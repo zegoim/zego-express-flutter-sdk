@@ -12,7 +12,12 @@ class ZegoExpressEngine {
       const EventChannel('plugins.zego.im/zego_express_event_handler');
 
   static ZegoExpressEngine _instance;
-  static Stream<dynamic> _receiverEvents;
+
+  static bool _enablePlatformView = false;
+
+  //static Stream<dynamic> _receiverEvents;
+  /// 用于接收native层事件流，开发者无需关注
+  static StreamSubscription<dynamic> _streamSubscription;
 
   ZegoExpressEngine._internal();
 
@@ -29,6 +34,10 @@ class ZegoExpressEngine {
     return version;
   }
 
+  static bool get isUsePlatformView {
+    return _enablePlatformView;
+  }
+
   /// 设置是否使用 Platform View 渲染
   ///
   ///@param enable 是否使用，true 使用，false 不使用。默认为 false
@@ -36,77 +45,42 @@ class ZegoExpressEngine {
   ///@discussion 参数为 true 时，使用 Platform View 渲染，参数为 false 时，使用 Texture 渲染
   ///@discussion 由于 flutter 团队 对 platform view 仍处于开发阶段，请开发者酌情使用
   static Future<void> enablePlatformView(bool enable) async {
+    _enablePlatformView = enable;
     return await _channel.invokeMethod('enablePlatformView', {
       'enable': enable
     });
   }
 
-  static Future<void> createEngine(int appID, String appSign, bool isTestEnv, int scenario) async {
+  static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario) async {
     final int error = await _channel.invokeMethod('createEngine', {
       'appID': appID,
       'appSign': appSign,
       'isTestEnv': isTestEnv,
-      'scenario': scenario
+      'scenario': scenario.index
     });
 
     if(error == 0) {
       _instance = _instance ?? new ZegoExpressEngine._internal();
-      _receiverEvents = _receiverEvents ?? _event.receiveBroadcastStream();
+      _registerEventHandler();
     }
   }
 
   static Future<void> destroyEngine() async {
     await _channel.invokeMethod('destroyEngine');
+    _unregisterEventHandler();
     if(_instance != null) {
       _instance = null;
     }
-
-    if(_receiverEvents != null) {
-      _receiverEvents = null;
-    }
-  }
-
-  void registerEventHandler({
-    Function(String roomID, int state, int errorCode) onRoomStateUpdate,
-    Function(String roomID, int updateType, List<ZegoUser> userList) onRoomUserUpdate,
-    Function(String roomID, int updateType, List<ZegoStream> streamList) onRoomStreamUpdate,
-    Function(String roomID, List<ZegoStream> streamList) onRoomStreamExtraInfoUpdate,
-    Function(String streamID, int state, int errorCode) onPublisherStateUpdate,
-    Function(String streamID, ZegoPublishStreamQuality quality) onPublisherQualityUpdate,
-    Function(int event) onPublisherRecvFirstFrameEvent,
-    Function(int width, int height) onPublisherVideoSizeChanged,
-    Function(String streamID, List<ZegoStreamRelayCDNInfo> relayInfoList) onPublisherRelayCDNStateUpdate,
-    Function(String streamID, int state, int errorCode) onPlayerStateUpdate,
-    Function(String streamID, ZegoPlayStreamQuality quality) onPlayerQualityUpdate,
-    Function(String streamID, int event) onPlayerMediaEvent,
-    Function(String streamID, int event) onPlayerRecvFirstFrameEvent,
-    Function(String streamID, int width, int height) onPlayerVideoSizeChanged,
-    Function(String streamID, Uint8List byteData) onPlayerRecvSEI,
-    Function(double soundLevel) onCapturedSoundLevelUpdate,
-    Function(Map<String, double> soundLevels) onRemoteSoundLevelUpdate,
-    Function(List<double> audioSpectrum) onCapturedAudioSpectrumUpdate,
-    Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate,
-    Function(String deviceName, int errorCode) onDeviceError,
-    Function(String streamID, int state) onRemoteCameraStateUpdate,
-    Function(String streamID, int state) onRemoteMicStateUpdate,
-    Function(String roomID, List<ZegoMessageInfo> messageList) onRecvBroadcastMessage,
-    Function(String roomID, String command, ZegoUser fromUser) onRecvCustomCommand
-  }) {
-    
-  }
-
-  void unregisterEventHandler() {
-
   }
 
   Future<void> uploadLog() async {
     return await _channel.invokeMethod('uploadLog');
   }
 
-  Future<void> setDebugVerbose(bool enable, int language) async {
+  Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
     return await _channel.invokeMethod('setDebugVerbose', {
       'enable': enable,
-      'language': language
+      'language': language.index
     });
   }
 
@@ -114,7 +88,7 @@ class ZegoExpressEngine {
     return await _channel.invokeMethod('loginRoom', {
       'roomID': roomID,
       'user': user.toMap(),
-      'config': config,
+      'config': config.toMap(),
       'token': token
     });
   }
@@ -124,6 +98,16 @@ class ZegoExpressEngine {
       'roomID': roomID
     });
   }
+
+  Future<int> createRenderer(int width, int height) async {
+    final int textureID = await _channel.invokeMethod('createRenderer', {
+      'width': width,
+      'height': height
+    });
+
+    return textureID;
+  }
+
 
   Future<void> startPublishing(String streamID) async {
     return await _channel.invokeMethod('startPublishing', {
@@ -156,10 +140,11 @@ class ZegoExpressEngine {
       'config': config.toMap()
     });
   }
+
   /// 参考 [ZegoVideoMirrorMode]
-  Future<void> setVideoMirrorMode(int mode) async {
+  Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mode) async {
     return await _channel.invokeMethod('setVideoMirrorMode', {
-      'mode': mode
+      'mode': mode.index
     });
   }
 
@@ -230,9 +215,9 @@ class ZegoExpressEngine {
     });
   }
 
-  Future<void> setCapturePipelineScaleMode(int mode) async {
+  Future<void> setCapturePipelineScaleMode(ZegoCapturePipelineScaleMode mode) async {
     return await _channel.invokeMethod('setCapturePipelineScaleMode', {
-      'mode': mode
+      'mode': mode.index
     });
   }
 
@@ -367,9 +352,13 @@ class ZegoExpressEngine {
   }
 
   Future<ZegoCustomCommandResult> sendCustomCommand(String roomID, String command, {List<ZegoUser> toUserList}) async {
-    List<Map<String, dynamic>> objUserList = [];
-    for(var user in toUserList) {
-      objUserList.add(user.toMap());
+    List<Map<String, dynamic>> objUserList;
+
+    if(toUserList != null) {
+      objUserList = new List(toUserList.length);
+      for (var user in toUserList) {
+        objUserList.add(user.toMap());
+      }
     }
 
     final Map<dynamic, dynamic> map = await _channel.invokeMethod('sendCustomCommand', {
@@ -397,56 +386,121 @@ class ZegoExpressEngine {
 
   }*/
 
-  void Function(String roomID, int state, int errorCode) _onRoomStateUpdate;
+  static void Function(String roomID, ZegoRoomState state, int errorCode) onRoomStateUpdate;
 
-  void Function(String roomID, int updateType, List<ZegoUser> userList) _onRoomUserUpdate;
+  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoUser> userList) onRoomUserUpdate;
 
-  void Function(String roomID, int updateType, List<ZegoStream> streamList) _onRoomStreamUpdate;
+  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList) onRoomStreamUpdate;
 
-  void Function(String roomID, List<ZegoStream> streamList) _onRoomStreamExtraInfoUpdate;
+  static void Function(String roomID, List<ZegoStream> streamList) onRoomStreamExtraInfoUpdate;
 
-  void Function(String streamID, int state, int errorCode) _onPublisherStateUpdate;
+  static void Function(String streamID, ZegoPublisherState state, int errorCode) onPublisherStateUpdate;
 
-  void Function(String streamID, ZegoPublishStreamQuality quality) _onPublisherQualityUpdate;
+  static void Function(String streamID, ZegoPublishStreamQuality quality) onPublisherQualityUpdate;
 
-  void Function(int event) _onPublisherRecvFirstFrameEvent;
+  static void Function(int event) onPublisherRecvFirstFrameEvent;
 
-  void Function(int width, int height) _onPublisherVideoSizeChanged;
+  static void Function(int width, int height) onPublisherVideoSizeChanged;
 
-  void Function(String streamID, List<ZegoStreamRelayCDNInfo> relayInfoList) _onPublisherRelayCDNStateUpdate;
+  static void Function(String streamID, List<ZegoStreamRelayCDNInfo> relayInfoList) onPublisherRelayCDNStateUpdate;
 
-  void Function(String streamID, int state, int errorCode) _onPlayerStateUpdate;
+  static void Function(String streamID, ZegoPlayerState state, int errorCode) onPlayerStateUpdate;
 
-  void Function(String streamID, ZegoPlayStreamQuality quality) _onPlayerQualityUpdate;
+  static void Function(String streamID, ZegoPlayStreamQuality quality) onPlayerQualityUpdate;
 
-  void Function(String streamID, int event) _onPlayerMediaEvent;
+  static void Function(String streamID, ZegoPlayerMediaEvent event) onPlayerMediaEvent;
 
-  void Function(String streamID, int event) _onPlayerRecvFirstFrameEvent;
+  static void Function(String streamID, int event) onPlayerRecvFirstFrameEvent;
 
-  void Function(String streamID, int width, int height) _onPlayerVideoSizeChanged;
+  static void Function(String streamID, int width, int height) onPlayerVideoSizeChanged;
 
-  void Function(String streamID, Uint8List byteData) _onPlayerRecvSEI;
+  static void Function(String streamID, Uint8List byteData) onPlayerRecvSEI;
 
-  void Function(double soundLevel) _onCapturedSoundLevelUpdate;
+  static void Function(double soundLevel) onCapturedSoundLevelUpdate;
 
-  void Function(Map<String, double> soundLevels) _onRemoteSoundLevelUpdate;
+  static void Function(Map<String, double> soundLevels) onRemoteSoundLevelUpdate;
 
-  void Function(List<double> audioSpectrum) _onCapturedAudioSpectrumUpdate;
+  static void Function(List<double> audioSpectrum) onCapturedAudioSpectrumUpdate;
 
-  void Function(Map<String, List<double>> audioSpectrums) _onRemoteAudioSpectrumUpdate;
+  static void Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate;
 
-  void Function(String deviceName, int errorCode) _onDeviceError;
+  static void Function(String deviceName, int errorCode) onDeviceError;
 
-  void Function(String streamID, int state) _onRemoteCameraStateUpdate;
+  static void Function(String streamID, ZegoRemoteDeviceState state) onRemoteCameraStateUpdate;
 
-  void Function(String streamID, int state) _onRemoteMicStateUpdate;
+  static void Function(String streamID, ZegoRemoteDeviceState state) onRemoteMicStateUpdate;
 
-  void Function(String roomID, List<ZegoMessageInfo> messageList) _onRecvBroadcastMessage;
+  static void Function(String roomID, List<ZegoMessageInfo> messageList) onRecvBroadcastMessage;
 
-  void Function(String roomID, String command, ZegoUser fromUser) _onRecvCustomCommand;
+  static void Function(String roomID, String command, ZegoUser fromUser) onRecvCustomCommand;
 
+  static void _registerEventHandler() async {
+    _streamSubscription = _event.receiveBroadcastStream().listen(_eventListener);
+  }
 
+  static void _unregisterEventHandler() async {
+    await _streamSubscription?.cancel();
+    _streamSubscription = null;
+  }
 
+  static void _eventListener(dynamic data) {
+    final Map<dynamic, dynamic> method = data;
+    switch(method['name']) {
+      case 'onRoomStateUpdate':
+        break;
+      case 'onRoomUserUpdate':
+        break;
+      case 'onRoomStreamUpdate':
+        break;
+      case 'onRoomStreamExtraInfoUpdate':
+        break;
+      case 'onPublisherStateUpdate':
+        break;
+      case 'onPublisherQualityUpdate':
+        break;
+      case 'onPublisherRecvFirstFrameEvent':
+        break;
+      case 'onPublisherVideoSizeChanged':
+        break;
+      case 'onPublisherRelayCDNStateUpdate':
+        break;
+      case 'onPlayerStateUpdate':
+        break;
+      case 'onPlayerQualityUpdate':
+        break;
+      case 'onPlayerMediaEvent':
+        break;
+      case 'onPlayerRecvFirstFrameEvent':
+        break;
+      case 'onPlayerVideoSizeChanged':
+        break;
+      case 'onPlayerRecvSEI':
+        break;
+      case 'onCapturedSoundLevelUpdate':
+        break;
+      case 'onRemoteSoundLevelUpdate':
+        break;
+      case 'onCapturedAudioSpectrumUpdate':
+        break;
+      case 'onRemoteAudioSpectrumUpdate':
+        break;
+      case 'onDeviceError':
+        break;
+      case 'onRemoteCameraStateUpdate':
+        break;
+      case 'onRemoteCameraStateUpdate':
+        break;
+      case 'onRemoteMicStateUpdate':
+        break;
+      case 'onRecvBroadcastMessage':
+        break;
+      case 'onRecvCustomCommand':
+        break;
+      default:
+        break;
+    }
+
+  }
 
 
 

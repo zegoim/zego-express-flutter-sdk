@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:zego_express_engine/src/zego_express_api.dart';
+
+enum ZegoScenario {
+  GENERAL
+}
+
+enum ZegoLanguage {
+  ENGLISH,
+  CHINESE
+}
 
 class ZegoUser {
   String userID;
   String userName;
 
-  ZegoUser(this.userID, this.userName);
+  ZegoUser(this.userID, this.userName)
+      : assert(userID != null),
+        assert(userName != null);
 
-  ZegoUser.id(String userID) {
+  ZegoUser.id(String userID)
+      : assert(userID != null) {
     this.userID = userID;
     this.userName = this.userID;
   }
@@ -39,7 +54,9 @@ class ZegoRoomConfig {
   int maxMemberCount;
   bool isUserStatusNotify;
 
-  ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify);
+  ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify)
+      : assert(maxMemberCount != null),
+        assert(isUserStatusNotify != null);
 
   ZegoRoomConfig.defaultConfig() {
     // 默认为0，表示房间人数无限制
@@ -47,6 +64,24 @@ class ZegoRoomConfig {
     this.isUserStatusNotify = false;
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'maxMemberCount': this.maxMemberCount,
+      'isUserStatusNotify': this.isUserStatusNotify
+    };
+  }
+
+}
+
+enum ZegoRoomState {
+  DISCONNECT,
+  CONNECTING,
+  CONNECTED
+}
+
+enum ZegoUpdateType {
+  ADD,
+  DELETE
 }
 
 class ZegoResolution {
@@ -66,7 +101,13 @@ class ZegoVideoConfig {
   int bitrate;
   int fps;
 
-  ZegoVideoConfig(this.videoCaptureResolutionWidth, this.videoCaptureResolutionHeight, this.videoEncodeResolutionWidth, this.videoEncodeResolutionHeight, this.bitrate, this.fps);
+  ZegoVideoConfig(this.videoCaptureResolutionWidth, this.videoCaptureResolutionHeight, this.videoEncodeResolutionWidth, this.videoEncodeResolutionHeight, this.bitrate, this.fps)
+      : assert(videoCaptureResolutionWidth != null),
+        assert(videoCaptureResolutionHeight != null),
+        assert(videoEncodeResolutionWidth != null),
+        assert(videoEncodeResolutionHeight != null),
+        assert(bitrate != null),
+        assert(fps != null);
 
   ZegoVideoConfig.defaultConfig() {
     this.videoCaptureResolutionWidth = 360;
@@ -78,7 +119,8 @@ class ZegoVideoConfig {
   }
 
   /// 预配置分辨率，参考 [ZegoResolution]
-  ZegoVideoConfig.preset(int resolutionPresetType) {
+  ZegoVideoConfig.preset(int resolutionPresetType)
+      : assert(resolutionPresetType != null) {
     switch(resolutionPresetType) {
       case ZegoResolution.RESOLUTION_180x320:
         this.videoCaptureResolutionWidth = 180;
@@ -145,11 +187,11 @@ class ZegoVideoConfig {
 
 }
 
-class ZegoVideoMirrorMode {
-  static const int ONLY_PREVIEW_MIRROR = 0;
-  static const int BOTH_MIRROR = 1;
-  static const int NO_MIRROR = 2;
-  static const int ONLY_PUBLISH_MIRROR = 3;
+enum ZegoVideoMirrorMode {
+  ONLY_PREVIEW_MIRROR,
+  BOTH_MIRROR,
+  NO_MIRROR,
+  ONLY_PUBLISH_MIRROR
 }
 
 class ZegoAudioConfigPreset {
@@ -241,7 +283,8 @@ class ZegoWatermark {
   String imageURL;
   Rect layout;
 
-  ZegoWatermark(this.imageURL, this.layout);
+  ZegoWatermark(this.imageURL, this.layout)
+      : assert (imageURL != null), assert(layout != null);
 
   Map<String, dynamic> toMap() {
     return {
@@ -254,9 +297,9 @@ class ZegoWatermark {
   }
 }
 
-class ZegoCapturePipelineScaleMode {
-  static const int PRE_SCALE = 0;
-  static const int POST_SCALE = 1;
+enum ZegoCapturePipelineScaleMode {
+  PRE_SCALE,
+  POST_SCALE
 }
 
 class ZegoAECMode {
@@ -278,7 +321,10 @@ class ZegoBeautifyOption {
   double whitenFactor;
   double sharpenFactor;
 
-  ZegoBeautifyOption(this.polishStep, this.whitenFactor, this.sharpenFactor);
+  ZegoBeautifyOption(this.polishStep, this.whitenFactor, this.sharpenFactor)
+      : assert(polishStep != null),
+        assert(whitenFactor != null),
+        assert(sharpenFactor != null);
 
   ZegoBeautifyOption.defaultOption() {
     this.polishStep = 0.2;
@@ -326,6 +372,12 @@ class ZegoStreamRelayCDNInfo {
   const ZegoStreamRelayCDNInfo(this.URL, this.state, this.reason, this.stateTime);
 }
 
+enum ZegoPublisherState {
+  NO_PUBLISH,
+  PUBLISH_REQUESTING,
+  PUBLISHING
+}
+
 class ZegoPlayStreamQuality {
   final int level;
   final double videoRecvFPS;
@@ -342,6 +394,37 @@ class ZegoPlayStreamQuality {
   final bool isHardwareDecode;
 
   const ZegoPlayStreamQuality(this.level, this.videoRecvFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.audioRecvFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.delay, this.isHardwareDecode);
+}
+
+enum ZegoPlayerState {
+  NO_PLAY,
+  PLAY_REQUESTING,
+  PLAYING
+}
+
+enum ZegoPlayerMediaEvent {
+  AUDIO_BREAK_OCCUR,
+  AUDIO_BREAK_RESUME,
+  VIDEO_BREAK_OCCUR,
+  VIDEO_BREAK_RESUME
+}
+
+enum ZegoRemoteDeviceState {
+  OPEN,
+  GENERIC_ERROR,
+  INVALID_ID,
+  NO_AUTHORIZATION,
+  ZERO_FPS,
+  IN_USE_BY_OTHER,
+  UNPLUGGED,
+  REBOOT_REQUIRED,
+  SYSTEM_MEDIA_SERVICES_LOST,
+  DISABLE,
+  MUTE,
+  INTERRUPTION,
+  IN_BACKGROUND,
+  MULTI_FOREGROUND_APP,
+  SYSTEM_PRESSURE
 }
 
 class ZegoMessageInfo {
@@ -371,3 +454,23 @@ class ZegoCustomCommandResult {
   final int errorCode;
   const ZegoCustomCommandResult(this.errorCode);
 }
+
+
+typedef ZegoViewCreatedCallback = void Function(int viewID);
+
+/*class ZegoRenderViewController {
+  int _viewID;
+
+  ZegoRenderViewController();
+
+  int get viewID => _viewID;
+
+  Future<void> initialize() async {
+
+    _viewID =
+  }
+
+  Future<void> release() async {
+
+  }
+}*/
