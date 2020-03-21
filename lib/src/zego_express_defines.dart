@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:zego_express_engine/src/zego_express_api.dart';
 
 enum ZegoScenario {
-  GENERAL
+  GENERAL,
+  COMMUNICATION,
+  LIVE
 }
 
 enum ZegoLanguage {
@@ -84,13 +86,19 @@ enum ZegoUpdateType {
   DELETE
 }
 
-class ZegoResolution {
-  static const RESOLUTION_180x320 = 0;
-  static const RESOLUTION_270x480 = 1;
-  static const RESOLUTION_360x640 = 2;
-  static const RESOLUTION_540x960 = 3;
-  static const RESOLUTION_720x1280 = 4;
-  static const RESOLUTION_1080x1920 = 5;
+enum ZegoVideoConfigPreset {
+  PRESET_180P,
+  PRESET_270P,
+  PRESET_360P,
+  PRESET_540P,
+  PRESET_720P,
+  PRESET_1080P
+}
+
+enum ZegoVideoCodecID {
+  DEFAULT,
+  MULTI_LAYER,
+  VP8
 }
 
 class ZegoVideoConfig {
@@ -100,6 +108,7 @@ class ZegoVideoConfig {
   int videoEncodeResolutionHeight;
   int bitrate;
   int fps;
+  ZegoVideoCodecID videoCodecID;
 
   ZegoVideoConfig(this.videoCaptureResolutionWidth, this.videoCaptureResolutionHeight, this.videoEncodeResolutionWidth, this.videoEncodeResolutionHeight, this.bitrate, this.fps)
       : assert(videoCaptureResolutionWidth != null),
@@ -114,61 +123,61 @@ class ZegoVideoConfig {
     this.videoEncodeResolutionHeight = 640;
     this.videoEncodeResolutionWidth = 360;
     this.videoEncodeResolutionHeight = 640;
-    this.bitrate = 600 * 1000;
+    this.bitrate = 600;
     this.fps = 15;
   }
 
   /// 预配置分辨率，参考 [ZegoResolution]
-  ZegoVideoConfig.preset(int resolutionPresetType)
-      : assert(resolutionPresetType != null) {
-    switch(resolutionPresetType) {
-      case ZegoResolution.RESOLUTION_180x320:
+  ZegoVideoConfig.preset(ZegoVideoConfigPreset preset)
+      : assert(preset != null) {
+    switch(preset) {
+      case ZegoVideoConfigPreset.PRESET_180P:
         this.videoCaptureResolutionWidth = 180;
         this.videoCaptureResolutionHeight = 320;
         this.videoEncodeResolutionWidth = 180;
         this.videoEncodeResolutionHeight = 320;
-        this.bitrate = 300 * 1000;
+        this.bitrate = 300;
         this.fps = 15;
         break;
-      case ZegoResolution.RESOLUTION_270x480:
+      case ZegoVideoConfigPreset.PRESET_270P:
         this.videoCaptureResolutionWidth = 270;
         this.videoCaptureResolutionHeight = 480;
         this.videoEncodeResolutionWidth = 270;
         this.videoEncodeResolutionHeight = 480;
-        this.bitrate = 400 * 1000;
+        this.bitrate = 400;
         this.fps = 15;
         break;
-      case ZegoResolution.RESOLUTION_540x960:
+      case ZegoVideoConfigPreset.PRESET_540P:
         this.videoCaptureResolutionWidth = 540;
         this.videoCaptureResolutionHeight = 960;
         this.videoEncodeResolutionWidth = 540;
         this.videoEncodeResolutionHeight = 960;
-        this.bitrate = 1200 * 1000;
+        this.bitrate = 1200;
         this.fps = 15;
         break;
-      case ZegoResolution.RESOLUTION_720x1280:
+      case ZegoVideoConfigPreset.PRESET_720P:
         this.videoCaptureResolutionWidth = 720;
         this.videoCaptureResolutionHeight = 1280;
         this.videoEncodeResolutionWidth = 720;
         this.videoEncodeResolutionHeight = 1280;
-        this.bitrate = 1500 * 1000;
+        this.bitrate = 1500;
         this.fps = 15;
         break;
-      case ZegoResolution.RESOLUTION_1080x1920:
+      case ZegoVideoConfigPreset.PRESET_1080P:
         this.videoCaptureResolutionWidth = 1080;
         this.videoCaptureResolutionHeight = 1920;
         this.videoEncodeResolutionWidth = 1080;
         this.videoEncodeResolutionHeight = 1920;
-        this.bitrate = 3000 * 1000;
+        this.bitrate = 3000;
         this.fps = 15;
         break;
-      case ZegoResolution.RESOLUTION_360x640:
+      case ZegoVideoConfigPreset.PRESET_360P:
       default:
         this.videoCaptureResolutionWidth = 360;
         this.videoCaptureResolutionHeight = 640;
         this.videoEncodeResolutionWidth = 360;
         this.videoEncodeResolutionHeight = 640;
-        this.bitrate = 600 * 1000;
+        this.bitrate = 600;
         this.fps = 15;
         break;
     }
@@ -205,6 +214,10 @@ class ZegoAudioConfigPreset {
   static const int NORMAL_LATENCY_HIGH_QUALITY = 7;
   static const int NORMAL_LATENCY_HIGH_QUALITY_STEREO = 8;
 }
+
+//enum ZegoAudioConfigPreset {
+//
+//}
 
 class ZegoAudioConfig {
   int bitrate;

@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 
 import 'zego_express_defines.dart';
 
-class ZegoExpressEngine {
+class ZegoExpressEngineImpl {
   /* Method Channel */
   static const MethodChannel _channel =
       const MethodChannel('plugins.zego.im/zego_express_engine');
   static const EventChannel _event =
       const EventChannel('plugins.zego.im/zego_express_event_handler');
 
-  static ZegoExpressEngine _instance;
+  static ZegoExpressEngineImpl _instance;
 
   static bool _enablePlatformView = false;
 
@@ -19,13 +19,13 @@ class ZegoExpressEngine {
   /// 用于接收native层事件流，开发者无需关注
   static StreamSubscription<dynamic> _streamSubscription;
 
-  ZegoExpressEngine._internal();
+  ZegoExpressEngineImpl._internal();
 
-  factory ZegoExpressEngine() {
+  factory ZegoExpressEngineImpl() {
     return _instance;
   }
 
-  static ZegoExpressEngine get instance {
+  static ZegoExpressEngineImpl get instance {
     return _instance;
   }
 
@@ -60,7 +60,7 @@ class ZegoExpressEngine {
     });
 
     if(error == 0) {
-      _instance = _instance ?? new ZegoExpressEngine._internal();
+      _instance = _instance ?? new ZegoExpressEngineImpl._internal();
       _registerEventHandler();
     }
   }

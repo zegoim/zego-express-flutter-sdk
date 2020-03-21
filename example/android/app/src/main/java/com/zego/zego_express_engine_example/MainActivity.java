@@ -1,5 +1,7 @@
 package com.zego.zego_express_engine_example;
 
+import android.view.Surface;
+
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
