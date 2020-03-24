@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../zego_express_engine.dart';
 import 'zego_express_defines.dart';
-import 'zego_express_api.dart';
+import 'zego_express_impl.dart';
 
 enum ZegoRenderViewMode {
   ASPECT_FIT,
@@ -42,7 +42,7 @@ class _ZegoRenderViewState extends State<ZegoRenderView> {
   void initState() {
     super.initState();
 
-    if(ZegoExpressEngineImpl.isUsePlatformView) {
+    if(ZegoExpressImpl.isUsePlatformView) {
 
     } else {
 
