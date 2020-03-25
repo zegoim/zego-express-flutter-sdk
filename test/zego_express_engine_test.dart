@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await ZegoExpressEngine.sdkVersion, '42');
+    expect(await ZegoExpressEngine.getVersion(), '42');
   });
 }

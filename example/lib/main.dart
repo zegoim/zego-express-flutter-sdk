@@ -18,6 +18,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+
+    var handler = ZegoExpressEventHandler();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -25,7 +27,7 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await ZegoExpressEngine.sdkVersion;
+      platformVersion = await ZegoExpressEngine.getVersion();
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
