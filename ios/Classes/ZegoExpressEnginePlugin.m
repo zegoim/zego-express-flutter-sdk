@@ -1,6 +1,7 @@
 #import "ZegoExpressEnginePlugin.h"
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 #import "ZegoUtils.h"
+#import "ZegoLog.h"
 
 @interface ZegoExpressEnginePlugin()<FlutterStreamHandler, ZegoEventHandler>
 
@@ -85,10 +86,12 @@
     result([FlutterError errorWithCode:[[NSString stringWithFormat:@"%@_ERROR", methodName] uppercaseString] message:errorMessage details:nil]);
 }
 
+#pragma mark - Engine Method Call
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     
     NSDictionary *args = call.arguments;
-    if([@"getVersion" isEqualToString:call.method]) {
+    if ([@"getVersion" isEqualToString:call.method]) {
         
         result([ZegoExpressEngine getVersion]);
         
@@ -98,35 +101,35 @@
         _isEnablePlatformView = enable;
         result(nil);
         
-#pragma mark - Engine
+#pragma mark Main
         
-    } else if([@"createEngine" isEqualToString:call.method]) {
+    } else if ([@"createEngine" isEqualToString:call.method]) {
         
         unsigned int appID = [ZegoUtils unsignedIntValue:args[@"appID"]];
         NSString *appSign = args[@"appID"];
         BOOL isTestEnv = [ZegoUtils boolValue:args[@"isTestEnv"]];
         int scenario = [ZegoUtils intValue:args[@"scenario"]];
         
-        if([ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self]) {
+        if ([ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self]) {
             NSLog(@"create engine success");
             result(@(0));
         } else {
             [self throwCreateEngineError:result ofMethodName:call.method];
         }
       
-    } else if([@"destroyEngine" isEqualToString:call.method]) {
+    } else if ([@"destroyEngine" isEqualToString:call.method]) {
         
         [ZegoExpressEngine destroyEngine:nil];
         
         result(nil);
       
-    } else if([@"uploadLog" isEqualToString:call.method]) {
+    } else if ([@"uploadLog" isEqualToString:call.method]) {
         
         [[ZegoExpressEngine sharedEngine] uploadLog];
         
         result(nil);
       
-    } else if([@"setDebugVerbose" isEqualToString:call.method]) {
+    } else if ([@"setDebugVerbose" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         int language = [ZegoUtils intValue:args[@"language"]];
@@ -135,9 +138,9 @@
         
         result(nil);
       
-#pragma mark - Room
+#pragma mark Room
         
-    } else if([@"loginRoom" isEqualToString:call.method]) {
+    } else if ([@"loginRoom" isEqualToString:call.method]) {
       
         NSString *roomID = args[@"roomID"];
         NSDictionary *userMap = args[@"user"];
@@ -145,7 +148,7 @@
         
         ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
         
-        if(configMap) {
+        if (configMap) {
             unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
             BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
             NSString *token = configMap[@"token"];
@@ -162,7 +165,7 @@
         
         result(nil);
       
-    } else if([@"logoutRoom" isEqualToString:call.method]) {
+    } else if ([@"logoutRoom" isEqualToString:call.method]) {
         
         NSString *roomID = args[@"roomID"];
         
@@ -170,9 +173,9 @@
         
         result(nil);
         
-#pragma mark - Publisher
+#pragma mark Publisher
       
-    } else if([@"startPublishingStream" isEqualToString:call.method]) {
+    } else if ([@"startPublishingStream" isEqualToString:call.method]) {
         
         NSString *streamID = args[@"streamID"];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -181,7 +184,7 @@
         
         result(nil);
       
-    } else if([@"stopPublishingStream" isEqualToString:call.method]) {
+    } else if ([@"stopPublishingStream" isEqualToString:call.method]) {
       
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
@@ -189,7 +192,7 @@
         
         result(nil);
         
-    } else if([@"setStreamExtraInfo" isEqualToString:call.method]) {
+    } else if ([@"setStreamExtraInfo" isEqualToString:call.method]) {
       
         NSString *extraInfo = args[@"extraInfo"];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -199,11 +202,11 @@
             result(@{@"errorCode": @(errorCode)});
         } channel:(ZegoPublishChannel)channel];
         
-    } else if([@"startPreview" isEqualToString:call.method]) {
+    } else if ([@"startPreview" isEqualToString:call.method]) {
         // TODO: 预览
-    } else if([@"stopPreview" isEqualToString:call.method]) {
+    } else if ([@"stopPreview" isEqualToString:call.method]) {
         // TODO: 预览
-    } else if([@"setVideoConfig" isEqualToString:call.method]) {
+    } else if ([@"setVideoConfig" isEqualToString:call.method]) {
       
         NSDictionary *configMap = args[@"config"];
         int capWidth = [ZegoUtils intValue:configMap[@"captureWidth"]];
@@ -225,7 +228,7 @@
         
         result(nil);
         
-    } else if([@"setVideoMirrorMode" isEqualToString:call.method]) {
+    } else if ([@"setVideoMirrorMode" isEqualToString:call.method]) {
         
         int mode = [ZegoUtils intValue:args[@"mode"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -234,7 +237,7 @@
         
         result(nil);
       
-    } else if([@"setAppOrientation" isEqualToString:call.method]) {
+    } else if ([@"setAppOrientation" isEqualToString:call.method]) {
         
         int orientation = [ZegoUtils intValue:args[@"orientation"]];
         UIInterfaceOrientation  uiOrientation = UIInterfaceOrientationUnknown;
@@ -260,7 +263,7 @@
         
         result(nil);
       
-    } else if([@"setAudioConfig" isEqualToString:call.method]) {
+    } else if ([@"setAudioConfig" isEqualToString:call.method]) {
         
         NSDictionary *configMap = args[@"config"];
         int bitrate = [ZegoUtils intValue:configMap[@"bitrate"]];
@@ -276,7 +279,7 @@
         
         result(nil);
       
-    } else if([@"mutePublishStreamAudio" isEqualToString:call.method]) {
+    } else if ([@"mutePublishStreamAudio" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -285,7 +288,7 @@
         
         result(nil);
       
-    } else if([@"mutePublishStreamVideo" isEqualToString:call.method]) {
+    } else if ([@"mutePublishStreamVideo" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -312,7 +315,7 @@
         
         result(nil);
         
-    } else if([@"setCaptureVolume" isEqualToString:call.method]) {
+    } else if ([@"setCaptureVolume" isEqualToString:call.method]) {
       
         int volume = [ZegoUtils intValue:args[@"volume"]];
         
@@ -320,7 +323,7 @@
         
         result(nil);
         
-    } else if([@"addPublishCDNURL" isEqualToString:call.method]) {
+    } else if ([@"addPublishCDNURL" isEqualToString:call.method]) {
         
         NSString *targetURL = args[@"targetURL"];
         NSString *streamID = args[@"streamID"];
@@ -329,7 +332,7 @@
             result(@{@"errorCode": @(errorCode)});
         }];
       
-    } else if([@"removePublishCDNUrl" isEqualToString:call.method]) {
+    } else if ([@"removePublishCDNURL" isEqualToString:call.method]) {
         
         NSString *targetURL = args[@"targetURL"];
         NSString *streamID = args[@"streamID"];
@@ -359,11 +362,11 @@
         
         result(nil);
       
-    } else if([@"setPublishWatermark" isEqualToString:call.method]) {
+    } else if ([@"setPublishWatermark" isEqualToString:call.method]) {
         
         NSDictionary *watermarkMap = args[@"watermark"];
         ZegoWatermark *watermarkObject = nil;
-        if(watermarkMap) {
+        if (watermarkMap) {
             NSString *imageURL = watermarkMap[@"imageURL"];
             int left = [ZegoUtils intValue:watermarkMap[@"left"]];
             int top = [ZegoUtils intValue:watermarkMap[@"top"]];
@@ -380,7 +383,7 @@
         
         result(nil);
       
-    } else if([@"sendSEI" isEqualToString:call.method]) {
+    } else if ([@"sendSEI" isEqualToString:call.method]) {
         
         FlutterStandardTypedData *data = args[@"byteData"];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -389,7 +392,7 @@
         
         result(nil);
       
-    } else if([@"enableHardwareEncoder" isEqualToString:call.method]) {
+    } else if ([@"enableHardwareEncoder" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -397,7 +400,7 @@
         
         result(nil);
       
-    } else if([@"setCapturePipelineScaleMode" isEqualToString:call.method]) {
+    } else if ([@"setCapturePipelineScaleMode" isEqualToString:call.method]) {
         
         int mode = [ZegoUtils intValue:args[@"mode"]];
         
@@ -405,15 +408,15 @@
         
         result(nil);
         
-#pragma mark - Player
+#pragma mark Player
       
-    } else if([@"startPlayingStream" isEqualToString:call.method]) {
+    } else if ([@"startPlayingStream" isEqualToString:call.method]) {
         // TODO: 拉流
       
-    } else if([@"stopPlayingStream" isEqualToString:call.method]) {
+    } else if ([@"stopPlayingStream" isEqualToString:call.method]) {
         // TODO: 拉流
       
-    } else if([@"setPlayVolume" isEqualToString:call.method]) {
+    } else if ([@"setPlayVolume" isEqualToString:call.method]) {
         
         int volume = [ZegoUtils intValue:args[@"volume"]];
         NSString *streamID = args[@"streamID"];
@@ -422,7 +425,7 @@
         
         result(nil);
       
-    } else if([@"mutePlayStreamAudio" isEqualToString:call.method]) {
+    } else if ([@"mutePlayStreamAudio" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         NSString *streamID = args[@"streamID"];
@@ -431,7 +434,7 @@
         
         result(nil);
       
-    } else if([@"mutePlayStreamVideo" isEqualToString:call.method]) {
+    } else if ([@"mutePlayStreamVideo" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         NSString *streamID = args[@"streamID"];
@@ -440,7 +443,7 @@
         
         result(nil);
       
-    } else if([@"enableHardwareDecoder" isEqualToString:call.method]) {
+    } else if ([@"enableHardwareDecoder" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -448,7 +451,7 @@
         
         result(nil);
       
-    } else if([@"enableCheckPoc" isEqualToString:call.method]) {
+    } else if ([@"enableCheckPoc" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -456,7 +459,7 @@
         
         result(nil);
         
-#pragma mark - Mixer
+#pragma mark Mixer
         
     } else if ([@"startMixerTask" isEqualToString:call.method]) {
         
@@ -535,7 +538,7 @@
         // Watermark
         ZegoWatermark *watermarkObject = nil;
         NSDictionary *watermarkMap = args[@"watermark"];
-        if(watermarkMap) {
+        if (watermarkMap) {
             NSString *imageURL = watermarkMap[@"imageURL"];
             int left = [ZegoUtils intValue:watermarkMap[@"left"]];
             int top = [ZegoUtils intValue:watermarkMap[@"top"]];
@@ -652,9 +655,9 @@
             result(@(errorCode));
         }];
         
-#pragma mark - Device
+#pragma mark Device
         
-    } else if([@"muteMicrophone" isEqualToString:call.method]) {
+    } else if ([@"muteMicrophone" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         
@@ -662,7 +665,7 @@
         
         result(nil);
       
-    } else if([@"muteAudioOutput" isEqualToString:call.method]) {
+    } else if ([@"muteAudioOutput" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         
@@ -670,7 +673,7 @@
         
         result(nil);
       
-    } else if([@"enableAudioCaptureDevice" isEqualToString:call.method]) {
+    } else if ([@"enableAudioCaptureDevice" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -678,7 +681,7 @@
         
         result(nil);
     
-    } else if([@"setBuiltInSpeakerOn" isEqualToString:call.method]) {
+    } else if ([@"setBuiltInSpeakerOn" isEqualToString:call.method]) {
     
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -686,7 +689,7 @@
         
         result(nil);
       
-    } else if([@"enableCamera" isEqualToString:call.method]) {
+    } else if ([@"enableCamera" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -695,7 +698,7 @@
         
         result(nil);
       
-    } else if([@"useFrontCamera" isEqualToString:call.method]) {
+    } else if ([@"useFrontCamera" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -704,33 +707,33 @@
         
         result(nil);
       
-    } else if([@"startSoundLevelMonitor" isEqualToString:call.method]) {
+    } else if ([@"startSoundLevelMonitor" isEqualToString:call.method]) {
         
         [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
         
         result(nil);
       
-    } else if([@"stopSoundLevelMonitor" isEqualToString:call.method]) {
+    } else if ([@"stopSoundLevelMonitor" isEqualToString:call.method]) {
         
         [[ZegoExpressEngine sharedEngine] stopSoundLevelMonitor];
         
         result(nil);
       
-    } else if([@"startAudioSpectrumMonitor" isEqualToString:call.method]) {
+    } else if ([@"startAudioSpectrumMonitor" isEqualToString:call.method]) {
         
         [[ZegoExpressEngine sharedEngine] startAudioSpectrumMonitor];
         
         result(nil);
       
-    } else if([@"stopAudioSpectrumMonitor" isEqualToString:call.method]) {
+    } else if ([@"stopAudioSpectrumMonitor" isEqualToString:call.method]) {
         
         [[ZegoExpressEngine sharedEngine] stopSoundLevelMonitor];
         
         result(nil);
         
-#pragma mark - Preprocess
+#pragma mark Preprocess
       
-    } else if([@"enableAEC" isEqualToString:call.method]) {
+    } else if ([@"enableAEC" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -738,7 +741,7 @@
         
         result(nil);
       
-    } else if([@"setAECMode" isEqualToString:call.method]) {
+    } else if ([@"setAECMode" isEqualToString:call.method]) {
         
         int mode = [ZegoUtils intValue:args[@"mode"]];
         
@@ -746,7 +749,7 @@
         
         result(nil);
       
-    } else if([@"enableAGC" isEqualToString:call.method]) {
+    } else if ([@"enableAGC" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -754,7 +757,7 @@
         
         result(nil);
       
-    } else if([@"enableANS" isEqualToString:call.method]) {
+    } else if ([@"enableANS" isEqualToString:call.method]) {
         
         BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
         
@@ -762,7 +765,7 @@
         
         result(nil);
       
-    } else if([@"enableBeautify" isEqualToString:call.method]) {
+    } else if ([@"enableBeautify" isEqualToString:call.method]) {
         
         int feature = [ZegoUtils intValue:args[@"feature"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
@@ -771,7 +774,7 @@
         
         result(nil);
       
-    } else if([@"setBeautifyOption" isEqualToString:call.method]) {
+    } else if ([@"setBeautifyOption" isEqualToString:call.method]) {
       
         NSDictionary *option = args[@"option"];
         ZegoBeautifyOption *optionObject = [[ZegoBeautifyOption alloc] init];
@@ -785,9 +788,9 @@
         
         result(nil);
         
-#pragma mark - IM
+#pragma mark IM
         
-    } else if([@"sendBroadcastMessage" isEqualToString:call.method]) {
+    } else if ([@"sendBroadcastMessage" isEqualToString:call.method]) {
         
         NSString *roomID = args[@"roomID"];
         NSString *message = args[@"message"];
@@ -811,14 +814,14 @@
             });
         }];
         
-    } else if([@"sendCustomCommand" isEqualToString:call.method]) {
+    } else if ([@"sendCustomCommand" isEqualToString:call.method]) {
         
         NSString *roomID = args[@"roomID"];
         NSString *command = args[@"command"];
         NSArray<NSDictionary *> *userListMap = args[@"toUserList"];
         
         NSMutableArray<ZegoUser *> *userListObject = nil;
-        if(userListMap) {
+        if (userListMap) {
             userListObject = [[NSMutableArray alloc] init];
             for(NSDictionary *userMap in userListMap) {
                 ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
@@ -832,6 +835,529 @@
         
     } else {
       result(FlutterMethodNotImplemented);
+    }
+}
+
+#pragma mark - ZegoEventHandler
+
+- (void)onDebugError:(int)errorCode funcName:(NSString *)funcName info:(NSString *)info {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, errorCode: %d, funcName: %@, info: %@", sink, errorCode, funcName, info);
+    
+    if (sink) {
+        sink(@{
+            @"errorCode": @(errorCode),
+            @"funcName": funcName,
+            @"info": info
+        });
+    }
+}
+
+#pragma mark Room Callback
+
+- (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, errorCode: %d, roomID: %@", sink, errorCode, roomID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRoomStateUpdate",
+            @"errorCode": @(errorCode),
+            @"extendedData": extendedData,
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onRoomUserUpdate:(ZegoUpdateType)updateType userList:(NSArray<ZegoUser *> *)userList roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, updateType: %@, usersCount: %d, roomID: %@", sink, updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)userList.count, roomID);
+    
+    if (sink) {
+        NSMutableArray *userListArray = [[NSMutableArray alloc] init];
+        for (ZegoUser *user in userList) {
+            [userListArray addObject:@{
+                @"userID": user.userID,
+                @"userName": user.userName
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onRoomUserUpdate",
+            @"updateType": @(updateType),
+            @"userList": userListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onRoomStreamUpdate:(ZegoUpdateType)updateType streamList:(NSArray<ZegoStream *> *)streamList roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, updateType: %@, streamsCount: %d, roomID: %@", sink, updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)streamList.count, roomID);
+    
+    if (sink) {
+        NSMutableArray *streamListArray = [[NSMutableArray alloc] init];
+        for (ZegoStream *stream in streamList) {
+            [streamListArray addObject:@{
+                @"user": @{
+                    @"userID": stream.user.userID,
+                    @"userName": stream.user.userName
+                },
+                @"streamID": stream.streamID,
+                @"extraInfo": stream.extraInfo
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onRoomStreamUpdate",
+            @"updateType": @(updateType),
+            @"streamList": streamListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onRoomStreamExtraInfoUpdate:(NSArray<ZegoStream *> *)streamList roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, streamsCount: %d, roomID: %@", sink, (int)streamList.count, roomID);
+    
+    if (sink) {
+        NSMutableArray *streamListArray = [[NSMutableArray alloc] init];
+        for (ZegoStream *stream in streamList) {
+            [streamListArray addObject:@{
+                @"user": @{
+                    @"userID": stream.user.userID,
+                    @"userName": stream.user.userName
+                },
+                @"streamID": stream.streamID,
+                @"extraInfo": stream.extraInfo
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onRoomStreamExtraInfoUpdate",
+            @"streamList": streamListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
+#pragma mark Publisher Callback
+
+- (void)onPublisherStateUpdate:(ZegoPublisherState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, state: %d, errorCode: %d, streamID: %@", sink, (int)state, errorCode, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherStateUpdate",
+            @"state": @(state),
+            @"errorCode": @(errorCode),
+            @"extendedData": extendedData,
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherQualityUpdate",
+            @"quality": @{
+                @"videoCaptureFPS": @(quality.videoCaptureFPS),
+                @"videoEncodeFPS": @(quality.videoEncodeFPS),
+                @"videoSendFPS": @(quality.videoSendFPS),
+                @"videoKBPS": @(quality.videoKBPS),
+                @"audioCaptureFPS": @(quality.audioCaptureFPS),
+                @"audioSendFPS": @(quality.audioSendFPS),
+                @"audioKBPS": @(quality.audioKBPS),
+                @"rtt": @(quality.rtt),
+                @"packetLostRate": @(quality.packetLostRate),
+                @"level": @(quality.level),
+                @"isHardwareEncode": @(quality.isHardwareEncode)
+            },
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPublisherCapturedAudioFirstFrame {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p", sink);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherCapturedAudioFirstFrame",
+        });
+    }
+}
+
+- (void)onPublisherCapturedVideoFirstFrame:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, channel: %d", sink, (int)channel);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherCapturedVideoFirstFrame",
+            @"channel": @(channel)
+        });
+    }
+}
+
+- (void)onPublisherVideoSizeChanged:(CGSize)size channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, width: %d, height: %d, channel: %d", sink, (int)size.width, (int)size.height, (int)channel);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherVideoSizeChanged",
+            @"width": @((int)size.width),
+            @"height": @((int)size.height),
+            @"channel": @(channel)
+        });
+    }
+}
+
+- (void)onPublisherRelayCDNStateUpdate:(NSArray<ZegoStreamRelayCDNInfo *> *)streamInfoList streamID:(NSString *)streamID {
+    //TODO: gaiming
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, infosCount: %d, streamID: %@", sink, (int)streamInfoList.count, streamID);
+    
+    if (sink) {
+        NSMutableArray *streamInfoListArray = [[NSMutableArray alloc] init];
+        for (ZegoStreamRelayCDNInfo *info in streamInfoList) {
+            [streamInfoListArray addObject:@{
+                @"URL": info.URL,
+                @"state": @(info.state),
+                @"updateReason": @(info.updateReason),
+                @"stateTime": @(info.stateTime)
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onPublisherRelayCDNStateUpdate",
+            @"streamInfoList": streamInfoListArray,
+            @"streamID": streamID
+        });
+    }
+}
+
+#pragma mark Player Callback
+
+- (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, state: %d, errorCode: %d, streamID: %@", sink, (int)state, errorCode, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerStateUpdate",
+            @"state": @(state),
+            @"errorCode": @(errorCode),
+            @"extendedData": extendedData,
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerQualityUpdate:(ZegoPlayStreamQuality *)quality streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerQualityUpdate",
+            @"quality": @{
+                @"videoRecvFPS": @(quality.videoRecvFPS),
+                @"videoDecodeFPS": @(quality.videoDecodeFPS),
+                @"videoRenderFPS": @(quality.videoRenderFPS),
+                @"videoKBPS": @(quality.videoKBPS),
+                @"audioRecvFPS": @(quality.audioRecvFPS),
+                @"audioDecodeFPS": @(quality.audioDecodeFPS),
+                @"audioRenderFPS": @(quality.audioRenderFPS),
+                @"audioKBPS": @(quality.audioKBPS),
+                @"rtt": @(quality.rtt),
+                @"packetLostRate": @(quality.packetLostRate),
+                @"level": @(quality.level),
+                @"delay": @(quality.delay),
+                @"isHardwareDecode": @(quality.isHardwareDecode)
+            },
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerMediaEvent:(ZegoPlayerMediaEvent)event streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, event: %d, streamID: %@", sink, (int)event, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerMediaEvent",
+            @"event": @(event),
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerRecvAudioFirstFrame:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, streamID: %@", sink, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRecvAudioFirstFrame",
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerRecvVideoFirstFrame:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, streamID: %@", sink, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRecvVideoFirstFrame",
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerRenderVideoFirstFrame:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, streamID: %@", sink, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRenderVideoFirstFrame",
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerVideoSizeChanged:(CGSize)size streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, width: %d, height: %d, streamID: %@", sink, (int)size.width, (int)size.height, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerVideoSizeChanged",
+            @"width": @((int)size.width),
+            @"height": @((int)size.height),
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerRecvSEI:(NSData *)data streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, streamID: %@", sink, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRecvSEI",
+            @"data": data,
+            @"streamID": streamID
+        });
+    }
+}
+
+#pragma mark Mixer Callback
+
+- (void)onMixerRelayCDNStateUpdate:(NSArray<ZegoStreamRelayCDNInfo *> *)infoList taskID:(NSString *)taskID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, infosCount: %d, taskID: %@", sink, (int)infoList.count, taskID);
+    
+    if (sink) {
+        NSMutableArray *infoListArray = [[NSMutableArray alloc] init];
+        for (ZegoStreamRelayCDNInfo *info in infoList) {
+            [infoListArray addObject:@{
+                @"URL": info.URL,
+                @"state": @(info.state),
+                @"updateReason": @(info.updateReason),
+                @"stateTime": @(info.stateTime)
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onMixerRelayCDNStateUpdate",
+            @"infoList": infoListArray,
+            @"taskID": taskID
+        });
+    }
+}
+
+- (void)onMixerSoundLevelUpdate:(NSDictionary<NSNumber *,NSNumber *> *)soundLevels {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onMixerSoundLevelUpdate",
+            @"soundLevels": soundLevels
+        });
+    }
+}
+
+#pragma mark Device Callback
+
+- (void)onCapturedSoundLevelUpdate:(NSNumber *)soundLevel {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onCapturedSoundLevelUpdate",
+            @"soundLevel": soundLevel
+        });
+    }
+}
+
+- (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteSoundLevelUpdate",
+            @"soundLevels": soundLevels
+        });
+    }
+}
+
+- (void)onCapturedAudioSpectrumUpdate:(NSArray<NSNumber *> *)audioSpectrum {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onCapturedAudioSpectrumUpdate",
+            @"audioSpectrum": audioSpectrum
+        });
+    }
+}
+
+- (void)onRemoteAudioSpectrumUpdate:(NSDictionary<NSString *,NSArray<NSNumber *> *> *)audioSpectrums {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteAudioSpectrumUpdate",
+            @"audioSpectrums": audioSpectrums
+        });
+    }
+}
+
+- (void)onDeviceError:(int)errorCode deviceName:(NSString *)deviceName {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, errorCode: %d, deviceName: %@", sink, errorCode, deviceName);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onDeviceError",
+            @"errorCode": @(errorCode),
+            @"deviceName": deviceName
+        });
+    }
+}
+
+- (void)onRemoteCameraStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, state: %d, streamID: %@", sink, (int)state, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteCameraStateUpdate",
+            @"state": @(state),
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onRemoteMicStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, state: %d, streamID: %@", sink, (int)state, streamID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteMicStateUpdate",
+            @"state": @(state),
+            @"streamID": streamID
+        });
+    }
+}
+
+#pragma mark IM Callback
+
+- (void)onIMRecvBroadcastMessage:(NSArray<ZegoBroadcastMessageInfo *> *)messageList roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, messageListCount: %d, roomID: %@", sink, (int)messageList.count, roomID);
+    
+    if (sink) {
+        NSMutableArray *messageListArray = [[NSMutableArray alloc] init];
+        for (ZegoBroadcastMessageInfo *info in messageList) {
+            [messageListArray addObject:@{
+                @"message": info.message,
+                @"messageID": @(info.messageID),
+                @"sendTime": @(info.sendTime),
+                @"fromUser": @{
+                    @"userID": info.fromUser.userID,
+                    @"userName": info.fromUser.userName
+                }
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onIMRecvBroadcastMessage",
+            @"messageList": messageListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onIMRecvBarrageMessage:(NSArray<ZegoBarrageMessageInfo *> *)messageList roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, messageListCount: %d, roomID: %@", sink, (int)messageList.count, roomID);
+    
+    if (sink) {
+        NSMutableArray *messageListArray = [[NSMutableArray alloc] init];
+        for (ZegoBarrageMessageInfo *info in messageList) {
+            [messageListArray addObject:@{
+                @"message": info.message,
+                @"messageID": info.messageID,
+                @"sendTime": @(info.sendTime),
+                @"fromUser": @{
+                    @"userID": info.fromUser.userID,
+                    @"userName": info.fromUser.userName
+                }
+            }];
+        }
+        
+        sink(@{
+            @"method": @"onIMRecvBarrageMessage",
+            @"messageList": messageListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onIMRecvCustomCommand:(NSString *)command fromUser:(ZegoUser *)fromUser roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"sink: %p, command: %@, fromUserID: %@, fromUserName: %@, roomID: %@", sink, command, fromUser.userID, fromUser.userName, roomID);
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onIMRecvCustomCommand",
+            @"fromUser": @{
+                @"userID": fromUser.userID,
+                @"userName": fromUser.userName
+            },
+            @"roomID": roomID
+        });
     }
 }
 
