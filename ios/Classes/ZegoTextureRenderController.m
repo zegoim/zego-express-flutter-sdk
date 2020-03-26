@@ -139,6 +139,7 @@
 {
     [self.captureRenderers removeAllObjects];
     [self.remoteRenderers removeAllObjects];
+    [self.rendererList removeAllObjects];
 }
 
 - (ZegoTextureRenderer *)getRendererFromList:(int64_t)textureID
