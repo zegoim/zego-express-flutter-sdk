@@ -1,4 +1,4 @@
-group 'com.zego.zego_express_engine'
+group 'im.zego.zego_express_engine'
 version '1.0'
 
 buildscript {

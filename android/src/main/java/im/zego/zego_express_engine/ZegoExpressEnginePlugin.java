@@ -1,4 +1,4 @@
-package com.zego.zego_express_engine;
+package im.zego.zego_express_engine;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;

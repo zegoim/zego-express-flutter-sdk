@@ -1,4 +1,4 @@
-package com.zego.zego_express_engine_example;
+package im.zego.zego_express_engine_example;
 
 import android.view.Surface;
 
