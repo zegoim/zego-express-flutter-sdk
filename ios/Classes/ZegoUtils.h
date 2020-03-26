@@ -20,6 +20,8 @@
 
 + (unsigned long)unsignedLongValue:(NSNumber *)number;
 
++ (long long)longLongValue:(NSNumber *)number;
+
 + (float)folatValue:(NSNumber *)number;
 
 + (double)doubleValue:(NSNumber *)number;
