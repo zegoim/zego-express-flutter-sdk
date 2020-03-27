@@ -1,4 +1,5 @@
 
+import 'dart:typed_data';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
@@ -134,8 +135,8 @@ class ZegoExpressEngine {
     /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
     /// [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     /// [channel] Publish stream channel
-    Future<void> startPublishingStream(String streamID, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.startPublishingStream(streamID, channel);
+    Future<void> startPublishingStream(String streamID, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.startPublishingStream(streamID, channel: channel);
     }
 
     /// Stop publishing stream of the specified channel
@@ -145,8 +146,8 @@ class ZegoExpressEngine {
     /// After stopping streaming, the developer should stop the local preview based on whether the business situation requires it.
     /// Use this API to stop publishing stream of aux channel.
     /// [channel] Publish stream channel
-    Future<void> stopPublishingStream(ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.stopPublishingStream(channel);
+    Future<void> stopPublishingStream({ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.stopPublishingStream(channel: channel);
     }
 
     /// Set stream additional information. You can call this api to set params when publishing another streams
@@ -157,8 +158,8 @@ class ZegoExpressEngine {
     /// [extraInfo] Stream extra information, a string of up to 1024 characters.
     /// [channel] Publish stream channel
     /// Returns Set stream extra information execution result notification
-    Future<ZegoPublisherSetStreamExtraInfoResult> setStreamExtraInfo(String extraInfo, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.setStreamExtraInfo(extraInfo, channel);
+    Future<ZegoPublisherSetStreamExtraInfoResult> setStreamExtraInfo(String extraInfo, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.setStreamExtraInfo(extraInfo, channel: channel);
     }
 
     /// Start/Update local preview. You can call this api to set params when publishing another streams
@@ -169,16 +170,16 @@ class ZegoExpressEngine {
     /// When this api is called, the audio and video engine module inside ZegoExpressEngine will start really, and it will start to try to collect audio and video. In addition to calling this api normally to preview the local screen, developers can also pass [null] to the canvas parameter, in conjunction with ZegoExpressEngine's sound wave function, in order to achieve the purpose of detecting whether the audio equipment is working properly before logging in to the room.
     /// [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
     /// [channel] Publish stream channel
-    Future<void> startPreview(ZegoCanvas canvas, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.startPreview(canvas, channel);
+    Future<void> startPreview({ZegoCanvas canvas, ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.startPreview(canvas: canvas, channel: channel);
     }
 
     /// Stop local preview
     ///
     /// This api can be called to stop previewing when there is no need to see the preview locally.
     /// [channel] Publish stream channel
-    Future<void> stopPreview(ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.stopPreview(channel);
+    Future<void> stopPreview({ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.stopPreview(channel: channel);
     }
 
     /// Set up video configuration. You can call this api to publish another streams
@@ -188,8 +189,8 @@ class ZegoExpressEngine {
     /// Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
     /// [config] Video configuration, the ZegoExpressEngine provides a common setting combination of resolution, frame rate and bit rate, they also can be customized.
     /// [channel] Publish stream channel
-    Future<void> setVideoConfig(ZegoVideoConfig config, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.setVideoConfig(config, channel);
+    Future<void> setVideoConfig(ZegoVideoConfig config, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.setVideoConfig(config, channel: channel);
     }
 
     /// Set mirror mode. You can call this api to set params when publishing another streams
@@ -197,8 +198,8 @@ class ZegoExpressEngine {
     /// This interface can be called to set whether the local preview video and the published video have mirror mode enabled.
     /// [mirrorMode] Mirror mode for previewing or publishing the stream
     /// [channel] Publish stream channel
-    Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.setVideoMirrorMode(mirrorMode, channel);
+    Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.setVideoMirrorMode(mirrorMode, channel: channel);
     }
 
     /// set audio config
@@ -216,8 +217,8 @@ class ZegoExpressEngine {
     /// If you stop sending audio streams, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteMicStateUpdate] callbacks,
     /// [mute] Whether to stop sending audio streams, true means that only the video stream is sent without sending the audio stream, and false means that the audio and video streams are sent simultaneously. The default is false.
     /// [channel] Publish stream channel
-    Future<void> mutePublishStreamAudio(bool mute, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.mutePublishStreamAudio(mute, channel);
+    Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.mutePublishStreamAudio(mute, channel: channel);
     }
 
     /// Stop or resume sending a video stream. You can call this api to set params when publishing another streams
@@ -226,8 +227,8 @@ class ZegoExpressEngine {
     /// If you stop sending video streams locally, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteCameraStateUpdate] callbacks,
     /// [mute] Whether to stop sending video streams, true means that only the audio stream is sent without sending the video stream, and false means that the audio and video streams are sent at the same time. The default is false.
     /// [channel] Publish stream channel
-    Future<void> mutePublishStreamVideo(bool mute, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.mutePublishStreamVideo(mute, channel);
+    Future<void> mutePublishStreamVideo(bool mute, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.mutePublishStreamVideo(mute, channel: channel);
     }
 
     /// Enable or disable traffic control
@@ -291,8 +292,8 @@ class ZegoExpressEngine {
     /// [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
     /// [config] CDN configuration, if null, use Zego's background default configuration
     /// [channel] Publish stream channel
-    Future<void> enablePublishDirectToCDN(bool enable, ZegoCDNConfig config, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.enablePublishDirectToCDN(enable, config, channel);
+    Future<void> enablePublishDirectToCDN(bool enable, ZegoCDNConfig config, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.enablePublishDirectToCDN(enable, config, channel: channel);
     }
 
     /// set publish watermark. You can call this api to set params when publishing another streams
@@ -301,8 +302,8 @@ class ZegoExpressEngine {
     /// [watermark] The upper left corner of the watermark layout is the origin of the coordinate system, and the area cannot exceed the size set by the encoding resolution. If it is null, the watermark is cancelled.
     /// [isPreviewVisible] the watermark is visible on local preview
     /// [channel] Publish stream channel
-    Future<void> setPublishWatermark(ZegoWatermark watermark, bool isPreviewVisible, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.setPublishWatermark(watermark, isPreviewVisible, channel);
+    Future<void> setPublishWatermark(ZegoWatermark watermark, bool isPreviewVisible, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.setPublishWatermark(watermark, isPreviewVisible, channel: channel);
     }
 
     /// Send SEI. You can call this api to set params when publishing another streams
@@ -317,8 +318,8 @@ class ZegoExpressEngine {
     /// [data] SEI data
     /// [dataLength] SEI data length
     /// [channel] Publish stream channel
-    Future<void> sendSEI(Uint8List data, int dataLength, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.sendSEI(data, dataLength, channel);
+    Future<void> sendSEI(Uint8List data, int dataLength, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.sendSEI(data, dataLength, channel: channel);
     }
 
     /// On/off hardware encoding
@@ -402,8 +403,8 @@ class ZegoExpressEngine {
     /// [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     /// [canvas] The view used to display the play audio and video stream's image. If the view is set to [null], it will not be displayed.
     /// [config] Advanced player configuration
-    Future<void> startPlayingStream(String streamID, ZegoCanvas canvas, ZegoPlayerConfig config) async {
-        return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas, config);
+    Future<void> startPlayingStream(String streamID, {ZegoCanvas canvas, ZegoPlayerConfig config}) async {
+        return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas: canvas, config: config);
     }
 
     /// Stop playing stream
@@ -601,8 +602,8 @@ class ZegoExpressEngine {
     /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
     /// [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
     /// [channel] Publishing stream channel.
-    Future<void> enableCamera(bool enable, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.enableCamera(enable, channel);
+    Future<void> enableCamera(bool enable, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
     }
 
     /// Switch front and rear camera.You can call this api to set params when publishing another streams
@@ -610,8 +611,8 @@ class ZegoExpressEngine {
     /// This interface is used to control the front or rear camera
     /// [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera
     /// [channel] Publishing stream channel.
-    Future<void> useFrontCamera(bool enable, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.useFrontCamera(enable, channel);
+    Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
     }
 
     /// Start the sound level monitor
@@ -722,16 +723,16 @@ class ZegoExpressEngine {
     /// Identify the portraits in the video for beauty. It can be set before and after the start of the publish.
     /// [featureBitmask] Bit mask format, you can choose to enable several features in ZegoBeautifyFeature at the same time
     /// [channel] Publishing stream channel.
-    Future<void> enableBeautify(ZegoBeautifyFeature featureBitmask, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel);
+    Future<void> enableBeautify(ZegoBeautifyFeature featureBitmask, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
     }
 
     /// Set beauty parameters
     ///
     /// [option] Beauty configuration options
     /// [channel] Publishing stream channel.
-    Future<void> setBeautifyOption(ZegoBeautifyOption option, ZegoPublishChannel channel) async {
-        return await ZegoExpressImpl.instance.setBeautifyOption(option, channel);
+    Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
     }
 
     /// Send room broadcast message
