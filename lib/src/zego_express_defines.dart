@@ -1,10 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import 'package:zego_express_engine/src/zego_express_api.dart';
-
-/// Application cenario
+/// Application scenario
 enum ZegoScenario {
     /// General scenario
     General,
@@ -487,7 +484,7 @@ class ZegoVideoConfig {
 /// Note that the userID must be unique under the same appID, otherwise mutual kicks out will occur.
 class ZegoUser {
 
-    /// User ID, a string with a maximum length of 64 bytes or less. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+    /// User ID, a string with a maximum length of 64 bytes or less. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     String userID;
 
     /// User Name, a string with a maximum length of 256 bytes or less
@@ -516,7 +513,7 @@ class ZegoStream {
     /// User object instance
     ZegoUser user;
 
-    /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+    /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     String streamID;
 
     /// Stream extra info
@@ -682,20 +679,20 @@ class ZegoPublishStreamQuality {
 class ZegoCDNConfig {
 
     /// CDN URL
-    String URL;
+    String url;
 
     /// Auth param of URL
     String authParam;
 
-    ZegoCDNConfig(this.URL, this.authParam): assert(URL != null), assert(authParam != null);
+    ZegoCDNConfig(this.url, this.authParam): assert(url != null), assert(authParam != null);
 
     ZegoCDNConfig.fromMap(Map<dynamic, dynamic> map):
-        URL = map['URL'],
+        url = map['url'],
         authParam = map['authParam'];
 
     Map<String, dynamic> toMap() {
         return {
-            'URL': this.URL,
+            'url': this.url,
             'authParam': this.authParam
         };
     }
@@ -708,7 +705,7 @@ class ZegoCDNConfig {
 class ZegoStreamRelayCDNInfo {
 
     /// URL of publishing stream to CDN
-    String URL;
+    String url;
 
     /// State of relaying to CDN
     ZegoStreamRelayCDNState state;
@@ -719,17 +716,17 @@ class ZegoStreamRelayCDNInfo {
     /// The timestamp when the state changed, in milliseconds
     int stateTime;
 
-    ZegoStreamRelayCDNInfo(this.URL, this.state, this.updateReason, this.stateTime): assert(URL != null), assert(state != null), assert(updateReason != null), assert(stateTime != null);
+    ZegoStreamRelayCDNInfo(this.url, this.state, this.updateReason, this.stateTime): assert(url != null), assert(state != null), assert(updateReason != null), assert(stateTime != null);
 
     ZegoStreamRelayCDNInfo.fromMap(Map<dynamic, dynamic> map):
-        URL = map['URL'],
+        url = map['url'],
         state = map['state'],
         updateReason = map['updateReason'],
         stateTime = map['stateTime'];
 
     Map<String, dynamic> toMap() {
         return {
-            'URL': this.URL,
+            'url': this.url,
             'state': this.state,
             'updateReason': this.updateReason,
             'stateTime': this.stateTime
@@ -744,20 +741,20 @@ class ZegoStreamRelayCDNInfo {
 class ZegoPlayerConfig {
 
     /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
-    ZegoCDNConfig CDNConfig;
+    ZegoCDNConfig cdnConfig;
 
     /// Set the video layer for playing the stream
     ZegoPlayerVideoLayer videoLayer;
 
-    ZegoPlayerConfig(this.CDNConfig, this.videoLayer): assert(CDNConfig != null), assert(videoLayer != null);
+    ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(cdnConfig != null), assert(videoLayer != null);
 
     ZegoPlayerConfig.fromMap(Map<dynamic, dynamic> map):
-        CDNConfig = ZegoCDNConfig.fromMap(map['CDNConfig']),
+        cdnConfig = ZegoCDNConfig.fromMap(map['cdnConfig']),
         videoLayer = map['videoLayer'];
 
     Map<String, dynamic> toMap() {
         return {
-            'CDNConfig': this.CDNConfig.toMap(),
+            'cdnConfig': this.cdnConfig.toMap(),
             'videoLayer': this.videoLayer
         };
     }
@@ -974,7 +971,7 @@ class ZegoMixerVideoConfig {
 /// Configure the mix stream input stream ID, type, and the layout
 class ZegoMixerInput {
 
-    /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+    /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     String streamID;
 
     /// Mix stream content type
@@ -1207,6 +1204,171 @@ class ZegoAudioConfig {
             'bitrate': this.bitrate,
             'channel': this.channel,
             'codecID': this.codecID
+        };
+    }
+
+}
+
+/// Callback for updating stream extra information
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+class ZegoPublisherSetStreamExtraInfoResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    ZegoPublisherSetStreamExtraInfoResult(this.errorCode): assert(errorCode != null);
+
+    ZegoPublisherSetStreamExtraInfoResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode
+        };
+    }
+
+}
+
+/// Callback for add/remove CDN URL
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+class ZegoPublisherUpdateCdnUrlResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    ZegoPublisherUpdateCdnUrlResult(this.errorCode): assert(errorCode != null);
+
+    ZegoPublisherUpdateCdnUrlResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode
+        };
+    }
+
+}
+
+/// Results of starting a mixer task
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// [extendedData] Extended Information
+class ZegoMixerStartResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    /// Extended Information
+    Map<String, dynamic> extendedData;
+
+    ZegoMixerStartResult(this.errorCode, this.extendedData): assert(errorCode != null), assert(extendedData != null);
+
+    ZegoMixerStartResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'],
+        extendedData = map['extendedData'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode,
+            'extendedData': this.extendedData
+        };
+    }
+
+}
+
+/// Results of stoping a mixer task
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+class ZegoMixerStopResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    ZegoMixerStopResult(this.errorCode): assert(errorCode != null);
+
+    ZegoMixerStopResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode
+        };
+    }
+
+}
+
+/// Callback for sending broadcast messages
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// [messageID] ID of this message
+class ZegoIMSendBroadcastMessageResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    /// ID of this message
+    int messageID;
+
+    ZegoIMSendBroadcastMessageResult(this.errorCode, this.messageID): assert(errorCode != null), assert(messageID != null);
+
+    ZegoIMSendBroadcastMessageResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'],
+        messageID = map['messageID'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode,
+            'messageID': this.messageID
+        };
+    }
+
+}
+
+/// Callback for sending barrage message
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// [messageID] ID of this message
+class ZegoIMSendBarrageMessageResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    /// ID of this message
+    String messageID;
+
+    ZegoIMSendBarrageMessageResult(this.errorCode, this.messageID): assert(errorCode != null), assert(messageID != null);
+
+    ZegoIMSendBarrageMessageResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'],
+        messageID = map['messageID'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode,
+            'messageID': this.messageID
+        };
+    }
+
+}
+
+/// Callback for sending custom command
+///
+/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+class ZegoIMSendCustomCommandResult {
+
+    /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+    int errorCode;
+
+    ZegoIMSendCustomCommandResult(this.errorCode): assert(errorCode != null);
+
+    ZegoIMSendCustomCommandResult.fromMap(Map<dynamic, dynamic> map):
+        errorCode = map['errorCode'];
+
+    Map<String, dynamic> toMap() {
+        return {
+            'errorCode': this.errorCode
         };
     }
 

@@ -3,13 +3,18 @@ import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 class ZegoExpressEngine {
+
     static ZegoExpressEngine _instance;
 
     ZegoExpressEngine._internal();
 
+    /// Returns engine singleton instance
+    ///
+    /// If the engine has not been created or has been destroyed, an unusable engine object will be returned.
     static ZegoExpressEngine get instance {
-        return _instance;
+        return _instance ?? new ZegoExpressEngine._internal();
     }
+
     /// Create engine singleton instance
     ///
     /// The engine needs to be created and initialized before calling other APIs. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this interface return the same object.
@@ -17,8 +22,7 @@ class ZegoExpressEngine {
     /// [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
     /// [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 30 rooms and 230 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
     /// [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific api to set specific parameters if they have customized parameter settings.
-    /// Returns Engine singleton instance
-    static Future<ZegoExpressEngine> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario) async {
+    static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario) async {
         return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario);
     }
 
@@ -27,22 +31,6 @@ class ZegoExpressEngine {
     /// Used to release resources used by ZegoExpressEngine.
     static Future<void> destroyEngine() async {
         return await ZegoExpressImpl.destroyEngine();
-    }
-
-    /// Returns engine singleton instance
-    ///
-    /// If the engine has not been created or has been destroyed, returns [null].
-    /// Returns Engine singleton instance
-    static Future<ZegoExpressEngine> getEngine() async {
-        return await ZegoExpressImpl.getEngine();
-    }
-
-    /// Set the advanced engine configuration, which will only take effect before create engine
-    ///
-    /// Developers need to call this interface to set advanced function configuration when they need advanced functions of the engine.
-    /// [config] Advanced engine configuration
-    static Future<void> setEngineConfig(ZegoEngineConfig config) async {
-        return await ZegoExpressImpl.setEngineConfig(config);
     }
 
     /// Get ZegoExpressEngine version number
@@ -86,7 +74,7 @@ class ZegoExpressEngine {
     /// Messages sent in one room (eg apis [setStreamExtraInfo], [sendBroadcastMessage], [sendBarrageMessage], [sendCustomCommand], etc.) cannot be received callback ((eg [onRoomStreamExtraInfoUpdate], [onIMRecvBroadcastMessage], [onIMRecvBarrageMessage], [onIMRecvCustomCommand], etc) in other rooms. Currently, ZegoExpressEngine does not provide the ability to send messages across rooms. Developers can integrate the SDK of third-party IM to achieve.
     /// ZegoExpressEngine supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
     /// If the network is temporarily interrupted due to network quality reasons, the SDK will automatically reconnect internally. You can get the current connection status of the local room by listening to the [onRoomStateUpdate] callback method, and other users in the same room will receive [onRoomUserUpdate] callback notification.
-    /// [roomID] Room ID, a string of up to 128 bytes in length. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
+    /// [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
     /// [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
     /// [config] Advanced room configuration
     Future<void> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig config}) async {
@@ -96,7 +84,7 @@ class ZegoExpressEngine {
     /// Logout room
     ///
     /// Exiting the room will stop all publishing and playing streams for user, and then ZegoExpressEngine will auto stop local preview UI. After calling this interface, you will receive [onRoomStateUpdate] callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification.
-    /// [roomID] Room ID, a string of up to 128 bytes in length. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
+    /// [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
     Future<void> logoutRoom(String roomID) async {
         return await ZegoExpressImpl.instance.logoutRoom(roomID);
     }
@@ -118,7 +106,7 @@ class ZegoExpressEngine {
     /// [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
     /// [updateType] Update type (add/delete)
     /// [userList] List of users changed in the current room
-    static void Function(String roomID, ZegoUpdateType updateType, List<ZegoUSer> userList) onRoomUserUpdate;
+    static void Function(String roomID, ZegoUpdateType updateType, List<ZegoUser> userList) onRoomUserUpdate;
 
     /// Notification of increase or decrease of streams published by other users in the same room
     ///
@@ -139,12 +127,12 @@ class ZegoExpressEngine {
     /// [streamList] List of streams that the extra info was updated.
     static void Function(String roomID, List<ZegoStream> streamList) onRoomStreamExtraInfoUpdate;
 
-    /// Start publishing stream, you can call this api to piblish the another stream.
+    /// Start publishing stream, you can call this api to publish the another stream.
     ///
     /// This interface allows users to publish their local audio and video streams to the ZEGO real-time audio and video cloud. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
-    /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the loacal user publishing stream successfully.
-    /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error infomation of the stream published by monitoring the [onPublisherStateUpdate] event.
-    /// [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+    /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
+    /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
+    /// [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     /// [channel] Publish stream channel
     Future<void> startPublishingStream(String streamID, ZegoPublishChannel channel) async {
         return await ZegoExpressImpl.instance.startPublishingStream(streamID, channel);
@@ -163,14 +151,14 @@ class ZegoExpressEngine {
 
     /// Set stream additional information. You can call this api to set params when publishing another streams
     ///
-    /// User this interface to set the extra info of the stream, the result will be notified via the [IZegoPublisherSetStreamExtraInfoCallback].
+    /// User this interface to set the extra info of the stream, the result will be notified via the [ZegoPublisherSetStreamExtraInfoResult].
     /// The stream extra information is an extra information identifier of the stream ID. Unlike the stream ID, which cannot be modified during the publishing process, the stream extra information can be modified midway through the stream corresponding to the stream ID.
     /// Developers can synchronize variable content related to stream IDs based on stream additional information.
     /// [extraInfo] Stream extra information, a string of up to 1024 characters.
     /// [channel] Publish stream channel
-    /// [callback] Set stream extra information execution result notification
-    Future<void> setStreamExtraInfo(String extraInfo, ZegoPublishChannel channel, ZegoPublisherSetStreamExtraInfoCallback callback) async {
-        return await ZegoExpressImpl.instance.setStreamExtraInfo(extraInfo, channel, callback);
+    /// Returns Set stream extra information execution result notification
+    Future<ZegoPublisherSetStreamExtraInfoResult> setStreamExtraInfo(String extraInfo, ZegoPublishChannel channel) async {
+        return await ZegoExpressImpl.instance.setStreamExtraInfo(extraInfo, channel);
     }
 
     /// Start/Update local preview. You can call this api to set params when publishing another streams
@@ -215,7 +203,7 @@ class ZegoExpressEngine {
 
     /// set audio config
     ///
-    /// You can set the combined value of the audio codec, bit rate, and audio channel through this interface. If this interface is not called, the default is "nornal_latency_standard_quality" mode. Should be used before publishing.
+    /// You can set the combined value of the audio codec, bit rate, and audio channel through this interface. If this interface is not called, the default is standard quality mode. Should be used before publishing.
     /// If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
     /// [config] Audio config
     Future<void> setAudioConfig(ZegoAudioConfig config) async {
@@ -225,7 +213,7 @@ class ZegoExpressEngine {
     /// Stop or resume sending a audio stream. You can call this api to set params when publishing another streams
     ///
     /// This interface can be called when publishing the stream to publish only the video stream without publishing the audio. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before publishing.
-    /// If you stop sending audio streams, the remote user that play stream of local user pusihng stream can receive  ZEGO_REMOTE_DEVICE_STATE_MUTE status change notification by monitoring [onRemoteMicStateUpdate] callbacks,
+    /// If you stop sending audio streams, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteMicStateUpdate] callbacks,
     /// [mute] Whether to stop sending audio streams, true means that only the video stream is sent without sending the audio stream, and false means that the audio and video streams are sent simultaneously. The default is false.
     /// [channel] Publish stream channel
     Future<void> mutePublishStreamAudio(bool mute, ZegoPublishChannel channel) async {
@@ -235,7 +223,7 @@ class ZegoExpressEngine {
     /// Stop or resume sending a video stream. You can call this api to set params when publishing another streams
     ///
     /// When publishing the stream, this interface can be called to publish only the audio stream without publishing the video stream. The local camera can still work normally, and can normally capture, preview and process the video picture, but does not send the video data to the network. It can be set before publishing.
-    /// If you stop sending video streams locally, the remote user that play stream of local user pusihng stream can receive ZEGO_REMOTE_DEVICE_STATE_MUTE status change notification by monitoring [onRemoteCameraStateUpdate] callbacks,
+    /// If you stop sending video streams locally, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteCameraStateUpdate] callbacks,
     /// [mute] Whether to stop sending video streams, true means that only the audio stream is sent without sending the video stream, and false means that the audio and video streams are sent at the same time. The default is false.
     /// [channel] Publish stream channel
     Future<void> mutePublishStreamVideo(bool mute, ZegoPublishChannel channel) async {
@@ -280,9 +268,9 @@ class ZegoExpressEngine {
     /// When the [enablePublishDirectToCDN] api is set to true to publish the stream straight to the CDN, then calling this interface will have no effect.
     /// [streamID] Stream ID
     /// [targetURL] CDN relay address, supported address format rtmp.
-    /// [callback] The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
-    Future<void> addPublishCdnUrl(String streamID, String targetURL, ZegoPublisherUpdateCdnUrlCallback callback) async {
-        return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL, callback);
+    /// Returns The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
+    Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(String streamID, String targetURL) async {
+        return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
     }
 
     /// Delete the URL relayed to the CDN
@@ -291,13 +279,15 @@ class ZegoExpressEngine {
     /// This api does not stop publishing audio and video stream to the ZEGO audio and video cloud.
     /// [streamID] Stream ID
     /// [targetURL] CDN relay address, supported address format rtmp, flv, hls
-    /// [callback] Remove CDN relay result notifications
-    Future<void> removePublishCdnUrl(String streamID, String targetURL, ZegoPublisherUpdateCdnUrlCallback callback) async {
-        return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL, callback);
+    /// Returns The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
+    Future<ZegoPublisherUpdateCdnUrlResult> removePublishCdnUrl(String streamID, String targetURL) async {
+        return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
     }
 
     /// Whether to publish stream directly to CDN without passing through Zego real-time video cloud server. You can call this api to set params when publishing another streams
     ///
+    /// This api needs to be set before start publishing stream.
+    /// After calling this api to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two apis retweet or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
     /// [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
     /// [config] CDN configuration, if null, use Zego's background default configuration
     /// [channel] Publish stream channel
@@ -349,6 +339,59 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.setCapturePipelineScaleMode(mode);
     }
 
+    /// Publish stream state callback
+    ///
+    /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback interface.
+    /// You can roughly judge the user's uplink network status based on whether the state parameter is in [PUBLISH_REQUESTING].
+    /// [streamID] Stream ID
+    /// [state] Status of publishing stream
+    /// [errorCode] The error code corresponding to the status change of the publish stream. Please refer to the common error code documentation [https://doc-zh.zego.im/zh/308.html] for details.
+    /// [extendedData] Extended Information. If you use ZEGO's CDN content distribution network, after the stream is successfully published, the keys of the content of this parameter are flv_url_list, rtmp_url_list, hls_url_list. These correspond to the publishing stream URLs of the flv, rtmp, and hls protocols. For CDNs that do not use ZEGO, you do not need to pay attention to this parameter.
+    static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData) onPublisherStateUpdate;
+
+    /// Publish stream quality callback
+    ///
+    /// After the successful publish, the callback will be received every 3 seconds. Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data of the published audio and video stream can be obtained, and the health of the publish stream can be monitored in real time.
+    /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callbacl api, in order to show the uplink network status in real time on the device UI interface.
+    /// If you does not know how to use the parameters of this callback api, you can only pay attention to the level field of the quality parameter, which is a comprehensive value describing the uplink network calculated by ZegoExpressEngine based on the quality parameters.
+    /// [streamID] Stream ID
+    /// [quality] Published stream quality, including audio and video frame rate, bit rate, resolution, RTT, etc.
+    static void Function(String streamID, ZegoPublishStreamQuality quality) onPublisherQualityUpdate;
+
+    /// First frame callback notification for local audio captured
+    ///
+    /// After the startPublishingStream interface is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
+    /// In the case of no startPublishingStream audio and video stream or preview, the first startPublishingStream audio and video stream or first preview, that is, when the engine of the audio and video module inside ZegoExpressEngine starts, it will collect audio data of the local device and receive this callback.
+    /// Developers can use this callback to determine whether ZegoExpressEngine has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
+    static void Function() onPublisherCapturedAudioFirstFrame;
+
+    /// First frame callback notification for local video captured.
+    ///
+    /// After the startPublishingStream interface is called successfully, the SDK will receive this callback notification when it collects the first frame of video data.
+    /// In the case of no startPublishingStream video stream or preview, the first startPublishingStream video stream or first preview, that is, when the engine of the audio and video module inside ZegoExpressEngine starts, it will collect video data of the local device and receive this callback.
+    /// Developers can use this callback to determine whether ZegoExpressEngine has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
+    /// [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+    static void Function(ZegoPublishChannel channel) onPublisherCapturedVideoFirstFrame;
+
+    /// Video captured size change callback notification
+    ///
+    /// After the successful publish, the callback will be received if there is a change in the video capture resolution in the process of publishing the stream.
+    /// When the audio and video stream is not published or previewed for the first time, the publishing stream or preview first time, that is, the engine of the audio and video module inside the ZegoExpressEngine is started, the video data of the local device will be collected, and the collection resolution will change at this time.
+    /// You can use this callback to remove the cover of the local preview UI and similar operations.You can also dynamically adjust the scale of the preview view based on the resolution of the callback.
+    /// [width] Video capture resolution width
+    /// [height] Video capture resolution width
+    /// [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+    static void Function(int width, int height, ZegoPublishChannel channel) onPublisherVideoSizeChanged;
+
+    /// Add/Remove CDN address status callback
+    ///
+    /// After the ZEGO real-time audio and video cloud relays the audio and video streams to the CDN, this callback will be received if the CDN relay status changes, such as a stop or a retry.
+    /// Developers can use this callback to determine whether the audio and video streams of the relay CDN are normal. If they are abnormal, further locate the cause of the abnormal audio and video streams of the relay CDN and make corresponding disaster recovery strategies.
+    /// If you do not understand the cause of the abnormality, you can contact ZEGO technicians to analyze the specific cause of the abnormality.
+    /// [streamID] Stream ID
+    /// [infoList] List of information that the current CDN is relaying
+    static void Function(String streamID, List<ZegoStreamRelayCDNInfo> infoList) onPublisherRelayCDNStateUpdate;
+
     /// Start playing stream
     ///
     /// This interface allows users to play audio and video streams both from the ZEGO real-time audio and video cloud and from third-party cdn.
@@ -356,7 +399,7 @@ class ZegoExpressEngine {
     /// In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event.
     /// Playing the stream ID that does not exist, the SDK continues to try to play after executing this interface. After the stream ID is successfully published, the audio and video stream can be actually played.
     /// The developer can update the player canvas by calling this interface again (the streamID must be the same).
-    /// [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+    /// [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
     /// [canvas] The view used to display the play audio and video stream's image. If the view is set to [null], it will not be displayed.
     /// [config] Advanced player configuration
     Future<void> startPlayingStream(String streamID, ZegoCanvas canvas, ZegoPlayerConfig config) async {
@@ -386,7 +429,7 @@ class ZegoExpressEngine {
     /// This api can be used to stop playing/retrieving the audio data of the stream. Need to be called after calling startPlayingStream.
     /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
     /// [streamID] Stream ID
-    /// [mute] mute flag, ture: mute play stream video, false: resume play stream video
+    /// [mute] mute flag, true: mute play stream video, false: resume play stream video
     Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
         return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
     }
@@ -396,7 +439,7 @@ class ZegoExpressEngine {
     /// This interface can be used to stop playing/retrieving the video data of the stream. Need to be called after calling startPlayingStream.
     /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
     /// [streamID] Stream ID
-    /// [mute] mute flag, ture: mute play stream video, false: resume play stream video
+    /// [mute] mute flag, true: mute play stream video, false: resume play stream video
     Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
         return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
     }
@@ -465,7 +508,7 @@ class ZegoExpressEngine {
 
     /// playing stream resolution change callback
     ///
-    /// If there is a change in the video resolution of the playing stream, the callback will be triggerd, and the user can adjust the display for that stream dynamiclly.
+    /// If there is a change in the video resolution of the playing stream, the callback will be triggered, and the user can adjust the display for that stream dynamically.
     /// If the publishing stream end triggers the internal stream flow control of ZegoExpressEngine due to a network problem, the encoding resolution of the streaming end may be dynamically reduced, and this callback will also be received at this time.
     /// If the stream is only audio data, the callback will not be received.
     /// This callback will be triggered when the played audio and video stream is actually rendered to the set UI play canvas. You can use this callback notification to update or switch UI components that actually play the stream.
@@ -489,9 +532,9 @@ class ZegoExpressEngine {
     /// If an exception occurs when requesting to start the mixing stream task, for example, the most common mix input stream does not exist, it will be given from the callback error code. For specific error codes, please refer to the common error code documentation [https://doc-zh.zego.im/zh/308.html].
     /// If an input stream does not exist in the middle, the mixing stream task will automatically retry playing the input stream for 90 seconds, and will not retry after 90 seconds.
     /// [task] Mix stream task object
-    /// [callback] Start mix stream task result callback notification
-    Future<void> startMixerTask(ZegoMixerTask task, ZegoMixerStartCallback callback) async {
-        return await ZegoExpressImpl.instance.startMixerTask(task, callback);
+    /// Returns Start mix stream task result callback notification
+    Future<ZegoMixerStartResult> startMixerTask(ZegoMixerTask task) async {
+        return await ZegoExpressImpl.instance.startMixerTask(task);
     }
 
     /// Stop mix stream task
@@ -500,10 +543,23 @@ class ZegoExpressEngine {
     /// If you starts the next mixing stream task without stopping the previous mixing stream task, the previous mixing stream task will not stop automatically. The previous mixing stream task will not be stopped automatically until 90 seconds after the input stream of the previous mixing stream task does not exist.
     /// When using the mixing stream function of the ZEGO audio and video cloud service, you should pay attention to the start of the next mixing stream task, and should stop the previous mixing stream task, so as not to cause the anchor has started the next streaming task and mixing with other anchors, and the audience is still playing the output stream of the previous mixing stream task.
     /// [task] Mix stream task object
-    /// [callback] Stop mix stream task result callback notification
-    Future<void> stopMixerTask(ZegoMixerTask task, ZegoMixerStopCallback callback) async {
-        return await ZegoExpressImpl.instance.stopMixerTask(task, callback);
+    /// Returns Stop mix stream task result callback notification
+    Future<ZegoMixerStopResult> stopMixerTask(ZegoMixerTask task) async {
+        return await ZegoExpressImpl.instance.stopMixerTask(task);
     }
+
+    /// Mixed stream relay CDN status update notification
+    ///
+    /// In the general case of the ZEGO audio and video cloud mixing stream task, the output stream is published to the CDN using the rtmp protocol, and changes in the state during the publish will be notified from this callback api.
+    /// [infoList] List of information that the current CDN is being mixed
+    /// [taskID] Mix stream task ID
+    static void Function(List<ZegoStreamRelayCDNInfo> infoList, String taskID) onMixerRelayCDNStateUpdate;
+
+    /// Callback when the soundLevel of every stream in the mix stream updated
+    ///
+    /// You can use this callback to show the effect of the anchors sound level when the audience plays the mixed stream. So audience can notice which anchor is speaking.
+    /// [soundLevels] Sound level hashmap, key is the soundLevelID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0
+    static void Function(Map<int, double> soundLevels) onMixerSoundLevelUpdate;
 
     /// On/off microphone
     ///
@@ -582,6 +638,53 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.startAudioSpectrumMonitor();
     }
 
+    /// Captured sound level update callback
+    ///
+    /// Callback notification period is 100 ms'
+    /// [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0
+    static void Function(double soundLevel) onCapturedSoundLevelUpdate;
+
+    /// Remote sound level update callback
+    ///
+    /// Callback notification period is 100 ms'
+    /// [soundLevels] Remote sound level hashmap, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
+    static void Function(Map<int, double> soundLevels) onRemoteSoundLevelUpdate;
+
+    /// Captured audio spectrum update callback
+    ///
+    /// Callback notification period is 100 ms'
+    /// [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30]
+    static void Function(List<double> audioSpectrum) onCapturedAudioSpectrumUpdate;
+
+    /// Remote audio spectrum update callback
+    ///
+    /// Callback notification period is 100 ms'
+    /// [audioSpectrums] Remote audio spectrum hashmap, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
+    static void Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate;
+
+    /// Device exception notification
+    ///
+    /// This callback is triggered when an exception occurs when reading or writing the audio and video device.
+    /// [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the common error code documentation [https://doc-zh.zego.im/zh/308.html] for details
+    /// [deviceName] device name
+    static void Function(int errorCode, String deviceName) onDeviceError;
+
+    /// Remote camera device status notification
+    ///
+    /// When the state of the remote camera device changes, such as switching the camera, by monitoring this callback, it is possible to obtain an event related to the far-end camera, which can be used to prompt the user that the video may be abnormal.
+    /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the camera device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+    /// [streamID] Stream ID
+    /// [state] Remote camera status
+    static void Function(String streamID, ZegoRemoteDeviceState state) onRemoteCameraStateUpdate;
+
+    /// Remote microphone device status notification
+    ///
+    /// When the state of the remote microphone device is changed, such as switching a microphone, etc., by listening to the callback, it is possible to obtain an event related to the remote microphone, which can be used to prompt the user that the audio may be abnormal.
+    /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the microphone device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+    /// [streamID] Stream ID
+    /// [state] Remote microphone status
+    static void Function(String streamID, ZegoRemoteDeviceState state) onRemoteMicStateUpdate;
+
     /// On/off echo cancellation
     ///
     /// Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio. It needs to be set before starting the publish, and the setting is invalid after the start of the publish.
@@ -633,31 +736,56 @@ class ZegoExpressEngine {
 
     /// Send room broadcast message
     ///
-    /// [roomID] Room ID, a string of up to 128 bytes in length. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
+    /// The total sending frequency limit of [sendBroadcastMessage] and [sendCustomCommand] is 600 times per minute by default.
+    /// Users of up to the first 500 advanced rooms in the same room can receive it, which is generally used when the number of live broadcast rooms is less than 500.
+    /// [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
     /// [message] Message content, no longer than 256 bytes
-    /// [callback] Send broadcast message result callback
-    Future<void> sendBroadcastMessage(String roomID, String message, ZegoIMSendBroadcastMessageCallback callback) async {
-        return await ZegoExpressImpl.instance.sendBroadcastMessage(roomID, message, callback);
+    /// Returns Send broadcast message result callback
+    Future<ZegoIMSendBroadcastMessageResult> sendBroadcastMessage(String roomID, String message) async {
+        return await ZegoExpressImpl.instance.sendBroadcastMessage(roomID, message);
     }
 
-    /// Send room broadcast message
+    /// Send room barrage message
     ///
-    /// [roomID] Room ID, a string of up to 128 bytes in length. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
+    /// There is no limit on the number of transmissions, but the server will actively drop messages if it is sent too frequently.
+    /// It can be received by users with more than 500 people in the same room, but it is not reliable, that is, when there are many users in the room or messages are sent frequently between users, the users who receive the messages may not be able to receive them. Generally used for sending live barrage.
+    /// [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
     /// [message] Message content, no longer than 256 bytes
-    /// [callback] Send barrage message result callback
-    Future<void> sendBarrageMessage(String roomID, String message, ZegoIMSendBarrageMessageCallback callback) async {
-        return await ZegoExpressImpl.instance.sendBarrageMessage(roomID, message, callback);
+    /// Returns Send barrage message result callback
+    Future<ZegoIMSendBarrageMessageResult> sendBarrageMessage(String roomID, String message) async {
+        return await ZegoExpressImpl.instance.sendBarrageMessage(roomID, message);
     }
 
     /// Send custom command
     ///
-    /// [roomID] Room ID, a string of up to 128 bytes in length. Only surpport numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
+    /// The total sending frequency limit of [sendBroadcastMessage] and [sendCustomCommand] is 600 times per minute by default.
+    /// The type of point-to-point signaling in the same room is generally used for remote control signaling or message sending between users.
+    /// [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
     /// [command] Custom command content, no longer than 256 bytes
     /// [toUserList] The users who will receive the command
-    /// [callback] Send commad result callback
-    Future<void> sendCustomCommand(String roomID, String command, List<ZegoUser> toUserList, ZegoIMSendCustomCommandCallback callback) async {
-        return await ZegoExpressImpl.instance.sendCustomCommand(roomID, command, toUserList, callback);
+    /// Returns Send commad result callback
+    Future<ZegoIMSendCustomCommandResult> sendCustomCommand(String roomID, String command, List<ZegoUser> toUserList) async {
+        return await ZegoExpressImpl.instance.sendCustomCommand(roomID, command, toUserList);
     }
+
+    /// Receive room broadcast message notification
+    ///
+    /// [roomID] Room ID
+    /// [messageList] list of received messages.
+    static void Function(String roomID, List<ZegoBroadcastMessageInfo> messageList) onIMRecvBroadcastMessage;
+
+    /// Receive room barrage message notification
+    ///
+    /// [roomID] Room ID
+    /// [messageList] list of received messages.
+    static void Function(String roomID, List<ZegoBarrageMessageInfo> messageList) onIMRecvBarrageMessage;
+
+    /// Receive room custom command notification
+    ///
+    /// [roomID] Room ID
+    /// [fromUser] Sender of the command
+    /// [command] Command content received
+    static void Function(String roomID, ZegoUser fromUser, String command) onIMRecvCustomCommand;
 
 
 }
