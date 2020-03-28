@@ -156,15 +156,15 @@ enum ZegoAECMode {
 }
 
 /// Traffic control property
-enum ZegoTrafficControlProperty {
+class ZegoTrafficControlProperty {
     /// Basic
-    Basic,
+    static const int Basic = 0;
     /// Adaptive FPS
-    AdaptiveFPS,
+    static const int AdaptiveFPS = 1;
     /// Adaptive resolution
-    AdaptiveResolution,
+    static const int AdaptiveResolution = 1 << 1;
     /// Adaptive Audio bitrate
-    AdaptiveAudioBitrate
+    static const int AdaptiveAudioBitrate = 1 << 2;
 }
 
 /// Video transmission mode when current bitrate is lower than the set minimum bitrate
@@ -236,17 +236,17 @@ enum ZegoStreamRelayCDNUpdateReason {
 }
 
 /// Beauty feature
-enum ZegoBeautifyFeature {
+class ZegoBeautifyFeature {
     /// No beautifying
-    None,
+    static const int None = 0;
     /// Polish
-    Polish,
+    static const int Polish = 1 << 0;
     /// Sharpen
-    Whiten,
+    static const int Whiten = 1 << 1;
     /// Skin whiten
-    SkinWhiten,
+    static const int SkinWhiten = 1 << 2;
     /// Whiten
-    Sharpen
+    static const int Sharpen = 1 << 3;
 }
 
 /// Remote device status
@@ -299,7 +299,7 @@ enum ZegoMixerInputContentType {
     Video
 }
 
-/// Capture pipline scale mode
+/// Capture pipeline scale mode
 enum ZegoCapturePipelineScaleMode {
     /// Zoom immediately after acquisition, default
     Pre,
@@ -472,7 +472,7 @@ class ZegoVideoConfig {
             'encodeHeight': this.encodeHeight,
             'fps': this.fps,
             'bitrate': this.bitrate,
-            'codecID': this.codecID
+            'codecID': this.codecID.index
         };
     }
 
@@ -576,7 +576,7 @@ class ZegoRect {
 /// Configure view object, view Mode, background color
 class ZegoCanvas {
 
-    /// View object
+    /// ViewID, if [enablePlatformView] is set to [true] when [createEngine], this parameter is [PlatformViewID], otherwise it is [TextureID]
     int view;
 
     /// View mode, default is ZegoViewModeAspectFit
@@ -595,7 +595,7 @@ class ZegoCanvas {
     Map<String, dynamic> toMap() {
         return {
             'view': this.view,
-            'viewMode': this.viewMode,
+            'viewMode': this.viewMode.index,
             'backgroundColor': this.backgroundColor
         };
     }
@@ -666,7 +666,7 @@ class ZegoPublishStreamQuality {
             'audioKBPS': this.audioKBPS,
             'rtt': this.rtt,
             'packetLostRate': this.packetLostRate,
-            'level': this.level,
+            'level': this.level.index,
             'isHardwareEncode': this.isHardwareEncode
         };
     }
@@ -727,8 +727,8 @@ class ZegoStreamRelayCDNInfo {
     Map<String, dynamic> toMap() {
         return {
             'url': this.url,
-            'state': this.state,
-            'updateReason': this.updateReason,
+            'state': this.state.index,
+            'updateReason': this.updateReason.index,
             'stateTime': this.stateTime
         };
     }
@@ -755,7 +755,7 @@ class ZegoPlayerConfig {
     Map<String, dynamic> toMap() {
         return {
             'cdnConfig': this.cdnConfig.toMap(),
-            'videoLayer': this.videoLayer
+            'videoLayer': this.videoLayer.index
         };
     }
 
@@ -834,7 +834,7 @@ class ZegoPlayStreamQuality {
             'audioKBPS': this.audioKBPS,
             'rtt': this.rtt,
             'packetLostRate': this.packetLostRate,
-            'level': this.level,
+            'level': this.level.index,
             'delay': this.delay,
             'isHardwareDecode': this.isHardwareDecode
         };
@@ -923,8 +923,8 @@ class ZegoMixerAudioConfig {
     Map<String, dynamic> toMap() {
         return {
             'bitrate': this.bitrate,
-            'channel': this.channel,
-            'codecID': this.codecID
+            'channel': this.channel.index,
+            'codecID': this.codecID.index
         };
     }
 
@@ -994,7 +994,7 @@ class ZegoMixerInput {
     Map<String, dynamic> toMap() {
         return {
             'streamID': this.streamID,
-            'contentType': this.contentType,
+            'contentType': this.contentType.index,
             'layout': this.layout,
             'soundLevelID': this.soundLevelID
         };
@@ -1202,8 +1202,8 @@ class ZegoAudioConfig {
     Map<String, dynamic> toMap() {
         return {
             'bitrate': this.bitrate,
-            'channel': this.channel,
-            'codecID': this.codecID
+            'channel': this.channel.index,
+            'codecID': this.codecID.index
         };
     }
 

@@ -1,12 +1,15 @@
 
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 class ZegoExpressEngine {
 
+    /// Singleton instance
     static ZegoExpressEngine _instance;
 
+    /// Private constructor
     ZegoExpressEngine._internal();
 
     /// Returns engine singleton instance
@@ -203,6 +206,15 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.setVideoMirrorMode(mirrorMode, channel: channel);
     }
 
+    /// Set the orientation of the captured video. You can call this api to set params when publishing another streams.
+    ///
+    /// This interface sets the orientation of the video. The captued image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
+    /// [orientation] Video orientation
+    /// [channel] Publish stream channel
+    Future<void> setAppOrientation(DeviceOrientation orientation, ZegoPublishChannel channel) async {
+        return await ZegoExpressImpl.instance.setAppOrientation(orientation, channel);
+    }
+
     /// set audio config
     ///
     /// You can set the combined value of the audio codec, bit rate, and audio channel through this interface. If this interface is not called, the default is standard quality mode. Should be used before publishing.
@@ -237,14 +249,14 @@ class ZegoExpressEngine {
     /// Traffic control enables ZegoExpressEngine SDK to dynamically adjust the bitrate of audio and video streaming according to its own and peer current network environment status.
     /// Automatically adapt to the current network environment and fluctuations, so as to ensure the smooth publishing of stream.
     /// [enable] Whether to enable traffic control. The default is ture.
-    /// [property] Adjustable property of traffic control. Should be one or the combinations of ZegoTrafficControlProperty enumeration. AdaptiveFPS as default.
+    /// [property] Adjustable property of traffic control. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
     Future<void> enableTrafficControl(bool enable, int property) async {
         return await ZegoExpressImpl.instance.enableTrafficControl(enable, property);
     }
 
-    /// Set the minimum video birtate for traffic control
+    /// Set the minimum video bitrate for traffic control
     ///
-    /// Set how should SDK send video data when the network conditions are poor and the minimum video birrate cannot be met.
+    /// Set how should SDK send video data when the network conditions are poor and the minimum video bitrate cannot be met.
     /// When this api is not called, the ZegoExpressEngine SDK will automatically adjust the sent video data frames according to the current network uplink conditions by default.
     /// [bitrate] Minimum video bitrate (kbps)
     /// [mode] Video sending mode below the minimum bitrate.
@@ -263,10 +275,10 @@ class ZegoExpressEngine {
     /// Add URL to relay to CDN
     ///
     /// You can call this api to publish the audio and video streams that have been published to the ZEGO real-time audio and video cloud to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
-    /// Because this called api is essentially a dynamic retweet of the audio and video streams published to the ZEGO audio and video cloud to different CDNs, this api needs to be called after the audio and video stream is published to ZEGO real-time cloud successfully.
+    /// Because this called api is essentially a dynamic relay of the audio and video streams published to the ZEGO audio and video cloud to different CDNs, this api needs to be called after the audio and video stream is published to ZEGO real-time cloud successfully.
     /// Since ZEGO's audio and video cloud service itself can be configured to support CDN(content distribution networks), this api is mainly used by developers who have CDN content distribution services themselves.
     /// You can use ZEGO's CDN audio and video streaming content distribution service at the same time by calling this interface and then use the developer who owns the CDN content distribution service.
-    /// This interface supports dynamic retweets to the CDN content distribution network, so developers can use this api as a disaster recovery solution for CDN content distribution services.
+    /// This interface supports dynamic relay to the CDN content distribution network, so developers can use this api as a disaster recovery solution for CDN content distribution services.
     /// When the [enablePublishDirectToCDN] api is set to true to publish the stream straight to the CDN, then calling this interface will have no effect.
     /// [streamID] Stream ID
     /// [targetURL] CDN relay address, supported address format rtmp.
@@ -289,7 +301,7 @@ class ZegoExpressEngine {
     /// Whether to publish stream directly to CDN without passing through Zego real-time video cloud server. You can call this api to set params when publishing another streams
     ///
     /// This api needs to be set before start publishing stream.
-    /// After calling this api to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two apis retweet or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
+    /// After calling this api to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two API relay or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
     /// [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
     /// [config] CDN configuration, if null, use Zego's background default configuration
     /// [channel] Publish stream channel
@@ -297,7 +309,7 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.enablePublishDirectToCDN(enable, config, channel: channel);
     }
 
-    /// set publish watermark. You can call this api to set params when publishing another streams
+    /// Set publish watermark. You can call this api to set params when publishing another streams
     ///
     /// Set before publishing. The layout of the watermark cannot exceed the video encoding resolution of stream.
     /// [watermark] The upper left corner of the watermark layout is the origin of the coordinate system, and the area cannot exceed the size set by the encoding resolution. If it is null, the watermark is cancelled.
@@ -332,7 +344,7 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.enableHardwareEncoder(enable);
     }
 
-    /// set capture pipline scale mode. Whether the video data is scaled immediately when it is acquired or scaled when it is encoded.
+    /// set capture pipeline scale mode. Whether the video data is scaled immediately when it is acquired or scaled when it is encoded.
     ///
     /// This interface needs to be set before previewing or streaming.
     /// The main effect is whether the local preview is affected when the acquisition resolution is different from the encoding resolution.
@@ -354,7 +366,7 @@ class ZegoExpressEngine {
     /// Publish stream quality callback
     ///
     /// After the successful publish, the callback will be received every 3 seconds. Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data of the published audio and video stream can be obtained, and the health of the publish stream can be monitored in real time.
-    /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callbacl api, in order to show the uplink network status in real time on the device UI interface.
+    /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callback api, in order to show the uplink network status in real time on the device UI interface.
     /// If you does not know how to use the parameters of this callback api, you can only pay attention to the level field of the quality parameter, which is a comprehensive value describing the uplink network calculated by ZegoExpressEngine based on the quality parameters.
     /// [streamID] Stream ID
     /// [quality] Published stream quality, including audio and video frame rate, bit rate, resolution, RTT, etc.
@@ -560,7 +572,7 @@ class ZegoExpressEngine {
     /// Callback when the soundLevel of every stream in the mix stream updated
     ///
     /// You can use this callback to show the effect of the anchors sound level when the audience plays the mixed stream. So audience can notice which anchor is speaking.
-    /// [soundLevels] Sound level hashmap, key is the soundLevelID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0
+    /// [soundLevels] Sound level hash map, key is the soundLevelID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0
     static void Function(Map<int, double> soundLevels) onMixerSoundLevelUpdate;
 
     /// On/off microphone
@@ -581,14 +593,6 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.muteAudioOutput(mute);
     }
 
-    /// Choose to use an audio device
-    ///
-    /// [deviceID] ID of a device obtained by getAudioDeviceList
-    /// [deviceType] Audio device type
-    Future<void> useAudioDevice(String deviceID, ZegoAudioDeviceType deviceType) async {
-        return await ZegoExpressImpl.instance.useAudioDevice(deviceID, deviceType);
-    }
-
     /// On/off audio capture device
     ///
     /// This api is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
@@ -596,6 +600,14 @@ class ZegoExpressEngine {
     /// [enable] Whether to enable the audio capture device, true: disable audio capture device, false: enable audio capture device
     Future<void> enableAudioCaptureDevice(bool enable) async {
         return await ZegoExpressImpl.instance.enableAudioCaptureDevice(enable);
+    }
+
+    /// Whether to use the built-in speaker to play sound
+    ///
+    /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
+    /// [enable] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
+    Future<void> setBuiltInSpeakerOn(bool enable) async {
+        return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
     }
 
     /// On/off camera. You can call this api to set params when publishing another streams
@@ -640,6 +652,28 @@ class ZegoExpressEngine {
         return await ZegoExpressImpl.instance.startAudioSpectrumMonitor();
     }
 
+    /// Stop the audio spectrum monitor
+    ///
+    /// After the monitoring is stopped, the callback of the local/remote audio spectrum will be stopped.
+    Future<void> stopAudioSpectrumMonitor() async {
+        return await ZegoExpressImpl.instance.stopAudioSpectrumMonitor();
+    }
+
+    /// Audio device status change
+    ///
+    /// This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
+    /// [updateType] Update type (add/delete)
+    /// [deviceType] Audio device type
+    /// [deviceInfo] Audio device information
+    static void Function(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType, List<ZegoDeviceInfo> deviceInfo) onAudioDeviceStateChanged;
+
+    /// Audio device status change
+    ///
+    /// This callback is triggered when a video device is added or removed from the system. By listening to this callback, users can update the video capture using a specific device when necessary.
+    /// [updateType] Update type (add/delete)
+    /// [deviceInfo] Audio device information
+    static void Function(ZegoUpdateType updateType, List<ZegoDeviceInfo> deviceInfo) onVideoDeviceStateChanged;
+
     /// Captured sound level update callback
     ///
     /// Callback notification period is 100 ms'
@@ -649,7 +683,7 @@ class ZegoExpressEngine {
     /// Remote sound level update callback
     ///
     /// Callback notification period is 100 ms'
-    /// [soundLevels] Remote sound level hashmap, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
+    /// [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
     static void Function(Map<int, double> soundLevels) onRemoteSoundLevelUpdate;
 
     /// Captured audio spectrum update callback
@@ -661,7 +695,7 @@ class ZegoExpressEngine {
     /// Remote audio spectrum update callback
     ///
     /// Callback notification period is 100 ms'
-    /// [audioSpectrums] Remote audio spectrum hashmap, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
+    /// [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
     static void Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate;
 
     /// Device exception notification
@@ -765,7 +799,7 @@ class ZegoExpressEngine {
     /// [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
     /// [command] Custom command content, no longer than 256 bytes
     /// [toUserList] The users who will receive the command
-    /// Returns Send commad result callback
+    /// Returns Send command result callback
     Future<ZegoIMSendCustomCommandResult> sendCustomCommand(String roomID, String command, List<ZegoUser> toUserList) async {
         return await ZegoExpressImpl.instance.sendCustomCommand(roomID, command, toUserList);
     }
