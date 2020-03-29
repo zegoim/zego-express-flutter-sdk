@@ -155,7 +155,7 @@ enum ZegoAECMode {
     Soft
 }
 
-/// Traffic control property
+/// Traffic control property (bitmask enumeration)
 class ZegoTrafficControlProperty {
     /// Basic
     static const int Basic = 0;
@@ -235,7 +235,7 @@ enum ZegoStreamRelayCDNUpdateReason {
     Disconnected
 }
 
-/// Beauty feature
+/// Beauty feature (bitmask enumeration)
 class ZegoBeautifyFeature {
     /// No beautifying
     static const int None = 0;

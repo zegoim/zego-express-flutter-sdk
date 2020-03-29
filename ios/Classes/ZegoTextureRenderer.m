@@ -10,7 +10,6 @@
 @interface ZegoTextureRenderer()
 
 @property (nonatomic, weak) id<FlutterTextureRegistry> registry;
-@property (nonatomic, assign) BOOL isPublisher;
 @property (nonatomic, strong)EAGLContext *context;
 @property (nonatomic, strong) dispatch_semaphore_t lock;
 

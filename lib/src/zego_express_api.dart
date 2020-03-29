@@ -249,7 +249,7 @@ class ZegoExpressEngine {
     /// Traffic control enables ZegoExpressEngine SDK to dynamically adjust the bitrate of audio and video streaming according to its own and peer current network environment status.
     /// Automatically adapt to the current network environment and fluctuations, so as to ensure the smooth publishing of stream.
     /// [enable] Whether to enable traffic control. The default is ture.
-    /// [property] Adjustable property of traffic control. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
+    /// [property] Adjustable property of traffic control, bitmask format. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
     Future<void> enableTrafficControl(bool enable, int property) async {
         return await ZegoExpressImpl.instance.enableTrafficControl(enable, property);
     }
@@ -756,9 +756,9 @@ class ZegoExpressEngine {
     /// On/off beauty
     ///
     /// Identify the portraits in the video for beauty. It can be set before and after the start of the publish.
-    /// [featureBitmask] Bit mask format, you can choose to enable several features in ZegoBeautifyFeature at the same time
+    /// [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
     /// [channel] Publishing stream channel.
-    Future<void> enableBeautify(ZegoBeautifyFeature featureBitmask, {ZegoPublishChannel channel}) async {
+    Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel channel}) async {
         return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
     }
 

@@ -1018,6 +1018,7 @@
     
     if (sink) {
         sink(@{
+            @"method": @"onDebugError",
             @"errorCode": @(errorCode),
             @"funcName": funcName,
             @"info": info
