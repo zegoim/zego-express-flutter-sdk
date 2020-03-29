@@ -18,8 +18,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
-
-    var handler = ZegoExpressEventHandler();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

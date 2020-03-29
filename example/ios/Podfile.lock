@@ -23,7 +23,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  zego_express_engine: 1e82bd055e67c9b57e471ae84e12eb635b15ea8c
+  zego_express_engine: 45907a185dfaa8a3baed31e8e04c8d818fdc2e45
   ZegoExpressEngine: 689b2427ce65ae88ae09012a0e8f412d791be5ee
 
 PODFILE CHECKSUM: 3dbe063e9c90a5d7c9e4e76e70a821b9e2c1d271

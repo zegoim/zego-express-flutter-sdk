@@ -1,5 +1,7 @@
 *.iml
 .gradle
+/.project
+/.settings
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries

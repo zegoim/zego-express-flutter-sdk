@@ -9,9 +9,9 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A new Flutter plugin.
                        DESC
-  s.homepage         = 'https://www.zego.im'
+  s.homepage         = 'https://zego.im'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Zego' => 'lizhanpeng@zego.im' }
+  s.author           = { 'ZEGO' => 'developer@zego.im' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
