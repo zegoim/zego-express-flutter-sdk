@@ -1,4 +1,4 @@
-group 'com.zego.zego_express_engine'
+group 'im.zego.zego_express_engine'
 version '1.0'
 
 buildscript {
@@ -31,4 +31,8 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+}
+
+dependencies {
+    implementation 'im.zego:express-engine-video:1.5.1'
 }

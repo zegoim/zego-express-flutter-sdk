@@ -1,11 +1,11 @@
 name: zego_express_engine
-description: A new Flutter plugin.
-version: 0.0.1
-author:
-homepage:
+description: A flutter plugin that can provide real-time communication and live video broadcast.
+version: 1.5.1
+author: ZEGO <developer@zego.im>
+homepage: https://zego.im
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -25,7 +25,7 @@ flutter:
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
   plugin:
-    androidPackage: com.zego.zego_express_engine
+    androidPackage: im.zego.zego_express_engine
     pluginClass: ZegoExpressEnginePlugin
 
   # To add assets to your plugin package, add an assets section, like this:
