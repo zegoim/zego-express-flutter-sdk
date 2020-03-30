@@ -5,7 +5,7 @@ import 'zego_express_api.dart';
 extension ZegoExpressTextureRenderUtils on ZegoExpressEngine {
 
     /// Create a Texture renderer and return the texture ID
-    static Future<int> createTextureRenderer(int width, int height) async {
+    Future<int> createTextureRenderer(int width, int height) async {
         final int textureID = await ZegoExpressImpl.methodChannel.invokeMethod('createTextureRenderer', {
             'width': width,
             'height': height
@@ -15,7 +15,7 @@ extension ZegoExpressTextureRenderUtils on ZegoExpressEngine {
     }
 
     /// Update the size of the Texture renderer
-    static Future<void> updateTextureRendererSize(int textureID, int width, int height) async {
+    Future<void> updateTextureRendererSize(int textureID, int width, int height) async {
         return await ZegoExpressImpl.methodChannel.invokeMethod('updateTextureRendererSize', {
             'textureID': textureID,
             'width': width,
@@ -24,7 +24,7 @@ extension ZegoExpressTextureRenderUtils on ZegoExpressEngine {
     }
 
     /// Destroys the Texture renderer and releases its resources
-    static Future<void> destroyTextureRenderer(int textureID) async {
+    Future<void> destroyTextureRenderer(int textureID) async {
         return await ZegoExpressImpl.methodChannel.invokeMethod('destroyTextureRenderer', {
             'textureID': textureID
         });

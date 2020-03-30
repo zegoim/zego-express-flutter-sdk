@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
 
     /// Create a PlatformView and return the view ID
-    static Widget createPlatformView(Key key, Function(int viewID) onViewCreated) {
+    Widget createPlatformView(Key key, Function(int viewID) onViewCreated) {
         if (TargetPlatform.iOS == defaultTargetPlatform) {
             return UiKitView(
                 key: key,
@@ -35,7 +35,7 @@ extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
     }
 
     /// Destroy the PlatformView and releases its resources
-    static Future<bool> destroyPlatformView(int viewID) async {
+    Future<bool> destroyPlatformView(int viewID) async {
         final bool success = await ZegoExpressImpl.methodChannel.invokeMethod('destroyPlatformView', {
             'viewID': viewID
         });
