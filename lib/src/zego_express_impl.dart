@@ -346,8 +346,8 @@ class ZegoExpressImpl {
         });
     }
 
-    Future<void> muteAudioOutput(bool mute) async {
-        return await _channel.invokeMethod('muteAudioOutput', {
+    Future<void> muteSpeaker(bool mute) async {
+        return await _channel.invokeMethod('muteSpeaker', {
             'mute': mute
         });
     }
@@ -715,8 +715,8 @@ class ZegoExpressImpl {
                 }
 
                 ZegoExpressEngine.onMixerRelayCDNStateUpdate(
-                    infoList,
-                    map['taskID']
+                    map['taskID'],
+                    infoList
                 );
                 break;
 
