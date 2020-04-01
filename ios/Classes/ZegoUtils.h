@@ -3,6 +3,7 @@
 //  Pods
 //
 //  Created by lizhanpeng@ZEGO on 2020/2/14.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #ifndef ZegoFlutterUtils_h

@@ -226,10 +226,9 @@
         NSString *extraInfo = args[@"extraInfo"];
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
-        // TODO: 参数顺序
-        [[ZegoExpressEngine sharedEngine] setStreamExtraInfo:extraInfo callback:^(int errorCode) {
+        [[ZegoExpressEngine sharedEngine] setStreamExtraInfo:extraInfo channel:(ZegoPublishChannel)channel callback:^(int errorCode) {
             result(@{@"errorCode": @(errorCode)});
-        } channel:(ZegoPublishChannel)channel];
+        }];
         
     } else if([@"createTextureRenderer" isEqualToString:call.method]) {
         
@@ -419,21 +418,21 @@
         
         result(nil);
         
-    } else if ([@"addPublishCDNURL" isEqualToString:call.method]) {
+    } else if ([@"addPublishCdnUrl" isEqualToString:call.method]) {
         
         NSString *targetURL = args[@"targetURL"];
         NSString *streamID = args[@"streamID"];
         
-        [[ZegoExpressEngine sharedEngine] addPublishCDNURL:targetURL streamID:streamID callback:^(int errorCode) {
+        [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
             result(@{@"errorCode": @(errorCode)});
         }];
       
-    } else if ([@"removePublishCDNURL" isEqualToString:call.method]) {
+    } else if ([@"removePublishCdnUrl" isEqualToString:call.method]) {
         
         NSString *targetURL = args[@"targetURL"];
         NSString *streamID = args[@"streamID"];
         
-        [[ZegoExpressEngine sharedEngine] removePublishCDNURL:targetURL streamID:streamID callback:^(int errorCode) {
+        [[ZegoExpressEngine sharedEngine] removePublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
             result(@{@"errorCode": @(errorCode)});
         }];
         
@@ -444,11 +443,11 @@
         ZegoCDNConfig *cdnConfig = nil;
         NSDictionary *config = args[@"config"];
         if (config) {
-            NSString *URL = config[@"URL"];
+            NSString *url = config[@"url"];
             NSString *authParam = config[@"authParam"];
             
             cdnConfig = [[ZegoCDNConfig alloc] init];
-            cdnConfig.URL = URL;
+            cdnConfig.url = url;
             cdnConfig.authParam = authParam;
         }
         
@@ -529,9 +528,9 @@
                 NSDictionary * cdnConfig = playerConfig[@"cdnConfig"];
                 if(cdnConfig) {
                     ZegoCDNConfig *objCdnConfig = [[ZegoCDNConfig alloc] init];
-                    objCdnConfig.URL = cdnConfig[@"URL"];
+                    objCdnConfig.url = cdnConfig[@"url"];
                     objCdnConfig.authParam = cdnConfig[@"authParam"];
-                    objPlayerConfig.CDNConfig = objCdnConfig;
+                    objPlayerConfig.cdnConfig = objCdnConfig;
                 }
                 
                 [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:objPlayerConfig];
@@ -550,9 +549,9 @@
                 NSDictionary * cdnConfig = playerConfig[@"cdnConfig"];
                 if(cdnConfig) {
                     ZegoCDNConfig *objCdnConfig = [[ZegoCDNConfig alloc] init];
-                    objCdnConfig.URL = cdnConfig[@"URL"];
+                    objCdnConfig.url = cdnConfig[@"url"];
                     objCdnConfig.authParam = cdnConfig[@"authParam"];
-                    objPlayerConfig.CDNConfig = objCdnConfig;
+                    objPlayerConfig.cdnConfig = objCdnConfig;
                 }
             }
             
@@ -837,11 +836,11 @@
         
         result(nil);
       
-    } else if ([@"muteAudioOutput" isEqualToString:call.method]) {
+    } else if ([@"muteSpeaker" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         
-        [[ZegoExpressEngine sharedEngine] muteAudioOutput:mute];
+        [[ZegoExpressEngine sharedEngine] muteSpeaker:mute];
         
         result(nil);
       
@@ -1203,7 +1202,7 @@
         NSMutableArray *streamInfoListArray = [[NSMutableArray alloc] init];
         for (ZegoStreamRelayCDNInfo *info in streamInfoList) {
             [streamInfoListArray addObject:@{
-                @"URL": info.URL,
+                @"url": info.url,
                 @"state": @(info.state),
                 @"updateReason": @(info.updateReason),
                 @"stateTime": @(info.stateTime)
@@ -1332,7 +1331,7 @@
     if (sink) {
         sink(@{
             @"method": @"onPlayerRecvSEI",
-            @"data": data,
+            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
             @"streamID": streamID
         });
     }
@@ -1348,7 +1347,7 @@
         NSMutableArray *infoListArray = [[NSMutableArray alloc] init];
         for (ZegoStreamRelayCDNInfo *info in infoList) {
             [infoListArray addObject:@{
-                @"URL": info.URL,
+                @"url": info.url,
                 @"state": @(info.state),
                 @"updateReason": @(info.updateReason),
                 @"stateTime": @(info.stateTime)

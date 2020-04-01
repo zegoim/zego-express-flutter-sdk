@@ -3,6 +3,7 @@
 //  Pods-Runner
 //
 //  Created by lizhanpeng@ZEGO on 2020/2/14.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #import "ZegoUtils.h"

@@ -1,11 +1,11 @@
 PODS:
   - Flutter (1.0.0)
-  - zego_express_engine (1.5.1):
+  - zego_express_engine (1.5.5):
     - Flutter
-    - ZegoExpressEngine (= 1.5.1)
-  - ZegoExpressEngine (1.5.1):
-    - ZegoExpressEngine/Video_en (= 1.5.1)
-  - ZegoExpressEngine/Video_en (1.5.1)
+    - ZegoExpressEngine (= 1.5.5)
+  - ZegoExpressEngine (1.5.5):
+    - ZegoExpressEngine/Video_en (= 1.5.5)
+  - ZegoExpressEngine/Video_en (1.5.5)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -23,8 +23,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  zego_express_engine: 45907a185dfaa8a3baed31e8e04c8d818fdc2e45
-  ZegoExpressEngine: 689b2427ce65ae88ae09012a0e8f412d791be5ee
+  zego_express_engine: a846d9077ad58d1f092f59920891f3be93946342
+  ZegoExpressEngine: 16aefe493af821b082e42fa28c205f9ebfdd8412
 
 PODFILE CHECKSUM: 3dbe063e9c90a5d7c9e4e76e70a821b9e2c1d271
 
