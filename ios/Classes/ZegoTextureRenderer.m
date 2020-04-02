@@ -80,8 +80,7 @@
     return self;
 }
 
-- (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer
-{
+- (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer {
     
     dispatch_async(m_opengl_queue, ^{
         
@@ -133,10 +132,10 @@
     });
 }
 
-- (void)setUseMirrorEffect:(BOOL)isUse
-{
-    if(m_isUseMirror == isUse)
+- (void)setUseMirrorEffect:(BOOL)isUse {
+    if (m_isUseMirror == isUse) {
         return;
+    }
     
     __weak ZegoTextureRenderer *weak_ptr = self;
     dispatch_async(m_opengl_queue, ^{
@@ -152,8 +151,7 @@
     });
 }
 
-- (void)setBackgroundColor:(int)color
-{
+- (void)setBackgroundColor:(int)color {
     // TODO: 补充背景颜色
 }
 

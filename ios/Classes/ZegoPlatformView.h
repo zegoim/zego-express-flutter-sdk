@@ -1,5 +1,5 @@
 //
-//  ZegoPlatformViewRenderer.h
+//  ZegoPlatformView.h
 //  Pods
 //
 //  Created by lizhanpeng@ZEGO on 2020/3/26.
@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <Flutter/FlutterPlatformViews.h>
 
-@interface ZegoPlatformViewRenderer : NSObject<FlutterPlatformView>
+@interface ZegoPlatformView : NSObject<FlutterPlatformView>
 
 - (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID;
 
