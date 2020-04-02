@@ -411,6 +411,13 @@ class ZegoRoomConfig {
 
     ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token): assert(maxMemberCount != null), assert(isUserStatusNotify != null), assert(token != null);
 
+    /// Create a default room configuration
+    ZegoRoomConfig.defaultConfig() {
+        maxMemberCount = 0;
+        isUserStatusNotify = false;
+        token = "";
+    }
+
     ZegoRoomConfig.fromMap(Map<dynamic, dynamic> map):
         maxMemberCount = map['maxMemberCount'],
         isUserStatusNotify = map['isUserStatusNotify'],
@@ -455,6 +462,62 @@ class ZegoVideoConfig {
 
     ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID): assert(captureWidth != null), assert(captureHeight != null), assert(encodeWidth != null), assert(encodeHeight != null), assert(fps != null), assert(bitrate != null), assert(codecID != null);
 
+    /// Create video configuration with preset enumeration values
+    ZegoVideoConfig.preset(ZegoVideoConfigPreset preset): assert(preset != null) {
+
+        codecID = ZegoVideoCodecID.Default;
+        switch (preset) {
+            case ZegoVideoConfigPreset.Preset180P:
+                captureWidth = 180;
+                captureHeight = 320;
+                encodeWidth = 180;
+                encodeHeight = 320;
+                bitrate = 300;
+                fps = 15;
+                break;
+            case ZegoVideoConfigPreset.Preset270P:
+                captureWidth = 270;
+                captureHeight = 480;
+                encodeWidth = 270;
+                encodeHeight = 480;
+                bitrate = 400;
+                fps = 15;
+                break;
+            case ZegoVideoConfigPreset.Preset360P:
+                captureWidth = 360;
+                captureHeight = 640;
+                encodeWidth = 360;
+                encodeHeight = 640;
+                bitrate = 600;
+                fps = 15;
+                break;
+            case ZegoVideoConfigPreset.Preset540P:
+                captureWidth = 540;
+                captureHeight = 960;
+                encodeWidth = 540;
+                encodeHeight = 960;
+                bitrate = 1200;
+                fps = 15;
+                break;
+            case ZegoVideoConfigPreset.Preset720P:
+                captureWidth = 720;
+                captureHeight = 1280;
+                encodeWidth = 720;
+                encodeHeight = 1480;
+                bitrate = 1500;
+                fps = 15;
+                break;
+            case ZegoVideoConfigPreset.Preset1080P:
+                captureWidth = 1080;
+                captureHeight = 1920;
+                encodeWidth = 1080;
+                encodeHeight = 1920;
+                bitrate = 3000;
+                fps = 15;
+                break;
+        }
+    }
+
     ZegoVideoConfig.fromMap(Map<dynamic, dynamic> map):
         captureWidth = map['captureWidth'],
         captureHeight = map['captureHeight'],
@@ -491,6 +554,14 @@ class ZegoUser {
     String userName;
 
     ZegoUser(this.userID, this.userName): assert(userID != null), assert(userName != null);
+
+    /// Create a ZegoUser object
+    ///
+    /// userName and userID are set to match
+    ZegoUser.id(String userID): assert(userID != null) {
+        this.userID = userID;
+        this.userName = userID;
+    }
 
     ZegoUser.fromMap(Map<dynamic, dynamic> map):
         userID = map['userID'],
@@ -586,6 +657,13 @@ class ZegoCanvas {
     int backgroundColor;
 
     ZegoCanvas(this.view, this.viewMode, this.backgroundColor): assert(view != null), assert(viewMode != null), assert(backgroundColor != null);
+
+    /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
+    ZegoCanvas.view(int view): assert(view != null) {
+        this.view = view;
+        this.viewMode = ZegoViewMode.AspectFit;
+        this.backgroundColor = 0x000000;
+    }
 
     ZegoCanvas.fromMap(Map<dynamic, dynamic> map):
         view = map['view'],
@@ -884,6 +962,13 @@ class ZegoBeautifyOption {
 
     ZegoBeautifyOption(this.polishStep, this.whitenFactor, this.sharpenFactor): assert(polishStep != null), assert(whitenFactor != null), assert(sharpenFactor != null);
 
+    /// Create a default beauty parameter object
+    ZegoBeautifyOption.defaultConfig() {
+        polishStep = 0.2;
+        whitenFactor = 0.5;
+        sharpenFactor = 0.1;
+    }
+
     ZegoBeautifyOption.fromMap(Map<dynamic, dynamic> map):
         polishStep = map['polishStep'],
         whitenFactor = map['whitenFactor'],
@@ -914,6 +999,13 @@ class ZegoMixerAudioConfig {
     ZegoAudioCodecID codecID;
 
     ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID): assert(bitrate != null), assert(channel != null), assert(codecID != null);
+
+    /// Create a default mix stream audio configuration
+    ZegoMixerAudioConfig.defaultConfig() {
+        bitrate = 48;
+        channel = ZegoAudioChannel.Mono;
+        codecID = ZegoAudioCodecID.Normal;
+    }
 
     ZegoMixerAudioConfig.fromMap(Map<dynamic, dynamic> map):
         bitrate = map['bitrate'],
@@ -948,6 +1040,15 @@ class ZegoMixerVideoConfig {
     int bitrate;
 
     ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate): assert(width != null), assert(height != null), assert(fps != null), assert(bitrate != null);
+
+    /// Create a default mixer video configuration
+    ///
+    ZegoMixerVideoConfig.defaultConfig() {
+        width = 360;
+        height = 640;
+        fps = 15;
+        bitrate = 600;
+    }
 
     ZegoMixerVideoConfig.fromMap(Map<dynamic, dynamic> map):
         width = map['width'],
@@ -1010,24 +1111,14 @@ class ZegoMixerOutput {
     /// Mix stream output target, URL or stream ID
     String target;
 
-    /// Mix stream audio config
-    ZegoMixerAudioConfig audioConfig;
-
-    /// Mix stream audio config
-    ZegoMixerVideoConfig videoConfig;
-
-    ZegoMixerOutput(this.target, this.audioConfig, this.videoConfig): assert(target != null), assert(audioConfig != null), assert(videoConfig != null);
+    ZegoMixerOutput(this.target): assert(target != null);
 
     ZegoMixerOutput.fromMap(Map<dynamic, dynamic> map):
-        target = map['target'],
-        audioConfig = ZegoMixerAudioConfig.fromMap(map['audioConfig']),
-        videoConfig = ZegoMixerVideoConfig.fromMap(map['videoConfig']);
+        target = map['target'];
 
     Map<String, dynamic> toMap() {
         return {
-            'target': this.target,
-            'audioConfig': this.audioConfig.toMap(),
-            'videoConfig': this.videoConfig.toMap()
+            'target': this.target
         };
     }
 
@@ -1068,6 +1159,12 @@ class ZegoMixerTask {
     /// The task ID of the task
     String taskID;
 
+    /// The audio config of the task
+    ZegoMixerAudioConfig audioConfig;
+
+    /// The audio config of the task
+    ZegoMixerVideoConfig videoConfig;
+
     /// The input list of the task
     List<ZegoMixerInput> inputList;
 
@@ -1083,19 +1180,23 @@ class ZegoMixerTask {
     /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback.
     bool enableSoundLevel;
 
-    ZegoMixerTask(this.taskID, this.inputList, this.outputList, this.watermark, this.backgroundImageURL, this.enableSoundLevel): assert(taskID != null), assert(inputList != null), assert(outputList != null), assert(enableSoundLevel != null);
-
-    ZegoMixerTask.fromMap(Map<dynamic, dynamic> map):
-        taskID = map['taskID'],
-        inputList = map['inputList'],
-        outputList = map['outputList'],
-        watermark = ZegoWatermark.fromMap(map['watermark']),
-        backgroundImageURL = map['backgroundImageURL'],
-        enableSoundLevel = map['enableSoundLevel'];
+    /// Create a mix stream task object with TaskID
+    ZegoMixerTask(String taskID) {
+        this.taskID = taskID;
+        inputList = List<ZegoMixerInput>();
+        outputList = List<ZegoMixerOutput>();
+        audioConfig = ZegoMixerAudioConfig.defaultConfig();
+        videoConfig = ZegoMixerVideoConfig.defaultConfig();
+        watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0));
+        backgroundImageURL = "";
+        enableSoundLevel = false;
+    }
 
     Map<String, dynamic> toMap() {
         return {
             'taskID': this.taskID,
+            'audioConfig': this.audioConfig.toMap(),
+            'videoConfig': this.videoConfig.toMap(),
             'inputList': this.inputList,
             'outputList': this.outputList,
             'watermark': this.watermark.toMap(),
@@ -1193,6 +1294,34 @@ class ZegoAudioConfig {
     ZegoAudioCodecID codecID;
 
     ZegoAudioConfig(this.bitrate, this.channel, this.codecID): assert(bitrate != null), assert(channel != null), assert(codecID != null);
+
+    /// Create a audio configuration with preset enumeration values
+    ZegoAudioConfig.preset(ZegoAudioConfigPreset preset): assert(preset != null) {
+
+        codecID = ZegoAudioCodecID.Default;
+        switch (preset) {
+            case ZegoAudioConfigPreset.BasicQuality:
+                bitrate = 16;
+                channel = ZegoAudioChannel.Mono;
+                break;
+            case ZegoAudioConfigPreset.StandardQuality:
+                bitrate = 48;
+                channel = ZegoAudioChannel.Mono;
+                break;
+            case ZegoAudioConfigPreset.StandardQualityStereo:
+                bitrate = 56;
+                channel = ZegoAudioChannel.Stereo;
+                break;
+            case ZegoAudioConfigPreset.HighQuality:
+                bitrate = 128;
+                channel = ZegoAudioChannel.Mono;
+                break;
+            case ZegoAudioConfigPreset.HighQualityStereo:
+                bitrate = 192;
+                channel = ZegoAudioChannel.Stereo;
+                break;
+        }
+    }
 
     ZegoAudioConfig.fromMap(Map<dynamic, dynamic> map):
         bitrate = map['bitrate'],

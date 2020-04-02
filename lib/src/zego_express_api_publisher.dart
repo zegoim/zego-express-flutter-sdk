@@ -190,8 +190,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     /// [watermark] The upper left corner of the watermark layout is the origin of the coordinate system, and the area cannot exceed the size set by the encoding resolution. If it is null, the watermark is cancelled.
     /// [isPreviewVisible] the watermark is visible on local preview
     /// [channel] Publish stream channel
-    Future<void> setPublishWatermark(ZegoWatermark watermark, bool isPreviewVisible, {ZegoPublishChannel channel}) async {
-        return await ZegoExpressImpl.instance.setPublishWatermark(watermark, isPreviewVisible, channel: channel);
+    Future<void> setPublishWatermark({ZegoWatermark watermark, bool isPreviewVisible, ZegoPublishChannel channel}) async {
+        return await ZegoExpressImpl.instance.setPublishWatermark(watermark: watermark, isPreviewVisible: isPreviewVisible, channel: channel);
     }
 
     /// Send SEI. You can call this api to set params when publishing another streams
