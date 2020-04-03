@@ -9,6 +9,7 @@
 package im.zego.zego_express_engine;
 
 import android.app.Application;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import java.lang.*;
@@ -27,13 +28,17 @@ import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoLanguage;
 import im.zego.zegoexpress.constants.ZegoOrientation;
+import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
+import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
+import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
@@ -41,17 +46,24 @@ import im.zego.zegoexpress.entity.ZegoWatermark;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.view.TextureRegistry;
 
 public class ZegoExpressEngineMethodHandler {
 
+    private static boolean enablePlatformView = false;
+
+    private static TextureRegistry textureRegistry = null;
+
     /* Main */
 
-    public static void createEngine(MethodCall call, Result result, Application application, EventChannel.EventSink sink) {
+    public static void createEngine(MethodCall call, Result result, Application application, EventChannel.EventSink sink, TextureRegistry registry) {
 
         long appID = longValue((Number)call.argument("appID"));
         String appSign = call.argument("appSign");
         boolean isTestEnv = boolValue((Boolean) call.argument("isTestEnv"));
         ZegoScenario scenario = ZegoScenario.getZegoScenario(intValue((Number)call.argument("scenario")));
+        enablePlatformView = boolValue((Boolean) call.argument("enablePlatformView"));
+        textureRegistry = registry;
 
         ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, new ZegoExpressEngineEventHandler(sink));
 
@@ -157,19 +169,73 @@ public class ZegoExpressEngineMethodHandler {
             }
         });
 
-
     }
 
     public static void startPreview(MethodCall call, Result result) {
 
-        // TODO: startPreview
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        HashMap<String, Object> canvasMap = call.argument("canvas");
+
+        if (canvasMap != null && !canvasMap.isEmpty()) {
+            // Preview video
+
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int viewID = intValue((Number) canvasMap.get("view"));
+            ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(intValue((Number) canvasMap.get("viewMode")));
+            int backgroundColor = intValue((Number) canvasMap.get("backgroundColor"));
+
+            Object view = null;
+
+            if (enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+
+                if (platformView != null) {
+                    view = platformView.getView();
+                } else {
+                    // Preview video without creating the PlatfromView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
+                    // TODO: Throw Flutter Exception
+                }
+
+            } else {
+                // Render with Texture
+                ZegoTextureRenderer textureRenderer = ZegoTextureRendererController.getInstance().getTextureRenderer((long)viewID);
+
+                if (textureRenderer != null) {
+                    view = textureRenderer.getSurface();
+                } else {
+                    // Preview video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    // TODO: Throw Flutter Exception
+                }
+            }
+
+            ZegoCanvas canvas = null;
+
+            if (view != null) {
+                canvas = new ZegoCanvas(view);
+                canvas.viewMode = viewMode;
+                canvas.backgroundColor = backgroundColor;
+            }
+
+            ZegoExpressEngine.getEngine().startPreview(canvas, channel);
+
+        } else { /* if (canvasMap != null && !canvasMap.isEmpty()) */
+
+            // Preview audio only
+            ZegoExpressEngine.getEngine().startPreview(null, channel);
+        }
 
         result.success(null);
     }
 
     public static void stopPreview(MethodCall call, Result result) {
 
-        // TODO: stopPreview
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().stopPreview(channel);
 
         result.success(null);
     }
@@ -390,14 +456,92 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void startPlayingStream(MethodCall call, Result result) {
 
-        // TODO: startPlayingStream
+        String streamID = call.argument("stream");
+
+        // Handle ZegoPlayerConfig
+
+        ZegoPlayerConfig playerConfig = null;
+
+        HashMap<String, Object> playerConfigMap = call.argument("config");
+
+        if (playerConfigMap != null && !playerConfigMap.isEmpty()) {
+
+            playerConfig = new ZegoPlayerConfig();
+            playerConfig.videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) playerConfigMap.get("videoLayer")));
+
+            HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
+            if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {
+
+                ZegoCDNConfig cdnConfig = new ZegoCDNConfig();
+                cdnConfig.url = (String) cdnConfigMap.get("url");
+                cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
+                playerConfig.cdnConfig = cdnConfig;
+            }
+        }
+
+        // Handle ZegoCanvas
+
+        HashMap<String, Object> canvasMap = call.argument("canvas");
+
+        if (canvasMap != null && !canvasMap.isEmpty()) {
+            // Play video
+
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int viewID = intValue((Number) canvasMap.get("view"));
+            ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(intValue((Number) canvasMap.get("viewMode")));
+            int backgroundColor = intValue((Number) canvasMap.get("backgroundColor"));
+
+            Object view = null;
+
+            if (enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+
+                if (platformView != null) {
+                    view = platformView.getView();
+                } else {
+                    // Play video without creating the PlatfromView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
+                    // TODO: Throw Flutter Exception
+                }
+
+            } else {
+                // Render with Texture
+                ZegoTextureRenderer textureRenderer = ZegoTextureRendererController.getInstance().getTextureRenderer((long)viewID);
+
+                if (textureRenderer != null) {
+                    view = textureRenderer.getSurface();
+                } else {
+                    // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    // TODO: Throw Flutter Exception
+                }
+            }
+
+            ZegoCanvas canvas = null;
+
+            if (view != null) {
+                canvas = new ZegoCanvas(view);
+                canvas.viewMode = viewMode;
+                canvas.backgroundColor = backgroundColor;
+            }
+
+            ZegoExpressEngine.getEngine().startPlayingStream(streamID, canvas, playerConfig);
+
+        } else { /* if (canvasMap != null && !canvasMap.isEmpty()) */
+
+            // Play audio only
+            ZegoExpressEngine.getEngine().startPlayingStream(streamID, null, playerConfig);
+        }
 
         result.success(null);
     }
 
     public static void stopPlayingStream(MethodCall call, Result result) {
 
-        // TODO: stopPlayingStream
+        String streamID = call.argument("stream");
+
+        ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
 
         result.success(null);
     }
@@ -685,8 +829,52 @@ public class ZegoExpressEngineMethodHandler {
     }
 
 
+    /* PlatformView Utils */
 
-    // Utils
+    public static void destroyPlatformView(MethodCall call, Result result) {
+
+        int viewID = intValue((Number) call.argument("viewID"));
+
+        ZegoPlatformViewFactory.getInstance().destroyPlatformView(viewID);
+
+        result.success(null);
+    }
+
+
+    /* TextureRenderer Utils */
+
+    public static void createTextureRenderer(MethodCall call, Result result) {
+
+        int width = intValue((Number) call.argument("width"));
+        int height = intValue((Number) call.argument("height"));
+
+        Long textureID = ZegoTextureRendererController.getInstance().createTextureRenderer(textureRegistry.createSurfaceTexture(), width, height);
+
+        result.success(textureID);
+    }
+
+    public static void updateTextureRenderer(MethodCall call, Result result) {
+
+        Long textureID = call.argument("textureID");
+        int width = intValue((Number) call.argument("width"));
+        int height = intValue((Number) call.argument("height"));
+
+        ZegoTextureRendererController.getInstance().updateTextureRenderer(textureID, width, height);
+
+        result.success(null);
+    }
+
+    public static void destroyTextureRenderer(MethodCall call, Result result) {
+
+        Long textureID = call.argument("textureID");
+
+        ZegoTextureRendererController.getInstance().destroyTextureRenderer(textureID);
+
+        result.success(null);
+    }
+
+
+    /* Utils */
 
     private static boolean boolValue(Boolean number) {
         return number != null && number;
