@@ -8,7 +8,7 @@
 
 @interface ZegoExpressEnginePlugin()<FlutterStreamHandler, ZegoEventHandler>
 
-@property (nonatomic, assign) BOOL isEnablePlatformView;
+@property (nonatomic, assign) BOOL enablePlatformView;
 @property (nonatomic, strong) NSObject<FlutterPluginRegistrar> *registrar;
 
 @end
@@ -22,7 +22,7 @@
     if (self = [super init]) {
         
         _registrar = registrar;
-        _isEnablePlatformView = NO;
+        _enablePlatformView = NO;
     }
     
     return self;
@@ -83,12 +83,6 @@
     return nil;
 }
 
-- (void)throwCreateEngineError:(FlutterResult)result ofMethodName:(NSString*)methodName {
-    NSString *errorMessage = [NSString stringWithFormat:@"[ERROR]: %@ %@", methodName, @"Create engine error! Please check the parameters for errors."];
-    //[ZegoLog logNotice:[NSString stringWithFormat:@"[Flutter-Native] %@", errorMessage]];
-    result([FlutterError errorWithCode:[[NSString stringWithFormat:@"%@_ERROR", methodName] uppercaseString] message:errorMessage details:nil]);
-}
-
 #pragma mark - Engine Method Call
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -109,11 +103,10 @@
         int scenario = [ZegoUtils intValue:args[@"scenario"]];
         BOOL enablePlatformView = [ZegoUtils boolValue:args[@"enablePlatformView"]];
         
-        _isEnablePlatformView = enablePlatformView;
+        _enablePlatformView = enablePlatformView;
         
         ZegoEngineConfig *config = [[ZegoEngineConfig alloc] init];
-        if(!self.isEnablePlatformView)
-        {
+        if (!self.enablePlatformView) {
             ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
             renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
             renderConfig.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
@@ -122,29 +115,21 @@
         
         [ZegoExpressEngine setEngineConfig:config];
         
-        if ([ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self])
-        {
-            NSLog(@"create engine success");
+        [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self];
             
-            if(self.isEnablePlatformView)
-            {
-                [self.registrar registerViewFactory:[ZegoPlatformViewFactory sharedInstance] withId:@"plugins.zego.im/zego_express_view"];
-            }
-            else
-            {
-                [[ZegoTextureRendererController sharedInstance] initController];
-            }
-            
-            result(@(0));
+        if (self.enablePlatformView) {
+            [self.registrar registerViewFactory:[ZegoPlatformViewFactory sharedInstance] withId:@"plugins.zego.im/zego_express_view"];
         } else {
-            [self throwCreateEngineError:result ofMethodName:call.method];
+            [[ZegoTextureRendererController sharedInstance] initController];
         }
+        
+        result(nil);
       
     } else if ([@"destroyEngine" isEqualToString:call.method]) {
         
         [ZegoExpressEngine destroyEngine:nil];
         
-        if (!self.isEnablePlatformView) {
+        if (!self.enablePlatformView) {
             // uninit texture render
             [[ZegoTextureRendererController sharedInstance] uninitController];
         }
@@ -234,7 +219,7 @@
         int viewWidth = [ZegoUtils intValue:args[@"width"]];
         int viewHeight = [ZegoUtils intValue:args[@"height"]];
         
-        int64_t textureID = [[ZegoTextureRendererController sharedInstance] createRenderer:[self.registrar textures] viewWidth:viewWidth viewHeight:viewHeight];
+        int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:[self.registrar textures] viewWidth:viewWidth viewHeight:viewHeight];
         
         result(@(textureID));
         
@@ -248,49 +233,66 @@
     } else if([@"destroyTextureRenderer" isEqualToString:call.method]) {
         
         int64_t textureID = [ZegoUtils longLongValue:args[@"textureID"]];
-        [[ZegoTextureRendererController sharedInstance] releaseRenderer: textureID];
+        [[ZegoTextureRendererController sharedInstance] destroyTextureRenderer: textureID];
         
         result(nil);
         
     } else if([@"destroyPlatformView" isEqualToString:call.method]) {
         
         int viewID = [ZegoUtils intValue:args[@"viewID"]];
-        [[ZegoPlatformViewFactory sharedInstance] removePlatformView:@(viewID)];
+        [[ZegoPlatformViewFactory sharedInstance] destroyPlatformView:@(viewID)];
         
         result(nil);
         
     } else if ([@"startPreview" isEqualToString:call.method]) {
         
-        NSDictionary *canvas = args[@"canvas"];
-        // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
-        int64_t viewID = [ZegoUtils longLongValue:canvas[@"view"]];
-        int viewMode = [ZegoUtils intValue:canvas[@"viewMode"]];
-        int backgroundColor = [ZegoUtils intValue:canvas[@"backgroundColor"]];
-        
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
-        if (self.isEnablePlatformView) {
-            // Render with PlatformView
-            ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
-            if (platformView) {
-                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
-                canvas.viewMode = (ZegoViewMode)viewMode;
-                canvas.backgroundColor = backgroundColor;
+        // Handle ZegoCanvas
+        
+        NSDictionary *canvasMap = args[@"canvas"];
+        
+        if (canvasMap && canvasMap.count > 0) {
+            // Preview video
+            
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+            int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+            int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+            
+            if (self.enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
                 
-                [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
-            } else {
-                // TODO: Throw Flutter Exception
-            }
+                if (platformView) {
+                    ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                    canvas.viewMode = (ZegoViewMode)viewMode;
+                    canvas.backgroundColor = backgroundColor;
+                    
+                    [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
+                } else {
+                    // Preview video without creating the PlatfromView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
+                    // TODO: Throw Flutter Exception
+                }
 
-        } else {
-            // Render with Texture
-            if([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel)]) {
-                
-                [[ZegoTextureRendererController sharedInstance] startRendering];
             } else {
-                // Compatible with audio-only preview
+                // Render with Texture
+                if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel)]) {
+                    [[ZegoTextureRendererController sharedInstance] startRendering];
+                } else {
+                    // Preview video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    // TODO: Throw Flutter Exception
+                }
+                
+                // Using Custom Video Renderer
+                [[ZegoExpressEngine sharedEngine] startPreview:nil channel:(ZegoPublishChannel)channel];
             }
             
+        } else { /* if (canvas && canvas.count > 0) */
+            
+            // Preview audio only
             [[ZegoExpressEngine sharedEngine] startPreview:nil channel:(ZegoPublishChannel)channel];
         }
         
@@ -299,10 +301,10 @@
     } else if ([@"stopPreview" isEqualToString:call.method]) {
         
         int channel = [ZegoUtils intValue:args[@"channel"]];
-        [[ZegoExpressEngine sharedEngine] stopPreview:(ZegoPublishChannel) channel];
+        [[ZegoExpressEngine sharedEngine] stopPreview:(ZegoPublishChannel)channel];
         
-        if (!self.isEnablePlatformView) {
-            // Stop texture render
+        if (!self.enablePlatformView) {
+            // Stop Texture Renderer
             [[ZegoTextureRendererController sharedInstance] removeCapturedRenderer:@(channel)];
             [[ZegoTextureRendererController sharedInstance] stopRendering];
         }
@@ -517,69 +519,72 @@
         
         NSString *streamID = args[@"streamID"];
         
-        NSDictionary *canvas = args[@"canvas"];
-        // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
-        int64_t viewID = [ZegoUtils longLongValue:canvas[@"view"]];
-        int mode = [ZegoUtils intValue:canvas[@"viewMode"]];
-        int backgroundColor = [ZegoUtils intValue:canvas[@"backgroundColor"]];
+        // Handle ZegoPlayerConfig
         
-        NSDictionary *playerConfig = args[@"config"];
+        ZegoPlayerConfig *playerConfig = nil;
         
-        if(self.isEnablePlatformView) {
-            // Render with PlatformView
-            ZegoPlatformView *renderer = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
-            ZegoCanvas *canvas = nil;
-            if (renderer) {
-                canvas = [[ZegoCanvas alloc] initWithView:[renderer getUIView]];
-                canvas.viewMode = (ZegoViewMode)mode;
-                canvas.backgroundColor = backgroundColor;
-            }
+        NSDictionary *playerConfigMap = args[@"config"];
+        
+        if (playerConfigMap && playerConfigMap.count > 0) {
             
-            if (playerConfig && playerConfig.count > 0) {
-                ZegoPlayerConfig *objPlayerConfig = [[ZegoPlayerConfig alloc] init];
-                objPlayerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfig[@"videoLayer"]];
+            playerConfig = [[ZegoPlayerConfig alloc] init];
+            playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
+            NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
+            
+            if (cdnConfigMap && cdnConfigMap.count > 0) {
+                ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
+                cdnConfig.url = cdnConfigMap[@"url"];
+                cdnConfig.authParam = cdnConfigMap[@"authParam"];
+                playerConfig.cdnConfig = cdnConfig;
+            }
+        }
+        
+        // Handle ZegoCanvas
+        
+        NSDictionary *canvasMap = args[@"canvas"];
+        
+        if (canvasMap && canvasMap.count > 0) {
+            // Play video
+            
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+            int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+            int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+                        
+            if (self.enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
                 
-                NSDictionary * cdnConfig = playerConfig[@"cdnConfig"];
-                if (cdnConfig) {
-                    ZegoCDNConfig *objCdnConfig = [[ZegoCDNConfig alloc] init];
-                    objCdnConfig.url = cdnConfig[@"url"];
-                    objCdnConfig.authParam = cdnConfig[@"authParam"];
-                    objPlayerConfig.cdnConfig = objCdnConfig;
+                if (platformView) {
+                    ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                    canvas.viewMode = (ZegoViewMode)viewMode;
+                    canvas.backgroundColor = backgroundColor;
+                    
+                    [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
+                } else {
+                    // Play video without creating the PlatfromView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
+                    // TODO: Throw Flutter Exception
                 }
                 
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:objPlayerConfig];
             } else {
-                
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas];
-            }
-            
-        } else {
-            // Render with Texture
-            ZegoPlayerConfig *objPlayerConfig = nil;
-            if (playerConfig && playerConfig.count > 0) {
-                objPlayerConfig = [[ZegoPlayerConfig alloc] init];
-                objPlayerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfig[@"videoLayer"]];
-                
-                NSDictionary * cdnConfig = playerConfig[@"cdnConfig"];
-                if (cdnConfig) {
-                    ZegoCDNConfig *objCdnConfig = [[ZegoCDNConfig alloc] init];
-                    objCdnConfig.url = cdnConfig[@"url"];
-                    objCdnConfig.authParam = cdnConfig[@"authParam"];
-                    objPlayerConfig.cdnConfig = objCdnConfig;
+                // Render with Texture
+                if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID]) {
+                    [[ZegoTextureRendererController sharedInstance] startRendering];
+                } else {
+                    // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    // TODO: Throw Flutter Exception
                 }
+                
+                // Using Custom Video Renderer
+                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
             }
             
-            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID]) {
-                [[ZegoTextureRendererController sharedInstance] startRendering];
-            } else {
-                // Compatible with audio-only playing stream
-            }
+        } else { /* if (canvas && canvas.count > 0) */
             
-            if(objPlayerConfig) {
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas: nil config:objPlayerConfig];
-            } else {
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas: nil];
-            }
+            // Play audio only
+            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
         }
         
         result(nil);
@@ -589,11 +594,13 @@
         NSString *streamID = args[@"streamID"];
         [[ZegoExpressEngine sharedEngine] stopPlayingStream:streamID];
         
-        if (!self.isEnablePlatformView) {
+        if (!self.enablePlatformView) {
             // Stop Texture render
             [[ZegoTextureRendererController sharedInstance] removeRemoteRenderer:streamID];
             [[ZegoTextureRendererController sharedInstance] stopRendering];
         }
+        
+        result(nil);
         
     } else if ([@"setPlayVolume" isEqualToString:call.method]) {
         

@@ -43,7 +43,7 @@
     return YES;
 }
 
-- (BOOL)removePlatformView:(NSNumber *)viewID {
+- (BOOL)destroyPlatformView:(NSNumber *)viewID {
     if(!viewID)
         return NO;
     

@@ -13,16 +13,20 @@
 #import <Flutter/FlutterPlatformViews.h>
 #import "ZegoPlatformView.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZegoPlatformViewFactory : NSObject<FlutterPlatformViewFactory>
 
 + (instancetype) sharedInstance;
 
-/// Called when dart invoke `removeView`
-- (BOOL)removePlatformView:(NSNumber *)viewID;
+/// Called when dart invoke `destroyPlatformView`
+- (BOOL)destroyPlatformView:(NSNumber *)viewID;
 
 /// Get PlatfromView to pass to native when dart invoke `startPreview` or `startPlayingStream`
 - (nullable ZegoPlatformView *)getPlatformView:(NSNumber *)viewID;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* ZegoPlatformViewRenderController_h */

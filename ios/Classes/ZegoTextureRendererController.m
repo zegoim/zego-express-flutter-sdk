@@ -10,10 +10,10 @@
 
 @interface ZegoTextureRendererController()
 
-// BuffList for caching, the renderer created will not be immediately added to the renderers dictionary, but the developer will need to explicitly bind the relationship
-@property (strong) NSMutableArray<ZegoTextureRenderer*> *rendererList;
+// BufferRenderers for caching, the renderer created will not be immediately added to the renderers dictionary, but the developer will need to explicitly bind the relationship
+@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer*> *allRenderers;
 
-@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer*> *captureRenderers;
+@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer*> *capturedRenderers;
 @property (strong) NSMutableDictionary<NSString *, ZegoTextureRenderer*> *remoteRenderers;
 @property(readonly, nonatomic) CADisplayLink* displayLink;
 @property (nonatomic, assign) BOOL isRendering;
@@ -34,31 +34,30 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _captureRenderers = [[NSMutableDictionary alloc] init];
-        _remoteRenderers = [[NSMutableDictionary alloc] init];
-        _rendererList = [NSMutableArray array];
+        _capturedRenderers = [NSMutableDictionary dictionary];
+        _remoteRenderers = [NSMutableDictionary dictionary];
+        _allRenderers = [NSMutableDictionary dictionary];
         _isRendering = NO;
     }
     return self;
 }
 
-- (void)initController {
-    [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:self];
-}
+#pragma mark - Dart Texture Render Utils Operation
 
-- (void)uninitController {
-    [self removeAllRenderer];
-}
+/// The following methods are only triggered by the dart `zego_texture_render_utils`
 
-- (int64_t)createRenderer:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height {
+- (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height {
+    
     ZegoTextureRenderer *renderer = [[ZegoTextureRenderer alloc] initWithTextureRegistry:registry viewWidth:width viewHeight:height];
-    [self.rendererList addObject:renderer];
+    
+    [self.allRenderers setObject:renderer forKey:@(renderer.textureID)];
     
     return renderer.textureID;
 }
 
 - (void)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height {
-    ZegoTextureRenderer *renderer = [self getRendererFromList:textureID];
+    
+    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
         return;
@@ -67,86 +66,67 @@
     [renderer updateRenderSize:CGSizeMake(width, height)];
 }
 
-- (void)releaseRenderer:(int64_t)textureID {
-    ZegoTextureRenderer *renderer = [self getRendererFromList:textureID];
+- (void)destroyTextureRenderer:(int64_t)textureID {
+    
+    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
         return;
     }
     
-    [self.rendererList removeObject:renderer];
+    [self.allRenderers removeObjectForKey:@(renderer.textureID)];
     renderer = nil;
 }
 
+#pragma mark - Dart Express Engine API Operation
+
+/// The following methods are only triggered by the dart `zego_express_api`
+
+- (void)initController {
+    // Set up custom video render handler
+    [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:self];
+}
+
+- (void)uninitController {
+    [self removeAllRenderer];
+}
+
 - (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel {
-    if ([self isCaptureRendererExists:channel]) {
-        return NO;
-    }
     
-    ZegoTextureRenderer *renderer = [self getRendererFromList:textureID];
+    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
         return NO;
     }
     
-    [self.captureRenderers setObject:renderer forKey:channel];
-    [self.rendererList removeObject:renderer];
+    [self.capturedRenderers setObject:renderer forKey:channel];
     return YES;
 }
 
+- (void)removeCapturedRenderer:(NSNumber *)channel {
+    [self.capturedRenderers removeObjectForKey:channel];
+}
+
 - (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID {
-    if ([self isRemoteRendererExists:streamID])
-        return NO;
     
-    ZegoTextureRenderer *renderer = [self getRendererFromList:textureID];
+    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
         return NO;
     }
     
     [self.remoteRenderers setObject:renderer forKey:streamID];
-    [self.rendererList removeObject:renderer];
     return YES;
 }
 
-- (BOOL)removeCapturedRenderer:(NSNumber *)channel {
-    ZegoTextureRenderer *renderer = [self.captureRenderers objectForKey:channel];
-    if(renderer)
-    {
-        [self.captureRenderers removeObjectForKey:channel];
-    }
-    
-    [self.captureRenderers removeObjectForKey:channel];
-    return YES;
-}
-
-- (BOOL)removeRemoteRenderer:(NSString *)streamID {
+- (void)removeRemoteRenderer:(NSString *)streamID {
     [self.remoteRenderers removeObjectForKey:streamID];
-    return YES;
-}
-
-- (void)removeAllRenderer {
-    [self.captureRenderers removeAllObjects];
-    [self.remoteRenderers removeAllObjects];
-    [self.rendererList removeAllObjects];
-}
-
-- (ZegoTextureRenderer *)getRendererFromList:(int64_t)textureID {
-    ZegoTextureRenderer *renderer = nil;
-    for(ZegoTextureRenderer *obj in self.rendererList)
-    {
-        if(obj.textureID == textureID)
-        {
-            renderer = obj;
-            break;
-        }
-    }
-    
-    return renderer;
 }
 
 - (void)startRendering {
-    if (self.isRendering) return;
+    if (self.isRendering) {
+        return;
+    }
     
     _displayLink = [CADisplayLink displayLinkWithTarget:self
                                                selector:@selector(onDisplayLink:)];
@@ -159,11 +139,12 @@
 }
 
 - (void)stopRendering {
-    if(!self.isRendering)
+    if (!self.isRendering) {
         return;
+    }
     
     // TODO: 暂时先限定死只有在所有renderer都不存在时，停止渲染才成功
-    if (self.captureRenderers.count == 0 && self.remoteRenderers == 0) {
+    if (self.capturedRenderers.count == 0 && self.remoteRenderers == 0) {
         self.displayLink.paused = YES;
         [_displayLink invalidate];
         
@@ -171,29 +152,19 @@
     }
 }
 
-#pragma mark Private Methods
+#pragma mark - Private Methods
 
-- (BOOL)isCaptureRendererExists:(NSNumber *)channel {
-    for(NSNumber *key in self.captureRenderers) {
-        if ([key isEqualToNumber:channel])
-            return YES;
-    }
-    return NO;
-}
-
-- (BOOL)isRemoteRendererExists:(NSString *)streamID {
-    for(NSString *key in self.remoteRenderers) {
-        if ([key isEqualToString:streamID])
-            return YES;
-    }
-    return NO;
+- (void)removeAllRenderer {
+    [self.capturedRenderers removeAllObjects];
+    [self.remoteRenderers removeAllObjects];
+    [self.allRenderers removeAllObjects];
 }
 
 - (void)onDisplayLink:(CADisplayLink*)link {
     
     // Render local
-    for (NSNumber *key in self.captureRenderers) {
-        ZegoTextureRenderer *renderer = [self.captureRenderers objectForKey:key];
+    for (NSNumber *key in self.capturedRenderers) {
+        ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:key];
         if(!renderer || ![renderer isNewFrameAvailable])
             continue;
         
@@ -211,7 +182,7 @@
 }
 
 
-#pragma mark Custom Render Delegate
+#pragma mark - ZegoCustomVideoRenderHandler
 
 /// Remote playing stream video frame raw data callback, you can differentiate different streams by streamID
 ///
@@ -224,7 +195,7 @@
         return;
     }
     
-    ZegoTextureRenderer *renderer = [self.captureRenderers objectForKey:@(channel)];
+    ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:@(channel)];
     if (renderer) {
         [renderer setUseMirrorEffect:flipMode == 1];
         [renderer setSrcFrameBuffer:buffer];
