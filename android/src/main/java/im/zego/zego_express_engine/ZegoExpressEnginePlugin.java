@@ -20,16 +20,19 @@ import io.flutter.view.TextureRegistry;
 /** ZegoExpressEnginePlugin */
 public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
 
-    private EventChannel.EventSink sink;
-    private Class<?> manager;
-    private final Application application;
-    private final TextureRegistry textureRegistry;
+    private Application application;
+    private TextureRegistry textureRegistry;
 
+    private MethodChannel methodChannel;
+    private EventChannel eventChannel;
+
+    private EventChannel.EventSink sink;
+
+    private Class<?> manager;
     private HashMap<String, Method> methodHashMap = new HashMap<>();
 
-    private ZegoExpressEnginePlugin(Application application, TextureRegistry textureRegistry) {
-        this.application = application;
-        this.textureRegistry = textureRegistry;
+    public ZegoExpressEnginePlugin() {
+
 
         try {
             this.manager = Class.forName("im.zego.zego_express_engine.ZegoExpressEngineMethodHandler");
@@ -38,18 +41,36 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         }
     }
 
+
+    /* FlutterPlugin Interface */
+
+    // V2 embedding
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
-        ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin((Application) flutterPluginBinding.getApplicationContext(), flutterPluginBinding.getTextureRegistry());
+        Application application = (Application) flutterPluginBinding.getApplicationContext();
+        TextureRegistry textureRegistry =  flutterPluginBinding.getTextureRegistry();
+        MethodChannel methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_engine");
+        EventChannel eventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_event_handler");
 
-        final MethodChannel methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_engine");
-        methodChannel.setMethodCallHandler(plugin);
-
-        final EventChannel eventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_event_handler");
-        eventChannel.setStreamHandler(plugin);
-
+        this.setupPlugin(application, textureRegistry, methodChannel, eventChannel);
     }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+
+        this.methodChannel.setMethodCallHandler(null);
+        this.methodChannel = null;
+
+        this.eventChannel.setStreamHandler(null);
+        this.eventChannel = null;
+    }
+
+
+    /* Adapt to Flutter versions before 1.12 */
+
+    // V1 embedding
 
     // This static function is optional and equivalent to onAttachedToEngine. It supports the old
     // pre-Flutter-1.12 Android projects. You are encouraged to continue supporting
@@ -62,15 +83,32 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     // in the same class.
     public static void registerWith(Registrar registrar) {
 
-        ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin((Application) registrar.context(), registrar.textures());
+        Application application = (Application) registrar.context();
+        TextureRegistry textureRegistry = registrar.textures();
+        MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "plugins.zego.im/zego_express_engine");
+        EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.zego.im/zego_express_event_handler");
 
-        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "plugins.zego.im/zego_express_engine");
-        methodChannel.setMethodCallHandler(plugin);
-
-        final EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.zego.im/zego_express_event_handler");
-        eventChannel.setStreamHandler(plugin);
-
+        ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin();
+        plugin.setupPlugin(application, textureRegistry, methodChannel, eventChannel);
     }
+
+
+    /* Setup ZegoExpressEngine Plugin */
+
+    private void setupPlugin(Application application, TextureRegistry textureRegistry, MethodChannel methodChannel, EventChannel eventChannel) {
+
+        this.application = application;
+        this.textureRegistry =  textureRegistry;
+
+        this.methodChannel = methodChannel;
+        this.methodChannel.setMethodCallHandler(this);
+
+        this.eventChannel = eventChannel;
+        this.eventChannel.setStreamHandler(this);
+    }
+
+
+    /* EventChannel.StreamHandler Interface */
 
     @Override
     public void onListen(Object arguments, EventChannel.EventSink events) {
@@ -81,6 +119,10 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     public void onCancel(Object arguments) {
         this.sink = null;
     }
+
+
+
+    /* MethodCallHandler Interface */
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
@@ -110,7 +152,4 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         }
     }
 
-    @Override
-    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    }
 }
