@@ -7,50 +7,51 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+    @override
+    _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+    String version = 'Unknown';
 
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
+    // Apply AppID and AppSign from Zego
+    final int appID = 1234567890;
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await ZegoExpressEngine.getVersion();
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+    // Apply AppID and AppSign from Zego
+    final String appSign = 'abcdefghijklmnopqrstuvwzyv123456789abcdefghijklmnopqrstuvwzyz123';
+
+    // Use Test Environment
+    final bool isTestEnv = true;
+
+    // Specify General Scenario
+    final ZegoScenario scenario = ZegoScenario.General;
+
+    @override
+    void initState() {
+        super.initState();
+
+        // Get SDK Version
+        ZegoExpressEngine.getVersion().then((ver) {
+            setState(() {
+              version = ver;
+            });
+        });
+
+        // Create ZegoExpressEngine
+        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario);
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
-      ),
-    );
-  }
+    @override
+    Widget build(BuildContext context) {
+        return MaterialApp(
+            home: Scaffold(
+                appBar: AppBar(
+                    title: const Text('ZegoExpressEngine'),
+                ),
+                body: Center(
+                    child: Text('Version: $version\n'),
+                ),
+            ),
+        );
+    }
 }
