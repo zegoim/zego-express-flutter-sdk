@@ -35,7 +35,7 @@ class ZegoExpressImpl {
     /* Main */
 
     static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool enablePlatformView}) async {
-        final int error = await _channel.invokeMethod('createEngine', {
+        await _channel.invokeMethod('createEngine', {
             'appID': appID,
             'appSign': appSign,
             'isTestEnv': isTestEnv,
@@ -43,9 +43,7 @@ class ZegoExpressImpl {
             'enablePlatformView': enablePlatformView ?? false
         });
 
-        if (error == 0) {
-            _registerEventHandler();
-        }
+        _registerEventHandler();
 
         return null;
     }
@@ -892,11 +890,4 @@ class ZegoExpressImpl {
         }
 
     }
-
-
-
-
-
-
-
 }

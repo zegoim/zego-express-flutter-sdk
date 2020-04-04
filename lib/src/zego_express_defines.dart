@@ -418,11 +418,6 @@ class ZegoRoomConfig {
         token = "";
     }
 
-    ZegoRoomConfig.fromMap(Map<dynamic, dynamic> map):
-        maxMemberCount = map['maxMemberCount'],
-        isUserStatusNotify = map['isUserStatusNotify'],
-        token = map['token'];
-
     Map<String, dynamic> toMap() {
         return {
             'maxMemberCount': this.maxMemberCount,
@@ -518,15 +513,6 @@ class ZegoVideoConfig {
         }
     }
 
-    ZegoVideoConfig.fromMap(Map<dynamic, dynamic> map):
-        captureWidth = map['captureWidth'],
-        captureHeight = map['captureHeight'],
-        encodeWidth = map['encodeWidth'],
-        encodeHeight = map['encodeHeight'],
-        fps = map['fps'],
-        bitrate = map['bitrate'],
-        codecID = map['codecID'];
-
     Map<String, dynamic> toMap() {
         return {
             'captureWidth': this.captureWidth,
@@ -597,49 +583,6 @@ class ZegoStream {
         streamID = map['streamID'],
         extraInfo = map['extraInfo'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'user': this.user.toMap(),
-            'streamID': this.streamID,
-            'extraInfo': this.extraInfo
-        };
-    }
-
-}
-
-/// View related coordinates
-///
-class ZegoRect {
-
-    /// The horizontal offset from the top-left corner
-    int x;
-
-    /// The vertical offset from the top-left corner
-    int y;
-
-    /// The width of the rectangle
-    int width;
-
-    /// The height of the rectangle
-    int height;
-
-    ZegoRect(this.x, this.y, this.width, this.height): assert(x != null), assert(y != null), assert(width != null), assert(height != null);
-
-    ZegoRect.fromMap(Map<dynamic, dynamic> map):
-        x = map['x'],
-        y = map['y'],
-        width = map['width'],
-        height = map['height'];
-
-    Map<String, dynamic> toMap() {
-        return {
-            'x': this.x,
-            'y': this.y,
-            'width': this.width,
-            'height': this.height
-        };
-    }
-
 }
 
 /// View object
@@ -647,7 +590,7 @@ class ZegoRect {
 /// Configure view object, view Mode, background color
 class ZegoCanvas {
 
-    /// ViewID, if [enablePlatformView] is set to [true] when [createEngine], this parameter is [PlatformViewID], otherwise it is [TextureID]
+    /// ViewID, if [enablePlatformView] is set to [true] in [createEngine], this parameter is the PlatformViewID returned by calling [createPlatformView], otherwise it is the TextureID returned by calling [createTextureRenderer]
     int view;
 
     /// View mode, default is ZegoViewModeAspectFit
@@ -664,11 +607,6 @@ class ZegoCanvas {
         this.viewMode = ZegoViewMode.AspectFit;
         this.backgroundColor = 0x000000;
     }
-
-    ZegoCanvas.fromMap(Map<dynamic, dynamic> map):
-        view = map['view'],
-        viewMode = map['viewMode'],
-        backgroundColor = map['backgroundColor'];
 
     Map<String, dynamic> toMap() {
         return {
@@ -733,22 +671,6 @@ class ZegoPublishStreamQuality {
         level = map['level'],
         isHardwareEncode = map['isHardwareEncode'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'videoCaptureFPS': this.videoCaptureFPS,
-            'videoEncodeFPS': this.videoEncodeFPS,
-            'videoSendFPS': this.videoSendFPS,
-            'videoKBPS': this.videoKBPS,
-            'audioCaptureFPS': this.audioCaptureFPS,
-            'audioSendFPS': this.audioSendFPS,
-            'audioKBPS': this.audioKBPS,
-            'rtt': this.rtt,
-            'packetLostRate': this.packetLostRate,
-            'level': this.level.index,
-            'isHardwareEncode': this.isHardwareEncode
-        };
-    }
-
 }
 
 /// CDN config object
@@ -801,15 +723,6 @@ class ZegoStreamRelayCDNInfo {
         state = map['state'],
         updateReason = map['updateReason'],
         stateTime = map['stateTime'];
-
-    Map<String, dynamic> toMap() {
-        return {
-            'url': this.url,
-            'state': this.state.index,
-            'updateReason': this.updateReason.index,
-            'stateTime': this.stateTime
-        };
-    }
 
 }
 
@@ -900,24 +813,6 @@ class ZegoPlayStreamQuality {
         delay = map['delay'],
         isHardwareDecode = map['isHardwareDecode'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'videoRecvFPS': this.videoRecvFPS,
-            'videoDecodeFPS': this.videoDecodeFPS,
-            'videoRenderFPS': this.videoRenderFPS,
-            'videoKBPS': this.videoKBPS,
-            'audioRecvFPS': this.audioRecvFPS,
-            'audioDecodeFPS': this.audioDecodeFPS,
-            'audioRenderFPS': this.audioRenderFPS,
-            'audioKBPS': this.audioKBPS,
-            'rtt': this.rtt,
-            'packetLostRate': this.packetLostRate,
-            'level': this.level.index,
-            'delay': this.delay,
-            'isHardwareDecode': this.isHardwareDecode
-        };
-    }
-
 }
 
 /// Device Info
@@ -936,13 +831,6 @@ class ZegoDeviceInfo {
     ZegoDeviceInfo.fromMap(Map<dynamic, dynamic> map):
         deviceID = map['deviceID'],
         deviceName = map['deviceName'];
-
-    Map<String, dynamic> toMap() {
-        return {
-            'deviceID': this.deviceID,
-            'deviceName': this.deviceName
-        };
-    }
 
 }
 
@@ -968,11 +856,6 @@ class ZegoBeautifyOption {
         whitenFactor = 0.5;
         sharpenFactor = 0.1;
     }
-
-    ZegoBeautifyOption.fromMap(Map<dynamic, dynamic> map):
-        polishStep = map['polishStep'],
-        whitenFactor = map['whitenFactor'],
-        sharpenFactor = map['sharpenFactor'];
 
     Map<String, dynamic> toMap() {
         return {
@@ -1007,11 +890,6 @@ class ZegoMixerAudioConfig {
         codecID = ZegoAudioCodecID.Normal;
     }
 
-    ZegoMixerAudioConfig.fromMap(Map<dynamic, dynamic> map):
-        bitrate = map['bitrate'],
-        channel = map['channel'],
-        codecID = map['codecID'];
-
     Map<String, dynamic> toMap() {
         return {
             'bitrate': this.bitrate,
@@ -1042,19 +920,12 @@ class ZegoMixerVideoConfig {
     ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate): assert(width != null), assert(height != null), assert(fps != null), assert(bitrate != null);
 
     /// Create a default mixer video configuration
-    ///
     ZegoMixerVideoConfig.defaultConfig() {
         width = 360;
         height = 640;
         fps = 15;
         bitrate = 600;
     }
-
-    ZegoMixerVideoConfig.fromMap(Map<dynamic, dynamic> map):
-        width = map['width'],
-        height = map['height'],
-        fps = map['fps'],
-        bitrate = map['bitrate'];
 
     Map<String, dynamic> toMap() {
         return {
@@ -1086,12 +957,6 @@ class ZegoMixerInput {
 
     ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID): assert(streamID != null), assert(contentType != null), assert(layout != null), assert(soundLevelID != null);
 
-    ZegoMixerInput.fromMap(Map<dynamic, dynamic> map):
-        streamID = map['streamID'],
-        contentType = map['contentType'],
-        layout = map['layout'],
-        soundLevelID = map['soundLevelID'];
-
     Map<String, dynamic> toMap() {
         return {
             'streamID': this.streamID,
@@ -1113,9 +978,6 @@ class ZegoMixerOutput {
 
     ZegoMixerOutput(this.target): assert(target != null);
 
-    ZegoMixerOutput.fromMap(Map<dynamic, dynamic> map):
-        target = map['target'];
-
     Map<String, dynamic> toMap() {
         return {
             'target': this.target
@@ -1136,10 +998,6 @@ class ZegoWatermark {
     Rect layout;
 
     ZegoWatermark(this.imageURL, this.layout): assert(imageURL != null), assert(layout != null);
-
-    ZegoWatermark.fromMap(Map<dynamic, dynamic> map):
-        imageURL = map['imageURL'],
-        layout = map['layout'];
 
     Map<String, dynamic> toMap() {
         return {
@@ -1232,15 +1090,6 @@ class ZegoBroadcastMessageInfo {
         sendTime = map['sendTime'],
         fromUser = ZegoUser.fromMap(map['fromUser']);
 
-    Map<String, dynamic> toMap() {
-        return {
-            'message': this.message,
-            'messageID': this.messageID,
-            'sendTime': this.sendTime,
-            'fromUser': this.fromUser.toMap()
-        };
-    }
-
 }
 
 /// Barrage message info
@@ -1267,15 +1116,6 @@ class ZegoBarrageMessageInfo {
         messageID = map['messageID'],
         sendTime = map['sendTime'],
         fromUser = ZegoUser.fromMap(map['fromUser']);
-
-    Map<String, dynamic> toMap() {
-        return {
-            'message': this.message,
-            'messageID': this.messageID,
-            'sendTime': this.sendTime,
-            'fromUser': this.fromUser.toMap()
-        };
-    }
 
 }
 
@@ -1323,11 +1163,6 @@ class ZegoAudioConfig {
         }
     }
 
-    ZegoAudioConfig.fromMap(Map<dynamic, dynamic> map):
-        bitrate = map['bitrate'],
-        channel = map['channel'],
-        codecID = map['codecID'];
-
     Map<String, dynamic> toMap() {
         return {
             'bitrate': this.bitrate,
@@ -1351,12 +1186,6 @@ class ZegoPublisherSetStreamExtraInfoResult {
     ZegoPublisherSetStreamExtraInfoResult.fromMap(Map<dynamic, dynamic> map):
         errorCode = map['errorCode'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode
-        };
-    }
-
 }
 
 /// Callback for add/remove CDN URL
@@ -1371,12 +1200,6 @@ class ZegoPublisherUpdateCdnUrlResult {
 
     ZegoPublisherUpdateCdnUrlResult.fromMap(Map<dynamic, dynamic> map):
         errorCode = map['errorCode'];
-
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode
-        };
-    }
 
 }
 
@@ -1398,13 +1221,6 @@ class ZegoMixerStartResult {
         errorCode = map['errorCode'],
         extendedData = map['extendedData'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode,
-            'extendedData': this.extendedData
-        };
-    }
-
 }
 
 /// Results of stoping a mixer task
@@ -1419,12 +1235,6 @@ class ZegoMixerStopResult {
 
     ZegoMixerStopResult.fromMap(Map<dynamic, dynamic> map):
         errorCode = map['errorCode'];
-
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode
-        };
-    }
 
 }
 
@@ -1446,13 +1256,6 @@ class ZegoIMSendBroadcastMessageResult {
         errorCode = map['errorCode'],
         messageID = map['messageID'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode,
-            'messageID': this.messageID
-        };
-    }
-
 }
 
 /// Callback for sending barrage message
@@ -1473,13 +1276,6 @@ class ZegoIMSendBarrageMessageResult {
         errorCode = map['errorCode'],
         messageID = map['messageID'];
 
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode,
-            'messageID': this.messageID
-        };
-    }
-
 }
 
 /// Callback for sending custom command
@@ -1494,12 +1290,6 @@ class ZegoIMSendCustomCommandResult {
 
     ZegoIMSendCustomCommandResult.fromMap(Map<dynamic, dynamic> map):
         errorCode = map['errorCode'];
-
-    Map<String, dynamic> toMap() {
-        return {
-            'errorCode': this.errorCode
-        };
-    }
 
 }
 
