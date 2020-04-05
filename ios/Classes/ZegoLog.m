@@ -41,7 +41,8 @@
 }
 
 + (void)log:(NSString *)content {
-    zego_liveroom_custom_log(content.UTF8String);
+//    zego_liveroom_custom_log(content.UTF8String);
+    NSLog(@"%@", content);
 }
 
 @end

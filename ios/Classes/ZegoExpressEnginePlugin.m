@@ -98,7 +98,7 @@
     } else if ([@"createEngine" isEqualToString:call.method]) {
         
         unsigned int appID = [ZegoUtils unsignedIntValue:args[@"appID"]];
-        NSString *appSign = args[@"appID"];
+        NSString *appSign = args[@"appSign"];
         BOOL isTestEnv = [ZegoUtils boolValue:args[@"isTestEnv"]];
         int scenario = [ZegoUtils intValue:args[@"scenario"]];
         BOOL enablePlatformView = [ZegoUtils boolValue:args[@"enablePlatformView"]];
@@ -161,7 +161,7 @@
         
         ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
         
-        if (configMap) {
+        if (configMap && configMap.count > 0) {
             unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
             BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
             NSString *token = configMap[@"token"];
@@ -471,7 +471,7 @@
         
         NSDictionary *watermarkMap = args[@"watermark"];
         ZegoWatermark *watermarkObject = nil;
-        if (watermarkMap) {
+        if (watermarkMap && watermarkMap.count > 0) {
             NSString *imageURL = watermarkMap[@"imageURL"];
             int left = [ZegoUtils intValue:watermarkMap[@"left"]];
             int top = [ZegoUtils intValue:watermarkMap[@"top"]];
@@ -655,7 +655,7 @@
         // MixerInput
         NSMutableArray<ZegoMixerInput *> *inputListObject = nil;
         NSArray<NSDictionary *> *inputListMap = args[@"inputList"];
-        if (inputListMap) {
+        if (inputListMap && inputListMap.count > 0) {
             inputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *inputMap in inputListMap) {
                 NSString *streamID = inputMap[@"streamID"];
@@ -678,41 +678,11 @@
         // MixerOutput
         NSMutableArray<ZegoMixerOutput *> *outputListObject = nil;
         NSArray<NSDictionary *> *outputListMap = args[@"outputList"];
-        if (outputListMap) {
+        if (outputListMap && outputListMap.count > 0) {
             outputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *outputMap in outputListMap) {
                 NSString *target = outputMap[@"target"];
-                
-                // MixerOutput AudioConfig
-                NSDictionary *audioConfigMap = outputMap[@"audioConfig"];
-                ZegoMixerAudioConfig *audioConfigObject = nil;
-                if (audioConfigMap) {
-                    int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
-                    int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
-                    int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
-                    audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
-                    audioConfigObject.bitrate = bitrate;
-                    audioConfigObject.channel = (ZegoAudioChannel)channel;
-                    audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
-                }
-                
-                // MixerOutput VideoConfig
-                NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                ZegoMixerVideoConfig *videoConfigObject = nil;
-                if (videoConfigMap) {
-                    int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
-                    int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
-                    int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
-                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                    videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
-                    videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
-                    videoConfigObject.bitrate = bitrate;
-                    videoConfigObject.fps = fps;
-                }
-                
                 ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
-                outputObject.audioConfig = audioConfigObject;
-                outputObject.videoConfig = videoConfigObject;
                 [outputListObject addObject:outputObject];
             }
         }
@@ -720,11 +690,46 @@
         if (outputListObject) {
             [taskObject setOutputList:outputListObject];
         }
+        
+        // AudioConfig
+        ZegoMixerAudioConfig *audioConfigObject = nil;
+        NSDictionary *audioConfigMap = args[@"audioConfig"];
+        if (audioConfigMap && audioConfigMap.count > 0) {
+            int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
+            int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
+            int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
+            audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
+            audioConfigObject.bitrate = bitrate;
+            audioConfigObject.channel = (ZegoAudioChannel)channel;
+            audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
+        }
+        
+        if (audioConfigObject) {
+            [taskObject setAudioConfig:audioConfigObject];
+        }
+        
+        // VideoConfig
+        ZegoMixerVideoConfig *videoConfigObject = nil;
+        NSDictionary *videoConfigMap = args[@"videoConfig"];
+        if (videoConfigMap && videoConfigMap.count > 0) {
+            int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
+            int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
+            int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
+            int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+            videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
+            videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
+            videoConfigObject.bitrate = bitrate;
+            videoConfigObject.fps = fps;
+        }
+        
+        if (videoConfigObject) {
+            [taskObject setVideoConfig:videoConfigObject];
+        }
                                                 
         // Watermark
         ZegoWatermark *watermarkObject = nil;
         NSDictionary *watermarkMap = args[@"watermark"];
-        if (watermarkMap) {
+        if (watermarkMap && watermarkMap.count > 0) {
             NSString *imageURL = watermarkMap[@"imageURL"];
             int left = [ZegoUtils intValue:watermarkMap[@"left"]];
             int top = [ZegoUtils intValue:watermarkMap[@"top"]];
@@ -765,7 +770,7 @@
         // MixerInput
         NSMutableArray<ZegoMixerInput *> *inputListObject = nil;
         NSArray<NSDictionary *> *inputListMap = args[@"inputList"];
-        if (inputListMap) {
+        if (inputListMap && inputListMap.count > 0) {
             inputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *inputMap in inputListMap) {
                 NSString *streamID = inputMap[@"streamID"];
@@ -788,41 +793,11 @@
         // MixerOutput
         NSMutableArray<ZegoMixerOutput *> *outputListObject = nil;
         NSArray<NSDictionary *> *outputListMap = args[@"outputList"];
-        if (outputListMap) {
+        if (outputListMap && outputListMap.count > 0) {
             outputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *outputMap in outputListMap) {
                 NSString *target = outputMap[@"target"];
-                
-                // MixerOutput AudioConfig
-                NSDictionary *audioConfigMap = outputMap[@"audioConfig"];
-                ZegoMixerAudioConfig *audioConfigObject = nil;
-                if (audioConfigMap) {
-                    int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
-                    int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
-                    int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
-                    audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
-                    audioConfigObject.bitrate = bitrate;
-                    audioConfigObject.channel = (ZegoAudioChannel)channel;
-                    audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
-                }
-                
-                // MixerOutput VideoConfig
-                NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                ZegoMixerVideoConfig *videoConfigObject = nil;
-                if (videoConfigMap) {
-                    int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
-                    int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
-                    int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
-                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                    videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
-                    videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
-                    videoConfigObject.bitrate = bitrate;
-                    videoConfigObject.fps = fps;
-                }
-                
                 ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
-                outputObject.audioConfig = audioConfigObject;
-                outputObject.videoConfig = videoConfigObject;
                 [outputListObject addObject:outputObject];
             }
         }
@@ -1007,7 +982,7 @@
         NSArray<NSDictionary *> *userListMap = args[@"toUserList"];
         
         NSMutableArray<ZegoUser *> *userListObject = nil;
-        if (userListMap) {
+        if (userListMap && userListMap.count > 0) {
             userListObject = [[NSMutableArray alloc] init];
             for(NSDictionary *userMap in userListMap) {
                 ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
