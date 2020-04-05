@@ -3,12 +3,12 @@
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
 
-#import "ZegoPlatformViewRenderController.h"
-#import "ZegoTextureRenderController.h"
+#import "ZegoPlatformViewFactory.h"
+#import "ZegoTextureRendererController.h"
 
 @interface ZegoExpressEnginePlugin()<FlutterStreamHandler, ZegoEventHandler>
 
-@property (nonatomic, assign) BOOL isEnablePlatformView;
+@property (nonatomic, assign) BOOL enablePlatformView;
 @property (nonatomic, strong) NSObject<FlutterPluginRegistrar> *registrar;
 
 @end
@@ -22,7 +22,7 @@
     if (self = [super init]) {
         
         _registrar = registrar;
-        _isEnablePlatformView = NO;
+        _enablePlatformView = NO;
     }
     
     return self;
@@ -83,39 +83,30 @@
     return nil;
 }
 
-- (void)throwCreateEngineError:(FlutterResult)result ofMethodName:(NSString*)methodName {
-    NSString *errorMessage = [NSString stringWithFormat:@"[ERROR]: %@ %@", methodName, @"Create engine error! Please check the parameters for errors."];
-    //[ZegoLog logNotice:[NSString stringWithFormat:@"[Flutter-Native] %@", errorMessage]];
-    result([FlutterError errorWithCode:[[NSString stringWithFormat:@"%@_ERROR", methodName] uppercaseString] message:errorMessage details:nil]);
-}
-
 #pragma mark - Engine Method Call
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     
     NSDictionary *args = call.arguments;
+    
     if ([@"getVersion" isEqualToString:call.method]) {
         
         result([ZegoExpressEngine getVersion]);
-        
-    } else if ([@"enablePlatformView" isEqualToString:call.method]) {
-      
-        BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
-        _isEnablePlatformView = enable;
-        result(nil);
         
 #pragma mark Main
         
     } else if ([@"createEngine" isEqualToString:call.method]) {
         
         unsigned int appID = [ZegoUtils unsignedIntValue:args[@"appID"]];
-        NSString *appSign = args[@"appID"];
+        NSString *appSign = args[@"appSign"];
         BOOL isTestEnv = [ZegoUtils boolValue:args[@"isTestEnv"]];
         int scenario = [ZegoUtils intValue:args[@"scenario"]];
+        BOOL enablePlatformView = [ZegoUtils boolValue:args[@"enablePlatformView"]];
+        
+        _enablePlatformView = enablePlatformView;
         
         ZegoEngineConfig *config = [[ZegoEngineConfig alloc] init];
-        if(!self.isEnablePlatformView)
-        {
+        if (!self.enablePlatformView) {
             ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
             renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
             renderConfig.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
@@ -124,30 +115,23 @@
         
         [ZegoExpressEngine setEngineConfig:config];
         
-        if ([ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self])
-        {
-            NSLog(@"create engine success");
+        [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self];
             
-            if(self.isEnablePlatformView)
-            {
-                [self.registrar registerViewFactory:[ZegoPlatformViewRenderController sharedInstance] withId:@"plugins.zego.im/zego_express_view"];
-            }
-            else
-            {
-                [[ZegoTextureRenderController sharedInstance] initController];
-            }
-            
-            result(@(0));
+        if (self.enablePlatformView) {
+            [self.registrar registerViewFactory:[ZegoPlatformViewFactory sharedInstance] withId:@"plugins.zego.im/zego_express_view"];
         } else {
-            [self throwCreateEngineError:result ofMethodName:call.method];
+            [[ZegoTextureRendererController sharedInstance] initController];
         }
+        
+        result(nil);
       
     } else if ([@"destroyEngine" isEqualToString:call.method]) {
         
         [ZegoExpressEngine destroyEngine:nil];
-        if(!self.isEnablePlatformView)
-        {
-            [[ZegoTextureRenderController sharedInstance] uninitController];
+        
+        if (!self.enablePlatformView) {
+            // uninit texture render
+            [[ZegoTextureRendererController sharedInstance] uninitController];
         }
         
         result(nil);
@@ -177,7 +161,7 @@
         
         ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
         
-        if (configMap) {
+        if (configMap && configMap.count > 0) {
             unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
             BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
             NSString *token = configMap[@"token"];
@@ -226,78 +210,103 @@
         NSString *extraInfo = args[@"extraInfo"];
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
-        // TODO: 参数顺序
-        [[ZegoExpressEngine sharedEngine] setStreamExtraInfo:extraInfo callback:^(int errorCode) {
+        [[ZegoExpressEngine sharedEngine] setStreamExtraInfo:extraInfo channel:(ZegoPublishChannel)channel callback:^(int errorCode) {
             result(@{@"errorCode": @(errorCode)});
-        } channel:(ZegoPublishChannel)channel];
+        }];
         
     } else if([@"createTextureRenderer" isEqualToString:call.method]) {
         
         int viewWidth = [ZegoUtils intValue:args[@"width"]];
         int viewHeight = [ZegoUtils intValue:args[@"height"]];
         
-        int64_t textureID = [[ZegoTextureRenderController sharedInstance] createRenderer:[self.registrar textures] viewWidth:viewWidth viewHeight:viewHeight];
+        int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:[self.registrar textures] viewWidth:viewWidth viewHeight:viewHeight];
         
         result(@(textureID));
+        
+    } else if ([@"updateTextureRendererSize" isEqualToString:call.method]) {
+        
+        int64_t textureID = [ZegoUtils longLongValue:args[@"textureID"]];
+        int viewWidth = [ZegoUtils intValue:args[@"width"]];
+        int viewHeight = [ZegoUtils intValue:args[@"height"]];
+        [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
         
     } else if([@"destroyTextureRenderer" isEqualToString:call.method]) {
         
         int64_t textureID = [ZegoUtils longLongValue:args[@"textureID"]];
-        [[ZegoTextureRenderController sharedInstance] releaseRenderer: textureID];
+        [[ZegoTextureRendererController sharedInstance] destroyTextureRenderer: textureID];
         
         result(nil);
         
-    } else if([@"destroyPlatfornView" isEqualToString:call.method]) {
+    } else if([@"destroyPlatformView" isEqualToString:call.method]) {
         
         int viewID = [ZegoUtils intValue:args[@"viewID"]];
-        [[ZegoPlatformViewRenderController sharedInstance] removeView:@(viewID)];
+        [[ZegoPlatformViewFactory sharedInstance] destroyPlatformView:@(viewID)];
         
         result(nil);
         
     } else if ([@"startPreview" isEqualToString:call.method]) {
-        // TODO: 预览
-        NSDictionary *canvas = args[@"canvas"];
+        
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
-        // 使用platform view时为viewID，使用Texture时为textureID,对外传入都叫viewID
-        int64_t viewID = [ZegoUtils longLongValue:canvas[@"viewID"]];
-        int viewMode = [ZegoUtils intValue:canvas[@"viewMode"]];
+        // Handle ZegoCanvas
         
+        NSDictionary *canvasMap = args[@"canvas"];
         
-        if(self.isEnablePlatformView) {
-            // 使用Platform View 预览
-            ZegoPlatformViewRenderer *renderer = [[ZegoPlatformViewRenderController sharedInstance] getRenderer:@(viewID)];
-            if(renderer) {
-                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[renderer getUIView]];
-                canvas.viewMode = (ZegoViewMode)viewMode;
-                [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
-            } else {
-                //TODO: 直接抛出Flutter异常
-            }
-
-        } else {
-            // 使用Texture渲染
-            if([[ZegoTextureRenderController sharedInstance] addCaptureRenderer:viewID ofKey:@(channel)]) {
+        if (canvasMap && canvasMap.count > 0) {
+            // Preview video
+            
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+            int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+            int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+            
+            if (self.enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
                 
-                [[ZegoTextureRenderController sharedInstance] startRendering];
+                if (platformView) {
+                    ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                    canvas.viewMode = (ZegoViewMode)viewMode;
+                    canvas.backgroundColor = backgroundColor;
+                    
+                    [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
+                } else {
+                    // Preview video without creating the PlatfromView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
+                    // TODO: Throw Flutter Exception
+                }
+
             } else {
-                //兼容纯音频预览
+                // Render with Texture
+                if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel)]) {
+                    [[ZegoTextureRendererController sharedInstance] startRendering];
+                } else {
+                    // Preview video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    // TODO: Throw Flutter Exception
+                }
+                
+                // Using Custom Video Renderer
+                [[ZegoExpressEngine sharedEngine] startPreview:nil channel:(ZegoPublishChannel)channel];
             }
             
+        } else { /* if (canvas && canvas.count > 0) */
+            
+            // Preview audio only
             [[ZegoExpressEngine sharedEngine] startPreview:nil channel:(ZegoPublishChannel)channel];
         }
         
         result(nil);
         
     } else if ([@"stopPreview" isEqualToString:call.method]) {
-        // TODO: 预览
-        int channel = [ZegoUtils intValue:args[@"channel"]];
-        [[ZegoExpressEngine sharedEngine] stopPreview:(ZegoPublishChannel) channel];
         
-        if(!self.isEnablePlatformView) {
-            
-            [[ZegoTextureRenderController sharedInstance] removeCaptureRenderer:@(channel)];
-            [[ZegoTextureRenderController sharedInstance] stopRendering];
+        int channel = [ZegoUtils intValue:args[@"channel"]];
+        [[ZegoExpressEngine sharedEngine] stopPreview:(ZegoPublishChannel)channel];
+        
+        if (!self.enablePlatformView) {
+            // Stop Texture Renderer
+            [[ZegoTextureRendererController sharedInstance] removeCapturedRenderer:@(channel)];
+            [[ZegoTextureRendererController sharedInstance] stopRendering];
         }
         
         result(nil);
@@ -419,21 +428,21 @@
         
         result(nil);
         
-    } else if ([@"addPublishCDNURL" isEqualToString:call.method]) {
+    } else if ([@"addPublishCdnUrl" isEqualToString:call.method]) {
         
         NSString *targetURL = args[@"targetURL"];
         NSString *streamID = args[@"streamID"];
         
-        [[ZegoExpressEngine sharedEngine] addPublishCDNURL:targetURL streamID:streamID callback:^(int errorCode) {
+        [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
             result(@{@"errorCode": @(errorCode)});
         }];
       
-    } else if ([@"removePublishCDNURL" isEqualToString:call.method]) {
+    } else if ([@"removePublishCdnUrl" isEqualToString:call.method]) {
         
         NSString *targetURL = args[@"targetURL"];
         NSString *streamID = args[@"streamID"];
         
-        [[ZegoExpressEngine sharedEngine] removePublishCDNURL:targetURL streamID:streamID callback:^(int errorCode) {
+        [[ZegoExpressEngine sharedEngine] removePublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
             result(@{@"errorCode": @(errorCode)});
         }];
         
@@ -444,11 +453,11 @@
         ZegoCDNConfig *cdnConfig = nil;
         NSDictionary *config = args[@"config"];
         if (config) {
-            NSString *URL = config[@"URL"];
+            NSString *url = config[@"url"];
             NSString *authParam = config[@"authParam"];
             
             cdnConfig = [[ZegoCDNConfig alloc] init];
-            cdnConfig.URL = URL;
+            cdnConfig.url = url;
             cdnConfig.authParam = authParam;
         }
         
@@ -462,7 +471,7 @@
         
         NSDictionary *watermarkMap = args[@"watermark"];
         ZegoWatermark *watermarkObject = nil;
-        if (watermarkMap) {
+        if (watermarkMap && watermarkMap.count > 0) {
             NSString *imageURL = watermarkMap[@"imageURL"];
             int left = [ZegoUtils intValue:watermarkMap[@"left"]];
             int top = [ZegoUtils intValue:watermarkMap[@"top"]];
@@ -507,87 +516,92 @@
 #pragma mark Player
       
     } else if ([@"startPlayingStream" isEqualToString:call.method]) {
-        // TODO: 拉流
+        
         NSString *streamID = args[@"streamID"];
-        NSDictionary *canvas = args[@"canvas"];
-        int64_t viewID = [ZegoUtils longLongValue:canvas[@"viewID"]];
-        int mode = [ZegoUtils intValue:canvas[@"viewMode"]];
         
-        NSDictionary *playerConfig = args[@"config"];
+        // Handle ZegoPlayerConfig
         
-        if(self.isEnablePlatformView) {
-            // 使用PlatformView渲染
-            ZegoPlatformViewRenderer *renderer = [[ZegoPlatformViewRenderController sharedInstance] getRenderer:@(viewID)];
+        ZegoPlayerConfig *playerConfig = nil;
+        
+        NSDictionary *playerConfigMap = args[@"config"];
+        
+        if (playerConfigMap && playerConfigMap.count > 0) {
             
-            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[renderer getUIView]];
-            canvas.viewMode = mode;
+            playerConfig = [[ZegoPlayerConfig alloc] init];
+            playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
+            NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
             
-            if(playerConfig) {
-                ZegoPlayerConfig *objPlayerConfig = [[ZegoPlayerConfig alloc] init];
-                objPlayerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfig[@"videoLayer"]];
+            if (cdnConfigMap && cdnConfigMap.count > 0) {
+                ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
+                cdnConfig.url = cdnConfigMap[@"url"];
+                cdnConfig.authParam = cdnConfigMap[@"authParam"];
+                playerConfig.cdnConfig = cdnConfig;
+            }
+        }
+        
+        // Handle ZegoCanvas
+        
+        NSDictionary *canvasMap = args[@"canvas"];
+        
+        if (canvasMap && canvasMap.count > 0) {
+            // Play video
+            
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+            int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+            int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+                        
+            if (self.enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
                 
-                NSDictionary * cdnConfig = playerConfig[@"cdnConfig"];
-                if(cdnConfig) {
-                    ZegoCDNConfig *objCdnConfig = [[ZegoCDNConfig alloc] init];
-                    objCdnConfig.URL = cdnConfig[@"URL"];
-                    objCdnConfig.authParam = cdnConfig[@"authParam"];
-                    objPlayerConfig.CDNConfig = objCdnConfig;
+                if (platformView) {
+                    ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                    canvas.viewMode = (ZegoViewMode)viewMode;
+                    canvas.backgroundColor = backgroundColor;
+                    
+                    [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
+                } else {
+                    // Play video without creating the PlatfromView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
+                    // TODO: Throw Flutter Exception
                 }
                 
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:objPlayerConfig];
             } else {
-                
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas];
-            }
-            
-        } else {
-            // 使用Texture渲染
-            ZegoPlayerConfig *objPlayerConfig = nil;
-            if(playerConfig) {
-                objPlayerConfig = [[ZegoPlayerConfig alloc] init];
-                objPlayerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfig[@"videoLayer"]];
-                
-                NSDictionary * cdnConfig = playerConfig[@"cdnConfig"];
-                if(cdnConfig) {
-                    ZegoCDNConfig *objCdnConfig = [[ZegoCDNConfig alloc] init];
-                    objCdnConfig.URL = cdnConfig[@"URL"];
-                    objCdnConfig.authParam = cdnConfig[@"authParam"];
-                    objPlayerConfig.CDNConfig = objCdnConfig;
+                // Render with Texture
+                if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID]) {
+                    [[ZegoTextureRendererController sharedInstance] startRendering];
+                } else {
+                    // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    // TODO: Throw Flutter Exception
                 }
+                
+                // Using Custom Video Renderer
+                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
             }
             
-            if([[ZegoTextureRenderController sharedInstance] addRemoteRenderer:viewID ofKey:streamID]) {
-                [[ZegoTextureRenderController sharedInstance] startRendering];
-                
-            } else {
-                // 兼容纯音频拉流
-                
-            }
+        } else { /* if (canvas && canvas.count > 0) */
             
-            if(objPlayerConfig) {
-                
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas: nil config:objPlayerConfig];
-            } else {
-                
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas: nil];
-            }
+            // Play audio only
+            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
         }
         
         result(nil);
       
     } else if ([@"stopPlayingStream" isEqualToString:call.method]) {
-        // TODO: 拉流
+        
         NSString *streamID = args[@"streamID"];
         [[ZegoExpressEngine sharedEngine] stopPlayingStream:streamID];
         
-        if(!self.isEnablePlatformView) {
-            [[ZegoTextureRenderController sharedInstance] removeRemoteRenderer:streamID];
-            [[ZegoTextureRenderController sharedInstance] stopRendering];
+        if (!self.enablePlatformView) {
+            // Stop Texture render
+            [[ZegoTextureRendererController sharedInstance] removeRemoteRenderer:streamID];
+            [[ZegoTextureRendererController sharedInstance] stopRendering];
         }
         
+        result(nil);
         
-        
-      
     } else if ([@"setPlayVolume" isEqualToString:call.method]) {
         
         int volume = [ZegoUtils intValue:args[@"volume"]];
@@ -641,7 +655,7 @@
         // MixerInput
         NSMutableArray<ZegoMixerInput *> *inputListObject = nil;
         NSArray<NSDictionary *> *inputListMap = args[@"inputList"];
-        if (inputListMap) {
+        if (inputListMap && inputListMap.count > 0) {
             inputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *inputMap in inputListMap) {
                 NSString *streamID = inputMap[@"streamID"];
@@ -664,41 +678,11 @@
         // MixerOutput
         NSMutableArray<ZegoMixerOutput *> *outputListObject = nil;
         NSArray<NSDictionary *> *outputListMap = args[@"outputList"];
-        if (outputListMap) {
+        if (outputListMap && outputListMap.count > 0) {
             outputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *outputMap in outputListMap) {
                 NSString *target = outputMap[@"target"];
-                
-                // MixerOutput AudioConfig
-                NSDictionary *audioConfigMap = outputMap[@"audioConfig"];
-                ZegoMixerAudioConfig *audioConfigObject = nil;
-                if (audioConfigMap) {
-                    int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
-                    int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
-                    int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
-                    audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
-                    audioConfigObject.bitrate = bitrate;
-                    audioConfigObject.channel = (ZegoAudioChannel)channel;
-                    audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
-                }
-                
-                // MixerOutput VideoConfig
-                NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                ZegoMixerVideoConfig *videoConfigObject = nil;
-                if (videoConfigMap) {
-                    int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
-                    int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
-                    int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
-                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                    videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
-                    videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
-                    videoConfigObject.bitrate = bitrate;
-                    videoConfigObject.fps = fps;
-                }
-                
                 ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
-                outputObject.audioConfig = audioConfigObject;
-                outputObject.videoConfig = videoConfigObject;
                 [outputListObject addObject:outputObject];
             }
         }
@@ -706,11 +690,46 @@
         if (outputListObject) {
             [taskObject setOutputList:outputListObject];
         }
+        
+        // AudioConfig
+        ZegoMixerAudioConfig *audioConfigObject = nil;
+        NSDictionary *audioConfigMap = args[@"audioConfig"];
+        if (audioConfigMap && audioConfigMap.count > 0) {
+            int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
+            int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
+            int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
+            audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
+            audioConfigObject.bitrate = bitrate;
+            audioConfigObject.channel = (ZegoAudioChannel)channel;
+            audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
+        }
+        
+        if (audioConfigObject) {
+            [taskObject setAudioConfig:audioConfigObject];
+        }
+        
+        // VideoConfig
+        ZegoMixerVideoConfig *videoConfigObject = nil;
+        NSDictionary *videoConfigMap = args[@"videoConfig"];
+        if (videoConfigMap && videoConfigMap.count > 0) {
+            int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
+            int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
+            int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
+            int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+            videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
+            videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
+            videoConfigObject.bitrate = bitrate;
+            videoConfigObject.fps = fps;
+        }
+        
+        if (videoConfigObject) {
+            [taskObject setVideoConfig:videoConfigObject];
+        }
                                                 
         // Watermark
         ZegoWatermark *watermarkObject = nil;
         NSDictionary *watermarkMap = args[@"watermark"];
-        if (watermarkMap) {
+        if (watermarkMap && watermarkMap.count > 0) {
             NSString *imageURL = watermarkMap[@"imageURL"];
             int left = [ZegoUtils intValue:watermarkMap[@"left"]];
             int top = [ZegoUtils intValue:watermarkMap[@"top"]];
@@ -751,7 +770,7 @@
         // MixerInput
         NSMutableArray<ZegoMixerInput *> *inputListObject = nil;
         NSArray<NSDictionary *> *inputListMap = args[@"inputList"];
-        if (inputListMap) {
+        if (inputListMap && inputListMap.count > 0) {
             inputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *inputMap in inputListMap) {
                 NSString *streamID = inputMap[@"streamID"];
@@ -774,41 +793,11 @@
         // MixerOutput
         NSMutableArray<ZegoMixerOutput *> *outputListObject = nil;
         NSArray<NSDictionary *> *outputListMap = args[@"outputList"];
-        if (outputListMap) {
+        if (outputListMap && outputListMap.count > 0) {
             outputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *outputMap in outputListMap) {
                 NSString *target = outputMap[@"target"];
-                
-                // MixerOutput AudioConfig
-                NSDictionary *audioConfigMap = outputMap[@"audioConfig"];
-                ZegoMixerAudioConfig *audioConfigObject = nil;
-                if (audioConfigMap) {
-                    int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
-                    int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
-                    int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
-                    audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
-                    audioConfigObject.bitrate = bitrate;
-                    audioConfigObject.channel = (ZegoAudioChannel)channel;
-                    audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
-                }
-                
-                // MixerOutput VideoConfig
-                NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                ZegoMixerVideoConfig *videoConfigObject = nil;
-                if (videoConfigMap) {
-                    int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
-                    int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
-                    int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
-                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                    videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
-                    videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
-                    videoConfigObject.bitrate = bitrate;
-                    videoConfigObject.fps = fps;
-                }
-                
                 ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
-                outputObject.audioConfig = audioConfigObject;
-                outputObject.videoConfig = videoConfigObject;
                 [outputListObject addObject:outputObject];
             }
         }
@@ -837,11 +826,11 @@
         
         result(nil);
       
-    } else if ([@"muteAudioOutput" isEqualToString:call.method]) {
+    } else if ([@"muteSpeaker" isEqualToString:call.method]) {
         
         BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
         
-        [[ZegoExpressEngine sharedEngine] muteAudioOutput:mute];
+        [[ZegoExpressEngine sharedEngine] muteSpeaker:mute];
         
         result(nil);
       
@@ -993,7 +982,7 @@
         NSArray<NSDictionary *> *userListMap = args[@"toUserList"];
         
         NSMutableArray<ZegoUser *> *userListObject = nil;
-        if (userListMap) {
+        if (userListMap && userListMap.count > 0) {
             userListObject = [[NSMutableArray alloc] init];
             for(NSDictionary *userMap in userListMap) {
                 ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
@@ -1203,7 +1192,7 @@
         NSMutableArray *streamInfoListArray = [[NSMutableArray alloc] init];
         for (ZegoStreamRelayCDNInfo *info in streamInfoList) {
             [streamInfoListArray addObject:@{
-                @"URL": info.URL,
+                @"url": info.url,
                 @"state": @(info.state),
                 @"updateReason": @(info.updateReason),
                 @"stateTime": @(info.stateTime)
@@ -1332,7 +1321,7 @@
     if (sink) {
         sink(@{
             @"method": @"onPlayerRecvSEI",
-            @"data": data,
+            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
             @"streamID": streamID
         });
     }
@@ -1348,7 +1337,7 @@
         NSMutableArray *infoListArray = [[NSMutableArray alloc] init];
         for (ZegoStreamRelayCDNInfo *info in infoList) {
             [infoListArray addObject:@{
-                @"URL": info.URL,
+                @"url": info.url,
                 @"state": @(info.state),
                 @"updateReason": @(info.updateReason),
                 @"stateTime": @(info.stateTime)

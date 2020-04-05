@@ -1,20 +1,21 @@
 //
-//  ZegoPlatformViewRenderer.m
+//  ZegoPlatformView.m
 //  Pods-Runner
 //
 //  Created by lizhanpeng@ZEGO on 2020/3/26.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
-#import "ZegoPlatformViewRenderer.h"
+#import "ZegoPlatformView.h"
 
-@interface ZegoPlatformViewRenderer()
+@interface ZegoPlatformView()
 
 @property (nonatomic, strong) UIView *uiView;
 @property (nonatomic, assign) int64_t viewID;
 
 @end
 
-@implementation ZegoPlatformViewRenderer
+@implementation ZegoPlatformView
 
 - (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID {
     self = [super init];

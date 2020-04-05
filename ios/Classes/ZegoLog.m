@@ -3,6 +3,7 @@
 //  Pods-Runner
 //
 //  Created by Patrick Fu on 2020/3/25.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #import "ZegoLog.h"
@@ -40,7 +41,8 @@
 }
 
 + (void)log:(NSString *)content {
-    zego_liveroom_custom_log(content.UTF8String);
+//    zego_liveroom_custom_log(content.UTF8String);
+    NSLog(@"%@", content);
 }
 
 @end

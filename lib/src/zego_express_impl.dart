@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
@@ -34,7 +35,7 @@ class ZegoExpressImpl {
     /* Main */
 
     static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool enablePlatformView}) async {
-        final int error = await _channel.invokeMethod('createEngine', {
+        await _channel.invokeMethod('createEngine', {
             'appID': appID,
             'appSign': appSign,
             'isTestEnv': isTestEnv,
@@ -42,9 +43,7 @@ class ZegoExpressImpl {
             'enablePlatformView': enablePlatformView ?? false
         });
 
-        if (error == 0) {
-            _registerEventHandler();
-        }
+        _registerEventHandler();
 
         return null;
     }
@@ -79,7 +78,7 @@ class ZegoExpressImpl {
         return await _channel.invokeMethod('loginRoom', {
             'roomID': roomID,
             'user': user.toMap(),
-            'config': config?.toMap() ?? ''
+            'config': config?.toMap() ?? {}
         });
     }
 
@@ -95,20 +94,20 @@ class ZegoExpressImpl {
     Future<void> startPublishingStream(String streamID, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('startPublishingStream', {
             'streamID': streamID,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> stopPublishingStream({ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('stopPublishingStream', {
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<ZegoPublisherSetStreamExtraInfoResult> setStreamExtraInfo(String extraInfo, {ZegoPublishChannel channel}) async {
         final Map<dynamic, dynamic> map = await _channel.invokeMethod('setStreamExtraInfo', {
             'extraInfo': extraInfo,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
 
         return ZegoPublisherSetStreamExtraInfoResult.fromMap(map);
@@ -116,35 +115,35 @@ class ZegoExpressImpl {
 
     Future<void> startPreview({ZegoCanvas canvas, ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('startPreview', {
-            'canvas': canvas?.toMap() ?? '',
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'canvas': canvas?.toMap() ?? {},
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> stopPreview({ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('stopPreview', {
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> setVideoConfig(ZegoVideoConfig config, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('setVideoConfig', {
             'config': config.toMap(),
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('setVideoMirrorMode', {
             'mirrorMode': mirrorMode.index,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> setAppOrientation(DeviceOrientation orientation, ZegoPublishChannel channel) async {
         return await _channel.invokeMethod('setAppOrientation', {
             'orientation': orientation.index,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
@@ -157,14 +156,14 @@ class ZegoExpressImpl {
     Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('mutePublishStreamAudio', {
             'mute': mute,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> mutePublishStreamVideo(bool mute, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('mutePublishStreamVideo', {
             'mute': mute,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
@@ -210,15 +209,27 @@ class ZegoExpressImpl {
         return await _channel.invokeMethod('enablePublishDirectToCDN', {
             'enable': enable,
             'config': config.toMap(),
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
-    Future<void> setPublishWatermark(ZegoWatermark watermark, bool isPreviewVisible, {ZegoPublishChannel channel}) async {
+    Future<void> setPublishWatermark({ZegoWatermark watermark, bool isPreviewVisible, ZegoPublishChannel channel}) async {
+
+        Map<String, dynamic> watermarkMap = {};
+        if (watermark != null) {
+            watermarkMap = {
+                'imageURL': watermark.imageURL,
+                'left': watermark.layout.left,
+                'top': watermark.layout.top,
+                'right': watermark.layout.right,
+                'bottom': watermark.layout.bottom
+            };
+        }
+
         return await _channel.invokeMethod('setPublishWatermark', {
-            'watermark': watermark.toMap(),
-            'isPreviewVisible': isPreviewVisible,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'watermark': watermarkMap,
+            'isPreviewVisible': isPreviewVisible ?? false,
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
@@ -226,7 +237,7 @@ class ZegoExpressImpl {
         return await _channel.invokeMethod('sendSEI', {
             'data': data,
             'dataLength': dataLength,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
@@ -248,8 +259,8 @@ class ZegoExpressImpl {
     Future<void> startPlayingStream(String streamID, {ZegoCanvas canvas, ZegoPlayerConfig config}) async {
         return await _channel.invokeMethod('startPlayingStream', {
             'streamID': streamID,
-            'canvas': canvas?.toMap() ?? '',
-            'config': config?.toMap() ?? ''
+            'canvas': canvas?.toMap() ?? {},
+            'config': config?.toMap() ?? {}
         });
     }
 
@@ -346,8 +357,8 @@ class ZegoExpressImpl {
         });
     }
 
-    Future<void> muteAudioOutput(bool mute) async {
-        return await _channel.invokeMethod('muteAudioOutput', {
+    Future<void> muteSpeaker(bool mute) async {
+        return await _channel.invokeMethod('muteSpeaker', {
             'mute': mute
         });
     }
@@ -367,14 +378,14 @@ class ZegoExpressImpl {
     Future<void> enableCamera(bool enable, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('enableCamera', {
             'enable': enable,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('useFrontCamera', {
             'enable': enable,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
@@ -424,14 +435,14 @@ class ZegoExpressImpl {
     Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('enableBeautify', {
             'featureBitmask': featureBitmask,
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
     Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel channel}) async {
         return await _channel.invokeMethod('setBeautifyOption', {
             'option': option.toMap(),
-            'channel': channel ?? ZegoPublishChannel.Main.index
+            'channel': channel?.index ?? ZegoPublishChannel.Main.index
         });
     }
 
@@ -505,11 +516,13 @@ class ZegoExpressImpl {
             case 'onRoomStateUpdate':
                 if (ZegoExpressEngine.onRoomStateUpdate == null) return;
 
+                Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+
                 ZegoExpressEngine.onRoomStateUpdate(
                     map['roomID'],
                     ZegoRoomState.values[map['state']],
                     map['errorCode'],
-                    map['extendedData']
+                    extendedData
                 );
                 break;
 
@@ -569,11 +582,13 @@ class ZegoExpressImpl {
             case 'onPublisherStateUpdate':
                 if (ZegoExpressEngine.onPublisherStateUpdate == null) return;
 
+                Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+
                 ZegoExpressEngine.onPublisherStateUpdate(
                     map['streamID'],
                     ZegoPublisherState.values[map['state']],
                     map['errorCode'],
-                    map['extendedData']
+                    extendedData
                 );
                 break;
 
@@ -632,11 +647,13 @@ class ZegoExpressImpl {
             case 'onPlayerStateUpdate':
                 if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
 
+                Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+
                 ZegoExpressEngine.onPlayerStateUpdate(
                     map['streamID'],
                     ZegoPlayerState.values[map['state']],
                     map['errorCode'],
-                    map['extendedData']
+                    extendedData
                 );
                 break;
 
@@ -715,8 +732,8 @@ class ZegoExpressImpl {
                 }
 
                 ZegoExpressEngine.onMixerRelayCDNStateUpdate(
-                    infoList,
-                    map['taskID']
+                    map['taskID'],
+                    infoList
                 );
                 break;
 
@@ -873,11 +890,4 @@ class ZegoExpressImpl {
         }
 
     }
-
-
-
-
-
-
-
 }

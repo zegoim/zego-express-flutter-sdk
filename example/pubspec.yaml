@@ -2,12 +2,25 @@ name: zego_express_engine_example
 description: Demonstrates how to use the zego_express_engine plugin.
 publish_to: 'none'
 
+version: 1.0.0
+
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+
+  zego_express_engine:
+    path: ../
+
+  zego_permission:
+    git:
+      url: git://github.com/zegoim/zego-flutter-permission.git
+      ref: master
+
+  shared_preferences: ^0.5.6
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -16,9 +29,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  zego_express_engine:
-    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -3,6 +3,7 @@
 //  Pods
 //
 //  Created by lizhanpeng@ZEGO on 2020/3/26.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #ifndef ZegoTextureRenderer_h
@@ -14,6 +15,8 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef enum
 {
     ZegoRendererScaleAspectFit = 0,    ///< 等比缩放，可能有黑边
@@ -24,8 +27,8 @@ typedef enum
 @interface ZegoTextureRenderer : NSObject <FlutterTexture>
 
 @property (nonatomic, readonly) int64_t textureID;
-@property (nonatomic) int view_width;
-@property (nonatomic) int view_height;
+@property (nonatomic) int viewWidth;
+@property (nonatomic) int viewHeight;
 
 - (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height;
 
@@ -38,10 +41,8 @@ typedef enum
 - (BOOL)isNewFrameAvailable;
 - (void)notifyDrawNewFrame;
 
-//- (CVPixelBufferRef)getPixelBuffer;
-
-//- (void)releaseRenderer;
-
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* ZegoTextureRenderer_h */

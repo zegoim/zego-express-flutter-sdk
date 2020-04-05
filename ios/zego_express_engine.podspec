@@ -4,8 +4,8 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'zego_express_engine'
-  s.version          = '1.5.1'
-  s.summary          = 'A flutter plugin which can use zego audio/video services.'
+  s.version          = '1.5.5'
+  s.summary          = 'Zego Express Audio/Video Live SDK for Flutter'
   s.description      = <<-DESC
 A new Flutter plugin.
                        DESC
@@ -17,7 +17,7 @@ A new Flutter plugin.
   s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'ZegoExpressEngine', '1.5.1'
+  s.dependency 'ZegoExpressEngine', '1.5.5+hotfix.1'
   s.platform = :ios, '8.0'
   s.ios.deployment_target = '8.0'
   

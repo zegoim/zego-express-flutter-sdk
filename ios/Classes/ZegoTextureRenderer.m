@@ -3,6 +3,7 @@
 //  Pods-Runner
 //
 //  Created by lizhanpeng@ZEGO on 2020/3/26.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #import "ZegoTextureRenderer.h"
@@ -55,8 +56,8 @@
         _textureID  = [registry registerTexture:self];
         m_opengl_queue = dispatch_queue_create([[NSString stringWithFormat:@"opengl_queue%lld", _textureID] UTF8String], NULL);
        _lock = dispatch_semaphore_create(1);
-        _view_width = width;
-        _view_height = height;
+        _viewWidth = width;
+        _viewHeight = height;
         
         m_isUseMirror = NO;
         
@@ -66,7 +67,7 @@
         
         m_isNewFrameAvailable = NO;
         
-        [self createPixelBufferPool:&m_buffer_pool width:_view_width height:_view_height];
+        [self createPixelBufferPool:&m_buffer_pool width:_viewWidth height:_viewHeight];
         
         __weak ZegoTextureRenderer *weak_ptr = self;
         dispatch_async(m_opengl_queue, ^{
@@ -79,8 +80,7 @@
     return self;
 }
 
-- (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer
-{
+- (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer {
     
     dispatch_async(m_opengl_queue, ^{
         
@@ -104,12 +104,12 @@
         if(strong_ptr == nil)
             return;
         
-        if(strong_ptr.view_width != size.width || strong_ptr.view_height != size.height) {
-            strong_ptr.view_width = size.width;
-            strong_ptr.view_height = size.height;
+        if(strong_ptr.viewWidth != size.width || strong_ptr.viewHeight != size.height) {
+            strong_ptr.viewWidth = size.width;
+            strong_ptr.viewHeight = size.height;
             
             [strong_ptr destroyPixelBufferPool:self->m_buffer_pool];
-            [strong_ptr createPixelBufferPool:&self->m_buffer_pool width:strong_ptr.view_width height:strong_ptr.view_height];
+            [strong_ptr createPixelBufferPool:&self->m_buffer_pool width:strong_ptr.viewWidth height:strong_ptr.viewHeight];
             
             self->m_config_changed = YES;
             
@@ -132,10 +132,10 @@
     });
 }
 
-- (void)setUseMirrorEffect:(BOOL)isUse
-{
-    if(m_isUseMirror == isUse)
+- (void)setUseMirrorEffect:(BOOL)isUse {
+    if (m_isUseMirror == isUse) {
         return;
+    }
     
     __weak ZegoTextureRenderer *weak_ptr = self;
     dispatch_async(m_opengl_queue, ^{
@@ -151,8 +151,7 @@
     });
 }
 
-- (void)setBackgroundColor:(int)color
-{
+- (void)setBackgroundColor:(int)color {
     // TODO: 补充背景颜色
 }
 
@@ -296,30 +295,30 @@
     
     m_img_width = imageWidth;
     m_img_height = imageHeight;
-    //NSLog(@"setup vao, textureID: %lld, img :(%d, %d), view :(%d, %d),  ", _textureID, imageWidth, imageHeight, self.view_width, self.view_height);
+    //NSLog(@"setup vao, textureID: %lld, img :(%d, %d), view :(%d, %d),  ", _textureID, imageWidth, imageHeight, self.viewWidth, self.viewHeight);
     
     //实际倍数
-    float fViewRate = (float)self.view_width / (float)self.view_height;
+    float fViewRate = (float)self.viewWidth / (float)self.viewHeight;
     float fImageRate = (float)imageWidth / (float)imageHeight;
     
     if (m_view_mode == 0) {
         // * blackbar
         if(fImageRate > fViewRate) {
-            float actualHeight = self.view_width / fImageRate;
-            fHeightScale = actualHeight / (float)self.view_height;
+            float actualHeight = self.viewWidth / fImageRate;
+            fHeightScale = actualHeight / (float)self.viewHeight;
         }else {
-            float actualWidth = self.view_height * fImageRate;
-            fWidthScale = actualWidth / (float)self.view_width;
+            float actualWidth = self.viewHeight * fImageRate;
+            fWidthScale = actualWidth / (float)self.viewWidth;
         }
     } else if(m_view_mode == 1) {
         // * crop
         if(fImageRate > fViewRate) {
-            float actualWidth = self.view_height * fImageRate;
-            fWidthScale = actualWidth / (float)self.view_width;
+            float actualWidth = self.viewHeight * fImageRate;
+            fWidthScale = actualWidth / (float)self.viewWidth;
 
         }else {
-            float actualHeight = self.view_width / fImageRate;
-            fHeightScale = actualHeight / (float)self.view_height;
+            float actualHeight = self.viewWidth / fImageRate;
+            fHeightScale = actualHeight / (float)self.viewHeight;
             
         }
     } else if(m_view_mode == 2) {
@@ -390,7 +389,7 @@
         glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, CVOpenGLESTextureGetName(m_output_texture), 0);
         
-        glViewport(0, 0, self.view_width, self.view_height);
+        glViewport(0, 0, self.viewWidth, self.viewHeight);
         
         // 黑色背景用于填充黑边
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

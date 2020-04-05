@@ -1,6 +1,6 @@
 name: zego_express_engine
-description: A flutter plugin that can provide real-time communication and live video broadcast.
-version: 1.5.1
+description: Zego Express Audio/Video Live SDK for Flutter
+version: 1.5.5
 author: ZEGO <developer@zego.im>
 homepage: https://zego.im
 

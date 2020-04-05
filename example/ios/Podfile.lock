@@ -1,15 +1,27 @@
 PODS:
   - Flutter (1.0.0)
-  - zego_express_engine (1.5.1):
+  - shared_preferences (0.0.1):
     - Flutter
-    - ZegoExpressEngine (= 1.5.1)
-  - ZegoExpressEngine (1.5.1):
-    - ZegoExpressEngine/Video_en (= 1.5.1)
-  - ZegoExpressEngine/Video_en (1.5.1)
+  - shared_preferences_macos (0.0.1):
+    - Flutter
+  - shared_preferences_web (0.0.1):
+    - Flutter
+  - zego_express_engine (1.5.5):
+    - Flutter
+    - "ZegoExpressEngine (= 1.5.5+hotfix.1)"
+  - zego_permission (0.0.1):
+    - Flutter
+  - "ZegoExpressEngine (1.5.5+hotfix.1)":
+    - "ZegoExpressEngine/Video_en (= 1.5.5+hotfix.1)"
+  - "ZegoExpressEngine/Video_en (1.5.5+hotfix.1)"
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - shared_preferences_macos (from `.symlinks/plugins/shared_preferences_macos/ios`)
+  - shared_preferences_web (from `.symlinks/plugins/shared_preferences_web/ios`)
   - zego_express_engine (from `.symlinks/plugins/zego_express_engine/ios`)
+  - zego_permission (from `.symlinks/plugins/zego_permission/ios`)
 
 SPEC REPOS:
   trunk:
@@ -18,13 +30,25 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
+  shared_preferences_macos:
+    :path: ".symlinks/plugins/shared_preferences_macos/ios"
+  shared_preferences_web:
+    :path: ".symlinks/plugins/shared_preferences_web/ios"
   zego_express_engine:
     :path: ".symlinks/plugins/zego_express_engine/ios"
+  zego_permission:
+    :path: ".symlinks/plugins/zego_permission/ios"
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  zego_express_engine: 45907a185dfaa8a3baed31e8e04c8d818fdc2e45
-  ZegoExpressEngine: 689b2427ce65ae88ae09012a0e8f412d791be5ee
+  shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
+  shared_preferences_macos: f3f29b71ccbb56bf40c9dd6396c9acf15e214087
+  shared_preferences_web: 141cce0c3ed1a1c5bf2a0e44f52d31eeb66e5ea9
+  zego_express_engine: 5d1a0257f03c0c452f6067cf50e28baa27263faf
+  zego_permission: 0a12f978f018fa7a5becc3fce76d04a790897879
+  ZegoExpressEngine: 3aa309fe39b25115641e3fd75c3b5b7581bbe2db
 
 PODFILE CHECKSUM: 3dbe063e9c90a5d7c9e4e76e70a821b9e2c1d271
 
