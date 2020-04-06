@@ -15,21 +15,14 @@ class ZegoExpressImpl {
     /// Used to receive the native event stream
     static StreamSubscription<dynamic> _streamSubscription;
 
-    /// Singleton instance
-    static ZegoExpressImpl _instance;
-
     /// Private constructor
     ZegoExpressImpl._internal();
 
-    /// Returns Impl singleton instance
-    static ZegoExpressImpl get instance {
-        return _instance ?? new ZegoExpressImpl._internal();
-    }
+    /// Singleton instance
+    static final ZegoExpressImpl instance = ZegoExpressImpl._internal();
 
     /// Exposing methodChannel to other files
-    static MethodChannel get methodChannel {
-        return _channel;
-    }
+    static MethodChannel get methodChannel => _channel;
 
 
     /* Main */
