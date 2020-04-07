@@ -26,7 +26,6 @@ class ZegoConfig {
   bool isPublishMirror;
 
   ZegoConfig._internal() {
-    print('zego config init');
 
     SharedPreferences.getInstance().then((config) {
 
