@@ -23,6 +23,7 @@ public class ZegoTextureRendererController {
             synchronized (ZegoTextureRendererController.class) {
                 if (instance == null) {
                     instance = new ZegoTextureRendererController();
+                    instance.renderers = new HashMap<>();
                 }
             }
         }

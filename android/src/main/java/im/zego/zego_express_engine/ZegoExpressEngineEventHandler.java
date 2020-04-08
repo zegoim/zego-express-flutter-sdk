@@ -245,7 +245,7 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
 
         HashMap<String, Object> map = new HashMap<>();
 
-        map.put("method", "onPublisherQualityUpdate");
+        map.put("method", "onPlayerQualityUpdate");
         map.put("streamID", streamID);
         map.put("quality", qualityMap);
 

@@ -105,7 +105,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void loginRoom(MethodCall call, Result result) {
 
         String roomID = call.argument("roomID");
-        ZegoUser user = new ZegoUser((String)call.argument("userID"), (String)call.argument("userName"));
+
+        HashMap<String, Object> userMap = call.argument("user");
+        ZegoUser user = new ZegoUser((String) userMap.get("userID"), (String) userMap.get("userName"));
 
         HashMap<String, Object> configMap = call.argument("config");
         if (configMap != null && !configMap.isEmpty()) {
@@ -117,8 +119,6 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             ZegoExpressEngine.getEngine().loginRoom(roomID, user);
         }
-
-        ZegoExpressEngine.getEngine().loginRoom(roomID, user);
 
         result.success(null);
     }
@@ -355,7 +355,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void addPublishCdnUrl(MethodCall call, final Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
         String targetURL = call.argument("targetURL");
 
         ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, new IZegoPublisherUpdateCdnUrlCallback() {
@@ -370,7 +370,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void removePublishCdnUrl(MethodCall call, final Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
         String targetURL = call.argument("targetURL");
 
         ZegoExpressEngine.getEngine().removePublishCdnUrl(streamID, targetURL, new IZegoPublisherUpdateCdnUrlCallback() {
@@ -456,7 +456,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void startPlayingStream(MethodCall call, Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
 
         // Handle ZegoPlayerConfig
 
@@ -539,7 +539,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void stopPlayingStream(MethodCall call, Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
 
         ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
 
@@ -548,7 +548,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void setPlayVolume(MethodCall call, Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
         int volume = intValue((Number) call.argument("volume"));
 
         ZegoExpressEngine.getEngine().setPlayVolume(streamID, volume);
@@ -558,7 +558,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void mutePlayStreamAudio(MethodCall call, Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
         boolean mute = boolValue((Boolean) call.argument("mute"));
 
         ZegoExpressEngine.getEngine().mutePlayStreamAudio(streamID, mute);
@@ -568,7 +568,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void mutePlayStreamVideo(MethodCall call, Result result) {
 
-        String streamID = call.argument("stream");
+        String streamID = call.argument("streamID");
         boolean mute = boolValue((Boolean) call.argument("mute"));
 
         ZegoExpressEngine.getEngine().mutePlayStreamVideo(streamID, mute);
@@ -855,7 +855,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void updateTextureRenderer(MethodCall call, Result result) {
 
-        Long textureID = call.argument("textureID");
+        Long textureID = longValue((Number) call.argument("textureID"));
         int width = intValue((Number) call.argument("width"));
         int height = intValue((Number) call.argument("height"));
 
@@ -866,7 +866,7 @@ public class ZegoExpressEngineMethodHandler {
 
     public static void destroyTextureRenderer(MethodCall call, Result result) {
 
-        Long textureID = call.argument("textureID");
+        Long textureID = longValue((Number) call.argument("textureID"));
 
         ZegoTextureRendererController.getInstance().destroyTextureRenderer(textureID);
 
