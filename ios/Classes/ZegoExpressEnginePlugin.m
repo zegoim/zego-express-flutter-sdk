@@ -335,7 +335,7 @@
         
     } else if ([@"setVideoMirrorMode" isEqualToString:call.method]) {
         
-        int mode = [ZegoUtils intValue:args[@"mode"]];
+        int mode = [ZegoUtils intValue:args[@"mirrorMode"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:(ZegoVideoMirrorMode)mode channel:(ZegoPublishChannel)channel];
@@ -560,7 +560,11 @@
                     canvas.viewMode = (ZegoViewMode)viewMode;
                     canvas.backgroundColor = backgroundColor;
                     
-                    [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
+                    if (playerConfig) {
+                        [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
+                    } else {
+                        [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas];
+                    }
                 } else {
                     // Play video without creating the PlatfromView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
@@ -578,13 +582,21 @@
                 }
                 
                 // Using Custom Video Renderer
-                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
+                if (playerConfig) {
+                    [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
+                } else {
+                    [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil];
+                }
             }
             
         } else { /* if (canvas && canvas.count > 0) */
             
             // Play audio only
-            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
+            if (playerConfig) {
+                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil config:playerConfig];
+            } else {
+                [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil];
+            }
         }
         
         result(nil);
@@ -756,9 +768,21 @@
         [taskObject enableSoundLevel:enableSoundLevel];
         
         [[ZegoExpressEngine sharedEngine] startMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
+            
+            NSString *extendedDataJsonString = @"{}";
+            if (extendedData) {
+                NSError *error;
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+                if (!jsonData) {
+                    ZGLog(@"extendedData error: %@", error);
+                }else{
+                    extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+                }
+            }
+            
             result(@{
                 @"errorCode": @(errorCode),
-                @"extendedData": extendedData ? : @{}
+                @"extendedData": extendedDataJsonString
             });
         }];
         
@@ -1022,10 +1046,22 @@
     ZGLog(@"sink: %p, errorCode: %d, roomID: %@", sink, errorCode, roomID);
     
     if (sink) {
+        
+        NSString *extendedDataJsonString = @"{}";
+        if (extendedData) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+            if (!jsonData) {
+                ZGLog(@"extendedData error: %@", error);
+            }else{
+                extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+        }
+        
         sink(@{
             @"method": @"onRoomStateUpdate",
             @"errorCode": @(errorCode),
-            @"extendedData": extendedData,
+            @"extendedData": extendedDataJsonString,
             @"roomID": roomID
         });
     }
@@ -1111,11 +1147,23 @@
     ZGLog(@"sink: %p, state: %d, errorCode: %d, streamID: %@", sink, (int)state, errorCode, streamID);
     
     if (sink) {
+        
+        NSString *extendedDataJsonString = @"{}";
+        if (extendedData) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+            if (!jsonData) {
+                ZGLog(@"extendedData error: %@", error);
+            }else{
+                extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+        }
+        
         sink(@{
             @"method": @"onPublisherStateUpdate",
             @"state": @(state),
             @"errorCode": @(errorCode),
-            @"extendedData": extendedData,
+            @"extendedData": extendedDataJsonString,
             @"streamID": streamID
         });
     }
@@ -1214,11 +1262,23 @@
     ZGLog(@"sink: %p, state: %d, errorCode: %d, streamID: %@", sink, (int)state, errorCode, streamID);
     
     if (sink) {
+        
+        NSString *extendedDataJsonString = @"{}";
+        if (extendedData) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+            if (!jsonData) {
+                ZGLog(@"extendedData error: %@", error);
+            }else{
+                extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+        }
+        
         sink(@{
             @"method": @"onPlayerStateUpdate",
             @"state": @(state),
             @"errorCode": @(errorCode),
-            @"extendedData": extendedData,
+            @"extendedData": extendedDataJsonString,
             @"streamID": streamID
         });
     }

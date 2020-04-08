@@ -37,7 +37,7 @@
     }
     NSString *msg = [[NSString alloc] initWithFormat:format arguments:argList];
     
-    [ZegoLog log:[NSString stringWithFormat:@"[Flutter-Native] %s:%lu, %s, %@", file, (unsigned long)line, function, msg]];
+    [ZegoLog log:[NSString stringWithFormat:@"[Flutter-Native] %s, %@", function, msg]];
 }
 
 + (void)log:(NSString *)content {

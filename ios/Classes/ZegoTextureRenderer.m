@@ -82,6 +82,8 @@
 
 - (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer {
     
+    CVBufferRetain(srcFrameBuffer);
+    
     dispatch_async(m_opengl_queue, ^{
         
         if(self->m_pInputFrameBuffer) {
