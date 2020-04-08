@@ -6,11 +6,11 @@ class ZegoUITool {
   static showAlert(BuildContext context, String message) {
     showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('提示'),
+        title: Text('Tips'),
         content: Text(message),
         actions: <Widget>[
           FlatButton(
-            child: Text('确认'),
+            child: Text('OK'),
             onPressed: () {
               Navigator.of(context).pop();
             },

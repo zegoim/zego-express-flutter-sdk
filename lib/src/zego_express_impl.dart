@@ -28,6 +28,9 @@ class ZegoExpressImpl {
     /* Main */
 
     static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool enablePlatformView}) async {
+
+        _registerEventHandler();
+
         await _channel.invokeMethod('createEngine', {
             'appID': appID,
             'appSign': appSign,
@@ -35,8 +38,6 @@ class ZegoExpressImpl {
             'scenario': scenario.index,
             'enablePlatformView': enablePlatformView ?? false
         });
-
-        _registerEventHandler();
 
         return null;
     }
@@ -509,7 +510,7 @@ class ZegoExpressImpl {
             case 'onRoomStateUpdate':
                 if (ZegoExpressEngine.onRoomStateUpdate == null) return;
 
-                Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+                Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
 
                 ZegoExpressEngine.onRoomStateUpdate(
                     map['roomID'],
@@ -575,7 +576,7 @@ class ZegoExpressImpl {
             case 'onPublisherStateUpdate':
                 if (ZegoExpressEngine.onPublisherStateUpdate == null) return;
 
-                Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+                Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
 
                 ZegoExpressEngine.onPublisherStateUpdate(
                     map['streamID'],
@@ -604,7 +605,7 @@ class ZegoExpressImpl {
                 if (ZegoExpressEngine.onPublisherCapturedVideoFirstFrame == null) return;
 
                 ZegoExpressEngine.onPublisherCapturedVideoFirstFrame(
-                    map['channel']
+                    ZegoPublishChannel.values[map['channel']]
                 );
                 break;
 
@@ -614,7 +615,7 @@ class ZegoExpressImpl {
                 ZegoExpressEngine.onPublisherVideoSizeChanged(
                     map['width'],
                     map['height'],
-                    map['channel']
+                    ZegoPublishChannel.values[map['channel']]
                 );
                 break;
 
@@ -640,7 +641,7 @@ class ZegoExpressImpl {
             case 'onPlayerStateUpdate':
                 if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
 
-                Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+                Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
 
                 ZegoExpressEngine.onPlayerStateUpdate(
                     map['streamID'],

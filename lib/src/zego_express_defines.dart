@@ -658,18 +658,19 @@ class ZegoPublishStreamQuality {
 
     ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode): assert(videoCaptureFPS != null), assert(videoEncodeFPS != null), assert(videoSendFPS != null), assert(videoKBPS != null), assert(audioCaptureFPS != null), assert(audioSendFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(isHardwareEncode != null);
 
-    ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map):
-        videoCaptureFPS = map['videoCaptureFPS'],
-        videoEncodeFPS = map['videoEncodeFPS'],
-        videoSendFPS = map['videoSendFPS'],
-        videoKBPS = map['videoKBPS'],
-        audioCaptureFPS = map['audioCaptureFPS'],
-        audioSendFPS = map['audioSendFPS'],
-        audioKBPS = map['audioKBPS'],
-        rtt = map['rtt'],
-        packetLostRate = map['packetLostRate'],
-        level = map['level'],
+    ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map) {
+        videoCaptureFPS = map['videoCaptureFPS'];
+        videoEncodeFPS = map['videoEncodeFPS'];
+        videoSendFPS = map['videoSendFPS'];
+        videoKBPS = map['videoKBPS'];
+        audioCaptureFPS = map['audioCaptureFPS'];
+        audioSendFPS = map['audioSendFPS'];
+        audioKBPS = map['audioKBPS'];
+        rtt = map['rtt'];
+        packetLostRate = map['packetLostRate'];
+        level = ZegoStreamQualityLevel.values[map['level']];
         isHardwareEncode = map['isHardwareEncode'];
+    }
 
 }
 
@@ -798,20 +799,21 @@ class ZegoPlayStreamQuality {
 
     ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.audioRecvFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.delay, this.isHardwareDecode): assert(videoRecvFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(audioRecvFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(delay != null), assert(isHardwareDecode != null);
 
-    ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map):
-        videoRecvFPS = map['videoRecvFPS'],
-        videoDecodeFPS = map['videoDecodeFPS'],
-        videoRenderFPS = map['videoRenderFPS'],
-        videoKBPS = map['videoKBPS'],
-        audioRecvFPS = map['audioRecvFPS'],
-        audioDecodeFPS = map['audioDecodeFPS'],
-        audioRenderFPS = map['audioRenderFPS'],
-        audioKBPS = map['audioKBPS'],
-        rtt = map['rtt'],
-        packetLostRate = map['packetLostRate'],
-        level = map['level'],
-        delay = map['delay'],
+    ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map) {
+        videoRecvFPS = map['videoRecvFPS'];
+        videoDecodeFPS = map['videoDecodeFPS'];
+        videoRenderFPS = map['videoRenderFPS'];
+        videoKBPS = map['videoKBPS'];
+        audioRecvFPS = map['audioRecvFPS'];
+        audioDecodeFPS = map['audioDecodeFPS'];
+        audioRenderFPS = map['audioRenderFPS'];
+        audioKBPS = map['audioKBPS'];
+        rtt = map['rtt'];
+        packetLostRate = map['packetLostRate'];
+        level = ZegoStreamQualityLevel.values[map['level']];
+        delay = map['delay'];
         isHardwareDecode = map['isHardwareDecode'];
+    }
 
 }
 

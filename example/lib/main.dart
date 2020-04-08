@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    ZegoConfig.instance;
+    print(ZegoConfig.instance); // Load config instance
 
     return Scaffold(
         appBar: AppBar(
