@@ -134,6 +134,8 @@ Please refer to the API documentation for more features.
 
 Open the iOS project that requires Platform View and add the field `io.flutter.embedded_views_preview` to `Info.plist` with a value of `YES`.
 
+![iOS-Enable-PlatformView-Guide](https://raw.githubusercontent.com/patrick-fu/personal_blog_image/master/image/20200408194006.png)
+
 ### 2. iOS: fatal error: lipo: -extract armv7 specified but fat file: [...] does not contain that architecture
 
 Usually occurs when switching iOS devices, which can be resolved by deleting the `flutter-project-path/build/` and `flutter-project-path/ios/DerivedData/` directories. (If you cannot find the `DerivedData` folder, please look for `/Users/your-user-name/Library/Developer/Xcode/DerivedData/`)

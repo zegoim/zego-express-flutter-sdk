@@ -134,6 +134,8 @@ class _MyAppState extends State<MyApp> {
 
 打开需要使用 Platform View 的 iOS 工程，在 `Info.plist` 中添加字段 `io.flutter.embedded_views_preview`，其值为 `YES`。
 
+![iOS-Enable-PlatformView-Guide](https://raw.githubusercontent.com/patrick-fu/personal_blog_image/master/image/20200408194006.png)
+
 ### 2. iOS: fatal error: lipo: -extract armv7 specified but fat file: [...] does not contain that architecture
 
 通常在切换 iOS 设备时出现，可通过删除 `flutter-project-path/build/` 和 `flutter-project-path/ios/DerivedData/` 目录解决。（找不到 `DerivedData` 文件夹的话，请查找 `/Users/your-user-name/Library/Developer/Xcode/DerivedData/`）
