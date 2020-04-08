@@ -25,6 +25,8 @@ class ZegoConfig {
   bool isPreviewMirror;
   bool isPublishMirror;
 
+  bool enableHardwareEncoder;
+
   ZegoConfig._internal() {
 
     SharedPreferences.getInstance().then((config) {
@@ -44,6 +46,8 @@ class ZegoConfig {
 
       this.isPreviewMirror = true;
       this.isPublishMirror = false;
+
+      this.enableHardwareEncoder = false;
 
     });
   }

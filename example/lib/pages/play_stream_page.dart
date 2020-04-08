@@ -58,7 +58,7 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
       if(errorCode == 0) {
         setState(() {
           _isPlaying = true;
-          _title = '🟢 Playing';
+          _title = 'Playing';
         });
 
         ZegoConfig.instance.streamID = streamID;
@@ -73,7 +73,7 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
     ZegoExpressEngine.onPlayerQualityUpdate = (String streamID, ZegoPlayStreamQuality quality) {
 
       setState(() {
-        _playFps = quality.audioRecvFPS;
+        _playFps = quality.videoRecvFPS;
         _playBitrate = quality.videoKBPS;
         _isHardwareDecode = quality.isHardwareDecode;
 

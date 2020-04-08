@@ -16,6 +16,8 @@ class _PublishSettingsPageState extends State<PublishSettingsPage> {
   bool _isPreviewMirror;
   bool _isPublishMirror;
 
+  bool _enableHardwareEncoder;
+
 
   @override
   void initState() {
@@ -24,6 +26,8 @@ class _PublishSettingsPageState extends State<PublishSettingsPage> {
 
     _isPreviewMirror = ZegoConfig.instance.isPreviewMirror;
     _isPublishMirror = ZegoConfig.instance.isPublishMirror;
+
+    _enableHardwareEncoder = ZegoConfig.instance.enableHardwareEncoder;
 
   }
 
@@ -64,6 +68,106 @@ class _PublishSettingsPageState extends State<PublishSettingsPage> {
     });
   }
 
+  void onEnableHardwareEncodeValueChanged(bool value) {
+    setState(() {
+      _enableHardwareEncoder = value;
+      ZegoConfig.instance.enableHardwareEncoder = _enableHardwareEncoder;
+      ZegoExpressEngine.instance.enableHardwareEncoder(_enableHardwareEncoder);
+    });
+  }
+
+  Widget setMirrorModeRow() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.black26
+          )
+        )
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'Video Mirror Mode',
+            style: TextStyle(
+              fontSize: 15.0
+            ),
+          ),
+          Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(
+                    'Preview Mirror',
+                    style: TextStyle(
+                      fontSize: 12.0
+                    ),
+                  ),
+                  CupertinoSwitch(
+                    value: _isPreviewMirror,
+                    onChanged: onPreviewMirrorValueChanged,
+                  )
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    'Publish Mirror',
+                    style: TextStyle(
+                      fontSize: 12.0
+                    ),
+                  ),
+                  CupertinoSwitch(
+                    value: _isPublishMirror,
+                    onChanged: onPublishMirrorValueChanged,
+                  )
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget enableHardwareEncodeRow() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.black26
+          )
+        )
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'Hardware Encoder',
+            style: TextStyle(
+              fontSize: 15.0
+            ),
+          ),
+          Padding(padding: EdgeInsets.all(15)),
+          Expanded(
+            child: Text(
+              '(The setting only valid before start publishing stream)',
+              style: TextStyle(
+                fontSize: 10.0
+              ),),
+          ),
+          CupertinoSwitch(
+            value: _enableHardwareEncoder,
+            onChanged: onEnableHardwareEncodeValueChanged,
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,54 +178,9 @@ class _PublishSettingsPageState extends State<PublishSettingsPage> {
       body: Container(
         child: ListView(
           children: <Widget>[
-            /// 镜像模式
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.black26
-                  )
-                )
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Video Mirror Mode',
-                    style: TextStyle(
-                        fontSize: 18.0
-                    ),
-                  ),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Text(
-                              'Enable Preview Mirror'
-                          ),
-                          CupertinoSwitch(
-                            value: _isPreviewMirror,
-                            onChanged: onPreviewMirrorValueChanged,
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                              'Enable Publish Mirror'
-                          ),
-                          CupertinoSwitch(
-                            value: _isPublishMirror,
-                            onChanged: onPublishMirrorValueChanged,
-                          )
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
+            /// Video Mirror Mode
+            setMirrorModeRow(),
+            enableHardwareEncodeRow(),
           ],
         ),
       ),

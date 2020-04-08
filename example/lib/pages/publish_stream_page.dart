@@ -94,7 +94,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
       if (errorCode == 0) {
         setState(() {
           _isPublishing = true;
-          _title = '🟢 Publishing';
+          _title = 'Publishing';
         });
 
         ZegoConfig.instance.streamID = streamID;
