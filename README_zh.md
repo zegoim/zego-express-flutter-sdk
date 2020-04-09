@@ -1,8 +1,8 @@
-# zego_express_engine
+# zego_express_engine [![pub package](https://img.shields.io/pub/v/zego_express_engine.svg)](https://pub.dartlang.org/packages/zego_express_engine)
 
 [English](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README_zh.md)
 
-即构科技 (ZEGO) 极速音视频 Flutter SDK，提供视频直播以及实时音视频服务。仅需4行代码，30分钟即可轻松接入。
+即构科技 (ZEGO) 极速音视频 Flutter SDK 是一个基于 [ZegoExpressEngine](https://doc-zh.zego.im/zh/693.html) 原生 Android / iOS SDK 的 Flutter Plugin Wrapper，提供视频直播以及实时音视频服务。仅需4行代码，30分钟即可轻松接入。
 
 了解更多解决方案：[https://www.zego.im](https://www.zego.im)
 
@@ -26,7 +26,7 @@
 
 打开工程中的 `pubspec.yaml`，添加 `zego_express_engine` 依赖：
 
-- ### 以 pub 形式依赖（推荐）
+- ### 以 `pub` 形式依赖（推荐）
 
 ```yaml
 dependencies:
@@ -107,11 +107,11 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
 2. `Privacy - Microphone Usage Description`
 
-添加完成后如图所示：
+添加权限完成后如图所示：
 
-![Add iOS Privacy Completed](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
+![Add iOS Privacy Done](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
 
-> 如果需要用到 Platform View，iOS 端还需额外添加一行描述，参考 [常见问题-1](#8️⃣-常见问题)
+> 如果需要使用 Platform View，iOS 端还需额外添加一行描述，参考 [常见问题-1](#8️⃣-常见问题)
 
 ## 6️⃣ 初始化 SDK
 
