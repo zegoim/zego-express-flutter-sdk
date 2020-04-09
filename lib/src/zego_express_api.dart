@@ -5,18 +5,11 @@ import 'zego_express_defines.dart';
 
 class ZegoExpressEngine {
 
-    /// Singleton instance
-    static ZegoExpressEngine _instance;
-
     /// Private constructor
     ZegoExpressEngine._internal();
 
-    /// Returns engine singleton instance
-    ///
-    /// If the engine has not been created or has been destroyed, an unusable engine object will be returned.
-    static ZegoExpressEngine get instance {
-        return _instance ?? new ZegoExpressEngine._internal();
-    }
+    /// Engine singleton instance
+    static final ZegoExpressEngine instance = ZegoExpressEngine._internal();
 
     /// Create engine singleton instance
     ///

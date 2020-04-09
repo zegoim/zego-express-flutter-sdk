@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZegoPlatformViewFactory : NSObject<FlutterPlatformViewFactory>
 
-+ (instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
 /// Called when dart invoke `destroyPlatformView`
 - (BOOL)destroyPlatformView:(NSNumber *)viewID;

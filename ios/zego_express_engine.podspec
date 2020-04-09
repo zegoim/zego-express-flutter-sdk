@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'zego_express_engine'
-  s.version          = '1.5.5'
+  s.version          = '0.9.0'
   s.summary          = 'Zego Express Audio/Video Live SDK for Flutter'
   s.description      = <<-DESC
 A new Flutter plugin.

@@ -75,8 +75,11 @@
     }
     
     [self.allRenderers removeObjectForKey:@(renderer.textureID)];
-    renderer = nil;
+    
+    // Release renderer
+    [renderer destroy];
 }
+
 
 #pragma mark - Dart Express Engine API Operation
 

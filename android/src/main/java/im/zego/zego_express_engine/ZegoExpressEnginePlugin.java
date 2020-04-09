@@ -54,6 +54,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         MethodChannel methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_engine");
         EventChannel eventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_event_handler");
 
+        // Register platform view factory
+        flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
+
         this.setupPlugin(application, textureRegistry, methodChannel, eventChannel);
     }
 
@@ -87,6 +90,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         TextureRegistry textureRegistry = registrar.textures();
         MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "plugins.zego.im/zego_express_engine");
         EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.zego.im/zego_express_event_handler");
+
+        // Register platform view factory
+        registrar.platformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
 
         ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin();
         plugin.setupPlugin(application, textureRegistry, methodChannel, eventChannel);

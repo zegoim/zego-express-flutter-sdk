@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
 
     /// Create a PlatformView and return the view ID
-    Widget createPlatformView(Key key, Function(int viewID) onViewCreated) {
+    Widget createPlatformView(Function(int viewID) onViewCreated, {Key key}) {
         if (TargetPlatform.iOS == defaultTargetPlatform) {
             return UiKitView(
                 key: key,

@@ -6,8 +6,6 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity {
-  @Override
-  public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
-    GeneratedPluginRegistrant.registerWith(flutterEngine);
-  }
+    // You can keep this empty class or remove it. Plugins on the new embedding
+    // now automatically registers plugins.
 }
