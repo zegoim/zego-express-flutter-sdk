@@ -1,8 +1,8 @@
-# zego_express_engine
+# zego_express_engine [![pub package](https://img.shields.io/pub/v/zego_express_engine.svg)](https://pub.dartlang.org/packages/zego_express_engine)
 
 [English](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README_zh.md)
 
-ZegoExpressEngine Audio/Video Flutter SDK provides live video and real-time audio/video services. It only needs 4 lines of code and can be easily accessed in 30 minutes.
+ZegoExpressEngine Audio/Video Flutter SDK is a flutter plugin wrapper based on [ZegoExpressEngine](https://doc-en.zego.im/en/693.html) native Android / iOS SDK, providing live video and real-time audio/video services. It only needs 4 lines of code and can be easily accessed in 30 minutes.
 
 Learn more about the solution: [https://www.zego.im](https://www.zego.im)
 
@@ -26,7 +26,7 @@ Log in to [ZEGO Official Website](https://www.zego.im) to register an account, s
 
 Open the `pubspec.yaml` in the project and add the `zego_express_engine` dependency:
 
-- ### Depends on pub (recommended)
+- ### Depends on `pub` (recommended)
 
 ```yaml
 dependencies:
@@ -106,9 +106,9 @@ Click the + Add button to add camera and microphone permissions.
 
 2. `Privacy - Microphone Usage Description`
 
-After addition, obtain the result as shown in the following view:
+After adding permissions, it will be as shown:
 
-![Add iOS Privacy](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png)
+![Add iOS Privacy Done](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
 
 > If you use Platform View, you need to add an additional description for iOS, refer to [FAQ-1](#8️⃣-FAQ)
 
