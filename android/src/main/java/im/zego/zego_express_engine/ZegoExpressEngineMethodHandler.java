@@ -9,7 +9,6 @@
 package im.zego.zego_express_engine;
 
 import android.app.Application;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import java.lang.*;
@@ -56,6 +55,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Main */
 
+    @SuppressWarnings("unused")
     public static void createEngine(MethodCall call, Result result, Application application, EventChannel.EventSink sink, TextureRegistry registry) {
 
         long appID = longValue((Number)call.argument("appID"));
@@ -70,6 +70,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void destroyEngine(MethodCall call, Result result) {
 
         ZegoExpressEngine.destroyEngine(null);
@@ -77,11 +78,13 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void getVersion(MethodCall call, Result result) {
 
         result.success(ZegoExpressEngine.getVersion());
     }
 
+    @SuppressWarnings("unused")
     public static void uploadLog(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().uploadLog();
@@ -89,6 +92,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setDebugVerbose(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -102,6 +106,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Room */
 
+    @SuppressWarnings("unused")
     public static void loginRoom(MethodCall call, Result result) {
 
         String roomID = call.argument("roomID");
@@ -123,6 +128,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void logoutRoom(MethodCall call, Result result) {
 
         String roomID = call.argument("roomID");
@@ -135,6 +141,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Publisher */
 
+    @SuppressWarnings("unused")
     public static void startPublishingStream(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -145,6 +152,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void stopPublishingStream(MethodCall call, Result result) {
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
@@ -154,6 +162,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setStreamExtraInfo(MethodCall call, final Result result) {
 
         String extraInfo = call.argument("extraInfo");
@@ -171,6 +180,7 @@ public class ZegoExpressEngineMethodHandler {
 
     }
 
+    @SuppressWarnings("unused")
     public static void startPreview(MethodCall call, Result result) {
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
@@ -231,6 +241,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void stopPreview(MethodCall call, Result result) {
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
@@ -240,6 +251,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setVideoConfig(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
@@ -265,6 +277,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setVideoMirrorMode(MethodCall call, Result result) {
 
         ZegoVideoMirrorMode mirrorMode = ZegoVideoMirrorMode.getZegoVideoMirrorMode(intValue((Number) call.argument("mirrorMode")));
@@ -275,6 +288,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setAppOrientation(MethodCall call, Result result) {
 
         ZegoOrientation orientation = ZegoOrientation.values()[intValue((Number) call.argument("orientation"))];
@@ -285,6 +299,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setAudioConfig(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
@@ -304,6 +319,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void mutePublishStreamAudio(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -314,6 +330,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void mutePublishStreamVideo(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -324,6 +341,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableTrafficControl(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -334,6 +352,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setMinVideoBitrateForTrafficControl(MethodCall call, Result result) {
 
         int bitrate = intValue((Number) call.argument("bitrate"));
@@ -344,6 +363,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setCaptureVolume(MethodCall call, Result result) {
 
         int volume = intValue((Number) call.argument("volume"));
@@ -353,6 +373,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void addPublishCdnUrl(MethodCall call, final Result result) {
 
         String streamID = call.argument("streamID");
@@ -368,6 +389,7 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    @SuppressWarnings("unused")
     public static void removePublishCdnUrl(MethodCall call, final Result result) {
 
         String streamID = call.argument("streamID");
@@ -383,6 +405,7 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    @SuppressWarnings("unused")
     public static void enablePublishDirectToCDN(MethodCall call, Result result) {
 
         HashMap<String, String> configMap = call.argument("config");
@@ -400,6 +423,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setPublishWatermark(MethodCall call, Result result) {
 
         HashMap<String, Object> watermarkMap = call.argument("watermark");
@@ -423,6 +447,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void sendSEI(MethodCall call, Result result) {
 
         byte[] data = call.argument("data");
@@ -433,6 +458,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableHardwareEncoder(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -442,6 +468,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setCapturePipelineScaleMode(MethodCall call, Result result) {
 
         ZegoCapturePipelineScaleMode mode = ZegoCapturePipelineScaleMode.getZegoCapturePipelineScaleMode(intValue((Number) call.argument("mode")));
@@ -454,6 +481,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Player */
 
+    @SuppressWarnings("unused")
     public static void startPlayingStream(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -537,6 +565,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void stopPlayingStream(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -546,6 +575,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setPlayVolume(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -556,6 +586,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void mutePlayStreamAudio(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -566,6 +597,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void mutePlayStreamVideo(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -576,6 +608,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableHardwareDecoder(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -585,6 +618,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableCheckPoc(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -597,6 +631,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Mixer */
 
+    @SuppressWarnings("unused")
     public static void startMixerTask(MethodCall call, Result result) {
 
         // TODO: startMixerTask
@@ -604,6 +639,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void stopMixerTask(MethodCall call, Result result) {
 
         // TODO: stopMixerTask
@@ -614,6 +650,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Device */
 
+    @SuppressWarnings("unused")
     public static void muteMicrophone(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -623,6 +660,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void muteSpeaker(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -632,6 +670,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableAudioCaptureDevice(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -641,6 +680,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setBuiltInSpeakerOn(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -650,6 +690,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableCamera(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -659,6 +700,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void useFrontCamera(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -669,6 +711,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void startSoundLevelMonitor(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().startSoundLevelMonitor();
@@ -676,6 +719,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void stopSoundLevelMonitor(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().stopSoundLevelMonitor();
@@ -683,6 +727,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void startAudioSpectrumMonitor(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().startAudioSpectrumMonitor();
@@ -690,6 +735,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void stopAudioSpectrumMonitor(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().stopAudioSpectrumMonitor();
@@ -700,6 +746,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* PreProcess */
 
+    @SuppressWarnings("unused")
     public static void enableAEC(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -709,6 +756,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setAECMode(MethodCall call, Result result) {
 
         ZegoAECMode mode = ZegoAECMode.getZegoAECMode(intValue((Number) call.argument("mode")));
@@ -718,6 +766,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableAGC(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -727,6 +776,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableANS(MethodCall call, Result result) {
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
@@ -736,6 +786,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void enableBeautify(MethodCall call, Result result) {
 
         int featureBitmask = intValue((Number) call.argument("featureBitmask"));
@@ -746,6 +797,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void setBeautifyOption(MethodCall call, Result result) {
 
         HashMap<String, Double> optionMap = call.argument("option");
@@ -767,6 +819,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void sendBroadcastMessage(MethodCall call, final Result result) {
 
         String roomID = call.argument("roomID");
@@ -783,6 +836,7 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    @SuppressWarnings("unused")
     public static void sendBarrageMessage(MethodCall call, final Result result) {
 
         String roomID = call.argument("roomID");
@@ -801,6 +855,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void sendCustomCommand(MethodCall call, final Result result) {
 
         ArrayList<ZegoUser> toUserList = new ArrayList<>();
@@ -831,6 +886,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* PlatformView Utils */
 
+    @SuppressWarnings("unused")
     public static void destroyPlatformView(MethodCall call, Result result) {
 
         int viewID = intValue((Number) call.argument("viewID"));
@@ -843,6 +899,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* TextureRenderer Utils */
 
+    @SuppressWarnings("unused")
     public static void createTextureRenderer(MethodCall call, Result result) {
 
         int width = intValue((Number) call.argument("width"));
@@ -853,6 +910,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(textureID);
     }
 
+    @SuppressWarnings("unused")
     public static void updateTextureRenderer(MethodCall call, Result result) {
 
         Long textureID = longValue((Number) call.argument("textureID"));
@@ -864,6 +922,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
     public static void destroyTextureRenderer(MethodCall call, Result result) {
 
         Long textureID = longValue((Number) call.argument("textureID"));
