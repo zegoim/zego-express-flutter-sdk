@@ -19,7 +19,7 @@
 
 - (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID {
     self = [super init];
-    if(self) {
+    if (self) {
         _uiView = [[UIView alloc] initWithFrame:rect];
         _uiView.backgroundColor = [UIColor blackColor];
         _viewID = viewID;

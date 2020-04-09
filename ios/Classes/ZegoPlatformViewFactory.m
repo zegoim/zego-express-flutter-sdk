@@ -25,17 +25,16 @@
     return instance;
 }
 
-- (instancetype) init {
-    
-    if(self = [super init]) {
+- (instancetype)init {
+    self = [super init];
+    if (self) {
         _platformViewMap = [[NSMutableDictionary alloc] init];
-        
     }
     return self;
 }
 
 - (BOOL)addPlatformView:(ZegoPlatformView *)view viewID:(NSNumber *)viewID {
-    if(!viewID || !view)
+    if (!viewID || !view)
         return NO;
 
     [self.platformViewMap setObject:view forKey:viewID];
@@ -44,10 +43,10 @@
 }
 
 - (BOOL)destroyPlatformView:(NSNumber *)viewID {
-    if(!viewID)
+    if (!viewID)
         return NO;
     
-    if(![[self.platformViewMap allKeys] containsObject:viewID])
+    if (![[self.platformViewMap allKeys] containsObject:viewID])
         return NO;
     
     [self.platformViewMap removeObjectForKey:viewID];
