@@ -48,7 +48,7 @@
 
 - (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height {
     self = [super init];
-    if(self) {
+    if (self) {
         _registry = registry;
         m_pRenderFrameBuffer = nil;
         m_output_texture = nil;
@@ -79,6 +79,55 @@
     
     return self;
 }
+
+- (void)destroy {
+    [self destroyPixelBufferPool:m_buffer_pool];
+    
+    dispatch_async(m_opengl_queue, ^{
+        
+        [EAGLContext setCurrentContext:self.context];
+        
+        if(self->m_pInputFrameBuffer){
+            CVBufferRelease(self->m_pInputFrameBuffer);
+            self->m_pInputFrameBuffer = nil;
+        }
+        
+        if(self->m_pRenderFrameBuffer){
+            CVBufferRelease(self->m_pRenderFrameBuffer);
+            self->m_pRenderFrameBuffer = nil;
+        }
+        
+        if(self->m_output_texture) {
+            CFRelease(self->m_output_texture);
+            self->m_output_texture = NULL;
+        }
+        
+        if (self->m_pTexCache) {
+            CFRelease(self->m_pTexCache);
+            self->m_pTexCache = 0;
+        }
+        
+        if(self->m_framebuffer) {
+            glDeleteBuffers(1, &self->m_framebuffer);
+        }
+        
+        if(self->m_hVertexShader) {
+            glDeleteShader(self->m_hVertexShader);
+        }
+        
+        if(self->m_hFragShader) {
+            glDeleteShader(self->m_hFragShader);
+        }
+        
+        if(self->m_hProgram) {
+            glDeleteProgram(self->m_hProgram);
+        }
+    });
+    
+    // Release GPU Resource
+    [self.registry unregisterTexture:_textureID];
+}
+
 
 - (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer {
     
@@ -234,7 +283,7 @@
     if (status != GL_TRUE) {
         // * compile shader error
         // * to_do: handle error
-        NSLog(@"error");
+        NSLog(@"OpenGL glCompileShader GL_VERTEX_SHADER error");
     }
     
     // * compile fragment shader
@@ -252,9 +301,9 @@
     glCompileShader(m_hFragShader);
     // * to_do: check status
     if (status != GL_TRUE) {
-        NSLog(@"error");
         // * compile shader error
         // * to_do: handle error
+        NSLog(@"OpenGL glCompileShader GL_FRAGMENT_SHADER error");
     }
     
     // * attach shader to program
@@ -266,7 +315,7 @@
     glGetProgramiv(m_hProgram, GL_LINK_STATUS, &status);
     if (status != GL_TRUE) {
         // * to_do: handle error
-        NSLog(@"error");
+        NSLog(@"OpenGL glLinkProgram error");
     }
     
     // * use program
@@ -428,53 +477,6 @@
     }
 }
 
-- (void) dealloc
-{
-    [self destroyPixelBufferPool:m_buffer_pool];
-    //dispatch_async(m_opengl_queue, ^{
-        
-        [EAGLContext setCurrentContext:self.context];
-        
-        if(self->m_pInputFrameBuffer){
-            CVBufferRelease(self->m_pInputFrameBuffer);
-            self->m_pInputFrameBuffer = nil;
-        }
-        
-        if(self->m_pRenderFrameBuffer){
-            CVBufferRelease(self->m_pRenderFrameBuffer);
-            self->m_pRenderFrameBuffer = nil;
-        }
-        
-        if(self->m_output_texture) {
-            CFRelease(self->m_output_texture);
-            self->m_output_texture = NULL;
-        }
-        
-        if (self->m_pTexCache) {
-            CFRelease(self->m_pTexCache);
-            self->m_pTexCache = 0;
-        }
-        
-        if(self->m_framebuffer) {
-            glDeleteBuffers(1, &self->m_framebuffer);
-        }
-        
-        if(self->m_hVertexShader) {
-            glDeleteShader(self->m_hVertexShader);
-        }
-        
-        if(self->m_hFragShader) {
-            glDeleteShader(self->m_hFragShader);
-        }
-        
-        if(self->m_hProgram) {
-            glDeleteProgram(self->m_hProgram);
-        }
-        
-    //});
-    //释放GPU资源
-    [self.registry unregisterTexture:_textureID];
-}
 
 #pragma mark - FlutterTexture Delegate
 - (CVPixelBufferRef)copyPixelBuffer {
@@ -499,9 +501,8 @@
     return temp;
 }
 
-- (void)onTextureUnregistered:(NSObject<FlutterTexture>*)texture
-{
-    NSLog(@"texture unregistered: %@", texture);
+- (void)onTextureUnregistered:(NSObject<FlutterTexture>*)texture {
+    NSLog(@"[TextureRenderer] %@ unregistered", texture);
 }
 
 #pragma mark OpenGL Methods

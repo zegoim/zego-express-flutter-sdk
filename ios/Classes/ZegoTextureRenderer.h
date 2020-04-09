@@ -31,6 +31,7 @@ typedef enum
 @property (nonatomic) int viewHeight;
 
 - (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height;
+- (void)destroy;
 
 - (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer;
 - (void)setVideoMode:(ZegoRendererViewMode)mode;
