@@ -230,7 +230,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.5.5"
+    version: "0.9.0"
   zego_permission:
     dependency: "direct main"
     description:

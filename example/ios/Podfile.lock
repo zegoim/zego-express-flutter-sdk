@@ -6,7 +6,7 @@ PODS:
     - Flutter
   - shared_preferences_web (0.0.1):
     - Flutter
-  - zego_express_engine (1.5.5):
+  - zego_express_engine (0.9.0):
     - Flutter
     - "ZegoExpressEngine (= 1.5.5+hotfix.1)"
   - zego_permission (0.0.1):
@@ -46,7 +46,7 @@ SPEC CHECKSUMS:
   shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
   shared_preferences_macos: f3f29b71ccbb56bf40c9dd6396c9acf15e214087
   shared_preferences_web: 141cce0c3ed1a1c5bf2a0e44f52d31eeb66e5ea9
-  zego_express_engine: 5d1a0257f03c0c452f6067cf50e28baa27263faf
+  zego_express_engine: 4f2d580a4c00ca442e84f80224d112e10d196a1d
   zego_permission: 0a12f978f018fa7a5becc3fce76d04a790897879
   ZegoExpressEngine: 3aa309fe39b25115641e3fd75c3b5b7581bbe2db
 
