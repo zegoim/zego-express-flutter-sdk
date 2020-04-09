@@ -144,7 +144,7 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
         // Create a PlatformView Widget
         _playViewWidget = ZegoExpressEngine.instance.createPlatformView((viewID) {
 
-          print('Create Preview Platform View, ID: $viewID');
+          _playViewID = viewID;
 
           // Start playing stream using platform view
           startPlayingStream(viewID, streamID);
@@ -158,7 +158,7 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
       // Create a Texture Renderer
       ZegoExpressEngine.instance.createTextureRenderer(widget.screenWidthPx, widget.screenHeightPx).then((textureID) {
 
-        print('Create Preview Texture Renderer, ID: $textureID');
+        _playViewID = textureID;
 
         setState(() {
           // Create a Texture Widget
@@ -207,9 +207,7 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             ),
             Row(
               children: <Widget>[
-                Text('StreamID: ',
-
-                )
+                Text('StreamID: ')
               ],
             ),
             Padding(
@@ -236,9 +234,11 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
             ),
-            Text('StreamID must be globally unique and the length should not exceed 255 bytes',
+            Text(
+              'StreamID must be globally unique and the length should not exceed 255 bytes',
               style: TextStyle(
-                color: Colors.white
+                fontSize: 12.0,
+                color: Colors.black45
               ),
             ),
             Padding(

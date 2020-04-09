@@ -56,8 +56,6 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
         // Create a PlatformView Widget
         _previewViewWidget = ZegoExpressEngine.instance.createPlatformView((viewID) {
 
-          print('Create Preview Platform View, ID: $viewID');
-
           _previewViewID = viewID;
 
           // Start preview using platform view
@@ -70,8 +68,6 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
 
       // Create a Texture Renderer
       ZegoExpressEngine.instance.createTextureRenderer(widget.screenWidthPx, widget.screenHeightPx).then((textureID) {
-
-        print('Create Preview Texture Renderer, ID: $textureID');
 
         _previewViewID = textureID;
 
@@ -262,7 +258,8 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
             ),
-            Text('StreamID must be globally unique and the length should not exceed 255 bytes',
+            Text(
+              'StreamID must be globally unique and the length should not exceed 255 bytes',
               style: TextStyle(
                 color: Colors.white
               ),
