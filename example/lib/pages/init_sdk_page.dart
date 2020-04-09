@@ -102,7 +102,7 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      Text('Version: '),
+                      Text('Native SDK Version: '),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                       ),
@@ -116,7 +116,7 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      Text('userID: '),
+                      Text('User ID: '),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                       ),
@@ -128,7 +128,7 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      Text('userName: '),
+                      Text('User Name: '),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                       ),
@@ -140,7 +140,7 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      Text('AppID: '),
+                      Text('AppID:'),
                       GestureDetector(
                         child: Container(
                           width: 40.0,
@@ -179,7 +179,7 @@ class _InitPageState extends State<InitPage> {
                   Row(
                     children: <Widget>[
 
-                      Text('AppSign: '),
+                      Text('AppSign:'),
                     ],
                   ),
                   Padding(
@@ -207,11 +207,11 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      Text('Environment '),
+                      Text('SDK Environment  '),
                       Expanded(
                         child: Text('(Please select the environment corresponding to AppID)',
                           style: TextStyle(
-                            fontSize: 12.0
+                            fontSize: 10.0
                           ),
                         ),
                       ),
@@ -223,7 +223,6 @@ class _InitPageState extends State<InitPage> {
                         value: ZegoConfig.instance.isTestEnv,
                         onChanged: (value) {
                           setState(() {
-
                             ZegoConfig.instance.isTestEnv = value;
                             ZegoConfig.instance.saveConfig();
                           });
@@ -235,7 +234,6 @@ class _InitPageState extends State<InitPage> {
                         value: !ZegoConfig.instance.isTestEnv,
                         onChanged: (value) {
                           setState(() {
-
                             ZegoConfig.instance.isTestEnv = !value;
                             ZegoConfig.instance.saveConfig();
                           });
@@ -246,17 +244,38 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
+                      Text('Rendering options  '),
+                      Expanded(
+                        child: Text('(Ways to render video frames)',
+                          style: TextStyle(
+                            fontSize: 10.0
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Checkbox(
+                        value: !ZegoConfig.instance.enablePlatformView,
+                        onChanged: (value) {
+                          setState(() {
+                            ZegoConfig.instance.enablePlatformView = !value;
+                            ZegoConfig.instance.saveConfig();
+                          });
+                        },
+                      ),
+                      Text('TextureRenderer'),
                       Checkbox(
                         value: ZegoConfig.instance.enablePlatformView,
                         onChanged: (value) {
                           setState(() {
-
                             ZegoConfig.instance.enablePlatformView = value;
                             ZegoConfig.instance.saveConfig();
                           });
                         },
                       ),
-                      Text('Use PlatformView to render'),
+                      Text('PlatformView'),
                     ],
                   ),
                   Container(

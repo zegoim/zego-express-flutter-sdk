@@ -284,12 +284,20 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
               ),
             ],
           ),
-
           Row(
             children: <Widget>[
               Text('StreamID: ${ZegoConfig.instance.streamID}',
                 style: TextStyle(
                     color: Colors.white
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('Rendering with: ${ZegoConfig.instance.enablePlatformView ? 'PlatformView' : 'TextureRenderer'}',
+                style: TextStyle(
+                  color: Colors.white
                 ),
               ),
             ],
