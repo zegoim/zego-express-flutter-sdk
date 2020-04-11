@@ -190,7 +190,13 @@ class _MyAppState extends State<MyApp> {
 
 通常在切换 iOS 设备时出现，可通过删除 `flutter-project-path/build/` 和 `flutter-project-path/ios/DerivedData/` 目录解决。（找不到 `DerivedData` 文件夹的话，请查找 `/Users/your-user-name/Library/Developer/Xcode/DerivedData/`）
 
-### 3. Android: Flutter 升级至 v1.10 或以上时，Android release 下出现 `NoClassDefFoundError` 导致 Crash
+### 3. iOS: 编译时报错 `CDN: trunk URL couldn't be downloaded` 或者 `CDN: trunk Repo update failed`
+
+打开 Terminal 终端 `cd` 进项目根目录下的 `ios` 文件夹（`Podfile` 文件所在的目录），执行 `pod repo update`。
+
+通常是国内网络不畅导致，建议开启代理。请参考 [iOS CocoaPods 常见问题](https://doc-zh.zego.im/zh/1253.html)
+
+### 4. Android: Flutter 升级至 v1.10 或以上时，Android release 下出现 `NoClassDefFoundError` 导致 Crash
 
 Flutter 在 1.10 或以上版本默认开启了混淆，请在项目中 `app/proguard-rules.pro` 为 SDK 添加 -keep 类的配置防止混淆。
 

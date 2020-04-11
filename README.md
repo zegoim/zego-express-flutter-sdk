@@ -189,7 +189,13 @@ Open the iOS project that requires Platform View and add the field `io.flutter.e
 
 Usually occurs when switching iOS devices, which can be resolved by deleting the `flutter-project-path/build/` and `flutter-project-path/ios/DerivedData/` directories. (If you cannot find the `DerivedData` folder, please look for `/Users/your-user-name/Library/Developer/Xcode/DerivedData/`)
 
-### 3. Android: building release crashes with `NoClassDefFoundError` when Flutter is upgraded to v1.10 or above
+### 3. iOS: Error when compiling: `CDN: trunk URL couldn't be downloaded` or `CDN: trunk Repo update failed`
+
+Open the Terminal terminal `cd` into the `ios` folder in the root directory of your project (the directory where the `Podfile` file is located) and execute `pod repo update`.
+
+It is usually caused by a poor Internet connection in mainland China. It is recommended to turn on the proxy. Please refer to [iOS CocoaPods FAQ](https://doc-zh.zego.im/zh/1253.html)
+
+### 4. Android: building release crashes with `NoClassDefFoundError` when Flutter is upgraded to v1.10 or above
 
 Flutter is enabled obfuscation by default in version 1.10 or above. Please add the following line in `app/proguard-rules.pro` to prevent the SDK obfuscation.
 
