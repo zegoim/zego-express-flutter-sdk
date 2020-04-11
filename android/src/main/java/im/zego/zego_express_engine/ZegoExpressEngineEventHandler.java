@@ -134,6 +134,8 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
         super.onPublisherQualityUpdate(streamID, quality);
 
+        // TODO: Wait for new version framework to add new parameters
+
         HashMap<String, Object> qualityMap = new HashMap<>();
         qualityMap.put("videoCaptureFPS", quality.videoCaptureFPS);
         qualityMap.put("videoEncodeFPS", quality.videoEncodeFPS);
@@ -227,6 +229,8 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     @Override
     public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
         super.onPlayerQualityUpdate(streamID, quality);
+
+        // TODO: Wait for new version framework to add new parameters
 
         HashMap<String, Object> qualityMap = new HashMap<>();
         qualityMap.put("videoRecvFPS", quality.videoRecvFPS);

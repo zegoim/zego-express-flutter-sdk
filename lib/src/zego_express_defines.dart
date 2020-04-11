@@ -531,6 +531,7 @@ class ZegoVideoConfig {
 ///
 /// Configure user ID and username to identify users in the room.
 /// Note that the userID must be unique under the same appID, otherwise mutual kicks out will occur.
+/// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
 
     /// User ID, a string with a maximum length of 64 bytes or less. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
@@ -656,7 +657,16 @@ class ZegoPublishStreamQuality {
     /// Whether to enable hardware encoding
     bool isHardwareEncode;
 
-    ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode): assert(videoCaptureFPS != null), assert(videoEncodeFPS != null), assert(videoSendFPS != null), assert(videoKBPS != null), assert(audioCaptureFPS != null), assert(audioSendFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(isHardwareEncode != null);
+    /// Total number of bytes sent, including audio, video, SEI
+    double totalSendBytes;
+
+    /// Number of audio bytes sent
+    double audioSendBytes;
+
+    /// Number of video bytes sent
+    double videoSendBytes;
+
+    ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode, this.totalSendBytes, this.audioSendBytes, this.videoSendBytes): assert(videoCaptureFPS != null), assert(videoEncodeFPS != null), assert(videoSendFPS != null), assert(videoKBPS != null), assert(audioCaptureFPS != null), assert(audioSendFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(isHardwareEncode != null), assert(totalSendBytes != null), assert(audioSendBytes != null), assert(videoSendBytes != null);
 
     ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map) {
         videoCaptureFPS = map['videoCaptureFPS'];
@@ -670,6 +680,9 @@ class ZegoPublishStreamQuality {
         packetLostRate = map['packetLostRate'];
         level = ZegoStreamQualityLevel.values[map['level']];
         isHardwareEncode = map['isHardwareEncode'];
+        totalSendBytes = map['totalSendBytes'];
+        audioSendBytes = map['audioSendBytes'];
+        videoSendBytes = map['videoSendBytes'];
     }
 
 }
@@ -788,6 +801,12 @@ class ZegoPlayStreamQuality {
     /// Packet loss rate, in percentage, 0.0 ~ 1.0
     double packetLostRate;
 
+    /// Delay from peer to peer, in milliseconds
+    int peerToPeerDelay;
+
+    /// Packet loss rate from peer to peer, in percentage, 0.0 ~ 1.0
+    double peerToPeerPacketLostRate;
+
     /// Published stream quality level
     ZegoStreamQualityLevel level;
 
@@ -797,7 +816,16 @@ class ZegoPlayStreamQuality {
     /// Whether to enable hardware decoding
     bool isHardwareDecode;
 
-    ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.audioRecvFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.delay, this.isHardwareDecode): assert(videoRecvFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(audioRecvFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(delay != null), assert(isHardwareDecode != null);
+    /// Total number of bytes received, including audio, video, SEI
+    double totalRecvBytes;
+
+    /// Number of audio bytes received
+    double audioRecvBytes;
+
+    /// Number of video bytes received
+    double videoRecvBytes;
+
+    ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.audioRecvFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.isHardwareDecode, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes): assert(videoRecvFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(audioRecvFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(peerToPeerDelay != null), assert(peerToPeerPacketLostRate != null), assert(level != null), assert(delay != null), assert(isHardwareDecode != null), assert(totalRecvBytes != null), assert(audioRecvBytes != null), assert(videoRecvBytes != null);
 
     ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map) {
         videoRecvFPS = map['videoRecvFPS'];
@@ -810,9 +838,14 @@ class ZegoPlayStreamQuality {
         audioKBPS = map['audioKBPS'];
         rtt = map['rtt'];
         packetLostRate = map['packetLostRate'];
+        peerToPeerDelay = map['peerToPeerDelay'];
+        peerToPeerPacketLostRate = map['peerToPeerPacketLostRate'];
         level = ZegoStreamQualityLevel.values[map['level']];
         delay = map['delay'];
         isHardwareDecode = map['isHardwareDecode'];
+        totalRecvBytes = map['totalRecvBytes'];
+        audioRecvBytes = map['audioRecvBytes'];
+        videoRecvBytes = map['videoRecvBytes'];
     }
 
 }

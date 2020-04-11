@@ -174,6 +174,8 @@
 - (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log
+
+    // TODO: Wait for new version framework to add new parameters
     
     if (sink) {
         sink(@{
@@ -289,6 +291,8 @@
 - (void)onPlayerQualityUpdate:(ZegoPlayStreamQuality *)quality streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log
+    
+    // TODO: Wait for new version framework to add new parameters
     
     if (sink) {
         sink(@{
