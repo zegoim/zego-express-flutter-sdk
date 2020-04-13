@@ -679,10 +679,9 @@
         ZegoMixerTask *taskObject = [[ZegoMixerTask alloc] initWithTaskID:taskID];
         
         // MixerInput
-        NSMutableArray<ZegoMixerInput *> *inputListObject = nil;
         NSArray<NSDictionary *> *inputListMap = args[@"inputList"];
         if (inputListMap && inputListMap.count > 0) {
-            inputListObject = [[NSMutableArray alloc] init];
+            NSMutableArray<ZegoMixerInput *> *inputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *inputMap in inputListMap) {
                 NSString *streamID = inputMap[@"streamID"];
                 int contentType = [ZegoUtils intValue:inputMap[@"contentType"]];
@@ -695,65 +694,51 @@
                 ZegoMixerInput *inputObject = [[ZegoMixerInput alloc] initWithStreamID:streamID contentType:(ZegoMixerInputContentType)contentType layout:rect soundLevelID:soundLevelID];
                 [inputListObject addObject:inputObject];
             }
-        }
-        
-        if (inputListObject) {
             [taskObject setInputList:inputListObject];
         }
         
         // MixerOutput
-        NSMutableArray<ZegoMixerOutput *> *outputListObject = nil;
         NSArray<NSDictionary *> *outputListMap = args[@"outputList"];
         if (outputListMap && outputListMap.count > 0) {
-            outputListObject = [[NSMutableArray alloc] init];
+            NSMutableArray<ZegoMixerOutput *> *outputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *outputMap in outputListMap) {
                 NSString *target = outputMap[@"target"];
                 ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
                 [outputListObject addObject:outputObject];
             }
-        }
-        
-        if (outputListObject) {
             [taskObject setOutputList:outputListObject];
         }
         
         // AudioConfig
-        ZegoMixerAudioConfig *audioConfigObject = nil;
         NSDictionary *audioConfigMap = args[@"audioConfig"];
         if (audioConfigMap && audioConfigMap.count > 0) {
             int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
             int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
             int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
-            audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
+            ZegoMixerAudioConfig *audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
             audioConfigObject.bitrate = bitrate;
             audioConfigObject.channel = (ZegoAudioChannel)channel;
             audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
-        }
-        
-        if (audioConfigObject) {
+            
             [taskObject setAudioConfig:audioConfigObject];
         }
         
         // VideoConfig
-        ZegoMixerVideoConfig *videoConfigObject = nil;
         NSDictionary *videoConfigMap = args[@"videoConfig"];
         if (videoConfigMap && videoConfigMap.count > 0) {
             int width = [ZegoUtils intValue:videoConfigMap[@"width"]];
             int height = [ZegoUtils intValue:videoConfigMap[@"height"]];
             int fps = [ZegoUtils intValue:videoConfigMap[@"fps"]];
             int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-            videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
+            ZegoMixerVideoConfig *videoConfigObject = [[ZegoMixerVideoConfig alloc] init];
             videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
             videoConfigObject.bitrate = bitrate;
             videoConfigObject.fps = fps;
-        }
-        
-        if (videoConfigObject) {
+            
             [taskObject setVideoConfig:videoConfigObject];
         }
                                                 
         // Watermark
-        ZegoWatermark *watermarkObject = nil;
         NSDictionary *watermarkMap = args[@"watermark"];
         if (watermarkMap && watermarkMap.count > 0) {
             NSString *imageURL = watermarkMap[@"imageURL"];
@@ -762,10 +747,8 @@
             int bottom = [ZegoUtils intValue:watermarkMap[@"bottom"]];
             int right = [ZegoUtils intValue:watermarkMap[@"right"]];
             CGRect rect = CGRectMake(left, top, right - left, bottom - top);
-            watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
-        }
-        
-        if (watermarkObject) {
+            ZegoWatermark *watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
+            
             [taskObject setWatermark:watermarkObject];
         }
         
@@ -806,10 +789,9 @@
         ZegoMixerTask *taskObject = [[ZegoMixerTask alloc] initWithTaskID:taskID];
         
         // MixerInput
-        NSMutableArray<ZegoMixerInput *> *inputListObject = nil;
         NSArray<NSDictionary *> *inputListMap = args[@"inputList"];
         if (inputListMap && inputListMap.count > 0) {
-            inputListObject = [[NSMutableArray alloc] init];
+            NSMutableArray<ZegoMixerInput *> *inputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *inputMap in inputListMap) {
                 NSString *streamID = inputMap[@"streamID"];
                 int contentType = [ZegoUtils intValue:inputMap[@"contentType"]];
@@ -822,25 +804,18 @@
                 ZegoMixerInput *inputObject = [[ZegoMixerInput alloc] initWithStreamID:streamID contentType:(ZegoMixerInputContentType)contentType layout:rect soundLevelID:soundLevelID];
                 [inputListObject addObject:inputObject];
             }
-        }
-        
-        if (inputListObject) {
             [taskObject setInputList:inputListObject];
         }
         
         // MixerOutput
-        NSMutableArray<ZegoMixerOutput *> *outputListObject = nil;
         NSArray<NSDictionary *> *outputListMap = args[@"outputList"];
         if (outputListMap && outputListMap.count > 0) {
-            outputListObject = [[NSMutableArray alloc] init];
+            NSMutableArray<ZegoMixerOutput *> *outputListObject = [[NSMutableArray alloc] init];
             for (NSDictionary *outputMap in outputListMap) {
                 NSString *target = outputMap[@"target"];
                 ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
                 [outputListObject addObject:outputObject];
             }
-        }
-        
-        if (outputListObject) {
             [taskObject setOutputList:outputListObject];
         }
         
