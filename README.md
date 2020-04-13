@@ -14,7 +14,7 @@ Learn more about the solution: [https://www.zego.im](https://www.zego.im)
 
 - Android Studio: `Preferences` -> `Plugins`, search for the `Flutter` plugin to download, configure the first step to download the Flutter SDK path in the plugin.
 
-- Visual Code: Search for the `Flutter` extension in the app store and download
+- VS Code: Search for the `Flutter` extension in the app store and download
 
 After configuring the flutter environment in any of the above development environments, execute the `flutter doctor` on the command line and complete the related undownloaded dependencies according to the prompts.
 
@@ -48,6 +48,8 @@ dependencies:
       url: git://github.com/zegoim/zego-express-flutter-sdk.git
       ref: master
 ```
+
+After saving the file, execute `flutter pub get`
 
 ## 5️⃣ Add device permissions
 

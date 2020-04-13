@@ -14,7 +14,7 @@
 
 - Android Studio: `Preferences` -> `Plugins`，搜索 `Flutter` 插件进行下载，在插件中配置第一步下载好的 Flutter SDK 路径。
 
-- Visual Code: 在应用商店中搜索 `Flutter` 扩展并下载。
+- VS Code: 在应用商店中搜索 `Flutter` 扩展并下载。
 
 以上任一开发环境配置好 Flutter 环境之后，命令行执行 `flutter doctor`，根据提示内容补全相关未下载的依赖项。
 
@@ -48,6 +48,8 @@ dependencies:
       url: git://github.com/zegoim/zego-express-flutter-sdk.git
       ref: master
 ```
+
+保存文件后，执行 `flutter pub get`
 
 ## 5️⃣ 添加设备权限
 
