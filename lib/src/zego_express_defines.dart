@@ -1210,7 +1210,7 @@ class ZegoAudioConfig {
 
 /// Callback for updating stream extra information
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
 class ZegoPublisherSetStreamExtraInfoResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
@@ -1225,7 +1225,7 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 /// Callback for add/remove CDN URL
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
 class ZegoPublisherUpdateCdnUrlResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
@@ -1240,8 +1240,8 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 /// Results of starting a mixer task
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
-/// [extendedData] Extended Information
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [extendedData] Extended Information
 class ZegoMixerStartResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
@@ -1260,7 +1260,7 @@ class ZegoMixerStartResult {
 
 /// Results of stoping a mixer task
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
 class ZegoMixerStopResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
@@ -1275,8 +1275,8 @@ class ZegoMixerStopResult {
 
 /// Callback for sending broadcast messages
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
-/// [messageID] ID of this message
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [messageID] ID of this message
 class ZegoIMSendBroadcastMessageResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
@@ -1295,8 +1295,8 @@ class ZegoIMSendBroadcastMessageResult {
 
 /// Callback for sending barrage message
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
-/// [messageID] ID of this message
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [messageID] ID of this message
 class ZegoIMSendBarrageMessageResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
@@ -1315,7 +1315,7 @@ class ZegoIMSendBarrageMessageResult {
 
 /// Callback for sending custom command
 ///
-/// [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
 class ZegoIMSendCustomCommandResult {
 
     /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
