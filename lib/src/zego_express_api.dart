@@ -285,7 +285,7 @@ class ZegoExpressEngine {
     /// Callback notification period is 100 ms'
     ///
     /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
-    static void Function(Map<int, double> soundLevels) onRemoteSoundLevelUpdate;
+    static void Function(Map<String, double> soundLevels) onRemoteSoundLevelUpdate;
 
     /// Captured audio spectrum update callback
     ///
