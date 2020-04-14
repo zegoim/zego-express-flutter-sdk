@@ -12,9 +12,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     /// In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event.
     /// Playing the stream ID that does not exist, the SDK continues to try to play after executing this interface. After the stream ID is successfully published, the audio and video stream can be actually played.
     /// The developer can update the player canvas by calling this interface again (the streamID must be the same).
-    /// [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-    /// [canvas] The view used to display the play audio and video stream's image. If the view is set to [null], it will not be displayed.
-    /// [config] Advanced player configuration
+    ///
+    /// - [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+    /// - [canvas] The view used to display the play audio and video stream's image. If the view is set to [null], it will not be displayed.
+    /// - [config] Advanced player configuration
     Future<void> startPlayingStream(String streamID, {ZegoCanvas canvas, ZegoPlayerConfig config}) async {
         return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas: canvas, config: config);
     }
@@ -22,7 +23,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     /// Stop playing stream
     ///
     /// This interface allows the user to stop playing the stream. When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
-    /// [streamID] Stream ID
+    ///
+    /// - [streamID] Stream ID
     Future<void> stopPlayingStream(String streamID) async {
         return await ZegoExpressImpl.instance.stopPlayingStream(streamID);
     }
@@ -31,8 +33,9 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     ///
     /// This interface is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.
     /// You need to reset after [stopPlayingStream] and [startPlayingStream].
-    /// [streamID] Stream ID
-    /// [volume] Volume percentage. The value ranges from 0 to 100, and the default value is 100.
+    ///
+    /// - [streamID] Stream ID
+    /// - [volume] Volume percentage. The value ranges from 0 to 100, and the default value is 100.
     Future<void> setPlayVolume(String streamID, int volume) async {
         return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
     }
@@ -41,8 +44,9 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     ///
     /// This api can be used to stop playing/retrieving the audio data of the stream. Need to be called after calling startPlayingStream.
     /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
-    /// [streamID] Stream ID
-    /// [mute] mute flag, true: mute play stream video, false: resume play stream video
+    ///
+    /// - [streamID] Stream ID
+    /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
     Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
         return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
     }
@@ -51,8 +55,9 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     ///
     /// This interface can be used to stop playing/retrieving the video data of the stream. Need to be called after calling startPlayingStream.
     /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
-    /// [streamID] Stream ID
-    /// [mute] mute flag, true: mute play stream video, false: resume play stream video
+    ///
+    /// - [streamID] Stream ID
+    /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
     Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
         return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
     }
@@ -61,14 +66,15 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     ///
     /// Turn on hardware decoding and use hardware to improve decoding efficiency. Need to be called before calling startPlayingStream.
     /// Because hard-decoded support is not particularly good for a few models, SDK uses software decoding by default. If the developer finds that the device is hot when playing a high-resolution audio and video stream during testing of some models, you can consider calling this interface to enable hard decoding.
-    /// [enable] Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding. The default is false
+    ///
+    /// - [enable] Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding. The default is false
     Future<void> enableHardwareDecoder(bool enable) async {
         return await ZegoExpressImpl.instance.enableHardwareDecoder(enable);
     }
 
     /// On/off frame order detection
     ///
-    /// [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames but the screen may temporary splash. The default is true
+    /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames but the screen may temporary splash. The default is true
     Future<void> enableCheckPoc(bool enable) async {
         return await ZegoExpressImpl.instance.enableCheckPoc(enable);
     }
