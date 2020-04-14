@@ -11,6 +11,8 @@ package im.zego.zego_express_engine;
 import android.app.Application;
 import android.graphics.Rect;
 
+import org.json.JSONObject;
+
 import java.lang.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +21,8 @@ import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendCustomCommandCallback;
+import im.zego.zegoexpress.callback.IZegoMixerStartCallback;
+import im.zego.zegoexpress.callback.IZegoMixerStopCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherSetStreamExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
@@ -26,6 +30,7 @@ import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoLanguage;
+import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
 import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -37,6 +42,11 @@ import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
+import im.zego.zegoexpress.entity.ZegoMixerInput;
+import im.zego.zegoexpress.entity.ZegoMixerOutput;
+import im.zego.zegoexpress.entity.ZegoMixerTask;
+import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -632,19 +642,161 @@ public class ZegoExpressEngineMethodHandler {
     /* Mixer */
 
     @SuppressWarnings("unused")
-    public static void startMixerTask(MethodCall call, Result result) {
+    public static void startMixerTask(MethodCall call, final Result result) {
 
-        // TODO: startMixerTask
+        String taskID = call.argument("taskID");
+        ZegoMixerTask taskObject = new ZegoMixerTask(taskID);
 
-        result.success(null);
+        // MixerInput
+        ArrayList<HashMap<String, Object>> inputListMap = call.argument("inputList");
+        if (inputListMap != null && !inputListMap.isEmpty()) {
+            ArrayList<ZegoMixerInput> inputListObject= new ArrayList<>();
+            for (HashMap<String, Object> inputMap: inputListMap) {
+                String streamID = (String) inputMap.get("streamID");
+                int contentType = intValue((Number) inputMap.get("contentType"));
+                int left = intValue((Number) inputMap.get("left"));
+                int top = intValue((Number) inputMap.get("top"));
+                int right = intValue((Number) inputMap.get("right"));
+                int bottom = intValue((Number) inputMap.get("bottom"));
+                Rect rect = new Rect(left, top, right, bottom);
+                int soundLevelID = intValue((Number) inputMap.get("soundLevelID"));
+                ZegoMixerInput inputObject = new ZegoMixerInput(streamID, ZegoMixerInputContentType.getZegoMixerInputContentType(contentType), rect, soundLevelID);
+                inputListObject.add(inputObject);
+            }
+            taskObject.setInputList(inputListObject);
+        }
+
+        // MixerOutput
+        ArrayList<HashMap<String, Object>> outputListMap = call.argument("inputList");
+        if (outputListMap != null && !outputListMap.isEmpty()) {
+            ArrayList<ZegoMixerOutput> outputListObject = new ArrayList<>();
+            for (HashMap<String, Object> outputMap : outputListMap) {
+                String target = (String) outputMap.get("target");
+                ZegoMixerOutput outputObject = new ZegoMixerOutput(target);
+                outputListObject.add(outputObject);
+            }
+            taskObject.setOutputList(outputListObject);
+        }
+
+        // AudioConfig
+        HashMap<String, Object> audioConfigMap = call.argument("audioConfig");
+        if (audioConfigMap != null && !audioConfigMap.isEmpty()) {
+            int bitrate = intValue((Number) audioConfigMap.get("bitrate"));
+            int channel = intValue((Number) audioConfigMap.get("channel"));
+            int codecID = intValue((Number) audioConfigMap.get("codecID"));
+            ZegoMixerAudioConfig audioConfigObject = new ZegoMixerAudioConfig();
+            audioConfigObject.bitrate = bitrate;
+            audioConfigObject.channel = ZegoAudioChannel.getZegoAudioChannel(channel);
+            audioConfigObject.codecID = ZegoAudioCodecID.getZegoAudioCodecID(codecID);
+
+            taskObject.setAudioConfig(audioConfigObject);
+        }
+
+        // VideoConfig
+        HashMap<String, Object> videoConfigMap = call.argument("videoConfig");
+        if (videoConfigMap != null && !videoConfigMap.isEmpty()) {
+            int width = intValue((Number) videoConfigMap.get("width"));
+            int height = intValue((Number) videoConfigMap.get("height"));
+            int fps = intValue((Number) videoConfigMap.get("fps"));
+            int bitrate = intValue((Number) videoConfigMap.get("bitrate"));
+            ZegoMixerVideoConfig videoConfigObject = new ZegoMixerVideoConfig(width, height, fps, bitrate);
+
+            taskObject.setVideoConfig(videoConfigObject);
+        }
+
+        // Watermark
+        HashMap<String, Object> watermarkMap = call.argument("watermark");
+        if (watermarkMap != null && !watermarkMap.isEmpty()) {
+            String imageURL = (String) watermarkMap.get("imageURL");
+            int left = intValue((Number) watermarkMap.get("left"));
+            int top = intValue((Number) watermarkMap.get("top"));
+            int right = intValue((Number) watermarkMap.get("right"));
+            int bottom = intValue((Number) watermarkMap.get("bottom"));
+            Rect rect = new Rect(left, top, right, bottom);
+            ZegoWatermark watermarkObject = new ZegoWatermark(imageURL, rect);
+
+            taskObject.setWatermark(watermarkObject);
+        }
+
+        // Background Image
+        String backgroundImageURL = call.argument("backgroundImageURL");
+
+        if (backgroundImageURL.length() > 0) {
+            taskObject.setBackgroundImageURL(backgroundImageURL);
+        }
+
+        // Enable SoundLevel
+        boolean enableSoundLevel = boolValue((Boolean) call.argument("enableSoundLevel"));
+
+        taskObject.enableSoundLevel(enableSoundLevel);
+
+
+        ZegoExpressEngine.getEngine().startMixerTask(taskObject, new IZegoMixerStartCallback() {
+            @Override
+            public void onMixerStartResult(int errorCode, JSONObject extendedData) {
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("errorCode", errorCode);
+                resultMap.put("extendedData", extendedData.toString());
+                result.success(resultMap);
+            }
+        });
     }
 
     @SuppressWarnings("unused")
-    public static void stopMixerTask(MethodCall call, Result result) {
+    public static void stopMixerTask(MethodCall call, final Result result) {
 
-        // TODO: stopMixerTask
+        String taskID = call.argument("taskID");
+        ZegoMixerTask taskObject = new ZegoMixerTask(taskID);
 
-        result.success(null);
+        // MixerInput
+        ArrayList<HashMap<String, Object>> inputListMap = call.argument("inputList");
+        if (inputListMap != null && !inputListMap.isEmpty()) {
+            ArrayList<ZegoMixerInput> inputListObject= new ArrayList<>();
+            for (HashMap<String, Object> inputMap: inputListMap) {
+                String streamID = (String) inputMap.get("streamID");
+                int contentType = intValue((Number) inputMap.get("contentType"));
+                int left = intValue((Number) inputMap.get("left"));
+                int top = intValue((Number) inputMap.get("top"));
+                int right = intValue((Number) inputMap.get("right"));
+                int bottom = intValue((Number) inputMap.get("bottom"));
+                Rect rect = new Rect(left, top, right, bottom);
+                int soundLevelID = intValue((Number) inputMap.get("soundLevelID"));
+                ZegoMixerInput inputObject = new ZegoMixerInput(streamID, ZegoMixerInputContentType.getZegoMixerInputContentType(contentType), rect, soundLevelID);
+                inputListObject.add(inputObject);
+            }
+            taskObject.setInputList(inputListObject);
+        }
+
+        // MixerOutput
+        ArrayList<HashMap<String, Object>> outputListMap = call.argument("inputList");
+        if (outputListMap != null && !outputListMap.isEmpty()) {
+            ArrayList<ZegoMixerOutput> outputListObject = new ArrayList<>();
+            for (HashMap<String, Object> outputMap : outputListMap) {
+                String target = (String) outputMap.get("target");
+                ZegoMixerOutput outputObject = new ZegoMixerOutput(target);
+                outputListObject.add(outputObject);
+            }
+            taskObject.setOutputList(outputListObject);
+        }
+
+        // no need to set audio config
+
+        // no need to set video config
+
+        // no need to set watermark
+
+        // no need to set background image
+
+        // no need to set enable sound level
+
+        ZegoExpressEngine.getEngine().stopMixerTask(taskObject, new IZegoMixerStopCallback() {
+            @Override
+            public void onMixerStopResult(int errorCode) {
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("errorCode", errorCode);
+                result.success(resultMap);
+            }
+        });
     }
 
 

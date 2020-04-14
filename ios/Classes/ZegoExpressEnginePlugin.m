@@ -819,6 +819,10 @@
             [taskObject setOutputList:outputListObject];
         }
         
+        // no need to set audio config
+        
+        // no need to set video config
+        
         // no need to set watermark
         
         // no need to set background image
