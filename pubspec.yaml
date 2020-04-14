@@ -1,6 +1,6 @@
 name: zego_express_engine
 description: ZegoExpressEngine Audio/Video Flutter SDK is a flutter plugin wrapper based on ZegoExpressEngine native Android / iOS SDK, providing live video and real-time audio/video services. It only needs 4 lines of code and can be easily accessed in 30 minutes to build stable and high-quality cloud streaming services for real-time audio and video communications with global streaming cloud, abundant nodes and rapid scalability.
-version: 0.9.0
+version: 0.9.1
 author: ZEGO <developer@zego.im>
 homepage: https://zego.im
 
