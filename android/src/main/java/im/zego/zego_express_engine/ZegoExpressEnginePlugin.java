@@ -46,6 +46,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
     // V2 embedding
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
@@ -84,6 +85,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     // them functionally equivalent. Only one of onAttachedToEngine or registerWith will be called
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
+    @SuppressWarnings("unused")
     public static void registerWith(Registrar registrar) {
 
         Application application = (Application) registrar.context();

@@ -134,8 +134,6 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
         super.onPublisherQualityUpdate(streamID, quality);
 
-        // TODO: Wait for new version framework to add new parameters
-
         HashMap<String, Object> qualityMap = new HashMap<>();
         qualityMap.put("videoCaptureFPS", quality.videoCaptureFPS);
         qualityMap.put("videoEncodeFPS", quality.videoEncodeFPS);
@@ -148,6 +146,9 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
         qualityMap.put("packetLostRate", quality.packetLostRate);
         qualityMap.put("level", quality.level.value());
         qualityMap.put("isHardwareEncode", quality.isHardwareEncode);
+        qualityMap.put("totalSendBytes", quality.totalSendBytes);
+        qualityMap.put("audioSendBytes", quality.audioSendBytes);
+        qualityMap.put("videoSendBytes", quality.videoSendBytes);
 
         HashMap<String, Object> map = new HashMap<>();
 
@@ -230,8 +231,6 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
         super.onPlayerQualityUpdate(streamID, quality);
 
-        // TODO: Wait for new version framework to add new parameters
-
         HashMap<String, Object> qualityMap = new HashMap<>();
         qualityMap.put("videoRecvFPS", quality.videoRecvFPS);
         qualityMap.put("videoDecodeFPS", quality.videoDecodeFPS);
@@ -243,9 +242,14 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
         qualityMap.put("audioKBPS", quality.audioKBPS);
         qualityMap.put("rtt", quality.rtt);
         qualityMap.put("packetLostRate", quality.packetLostRate);
+        qualityMap.put("peerToPeerDelay", quality.peerToPeerDelay);
+        qualityMap.put("peerToPeerPacketLostRate", quality.peerToPeerPacketLostRate);
         qualityMap.put("level", quality.level.value());
         qualityMap.put("delay", quality.delay);
         qualityMap.put("isHardwareDecode", quality.isHardwareDecode);
+        qualityMap.put("totalRecvBytes", quality.totalRecvBytes);
+        qualityMap.put("audioRecvBytes", quality.audioRecvBytes);
+        qualityMap.put("videoRecvBytes", quality.videoRecvBytes);
 
         HashMap<String, Object> map = new HashMap<>();
 
@@ -349,7 +353,7 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     }
 
     @Override
-    public void onMixerSoundLevelUpdate(HashMap<Integer, Double> soundLevels) {
+    public void onMixerSoundLevelUpdate(HashMap<Integer, Float> soundLevels) {
         super.onMixerSoundLevelUpdate(soundLevels);
 
         HashMap<String, Object> map = new HashMap<>();
@@ -364,7 +368,7 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     /* Device */
 
     @Override
-    public void onCapturedSoundLevelUpdate(double soundLevel) {
+    public void onCapturedSoundLevelUpdate(float soundLevel) {
         super.onCapturedSoundLevelUpdate(soundLevel);
 
         HashMap<String, Object> map = new HashMap<>();
@@ -376,7 +380,7 @@ public class ZegoExpressEngineEventHandler extends IZegoEventHandler {
     }
 
     @Override
-    public void onRemoteSoundLevelUpdate(HashMap<String, Double> soundLevels) {
+    public void onRemoteSoundLevelUpdate(HashMap<String, Float> soundLevels) {
         super.onRemoteSoundLevelUpdate(soundLevels);
 
         HashMap<String, Object> map = new HashMap<>();

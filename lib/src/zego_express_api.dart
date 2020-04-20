@@ -75,7 +75,7 @@ class ZegoExpressEngine {
     /// - [roomID] Room ID, a string of up to 128 bytes in length.
     /// - [state] Changed room state
     /// - [errorCode] Error code, please refer to the [common error code document](https://doc-en.zego.im/en/308.html) for details
-    /// - [extendedData] Extended Information
+    /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
     static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData) onRoomStateUpdate;
 
     /// Notification callback for other users in the room to increase or decrease
@@ -114,11 +114,12 @@ class ZegoExpressEngine {
     ///
     /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback interface.
     /// You can roughly judge the user's uplink network status based on whether the state parameter is in [PUBLISH_REQUESTING].
+    /// ExtendedData is extended information with state updates. If you use ZEGO's CDN content distribution network, after the stream is successfully published, the keys of the content of this parameter are flv_url_list, rtmp_url_list, hls_url_list. These correspond to the publishing stream URLs of the flv, rtmp, and hls protocols.
     ///
     /// - [streamID] Stream ID
     /// - [state] Status of publishing stream
     /// - [errorCode] The error code corresponding to the status change of the publish stream. Please refer to the common error code documentation [https://doc-zh.zego.im/zh/308.html] for details.
-    /// - [extendedData] Extended Information. If you use ZEGO's CDN content distribution network, after the stream is successfully published, the keys of the content of this parameter are flv_url_list, rtmp_url_list, hls_url_list. These correspond to the publishing stream URLs of the flv, rtmp, and hls protocols. For CDNs that do not use ZEGO, you do not need to pay attention to this parameter.
+    /// - [extendedData] Extended information with state updates.
     static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData) onPublisherStateUpdate;
 
     /// Publish stream quality callback
@@ -176,7 +177,7 @@ class ZegoExpressEngine {
     /// - [streamID] stream ID
     /// - [state] Current play state
     /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the common error code documentation [https://doc-zh.zego.im/zh/308.html] for details.
-    /// - [extendedData] Extended Information
+    /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
     static void Function(String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData) onPlayerStateUpdate;
 
     /// Play stream quality callback

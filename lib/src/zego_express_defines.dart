@@ -459,7 +459,6 @@ class ZegoVideoConfig {
 
     /// Create video configuration with preset enumeration values
     ZegoVideoConfig.preset(ZegoVideoConfigPreset preset): assert(preset != null) {
-
         codecID = ZegoVideoCodecID.Default;
         switch (preset) {
             case ZegoVideoConfigPreset.Preset180P:
@@ -1172,7 +1171,6 @@ class ZegoAudioConfig {
 
     /// Create a audio configuration with preset enumeration values
     ZegoAudioConfig.preset(ZegoAudioConfigPreset preset): assert(preset != null) {
-
         codecID = ZegoAudioCodecID.Default;
         switch (preset) {
             case ZegoAudioConfigPreset.BasicQuality:
