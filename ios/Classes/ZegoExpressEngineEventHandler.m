@@ -174,8 +174,6 @@
 - (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log
-
-    // TODO: Wait for new version framework to add new parameters
     
     if (sink) {
         sink(@{
@@ -191,7 +189,10 @@
                 @"rtt": @(quality.rtt),
                 @"packetLostRate": @(quality.packetLostRate),
                 @"level": @(quality.level),
-                @"isHardwareEncode": @(quality.isHardwareEncode)
+                @"isHardwareEncode": @(quality.isHardwareEncode),
+                @"totalSendBytes": @(quality.totalSendBytes),
+                @"audioSendBytes": @(quality.audioSendBytes),
+                @"videoSendBytes": @(quality.videoSendBytes)
             },
             @"streamID": streamID
         });
@@ -292,8 +293,6 @@
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log
     
-    // TODO: Wait for new version framework to add new parameters
-    
     if (sink) {
         sink(@{
             @"method": @"onPlayerQualityUpdate",
@@ -308,9 +307,14 @@
                 @"audioKBPS": @(quality.audioKBPS),
                 @"rtt": @(quality.rtt),
                 @"packetLostRate": @(quality.packetLostRate),
+                @"peerToPeerDelay": @(quality.peerToPeerDelay),
+                @"peerToPeerPacketLostRate": @(quality.peerToPeerPacketLostRate),
                 @"level": @(quality.level),
                 @"delay": @(quality.delay),
-                @"isHardwareDecode": @(quality.isHardwareDecode)
+                @"isHardwareDecode": @(quality.isHardwareDecode),
+                @"totalRecvBytes": @(quality.totalRecvBytes),
+                @"audioRecvBytes": @(quality.audioRecvBytes),
+                @"videoRecvBytes": @(quality.videoRecvBytes)
             },
             @"streamID": streamID
         });
