@@ -33,7 +33,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^0.9.1
+  zego_express_engine: ^0.9.2
 ```
 
 - ### Depends on git
@@ -112,7 +112,7 @@ After adding permissions, it will be as shown:
 
 ![Add iOS Privacy Done](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
 
-> If you use Platform View, you need to add an additional description for iOS, refer to [FAQ-1](#8️⃣-FAQ)
+> If you use Platform View, you need to add an additional description for iOS, refer to [FAQ-1](#1-ios-error-when-using-platform-view-verbose-2platform_view_layercc28-trying-to-embed-a-platform-view-but-the-paintcontext-does-not-support-embedding)
 
 ## 6️⃣ Init SDK
 
