@@ -27,8 +27,11 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
 
   int _playWidth = 0;
   int _playHeight = 0;
-  double _playFps = 0.0;
-  double _playBitrate = 0.0;
+  double _playRecvFPS = 0.0;
+  double _playDecodeFPS = 0.0;
+  double _playRenderFPS = 0.0;
+  double _playVideoBitrate = 0.0;
+  double _playAudioBitrate = 0.0;
   bool _isHardwareDecode = false;
   String _networkQuality = '';
 
@@ -73,8 +76,11 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
     ZegoExpressEngine.onPlayerQualityUpdate = (String streamID, ZegoPlayStreamQuality quality) {
 
       setState(() {
-        _playFps = quality.videoRecvFPS;
-        _playBitrate = quality.videoKBPS;
+        _playRecvFPS = quality.videoRecvFPS;
+        _playDecodeFPS = quality.videoDecodeFPS;
+        _playRenderFPS = quality.videoRenderFPS;
+        _playVideoBitrate = quality.videoKBPS;
+        _playAudioBitrate = quality.audioKBPS;
         _isHardwareDecode = quality.isHardwareDecode;
 
         switch (quality.level) {
@@ -279,7 +285,8 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             children: <Widget>[
               Text('RoomID: ${ZegoConfig.instance.roomID}',
                 style: TextStyle(
-                    color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -288,7 +295,8 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             children: <Widget>[
               Text('StreamID: ${ZegoConfig.instance.streamID}',
                 style: TextStyle(
-                    color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -297,7 +305,8 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             children: <Widget>[
               Text('Rendering with: ${ZegoConfig.instance.enablePlatformView ? 'PlatformView' : 'TextureRenderer'}',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -306,25 +315,58 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             children: <Widget>[
               Text('Resolution: $_playWidth x $_playHeight',
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('FPS: ${_playFps.toStringAsFixed(2)}',
+              Text('FPS(Recv): ${_playRecvFPS.toStringAsFixed(2)}',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('Bitrate: ${_playBitrate.toStringAsFixed(2)} kb/s',
+              Text('FPS(Decode): ${_playDecodeFPS.toStringAsFixed(2)}',
                 style: TextStyle(
-                    color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('FPS(Render): ${_playDecodeFPS.toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('Bitrate(Video): ${_playVideoBitrate.toStringAsFixed(2)} kb/s',
+                style: TextStyle(
+                    color: Colors.white,
+                  fontSize: 9
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('Bitrate(Audio): ${_playAudioBitrate.toStringAsFixed(2)} kb/s',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -333,7 +375,8 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             children: <Widget>[
               Text('HardwareDecode: ${_isHardwareDecode ? '✅' : '❎'}',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -342,7 +385,8 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
             children: <Widget>[
               Text('NetworkQuality: $_networkQuality',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],

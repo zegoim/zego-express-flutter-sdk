@@ -523,9 +523,9 @@ class ZegoExpressImpl {
             case 'onRoomUserUpdate':
                 if (ZegoExpressEngine.onRoomUserUpdate == null) return;
 
-                List<Map<String, dynamic>> userMapList = map['userList'];
+                List<dynamic> userMapList = map['userList'];
                 List<ZegoUser> userList = [];
-                for (Map<String, dynamic> userMap in userMapList) {
+                for (Map<dynamic, dynamic> userMap in userMapList) {
                     ZegoUser user = ZegoUser.fromMap(userMap);
                     userList.add(user);
                 }
@@ -540,9 +540,9 @@ class ZegoExpressImpl {
             case 'onRoomStreamUpdate':
                 if (ZegoExpressEngine.onRoomStreamUpdate == null) return;
 
-                List<Map<String, dynamic>> streamMapList = map['streamList'];
+                List<dynamic> streamMapList = map['streamList'];
                 List<ZegoStream> streamList = [];
-                for (Map<String, dynamic> streamMap in streamMapList) {
+                for (Map<dynamic, dynamic> streamMap in streamMapList) {
                     ZegoStream stream = ZegoStream.fromMap(streamMap);
                     streamList.add(stream);
                 }
@@ -557,9 +557,9 @@ class ZegoExpressImpl {
             case 'onRoomStreamExtraInfoUpdate':
                 if (ZegoExpressEngine.onRoomStreamExtraInfoUpdate == null) return;
 
-                List<Map<String, dynamic>> streamMapList = map['streamList'];
+                List<dynamic> streamMapList = map['streamList'];
                 List<ZegoStream> streamList = [];
-                for (Map<String, dynamic> streamMap in streamMapList) {
+                for (Map<dynamic, dynamic> streamMap in streamMapList) {
                     ZegoStream stream = ZegoStream.fromMap(streamMap);
                     streamList.add(stream);
                 }
@@ -622,9 +622,9 @@ class ZegoExpressImpl {
             case 'onPublisherRelayCDNStateUpdate':
                 if (ZegoExpressEngine.onPublisherRelayCDNStateUpdate == null) return;
 
-                List<Map<String, dynamic>> infoMapList = map['infoList'];
+                List<dynamic> infoMapList = map['infoList'];
                 List<ZegoStreamRelayCDNInfo> infoList = [];
-                for (Map<String, dynamic> infoMap in infoMapList) {
+                for (Map<dynamic, dynamic> infoMap in infoMapList) {
                     ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo.fromMap(infoMap);
                     infoList.add(info);
                 }
@@ -718,9 +718,9 @@ class ZegoExpressImpl {
             case 'onMixerRelayCDNStateUpdate':
                 if (ZegoExpressEngine.onMixerRelayCDNStateUpdate == null) return;
 
-                List<Map<String, dynamic>> infoMapList = map['infoList'];
+                List<dynamic> infoMapList = map['infoList'];
                 List<ZegoStreamRelayCDNInfo> infoList = [];
-                for (Map<String, dynamic> infoMap in infoMapList) {
+                for (Map<dynamic, dynamic> infoMap in infoMapList) {
                     ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo.fromMap(infoMap);
                     infoList.add(info);
                 }
@@ -745,9 +745,9 @@ class ZegoExpressImpl {
             case 'onAudioDeviceStateChanged':
                 if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
 
-                List<Map<String, dynamic>> infoMapList = map['deviceInfo'];
+                List<dynamic> infoMapList = map['deviceInfo'];
                 List<ZegoDeviceInfo> infoList = [];
-                for (Map<String, dynamic> infoMap in infoMapList) {
+                for (Map<dynamic, dynamic> infoMap in infoMapList) {
                     ZegoDeviceInfo info = ZegoDeviceInfo.fromMap(infoMap);
                     infoList.add(info);
                 }
@@ -762,9 +762,9 @@ class ZegoExpressImpl {
             case 'onVideoDeviceStateChanged':
                 if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
-                List<Map<String, dynamic>> infoMapList = map['deviceInfo'];
+                List<dynamic> infoMapList = map['deviceInfo'];
                 List<ZegoDeviceInfo> infoList = [];
-                for (Map<String, dynamic> infoMap in infoMapList) {
+                for (Map<dynamic, dynamic> infoMap in infoMapList) {
                     ZegoDeviceInfo info = ZegoDeviceInfo.fromMap(infoMap);
                     infoList.add(info);
                 }
@@ -840,9 +840,9 @@ class ZegoExpressImpl {
             case 'onIMRecvBroadcastMessage':
                 if (ZegoExpressEngine.onIMRecvBroadcastMessage == null) return;
 
-                List<Map<String, dynamic>> messageMapList = map['deviceInfo'];
+                List<dynamic> messageMapList = map['deviceInfo'];
                 List<ZegoBroadcastMessageInfo> messageList = [];
-                for (Map<String, dynamic> messageMap in messageMapList) {
+                for (Map<dynamic, dynamic> messageMap in messageMapList) {
                     ZegoBroadcastMessageInfo message = ZegoBroadcastMessageInfo.fromMap(messageMap);
                     messageList.add(message);
                 }
@@ -856,9 +856,9 @@ class ZegoExpressImpl {
             case 'onIMRecvBarrageMessage':
                 if (ZegoExpressEngine.onIMRecvBarrageMessage == null) return;
 
-                List<Map<String, dynamic>> messageMapList = map['deviceInfo'];
+                List<dynamic> messageMapList = map['deviceInfo'];
                 List<ZegoBarrageMessageInfo> messageList = [];
-                for (Map<String, dynamic> messageMap in messageMapList) {
+                for (Map<dynamic, dynamic> messageMap in messageMapList) {
                     ZegoBarrageMessageInfo message = ZegoBarrageMessageInfo.fromMap(messageMap);
                     messageList.add(message);
                 }

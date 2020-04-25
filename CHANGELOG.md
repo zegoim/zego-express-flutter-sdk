@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.9.3
+
+- Fix type conversion issue in dart callback
+
 ## 0.9.2
 
 - Update native SDK version to 1.6.0

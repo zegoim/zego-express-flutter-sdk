@@ -28,8 +28,11 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
 
   int _publishWidth = 0;
   int _publishHeight = 0;
-  double _publishFps = 0.0;
-  double _publishBitrate = 0.0;
+  double _publishCaptureFPS = 0.0;
+  double _publishEncodeFPS = 0.0;
+  double _publishSendFPS = 0.0;
+  double _publishVideoBitrate = 0.0;
+  double _publishAudioBitrate = 0.0;
   bool _isHardwareEncode = false;
   String _networkQuality = '';
 
@@ -105,8 +108,11 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
     ZegoExpressEngine.onPublisherQualityUpdate = (String streamID, ZegoPublishStreamQuality quality) {
 
       setState(() {
-        _publishFps = quality.videoSendFPS;
-        _publishBitrate = quality.videoKBPS;
+        _publishCaptureFPS = quality.videoCaptureFPS;
+        _publishEncodeFPS = quality.videoEncodeFPS;
+        _publishSendFPS = quality.videoSendFPS;
+        _publishVideoBitrate = quality.videoKBPS;
+        _publishAudioBitrate = quality.audioKBPS;
         _isHardwareEncode = quality.isHardwareEncode;
 
         switch (quality.level) {
@@ -300,18 +306,10 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
           ),
           Row(
             children: <Widget>[
-              Text('RoomID: ${ZegoConfig.instance.roomID}',
+              Text('RoomID: ${ZegoConfig.instance.roomID} |  StreamID: ${ZegoConfig.instance.streamID}',
                 style: TextStyle(
-                    color: Colors.white
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('StreamID: ${ZegoConfig.instance.streamID}',
-                style: TextStyle(
-                  color: Colors.white
+                    color: Colors.white,
+                    fontSize: 9
                 ),
               ),
             ],
@@ -320,7 +318,8 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             children: <Widget>[
               Text('Rendering with: ${ZegoConfig.instance.enablePlatformView ? 'PlatformView' : 'TextureRenderer'}',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -329,25 +328,58 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             children: <Widget>[
               Text('Resolution: $_publishWidth x $_publishHeight',
                 style: TextStyle(
-                    color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('FPS: ${_publishFps.toStringAsFixed(2)}',
+              Text('FPS(Capture): ${_publishCaptureFPS.toStringAsFixed(2)}',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('Bitrate: ${_publishBitrate.toStringAsFixed(2)} kb/s',
+              Text('FPS(Encode): ${_publishEncodeFPS.toStringAsFixed(2)}',
                 style: TextStyle(
-                    color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('FPS(Send): ${_publishSendFPS.toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('Bitrate(Video): ${_publishVideoBitrate.toStringAsFixed(2)} kb/s',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('Bitrate(Audio): ${_publishAudioBitrate.toStringAsFixed(2)} kb/s',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -356,7 +388,8 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             children: <Widget>[
               Text('HardwareEncode: ${_isHardwareEncode ? '✅' : '❎'}',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -365,7 +398,8 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             children: <Widget>[
               Text('NetworkQuality: $_networkQuality',
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.white,
+                  fontSize: 9
                 ),
               ),
             ],
@@ -426,11 +460,10 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
         title: Text(_title),
       ),
       floatingActionButton: CupertinoButton(
-          child: Text(
-            'Settings',
-            style: TextStyle(
-              color: Colors.white
-            ),
+          child: Icon(
+            Icons.settings,
+            size: 40,
+            color: Colors.white,
           ),
           onPressed: onSettingsButtonClicked
       ),
