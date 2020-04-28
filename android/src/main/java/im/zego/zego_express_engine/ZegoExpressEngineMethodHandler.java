@@ -122,7 +122,7 @@ public class ZegoExpressEngineMethodHandler {
         String roomID = call.argument("roomID");
 
         HashMap<String, Object> userMap = call.argument("user");
-        ZegoUser user = new ZegoUser((String) userMap.get("userID"), (String) userMap.get("userName"));
+        ZegoUser user = new ZegoUser((String) (userMap != null ? userMap.get("userID") : null), (String) (userMap != null ? userMap.get("userName") : null));
 
         HashMap<String, Object> configMap = call.argument("config");
         if (configMap != null && !configMap.isEmpty()) {
@@ -491,7 +491,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Player */
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "unchecked"})
     public static void startPlayingStream(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -721,7 +721,7 @@ public class ZegoExpressEngineMethodHandler {
         // Background Image
         String backgroundImageURL = call.argument("backgroundImageURL");
 
-        if (backgroundImageURL.length() > 0) {
+        if (backgroundImageURL != null && backgroundImageURL.length() > 0) {
             taskObject.setBackgroundImageURL(backgroundImageURL);
         }
 
@@ -1097,10 +1097,6 @@ public class ZegoExpressEngineMethodHandler {
 
     private static long longValue(Number number) {
         return number != null ? number.longValue() : 0;
-    }
-
-    private static float floatValue(Number number) {
-        return number != null ? number.floatValue() : .0f;
     }
 
     private static double doubleValue(Number number) {
