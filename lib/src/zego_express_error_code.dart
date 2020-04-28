@@ -353,12 +353,12 @@ class ZegoErrorCode {
   static const int IMSendFailed                                                           = 1009010;
 
   /// The custom video capturer is not created, be sure to use it after you receive 'onStart' callback
-  static const int ExternalIOCustomVideoCapturerNotCreated                                = 1011001;
+  static const int CustomVideoIOCapturerNotCreated                                        = 1011001;
 
   /// The custom video capture module is not open. Make sure that the custom video capture is enabled in the initialization configuration
-  static const int ExternalIONoCustomVideoCapture                                         = 1011002;
+  static const int CustomVideoIONoCustomVideoCapture                                      = 1011002;
 
   /// The currently custom video capture format does not support this API
-  static const int ExternalIONotSupportedFormat                                           = 1011010;
+  static const int CustomVideoIONotSupportedFormat                                        = 1011010;
 
 }
