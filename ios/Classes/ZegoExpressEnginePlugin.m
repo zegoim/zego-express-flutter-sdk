@@ -2,6 +2,7 @@
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
 #import "ZegoExpressEngineEventHandler.h"
+#import "ZegoExpressEngineMediaPlayerEventHandler.h"
 
 #import "ZegoPlatformViewFactory.h"
 #import "ZegoTextureRendererController.h"
@@ -16,6 +17,8 @@
 @property (nonatomic, strong) FlutterEventChannel *eventChannel;
 @property (nonatomic, strong) FlutterEventSink eventSink;
 @property (nonatomic, strong) ZegoExpressEngineEventHandler *eventHandler;
+@property (nonatomic, strong) ZegoExpressEngineMediaPlayerEventHandler *mediaPlayerEventHandler;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaPlayer *> *mediaPlayerMap;
 @property (nonatomic, assign) BOOL enablePlatformView;
 
 @end
@@ -132,6 +135,8 @@
         if (!self.enablePlatformView) {
             [[ZegoTextureRendererController sharedInstance] initController];
         }
+
+        self.mediaPlayerEventHandler = [[ZegoExpressEngineMediaPlayerEventHandler alloc] initWithSink:self.eventSink];
         
         result(nil);
       
@@ -1010,6 +1015,207 @@
         [[ZegoExpressEngine sharedEngine] sendCustomCommand:command toUserList:userListObject roomID:roomID callback:^(int errorCode) {
             result(@(errorCode));
         }];
+
+#pragma mark MediaPlayer
+
+    } else if ([@"createMediaPlayer" isEqualToString:call.method]) {
+
+        ZegoMediaPlayer *mediaPlayer = [[ZegoExpressEngine sharedEngine] createMediaPlayer];
+
+        if (mediaPlayer) {
+            NSNumber *index = mediaPlayer.index;
+
+            [mediaPlayer setEventHandler:self.mediaPlayerEventHandler];
+            self.mediaPlayerMap[index] = mediaPlayer;
+
+            result(index);
+        } else {
+            result(@(-1));
+        }
+
+    } else if ([@"destroyMediaPlayer" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+            [[ZegoExpressEngine sharedEngine] destroyMediaPlayer:mediaPlayer];
+        }
+
+        [self.mediaPlayerMap removeObjectForKey:index];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerLoadResource" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+
+            NSString *path = args[@"path"];
+
+            [mediaPlayer loadResource:path callback:^(int errorCode) {
+                result(@{
+                    @"errorCode": @(errorCode)
+                });
+            }];
+        }
+
+    } else if ([@"mediaPlayerStart" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        [mediaPlayer start];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerStop" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        [mediaPlayer stop];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerPause" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        [mediaPlayer pause];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerResume" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        [mediaPlayer resume];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerSeekTo" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+
+            unsigned long long millisecond = [ZegoUtils unsignedLongLongValue:args[@"millisecond"]];
+
+            [mediaPlayer seekTo:millisecond callback:^(int errorCode) {
+                result(@{
+                    @"errorCode": @(errorCode)
+                });
+            }];
+        }
+
+    } else if ([@"mediaPlayerEnableRepeat" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
+
+        [mediaPlayer enableRepeat:enable];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerEnableAux" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        BOOL enable = [ZegoUtils boolValue:args[@"enable"]];
+
+        [mediaPlayer enableAux:enable];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerMuteLocal" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        BOOL mute = [ZegoUtils boolValue:args[@"mute"]];
+
+        [mediaPlayer muteLocal:mute];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerSetVolume" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        int volume = [ZegoUtils intValue:args[@"volume"]];
+
+        [mediaPlayer setVolume:volume];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerSetProgressInterval" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        unsigned long long millisecond = [ZegoUtils unsignedLongLongValue:args[@"millisecond"]];
+
+        [mediaPlayer setProgressInterval:millisecond];
+
+        result(nil);
+
+    } else if ([@"mediaPlayerGetVolume" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+            int volume = mediaPlayer.volume;
+            result(@(volume));
+        } else {
+            result(@(0));
+        }
+
+    } else if ([@"mediaPlayerGetTotalDuration" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+            unsigned long long totalDuration = mediaPlayer.totalDuration;
+            result(@(totalDuration));
+        } else {
+            result(@(0));
+        }
+
+    } else if ([@"mediaPlayerGetCurrentProgress" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+            unsigned long long currentProgress = mediaPlayer.currentProgress;
+            result(@(currentProgress));
+        } else {
+            result(@(0));
+        }
+
+    } else if ([@"mediaPlayerGetCurrentState" isEqualToString:call.method]) {
+
+        NSNumber *index = args[@"index"];
+        ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+        if (mediaPlayer) {
+            ZegoMediaPlayerState currentState = mediaPlayer.currentState;
+            result(@(currentState));
+        } else {
+            result(@(0));
+        }
         
     } else {
       result(FlutterMethodNotImplemented);
