@@ -18,9 +18,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendCustomCommandCallback;
+import im.zego.zegoexpress.callback.IZegoMediaPlayerLoadResourceCallback;
+import im.zego.zegoexpress.callback.IZegoMediaPlayerSeekToCallback;
 import im.zego.zegoexpress.callback.IZegoMixerStartCallback;
 import im.zego.zegoexpress.callback.IZegoMixerStopCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherSetStreamExtraInfoCallback;
@@ -30,6 +33,7 @@ import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoLanguage;
+import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
 import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
@@ -63,6 +67,10 @@ public class ZegoExpressEngineMethodHandler {
 
     private static TextureRegistry textureRegistry = null;
 
+    private static EventChannel.EventSink eventSink = null;
+
+    private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
+
     /* Main */
 
     @SuppressWarnings("unused")
@@ -74,6 +82,7 @@ public class ZegoExpressEngineMethodHandler {
         ZegoScenario scenario = ZegoScenario.getZegoScenario(intValue((Number)call.argument("scenario")));
         enablePlatformView = boolValue((Boolean) call.argument("enablePlatformView"));
         textureRegistry = registry;
+        eventSink = sink;
 
         ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, new ZegoExpressEngineEventHandler(sink));
 
@@ -1033,6 +1042,258 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(resultMap);
             }
         });
+    }
+
+
+    /* MediaPlayer */
+
+    @SuppressWarnings("unused")
+    public static void createMediaPlayer(MethodCall call, Result result) {
+
+        ZegoMediaPlayer mediaPlayer = ZegoExpressEngine.getEngine().createMediaPlayer();
+
+        if (mediaPlayer != null) {
+            int index = mediaPlayer.getIndex();
+
+            mediaPlayer.setEventHandler(new ZegoExpressEngineMediaPlayerEventHandler(eventSink));
+            mediaPlayerHashMap.put(index, mediaPlayer);
+
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyMediaPlayer(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyMediaPlayer(mediaPlayer);
+        }
+
+        mediaPlayerHashMap.remove(index);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerLoadResource(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            String path = call.argument("path");
+            mediaPlayer.loadResource(path, new IZegoMediaPlayerLoadResourceCallback() {
+                @Override
+                public void onLoadResourceCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerStart(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerStop(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerPause(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerResume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.resume();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSeekTo(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            long millisecond = longValue((Number) call.argument("millisecond"));
+            mediaPlayer.seekTo(millisecond, new IZegoMediaPlayerSeekToCallback() {
+                @Override
+                public void onSeekToTimeCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableRepeat(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = boolValue((Boolean) call.argument("enable"));
+            mediaPlayer.enableRepeat(enable);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableAux(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = boolValue((Boolean) call.argument("enable"));
+            mediaPlayer.enableAux(enable);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerMuteLocal(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean mute = boolValue((Boolean) call.argument("mute"));
+            mediaPlayer.muteLocal(mute);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            mediaPlayer.setVolume(volume);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetProgressInterval(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            long millisecond = longValue((Number) call.argument("millisecond"));
+            mediaPlayer.setProgressInterval(millisecond);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = mediaPlayer.getVolume();
+            result.success(volume);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetTotalDuration(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            long totalDuration = mediaPlayer.getTotalDuration();
+            result.success(totalDuration);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetCurrentProgress(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            long currentProgress = mediaPlayer.getCurrentProgress();
+            result.success(currentProgress);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetCurrentState(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            ZegoMediaPlayerState state = mediaPlayer.getCurrentState();
+            result.success(state.value());
+        } else {
+            result.success(0);
+        }
     }
 
 
