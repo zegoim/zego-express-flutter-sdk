@@ -28,7 +28,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
         this.platformViews = new HashMap<>();
     }
 
-    public static ZegoPlatformViewFactory getInstance() {
+    static ZegoPlatformViewFactory getInstance() {
         if (instance == null) {
             synchronized (ZegoPlatformViewFactory.class) {
                 if (instance == null) {
@@ -40,12 +40,12 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
     }
 
     /// Called when dart invoke `destroyPlatformView`
-    public void destroyPlatformView(int viewID) {
+    void destroyPlatformView(int viewID) {
         this.platformViews.remove(viewID);
     }
 
     /// Get PlatfromView to pass to native when dart invoke `startPreview` or `startPlayingStream`
-    public ZegoPlatformView getPlatformView(int viewID) {
+    ZegoPlatformView getPlatformView(int viewID) {
         return this.platformViews.get(viewID);
     }
 
