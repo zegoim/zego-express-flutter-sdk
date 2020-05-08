@@ -34,6 +34,11 @@
     return [number isKindOfClass:[NSNull class]] ? 0 : [number unsignedLongValue];
 }
 
++ (unsigned long long)unsignedLongLongValue:(NSNumber *)number {
+
+    return [number isKindOfClass:[NSNull class]] ? 0 : [number unsignedLongLongValue];
+}
+
 + (long long)longLongValue:(NSNumber *)number {
     
     return [number isKindOfClass:[NSNull class]] ? 0 : [number longLongValue];

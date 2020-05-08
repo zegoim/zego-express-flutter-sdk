@@ -9,8 +9,6 @@
 package im.zego.zego_express_engine;
 
 import android.content.Context;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 

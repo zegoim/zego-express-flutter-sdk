@@ -12,13 +12,13 @@ import java.util.HashMap;
 
 import io.flutter.view.TextureRegistry;
 
-public class ZegoTextureRendererController {
+class ZegoTextureRendererController {
 
     private static ZegoTextureRendererController instance;
 
     private HashMap<Long, ZegoTextureRenderer> renderers;
 
-    public static ZegoTextureRendererController getInstance() {
+    static ZegoTextureRendererController getInstance() {
         if (instance == null) {
             synchronized (ZegoTextureRendererController.class) {
                 if (instance == null) {
@@ -32,7 +32,7 @@ public class ZegoTextureRendererController {
 
     /// Called when dart invoke `createTextureRenderer`
     /// @return textureID
-    public Long createTextureRenderer(TextureRegistry.SurfaceTextureEntry textureEntry, int viewWidth, int viewHeight) {
+    Long createTextureRenderer(TextureRegistry.SurfaceTextureEntry textureEntry, int viewWidth, int viewHeight) {
 
         ZegoTextureRenderer renderer = new ZegoTextureRenderer(textureEntry, viewWidth, viewHeight);
 
@@ -42,7 +42,7 @@ public class ZegoTextureRendererController {
     }
 
     /// Called when dart invoke `updateTextureRendererSize`
-    public void updateTextureRenderer(Long textureID, int viewWidth, int viewHeight) {
+    void updateTextureRenderer(Long textureID, int viewWidth, int viewHeight) {
 
         ZegoTextureRenderer renderer = this.renderers.get(textureID);
 
@@ -54,7 +54,7 @@ public class ZegoTextureRendererController {
     }
 
     /// Called when dart invoke `destroyTextureRenderer`
-    public void destroyTextureRenderer(Long textureID) {
+    void destroyTextureRenderer(Long textureID) {
 
         ZegoTextureRenderer renderer = this.renderers.get(textureID);
 
@@ -67,7 +67,7 @@ public class ZegoTextureRendererController {
     }
 
     /// Get TextureRenderer to pass to native when dart invoke `startPreview` or `startPlayingStream`
-    public ZegoTextureRenderer getTextureRenderer(Long textureID) {
+    ZegoTextureRenderer getTextureRenderer(Long textureID) {
         return this.renderers.get(textureID);
     }
 

@@ -62,6 +62,7 @@
         
         sink(@{
             @"method": @"onRoomStateUpdate",
+            @"state": @(state),
             @"errorCode": @(errorCode),
             @"extendedData": extendedDataJsonString,
             @"roomID": roomID

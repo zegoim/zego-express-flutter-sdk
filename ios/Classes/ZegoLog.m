@@ -7,7 +7,6 @@
 //
 
 #import "ZegoLog.h"
-#include "../../zego_defines.h"
 
 @implementation ZegoLog
 
@@ -41,7 +40,7 @@
 }
 
 + (void)log:(NSString *)content {
-//    zego_liveroom_custom_log(content.UTF8String);
+    // TODO: write log
     NSLog(@"%@", content);
 }
 

@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.10.0
+
+1. Add media player (audio only) module
+
+2. Update native SDK to version 1.7.0
+
+3. Add error code definition class
+
+4. Fix iOS callback bug
+
 ## 0.9.3
 
 - Fix type conversion issue in dart callback
