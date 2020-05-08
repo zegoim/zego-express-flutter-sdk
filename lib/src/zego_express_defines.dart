@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'zego_express_impl.dart';
 
 /// Application scenario
 enum ZegoScenario {
@@ -1206,12 +1207,102 @@ class ZegoAudioConfig {
 
 }
 
+/// Zego MediaPlayer
+///
+/// Yon can use ZegoMediaPlayer to play media resource files on the local or remote server, and can mix the sound of the media resource files that are played into the publish stream to achieve the effect of background music.
+abstract class ZegoMediaPlayer {
+
+  /// Load media resource
+  ///
+  /// Yon can pass the absolute path of the local resource or the URL of the network resource
+  ///
+  /// - [path] the absolute path of the local resource or the URL of the network resource
+  /// - Returns Notification of resource loading results
+  Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
+
+  /// Start playing
+  ///
+  /// You need to load resources before playing
+  Future<void> start();
+
+  /// Stop playing
+  Future<void> stop();
+
+  /// Pause playing
+  Future<void> pause();
+
+  /// resume playing
+  Future<void> resume();
+
+  /// Set the specified playback progress
+  ///
+  /// Unit is millisecond
+  ///
+  /// - [millisecond] Point in time of specified playback progress
+  /// - Returns the result notification of set the specified playback progress
+  Future<ZegoMediaPlayerSeekToResult> seekTo(int millisecond);
+
+  /// Whether to repeat playback
+  ///
+  /// - [enable] repeat playback flag. The default is false.
+  Future<void> enableRepeat(bool enable);
+
+  /// Whether to mix the player's sound into the stream being published
+  ///
+  /// - [enable] Aux audio flag. The default is false.
+  Future<void> enableAux(bool enable);
+
+  /// Whether to play locally silently
+  ///
+  /// If [enableAux] switch is turned on, there is still sound in the publishing stream. The default is false.
+  ///
+  /// - [mute] Mute local audio flag, The default is false.
+  Future<void> muteLocal(bool mute);
+
+  /// Set player volume
+  ///
+  /// - [volume] The range is 0 ~ 100. The default is 50.
+  Future<void> setVolume(int volume);
+
+  /// Set playback progress callback interval
+  ///
+  /// This interface can control the callback frequency of [onMediaPlayerPlayingProgress]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1s
+  /// This callback are not returned exactly at the set callback interval, but rather at the frequency at which the audio or video frames are processed to determine whether the callback is needed to call
+  ///
+  /// - [millisecond] Interval of playback progress callback in milliseconds
+  Future<void> setProgressInterval(int millisecond);
+
+  /// Get the current volume
+  ///
+  /// The range is 0 ~ 100. The default is 50
+  Future<int> getVolume();
+
+  /// Get the total progress of your media resources
+  ///
+  /// You should load resource before invoking this API, otherwise the return value is 0
+  ///
+  /// - Returns Unit is millisecond
+  Future<int> getTotalDuration();
+
+  /// Get current playing progress
+  ///
+  /// You should load resource before invoking this API, otherwise the return value is 0
+  Future<int> getCurrentProgress();
+
+  /// Get the current playback status
+  Future<ZegoMediaPlayerState> getCurrentState();
+
+  /// Get media player index
+  int getIndex();
+
+}
+
 /// Callback for updating stream extra information
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 class ZegoPublisherSetStreamExtraInfoResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   ZegoPublisherSetStreamExtraInfoResult(this.errorCode): assert(errorCode != null);
@@ -1223,10 +1314,10 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 /// Callback for add/remove CDN URL
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 class ZegoPublisherUpdateCdnUrlResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   ZegoPublisherUpdateCdnUrlResult(this.errorCode): assert(errorCode != null);
@@ -1238,11 +1329,11 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 /// Results of starting a mixer task
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 /// - [extendedData] Extended Information
 class ZegoMixerStartResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   /// Extended Information
@@ -1258,10 +1349,10 @@ class ZegoMixerStartResult {
 
 /// Results of stoping a mixer task
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 class ZegoMixerStopResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   ZegoMixerStopResult(this.errorCode): assert(errorCode != null);
@@ -1273,11 +1364,11 @@ class ZegoMixerStopResult {
 
 /// Callback for sending broadcast messages
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 /// - [messageID] ID of this message
 class ZegoIMSendBroadcastMessageResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   /// ID of this message
@@ -1293,11 +1384,11 @@ class ZegoIMSendBroadcastMessageResult {
 
 /// Callback for sending barrage message
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 /// - [messageID] ID of this message
 class ZegoIMSendBarrageMessageResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   /// ID of this message
@@ -1313,15 +1404,45 @@ class ZegoIMSendBarrageMessageResult {
 
 /// Callback for sending custom command
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
 class ZegoIMSendCustomCommandResult {
 
-  /// Error code, please refer to the common error code document [https://doc-zh.zego.im/zh/308.html] for details
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode): assert(errorCode != null);
 
   ZegoIMSendCustomCommandResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for media player loads resources
+///
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+class ZegoMediaPlayerLoadResourceResult {
+
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  int errorCode;
+
+  ZegoMediaPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
+
+  ZegoMediaPlayerLoadResourceResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for media player seek to playback progress
+///
+/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+class ZegoMediaPlayerSeekToResult {
+
+  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  int errorCode;
+
+  ZegoMediaPlayerSeekToResult(this.errorCode): assert(errorCode != null);
+
+  ZegoMediaPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
     errorCode = map['errorCode'];
 
 }

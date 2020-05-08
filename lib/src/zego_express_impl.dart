@@ -479,6 +479,42 @@ class ZegoExpressImpl {
   }
 
 
+  /* MediaPlayer */
+
+  static final Map<int, ZegoMediaPlayer> mediaPlayerMap = Map();
+
+  Future<ZegoMediaPlayer> createMediaPlayer() async {
+
+    int index = await _channel.invokeMethod('createMediaPlayer');
+
+    if (index >= 0) {
+
+      ZegoMediaPlayerImpl mediaPlayerInstance = ZegoMediaPlayerImpl(index);
+      mediaPlayerMap[index] = mediaPlayerInstance;
+
+      return mediaPlayerInstance;
+
+    } else {
+      return null;
+    }
+
+  }
+
+  Future<void> destroyMediaPlayer(ZegoMediaPlayer mediaPlayer) async {
+
+    int index = mediaPlayer.getIndex();
+
+    await _channel.invokeMethod('destroyMediaPlayer', {
+      'index': index
+    });
+
+    mediaPlayerMap.remove(index);
+
+    return;
+
+  }
+
+
   /* EventHandler */
 
   static void _registerEventHandler() async {
@@ -505,7 +541,7 @@ class ZegoExpressImpl {
         break;
 
 
-    /* Room */
+      /* Room */
 
       case 'onRoomStateUpdate':
         if (ZegoExpressEngine.onRoomStateUpdate == null) return;
@@ -571,7 +607,7 @@ class ZegoExpressImpl {
         break;
 
 
-    /* Publisher */
+      /* Publisher */
 
       case 'onPublisherStateUpdate':
         if (ZegoExpressEngine.onPublisherStateUpdate == null) return;
@@ -636,7 +672,7 @@ class ZegoExpressImpl {
         break;
 
 
-    /* Player */
+      /* Player */
 
       case 'onPlayerStateUpdate':
         if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
@@ -713,7 +749,7 @@ class ZegoExpressImpl {
         break;
 
 
-    /* Mixer*/
+      /* Mixer*/
 
       case 'onMixerRelayCDNStateUpdate':
         if (ZegoExpressEngine.onMixerRelayCDNStateUpdate == null) return;
@@ -740,7 +776,7 @@ class ZegoExpressImpl {
         break;
 
 
-    /* Device */
+      /* Device */
 
       case 'onAudioDeviceStateChanged':
         if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
@@ -835,7 +871,7 @@ class ZegoExpressImpl {
         break;
 
 
-    /* IM */
+      /* IM */
 
       case 'onIMRecvBroadcastMessage':
         if (ZegoExpressEngine.onIMRecvBroadcastMessage == null) return;
@@ -879,9 +915,190 @@ class ZegoExpressImpl {
         );
         break;
 
+
+      /* MediaPlayer */
+
+      case 'onMediaPlayerStateUpdate':
+        if (ZegoExpressEngine.onMediaPlayerStateUpdate == null) return;
+
+        int mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer mediaPlayer = ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerStateUpdate(
+            mediaPlayer,
+            ZegoMediaPlayerState.values[map['state']],
+            map['errorCode']
+          );
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
+
+      case 'onMediaPlayerNetworkEvent':
+        if (ZegoExpressEngine.onMediaPlayerNetworkEvent == null) return;
+
+        int mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer mediaPlayer = ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerNetworkEvent(
+            mediaPlayer,
+            ZegoMediaPlayerNetworkEvent.values[map['networkEvent']]
+          );
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
+
+      case 'onMediaPlayerPlayingProgress':
+        if (ZegoExpressEngine.onMediaPlayerPlayingProgress == null) return;
+
+        int mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer mediaPlayer = ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerPlayingProgress(
+            mediaPlayer,
+            map['millisecond']
+          );
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
+
       default:
+      // TODO: Unknown callback
         break;
     }
 
   }
+}
+
+class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
+
+  int _index;
+
+  ZegoMediaPlayerImpl(int index) : _index = index;
+
+  @override
+  Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod('mediaPlayerLoadResource', {
+      'index': _index,
+      'path': path
+    });
+
+    return ZegoMediaPlayerLoadResourceResult.fromMap(map);
+  }
+
+  @override
+  Future<void> start() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerStart', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> stop() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerStop', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> pause() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerPause', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> resume() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerResume', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<ZegoMediaPlayerSeekToResult> seekTo(int millisecond) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSeekTo', {
+      'index': _index,
+      'millisecond': millisecond
+    });
+
+    return ZegoMediaPlayerSeekToResult.fromMap(map);
+  }
+
+  @override
+  Future<void> enableRepeat(bool enable) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableRepeat', {
+      'index': _index,
+      'enable': enable
+    });
+  }
+
+  @override
+  Future<void> enableAux(bool enable) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableAux', {
+      'index': _index,
+      'enable': enable
+    });
+  }
+
+  @override
+  Future<void> muteLocal(bool mute) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerMuteLocal', {
+      'index': _index,
+      'mute': mute
+    });
+  }
+
+  @override
+  Future<void> setVolume(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetVolume', {
+      'index': _index,
+      'volume': volume
+    });
+  }
+
+  @override
+  Future<void> setProgressInterval(int millisecond) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetProgressInterval', {
+      'index': _index,
+      'millisecond': millisecond
+    });
+  }
+
+  @override
+  Future<int> getVolume() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetVolume', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<int> getTotalDuration() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetTotalDuration', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<int> getCurrentProgress() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetCurrentProgress', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<ZegoMediaPlayerState> getCurrentState() async {
+    int state = await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetCurrentState', {
+      'index': _index
+    });
+
+    return ZegoMediaPlayerState.values[state];
+  }
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
 }

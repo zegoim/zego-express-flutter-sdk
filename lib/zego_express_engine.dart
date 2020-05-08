@@ -7,6 +7,7 @@ export 'src/zego_express_api.dart';
 export 'src/zego_express_api_room.dart';
 export 'src/zego_express_api_publisher.dart';
 export 'src/zego_express_api_player.dart';
+export 'src/zego_express_api_mediaplayer.dart';
 export 'src/zego_express_api_mixer.dart';
 export 'src/zego_express_api_device.dart';
 export 'src/zego_express_api_preprocess.dart';
