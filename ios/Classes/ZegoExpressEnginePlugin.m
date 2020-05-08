@@ -135,8 +135,6 @@
         if (!self.enablePlatformView) {
             [[ZegoTextureRendererController sharedInstance] initController];
         }
-
-        self.mediaPlayerEventHandler = [[ZegoExpressEngineMediaPlayerEventHandler alloc] initWithSink:self.eventSink];
         
         result(nil);
       
@@ -1019,6 +1017,14 @@
 #pragma mark MediaPlayer
 
     } else if ([@"createMediaPlayer" isEqualToString:call.method]) {
+
+        if (!self.mediaPlayerMap) {
+            self.mediaPlayerMap = [NSMutableDictionary dictionary];
+        }
+
+        if (!self.mediaPlayerEventHandler) {
+            self.mediaPlayerEventHandler = [[ZegoExpressEngineMediaPlayerEventHandler alloc] initWithSink:self.eventSink];
+        }
 
         ZegoMediaPlayer *mediaPlayer = [[ZegoExpressEngine sharedEngine] createMediaPlayer];
 
