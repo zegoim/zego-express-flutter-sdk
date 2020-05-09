@@ -9,7 +9,6 @@
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
 #import "ZegoExpressEngineEventHandler.h"
-#import "ZegoExpressEngineMediaPlayerEventHandler.h"
 
 #import "ZegoPlatformViewFactory.h"
 #import "ZegoTextureRendererController.h"
@@ -23,10 +22,8 @@
 
 @property (nonatomic, strong) id<FlutterTextureRegistry> textureRegistry;
 
-@property (nonatomic, strong) FlutterEventSink eventSink;
-
 @property (nonatomic, strong) ZegoExpressEngineEventHandler *eventHandler;
-@property (nonatomic, strong) ZegoExpressEngineMediaPlayerEventHandler *mediaPlayerEventHandler;
+
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaPlayer *> *mediaPlayerMap;
 
 @end
@@ -59,7 +56,6 @@
 
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
     _textureRegistry = call.arguments[@"textureRegistry"];
-    _eventSink = call.arguments[@"eventSink"];;
 
     // If using textureRenderer, set engine config to enable custom video render
     ZegoEngineConfig *config = [[ZegoEngineConfig alloc] init];
@@ -72,7 +68,7 @@
     [ZegoExpressEngine setEngineConfig:config];
 
     // Init the event handler
-    self.eventHandler = [[ZegoExpressEngineEventHandler alloc] initWithSink:_eventSink];
+    self.eventHandler = [[ZegoExpressEngineEventHandler alloc] initWithSink:call.arguments[@"eventSink"]];
 
     // Create engine
     [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self.eventHandler];
@@ -1000,16 +996,12 @@
         self.mediaPlayerMap = [NSMutableDictionary dictionary];
     }
 
-    if (!self.mediaPlayerEventHandler) {
-        self.mediaPlayerEventHandler = [[ZegoExpressEngineMediaPlayerEventHandler alloc] initWithSink:self.eventSink];
-    }
-
     ZegoMediaPlayer *mediaPlayer = [[ZegoExpressEngine sharedEngine] createMediaPlayer];
 
     if (mediaPlayer) {
         NSNumber *index = mediaPlayer.index;
 
-        [mediaPlayer setEventHandler:self.mediaPlayerEventHandler];
+        [mediaPlayer setEventHandler:_eventHandler];
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);

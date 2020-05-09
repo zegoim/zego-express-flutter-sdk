@@ -3,7 +3,6 @@
 
 #import "ZegoExpressEngineMethodHandler.h"
 #import "ZegoExpressEngineEventHandler.h"
-#import "ZegoExpressEngineMediaPlayerEventHandler.h"
 
 #import "ZegoPlatformViewFactory.h"
 #import "ZegoTextureRendererController.h"

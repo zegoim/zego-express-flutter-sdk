@@ -20,13 +20,15 @@ This document briefly describes some guidance on how you can contribute to this 
 
 ### iOS
 
-1. ***[ios/Classes/ZegoExpressEnginePlugin.m](ios/Classes/ZegoExpressEnginePlugin.m)***: iOS native implementation, handle the life cycle of flutter plugin and the method call of dart.
+1. ***[ios/Classes/ZegoExpressEnginePlugin.m](ios/Classes/ZegoExpressEnginePlugin.m)***: iOS native implementation, handle the life cycle of flutter plugin.
 
-2. ***[ios/Classes/ZegoExpressEngineEventHandler.m](ios/Classes/ZegoExpressEngineEventHandler.m)***: iOS native implementation, handle native callbacks.
+2. ***[ios/Classes/ZegoExpressEngineMethodHandler.m](ios/Classes/ZegoExpressEngineMethodHandler.m)***: iOS native implementation, handle the method call of dart.
 
-3. ***[ios/Classes/ZegoPlatformView.m](ios/Classes/ZegoPlatformView.m)*** & ***[ios/Classes/ZegoPlatformViewFactory.m](ios/Classes/ZegoPlatformViewFactory.m)***: iOS native implementation, handle platform view.
+3. ***[ios/Classes/ZegoExpressEngineEventHandler.m](ios/Classes/ZegoExpressEngineEventHandler.m)***: iOS native implementation, handle native callbacks.
 
-4. ***[ios/Classes/ZegoTextureRenderer.m](ios/Classes/ZegoTextureRenderer.m)*** & ***[ios/Classes/ZegoTextureRendererController.m](ios/Classes/ZegoTextureRendererController.m)***: iOS native implementation, handle texture renderer.
+4. ***[ios/Classes/ZegoPlatformView.m](ios/Classes/ZegoPlatformView.m)*** & ***[ios/Classes/ZegoPlatformViewFactory.m](ios/Classes/ZegoPlatformViewFactory.m)***: iOS native implementation, handle platform view.
+
+5. ***[ios/Classes/ZegoTextureRenderer.m](ios/Classes/ZegoTextureRenderer.m)*** & ***[ios/Classes/ZegoTextureRendererController.m](ios/Classes/ZegoTextureRendererController.m)***: iOS native implementation, handle texture renderer.
 
 ### Android
 
