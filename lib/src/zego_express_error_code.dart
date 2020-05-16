@@ -19,6 +19,9 @@ class ZegoErrorCode {
   /// Invalid android environment context
   static const int CommonInvalidAndroidEnvironment                                        = 1000007;
 
+  /// The repeated setting handler is invalid. Please set the handler to null before resetting it
+  static const int CommonEventHandlerExists                                               = 1000008;
+
   /// The SDK does not include this module function, please contact technical support to provide
   static const int CommonSdkNoModule                                                      = 1000010;
 
