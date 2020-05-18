@@ -915,7 +915,7 @@
 
 - (void)enableBeautify:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    int feature = [ZegoUtils intValue:call.arguments[@"feature"]];
+    int feature = [ZegoUtils intValue:call.arguments[@"featureBitmask"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] enableBeautify:(ZegoBeautifyFeature)feature channel:(ZegoPublishChannel)channel];
