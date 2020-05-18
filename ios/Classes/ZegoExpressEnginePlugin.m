@@ -948,7 +948,7 @@
       
     } else if ([@"enableBeautify" isEqualToString:call.method]) {
         
-        int feature = [ZegoUtils intValue:args[@"feature"]];
+        int feature = [ZegoUtils intValue:args[@"featureBitmask"]];
         int channel = [ZegoUtils intValue:args[@"channel"]];
         
         [[ZegoExpressEngine sharedEngine] enableBeautify:(ZegoBeautifyFeature)feature channel:(ZegoPublishChannel)channel];
