@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.0
+
+1. Update native SDK to version 1.7.8
+
+2. Optimize native method handler and callback handler
+
 ## 0.10.0
 
 1. Add media player (audio only) module

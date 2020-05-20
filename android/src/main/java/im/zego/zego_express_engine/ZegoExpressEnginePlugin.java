@@ -32,8 +32,6 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     private HashMap<String, Method> methodHashMap = new HashMap<>();
 
     public ZegoExpressEnginePlugin() {
-
-
         try {
             this.manager = Class.forName("im.zego.zego_express_engine.ZegoExpressEngineMethodHandler");
         } catch (ClassNotFoundException e) {

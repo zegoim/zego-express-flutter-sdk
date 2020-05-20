@@ -67,7 +67,7 @@ public class ZegoExpressEngineMethodHandler {
 
     private static TextureRegistry textureRegistry = null;
 
-    private static EventChannel.EventSink eventSink = null;
+    private static ZegoExpressEngineEventHandler eventHandler = null;
 
     private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
@@ -80,11 +80,13 @@ public class ZegoExpressEngineMethodHandler {
         String appSign = call.argument("appSign");
         boolean isTestEnv = boolValue((Boolean) call.argument("isTestEnv"));
         ZegoScenario scenario = ZegoScenario.getZegoScenario(intValue((Number)call.argument("scenario")));
+
         enablePlatformView = boolValue((Boolean) call.argument("enablePlatformView"));
         textureRegistry = registry;
-        eventSink = sink;
 
-        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, new ZegoExpressEngineEventHandler(sink));
+        eventHandler = new ZegoExpressEngineEventHandler(sink);
+
+        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, eventHandler.eventHandler);
 
         result.success(null);
     }
@@ -1055,7 +1057,7 @@ public class ZegoExpressEngineMethodHandler {
         if (mediaPlayer != null) {
             int index = mediaPlayer.getIndex();
 
-            mediaPlayer.setEventHandler(new ZegoExpressEngineMediaPlayerEventHandler(eventSink));
+            mediaPlayer.setEventHandler(eventHandler.mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
 
             result.success(index);

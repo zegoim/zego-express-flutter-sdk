@@ -5,23 +5,23 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
-  /// Whether to mute microphone input
+  /// Whether to mute (disable) microphone
   ///
-  /// This api is used to control whether the collected audio data is used. When the microphone is turned off, the data is collected and discarded, and the microphone is still occupied.
+  /// This api is used to control whether the collected audio data is used. When the microphone is muted (disabled), the data is collected and discarded, and the microphone is still occupied.
   /// The microphone is still occupied because closing or opening the microphone on the hardware is a relatively heavy operation, and real users may have frequent operations. For trade-off reasons, this api simply discards the collected data.
   /// If you really want SDK to give up occupy the microphone, you can call the [enableAudioCaptureDevice] interface.
   /// Developers who want to control whether to use microphone on the UI should use this interface to avoid unnecessary performance overhead by using the [enableAudioCaptureDevice].
   ///
-  /// - [mute] Whether to turn off the microphone, true: turn off microphone, false: turn on microphone. The default is true.
+  /// - [mute] Whether to mute (disable) the microphone, true: mute (disable) microphone, false: enable microphone. The default is false.
   Future<void> muteMicrophone(bool mute) async {
     return await ZegoExpressImpl.instance.muteMicrophone(mute);
   }
 
-  /// Whether to mute speaker output
+  /// Whether to mute (disable) speaker audio output
   ///
-  /// After closing, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
+  /// After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
   ///
-  /// - [mute] Whether to disable audio output to the device, true: disable audio output, false: enable audio output. The default value is false
+  /// - [mute] Whether to mute (disable) speaker audio output, true: mute (disable) speaker audio output, false: enable speaker audio output. The default value is false
   Future<void> muteSpeaker(bool mute) async {
     return await ZegoExpressImpl.instance.muteSpeaker(mute);
   }

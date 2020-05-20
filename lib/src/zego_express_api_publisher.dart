@@ -98,7 +98,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setAppOrientation(orientation, channel);
   }
 
-  /// set audio config
+  /// Set up audio configuration
   ///
   /// You can set the combined value of the audio codec, bit rate, and audio channel through this interface. If this interface is not called, the default is standard quality mode. Should be used before publishing.
   /// If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
