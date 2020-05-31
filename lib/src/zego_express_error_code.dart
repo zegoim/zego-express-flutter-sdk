@@ -157,6 +157,9 @@ class ZegoErrorCode {
   /// Publish stream failed. The same stream already exists in the room
   static const int PublisherErrorRepetitivePublishStream                                  = 1003028;
 
+  /// The connection with the RTMP server was interrupted. Please check whether the network or publish url is abnormal
+  static const int PublisherRtmpServerDisconnect                                          = 1003029;
+
   /// Update publish cdn url failed. Please check whether the URL is legal
   static const int PublisherUpdateCdnTargetError                                          = 1003040;
 

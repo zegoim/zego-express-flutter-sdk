@@ -6,14 +6,14 @@ PODS:
     - Flutter
   - shared_preferences_web (0.0.1):
     - Flutter
-  - zego_express_engine (0.11.0):
+  - zego_express_engine (0.11.1):
     - Flutter
-    - ZegoExpressEngine (= 1.7.8)
+    - ZegoExpressEngine (= 1.7.9)
   - zego_permission (0.0.1):
     - Flutter
-  - ZegoExpressEngine (1.7.8):
-    - ZegoExpressEngine/Video_en (= 1.7.8)
-  - ZegoExpressEngine/Video_en (1.7.8)
+  - ZegoExpressEngine (1.7.9):
+    - ZegoExpressEngine/Video_en (= 1.7.9)
+  - ZegoExpressEngine/Video_en (1.7.9)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -46,9 +46,9 @@ SPEC CHECKSUMS:
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   shared_preferences_macos: f3f29b71ccbb56bf40c9dd6396c9acf15e214087
   shared_preferences_web: 141cce0c3ed1a1c5bf2a0e44f52d31eeb66e5ea9
-  zego_express_engine: 6593a212c516d7c3c05badba273bd5d9a5a660bb
+  zego_express_engine: 67733f0fa175ad38f224cff6f6c7a6329ee0f0cf
   zego_permission: 0a12f978f018fa7a5becc3fce76d04a790897879
-  ZegoExpressEngine: 6f8a6a26e9494e4513ba3f3fb717408aec811947
+  ZegoExpressEngine: c625c27988ce55388715b73068f837c353ffac05
 
 PODFILE CHECKSUM: 3dbe063e9c90a5d7c9e4e76e70a821b9e2c1d271
 
