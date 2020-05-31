@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.11.1
+
+- Update native SDK to version 1.7.9
+
 ## 0.11.0
 
 1. Update native SDK to version 1.7.8
