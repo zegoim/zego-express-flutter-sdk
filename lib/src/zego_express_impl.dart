@@ -127,6 +127,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<ZegoVideoConfig> getVideoConfig({ZegoPublishChannel channel}) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('getVideoConfig', {
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+
+    return ZegoVideoConfig.fromMap(map);
+  }
+
   Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('setVideoMirrorMode', {
       'mirrorMode': mirrorMode.index,
@@ -145,6 +153,12 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('setAudioConfig', {
       'config': config.toMap()
     });
+  }
+
+  Future<ZegoAudioConfig> getAudioConfig() async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('getAudioConfig');
+
+    return ZegoAudioConfig.fromMap(map);
   }
 
   Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
@@ -351,10 +365,18 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<bool> isMicrophoneMuted() async {
+    return await _channel.invokeMethod('isMicrophoneMuted');
+  }
+
   Future<void> muteSpeaker(bool mute) async {
     return await _channel.invokeMethod('muteSpeaker', {
       'mute': mute
     });
+  }
+
+  Future<bool> isSpeakerMuted() async {
+    return await _channel.invokeMethod('isSpeakerMuted');
   }
 
   Future<void> enableAudioCaptureDevice(bool enable) async {

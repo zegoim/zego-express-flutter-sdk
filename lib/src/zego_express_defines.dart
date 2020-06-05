@@ -513,6 +513,16 @@ class ZegoVideoConfig {
     }
   }
 
+  ZegoVideoConfig.fromMap(Map<dynamic, dynamic> map) {
+    captureWidth = map['captureWidth'];
+    captureHeight = map['captureHeight'];
+    encodeWidth = map['encodeWidth'];
+    encodeHeight = map['encodeHeight'];
+    fps = map['fps'];
+    bitrate = map['bitrate'];
+    codecID = ZegoVideoCodecID.values[map['codecID']];
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'captureWidth': this.captureWidth,
@@ -1195,6 +1205,12 @@ class ZegoAudioConfig {
         channel = ZegoAudioChannel.Stereo;
         break;
     }
+  }
+
+  ZegoAudioConfig.fromMap(Map<dynamic, dynamic> map) {
+    bitrate = map['bitrate'];
+    channel = ZegoAudioChannel.values[map['channel']];
+    codecID = ZegoAudioCodecID.values[map['codecID']];
   }
 
   Map<String, dynamic> toMap() {

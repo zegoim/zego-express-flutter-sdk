@@ -17,6 +17,15 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.muteMicrophone(mute);
   }
 
+  /// Checks whether the microphone is muted
+  ///
+  /// Can be used with [muteMicrophone], determine whether the microphone is muted.
+  ///
+  /// - Returns Whether the microphone is muted; true: the microphone is muted; false: the microphone is enable (not muted)
+  Future<bool> isMicrophoneMuted() async {
+    return await ZegoExpressImpl.instance.isMicrophoneMuted();
+  }
+
   /// Whether to mute (disable) speaker audio output
   ///
   /// After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
@@ -24,6 +33,15 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [mute] Whether to mute (disable) speaker audio output, true: mute (disable) speaker audio output, false: enable speaker audio output. The default value is false
   Future<void> muteSpeaker(bool mute) async {
     return await ZegoExpressImpl.instance.muteSpeaker(mute);
+  }
+
+  /// Checks whether the speaker is muted
+  ///
+  /// Can be used with [muteSpeaker], determine whether the speaker audio output is muted.
+  ///
+  /// - Returns Whether the speaker is muted; true: the speaker is muted; false: the speaker is enable (not muted)
+  Future<bool> isSpeakerMuted() async {
+    return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
   /// On/off audio capture device
