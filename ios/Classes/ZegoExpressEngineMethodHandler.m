@@ -983,7 +983,9 @@
     }
 
     [[ZegoExpressEngine sharedEngine] sendCustomCommand:command toUserList:userListObject roomID:roomID callback:^(int errorCode) {
-        result(@(errorCode));
+        result(@{
+            @"errorCode": @(errorCode)
+        });
     }];
 }
 

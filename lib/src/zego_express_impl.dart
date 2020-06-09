@@ -898,7 +898,7 @@ class ZegoExpressImpl {
       case 'onIMRecvBroadcastMessage':
         if (ZegoExpressEngine.onIMRecvBroadcastMessage == null) return;
 
-        List<dynamic> messageMapList = map['deviceInfo'];
+        List<dynamic> messageMapList = map['messageList'];
         List<ZegoBroadcastMessageInfo> messageList = [];
         for (Map<dynamic, dynamic> messageMap in messageMapList) {
           ZegoBroadcastMessageInfo message = ZegoBroadcastMessageInfo.fromMap(messageMap);
@@ -914,7 +914,7 @@ class ZegoExpressImpl {
       case 'onIMRecvBarrageMessage':
         if (ZegoExpressEngine.onIMRecvBarrageMessage == null) return;
 
-        List<dynamic> messageMapList = map['deviceInfo'];
+        List<dynamic> messageMapList = map['messageList'];
         List<ZegoBarrageMessageInfo> messageList = [];
         for (Map<dynamic, dynamic> messageMap in messageMapList) {
           ZegoBarrageMessageInfo message = ZegoBarrageMessageInfo.fromMap(messageMap);
