@@ -17,6 +17,15 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.muteMicrophone(mute);
   }
 
+  /// Checks whether the microphone is muted
+  ///
+  /// Can be used with [muteMicrophone], determine whether the microphone is muted.
+  ///
+  /// - Returns Whether the microphone is muted; true: the microphone is muted; false: the microphone is enable (not muted)
+  Future<bool> isMicrophoneMuted() async {
+    return await ZegoExpressImpl.instance.isMicrophoneMuted();
+  }
+
   /// Whether to mute (disable) speaker audio output
   ///
   /// After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
@@ -24,6 +33,15 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [mute] Whether to mute (disable) speaker audio output, true: mute (disable) speaker audio output, false: enable speaker audio output. The default value is false
   Future<void> muteSpeaker(bool mute) async {
     return await ZegoExpressImpl.instance.muteSpeaker(mute);
+  }
+
+  /// Checks whether the speaker is muted
+  ///
+  /// Can be used with [muteSpeaker], determine whether the speaker audio output is muted.
+  ///
+  /// - Returns Whether the speaker is muted; true: the speaker is muted; false: the speaker is enable (not muted)
+  Future<bool> isSpeakerMuted() async {
+    return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
   /// On/off audio capture device
@@ -50,7 +68,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
-  /// - [channel] Publishing stream channel.
+  /// - [channel] Publishing stream channel
   Future<void> enableCamera(bool enable, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
   }
@@ -60,7 +78,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// This interface is used to control the front or rear camera
   ///
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
-  /// - [channel] Publishing stream channel.
+  /// - [channel] Publishing stream channel
   Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }

@@ -1,11 +1,11 @@
 name: zego_express_engine
 description: ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZegoExpressEngine native Android / iOS SDK, providing live video and real-time audio/video services.
-version: 0.11.1
-author: ZEGO <developer@zego.im>
+version: 0.12.0
 homepage: https://zego.im
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
+  flutter: ^1.10.0
 
 dependencies:
   flutter:
@@ -21,17 +21,21 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   # This section identifies this Flutter project as a plugin project.
-  # The androidPackage and pluginClass identifiers should not ordinarily
+  # The 'pluginClass' and Android 'package' identifiers should not ordinarily
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
   plugin:
-    androidPackage: im.zego.zego_express_engine
-    pluginClass: ZegoExpressEnginePlugin
+    platforms:
+      android:
+        package: im.zego.zego_express_engine
+        pluginClass: ZegoExpressEnginePlugin
+      ios:
+        pluginClass: ZegoExpressEnginePlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

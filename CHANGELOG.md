@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.12.0
+
+1. Update native iOS SDK to version 1.8.0
+
+2. Update native Android SDK to version 1.8.1
+
+3. Fix some bugs in the IM module
+
 ## 0.11.1
 
 - Update native SDK to version 1.7.9

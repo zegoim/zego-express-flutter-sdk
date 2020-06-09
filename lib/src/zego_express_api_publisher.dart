@@ -78,6 +78,16 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setVideoConfig(config, channel: channel);
   }
 
+  /// Get current video configuration
+  ///
+  /// This api can be used to get the specified publish channel's current video frame rate, bit rate, video capture resolution, and video encoding output resolution.
+  ///
+  /// - [channel] Publish stream channel
+  /// - Returns Video configuration object
+  Future<ZegoVideoConfig> getVideoConfig({ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.getVideoConfig(channel: channel);
+  }
+
   /// Set mirror mode. You can call this api to set params when publishing another streams
   ///
   /// This interface can be called to set whether the local preview video and the published video have mirror mode enabled.
@@ -106,6 +116,15 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [config] Audio config
   Future<void> setAudioConfig(ZegoAudioConfig config) async {
     return await ZegoExpressImpl.instance.setAudioConfig(config);
+  }
+
+  /// Get current audio configuration
+  ///
+  /// You can get the current audio codec, bit rate, and audio channel through this interface.
+  ///
+  /// - Returns Audio config
+  Future<ZegoAudioConfig> getAudioConfig() async {
+    return await ZegoExpressImpl.instance.getAudioConfig();
   }
 
   /// Stop or resume sending a audio stream. You can call this api to set params when publishing another streams

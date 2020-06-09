@@ -299,6 +299,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void getVideoConfig(MethodCall call, Result result) {
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoVideoConfig config = ZegoExpressEngine.getEngine().getVideoConfig(channel);
+
+        HashMap<String, Object> resultMap = new HashMap<>();
+        // TODO: GetVideoConfig
+        result.success(resultMap);
+    }
+
+    @SuppressWarnings("unused")
     public static void setVideoMirrorMode(MethodCall call, Result result) {
 
         ZegoVideoMirrorMode mirrorMode = ZegoVideoMirrorMode.getZegoVideoMirrorMode(intValue((Number) call.argument("mirrorMode")));
@@ -338,6 +350,18 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setAudioConfig(config);
 
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void getAudioConfig(MethodCall call, Result result) {
+
+        ZegoAudioConfig config = ZegoExpressEngine.getEngine().getAudioConfig();
+
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("bitrate", config.bitrate);
+        resultMap.put("channel", config.channel.value());
+        resultMap.put("codecID", config.codecID.value());
+        result.success(resultMap);
     }
 
     @SuppressWarnings("unused")
@@ -824,6 +848,14 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void isMicrophoneMuted(MethodCall call, Result result) {
+
+        boolean muted = ZegoExpressEngine.getEngine().isMicrophoneMuted();
+
+        result.success(muted);
+    }
+
+    @SuppressWarnings("unused")
     public static void muteSpeaker(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -831,6 +863,14 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().muteSpeaker(mute);
 
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void isSpeakerMuted(MethodCall call, Result result) {
+
+        boolean muted = ZegoExpressEngine.getEngine().isSpeakerMuted();
+
+        result.success(muted);
     }
 
     @SuppressWarnings("unused")
@@ -1014,8 +1054,6 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(resultMap);
             }
         });
-
-        result.success(null);
     }
 
     @SuppressWarnings("unused")

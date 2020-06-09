@@ -45,6 +45,7 @@ class ZegoExpressEngine {
   ///
   /// By default, SDK creates and prints log files in the app's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this interface, SDK will auto package and upload the log files to the ZEGO server.
   /// Developers can provide a business “feedback” channel in the app. When users feedback problems, they can call this interface to upload the local log information of SDK to help locate user problems.
+  /// The API is valid for the entire life cycle of the SDK.
   Future<void> uploadLog() async {
     return await ZegoExpressImpl.instance.uploadLog();
   }
@@ -81,6 +82,7 @@ class ZegoExpressEngine {
   /// Notification callback for other users in the room to increase or decrease
   ///
   /// Note that the callback is only triggered when the isUserStatusNotify parameter in the ZegoRoomConfig passed loginRoom function is true. Developers can use this callback to determine the situation of users in the room.
+  /// If developers need to use ZEGO room users notifications, please make sure that each login user sets isUserStatusNotify to true
   /// When a user logs in to a room for the first time, other users already exist in this room, and a user list of the type of addition is received.
   /// When the user is already in the room, other users in this room will trigger this callback to notify the changed users when they enter or exit the room.
   ///

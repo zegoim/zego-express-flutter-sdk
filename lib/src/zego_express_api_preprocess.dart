@@ -46,7 +46,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Identify the portraits in the video for beauty. It can be set before and after the start of the publish.
   ///
   /// - [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
-  /// - [channel] Publishing stream channel.
+  /// - [channel] Publishing stream channel
   Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
   }
@@ -54,7 +54,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Set beauty parameters
   ///
   /// - [option] Beauty configuration options
-  /// - [channel] Publishing stream channel.
+  /// - [channel] Publishing stream channel
   Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
   }

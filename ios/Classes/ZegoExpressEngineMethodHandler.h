@@ -3,6 +3,7 @@
 //  Pods-Runner
 //
 //  Created by Patrick Fu on 2020/5/8.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #import <Flutter/Flutter.h>
