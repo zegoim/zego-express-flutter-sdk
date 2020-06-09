@@ -27,17 +27,17 @@
     ZegoExpressEnginePlugin *instance = [[ZegoExpressEnginePlugin alloc] init];
 
     instance.textureRegistry = [registrar textures];
-    
+
     FlutterMethodChannel *methodChannel = [FlutterMethodChannel
       methodChannelWithName:@"plugins.zego.im/zego_express_engine"
             binaryMessenger:[registrar messenger]];
     [registrar addMethodCallDelegate:instance channel:methodChannel];
     instance.methodChannel = methodChannel;
-    
+
     FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.zego.im/zego_express_event_handler" binaryMessenger:[registrar messenger]];
     [eventChannel setStreamHandler:instance];
     instance.eventChannel = eventChannel;
-    
+
     // Register platform view factory
     [registrar registerViewFactory:[ZegoPlatformViewFactory sharedInstance] withId:@"plugins.zego.im/zego_express_view"];
 }
@@ -96,7 +96,7 @@
 
         call = [FlutterMethodCall methodCallWithMethodName:@"createEngine" arguments:argumentsMap];
     }
-    
+
     SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
 
     // Handle unrecognized method
