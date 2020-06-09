@@ -68,7 +68,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
-  /// - [channel] Publishing stream channel.
+  /// - [channel] Publishing stream channel
   Future<void> enableCamera(bool enable, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
   }
@@ -78,7 +78,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// This interface is used to control the front or rear camera
   ///
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
-  /// - [channel] Publishing stream channel.
+  /// - [channel] Publishing stream channel
   Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }

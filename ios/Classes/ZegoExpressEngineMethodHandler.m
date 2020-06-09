@@ -3,6 +3,7 @@
 //  Pods-Runner
 //
 //  Created by Patrick Fu on 2020/5/8.
+//  Copyright © 2020 Zego. All rights reserved.
 //
 
 #import "ZegoExpressEngineMethodHandler.h"
@@ -274,6 +275,23 @@
     result(nil);
 }
 
+- (void)getVideoConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    ZegoVideoConfig *configObject = [[ZegoExpressEngine sharedEngine] getVideoConfig:(ZegoPublishChannel)channel];
+
+    result(@{
+        @"captureWidth": @(configObject.captureResolution.width),
+        @"captureHeight": @(configObject.captureResolution.height),
+        @"encodeWidth": @(configObject.encodeResolution.width),
+        @"encodeHeight": @(configObject.encodeResolution.height),
+        @"bitrate": @(configObject.bitrate),
+        @"fps": @(configObject.fps),
+        @"codecID": @(configObject.codecID)
+    });
+}
+
 - (void)setVideoMirrorMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int mode = [ZegoUtils intValue:call.arguments[@"mirrorMode"]];
@@ -327,6 +345,17 @@
     [[ZegoExpressEngine sharedEngine] setAudioConfig:configObject];
 
     result(nil);
+}
+
+- (void)getAudioConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    ZegoAudioConfig *configObject = [[ZegoExpressEngine sharedEngine] getAudioConfig];
+
+    result(@{
+        @"bitrate": @(configObject.bitrate),
+        @"channel": @(configObject.channel),
+        @"codecID": @(configObject.codecID)
+    });
 }
 
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -799,6 +828,13 @@
     result(nil);
 }
 
+- (void)isMicrophoneMuted:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL muted = [[ZegoExpressEngine sharedEngine] isMicrophoneMuted];
+
+    result(@(muted));
+}
+
 - (void)muteSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
@@ -806,6 +842,13 @@
     [[ZegoExpressEngine sharedEngine] muteSpeaker:mute];
 
     result(nil);
+}
+
+- (void)isSpeakerMuted:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL muted = [[ZegoExpressEngine sharedEngine] isSpeakerMuted];
+
+    result(@(muted));
 }
 
 - (void)enableAudioCaptureDevice:(FlutterMethodCall *)call result:(FlutterResult)result {

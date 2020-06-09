@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
-  /// Login room with token param. You must log in to the room before startPublishingStream and startPlayingStream the stream.
+  /// Login room with advanced room configuation. You must log in to the room before startPublishingStream and startPlayingStream the stream.
   ///
   /// To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
   /// Different users who log in to the same room can get room related notifications in the same room (eg [onRoomUserUpdate], [onRoomStreamUpdate], etc.), and users in one room cannot receive room signaling notifications in another room.
@@ -23,7 +23,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
   /// Logout room
   ///
-  /// Exiting the room will stop all publishing and playing streams for user, and then SDK will auto stop local preview UI. After calling this interface, you will receive [onRoomStateUpdate] callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification.
+  /// Exiting the room will stop all publishing and playing streams for user, and then SDK will auto stop local preview UI. After calling this interface, you will receive [onRoomStateUpdate] callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification(On the premise of enabling isUserStatusNotify configuration).
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   Future<void> logoutRoom(String roomID) async {

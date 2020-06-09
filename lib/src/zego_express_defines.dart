@@ -404,7 +404,7 @@ class ZegoRoomConfig {
   /// The maximum number of users in the room, Passing 0 means unlimited, the default is unlimited.
   int maxMemberCount;
 
-  /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off.
+  /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
   bool isUserStatusNotify;
 
   /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in [https://doc.zego.im/CN/565.html](https://doc.zego.im/CN/565.html). Default is empty string, that is, no authentication
