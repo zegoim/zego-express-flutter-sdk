@@ -585,6 +585,7 @@
     if (sink) {
         sink(@{
             @"method": @"onIMRecvCustomCommand",
+            @"command": command,
             @"fromUser": @{
                 @"userID": fromUser.userID,
                 @"userName": fromUser.userName
