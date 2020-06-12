@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.12.2
+
+- Update native SDK to version 1.8.2
+
 ## 0.12.1
 
 - Fix `onIMRecvCustomCommand` callback on iOS
