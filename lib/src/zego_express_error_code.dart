@@ -364,6 +364,9 @@ class ZegoErrorCode {
   /// The custom video capture module is not open. Make sure that the custom video capture is enabled in the initialization configuration
   static const int CustomVideoIONoCustomVideoCapture                                      = 1011002;
 
+  /// enable/disable custom video capture/render failed. please make sure to call before engine start. (make sure to call before startPreview/startPublishingStream/startPlayingStream)
+  static const int CustomVideoIOEnableCustomIoFailed                                      = 1011003;
+
   /// The currently custom video capture format does not support this API
   static const int CustomVideoIONotSupportedFormat                                        = 1011010;
 
