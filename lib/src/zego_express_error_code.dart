@@ -19,7 +19,7 @@ class ZegoErrorCode {
   /// Invalid android environment context
   static const int CommonInvalidAndroidEnvironment                                        = 1000007;
 
-  /// Calling setEventHandler API error. Please set the handler to null before resetting it
+  /// already called setEventHandler to set the handle, please do not repeat the setting, if you need to repeat the setting, please first call setEventHandler to set the previous handle null.
   static const int CommonEventHandlerExists                                               = 1000008;
 
   /// The SDK does not include this module function, please contact technical support to provide

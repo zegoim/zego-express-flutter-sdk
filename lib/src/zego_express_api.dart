@@ -69,6 +69,14 @@ class ZegoExpressEngine {
   /// - [info] Detailed error information
   static void Function(int errorCode, String funcName, String info) onDebugError;
 
+  /// Engine state update callback
+  ///
+  /// When developers call [startPreview] ,[startPublishing] or [startPlaying] for the first time, the engine will start.
+  /// When developers have [loginRoom], they must call [logoutRoom], and the audio and video engine will stop.
+  ///
+  /// - [state] engine state
+  static void Function(ZegoEngineState state) onEngineStateUpdate;
+
   /// Room status change callback
   ///
   /// This callback is triggered when the connection status of the room changes, and the reason for the change is notified. Developers can use this callback to determine the status of the current user in the room. If the connection is being requested for a long time, the general probability is that the user's network is unstable.
@@ -287,28 +295,28 @@ class ZegoExpressEngine {
 
   /// Captured sound level update callback
   ///
-  /// Callback notification period is 100 ms'
+  /// Callback notification period is 100 ms'. To trigger this callback API, the [startSoundLevelMonitor] interface must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
   ///
   /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0
   static void Function(double soundLevel) onCapturedSoundLevelUpdate;
 
   /// Remote sound level update callback
   ///
-  /// Callback notification period is 100 ms'
+  /// Callback notification period is 100 ms'. To trigger this callback API, the [startSoundLevelMonitor] interface must be called to start the sound level monitor and you must be in a state where it is playing the audio and video stream.
   ///
   /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
   static void Function(Map<String, double> soundLevels) onRemoteSoundLevelUpdate;
 
   /// Captured audio spectrum update callback
   ///
-  /// Callback notification period is 100 ms'
+  /// Callback notification period is 100 ms'. To trigger this callback API, the [startAudioSpectrumMonitor] interface must be called to start the audio spectrum monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
   ///
   /// - [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30]
   static void Function(List<double> audioSpectrum) onCapturedAudioSpectrumUpdate;
 
   /// Remote audio spectrum update callback
   ///
-  /// Callback notification period is 100 ms'
+  /// Callback notification period is 100 ms'. To trigger this callback API, the [startAudioSpectrumMonitor] interface must be called to start the audio spectrum monitor and you must be in a state where it is playing the audio and video stream.
   ///
   /// - [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
   static void Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate;

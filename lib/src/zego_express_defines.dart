@@ -20,6 +20,14 @@ enum ZegoLanguage {
   Chinese
 }
 
+/// engine state
+enum ZegoEngineState {
+  /// The engine has started
+  Start,
+  /// The engine has stoped
+  Stop
+}
+
 /// Room state
 enum ZegoRoomState {
   /// Unconnected state, enter this state before logging in and after exiting the room. If there is a steady state abnormality in the process of logging in to the room, such as AppID and AppSign are incorrect, or if the same user name is logged in elsewhere and the local end is KickOut, it will enter this state.
@@ -38,7 +46,7 @@ enum ZegoPublishChannel {
   Aux
 }
 
-/// Video rendering mode
+/// Video rendering fill mode
 enum ZegoViewMode {
   /// The proportional scaling up, there may be black borders
   AspectFit,
