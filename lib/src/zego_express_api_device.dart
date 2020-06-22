@@ -114,4 +114,22 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopAudioSpectrumMonitor();
   }
 
+  /// enable/disable headphone monitor
+  ///
+  /// enable/disable headphone monitor, this setting takes effect when the headset is connected.
+  ///
+  /// - [enable] Whether to use headphone monitor, true: enable, false: disable
+  Future<void> enableHeadphoneMonitor(bool enable) async {
+    return await ZegoExpressImpl.instance.enableHeadphoneMonitor(enable);
+  }
+
+  /// set headphone monitor volume
+  ///
+  /// set headphone monitor volume, this setting takes effect when the headset is connected.
+  ///
+  /// - [volume] headphone monitor volume, range from 0 to 100, 80 as default
+  Future<void> setHeadphoneMonitorVolume(int volume) async {
+    return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
+  }
+
 }

@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.13.0
+
+- Update native SDK to version 1.9.2
+
 ## 0.12.2
 
 - Update native SDK to version 1.8.2

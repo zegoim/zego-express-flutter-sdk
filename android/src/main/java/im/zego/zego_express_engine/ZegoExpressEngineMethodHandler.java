@@ -946,6 +946,26 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void enableHeadphoneMonitor(MethodCall call, Result result) {
+
+        boolean enable = boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableHeadphoneMonitor(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setHeadphoneMonitorVolume(MethodCall call, Result result) {
+
+        int volume = intValue((Number) call.argument("volume"));
+
+        ZegoExpressEngine.getEngine().setHeadphoneMonitorVolume(volume);
+
+        result.success(null);
+    }
+
 
     /* PreProcess */
 

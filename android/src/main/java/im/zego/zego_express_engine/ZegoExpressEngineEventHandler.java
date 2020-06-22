@@ -16,6 +16,7 @@ import java.util.HashMap;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
+import im.zego.zegoexpress.constants.ZegoEngineState;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoPlayerMediaEvent;
@@ -59,6 +60,17 @@ class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onEngineStateUpdate(ZegoEngineState state) {
+            super.onEngineStateUpdate(state);
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onEngineStateUpdate");
+            map.put("state", state.value());
+
+            sink.success(map);
+        }
 
         /* Room */
 

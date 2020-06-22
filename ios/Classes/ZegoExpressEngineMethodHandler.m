@@ -917,6 +917,24 @@
     result(nil);
 }
 
+- (void)enableHeadphoneMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableHeadphoneMonitor:enable];
+
+    result(nil);
+}
+
+- (void)setHeadphoneMonitorVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+    [[ZegoExpressEngine sharedEngine] setHeadphoneMonitorVolume:volume];
+
+    result(nil);
+}
+
 
 #pragma mark - Preprocess
 

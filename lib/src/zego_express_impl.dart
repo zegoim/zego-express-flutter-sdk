@@ -421,6 +421,18 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('stopAudioSpectrumMonitor');
   }
 
+  Future<void> enableHeadphoneMonitor(bool enable) async {
+    return await _channel.invokeMethod('enableHeadphoneMonitor', {
+      'enable': enable
+    });
+  }
+
+  Future<void> setHeadphoneMonitorVolume(int volume) async {
+    return await _channel.invokeMethod('enableHeadphoneMonitor', {
+      'volume': volume
+    });
+  }
+
 
   /* PreProcess */
 
@@ -562,6 +574,13 @@ class ZegoExpressImpl {
         );
         break;
 
+      case 'onEngineStateUpdate':
+        if (ZegoExpressEngine.onEngineStateUpdate == null) return;
+
+        ZegoExpressEngine.onEngineStateUpdate(
+          ZegoEngineState.values[map['state']]
+        );
+        break;
 
       /* Room */
 
