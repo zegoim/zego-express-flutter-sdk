@@ -41,6 +41,18 @@
     }
 }
 
+- (void)onEngineStateUpdate:(ZegoEngineState)state {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"state: %d", (int)state);
+
+    if (sink) {
+        sink(@{
+            @"method": @"onEngineStateUpdate",
+            @"state": @(state)
+        });
+    }
+}
+
 #pragma mark Room Callback
 
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
