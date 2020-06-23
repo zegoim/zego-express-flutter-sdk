@@ -223,19 +223,8 @@ class ZegoExpressImpl {
 
   Future<void> setPublishWatermark({ZegoWatermark watermark, bool isPreviewVisible, ZegoPublishChannel channel}) async {
 
-    Map<String, dynamic> watermarkMap = {};
-    if (watermark != null) {
-      watermarkMap = {
-        'imageURL': watermark.imageURL,
-        'left': watermark.layout.left,
-        'top': watermark.layout.top,
-        'right': watermark.layout.right,
-        'bottom': watermark.layout.bottom
-      };
-    }
-
     return await _channel.invokeMethod('setPublishWatermark', {
-      'watermark': watermarkMap,
+      'watermark': watermark.toMap(),
       'isPreviewVisible': isPreviewVisible ?? false,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });

@@ -723,14 +723,16 @@
     NSDictionary *watermarkMap = call.arguments[@"watermark"];
     if (watermarkMap && watermarkMap.count > 0) {
         NSString *imageURL = watermarkMap[@"imageURL"];
-        int left = [ZegoUtils intValue:watermarkMap[@"left"]];
-        int top = [ZegoUtils intValue:watermarkMap[@"top"]];
-        int bottom = [ZegoUtils intValue:watermarkMap[@"bottom"]];
-        int right = [ZegoUtils intValue:watermarkMap[@"right"]];
-        CGRect rect = CGRectMake(left, top, right - left, bottom - top);
-        ZegoWatermark *watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
+        if (imageURL && [imageURL length] > 0) {
+            int left = [ZegoUtils intValue:watermarkMap[@"left"]];
+            int top = [ZegoUtils intValue:watermarkMap[@"top"]];
+            int bottom = [ZegoUtils intValue:watermarkMap[@"bottom"]];
+            int right = [ZegoUtils intValue:watermarkMap[@"right"]];
+            CGRect rect = CGRectMake(left, top, right - left, bottom - top);
+            ZegoWatermark *watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
 
-        [taskObject setWatermark:watermarkObject];
+            [taskObject setWatermark:watermarkObject];
+        }
     }
 
     // Background Image

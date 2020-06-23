@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.13.1
+
+- Fix mixer module issue
+
 ## 0.13.0
 
 - Update native SDK to version 1.9.2
