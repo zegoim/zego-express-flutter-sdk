@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'zego_express_impl.dart';
+import 'dart:convert';
 
 /// Application scenario
 enum ZegoScenario {
@@ -1014,7 +1014,10 @@ class ZegoMixerInput {
     return {
       'streamID': this.streamID,
       'contentType': this.contentType.index,
-      'layout': this.layout,
+      'left': this.layout.left.toInt(),
+      'top': this.layout.top.toInt(),
+      'right': this.layout.right.toInt(),
+      'bottom': this.layout.bottom.toInt(),
       'soundLevelID': this.soundLevelID
     };
   }
@@ -1055,7 +1058,10 @@ class ZegoWatermark {
   Map<String, dynamic> toMap() {
     return {
       'imageURL': this.imageURL,
-      'layout': this.layout
+      'left': this.layout.left.toInt(),
+      'top': this.layout.top.toInt(),
+      'right': this.layout.right.toInt(),
+      'bottom': this.layout.bottom.toInt(),
     };
   }
 
@@ -1361,13 +1367,14 @@ class ZegoMixerStartResult {
   int errorCode;
 
   /// Extended Information
-  Map<String, dynamic> extendedData;
+  Map<dynamic, dynamic> extendedData;
 
   ZegoMixerStartResult(this.errorCode, this.extendedData): assert(errorCode != null), assert(extendedData != null);
 
-  ZegoMixerStartResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    extendedData = map['extendedData'];
+  ZegoMixerStartResult.fromMap(Map<dynamic, dynamic> map) {
+    errorCode = map['errorCode'];
+    extendedData = jsonDecode(map['extendedData']);
+  }
 
 }
 

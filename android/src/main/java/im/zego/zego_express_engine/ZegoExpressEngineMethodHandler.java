@@ -702,7 +702,7 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         // MixerOutput
-        ArrayList<HashMap<String, Object>> outputListMap = call.argument("inputList");
+        ArrayList<HashMap<String, Object>> outputListMap = call.argument("outputList");
         if (outputListMap != null && !outputListMap.isEmpty()) {
             ArrayList<ZegoMixerOutput> outputListObject = new ArrayList<>();
             for (HashMap<String, Object> outputMap : outputListMap) {
@@ -743,14 +743,16 @@ public class ZegoExpressEngineMethodHandler {
         HashMap<String, Object> watermarkMap = call.argument("watermark");
         if (watermarkMap != null && !watermarkMap.isEmpty()) {
             String imageURL = (String) watermarkMap.get("imageURL");
-            int left = intValue((Number) watermarkMap.get("left"));
-            int top = intValue((Number) watermarkMap.get("top"));
-            int right = intValue((Number) watermarkMap.get("right"));
-            int bottom = intValue((Number) watermarkMap.get("bottom"));
-            Rect rect = new Rect(left, top, right, bottom);
-            ZegoWatermark watermarkObject = new ZegoWatermark(imageURL, rect);
+            if (imageURL != null && imageURL.length() > 0) {
+                int left = intValue((Number) watermarkMap.get("left"));
+                int top = intValue((Number) watermarkMap.get("top"));
+                int right = intValue((Number) watermarkMap.get("right"));
+                int bottom = intValue((Number) watermarkMap.get("bottom"));
+                Rect rect = new Rect(left, top, right, bottom);
+                ZegoWatermark watermarkObject = new ZegoWatermark(imageURL, rect);
 
-            taskObject.setWatermark(watermarkObject);
+                taskObject.setWatermark(watermarkObject);
+            }
         }
 
         // Background Image
