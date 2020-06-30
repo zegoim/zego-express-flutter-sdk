@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
-  /// Whether to mute (disable) microphone
+  /// Mutes or unmutes the microphone.
   ///
   /// This api is used to control whether the collected audio data is used. When the microphone is muted (disabled), the data is collected and discarded, and the microphone is still occupied.
   /// The microphone is still occupied because closing or opening the microphone on the hardware is a relatively heavy operation, and real users may have frequent operations. For trade-off reasons, this api simply discards the collected data.
@@ -17,7 +17,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.muteMicrophone(mute);
   }
 
-  /// Checks whether the microphone is muted
+  /// Checks whether the microphone is muted.
   ///
   /// Can be used with [muteMicrophone], determine whether the microphone is muted.
   ///
@@ -26,7 +26,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isMicrophoneMuted();
   }
 
-  /// Whether to mute (disable) speaker audio output
+  /// Mutes or unmutes the audio output speaker.
   ///
   /// After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
   ///
@@ -35,7 +35,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.muteSpeaker(mute);
   }
 
-  /// Checks whether the speaker is muted
+  /// Checks whether the audio output speaker is muted.
   ///
   /// Can be used with [muteSpeaker], determine whether the speaker audio output is muted.
   ///
@@ -44,7 +44,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
-  /// On/off audio capture device
+  /// Enables or disables the audio capture device.
   ///
   /// This api is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
   /// Occupying the audio capture device and giving up Occupying the audio device is a relatively heavy operation, and the [muteMicrophone] interface is generally recommended.
@@ -54,7 +54,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableAudioCaptureDevice(enable);
   }
 
-  /// Whether to use the built-in speaker to play sound
+  /// Whether to use the built-in speaker to play audio.
   ///
   /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
   ///
@@ -63,7 +63,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
   }
 
-  /// On/off camera. You can call this api to set params when publishing another streams
+  /// Turns on/off the camera for the specified channel.
   ///
   /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
   ///
@@ -73,7 +73,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
   }
 
-  /// Switch front and rear camera.You can call this api to set params when publishing another streams
+  /// Switches to the front or the rear camera for the specified channel.
   ///
   /// This interface is used to control the front or rear camera
   ///
@@ -83,7 +83,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }
 
-  /// Start the sound level monitor
+  /// Starts sound level monitoring.
   ///
   /// After starting monitoring, you can receive local audio sound level via [onCapturedSoundLevelUpdate] callback, and receive remote audio sound level via [onRemoteSoundLevelUpdate] callback.
   /// Before entering the room, you can call [startPreview] with this api and combine it with [onCapturedSoundLevelUpdate] callback to determine whether the audio device is working properly.
@@ -92,14 +92,14 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.startSoundLevelMonitor();
   }
 
-  /// Stop the sound level monitor
+  /// Stops sound level monitoring.
   ///
   /// After the monitoring is stopped, the callback of the local/remote audio sound level will be stopped.
   Future<void> stopSoundLevelMonitor() async {
     return await ZegoExpressImpl.instance.stopSoundLevelMonitor();
   }
 
-  /// Start the audio spectrum monitor
+  /// Starts audio spectrum monitoring.
   ///
   /// After starting monitoring, you can receive local audio spectrum via [onCapturedAudioSpectrumUpdate] callback, and receive remote audio spectrum via [onRemoteAudioSpectrumUpdate] callback.
   /// [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is 100 ms.
@@ -107,14 +107,14 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.startAudioSpectrumMonitor();
   }
 
-  /// Stop the audio spectrum monitor
+  /// Stops audio spectrum monitoring.
   ///
   /// After the monitoring is stopped, the callback of the local/remote audio spectrum will be stopped.
   Future<void> stopAudioSpectrumMonitor() async {
     return await ZegoExpressImpl.instance.stopAudioSpectrumMonitor();
   }
 
-  /// enable/disable headphone monitor
+  /// Enables or disables headphone monitoring.
   ///
   /// enable/disable headphone monitor, this setting takes effect when the headset is connected.
   ///
@@ -123,7 +123,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableHeadphoneMonitor(enable);
   }
 
-  /// set headphone monitor volume
+  /// Sets the headphone monitor volume.
   ///
   /// set headphone monitor volume, this setting takes effect when the headset is connected.
   ///

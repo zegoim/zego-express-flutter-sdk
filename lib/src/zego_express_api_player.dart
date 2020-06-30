@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
-  /// Start playing stream
+  /// Starts playing a stream from ZEGO's streaming cloud or from third-party CDN.
   ///
   /// This interface allows users to play audio and video streams both from the ZEGO real-time audio and video cloud and from third-party cdn.
   /// Before starting to play the stream, you need to join the room first, you can get the new streamID in the room by listening to the [onRoomStreamUpdate] event callback.
@@ -20,7 +20,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas: canvas, config: config);
   }
 
-  /// Stop playing stream
+  /// Stops playing a stream.
   ///
   /// This interface allows the user to stop playing the stream. When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
   ///
@@ -29,7 +29,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopPlayingStream(streamID);
   }
 
-  /// Set the playback volume of the stream
+  /// Sets the stream playback volume.
   ///
   /// This interface is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.
   /// You need to reset after [stopPlayingStream] and [startPlayingStream].
@@ -40,7 +40,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
   }
 
-  /// Stop/resume playing the audio data of the stream
+  /// Stops or resumes playing the audio part of a stream.
   ///
   /// This api can be used to stop playing/retrieving the audio data of the stream. Need to be called after calling startPlayingStream.
   /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
@@ -51,7 +51,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
   }
 
-  /// Stop/resume playing the video data of the stream
+  /// Stops or resumes playing the video part of a stream.
   ///
   /// This interface can be used to stop playing/retrieving the video data of the stream. Need to be called after calling startPlayingStream.
   /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
@@ -62,7 +62,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
   }
 
-  /// On/off hardware decoding
+  /// Enables or disables hardware decoding.
   ///
   /// Turn on hardware decoding and use hardware to improve decoding efficiency. Need to be called before calling startPlayingStream.
   /// Because hard-decoded support is not particularly good for a few models, SDK uses software decoding by default. If the developer finds that the device is hot when playing a high-resolution audio and video stream during testing of some models, you can consider calling this interface to enable hard decoding.
@@ -72,7 +72,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableHardwareDecoder(enable);
   }
 
-  /// On/off frame order detection
+  /// Enables or disables frame order detection.
   ///
   /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames but the screen may temporary splash. The default is true
   Future<void> enableCheckPoc(bool enable) async {
