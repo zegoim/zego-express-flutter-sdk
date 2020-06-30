@@ -1386,13 +1386,13 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void updateTextureRenderer(MethodCall call, Result result) {
+    public static void updateTextureRendererSize(MethodCall call, Result result) {
 
         Long textureID = longValue((Number) call.argument("textureID"));
         int width = intValue((Number) call.argument("width"));
         int height = intValue((Number) call.argument("height"));
 
-        ZegoTextureRendererController.getInstance().updateTextureRenderer(textureID, width, height);
+        ZegoTextureRendererController.getInstance().updateTextureRendererSize(textureID, width, height);
 
         result.success(null);
     }

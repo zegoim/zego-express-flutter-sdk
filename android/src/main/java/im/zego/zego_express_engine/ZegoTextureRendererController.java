@@ -42,7 +42,7 @@ class ZegoTextureRendererController {
     }
 
     /// Called when dart invoke `updateTextureRendererSize`
-    void updateTextureRenderer(Long textureID, int viewWidth, int viewHeight) {
+    void updateTextureRendererSize(Long textureID, int viewWidth, int viewHeight) {
 
         ZegoTextureRenderer renderer = this.renderers.get(textureID);
 
