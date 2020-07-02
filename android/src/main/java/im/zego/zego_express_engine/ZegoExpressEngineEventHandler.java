@@ -104,6 +104,19 @@ class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onRoomOnlineUserCountUpdate(String roomID, int count) {
+            super.onRoomOnlineUserCountUpdate(roomID, count);
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRoomOnlineUserCountUpdate");
+            map.put("roomID", roomID);
+            map.put("count", count);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onRoomStreamUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoStream> streamList) {
             super.onRoomStreamUpdate(roomID, updateType, streamList);
 
