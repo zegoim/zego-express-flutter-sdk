@@ -86,6 +86,13 @@
 /// The following methods are only triggered by the dart `zego_express_api`
 
 - (void)initController {
+
+    // Enable custom video render
+    ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
+    renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
+    renderConfig.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
+    [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:YES config:renderConfig];
+
     // Set up custom video render handler
     [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:self];
 }
