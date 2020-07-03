@@ -603,6 +603,15 @@ class ZegoExpressImpl {
         );
         break;
 
+      case 'onRoomOnlineUserCountUpdate':
+        if (ZegoExpressEngine.onRoomOnlineUserCountUpdate == null) return;
+
+        ZegoExpressEngine.onRoomOnlineUserCountUpdate(
+          map['roomID'],
+          map['count']
+        );
+        break;
+
       case 'onRoomStreamUpdate':
         if (ZegoExpressEngine.onRoomStreamUpdate == null) return;
 

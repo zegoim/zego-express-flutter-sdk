@@ -404,6 +404,28 @@ enum ZegoMediaPlayerNetworkEvent {
   BufferEnded
 }
 
+/// Record type
+enum ZegoDataRecordType {
+  /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
+  Default,
+  /// only record audio
+  OnlyAudio,
+  /// only record video, Audio-only SDK is invalid.
+  OnlyVideo,
+  /// record audio and video, Audio-only SDK will be recorded only audio.
+  AudioAndVideo
+}
+
+/// Record state
+enum ZegoDataRecordState {
+  /// Unrecorded state, which is the state when a recording error occurs or before recording starts.
+  NoRecord,
+  /// Recording in progress, in this state after successfully call [startCapturedMediaRecord]
+  Recording,
+  /// Record successs
+  Success
+}
+
 /// Advanced room configuration
 ///
 /// Configure maximum number of users in the room and authentication token, etc.
@@ -443,25 +465,25 @@ class ZegoRoomConfig {
 /// Developers should note that the width and height resolution of the mobile and desktop are opposite. For example, 360p, the resolution of the mobile is 360x640, and the desktop is 640x360.
 class ZegoVideoConfig {
 
-  /// Capture resolution width
+  /// Capture resolution width, control the width of camera image acquisition. Only the camera is not started and the custom video capture is not used, the setting is effective
   int captureWidth;
 
-  /// Capture resolution height
+  /// Capture resolution height, control the height of camera image acquisition. Only the camera is not started and the custom video capture is not used, the setting is effective
   int captureHeight;
 
-  /// Encode resolution width
+  /// Encode resolution width, control the image width of the encoder when publishing stream. The settings before and after publishing stream can be effective
   int encodeWidth;
 
-  /// Encode resolution height
+  /// Encode resolution height, control the image height of the encoder when publishing stream. The settings before and after publishing stream can be effective
   int encodeHeight;
 
-  /// frame rate
+  /// frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective
   int fps;
 
-  /// Bit rate in kbps
+  /// Bit rate in kbps. The settings before and after publishing stream can be effective
   int bitrate;
 
-  /// codec ID
+  /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
   ZegoVideoCodecID codecID;
 
   ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID): assert(captureWidth != null), assert(captureHeight != null), assert(encodeWidth != null), assert(encodeHeight != null), assert(fps != null), assert(bitrate != null), assert(codecID != null);
@@ -1183,13 +1205,13 @@ class ZegoBarrageMessageInfo {
 /// Configure audio bitrate, audio channel, audio encoding for publishing stream
 class ZegoAudioConfig {
 
-  /// Audio bitrate in kbps, default is 48 kbps
+  /// Audio bitrate in kbps, default is 48 kbps. The settings before and after publishing stream can be effective
   int bitrate;
 
-  /// Audio channel, default is Mono
+  /// Audio channel, default is Mono. The setting only take effect before publishing stream
   ZegoAudioChannel channel;
 
-  /// codec ID, default is ZegoAudioCodecIDDefault
+  /// codec ID, default is ZegoAudioCodecIDDefault. The setting only take effect before publishing stream
   ZegoAudioCodecID codecID;
 
   ZegoAudioConfig(this.bitrate, this.channel, this.codecID): assert(bitrate != null), assert(channel != null), assert(codecID != null);

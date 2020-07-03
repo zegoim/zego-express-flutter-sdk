@@ -104,6 +104,19 @@
     }
 }
 
+- (void)onRoomOnlineUserCountUpdate:(int)count roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"count: %d, roomID: %@", count, roomID);
+
+    if (sink) {
+        sink(@{
+            @"method": @"onRoomOnlineUserCountUpdate",
+            @"count": @(count),
+            @"roomID": roomID
+        });
+    }
+}
+
 - (void)onRoomStreamUpdate:(ZegoUpdateType)updateType streamList:(NSArray<ZegoStream *> *)streamList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"updateType: %@, streamsCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)streamList.count, roomID);

@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineMediaPlayer on ZegoExpressEngine {
 
-  /// Create a media player instance object
+  /// Creates a media player instance.
   ///
   /// Currently, a maximum of 4 instances can be created, after which it will return null. The more instances of a media player, the greater the performance overhead on the device.
   ///
@@ -14,7 +14,7 @@ extension ZegoExpressEngineMediaPlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.createMediaPlayer();
   }
 
-  /// Destroy a media player instance object
+  /// Destroys a media player instance.
   ///
   /// - [mediaPlayer] The media player instance object to be destroyed
   Future<void> destroyMediaPlayer(ZegoMediaPlayer mediaPlayer) async {

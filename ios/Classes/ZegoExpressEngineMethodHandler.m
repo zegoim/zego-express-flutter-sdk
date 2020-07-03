@@ -58,16 +58,6 @@
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
     _textureRegistry = call.arguments[@"textureRegistry"];
 
-    // If using textureRenderer, set engine config to enable custom video render
-    ZegoEngineConfig *config = [[ZegoEngineConfig alloc] init];
-    if (!self.enablePlatformView) {
-        ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
-        renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
-        renderConfig.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
-        [config setCustomVideoRenderConfig:renderConfig];
-    }
-    [ZegoExpressEngine setEngineConfig:config];
-
     // Init the event handler
     self.eventHandler = [[ZegoExpressEngineEventHandler alloc] initWithSink:call.arguments[@"eventSink"]];
 

@@ -10,6 +10,7 @@ package im.zego.zego_express_engine;
 
 import android.app.Application;
 import android.graphics.Rect;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -228,6 +229,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Preview video without creating the PlatfromView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
                     // TODO: Throw Flutter Exception
+                    Log.e("ZEGO", "[Flutter-Native] Preview video without creating the PlatfromView in advance");
                 }
 
             } else {
@@ -240,6 +242,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Preview video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                     // TODO: Throw Flutter Exception
+                    Log.e("ZEGO", "[Flutter-Native] Preview video without creating TextureRenderer in advance");
                 }
             }
 
@@ -249,6 +252,11 @@ public class ZegoExpressEngineMethodHandler {
                 canvas = new ZegoCanvas(view);
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
+
+                // Mark the canvas is in use
+                if (!enablePlatformView) {
+                    ZegoTextureRendererController.getInstance().previewCanvasInUse.put(channel, canvas);
+                }
             }
 
             ZegoExpressEngine.getEngine().startPreview(canvas, channel);
@@ -266,6 +274,11 @@ public class ZegoExpressEngineMethodHandler {
     public static void stopPreview(MethodCall call, Result result) {
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        // Mark the canvas is no longer used
+        if (!enablePlatformView) {
+            ZegoTextureRendererController.getInstance().previewCanvasInUse.remove(channel);
+        }
 
         ZegoExpressEngine.getEngine().stopPreview(channel);
 
@@ -576,6 +589,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating the PlatfromView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
                     // TODO: Throw Flutter Exception
+                    Log.e("ZEGO", "[Flutter-Native] Play video without creating the PlatfromView in advance");
                 }
 
             } else {
@@ -588,6 +602,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                     // TODO: Throw Flutter Exception
+                    Log.e("ZEGO", "[Flutter-Native] Play video without creating TextureRenderer in advance");
                 }
             }
 
@@ -597,6 +612,14 @@ public class ZegoExpressEngineMethodHandler {
                 canvas = new ZegoCanvas(view);
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
+            }
+
+            // Mark the canvas is in use
+            if (!enablePlatformView) {
+                ZegoTextureRendererController.getInstance().playerCanvasInUse.put(streamID, canvas);
+                if (playerConfig != null) {
+                    ZegoTextureRendererController.getInstance().playerConfigInUse.put(streamID, playerConfig);
+                }
             }
 
             ZegoExpressEngine.getEngine().startPlayingStream(streamID, canvas, playerConfig);
@@ -614,6 +637,12 @@ public class ZegoExpressEngineMethodHandler {
     public static void stopPlayingStream(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
+
+        // Mark the canvas is no longer used
+        if (!enablePlatformView) {
+            ZegoTextureRendererController.getInstance().playerCanvasInUse.remove(streamID);
+            ZegoTextureRendererController.getInstance().playerConfigInUse.remove(streamID);
+        }
 
         ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
 
@@ -1386,13 +1415,13 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void updateTextureRenderer(MethodCall call, Result result) {
+    public static void updateTextureRendererSize(MethodCall call, Result result) {
 
         Long textureID = longValue((Number) call.argument("textureID"));
         int width = intValue((Number) call.argument("width"));
         int height = intValue((Number) call.argument("height"));
 
-        ZegoTextureRendererController.getInstance().updateTextureRenderer(textureID, width, height);
+        ZegoTextureRendererController.getInstance().updateTextureRendererSize(textureID, width, height);
 
         result.success(null);
     }

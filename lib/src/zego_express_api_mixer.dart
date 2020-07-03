@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineMixer on ZegoExpressEngine {
 
-  /// Start mix stream task
+  /// Starts a stream mixing task.
   ///
   /// Due to the performance considerations of the client device, ZegoExpressEngine's mix stream is to start the mixing stream task on the server side of the ZEGO audio and video cloud for mixing stream.
   /// After calling this api, SDK initiates a mixing stream request to the ZEGO audio and video cloud. The ZEGO audio and video cloud will find the current publishing stream and perform video layer blending according to the parameters of the mixing stream task requested by ZegoExpressEngine.
@@ -19,7 +19,7 @@ extension ZegoExpressEngineMixer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.startMixerTask(task);
   }
 
-  /// Stop mix stream task
+  /// Stops a stream mixing task.
   ///
   /// Similar to [startMixerTask], after calling this api, SDK initiates a request to end the mixing stream task to the ZEGO audio and video cloud server.
   /// If you starts the next mixing stream task without stopping the previous mixing stream task, the previous mixing stream task will not stop automatically. The previous mixing stream task will not be stopped automatically until 90 seconds after the input stream of the previous mixing stream task does not exist.
