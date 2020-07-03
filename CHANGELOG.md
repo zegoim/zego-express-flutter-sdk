@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.14.0
+
+1. Update native SDK to version 1.10.0
+
+2. Fix `updateTextureRendererSize` API on Android
+
+3. Fix `onRoomOnlineUserCountUpdate` callback
+
 ## 0.13.1
 
 - Fix mixer module issue
