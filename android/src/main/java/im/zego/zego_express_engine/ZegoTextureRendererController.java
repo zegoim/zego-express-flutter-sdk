@@ -8,8 +8,14 @@
 
 package im.zego.zego_express_engine;
 
+import android.view.Surface;
+
 import java.util.HashMap;
 
+import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.constants.ZegoPublishChannel;
+import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import io.flutter.view.TextureRegistry;
 
 class ZegoTextureRendererController {
@@ -17,6 +23,12 @@ class ZegoTextureRendererController {
     private static ZegoTextureRendererController instance;
 
     private HashMap<Long, ZegoTextureRenderer> renderers;
+
+    public HashMap<ZegoPublishChannel, ZegoCanvas> previewCanvasInUse = new HashMap<>();
+
+    public HashMap<String, ZegoCanvas> playerCanvasInUse = new HashMap<>(); // Key is playing streamID
+
+    public HashMap<String, ZegoPlayerConfig> playerConfigInUse = new HashMap<>(); // Key is playing streamID
 
     static ZegoTextureRendererController getInstance() {
         if (instance == null) {
@@ -50,7 +62,30 @@ class ZegoTextureRendererController {
             return;
         }
 
+        Surface originSurface = renderer.getSurface();
+
         renderer.updateRenderSize(viewWidth, viewHeight);
+
+        for (ZegoPublishChannel channel : previewCanvasInUse.keySet()) {
+            ZegoCanvas canvas = previewCanvasInUse.get(channel);
+            if (canvas != null && originSurface.equals(canvas.view)) {
+                canvas.view = renderer.getSurface();
+                ZegoExpressEngine.getEngine().stopPreview(channel);
+                ZegoExpressEngine.getEngine().startPreview(canvas, channel);
+                return;
+            }
+        }
+
+        for (String streamID : playerCanvasInUse.keySet()) {
+            ZegoCanvas canvas = playerCanvasInUse.get(streamID);
+            ZegoPlayerConfig config = playerConfigInUse.get(streamID);
+            if (canvas != null && originSurface.equals(canvas.view)) {
+                canvas.view = renderer.getSurface();
+                ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
+                ZegoExpressEngine.getEngine().startPlayingStream(streamID, canvas, config);
+                return;
+            }
+        }
     }
 
     /// Called when dart invoke `destroyTextureRenderer`
