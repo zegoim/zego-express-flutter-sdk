@@ -66,6 +66,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Turns on/off the camera for the specified channel.
   ///
   /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
+  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
   /// - [channel] Publishing stream channel
@@ -76,6 +77,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Switches to the front or the rear camera for the specified channel.
   ///
   /// This interface is used to control the front or rear camera
+  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
   ///
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
   /// - [channel] Publishing stream channel

@@ -406,11 +406,13 @@ enum ZegoMediaPlayerNetworkEvent {
 
 /// Record type
 enum ZegoDataRecordType {
+  /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
+  Default,
   /// only record audio
   OnlyAudio,
-  /// only record video
+  /// only record video, Audio-only SDK is invalid.
   OnlyVideo,
-  /// record audio and video
+  /// record audio and video, Audio-only SDK will be recorded only audio.
   AudioAndVideo
 }
 

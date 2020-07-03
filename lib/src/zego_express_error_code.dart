@@ -19,7 +19,7 @@ class ZegoErrorCode {
   /// Invalid Android context.
   static const int CommonInvalidAndroidEnvironment                                        = 1000007;
 
-  /// The event handler has already been set by calling setEventHandler. Please do not repeat the setting. If you do need to set up the event handler again, please call setEventHandler to set it to null first before applying the new setting.
+  /// The event handler has already been set by calling `setEventHandler`. Please do not repeat the setting. If you do need to set up the event handler again, please call `setEventHandler` to set it to null first before applying the new setting.
   static const int CommonEventHandlerExists                                               = 1000008;
 
   /// This feature is not included in the SDK. Please contact ZEGO technical support.
@@ -52,7 +52,7 @@ class ZegoErrorCode {
   /// Internal null pointer error. Please contact ZEGO technical support to solve the problem.
   static const int CommonInnerNullptr                                                     = 1000090;
 
-  /// App ID cannot be 0. Please check if the app ID is correct.
+  /// AppID cannot be 0. Please check if the AppID is correct.
   static const int EngineAppidZero                                                        = 1001000;
 
   /// The length of the input AppSign must be 64 bytes.
@@ -271,10 +271,10 @@ class ZegoErrorCode {
   /// Invalid watermark parameter. It may be that the layout of the watermark exceeds the canvas.
   static const int MixerWatermarkParametersError                                          = 1005062;
 
-  /// Invalid watermark URL. The URL must start with 'preset-id://', and must end with '.jpg' or '.png'.
+  /// Invalid watermark URL. The URL must start with `preset-id://`, and must end with `.jpg` or `.png`.
   static const int MixerWatermarkUrlInvalid                                               = 1005063;
 
-  /// Invalid background image URL. The URL must start with 'preset-id://', and must end with '.jpg' or '.png'.
+  /// Invalid background image URL. The URL must start with `preset-id://`, and must end with `.jpg` or `.png`.
   static const int MixerBackgroundImageUrlInvalid                                         = 1005067;
 
   /// The server for auto stream mixing is not found. Please contact ZEGO technical support to enable it.
@@ -292,7 +292,7 @@ class ZegoErrorCode {
   /// No permission to access the device. Please check the permissions of the camera or microphone.
   static const int DeviceErrorTypeNoAuthorization                                         = 1006003;
 
-  /// The sampling frame rate of the video capture device is 0.
+  /// The capture FPS of the device is 0.
   static const int DeviceErrorTypeZeroFps                                                 = 1006004;
 
   /// The device is occupied.
@@ -385,26 +385,11 @@ class ZegoErrorCode {
   /// Failed to send the message, possibly due to network problems.
   static const int IMSendFailed                                                           = 1009010;
 
-  /// The same recording task ID already exists. If you want to start a new recording task, you should stop the old recording task first.
-  static const int RecorderTaskidRepeat                                                   = 1010001;
-
   /// The file name suffix is not supported. Only .mp4 and .flv are supported currently. Depending on file name suffix, SDK sets the specified recording format accordingly.
   static const int RecorderFileSuffixNameFormatNotSupport                                 = 1010002;
 
   /// Generic error of recording API, generally due to invalid input parameters.
   static const int RecorderCommonLiveroomApiError                                         = 1010003;
-
-  /// Attempted to start multiple recording tasks simultaneously. Currently, the SDK only supports at most one recording task at the same time.
-  static const int RecorderMultipleTasksSimultaneouslyError                               = 1010004;
-
-  /// The length of the recording task ID exceeds the limit.
-  static const int RecorderGtTaskidMaxLen                                                 = 1010005;
-
-  /// Invalid recording task. There is no recording task currently.
-  static const int RecorderNoRecordingTask                                                = 1010006;
-
-  /// There is no specified recording task.
-  static const int RecorderNoSpecifiedRecordingTask                                       = 1010007;
 
   /// The specified recorded file path is too long.
   static const int RecorderFilePathTooLong                                                = 1010011;
@@ -438,6 +423,9 @@ class ZegoErrorCode {
 
   /// The currently configured custom video capture format does not support this API.
   static const int CustomVideoIONotSupportedFormat                                        = 1011010;
+
+  /// Custom video rendering does not support the currently set video buffer type
+  static const int CustomVideoIONotSupportedBufferType                                    = 1011011;
 
   /// Unsupported custom audio source type
   static const int CustomAudioIOUnsupportedAudioSourceType                                = 1012001;
