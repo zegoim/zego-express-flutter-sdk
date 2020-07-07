@@ -70,7 +70,6 @@ class ZegoTextureRendererController {
             ZegoCanvas canvas = previewCanvasInUse.get(channel);
             if (canvas != null && originSurface.equals(canvas.view)) {
                 canvas.view = renderer.getSurface();
-                ZegoExpressEngine.getEngine().stopPreview(channel);
                 ZegoExpressEngine.getEngine().startPreview(canvas, channel);
                 return;
             }
@@ -81,7 +80,6 @@ class ZegoTextureRendererController {
             ZegoPlayerConfig config = playerConfigInUse.get(streamID);
             if (canvas != null && originSurface.equals(canvas.view)) {
                 canvas.view = renderer.getSurface();
-                ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
                 ZegoExpressEngine.getEngine().startPlayingStream(streamID, canvas, config);
                 return;
             }

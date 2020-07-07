@@ -423,7 +423,7 @@
 
     ZegoCDNConfig *cdnConfig = nil;
     NSDictionary *config = call.arguments[@"config"];
-    if (config) {
+    if (config && config.count > 0) {
         NSString *url = config[@"url"];
         NSString *authParam = config[@"authParam"];
 

@@ -213,10 +213,10 @@ class ZegoExpressImpl {
     return ZegoPublisherUpdateCdnUrlResult.fromMap(map);
   }
 
-  Future<void> enablePublishDirectToCDN(bool enable, ZegoCDNConfig config, {ZegoPublishChannel channel}) async {
+  Future<void> enablePublishDirectToCDN(bool enable, {ZegoCDNConfig config, ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('enablePublishDirectToCDN', {
       'enable': enable,
-      'config': config.toMap(),
+      'config': config?.toMap() ?? {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -224,7 +224,7 @@ class ZegoExpressImpl {
   Future<void> setPublishWatermark({ZegoWatermark watermark, bool isPreviewVisible, ZegoPublishChannel channel}) async {
 
     return await _channel.invokeMethod('setPublishWatermark', {
-      'watermark': watermark.toMap(),
+      'watermark': watermark?.toMap() ?? {},
       'isPreviewVisible': isPreviewVisible ?? false,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });

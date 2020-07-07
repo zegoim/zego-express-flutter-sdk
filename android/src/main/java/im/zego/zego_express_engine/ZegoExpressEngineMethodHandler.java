@@ -467,11 +467,13 @@ public class ZegoExpressEngineMethodHandler {
     public static void enablePublishDirectToCDN(MethodCall call, Result result) {
 
         HashMap<String, String> configMap = call.argument("config");
-        if (configMap == null || configMap.isEmpty()) { return; }
 
-        ZegoCDNConfig config = new ZegoCDNConfig();
-        config.url = configMap.get("url");
-        config.authParam = configMap.get("authParam");
+        ZegoCDNConfig config = null;
+        if (configMap != null && !configMap.isEmpty()) {
+            config = new ZegoCDNConfig();
+            config.url = configMap.get("url");
+            config.authParam = configMap.get("authParam");
+        }
 
         boolean enable = boolValue((Boolean) call.argument("enable"));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
@@ -485,10 +487,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void setPublishWatermark(MethodCall call, Result result) {
 
         HashMap<String, Object> watermarkMap = call.argument("watermark");
-        if (watermarkMap == null) { return; }
 
         ZegoWatermark watermark = null;
-        if (!watermarkMap.isEmpty()) {
+        if (watermarkMap != null && !watermarkMap.isEmpty()) {
             int left = intValue((Number) watermarkMap.get("left"));
             int top = intValue((Number) watermarkMap.get("top"));
             int right = intValue((Number) watermarkMap.get("right"));
