@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.14.1
+
+1. Fix `enablePublishDirectToCDN` API
+
+2. Fix `updateTextureRendererSize` API on Android
+
 ## 0.14.0
 
 1. Update native SDK to version 1.10.0
