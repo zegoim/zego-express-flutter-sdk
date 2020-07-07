@@ -216,8 +216,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
   /// - [config] CDN configuration, if null, use Zego's background default configuration
   /// - [channel] Publish stream channel
-  Future<void> enablePublishDirectToCDN(bool enable, ZegoCDNConfig config, {ZegoPublishChannel channel}) async {
-    return await ZegoExpressImpl.instance.enablePublishDirectToCDN(enable, config, channel: channel);
+  Future<void> enablePublishDirectToCDN(bool enable, {ZegoCDNConfig config, ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.enablePublishDirectToCDN(enable, config: config, channel: channel);
   }
 
   /// Sets up stream watermark before stream publishing for the specified channel.
