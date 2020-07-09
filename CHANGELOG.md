@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.14.2
+
+- Fix the conversion issue of generic Map for some callbacks
+
 ## 0.14.1
 
 1. Fix `enablePublishDirectToCDN` API

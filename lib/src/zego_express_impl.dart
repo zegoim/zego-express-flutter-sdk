@@ -582,7 +582,7 @@ class ZegoExpressImpl {
           map['roomID'],
           ZegoRoomState.values[map['state']],
           map['errorCode'],
-          extendedData
+          Map<String, dynamic>.from(extendedData)
         );
         break;
 
@@ -657,7 +657,7 @@ class ZegoExpressImpl {
           map['streamID'],
           ZegoPublisherState.values[map['state']],
           map['errorCode'],
-          extendedData
+          Map<String, dynamic>.from(extendedData)
         );
         break;
 
@@ -722,7 +722,7 @@ class ZegoExpressImpl {
           map['streamID'],
           ZegoPlayerState.values[map['state']],
           map['errorCode'],
-          extendedData
+          Map<String, dynamic>.from(extendedData)
         );
         break;
 
@@ -809,8 +809,10 @@ class ZegoExpressImpl {
       case 'onMixerSoundLevelUpdate':
         if (ZegoExpressEngine.onMixerSoundLevelUpdate == null) return;
 
+        Map<dynamic, dynamic> soundLevels = map['soundLevels'];
+
         ZegoExpressEngine.onMixerSoundLevelUpdate(
-          map['soundLevels']
+          Map<int, double>.from(soundLevels)
         );
         break;
 
@@ -861,8 +863,10 @@ class ZegoExpressImpl {
       case 'onRemoteSoundLevelUpdate':
         if (ZegoExpressEngine.onRemoteSoundLevelUpdate == null) return;
 
+        Map<dynamic, dynamic> soundLevels = map['soundLevels'];
+
         ZegoExpressEngine.onRemoteSoundLevelUpdate(
-          map['soundLevels']
+          Map<String, double>.from(soundLevels)
         );
         break;
 
@@ -877,8 +881,14 @@ class ZegoExpressImpl {
       case 'onRemoteAudioSpectrumUpdate':
         if (ZegoExpressEngine.onRemoteAudioSpectrumUpdate == null) return;
 
+        Map<dynamic, dynamic> originAudioSpectrums = map['audioSpectrums'];
+        Map<String, List<double>> audioSpectrums = Map();
+        for (String streamID in originAudioSpectrums.keys) {
+          audioSpectrums[streamID] = List<double>.from(originAudioSpectrums[streamID]);
+        }
+
         ZegoExpressEngine.onRemoteAudioSpectrumUpdate(
-          map['audioSpectrums']
+          audioSpectrums
         );
         break;
 
