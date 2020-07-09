@@ -405,7 +405,7 @@ class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onCapturedSoundLevelUpdate");
-            map.put("soundLevels", soundLevel);
+            map.put("soundLevel", soundLevel);
 
             sink.success(map);
         }
