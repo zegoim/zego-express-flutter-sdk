@@ -60,7 +60,7 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
   }
 
-  /// Debugging error message callback.
+  /// The callback for obtaining debugging error information.
   ///
   /// When the APIs are not used correctly, the callback prompts for detailed error information, which is controlled by the [setDebugVerbose] interface
   ///
@@ -252,7 +252,7 @@ class ZegoExpressEngine {
   /// - [height] The height of the video
   static void Function(String streamID, int width, int height) onPlayerVideoSizeChanged;
 
-  /// The callback triggered when supplemental enhancement information (SEI) is received.
+  /// The callback triggered when Supplemental Enhancement Information is received.
   ///
   /// If sendSEI was called on remote, this callback will be triggered.
   /// If only the pure audio stream is played, the SEI information sent by the streaming end will not be received.
@@ -307,7 +307,7 @@ class ZegoExpressEngine {
   /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
   static void Function(Map<String, double> soundLevels) onRemoteSoundLevelUpdate;
 
-  /// The callback triggered every 100ms to report the audio spectrum of the locally capture audio.
+  /// The callback triggered every 100ms to report the audio spectrum of the locally captured audio.
   ///
   /// Callback notification period is 100 ms'. To trigger this callback API, the [startAudioSpectrumMonitor] interface must be called to start the audio spectrum monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
   ///

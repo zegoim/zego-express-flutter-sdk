@@ -41,7 +41,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableANS(enable);
   }
 
-  /// Enables or disables the beauty features for the specified channel.
+  /// Enables or disables the beauty features (for the specified channel).
   ///
   /// The current beauty function is simple and may not meet the developer's expectations, it is recommended to use [enableCustomVideoCapture] function to connect to a third party professional beauty SDK to get the best results.
   /// The [setBeautifyOption] API can be called to adjust the beauty parameters after the beauty function is enabled.
@@ -53,7 +53,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
   }
 
-  /// Set beauty parameters
+  /// Sets up the beauty parameters (for the specified channel).
   ///
   /// Developer need to call [enableBeautify] API first to enable the beautify function before calling this API
   /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.

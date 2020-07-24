@@ -31,8 +31,9 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+    // tag-add-jni-dir: do not remove me
 }
 
 dependencies {
-    implementation 'im.zego:express-engine-video:1.10.0'
+    implementation 'im.zego:express-video:1.11.4'
 }

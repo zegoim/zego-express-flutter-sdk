@@ -292,7 +292,7 @@ class ZegoErrorCode {
   /// No permission to access the device. Please check the permissions of the camera or microphone.
   static const int DeviceErrorTypeNoAuthorization                                         = 1006003;
 
-  /// The capture FPS of the device is 0.
+  /// The sampling frame rate of the video capture device is 0.
   static const int DeviceErrorTypeZeroFps                                                 = 1006004;
 
   /// The device is occupied.
@@ -418,25 +418,25 @@ class ZegoErrorCode {
   /// The custom video capture module is not enabled. Please make sure it is enabled in the initialization configurations.
   static const int CustomVideoIONoCustomVideoCapture                                      = 1011002;
 
-  /// Failed to enable/disable custom video capture/rendering. Please make sure to enable/disable it before the engine is started. (i.e. before calling `startPreview`, `startPublishingStream` or `startPlayingStream`)
+  /// Failed to enable/disable custom video capture/rendering. Please make sure to enable/disable it before the engine is started (i.e., before calling `startPreview`, `startPublishingStream` or `startPlayingStream`).
   static const int CustomVideoIOEnableCustomIoFailed                                      = 1011003;
 
   /// The currently configured custom video capture format does not support this API.
   static const int CustomVideoIONotSupportedFormat                                        = 1011010;
 
-  /// Custom video rendering does not support the currently set video buffer type
+  /// Custom video rendering does not support the currently set video buffer type.
   static const int CustomVideoIONotSupportedBufferType                                    = 1011011;
 
-  /// Unsupported custom audio source type
+  /// Unsupported custom audio source type.
   static const int CustomAudioIOUnsupportedAudioSourceType                                = 1012001;
 
-  /// The custom audio capture function is not enabled, please make sure that the custom audio IO function of the specified publish channel is enabled
+  /// The custom audio capture feature is not enabled. Please make sure that the custom audio IO module is enabled for the specified stream publishing channel.
   static const int CustomAudioIOCapturerNotCreated                                        = 1012002;
 
-  /// The custom audio render function is not enabled, please make sure that the custom audio IO function is enabled
+  /// The custom audio rendering feature is not enabled. Please make sure that the custom audio IO module is enabled.
   static const int CustomAudioIORendererNotCreated                                        = 1012003;
 
-  /// Failed to enable/disable custom audio IO. Please make sure to enable/disable it before the engine is started. (i.e. before calling `startPreview`, `startPublishingStream` or `startPlayingStream`)
+  /// Failed to enable/disable custom audio IO. Please make sure to enable/disable it before the engine is started (i.e., before calling `startPreview`, `startPublishingStream` or `startPlayingStream`).
   static const int CustomAudioIOEnableCustomAudioIoFailed                                 = 1012004;
 
 }
