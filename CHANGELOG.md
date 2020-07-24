@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.15.0
+
+- Update native SDK to version 1.11.4
+
 ## 0.14.2
 
 - Fix the conversion issue of generic Map for some callbacks

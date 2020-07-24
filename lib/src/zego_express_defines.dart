@@ -110,9 +110,11 @@ enum ZegoStreamQualityLevel {
 
 /// Audio channel type
 enum ZegoAudioChannel {
-  /// MONO
+  /// Unknown
+  Unknown,
+  /// Mono
   Mono,
-  /// STEREO
+  /// Stereo
   Stereo
 }
 

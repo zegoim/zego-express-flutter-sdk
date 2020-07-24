@@ -16,6 +16,7 @@
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
+#import <objc/message.h>
 
 @interface ZegoExpressEngineMethodHandler ()
 
@@ -49,6 +50,11 @@
 }
 
 - (void)createEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // Set platform language to dart
+    SEL selector = NSSelectorFromString(@"setPlatformLanguage:");
+    if ([ZegoExpressEngine respondsToSelector:selector]) {
+        ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
+    }
 
     unsigned int appID = [ZegoUtils unsignedIntValue:call.arguments[@"appID"]];
     NSString *appSign = call.arguments[@"appSign"];
