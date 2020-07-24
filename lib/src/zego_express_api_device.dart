@@ -63,7 +63,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
   }
 
-  /// Turns on/off the camera for the specified channel.
+  /// Turns on/off the camera (for the specified channel).
   ///
   /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
   /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
@@ -74,7 +74,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
   }
 
-  /// Switches to the front or the rear camera for the specified channel.
+  /// Switches to the front or the rear camera (for the specified channel).
   ///
   /// This interface is used to control the front or rear camera
   /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.

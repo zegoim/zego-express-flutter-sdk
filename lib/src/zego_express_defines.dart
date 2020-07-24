@@ -372,15 +372,15 @@ enum ZegoVideoFlipMode {
 
 /// Audio Config Preset
 enum ZegoAudioConfigPreset {
-  /// basic-quality
+  /// Basic sound quality (16 kbps, Mono, ZegoAudioCodecIDDefault)
   BasicQuality,
-  /// standard-quality
+  /// Standard sound quality (48 kbps, Mono, ZegoAudioCodecIDDefault)
   StandardQuality,
-  /// standard-quality-stereo
+  /// Standard sound quality (56 kbps, Stereo, ZegoAudioCodecIDDefault)
   StandardQualityStereo,
-  /// high-quality
+  /// High sound quality (128 kbps, Mono, ZegoAudioCodecIDDefault)
   HighQuality,
-  /// high-quality-stereo
+  /// High sound quality (192 kbps, Stereo, ZegoAudioCodecIDDefault)
   HighQualityStereo
 }
 

@@ -185,7 +185,7 @@ Please refer to the API documentation for more features.
 
 Open the iOS project that requires Platform View and add the field `io.flutter.embedded_views_preview` to `Info.plist` with a value of `YES`.
 
-![iOS-Enable-PlatformView-Guide](https://raw.githubusercontent.com/patrick-fu/personal_blog_image/master/image/20200408194006.png)
+![iOS-Enable-PlatformView-Guide](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png)
 
 ### 2. iOS: `fatal error: lipo: -extract armv7 specified but fat file: [...] does not contain that architecture`
 
