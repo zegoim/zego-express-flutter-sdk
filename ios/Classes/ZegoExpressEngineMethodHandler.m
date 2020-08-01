@@ -257,12 +257,14 @@
     int encHeight = [ZegoUtils intValue:configMap[@"encodeHeight"]];
     int bitrate = [ZegoUtils intValue:configMap[@"bitrate"]];
     int fps = [ZegoUtils intValue:configMap[@"fps"]];
+    int codecID = [ZegoUtils intValue:configMap[@"codecID"]];
 
     ZegoVideoConfig *configObject = [[ZegoVideoConfig alloc] init];
     configObject.captureResolution = CGSizeMake(capWidth, capHeight);
     configObject.encodeResolution = CGSizeMake(encWidth, encHeight);
     configObject.bitrate = bitrate;
     configObject.fps = fps;
+    configObject.codecID = (ZegoVideoCodecID)codecID;
 
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
@@ -336,7 +338,7 @@
     ZegoAudioConfig *configObject = [[ZegoAudioConfig alloc] init];
     configObject.bitrate = bitrate;
     configObject.channel = channel;
-    configObject.codecID = codecID;
+    configObject.codecID = (ZegoAudioCodecID)codecID;
 
     [[ZegoExpressEngine sharedEngine] setAudioConfig:configObject];
 
