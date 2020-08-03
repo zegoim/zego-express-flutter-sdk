@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.15.1
+
+- Fix the problem that the `codecID` parameter of `setVideoConfig` API does not take effect
+
 ## 0.15.0
 
 - Update native SDK to version 1.11.4
