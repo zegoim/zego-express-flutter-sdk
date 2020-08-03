@@ -41,6 +41,7 @@ import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
+import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
@@ -297,12 +298,14 @@ public class ZegoExpressEngineMethodHandler {
         int encodeHeight = intValue((Number) configMap.get("encodeHeight"));
         int fps = intValue((Number) configMap.get("fps"));
         int bitrate = intValue((Number) configMap.get("bitrate"));
+        int codecID = intValue((Number) configMap.get("codecID"));
 
         ZegoVideoConfig config = new ZegoVideoConfig();
         config.setCaptureResolution(captureWidth, captureHeight);
         config.setEncodeResolution(encodeWidth, encodeHeight);
         config.setVideoFPS(fps);
         config.setVideoBitrate(bitrate);
+        config.setCodecID(ZegoVideoCodecID.getZegoVideoCodecID(codecID));
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
