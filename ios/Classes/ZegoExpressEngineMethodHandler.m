@@ -974,6 +974,15 @@
     result(nil);
 }
 
+- (void)setANSMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setANSMode:(ZegoANSMode)mode];
+
+    result(nil);
+}
+
 - (void)enableBeautify:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int feature = [ZegoUtils intValue:call.arguments[@"featureBitmask"]];
@@ -995,6 +1004,51 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setBeautifyOption: optionObject channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setAudioEqualizerGain:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int bandIndex = [ZegoUtils intValue:call.arguments[@"bandIndex"]];
+    float bandGain = [ZegoUtils floatValue:call.arguments[@"bandGain"]];
+
+    [[ZegoExpressEngine sharedEngine] setAudioEqualizerGain:bandIndex bandGain:bandGain];
+
+    result(nil);
+}
+
+- (void)setVoiceChangerParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *paramMap = call.arguments[@"param"];
+    ZegoVoiceChangerParam *param = [[ZegoVoiceChangerParam alloc] init];
+    param.pitch = [ZegoUtils floatValue:paramMap[@"pitch"]];
+
+    [[ZegoExpressEngine sharedEngine] setVoiceChangerParam:param];
+
+    result(nil);
+}
+
+- (void)setReverbParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *paramMap = call.arguments[@"param"];
+    ZegoReverbParam *param = [[ZegoReverbParam alloc] init];
+    param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
+    param.dryWetRatio = [ZegoUtils floatValue:paramMap[@"dryWetRatio"]];
+    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
+    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
+
+    [[ZegoExpressEngine sharedEngine] setReverbParam:param];
+
+    result(nil);
+}
+
+- (void)enableVirtualStereo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    int angle = [ZegoUtils intValue:call.arguments[@"angle"]];
+
+    [[ZegoExpressEngine sharedEngine] enableVirtualStereo:enable angle:angle];
 
     result(nil);
 }
@@ -1271,6 +1325,33 @@
     } else {
         result(@(0));
     }
+}
+
+
+#pragma mark - Record
+
+- (void)startRecordingCapturedData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    ZegoDataRecordConfig *config = [[ZegoDataRecordConfig alloc] init];
+    config.filePath = configMap[@"filePath"];
+    config.recordType = (ZegoDataRecordType)[ZegoUtils intValue:configMap[@"recordType"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] startRecordingCapturedData:config channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)stopRecordingCapturedData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] stopRecordingCapturedData:(ZegoPublishChannel)channel];
+
+    result(nil);
 }
 
 

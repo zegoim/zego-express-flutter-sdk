@@ -13,9 +13,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
+import im.zego.zegoexpress.constants.ZegoDataRecordState;
 import im.zego.zegoexpress.constants.ZegoEngineState;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
@@ -28,6 +31,8 @@ import im.zego.zegoexpress.constants.ZegoRoomState;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
+import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
+import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
 import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
 import im.zego.zegoexpress.entity.ZegoStream;
@@ -679,6 +684,50 @@ class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerPlayingProgress");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("millisecond", millisecond);
+
+            sink.success(map);
+        }
+    };
+
+
+    IZegoDataRecordEventHandler dataRecordEventHandler = new IZegoDataRecordEventHandler() {
+        @Override
+        public void onCapturedDataRecordStateUpdate(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
+            super.onCapturedDataRecordStateUpdate(state, errorCode, config, channel);
+
+            HashMap<String, Object> configMap = new HashMap<>();
+            configMap.put("filePath", config.filePath);
+            configMap.put("recordType", config.recordType.value());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onCapturedDataRecordStateUpdate");
+            map.put("state", state.value());
+            map.put("errorCode", errorCode);
+            map.put("config", configMap);
+            map.put("channel", channel.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onCapturedDataRecordProgressUpdate(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
+            super.onCapturedDataRecordProgressUpdate(progress, config, channel);
+
+            HashMap<String, Object> progressMap = new HashMap<>();
+            progressMap.put("duration", progress.duration);
+            progressMap.put("currentFileSize", progress.currentFileSize);
+
+            HashMap<String, Object> configMap = new HashMap<>();
+            configMap.put("filePath", config.filePath);
+            configMap.put("recordType", config.recordType.value());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onCapturedDataRecordProgressUpdate");
+            map.put("progress", progressMap);
+            map.put("config", configMap);
+            map.put("channel", channel.value());
 
             sink.success(map);
         }

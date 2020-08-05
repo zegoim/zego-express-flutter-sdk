@@ -25,7 +25,7 @@
 
 + (long long)longLongValue:(NSNumber *)number;
 
-+ (float)folatValue:(NSNumber *)number;
++ (float)floatValue:(NSNumber *)number;
 
 + (double)doubleValue:(NSNumber *)number;
 

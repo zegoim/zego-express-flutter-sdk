@@ -385,4 +385,19 @@ class ZegoExpressEngine {
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
 
+  /// The callback triggered when the state of data recording (to a file) changes.
+  ///
+  /// - [state] File recording status, according to which you should determine the state of the file recording or the prompt of the UI.
+  /// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// - [config] Record config
+  /// - [channel] Publishing stream channel
+  static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordStateUpdate;
+
+  /// The callback to report the current recording progress.
+  ///
+  /// - [progress] File recording progress, which allows developers to hint at the UI, etc.
+  /// - [config] Record config
+  /// - [channel] Publishing stream channel
+  static void Function(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordProgressUpdate;
+
 }

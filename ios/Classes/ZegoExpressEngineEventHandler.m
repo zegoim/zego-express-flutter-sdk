@@ -663,4 +663,46 @@
     }
 }
 
+
+#pragma mark - Record Callback
+
+- (void)onCapturedDataRecordStateUpdate:(ZegoDataRecordState)state errorCode:(int)errorCode config:(ZegoDataRecordConfig *)config channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"state: %d, errorCode: %d, filePath: %@, recordType: %d, channel: %d", (int)state, errorCode, config.filePath, (int)config.recordType, (int)channel);
+
+    if (sink) {
+        sink(@{
+            @"method": @"onCapturedDataRecordStateUpdate",
+            @"state": @((int)state),
+            @"errorCode": @(errorCode),
+            @"config": @{
+                @"filePath": config.filePath,
+                @"recordType": @((int)config.recordType)
+            },
+            @"channel": @(channel)
+        });
+    }
+}
+
+- (void)onCapturedDataRecordProgressUpdate:(ZegoDataRecordProgress *)progress config:(ZegoDataRecordConfig *)config channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"duration: %llu, currentFileSize: %llu, filePath: %@, recordType: %d, channel: %d", progress.duration, progress.currentFileSize, config.filePath, (int)config.recordType, (int)channel);
+
+    if (sink) {
+        sink(@{
+            @"method": @"onCapturedDataRecordProgressUpdate",
+            @"progress": @{
+                @"duration": @(progress.duration),
+                @"currentFileSize": @(progress.currentFileSize)
+            },
+            @"config": @{
+                @"filePath": config.filePath,
+                @"recordType": @((int)config.recordType)
+            },
+            @"channel": @(channel)
+        });
+    }
+}
+
+
 @end
