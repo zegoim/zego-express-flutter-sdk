@@ -35,7 +35,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// You need to reset after [stopPlayingStream] and [startPlayingStream].
   ///
   /// - [streamID] Stream ID
-  /// - [volume] Volume percentage. The value ranges from 0 to 100, and the default value is 100.
+  /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.
   Future<void> setPlayVolume(String streamID, int volume) async {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
   }
@@ -43,7 +43,6 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Stops or resumes playing the audio part of a stream.
   ///
   /// This api can be used to stop playing/retrieving the audio data of the stream. Need to be called after calling startPlayingStream.
-  /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
   ///
   /// - [streamID] Stream ID
   /// - [mute] mute flag, true: mute play stream video, false: resume play stream video

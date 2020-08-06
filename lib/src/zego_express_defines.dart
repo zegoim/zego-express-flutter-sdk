@@ -1111,7 +1111,7 @@ class ZegoMixerInput {
 /// Configure mix stream output target URL or stream ID
 class ZegoMixerOutput {
 
-  /// Mix stream output target, URL or stream ID
+  /// Mix stream output target, URL or stream ID, if set to be URL format, only RTMP URL surpported, for example rtmp://xxxxxxxx
   String target;
 
   ZegoMixerOutput(this.target): assert(target != null);
@@ -1129,7 +1129,7 @@ class ZegoMixerOutput {
 /// Configure a watermark image URL and the layout of the watermark in the screen
 class ZegoWatermark {
 
-  /// Watermark image URL
+  /// Watermark image URL, only png or jpg format surpport.
   String imageURL;
 
   /// Watermark image layout

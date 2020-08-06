@@ -254,8 +254,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when Supplemental Enhancement Information is received.
   ///
-  /// If sendSEI was called on remote, this callback will be triggered.
-  /// If only the pure audio stream is played, the SEI information sent by the streaming end will not be received.
+  /// After the remote stream is successfully played, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
   ///
   /// - [streamID] Stream ID
   /// - [data] SEI content
