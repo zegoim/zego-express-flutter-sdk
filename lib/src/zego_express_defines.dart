@@ -827,7 +827,7 @@ class ZegoStreamRelayCDNInfo {
   /// Reason for relay state changed
   ZegoStreamRelayCDNUpdateReason updateReason;
 
-  /// The timestamp when the state changed, in milliseconds
+  /// The timestamp when the state changed, UNIX timestamp, in milliseconds.
   int stateTime;
 
   ZegoStreamRelayCDNInfo(this.url, this.state, this.updateReason, this.stateTime): assert(url != null), assert(state != null), assert(updateReason != null), assert(stateTime != null);
@@ -1217,7 +1217,7 @@ class ZegoBroadcastMessageInfo {
   /// message id
   int messageID;
 
-  /// Message send time
+  /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
   /// Message sender
@@ -1244,7 +1244,7 @@ class ZegoBarrageMessageInfo {
   /// message id
   String messageID;
 
-  /// Message send time
+  /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
   /// Message sender
@@ -1330,9 +1330,10 @@ class ZegoDataRecordConfig {
 
   ZegoDataRecordConfig(this.filePath, this.recordType): assert(filePath != null), assert(recordType != null);
 
-  ZegoDataRecordConfig.fromMap(Map<dynamic, dynamic> map):
-    filePath = map['filePath'],
-    recordType = map['recordType'];
+  ZegoDataRecordConfig.fromMap(Map<dynamic, dynamic> map) {
+    filePath = map['filePath'];
+    recordType = ZegoDataRecordType.values[map['recordType']];
+  }
 
   Map<String, dynamic> toMap() {
     return {

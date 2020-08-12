@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.1.0
+
+1. Update native SDK to version 1.12.3
+
+2. Add `setANSMode`, `setAudioEqualizerGain`, `setVoiceChangerParam`, `setReverbParam`, `enableVirtualStereo` APIs 
+
+3. Add `Record` module with `startRecordingCapturedData`, `stopRecordingCapturedData`, `onCapturedDataRecordStateUpdate`, `onCapturedDataRecordProgressUpdate`
+
+4. Add `getVideoConfig` implementation for Android
+
+5. Fix issue of `stopMixerTask` for Android
+
 ## 0.15.1
 
 - Fix the problem that the `codecID` parameter of `setVideoConfig` API does not take effect

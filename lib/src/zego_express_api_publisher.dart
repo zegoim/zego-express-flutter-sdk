@@ -100,7 +100,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the video orientation (for the specified channel).
   ///
-  /// This interface sets the orientation of the video. The captued image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
+  /// This interface sets the orientation of the video. The captured image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
   ///
   /// - [orientation] Video orientation
   /// - [channel] Publish stream channel
