@@ -329,7 +329,13 @@ public class ZegoExpressEngineMethodHandler {
         ZegoVideoConfig config = ZegoExpressEngine.getEngine().getVideoConfig(channel);
 
         HashMap<String, Object> resultMap = new HashMap<>();
-        // TODO: GetVideoConfig
+        resultMap.put("captureWidth", config.captureWidth);
+        resultMap.put("captureWidth", config.captureHeight);
+        resultMap.put("encodeWidth", config.encodeWidth);
+        resultMap.put("encodeHeight", config.encodeHeight);
+        resultMap.put("fps", config.fps);
+        resultMap.put("bitrate", config.bitrate);
+        resultMap.put("codecID", config.codecID.value());
         result.success(resultMap);
     }
 
