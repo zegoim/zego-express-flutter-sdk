@@ -812,7 +812,7 @@
     // no need to set enable sound level
 
     [[ZegoExpressEngine sharedEngine] stopMixerTask:taskObject callback:^(int errorCode) {
-        result(@(errorCode));
+        result(@{@"errorCode": @(errorCode)});
     }];
 }
 
