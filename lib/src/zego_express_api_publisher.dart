@@ -100,7 +100,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the video orientation (for the specified channel).
   ///
-  /// This interface sets the orientation of the video. The captued image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
+  /// This interface sets the orientation of the video. The captured image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
   ///
   /// - [orientation] Video orientation
   /// - [channel] Publish stream channel
@@ -175,7 +175,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// This interface is used to set the audio collection volume. The local user can control the volume of the audio stream sent to the far end. It can be set before publishing.
   ///
-  /// - [volume] Volume percentage. The range is 0 to 100. Default value is 100.
+  /// - [volume] Volume percentage. The range is 0 to 200. Default value is 100.
   Future<void> setCaptureVolume(int volume) async {
     return await ZegoExpressImpl.instance.setCaptureVolume(volume);
   }
@@ -190,7 +190,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// When the [enablePublishDirectToCDN] api is set to true to publish the stream straight to the CDN, then calling this interface will have no effect.
   ///
   /// - [streamID] Stream ID
-  /// - [targetURL] CDN relay address, supported address format rtmp.
+  /// - [targetURL] CDN relay address, supported address format is rtmp.
   /// - Returns The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(String streamID, String targetURL) async {
     return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
@@ -202,7 +202,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// This api does not stop publishing audio and video stream to the ZEGO audio and video cloud.
   ///
   /// - [streamID] Stream ID
-  /// - [targetURL] CDN relay address, supported address format rtmp, flv, hls
+  /// - [targetURL] CDN relay address, supported address format rtmp.
   /// - Returns The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
   Future<ZegoPublisherUpdateCdnUrlResult> removePublishCdnUrl(String streamID, String targetURL) async {
     return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);

@@ -254,8 +254,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when Supplemental Enhancement Information is received.
   ///
-  /// If sendSEI was called on remote, this callback will be triggered.
-  /// If only the pure audio stream is played, the SEI information sent by the streaming end will not be received.
+  /// After the remote stream is successfully played, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
   ///
   /// - [streamID] Stream ID
   /// - [data] SEI content
@@ -384,5 +383,20 @@ class ZegoExpressEngine {
   /// - [mediaPlayer] Callback player object
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
+
+  /// The callback triggered when the state of data recording (to a file) changes.
+  ///
+  /// - [state] File recording status, according to which you should determine the state of the file recording or the prompt of the UI.
+  /// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// - [config] Record config
+  /// - [channel] Publishing stream channel
+  static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordStateUpdate;
+
+  /// The callback to report the current recording progress.
+  ///
+  /// - [progress] File recording progress, which allows developers to hint at the UI, etc.
+  /// - [config] Record config
+  /// - [channel] Publishing stream channel
+  static void Function(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordProgressUpdate;
 
 }

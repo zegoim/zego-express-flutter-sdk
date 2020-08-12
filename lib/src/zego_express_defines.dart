@@ -166,6 +166,16 @@ enum ZegoAECMode {
   Soft
 }
 
+/// Audio Noise Suppression mode
+enum ZegoANSMode {
+  /// Soft ANS
+  Soft,
+  /// Medium ANS
+  Medium,
+  /// Aggressive ANS
+  Aggressive
+}
+
 /// Traffic control property (bitmask enumeration)
 class ZegoTrafficControlProperty {
   /// Basic
@@ -569,6 +579,54 @@ class ZegoVideoConfig {
 
 }
 
+/// Video config
+///
+/// developer can use the built-in presets of the SDK to change the parameters of the voice changer
+class ZegoVoiceChangerParam {
+
+  /// pitch
+  double pitch;
+
+  ZegoVoiceChangerParam(this.pitch): assert(pitch != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'pitch': this.pitch
+    };
+  }
+
+}
+
+/// Audio reverberation parameters
+///
+/// Developers can use the SDK's built-in presets to change the parameters of the reverb.
+class ZegoReverbParam {
+
+  /// Reverb Damping, range [0.0, 2.0], controls the attenuation of the reverb, the higher the damping, the higher the attenuation.
+  double damping;
+
+  /// Dry/wet ratio, the range is greater than or equal to 0.0, to control the ratio between reverberation, direct sound and early reflections; dry part is set to 1 by default; the smaller the dry/wet ratio, the larger the wet ratio, the stronger the reverberation effect.
+  double dryWetRatio;
+
+  /// Echo, in the range [0.0, 0.5], to control the trailing length of the reverb.
+  double reverberance;
+
+  /// Room size, in the range [0.0, 1.0], to control the size of the "room" in which the reverb is generated, the larger the room, the stronger the reverb.
+  double roomSize;
+
+  ZegoReverbParam(this.damping, this.dryWetRatio, this.reverberance, this.roomSize): assert(damping != null), assert(dryWetRatio != null), assert(reverberance != null), assert(roomSize != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'damping': this.damping,
+      'dryWetRatio': this.dryWetRatio,
+      'reverberance': this.reverberance,
+      'roomSize': this.roomSize
+    };
+  }
+
+}
+
 /// User object
 ///
 /// Configure user ID and username to identify users in the room.
@@ -769,7 +827,7 @@ class ZegoStreamRelayCDNInfo {
   /// Reason for relay state changed
   ZegoStreamRelayCDNUpdateReason updateReason;
 
-  /// The timestamp when the state changed, in milliseconds
+  /// The timestamp when the state changed, UNIX timestamp, in milliseconds.
   int stateTime;
 
   ZegoStreamRelayCDNInfo(this.url, this.state, this.updateReason, this.stateTime): assert(url != null), assert(state != null), assert(updateReason != null), assert(stateTime != null);
@@ -1053,7 +1111,7 @@ class ZegoMixerInput {
 /// Configure mix stream output target URL or stream ID
 class ZegoMixerOutput {
 
-  /// Mix stream output target, URL or stream ID
+  /// Mix stream output target, URL or stream ID, if set to be URL format, only RTMP URL surpported, for example rtmp://xxxxxxxx
   String target;
 
   ZegoMixerOutput(this.target): assert(target != null);
@@ -1071,7 +1129,7 @@ class ZegoMixerOutput {
 /// Configure a watermark image URL and the layout of the watermark in the screen
 class ZegoWatermark {
 
-  /// Watermark image URL
+  /// Watermark image URL, only png or jpg format surpport.
   String imageURL;
 
   /// Watermark image layout
@@ -1159,7 +1217,7 @@ class ZegoBroadcastMessageInfo {
   /// message id
   int messageID;
 
-  /// Message send time
+  /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
   /// Message sender
@@ -1186,7 +1244,7 @@ class ZegoBarrageMessageInfo {
   /// message id
   String messageID;
 
-  /// Message send time
+  /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
   /// Message sender
@@ -1258,6 +1316,48 @@ class ZegoAudioConfig {
       'codecID': this.codecID.index
     };
   }
+
+}
+
+/// Record config
+class ZegoDataRecordConfig {
+
+  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently only support .mp4 or .flv, if multiple recording for the same path, will overwrite the file with the same name.
+  String filePath;
+
+  /// Type of recording media
+  ZegoDataRecordType recordType;
+
+  ZegoDataRecordConfig(this.filePath, this.recordType): assert(filePath != null), assert(recordType != null);
+
+  ZegoDataRecordConfig.fromMap(Map<dynamic, dynamic> map) {
+    filePath = map['filePath'];
+    recordType = ZegoDataRecordType.values[map['recordType']];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'filePath': this.filePath,
+      'recordType': this.recordType.index
+    };
+  }
+
+}
+
+/// File recording progress
+class ZegoDataRecordProgress {
+
+  /// Current recording duration in milliseconds
+  int duration;
+
+  /// Current recording file size in byte
+  int currentFileSize;
+
+  ZegoDataRecordProgress(this.duration, this.currentFileSize): assert(duration != null), assert(currentFileSize != null);
+
+  ZegoDataRecordProgress.fromMap(Map<dynamic, dynamic> map):
+    duration = map['duration'],
+    currentFileSize = map['currentFileSize'];
 
 }
 

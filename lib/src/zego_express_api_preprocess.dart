@@ -41,6 +41,15 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableANS(enable);
   }
 
+  /// Sets the Automatic Noise Suppression (ANS) mode.
+  ///
+  /// Default is medium mode
+  ///
+  /// - [mode] Audio Noise Suppression mode
+  Future<void> setANSMode(ZegoANSMode mode) async {
+    return await ZegoExpressImpl.instance.setANSMode(mode);
+  }
+
   /// Enables or disables the beauty features (for the specified channel).
   ///
   /// The current beauty function is simple and may not meet the developer's expectations, it is recommended to use [enableCustomVideoCapture] function to connect to a third party professional beauty SDK to get the best results.
@@ -62,6 +71,42 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [channel] Publishing stream channel
   Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
+  }
+
+  /// Set the sound equalizer (EQ)
+  ///
+  /// - [bandIndex] The value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
+  /// - [bandGain] The value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
+  Future<void> setAudioEqualizerGain(int bandIndex, double bandGain) async {
+    return await ZegoExpressImpl.instance.setAudioEqualizerGain(bandIndex, bandGain);
+  }
+
+  /// Sets up the voice changer parameters.
+  ///
+  /// sound change effect only works on capture sounds.
+  ///
+  /// - [param] Voice changer parameters
+  Future<void> setVoiceChangerParam(ZegoVoiceChangerParam param) async {
+    return await ZegoExpressImpl.instance.setVoiceChangerParam(param);
+  }
+
+  /// Sets up the reverberation parameters.
+  ///
+  /// Different values set dynamically after a successful publishing will take effect, When any of the parameters is set to 0.0, the reverb is turned off.
+  ///
+  /// - [param] Reverb parameter
+  Future<void> setReverbParam(ZegoReverbParam param) async {
+    return await ZegoExpressImpl.instance.setReverbParam(param);
+  }
+
+  /// Enables the virtual stereo feature.
+  ///
+  /// Note: You need to set up a dual channel setAudioConfig for the virtual stereo to take effect!
+  ///
+  /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo
+  /// - [angle] angle of the sound source in the virtual stereo, ranging from 0 to 180, with 90 being the front, and 0 and 180 being respectively Corresponds to rightmost and leftmost, usually defaults to 90.
+  Future<void> enableVirtualStereo(bool enable, int angle) async {
+    return await ZegoExpressImpl.instance.enableVirtualStereo(enable, angle);
   }
 
 }

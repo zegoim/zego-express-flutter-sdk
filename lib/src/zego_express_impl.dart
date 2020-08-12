@@ -449,6 +449,12 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setANSMode(ZegoANSMode mode) async {
+    return await _channel.invokeMethod('setANSMode', {
+      'mode': mode.index
+    });
+  }
+
   Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('enableBeautify', {
       'featureBitmask': featureBitmask,
@@ -460,6 +466,32 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('setBeautifyOption', {
       'option': option.toMap(),
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setAudioEqualizerGain(int bandIndex, double bandGain) async {
+    return await _channel.invokeMethod('setAudioEqualizerGain', {
+      'bandIndex': bandIndex,
+      'bandGain': bandGain
+    });
+  }
+
+  Future<void> setVoiceChangerParam(ZegoVoiceChangerParam param) async {
+    return await _channel.invokeMethod('setVoiceChangerParam', {
+      'param': param.toMap()
+    });
+  }
+
+  Future<void> setReverbParam(ZegoReverbParam param) async {
+    return await _channel.invokeMethod('setReverbParam', {
+      'param': param.toMap()
+    });
+  }
+
+  Future<void> enableVirtualStereo(bool enable, int angle) async {
+    return await _channel.invokeMethod('enableVirtualStereo', {
+      'enable': enable,
+      'angle': angle
     });
   }
 
@@ -535,6 +567,22 @@ class ZegoExpressImpl {
 
     return;
 
+  }
+
+
+  /* Record */
+
+  Future<void> startRecordingCapturedData(ZegoDataRecordConfig config, {ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('startRecordingCapturedData', {
+      'config': config.toMap(),
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> stopRecordingCapturedData({ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('stopRecordingCapturedData', {
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
 
@@ -1011,6 +1059,30 @@ class ZegoExpressImpl {
         } else {
           // TODO: Can't find media player
         }
+        break;
+
+
+      /* Record */
+
+      case 'onCapturedDataRecordStateUpdate':
+        if (ZegoExpressEngine.onCapturedDataRecordStateUpdate == null) return;
+
+        ZegoExpressEngine.onCapturedDataRecordStateUpdate(
+          ZegoDataRecordState.values[map['state']],
+          map['errorCode'],
+          ZegoDataRecordConfig.fromMap(map['config']),
+          ZegoPublishChannel.values[map['channel']]
+        );
+        break;
+
+      case 'onCapturedDataRecordProgressUpdate':
+        if (ZegoExpressEngine.onCapturedDataRecordProgressUpdate == null) return;
+
+        ZegoExpressEngine.onCapturedDataRecordProgressUpdate(
+          ZegoDataRecordProgress.fromMap(map['progress']),
+          ZegoDataRecordConfig.fromMap(map['config']),
+          ZegoPublishChannel.values[map['channel']]
+        );
         break;
 
       default:
