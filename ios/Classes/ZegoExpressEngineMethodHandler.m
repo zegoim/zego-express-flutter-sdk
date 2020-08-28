@@ -138,6 +138,27 @@
     result(nil);
 }
 
+- (void)loginMultiRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *roomID = call.arguments[@"roomID"];
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoRoomConfig *configObject = nil;
+
+    if (configMap && configMap.count > 0) {
+        unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
+        BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
+        NSString *token = configMap[@"token"];
+
+        configObject = [[ZegoRoomConfig alloc] init];
+        configObject.maxMemberCount = maxMemberCount;
+        configObject.isUserStatusNotify = isUserStatusNotify;
+        configObject.token = token;
+    }
+
+    [[ZegoExpressEngine sharedEngine] loginMultiRoom:roomID config:configObject];
+
+    result(nil);
+}
+
 - (void)logoutRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *roomID = call.arguments[@"roomID"];
@@ -145,6 +166,27 @@
     [[ZegoExpressEngine sharedEngine] logoutRoom:roomID];
 
     result(nil);
+}
+
+- (void)switchRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *fromRoomID = call.arguments[@"fromRoomID"];
+    NSString *toRoomID = call.arguments[@"toRoomID"];
+
+    [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID];
+
+    result(nil);
+}
+
+- (void)setRoomExtraInfo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *roomID = call.arguments[@"roomID"];
+    NSString *key = call.arguments[@"key"];
+    NSString *value = call.arguments[@"value"];
+
+    [[ZegoExpressEngine sharedEngine] setRoomExtraInfo:value forKey:key roomID:roomID callback:^(int errorCode) {
+        result(@{@"errorCode": @(errorCode)});
+    }];
 }
 
 

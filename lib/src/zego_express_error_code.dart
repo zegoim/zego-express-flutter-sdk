@@ -106,6 +106,18 @@ class ZegoErrorCode {
   /// The input room ID is too long. The maximum length should be less than 128 bytes.
   static const int RoomRoomidTooLong                                                      = 1002013;
 
+  /// The key for room extra info is empty.
+  static const int RoomRoomExtraInfoKeyEmpty                                              = 1002014;
+
+  /// The key for room extra info is too long. The maximum length should be less than 128 bytes.
+  static const int RoomRoomExtraInfoKeyTooLong                                            = 1002015;
+
+  /// The value for room extra info is too long. The maximum length should be less than 4096 bytes.
+  static const int RoomRoomExtraInfoValueTooLong                                          = 1002016;
+
+  /// The set key of the room extra info exceeds the maximum number supported. If you need to modify the number of setting keys, please contact ZEGO technical support.
+  static const int RoomRoomExtraInfoExceedKeys                                            = 1002017;
+
   /// Login failed, possibly due to network problems.
   static const int RoomErrorConnectFailed                                                 = 1002030;
 
@@ -132,6 +144,18 @@ class ZegoErrorCode {
 
   /// The business server has sent a signal to kick the user out of the room. Please check the reason for the kick-out.
   static const int RoomManualKickedOut                                                    = 1002055;
+
+  /// You must log in to the main room with [loginRoom] before logging in to multi room
+  static const int RoomWrongLoginSequence                                                 = 1002061;
+
+  /// You must log out of the multi room before logging out of the main room
+  static const int RoomWrongLogoutSequence                                                = 1002062;
+
+  /// No multi-room permission, please contact ZEGO technical support to enable it.
+  static const int RoomNoMultiRoomPermission                                              = 1002063;
+
+  /// Room ID has been used by other login room interface
+  static const int RoomRoomIdHasBeenUsed                                                  = 1002064;
 
   /// Room login failed due to internal system exceptions.
   static const int RoomInnerError                                                         = 1002099;

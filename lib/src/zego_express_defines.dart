@@ -690,6 +690,31 @@ class ZegoStream {
 
 }
 
+/// Room extra information
+class ZegoRoomExtraInfo {
+
+  /// The key of the room extra information.
+  String key;
+
+  /// The value of the room extra information.
+  String value;
+
+  /// The user who update the room extra information.
+  ZegoUser updateUser;
+
+  /// Update time of the room extra information, UNIX timestamp, in milliseconds.
+  int updateTime;
+
+  ZegoRoomExtraInfo(this.key, this.value, this.updateUser, this.updateTime): assert(key != null), assert(value != null), assert(updateUser != null), assert(updateTime != null);
+
+  ZegoRoomExtraInfo.fromMap(Map<dynamic, dynamic> map):
+    key = map['key'],
+    value = map['value'],
+    updateUser = ZegoUser.fromMap(map['updateUser']),
+    updateTime = map['updateTime'];
+
+}
+
 /// View object
 ///
 /// Configure view object, view Mode, background color
@@ -1455,7 +1480,22 @@ abstract class ZegoMediaPlayer {
 
 }
 
-/// Callback for updating stream extra information
+/// Callback for setting room extra information
+///
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+class ZegoRoomSetRoomExtraInfoResult {
+
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  int errorCode;
+
+  ZegoRoomSetRoomExtraInfoResult(this.errorCode): assert(errorCode != null);
+
+  ZegoRoomSetRoomExtraInfoResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for setting stream extra information
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoPublisherSetStreamExtraInfoResult {

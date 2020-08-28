@@ -168,6 +168,32 @@
     }
 }
 
+- (void)onRoomExtraInfoUpdate:(NSArray<ZegoRoomExtraInfo *> *)roomExtraInfoList roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"roomExtraInfoCount: %d, roomID: %@", (int)roomExtraInfoList.count, roomID);
+
+    if (sink) {
+        NSMutableArray *roomExtraInfoListArray = [[NSMutableArray alloc] init];
+        for (ZegoRoomExtraInfo *info in roomExtraInfoList) {
+            [roomExtraInfoListArray addObject:@{
+                @"key": info.key,
+                @"value": info.value,
+                @"updateUser": @{
+                    @"userID": info.updateUser.userID,
+                    @"userName": info.updateUser.userName
+                },
+                @"updateTime": @(info.updateTime)
+            }];
+        }
+
+        sink(@{
+            @"method": @"onRoomExtraInfoUpdate",
+            @"roomExtraInfoList": roomExtraInfoListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
 #pragma mark Publisher Callback
 
 - (void)onPublisherStateUpdate:(ZegoPublisherState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {

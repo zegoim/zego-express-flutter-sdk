@@ -35,6 +35,7 @@ import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
 import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
+import im.zego.zegoexpress.entity.ZegoRoomExtraInfo;
 import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -148,6 +149,18 @@ class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onRoomExtraInfoUpdate(String roomID, ArrayList<ZegoRoomExtraInfo> roomExtraInfoList) {
+            super.onRoomExtraInfoUpdate(roomID, roomExtraInfoList);
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRoomExtraInfoUpdate");
+            map.put("roomID", roomID);
+            map.put("roomExtraInfoList", this.mapListFromRoomExtraInfoList(roomExtraInfoList));
+
+            sink.success(map);
+        }
 
         /* Publisher */
 
@@ -622,6 +635,27 @@ class ZegoExpressEngineEventHandler {
                 map.put("user", userMap);
                 map.put("streamID", stream.streamID);
                 map.put("extraInfo", stream.extraInfo);
+
+                arrayList.add(map);
+            }
+            return arrayList;
+        }
+
+        private ArrayList<HashMap<String, Object>> mapListFromRoomExtraInfoList(ArrayList<ZegoRoomExtraInfo> extraInfos) {
+
+            ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
+
+            for (ZegoRoomExtraInfo extraInfo: extraInfos) {
+
+                HashMap<String, Object> userMap = new HashMap<>();
+                userMap.put("userID", extraInfo.updateUser.userID);
+                userMap.put("userName", extraInfo.updateUser.userName);
+
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("key", extraInfo.key);
+                map.put("value", extraInfo.value);
+                map.put("updateUser", userMap);
+                map.put("updateTime", extraInfo.updateTime);
 
                 arrayList.add(map);
             }

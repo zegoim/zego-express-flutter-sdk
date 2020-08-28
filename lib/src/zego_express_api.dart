@@ -129,6 +129,14 @@ class ZegoExpressEngine {
   /// - [streamList] List of streams that the extra info was updated.
   static void Function(String roomID, List<ZegoStream> streamList) onRoomStreamExtraInfoUpdate;
 
+  /// The callback triggered when there is an update on the extra information of the room.
+  ///
+  /// When a user update the room extra information, other users in the same room will receive the callback.
+  ///
+  /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
+  /// - [roomExtraInfoList] List of the extra info updated.
+  static void Function(String roomID, List<ZegoRoomExtraInfo> roomExtraInfoList) onRoomExtraInfoUpdate;
+
   /// The callback triggered when the state of stream publishing changes.
   ///
   /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback interface.

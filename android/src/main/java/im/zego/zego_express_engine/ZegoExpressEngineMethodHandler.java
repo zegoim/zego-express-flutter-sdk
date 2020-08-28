@@ -29,6 +29,7 @@ import im.zego.zegoexpress.callback.IZegoMixerStartCallback;
 import im.zego.zegoexpress.callback.IZegoMixerStopCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherSetStreamExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
+import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
 import im.zego.zegoexpress.constants.ZegoANSMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
@@ -159,6 +160,25 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void loginMultiRoom(MethodCall call, Result result) {
+
+        String roomID = call.argument("roomID");
+
+        HashMap<String, Object> configMap = call.argument("config");
+        ZegoRoomConfig roomConfig = null;
+        if (configMap != null && !configMap.isEmpty()) {
+            roomConfig = new ZegoRoomConfig();
+            roomConfig.isUserStatusNotify = boolValue((Boolean)configMap.get("isUserStatusNotify"));
+            roomConfig.maxMemberCount = intValue((Number)configMap.get("maxMemberCount"));
+            roomConfig.token = (String)configMap.get("token");
+        }
+
+        ZegoExpressEngine.getEngine().loginMultiRoom(roomID, roomConfig);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void logoutRoom(MethodCall call, Result result) {
 
         String roomID = call.argument("roomID");
@@ -166,6 +186,34 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().logoutRoom(roomID);
 
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void switchRoom(MethodCall call, Result result) {
+
+        String fromRoomID = call.argument("fromRoomID");
+        String toRoomID = call.argument("toRoomID");
+
+        ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setRoomExtraInfo(MethodCall call, final Result result) {
+
+        String roomID = call.argument("roomID");
+        String key = call.argument("key");
+        String value = call.argument("value");
+
+        ZegoExpressEngine.getEngine().setRoomExtraInfo(roomID, key, value, new IZegoRoomSetRoomExtraInfoCallback() {
+            @Override
+            public void onRoomSetRoomExtraInfoResult(int errorCode) {
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("errorCode", errorCode);
+                result.success(resultMap);
+            }
+        });
     }
 
 
@@ -207,7 +255,6 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(resultMap);
             }
         });
-
     }
 
     @SuppressWarnings("unused")
