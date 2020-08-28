@@ -7,9 +7,10 @@ extension ZegoExpressEngineRecord on ZegoExpressEngine {
 
   /// Starts to record locally captured audio or video and directly save the data to a file.
   ///
-  /// The recording process should not logoutRoom, if the logoutRoom SDK internally ends the current recording voluntarily.
   /// Currently only one task can be recorded simultaneously.
-  /// The call to this api is effective only if the call to [startPreview] or [startPublishingStream] is successful.
+  /// This API needs to be called after the success of [startPreview] or [startPublishingStream] to be effective.
+  /// Developers should not [stopPreview] or [stopPublishingStream] during recording, otherwise the SDK will end the current recording task.
+  /// Developers will receive the [onCapturedDataRecordStateUpdate] and the [onCapturedDataRecordProgressUpdate] callback after start recording.
   ///
   /// - [config] Record config
   /// - [channel] Publishing stream channel

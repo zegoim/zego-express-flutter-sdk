@@ -15,7 +15,7 @@ class ZegoExpressEngine {
   ///
   /// The engine needs to be created and initialized before calling other APIs. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this interface return the same object.
   ///
-  /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im/. The value ranges from 0 to 4294967295.
+  /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
   /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
   /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 30 rooms and 230 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
   /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific api to set specific parameters if they have customized parameter settings.
@@ -64,17 +64,17 @@ class ZegoExpressEngine {
   ///
   /// When the APIs are not used correctly, the callback prompts for detailed error information, which is controlled by the [setDebugVerbose] interface
   ///
-  /// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   /// - [funcName] Function name
   /// - [info] Detailed error information
   static void Function(int errorCode, String funcName, String info) onDebugError;
 
-  /// The callback triggered when the engine state changes.
+  /// The callback triggered when the audio/video engine state changes.
   ///
-  /// When developers call [startPreview] ,[startPublishing] or [startPlaying] for the first time, the engine will start.
-  /// When developers have [loginRoom], they must call [logoutRoom], and the audio and video engine will stop.
+  /// When the developer calls the API that enables audio and video related functions, such as calling [startPreview], [startPublishingStream], [startPlayingStream] and MediaPlayer related API, the audio/video engine will start; when all audio and video functions are stopped, the engine state will become stopped.
+  /// When the developer has been [loginRoom], once [logoutRoom] is called, the audio/video engine will stop (preview, publishing/playing stream, MediaPlayer and other audio and video related functions will also stop).
   ///
-  /// - [state] engine state
+  /// - [state] The audio/video engine state
   static void Function(ZegoEngineState state) onEngineStateUpdate;
 
   /// The callback triggered when the room connection state changes.
@@ -83,7 +83,7 @@ class ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   /// - [state] Changed room state
-  /// - [errorCode] Error code, please refer to the [common error code document](https://doc-en.zego.im/en/308.html) for details
+  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
   static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData) onRoomStateUpdate;
 
@@ -137,7 +137,7 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [state] Status of publishing stream
-  /// - [errorCode] The error code corresponding to the status change of the publish stream. Please refer to the common error code documentation [https://doc-en.zego.im/en/308.html] for details.
+  /// - [errorCode] The error code corresponding to the status change of the publish stream. Please refer to the Error Codes https://doc-en.zego.im/en/308.html for details.
   /// - [extendedData] Extended information with state updates.
   static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData) onPublisherStateUpdate;
 
@@ -195,7 +195,7 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] stream ID
   /// - [state] Current play state
-  /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the common error code documentation [https://doc-en.zego.im/en/308.html] for details.
+  /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the Error Codes https://doc-en.zego.im/en/308.html for details.
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
   static void Function(String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData) onPlayerStateUpdate;
 
@@ -324,7 +324,7 @@ class ZegoExpressEngine {
   ///
   /// This callback is triggered when an exception occurs when reading or writing the audio and video device.
   ///
-  /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the common error code documentation [https://doc-en.zego.im/en/308.html] for details
+  /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   /// - [deviceName] device name
   static void Function(int errorCode, String deviceName) onDeviceError;
 
@@ -369,7 +369,7 @@ class ZegoExpressEngine {
   ///
   /// - [mediaPlayer] Callback player object
   /// - [state] Media player status
-  /// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state, int errorCode) onMediaPlayerStateUpdate;
 
   /// The callback triggered when the network status of the media player changes.
@@ -387,7 +387,7 @@ class ZegoExpressEngine {
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
   /// - [state] File recording status, according to which you should determine the state of the file recording or the prompt of the UI.
-  /// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   /// - [config] Record config
   /// - [channel] Publishing stream channel
   static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordStateUpdate;

@@ -379,7 +379,11 @@ enum ZegoVideoFlipMode {
   /// No flip
   None,
   /// X-axis flip
-  X
+  X,
+  /// Y-axis flip
+  Y,
+  /// X-Y-axis flip
+  XY
 }
 
 /// Audio Config Preset
@@ -449,7 +453,7 @@ class ZegoRoomConfig {
   /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
   bool isUserStatusNotify;
 
-  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in [https://doc.zego.im/CN/565.html](https://doc.zego.im/CN/565.html). Default is empty string, that is, no authentication
+  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description https://doc-en.zego.im/en/3881.html Default is empty string, that is, no authentication
   String token;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token): assert(maxMemberCount != null), assert(isUserStatusNotify != null), assert(token != null);
@@ -540,7 +544,7 @@ class ZegoVideoConfig {
         captureWidth = 720;
         captureHeight = 1280;
         encodeWidth = 720;
-        encodeHeight = 1480;
+        encodeHeight = 1280;
         bitrate = 1500;
         fps = 15;
         break;
@@ -1322,7 +1326,7 @@ class ZegoAudioConfig {
 /// Record config
 class ZegoDataRecordConfig {
 
-  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently only support .mp4 or .flv, if multiple recording for the same path, will overwrite the file with the same name.
+  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently only support .mp4 or .flv, if multiple recording for the same path, will overwrite the file with the same name. The maximum length should be less than 1024 bytes.
   String filePath;
 
   /// Type of recording media
@@ -1453,10 +1457,10 @@ abstract class ZegoMediaPlayer {
 
 /// Callback for updating stream extra information
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoPublisherSetStreamExtraInfoResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   ZegoPublisherSetStreamExtraInfoResult(this.errorCode): assert(errorCode != null);
@@ -1468,10 +1472,10 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 /// Callback for add/remove CDN URL
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoPublisherUpdateCdnUrlResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   ZegoPublisherUpdateCdnUrlResult(this.errorCode): assert(errorCode != null);
@@ -1483,11 +1487,11 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 /// Results of starting a mixer task
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 /// - [extendedData] Extended Information
 class ZegoMixerStartResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   /// Extended Information
@@ -1504,10 +1508,10 @@ class ZegoMixerStartResult {
 
 /// Results of stoping a mixer task
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoMixerStopResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   ZegoMixerStopResult(this.errorCode): assert(errorCode != null);
@@ -1519,11 +1523,11 @@ class ZegoMixerStopResult {
 
 /// Callback for sending broadcast messages
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 /// - [messageID] ID of this message
 class ZegoIMSendBroadcastMessageResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   /// ID of this message
@@ -1539,11 +1543,11 @@ class ZegoIMSendBroadcastMessageResult {
 
 /// Callback for sending barrage message
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 /// - [messageID] ID of this message
 class ZegoIMSendBarrageMessageResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   /// ID of this message
@@ -1559,10 +1563,10 @@ class ZegoIMSendBarrageMessageResult {
 
 /// Callback for sending custom command
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoIMSendCustomCommandResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode): assert(errorCode != null);
@@ -1574,10 +1578,10 @@ class ZegoIMSendCustomCommandResult {
 
 /// Callback for media player loads resources
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoMediaPlayerLoadResourceResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   ZegoMediaPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
@@ -1589,10 +1593,10 @@ class ZegoMediaPlayerLoadResourceResult {
 
 /// Callback for media player seek to playback progress
 ///
-/// - [errorCode] Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoMediaPlayerSeekToResult {
 
-  /// Error code, please refer to the common error code document [https://doc-en.zego.im/en/308.html] for details
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   int errorCode;
 
   ZegoMediaPlayerSeekToResult(this.errorCode): assert(errorCode != null);

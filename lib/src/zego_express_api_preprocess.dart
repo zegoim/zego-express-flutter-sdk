@@ -7,7 +7,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
   /// Enables or disables Acoustic Echo Cancellation (AEC).
   ///
-  /// Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio. It needs to be set before starting the publish, and the setting is invalid after the start of the publish.
+  /// Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
   ///
   /// - [enable] Whether to enable echo cancellation, true: enable echo cancellation, false: disable echo cancellation
   Future<void> enableAEC(bool enable) async {
@@ -16,7 +17,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
   /// Sets the Acoustic Echo Cancellation (AEC) mode.
   ///
-  /// Switch different echo cancellation modes to control the extent to which echo data is eliminated. Need to be set before starting the publish.
+  /// Switch different echo cancellation modes to control the extent to which echo data is eliminated.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
   ///
   /// - [mode] Echo cancellation mode
   Future<void> setAECMode(ZegoAECMode mode) async {
@@ -25,7 +27,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
   /// Enables or disables Automatic Gain Control (AGC).
   ///
-  /// When the auto gain is turned on, the sound will be amplified, but it will affect the sound quality to some extent. Need to be set before starting the publish.
+  /// When the auto gain is turned on, the sound will be amplified, but it will affect the sound quality to some extent.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
   ///
   /// - [enable] Whether to enable automatic gain control, true: enable AGC, false: disable AGC
   Future<void> enableAGC(bool enable) async {
@@ -34,7 +37,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
   /// Enables or disables Automatic Noise Suppression (ANS).
   ///
-  /// Turning on the noise suppression switch can reduce the noise in the audio data and make the human voice clearer. Need to be set before starting the publish.
+  /// Turning on the noise suppression switch can reduce the noise in the audio data and make the human voice clearer.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
   ///
   /// - [enable] Whether to enable noise suppression, true: enable AGC, false: disable AGC
   Future<void> enableANS(bool enable) async {
@@ -44,6 +48,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Sets the Automatic Noise Suppression (ANS) mode.
   ///
   /// Default is medium mode
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
   ///
   /// - [mode] Audio Noise Suppression mode
   Future<void> setANSMode(ZegoANSMode mode) async {
