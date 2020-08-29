@@ -76,10 +76,34 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig config}) async {
+    return await _channel.invokeMethod('loginMultiRoom', {
+      'roomID': roomID,
+      'config': config?.toMap() ?? {}
+    });
+  }
+
   Future<void> logoutRoom(String roomID) async {
     return await _channel.invokeMethod('logoutRoom', {
       'roomID': roomID
     });
+  }
+
+  Future<void> switchRoom(String fromRoomID, String toRoomID) async {
+    return await _channel.invokeMethod('switchRoom', {
+      'fromRoomID': fromRoomID,
+      'toRoomID': toRoomID
+    });
+  }
+
+  Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(String roomID, String key, String value) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('setRoomExtraInfo', {
+      'roomID': roomID,
+      'key': key,
+      'value': value
+    });
+
+    return ZegoRoomSetRoomExtraInfoResult.fromMap(map);
   }
 
 
@@ -690,6 +714,22 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onRoomStreamExtraInfoUpdate(
           map['roomID'],
           streamList
+        );
+        break;
+
+      case 'onRoomExtraInfoUpdate':
+        if (ZegoExpressEngine.onRoomExtraInfoUpdate == null) return;
+
+        List<dynamic> roomExtraInfoMapList = map['roomExtraInfoList'];
+        List<ZegoRoomExtraInfo> roomExtraInfoList = [];
+        for (Map<dynamic, dynamic> roomExtraInfoMap in roomExtraInfoMapList) {
+          ZegoRoomExtraInfo info = ZegoRoomExtraInfo.fromMap(roomExtraInfoMap);
+          roomExtraInfoList.add(info);
+        }
+
+        ZegoExpressEngine.onRoomExtraInfoUpdate(
+          map['roomID'],
+          roomExtraInfoList
         );
         break;
 

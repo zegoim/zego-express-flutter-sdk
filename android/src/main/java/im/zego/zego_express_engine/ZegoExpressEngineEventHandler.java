@@ -35,6 +35,7 @@ import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
 import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
+import im.zego.zegoexpress.entity.ZegoRoomExtraInfo;
 import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -54,6 +55,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onDebugError(int errorCode, String funcName, String info) {
             super.onDebugError(errorCode, funcName, info);
+            ZegoLog.log("[onDebugError] errorCode: %d, funcName: %s, info: %s", errorCode, funcName, info);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -68,6 +70,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onEngineStateUpdate(ZegoEngineState state) {
             super.onEngineStateUpdate(state);
+            ZegoLog.log("[onEngineStateUpdate] state: %s", state.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -82,6 +85,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRoomStateUpdate(String roomID, ZegoRoomState state, int errorCode, JSONObject extendedData) {
             super.onRoomStateUpdate(roomID, state, errorCode, extendedData);
+            ZegoLog.log("[onRoomStateUpdate] roomID: %s, state: %s, errorCode: %d", roomID, state.name(), errorCode);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -97,6 +101,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRoomUserUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoUser> userList) {
             super.onRoomUserUpdate(roomID, updateType, userList);
+            ZegoLog.log("[onRoomUserUpdate] roomID: %s, updateType: %s, userListCount: %d", roomID, updateType.name(), userList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -111,6 +116,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRoomOnlineUserCountUpdate(String roomID, int count) {
             super.onRoomOnlineUserCountUpdate(roomID, count);
+            ZegoLog.log("[onRoomOnlineUserCountUpdate] roomID: %s, count: %d", roomID, count);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -124,6 +130,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRoomStreamUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoStream> streamList) {
             super.onRoomStreamUpdate(roomID, updateType, streamList);
+            ZegoLog.log("[onRoomStreamUpdate] roomID: %s, updateType: %s, streamListCount: %d", roomID, updateType.name(), streamList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -138,6 +145,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRoomStreamExtraInfoUpdate(String roomID, ArrayList<ZegoStream> streamList) {
             super.onRoomStreamExtraInfoUpdate(roomID, streamList);
+            ZegoLog.log("[onRoomStreamExtraInfoUpdate] roomID: %s, streamListCount: %d", roomID, streamList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -148,12 +156,26 @@ class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onRoomExtraInfoUpdate(String roomID, ArrayList<ZegoRoomExtraInfo> roomExtraInfoList) {
+            super.onRoomExtraInfoUpdate(roomID, roomExtraInfoList);
+            ZegoLog.log("[onRoomExtraInfoUpdate] roomID: %s, roomExtraInfoListCount: %d", roomID, roomExtraInfoList.size());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRoomExtraInfoUpdate");
+            map.put("roomID", roomID);
+            map.put("roomExtraInfoList", this.mapListFromRoomExtraInfoList(roomExtraInfoList));
+
+            sink.success(map);
+        }
 
         /* Publisher */
 
         @Override
         public void onPublisherStateUpdate(String streamID, ZegoPublisherState state, int errorCode, JSONObject extendedData) {
             super.onPublisherStateUpdate(streamID, state, errorCode, extendedData);
+            ZegoLog.log("[onPublisherStateUpdate] streamID: %s, state: %s, errorCode: %d", streamID, state.name(), errorCode);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -169,6 +191,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
             super.onPublisherQualityUpdate(streamID, quality);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> qualityMap = new HashMap<>();
             qualityMap.put("videoCaptureFPS", quality.videoCaptureFPS);
@@ -198,6 +221,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPublisherCapturedAudioFirstFrame() {
             super.onPublisherCapturedAudioFirstFrame();
+            ZegoLog.log("[onPublisherCapturedAudioFirstFrame]");
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -209,6 +233,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPublisherCapturedVideoFirstFrame(ZegoPublishChannel channel) {
             super.onPublisherCapturedVideoFirstFrame(channel);
+            ZegoLog.log("[onPublisherCapturedVideoFirstFrame] channel: %s", channel.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -221,6 +246,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPublisherVideoSizeChanged(int width, int height, ZegoPublishChannel channel) {
             super.onPublisherVideoSizeChanged(width, height, channel);
+            ZegoLog.log("[onPublisherVideoSizeChanged] width: %d, height: %d, channel: %s", width, height, channel.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -235,6 +261,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPublisherRelayCDNStateUpdate(String streamID, ArrayList<ZegoStreamRelayCDNInfo> streamInfoList) {
             super.onPublisherRelayCDNStateUpdate(streamID, streamInfoList);
+            ZegoLog.log("[onPublisherRelayCDNStateUpdate] streamID: %s, streamInfoListCount: %d", streamID, streamInfoList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -251,6 +278,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerStateUpdate(String streamID, ZegoPlayerState state, int errorCode, JSONObject extendedData) {
             super.onPlayerStateUpdate(streamID, state, errorCode, extendedData);
+            ZegoLog.log("[onPlayerStateUpdate] streamID: %s, state: %s, errorCode: %d", streamID, state.name(), errorCode);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -266,6 +294,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
             super.onPlayerQualityUpdate(streamID, quality);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> qualityMap = new HashMap<>();
             qualityMap.put("videoRecvFPS", quality.videoRecvFPS);
@@ -299,6 +328,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerMediaEvent(String streamID, ZegoPlayerMediaEvent event) {
             super.onPlayerMediaEvent(streamID, event);
+            ZegoLog.log("[onPlayerMediaEvent] streamID: %s, event: %s", streamID, event.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -312,6 +342,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerRecvAudioFirstFrame(String streamID) {
             super.onPlayerRecvAudioFirstFrame(streamID);
+            ZegoLog.log("[onPlayerRecvAudioFirstFrame] streamID: %s", streamID);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -324,6 +355,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerRecvVideoFirstFrame(String streamID) {
             super.onPlayerRecvVideoFirstFrame(streamID);
+            ZegoLog.log("[onPlayerRecvVideoFirstFrame] streamID: %s", streamID);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -336,6 +368,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerRenderVideoFirstFrame(String streamID) {
             super.onPlayerRenderVideoFirstFrame(streamID);
+            ZegoLog.log("[onPlayerRenderVideoFirstFrame] streamID: %s", streamID);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -348,6 +381,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerVideoSizeChanged(String streamID, int width, int height) {
             super.onPlayerVideoSizeChanged(streamID, width, height);
+            ZegoLog.log("[onPlayerVideoSizeChanged] streamID: %s, width: %d, height: %d", streamID, width, height);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -362,6 +396,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerRecvSEI(String streamID, byte[] data) {
             super.onPlayerRecvSEI(streamID, data);
+            ZegoLog.log("[onPlayerRecvSEI] streamID: %s", streamID);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -378,6 +413,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onMixerRelayCDNStateUpdate(String taskID, ArrayList<ZegoStreamRelayCDNInfo> infoList) {
             super.onMixerRelayCDNStateUpdate(taskID, infoList);
+            ZegoLog.log("[onPlayerRecvSEI] taskID: %s, infosCount: %d", taskID, infoList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -391,6 +427,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onMixerSoundLevelUpdate(HashMap<Integer, Float> soundLevels) {
             super.onMixerSoundLevelUpdate(soundLevels);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -406,6 +443,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedSoundLevelUpdate(float soundLevel) {
             super.onCapturedSoundLevelUpdate(soundLevel);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -418,6 +456,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteSoundLevelUpdate(HashMap<String, Float> soundLevels) {
             super.onRemoteSoundLevelUpdate(soundLevels);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -430,6 +469,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedAudioSpectrumUpdate(float[] audioSpectrum) {
             super.onCapturedAudioSpectrumUpdate(audioSpectrum);
+            // High frequency callbacks do not log
 
             ArrayList<Float> audioSpectrumList = new ArrayList<>();
 
@@ -448,6 +488,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteAudioSpectrumUpdate(HashMap<String, float[]> audioSpectrums) {
             super.onRemoteAudioSpectrumUpdate(audioSpectrums);
+            // High frequency callbacks do not log
 
             HashMap<String, ArrayList<Float>> audioSpectrumsMap = new HashMap<>();
 
@@ -474,6 +515,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onDeviceError(int errorCode, String deviceName) {
             super.onDeviceError(errorCode, deviceName);
+            ZegoLog.log("[onDeviceError] errorCode: %d, deviceName: %s", errorCode, deviceName);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -487,6 +529,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteCameraStateUpdate(String streamID, ZegoRemoteDeviceState state) {
             super.onRemoteCameraStateUpdate(streamID, state);
+            ZegoLog.log("[onRemoteCameraStateUpdate] streamID: %s, state: %s", streamID, state.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -500,6 +543,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteMicStateUpdate(String streamID, ZegoRemoteDeviceState state) {
             super.onRemoteMicStateUpdate(streamID, state);
+            ZegoLog.log("[onRemoteMicStateUpdate] streamID: %s, state: %s", streamID, state.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -516,6 +560,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onIMRecvBroadcastMessage(String roomID, ArrayList<ZegoBroadcastMessageInfo> messageList) {
             super.onIMRecvBroadcastMessage(roomID, messageList);
+            ZegoLog.log("[onIMRecvBroadcastMessage] roomID: %s, messageListCount: %d", roomID, messageList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -546,6 +591,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onIMRecvBarrageMessage(String roomID, ArrayList<ZegoBarrageMessageInfo> messageList) {
             super.onIMRecvBarrageMessage(roomID, messageList);
+            ZegoLog.log("[onIMRecvBarrageMessage] roomID: %s, messageListCount: %d", roomID, messageList.size());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -576,6 +622,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onIMRecvCustomCommand(String roomID, ZegoUser fromUser, String command) {
             super.onIMRecvCustomCommand(roomID, fromUser, command);
+            ZegoLog.log("[onIMRecvCustomCommand] roomID: %s, fromUserID: %s, fromUserName: %s, command: %s", roomID, fromUser.userID, fromUser.userName, command);
 
             HashMap<String, Object> userMap = new HashMap<>();
             userMap.put("userID", fromUser.userID);
@@ -628,6 +675,27 @@ class ZegoExpressEngineEventHandler {
             return arrayList;
         }
 
+        private ArrayList<HashMap<String, Object>> mapListFromRoomExtraInfoList(ArrayList<ZegoRoomExtraInfo> extraInfos) {
+
+            ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
+
+            for (ZegoRoomExtraInfo extraInfo: extraInfos) {
+
+                HashMap<String, Object> userMap = new HashMap<>();
+                userMap.put("userID", extraInfo.updateUser.userID);
+                userMap.put("userName", extraInfo.updateUser.userName);
+
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("key", extraInfo.key);
+                map.put("value", extraInfo.value);
+                map.put("updateUser", userMap);
+                map.put("updateTime", extraInfo.updateTime);
+
+                arrayList.add(map);
+            }
+            return arrayList;
+        }
+
         private ArrayList<HashMap<String, Object>> mapListFromStreamRelayCdnInfoList(ArrayList<ZegoStreamRelayCDNInfo> infos) {
 
             ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
@@ -651,6 +719,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onMediaPlayerStateUpdate(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state, int errorCode) {
             super.onMediaPlayerStateUpdate(mediaPlayer, state, errorCode);
+            ZegoLog.log("[onMediaPlayerStateUpdate] idx: %d, state: %s, errorCode: %d", mediaPlayer.getIndex(), state.name(), errorCode);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -665,6 +734,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onMediaPlayerNetworkEvent(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerNetworkEvent networkEvent) {
             super.onMediaPlayerNetworkEvent(mediaPlayer, networkEvent);
+            ZegoLog.log("[onMediaPlayerNetworkEvent] idx: %d, networkEvent: %s", mediaPlayer.getIndex(), networkEvent.name());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -678,6 +748,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onMediaPlayerPlayingProgress(ZegoMediaPlayer mediaPlayer, long millisecond) {
             super.onMediaPlayerPlayingProgress(mediaPlayer, millisecond);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -694,6 +765,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedDataRecordStateUpdate(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
             super.onCapturedDataRecordStateUpdate(state, errorCode, config, channel);
+            ZegoLog.log("[onCapturedDataRecordStateUpdate] state: %s, errorCode: %d, filePath: %s, recordType: %s, channel: %s", state.name(), errorCode, config.filePath, config.recordType.name(), channel.name());
 
             HashMap<String, Object> configMap = new HashMap<>();
             configMap.put("filePath", config.filePath);
@@ -713,6 +785,7 @@ class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedDataRecordProgressUpdate(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) {
             super.onCapturedDataRecordProgressUpdate(progress, config, channel);
+            // High frequency callbacks do not log
 
             HashMap<String, Object> progressMap = new HashMap<>();
             progressMap.put("duration", progress.duration);

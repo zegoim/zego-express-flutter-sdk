@@ -1,10 +1,18 @@
 # Change Log
 
+## 1.14.0
+
+1. Update native SDK to version 1.14.0
+
+2. Add `loginMultiRoom`, `switchRoom`, `setRoomExtraInfo` APIs and `onRoomExtraInfoUpdate` callback
+
+3. Optimize the callback log on the flutter native side
+
 ## 1.1.0
 
 1. Update native SDK to version 1.12.3
 
-2. Add `setANSMode`, `setAudioEqualizerGain`, `setVoiceChangerParam`, `setReverbParam`, `enableVirtualStereo` APIs 
+2. Add `setANSMode`, `setAudioEqualizerGain`, `setVoiceChangerParam`, `setReverbParam`, `enableVirtualStereo` APIs
 
 3. Add `Record` module with `startRecordingCapturedData`, `stopRecordingCapturedData`, `onCapturedDataRecordStateUpdate`, `onCapturedDataRecordProgressUpdate`
 

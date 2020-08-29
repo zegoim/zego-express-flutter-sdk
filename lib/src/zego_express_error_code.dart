@@ -25,7 +25,7 @@ class ZegoErrorCode {
   /// This feature is not included in the SDK. Please contact ZEGO technical support.
   static const int CommonSdkNoModule                                                      = 1000010;
 
-  /// The input stream ID is too long. The maximum length allowed is 256 characters.
+  /// The input stream ID is too long. The maximum length should be less than 256 bytes.
   static const int CommonStreamIdTooLong                                                  = 1000014;
 
   /// The input stream ID is empty.
@@ -58,7 +58,7 @@ class ZegoErrorCode {
   /// The length of the input AppSign must be 64 bytes.
   static const int EngineAppsignInvalidLength                                             = 1001001;
 
-  /// The input AppSign contains invalid characters. Only '0'-'9','a'-'f','A'-'F' are valid.
+  /// The input AppSign contains invalid characters. Only '0'-'9', 'a'-'f', 'A'-'F' are valid.
   static const int EngineAppsignInvalidCharacter                                          = 1001002;
 
   /// The input AppSign is empty.
@@ -76,7 +76,7 @@ class ZegoErrorCode {
   /// The log file path is too long.
   static const int EngineLogPathTooLong                                                   = 1001015;
 
-  /// The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one room at the same time.
+  /// The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room and one multi room at the same time.
   static const int RoomCountExceed                                                        = 1002001;
 
   /// The input user ID is empty.
@@ -85,7 +85,7 @@ class ZegoErrorCode {
   /// The input user ID contains invalid characters.
   static const int RoomUserIdInvalidCharacter                                             = 1002006;
 
-  /// The input user ID is too long. The maximum length allowed is 64 characters.
+  /// The input user ID is too long. The maximum length should be less than 64 bytes.
   static const int RoomUserIdTooLong                                                      = 1002007;
 
   /// The input user name is empty.
@@ -94,7 +94,7 @@ class ZegoErrorCode {
   /// The input user name contains invalid characters.
   static const int RoomUserNameInvalidCharacter                                           = 1002009;
 
-  /// The input user name is too long. The maximum length allowed is 256 characters.
+  /// The input user name is too long. The maximum length should be less than 256 bytes.
   static const int RoomUserNameTooLong                                                    = 1002010;
 
   /// The input room ID is empty.
@@ -103,8 +103,20 @@ class ZegoErrorCode {
   /// The input room ID contains invalid characters.
   static const int RoomRoomidInvalidCharacter                                             = 1002012;
 
-  /// The input room ID is too long. The maximum length is 128 characters.
+  /// The input room ID is too long. The maximum length should be less than 128 bytes.
   static const int RoomRoomidTooLong                                                      = 1002013;
+
+  /// The key for room extra info is empty.
+  static const int RoomRoomExtraInfoKeyEmpty                                              = 1002014;
+
+  /// The key for room extra info is too long. The maximum length should be less than 128 bytes.
+  static const int RoomRoomExtraInfoKeyTooLong                                            = 1002015;
+
+  /// The value for room extra info is too long. The maximum length should be less than 4096 bytes.
+  static const int RoomRoomExtraInfoValueTooLong                                          = 1002016;
+
+  /// The set key of the room extra info exceeds the maximum number supported. If you need to modify the number of setting keys, please contact ZEGO technical support.
+  static const int RoomRoomExtraInfoExceedKeys                                            = 1002017;
 
   /// Login failed, possibly due to network problems.
   static const int RoomErrorConnectFailed                                                 = 1002030;
@@ -132,6 +144,18 @@ class ZegoErrorCode {
 
   /// The business server has sent a signal to kick the user out of the room. Please check the reason for the kick-out.
   static const int RoomManualKickedOut                                                    = 1002055;
+
+  /// You must log in to the main room with [loginRoom] before logging in to multi room
+  static const int RoomWrongLoginSequence                                                 = 1002061;
+
+  /// You must log out of the multi room before logging out of the main room
+  static const int RoomWrongLogoutSequence                                                = 1002062;
+
+  /// No multi-room permission, please contact ZEGO technical support to enable it.
+  static const int RoomNoMultiRoomPermission                                              = 1002063;
+
+  /// Room ID has been used by other login room interface
+  static const int RoomRoomIdHasBeenUsed                                                  = 1002064;
 
   /// Room login failed due to internal system exceptions.
   static const int RoomInnerError                                                         = 1002099;
@@ -166,13 +190,13 @@ class ZegoErrorCode {
   /// Failed to send SEI. The SEI data is null.
   static const int PublisherSeiDataNull                                                   = 1003043;
 
-  /// Failed to send SEI because the SEI data is too long. The maximum length allowed is 4096 characters.
+  /// Failed to send SEI because the SEI data is too long. The maximum length should be less than 4096 bytes.
   static const int PublisherSeiDataTooLong                                                = 1003044;
 
   /// The extra info of the stream is null.
   static const int PublisherExtraInfoNull                                                 = 1003050;
 
-  /// The extra info of the stream is too long. The maximum length allowed is 1024 characters.
+  /// The extra info of the stream is too long. The maximum length should be less than 1024 bytes.
   static const int PublisherExtraInfoTooLong                                              = 1003051;
 
   /// Failed to update the extra info of the stream. Please check the network connection.
@@ -181,7 +205,7 @@ class ZegoErrorCode {
   /// The watermark URL is null.
   static const int PublisherWatermarkUrlNull                                              = 1003055;
 
-  /// The watermark URL is too long. The maximum length allowed is 1024 characters.
+  /// The watermark URL is too long. The maximum length should be less than 1024 bytes.
   static const int PublisherWatermarkUrlTooLong                                           = 1003056;
 
   /// Invalid watermark format. The supported formats are `jpg` and `png`.
@@ -205,13 +229,13 @@ class ZegoErrorCode {
   /// Stream playing failed due to system internal exceptions.
   static const int PlayerInnerError                                                       = 1004099;
 
-  /// Stream mixing service not yet enabled.  Please contact ZEGO technical support to enable the service.
+  /// Stream mixing service not yet enabled. Please contact ZEGO technical support to enable the service.
   static const int MixerNoServices                                                        = 1005000;
 
   /// The stream mixing task ID is null.
   static const int MixerTaskIdNull                                                        = 1005001;
 
-  /// The stream mixing task ID is too long. The maximum length allowed is 256 characters.
+  /// The stream mixing task ID is too long. The maximum length should be less than 256 bytes.
   static const int MixerTaskIdTooLong                                                     = 1005002;
 
   /// The stream mixing task ID contains invalid characters.
@@ -379,7 +403,7 @@ class ZegoErrorCode {
   /// The input message content is empty.
   static const int IMContentNull                                                          = 1009001;
 
-  /// The input message content is too long. The maximum length allowed is 1024 bytes.
+  /// The input message content is too long. The maximum length should be less than 1024 bytes.
   static const int IMContentTooLong                                                       = 1009002;
 
   /// Failed to send the message, possibly due to network problems.
@@ -391,7 +415,7 @@ class ZegoErrorCode {
   /// Generic error of recording API, generally due to invalid input parameters.
   static const int RecorderCommonLiveroomApiError                                         = 1010003;
 
-  /// The specified recorded file path is too long.
+  /// The specified recorded file path is too long. The maximum length should be less than 1024 bytes.
   static const int RecorderFilePathTooLong                                                = 1010011;
 
   /// SDK internal VE error. Please contact ZEGO technical support to solve the problem.
@@ -438,5 +462,20 @@ class ZegoErrorCode {
 
   /// Failed to enable/disable custom audio IO. Please make sure to enable/disable it before the engine is started (i.e., before calling `startPreview`, `startPublishingStream` or `startPlayingStream`).
   static const int CustomAudioIOEnableCustomAudioIoFailed                                 = 1012004;
+
+  /// The MediaDataPublisher instance is not created.
+  static const int MediaDataPublisherNoInstance                                           = 1013000;
+
+  /// File error, failed to open
+  static const int MediaDataPublisherFileParseError                                       = 1013001;
+
+  /// File path error
+  static const int MediaDataPublisherFilePathError                                        = 1013002;
+
+  /// File decoding exception
+  static const int MediaDataPublisherFileCodecError                                       = 1013003;
+
+  /// Timestamp error (the later frame timestamp is smaller than the previous frame timestamp)
+  static const int MediaDataPublisherTimestampGoBackError                                 = 1013004;
 
 }

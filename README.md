@@ -33,7 +33,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.1.0
+  zego_express_engine: ^1.14.0
 ```
 
 - ### Depends on git
@@ -177,7 +177,7 @@ Please refer to the API documentation for more features.
 
 ## 7️⃣ API documentation
 
-[ZegoExpressEngine API Reference](https://pub.dev/documentation/zego_express_engine/latest/)
+[ZegoExpressEngine API Reference](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine-class.html)
 
 ## 8️⃣ FAQ
 
