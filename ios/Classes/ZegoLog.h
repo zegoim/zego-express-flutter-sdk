@@ -12,16 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZegoLog : NSObject
 
-#define ZGLog(frmt, ...) \
-[ZegoLog logWithFile:__FILE__ \
-function:__PRETTY_FUNCTION__ \
-line:__LINE__ \
-format:(frmt), ## __VA_ARGS__]
+#define ZGLog(format, ...) [ZegoLog logWithFormat:(format), ## __VA_ARGS__]
 
-+ (void)logWithFile:(const char *)file
-           function:(const char *)function
-               line:(NSUInteger)line
-             format:(NSString *)format, ... NS_FORMAT_FUNCTION(4,5);
++ (void)logWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
 
 @end
 

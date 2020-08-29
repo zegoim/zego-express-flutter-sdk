@@ -794,7 +794,7 @@
             NSError *error;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
             if (!jsonData) {
-                ZGLog(@"extendedData error: %@", error);
+                ZGLog(@"[startMixerTaskCallback] extendedData error: %@", error);
             }else{
                 extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
             }

@@ -101,7 +101,7 @@
 
     // Handle unrecognized method
     if (![[ZegoExpressEngineMethodHandler sharedInstance] respondsToSelector:selector]) {
-        ZGLog(@"Unrecognized selector: %@", call.method);
+        ZGLog(@"[handleMethodCall] Unrecognized selector: %@", call.method);
         result(FlutterMethodNotImplemented);
         return;
     }

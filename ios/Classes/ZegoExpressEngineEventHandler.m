@@ -29,7 +29,7 @@
 
 - (void)onDebugError:(int)errorCode funcName:(NSString *)funcName info:(NSString *)info {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"errorCode: %d, funcName: %@, info: %@", errorCode, funcName, info);
+    ZGLog(@"[onDebugError] errorCode: %d, funcName: %@, info: %@", errorCode, funcName, info);
     
     if (sink) {
         sink(@{
@@ -43,7 +43,7 @@
 
 - (void)onEngineStateUpdate:(ZegoEngineState)state {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d", (int)state);
+    ZGLog(@"[onEngineStateUpdate] state: %d", (int)state);
 
     if (sink) {
         sink(@{
@@ -57,7 +57,7 @@
 
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"errorCode: %d, roomID: %@", errorCode, roomID);
+    ZGLog(@"[onRoomStateUpdate] state: %d, errorCode: %d, roomID: %@", (int)state, errorCode, roomID);
     
     if (sink) {
         
@@ -66,7 +66,7 @@
             NSError *error;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
             if (!jsonData) {
-                ZGLog(@"extendedData error: %@", error);
+                ZGLog(@"[onRoomStateUpdate] extendedData error: %@", error);
             }else{
                 extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
             }
@@ -84,7 +84,7 @@
 
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType userList:(NSArray<ZegoUser *> *)userList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"updateType: %@, usersCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)userList.count, roomID);
+    ZGLog(@"[onRoomUserUpdate] updateType: %@, usersCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)userList.count, roomID);
     
     if (sink) {
         NSMutableArray *userListArray = [[NSMutableArray alloc] init];
@@ -106,7 +106,7 @@
 
 - (void)onRoomOnlineUserCountUpdate:(int)count roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"count: %d, roomID: %@", count, roomID);
+    ZGLog(@"[onRoomOnlineUserCountUpdate] count: %d, roomID: %@", count, roomID);
 
     if (sink) {
         sink(@{
@@ -119,7 +119,7 @@
 
 - (void)onRoomStreamUpdate:(ZegoUpdateType)updateType streamList:(NSArray<ZegoStream *> *)streamList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"updateType: %@, streamsCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)streamList.count, roomID);
+    ZGLog(@"[onRoomStreamUpdate] updateType: %@, streamsCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)streamList.count, roomID);
     
     if (sink) {
         NSMutableArray *streamListArray = [[NSMutableArray alloc] init];
@@ -145,7 +145,7 @@
 
 - (void)onRoomStreamExtraInfoUpdate:(NSArray<ZegoStream *> *)streamList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"streamsCount: %d, roomID: %@", (int)streamList.count, roomID);
+    ZGLog(@"[onRoomStreamExtraInfoUpdate] streamsCount: %d, roomID: %@", (int)streamList.count, roomID);
     
     if (sink) {
         NSMutableArray *streamListArray = [[NSMutableArray alloc] init];
@@ -170,7 +170,7 @@
 
 - (void)onRoomExtraInfoUpdate:(NSArray<ZegoRoomExtraInfo *> *)roomExtraInfoList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"roomExtraInfoCount: %d, roomID: %@", (int)roomExtraInfoList.count, roomID);
+    ZGLog(@"[onRoomExtraInfoUpdate] infosCount: %d, roomID: %@", (int)roomExtraInfoList.count, roomID);
 
     if (sink) {
         NSMutableArray *roomExtraInfoListArray = [[NSMutableArray alloc] init];
@@ -198,7 +198,7 @@
 
 - (void)onPublisherStateUpdate:(ZegoPublisherState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d, errorCode: %d, streamID: %@", (int)state, errorCode, streamID);
+    ZGLog(@"[onPublisherStateUpdate] state: %d, errorCode: %d, streamID: %@", (int)state, errorCode, streamID);
     
     if (sink) {
         
@@ -207,7 +207,7 @@
             NSError *error;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
             if (!jsonData) {
-                ZGLog(@"extendedData error: %@", error);
+                ZGLog(@"[onPublisherStateUpdate] extendedData error: %@", error);
             }else{
                 extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
             }
@@ -253,7 +253,7 @@
 
 - (void)onPublisherCapturedAudioFirstFrame {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"sink: %p", sink);
+    ZGLog(@"[onPublisherCapturedAudioFirstFrame]");
     
     if (sink) {
         sink(@{
@@ -264,7 +264,7 @@
 
 - (void)onPublisherCapturedVideoFirstFrame:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"channel: %d", (int)channel);
+    ZGLog(@"[onPublisherCapturedVideoFirstFrame] channel: %d", (int)channel);
     
     if (sink) {
         sink(@{
@@ -276,7 +276,7 @@
 
 - (void)onPublisherVideoSizeChanged:(CGSize)size channel:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"width: %d, height: %d, channel: %d", (int)size.width, (int)size.height, (int)channel);
+    ZGLog(@"[onPublisherVideoSizeChanged] width: %d, height: %d, channel: %d", (int)size.width, (int)size.height, (int)channel);
     
     if (sink) {
         sink(@{
@@ -289,9 +289,8 @@
 }
 
 - (void)onPublisherRelayCDNStateUpdate:(NSArray<ZegoStreamRelayCDNInfo *> *)streamInfoList streamID:(NSString *)streamID {
-    //TODO: gaiming
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"infosCount: %d, streamID: %@", (int)streamInfoList.count, streamID);
+    ZGLog(@"[onPublisherRelayCDNStateUpdate] infosCount: %d, streamID: %@", (int)streamInfoList.count, streamID);
     
     if (sink) {
         NSMutableArray *streamInfoListArray = [[NSMutableArray alloc] init];
@@ -316,7 +315,7 @@
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d, errorCode: %d, streamID: %@", (int)state, errorCode, streamID);
+    ZGLog(@"[onPlayerStateUpdate] state: %d, errorCode: %d, streamID: %@", (int)state, errorCode, streamID);
     
     if (sink) {
         
@@ -325,7 +324,7 @@
             NSError *error;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
             if (!jsonData) {
-                ZGLog(@"extendedData error: %@", error);
+                ZGLog(@"[onPlayerStateUpdate] extendedData error: %@", error);
             }else{
                 extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
             }
@@ -375,7 +374,7 @@
 
 - (void)onPlayerMediaEvent:(ZegoPlayerMediaEvent)event streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"event: %d, streamID: %@", (int)event, streamID);
+    ZGLog(@"[onPlayerMediaEvent] event: %d, streamID: %@", (int)event, streamID);
     
     if (sink) {
         sink(@{
@@ -388,7 +387,7 @@
 
 - (void)onPlayerRecvAudioFirstFrame:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"streamID: %@", streamID);
+    ZGLog(@"[onPlayerRecvAudioFirstFrame] streamID: %@", streamID);
     
     if (sink) {
         sink(@{
@@ -400,7 +399,7 @@
 
 - (void)onPlayerRecvVideoFirstFrame:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"streamID: %@", streamID);
+    ZGLog(@"[onPlayerRecvVideoFirstFrame] streamID: %@", streamID);
     
     if (sink) {
         sink(@{
@@ -412,7 +411,7 @@
 
 - (void)onPlayerRenderVideoFirstFrame:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"streamID: %@", streamID);
+    ZGLog(@"[onPlayerRenderVideoFirstFrame] streamID: %@", streamID);
     
     if (sink) {
         sink(@{
@@ -424,7 +423,7 @@
 
 - (void)onPlayerVideoSizeChanged:(CGSize)size streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"width: %d, height: %d, streamID: %@", (int)size.width, (int)size.height, streamID);
+    ZGLog(@"[onPlayerVideoSizeChanged] width: %d, height: %d, streamID: %@", (int)size.width, (int)size.height, streamID);
     
     if (sink) {
         sink(@{
@@ -438,7 +437,7 @@
 
 - (void)onPlayerRecvSEI:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"streamID: %@", streamID);
+    ZGLog(@"[onPlayerRecvSEI] streamID: %@", streamID);
     
     if (sink) {
         sink(@{
@@ -453,7 +452,7 @@
 
 - (void)onMixerRelayCDNStateUpdate:(NSArray<ZegoStreamRelayCDNInfo *> *)infoList taskID:(NSString *)taskID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"infosCount: %d, taskID: %@", (int)infoList.count, taskID);
+    ZGLog(@"[onMixerRelayCDNStateUpdate] infosCount: %d, taskID: %@", (int)infoList.count, taskID);
     
     if (sink) {
         NSMutableArray *infoListArray = [[NSMutableArray alloc] init];
@@ -538,7 +537,7 @@
 
 - (void)onDeviceError:(int)errorCode deviceName:(NSString *)deviceName {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"errorCode: %d, deviceName: %@", errorCode, deviceName);
+    ZGLog(@"[onDeviceError] errorCode: %d, deviceName: %@", errorCode, deviceName);
     
     if (sink) {
         sink(@{
@@ -551,7 +550,7 @@
 
 - (void)onRemoteCameraStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d, streamID: %@", (int)state, streamID);
+    ZGLog(@"[onRemoteCameraStateUpdate] state: %d, streamID: %@", (int)state, streamID);
     
     if (sink) {
         sink(@{
@@ -564,7 +563,7 @@
 
 - (void)onRemoteMicStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d, streamID: %@", (int)state, streamID);
+    ZGLog(@"[onRemoteMicStateUpdate] state: %d, streamID: %@", (int)state, streamID);
     
     if (sink) {
         sink(@{
@@ -579,7 +578,7 @@
 
 - (void)onIMRecvBroadcastMessage:(NSArray<ZegoBroadcastMessageInfo *> *)messageList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"messageListCount: %d, roomID: %@", (int)messageList.count, roomID);
+    ZGLog(@"[onIMRecvBroadcastMessage] messageListCount: %d, roomID: %@", (int)messageList.count, roomID);
     
     if (sink) {
         NSMutableArray *messageListArray = [[NSMutableArray alloc] init];
@@ -605,7 +604,7 @@
 
 - (void)onIMRecvBarrageMessage:(NSArray<ZegoBarrageMessageInfo *> *)messageList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"messageListCount: %d, roomID: %@", (int)messageList.count, roomID);
+    ZGLog(@"[onIMRecvBarrageMessage] messageListCount: %d, roomID: %@", (int)messageList.count, roomID);
     
     if (sink) {
         NSMutableArray *messageListArray = [[NSMutableArray alloc] init];
@@ -631,7 +630,7 @@
 
 - (void)onIMRecvCustomCommand:(NSString *)command fromUser:(ZegoUser *)fromUser roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"command: %@, fromUserID: %@, fromUserName: %@, roomID: %@", command, fromUser.userID, fromUser.userName, roomID);
+    ZGLog(@"[onIMRecvCustomCommand] command: %@, fromUserID: %@, fromUserName: %@, roomID: %@", command, fromUser.userID, fromUser.userName, roomID);
     
     if (sink) {
         sink(@{
@@ -651,7 +650,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer stateUpdate:(ZegoMediaPlayerState)state errorCode:(int)errorCode {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d, errorCode: %d", (int)state, errorCode);
+    ZGLog(@"[onMediaPlayerStateUpdate] state: %d, errorCode: %d", (int)state, errorCode);
 
     if (sink) {
         sink(@{
@@ -665,7 +664,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer networkEvent:(ZegoMediaPlayerNetworkEvent)networkEvent {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"networkEvent: %d", (int)networkEvent);
+    ZGLog(@"[onMediaPlayerNetworkEvent] networkEvent: %d", (int)networkEvent);
 
     if (sink) {
         sink(@{
@@ -678,7 +677,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer playingProgress:(unsigned long long)millisecond {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"millisecond: %llu", millisecond);
+    // High frequency callbacks do not log
 
     if (sink) {
         sink(@{
@@ -694,7 +693,7 @@
 
 - (void)onCapturedDataRecordStateUpdate:(ZegoDataRecordState)state errorCode:(int)errorCode config:(ZegoDataRecordConfig *)config channel:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"state: %d, errorCode: %d, filePath: %@, recordType: %d, channel: %d", (int)state, errorCode, config.filePath, (int)config.recordType, (int)channel);
+    ZGLog(@"[onCapturedDataRecordStateUpdate] state: %d, errorCode: %d, filePath: %@, recordType: %d, channel: %d", (int)state, errorCode, config.filePath, (int)config.recordType, (int)channel);
 
     if (sink) {
         sink(@{
@@ -712,7 +711,7 @@
 
 - (void)onCapturedDataRecordProgressUpdate:(ZegoDataRecordProgress *)progress config:(ZegoDataRecordConfig *)config channel:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"duration: %llu, currentFileSize: %llu, filePath: %@, recordType: %d, channel: %d", progress.duration, progress.currentFileSize, config.filePath, (int)config.recordType, (int)channel);
+    // High frequency callbacks do not log
 
     if (sink) {
         sink(@{

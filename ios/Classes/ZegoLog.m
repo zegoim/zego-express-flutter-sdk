@@ -7,41 +7,30 @@
 //
 
 #import "ZegoLog.h"
+#import <objc/message.h>
+
+static Class engineClass;
+static SEL logSelector;
+static const char *moduleName = "Flutter-Native";
 
 @implementation ZegoLog
 
-+ (void)logWithFile:(const char *)file
-           function:(const char *)function
-               line:(NSUInteger)line
-             format:(NSString *)format, ... NS_FORMAT_FUNCTION(4,5) {
-    if (format) {
-        va_list args;
-        va_start(args, format);
-        [self logWithFile:file
-                 function:function
-                     line:line
-                   format:format
-                     args:args];
-        va_end(args);
-    }
-}
++ (void)logWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2) {
+    if (!format) return;
 
-+ (void)logWithFile:(const char *)file
-           function:(const char *)function
-               line:(NSUInteger)line
-             format:(NSString *)format
-               args:(va_list)argList {
-    if (!format) {
-        return;
+    if (!engineClass || !logSelector) {
+        engineClass = NSClassFromString(@"ZegoExpressEngine");
+        logSelector = NSSelectorFromString(@"logNotice:module:");
     }
-    NSString *msg = [[NSString alloc] initWithFormat:format arguments:argList];
-    
-    [ZegoLog log:[NSString stringWithFormat:@"[Flutter-Native] %s, %@", function, msg]];
-}
 
-+ (void)log:(NSString *)content {
-    // TODO: write log
-    NSLog(@"%@", content);
+    va_list args;
+    va_start(args, format);
+
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+    ((void (*)(id, SEL, const char *, const char *))objc_msgSend)(engineClass, logSelector, [message UTF8String], moduleName);
+    NSLog(@"[%s] %@", moduleName, message);
+
+    va_end(args);
 }
 
 @end
