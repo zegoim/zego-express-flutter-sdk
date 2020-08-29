@@ -33,7 +33,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.1.0
+  zego_express_engine: ^1.14.0
 ```
 
 - ### 以 git 形式依赖
@@ -178,7 +178,7 @@ class _MyAppState extends State<MyApp> {
 
 ## 7️⃣ API 文档
 
-[ZegoExpressEngine API Reference](https://pub.dev/documentation/zego_express_engine/latest/)
+[ZegoExpressEngine API Reference](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine-class.html)
 
 ## 8️⃣ 常见问题
 
