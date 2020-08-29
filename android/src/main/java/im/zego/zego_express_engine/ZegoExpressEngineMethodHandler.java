@@ -15,6 +15,8 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.lang.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -95,6 +97,7 @@ public class ZegoExpressEngineMethodHandler {
         eventHandler = new ZegoExpressEngineEventHandler(sink);
 
         ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, eventHandler.eventHandler);
+        setPlatformLanguage();
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
 
@@ -1614,5 +1617,21 @@ public class ZegoExpressEngineMethodHandler {
 
     private static double doubleValue(Number number) {
         return number != null ? number.doubleValue() : .0f;
+    }
+
+    private static void setPlatformLanguage() {
+        try {
+            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineJniAPI");
+            Method jniMethod = jniClass.getMethod("setPlatformLanguageJni", int.class);
+            jniMethod.invoke(null, 4);
+        } catch (ClassNotFoundException e) {
+            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
+        } catch (NoSuchMethodException e) {
+            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, method setPlatformLanguageJni not found.");
+        } catch (IllegalAccessException e) {
+            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, illegal access.");
+        } catch (InvocationTargetException e) {
+            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, invocation failed.");
+        }
     }
 }
