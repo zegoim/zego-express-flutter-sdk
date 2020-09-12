@@ -380,7 +380,7 @@ public class ZegoExpressEngineMethodHandler {
 
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("captureWidth", config.captureWidth);
-        resultMap.put("captureWidth", config.captureHeight);
+        resultMap.put("captureHeight", config.captureHeight);
         resultMap.put("encodeWidth", config.encodeWidth);
         resultMap.put("encodeHeight", config.encodeHeight);
         resultMap.put("fps", config.fps);
