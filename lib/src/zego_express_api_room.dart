@@ -50,19 +50,23 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.logoutRoom(roomID);
   }
 
-  /// Switch the room
+  /// Switch the room with advanced room configurations
   ///
-  /// After successfully login room, if you need to quickly switch to the next room, you can call this API
-  /// Calling this API is faster and easier to use than calling [logoutRoom] and then [loginRoom]
-  /// When this API is called, all streams currently publishing or playing will stop (but the local preview will not stop)
+  /// After successfully login room, if you need to quickly switch to the next room, you can call this API.
+  /// Calling this API is faster and easier to use than calling [logoutRoom] and then [loginRoom].
+  /// When this API is called, all streams currently publishing or playing will stop (but the local preview will not stop).
+  /// To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over.
   ///
   /// - [fromRoomID] Current roomID
   /// - [toRoomID] The next roomID
-  Future<void> switchRoom(String fromRoomID, String toRoomID) async {
-    return await ZegoExpressImpl.instance.switchRoom(fromRoomID, toRoomID);
+  /// - [config] Advanced room configuration
+  Future<void> switchRoom(String fromRoomID, String toRoomID, {ZegoRoomConfig config}) async {
+    return await ZegoExpressImpl.instance.switchRoom(fromRoomID, toRoomID, config: config);
   }
 
   /// Set room extra information
+  ///
+  /// After the user in the room calls this api to set the extra info of the room, other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback api
   ///
   /// - [roomID] Room ID.
   /// - [key] key of the extra info.

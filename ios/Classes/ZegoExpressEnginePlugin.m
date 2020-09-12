@@ -85,6 +85,7 @@
 #pragma mark - Handle Method Call
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    ZGLog(@"[DartCall] [%@]", call.method);
 
     // When createEngine, re-create a FlutterMethodCall object to add additional parameters
     if ([@"createEngine" isEqualToString:call.method]) {

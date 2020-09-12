@@ -93,6 +93,7 @@ class ZegoExpressEngine {
   /// If developers need to use ZEGO room users notifications, please make sure that each login user sets isUserStatusNotify to true
   /// When a user logs in to a room for the first time, other users already exist in this room, and a user list of the type of addition is received.
   /// When the user is already in the room, other users in this room will trigger this callback to notify the changed users when they enter or exit the room.
+  /// The number of people the callback can return is 500.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)

@@ -89,9 +89,11 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// After starting monitoring, you can receive local audio sound level via [onCapturedSoundLevelUpdate] callback, and receive remote audio sound level via [onRemoteSoundLevelUpdate] callback.
   /// Before entering the room, you can call [startPreview] with this api and combine it with [onCapturedSoundLevelUpdate] callback to determine whether the audio device is working properly.
-  /// [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is 100 ms.
-  Future<void> startSoundLevelMonitor() async {
-    return await ZegoExpressImpl.instance.startSoundLevelMonitor();
+  /// [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is the value set by the parameter.
+  ///
+  /// - [millisecond] Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
+  Future<void> startSoundLevelMonitor({int millisecond}) async {
+    return await ZegoExpressImpl.instance.startSoundLevelMonitor(millisecond: millisecond);
   }
 
   /// Stops sound level monitoring.
@@ -104,9 +106,11 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Starts audio spectrum monitoring.
   ///
   /// After starting monitoring, you can receive local audio spectrum via [onCapturedAudioSpectrumUpdate] callback, and receive remote audio spectrum via [onRemoteAudioSpectrumUpdate] callback.
-  /// [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is 100 ms.
-  Future<void> startAudioSpectrumMonitor() async {
-    return await ZegoExpressImpl.instance.startAudioSpectrumMonitor();
+  /// [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is the value set by the parameter.
+  ///
+  /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
+  Future<void> startAudioSpectrumMonitor({int millisecond}) async {
+    return await ZegoExpressImpl.instance.startAudioSpectrumMonitor(millisecond: millisecond);
   }
 
   /// Stops audio spectrum monitoring.

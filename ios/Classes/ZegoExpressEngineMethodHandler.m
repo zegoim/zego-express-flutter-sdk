@@ -172,8 +172,22 @@
 
     NSString *fromRoomID = call.arguments[@"fromRoomID"];
     NSString *toRoomID = call.arguments[@"toRoomID"];
+    NSDictionary *configMap = call.arguments[@"config"];
 
-    [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID];
+    if (configMap && configMap.count > 0) {
+        unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
+        BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
+        NSString *token = configMap[@"token"];
+
+        ZegoRoomConfig *configObject = [[ZegoRoomConfig alloc] init];
+        configObject.maxMemberCount = maxMemberCount;
+        configObject.isUserStatusNotify = isUserStatusNotify;
+        configObject.token = token;
+
+        [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID config:configObject];
+    } else {
+        [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID];
+    }
 
     result(nil);
 }
@@ -443,6 +457,15 @@
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
 
     [[ZegoExpressEngine sharedEngine] setCaptureVolume:volume];
+
+    result(nil);
+}
+
+- (void)setAudioCaptureStereoMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setAudioCaptureStereoMode:(ZegoAudioCaptureStereoMode)mode];
 
     result(nil);
 }
@@ -933,7 +956,8 @@
 
 - (void)startSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
+    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+    [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor:millisecond];
 
     result(nil);
 }
@@ -947,7 +971,8 @@
 
 - (void)startAudioSpectrumMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    [[ZegoExpressEngine sharedEngine] startAudioSpectrumMonitor];
+    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+    [[ZegoExpressEngine sharedEngine] startAudioSpectrumMonitor:millisecond];
 
     result(nil);
 }
@@ -1305,6 +1330,30 @@
     result(nil);
 }
 
+- (void)mediaPlayerSetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+    [mediaPlayer setPlayVolume:volume];
+
+    result(nil);
+}
+
+- (void)mediaPlayerSetPublishVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+    [mediaPlayer setPlayVolume:volume];
+
+    result(nil);
+}
+
 - (void)mediaPlayerSetProgressInterval:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
@@ -1318,12 +1367,39 @@
 }
 
 - (void)mediaPlayerGetVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.15.0
 
     NSNumber *index = call.arguments[@"index"];
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
         int volume = mediaPlayer.volume;
+        result(@(volume));
+    } else {
+        result(@(0));
+    }
+}
+
+- (void)mediaPlayerGetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        int volume = mediaPlayer.playVolume;
+        result(@(volume));
+    } else {
+        result(@(0));
+    }
+}
+
+- (void)mediaPlayerGetPublishVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        int volume = mediaPlayer.publishVolume;
         result(@(volume));
     } else {
         result(@(0));

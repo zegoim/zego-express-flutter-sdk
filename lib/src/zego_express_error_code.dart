@@ -220,6 +220,9 @@ class ZegoErrorCode {
   /// Stream playing failed, possibly due to no data in the stream.
   static const int PlayerPlayStreamFailed                                                 = 1004001;
 
+  /// Stream playing failed because the stream does not exist. Please check whether the remote end publish is indeed successful, or whether the publish and play environment are inconsistent
+  static const int PlayerPlayStreamNotExist                                               = 1004002;
+
   /// The number of streams the user attempted to play simultaneously exceeds the maximum number allowed. Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
   static const int PlayerCountExceed                                                      = 1004010;
 
@@ -333,6 +336,12 @@ class ZegoErrorCode {
 
   /// The device list cannot be empty when trying to release devices.
   static const int DeviceFreeDeviceListNull                                               = 1006020;
+
+  /// The set sound level monitoring interval is out of range.
+  static const int DeviceSouldLevelIntervalInvalid                                        = 1006031;
+
+  /// The set audio spectrum monitoring interval is out of range.
+  static const int DeviceAudioSpectrumIntervalInvalid                                     = 1006032;
 
   /// Device internal error.
   static const int DeviceInnerError                                                       = 1006099;

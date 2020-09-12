@@ -118,6 +118,16 @@ enum ZegoAudioChannel {
   Stereo
 }
 
+/// Audio capture stereo mode
+enum ZegoAudioCaptureStereoMode {
+  /// Disable capture stereo, i.e. capture mono
+  None,
+  /// Always enable capture stereo
+  Always,
+  /// Adaptive mode, capture stereo when publishing stream only, capture mono when publishing and playing stream (e.g. talk/intercom scenes)
+  Adaptive
+}
+
 /// Audio Codec ID
 enum ZegoAudioCodecID {
   /// default
@@ -583,12 +593,12 @@ class ZegoVideoConfig {
 
 }
 
-/// Video config
+/// Voice changer parameter
 ///
-/// developer can use the built-in presets of the SDK to change the parameters of the voice changer
+/// Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
 class ZegoVoiceChangerParam {
 
-  /// pitch
+  /// Pitch parameter, value range [-8.0, 8.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note that the voice changer effect is only valid for the captured sound.
   double pitch;
 
   ZegoVoiceChangerParam(this.pitch): assert(pitch != null);
@@ -675,7 +685,7 @@ class ZegoStream {
   /// User object instance
   ZegoUser user;
 
-  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String streamID;
 
   /// Stream extra info
@@ -1107,7 +1117,7 @@ class ZegoMixerVideoConfig {
 /// Configure the mix stream input stream ID, type, and the layout
 class ZegoMixerInput {
 
-  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String streamID;
 
   /// Mix stream content type
@@ -1442,10 +1452,20 @@ abstract class ZegoMediaPlayer {
   /// - [mute] Mute local audio flag, The default is false.
   Future<void> muteLocal(bool mute);
 
-  /// Set player volume
+  /// Set mediaplayer volume. Both the local play volume and the publish volume are set
   ///
-  /// - [volume] The range is 0 ~ 100. The default is 50.
+  /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setVolume(int volume);
+
+  /// Set mediaplayer local play volume
+  ///
+  /// - [volume] The range is 0 ~ 200. The default is 60.
+  Future<void> setPlayVolume(int volume);
+
+  /// Set mediaplayer publish volume
+  ///
+  /// - [volume] The range is 0 ~ 200. The default is 60.
+  Future<void> setPublishVolume(int volume);
 
   /// Set playback progress callback interval
   ///
@@ -1455,10 +1475,11 @@ abstract class ZegoMediaPlayer {
   /// - [millisecond] Interval of playback progress callback in milliseconds
   Future<void> setProgressInterval(int millisecond);
 
-  /// Get the current volume
-  ///
-  /// The range is 0 ~ 100. The default is 50
-  Future<int> getVolume();
+  /// Gets the current local playback volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60
+  Future<int> getPlayVolume();
+
+  /// Gets the current publish volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60
+  Future<int> getPublishVolume();
 
   /// Get the total progress of your media resources
   ///
@@ -1477,6 +1498,12 @@ abstract class ZegoMediaPlayer {
 
   /// Get media player index
   int getIndex();
+
+  /// Gets the play volume
+  ///
+  /// @deprecated This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.
+  @Deprecated('This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.')
+  Future<int> getVolume();
 
 }
 

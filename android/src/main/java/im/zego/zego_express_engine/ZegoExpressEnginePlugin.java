@@ -132,6 +132,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+        ZegoLog.log("[DartCall] [%s]", call.method);
         try {
             Method method = methodHashMap.get(call.method);
             if (method == null) {

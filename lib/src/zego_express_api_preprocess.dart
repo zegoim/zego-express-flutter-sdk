@@ -97,7 +97,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
   /// Sets up the reverberation parameters.
   ///
-  /// Different values set dynamically after a successful publishing will take effect, When any of the parameters is set to 0.0, the reverb is turned off.
+  /// Different values set dynamically after a successful publishing will take effect, When all of the parameters is set to 0, the reverb is turned off.
   ///
   /// - [param] Reverb parameter
   Future<void> setReverbParam(ZegoReverbParam param) async {
@@ -109,7 +109,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Note: You need to set up a dual channel setAudioConfig for the virtual stereo to take effect!
   ///
   /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo
-  /// - [angle] angle of the sound source in the virtual stereo, ranging from 0 to 180, with 90 being the front, and 0 and 180 being respectively Corresponds to rightmost and leftmost, usually defaults to 90.
+  /// - [angle] angle of the sound source in the virtual stereo, ranging from 0 to 180, with 90 being the front, and 0 and 180 being respectively Corresponds to rightmost and leftmost, usually use 90.
   Future<void> enableVirtualStereo(bool enable, int angle) async {
     return await ZegoExpressImpl.instance.enableVirtualStereo(enable, angle);
   }

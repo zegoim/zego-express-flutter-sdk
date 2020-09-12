@@ -34,6 +34,7 @@ import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
 import im.zego.zegoexpress.constants.ZegoANSMode;
+import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
@@ -197,7 +198,16 @@ public class ZegoExpressEngineMethodHandler {
         String fromRoomID = call.argument("fromRoomID");
         String toRoomID = call.argument("toRoomID");
 
-        ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
+        HashMap<String, Object> configMap = call.argument("config");
+        if (configMap != null && !configMap.isEmpty()) {
+            ZegoRoomConfig roomConfig = new ZegoRoomConfig();
+            roomConfig.isUserStatusNotify = boolValue((Boolean)configMap.get("isUserStatusNotify"));
+            roomConfig.maxMemberCount = intValue((Number)configMap.get("maxMemberCount"));
+            roomConfig.token = (String)configMap.get("token");
+            ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID, roomConfig);
+        } else {
+            ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
+        }
 
         result.success(null);
     }
@@ -493,6 +503,16 @@ public class ZegoExpressEngineMethodHandler {
         int volume = intValue((Number) call.argument("volume"));
 
         ZegoExpressEngine.getEngine().setCaptureVolume(volume);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setAudioCaptureStereoMode(MethodCall call, Result result) {
+
+        ZegoAudioCaptureStereoMode mode = ZegoAudioCaptureStereoMode.getZegoAudioCaptureStereoMode(intValue((Number) call.argument("mode")));
+
+        ZegoExpressEngine.getEngine().setAudioCaptureStereoMode(mode);
 
         result.success(null);
     }
@@ -1015,7 +1035,9 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void startSoundLevelMonitor(MethodCall call, Result result) {
 
-        ZegoExpressEngine.getEngine().startSoundLevelMonitor();
+        int millisecond = intValue((Number) call.argument("millisecond"));
+
+        ZegoExpressEngine.getEngine().startSoundLevelMonitor(millisecond);
 
         result.success(null);
     }
@@ -1031,7 +1053,9 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void startAudioSpectrumMonitor(MethodCall call, Result result) {
 
-        ZegoExpressEngine.getEngine().startAudioSpectrumMonitor();
+        int millisecond = intValue((Number) call.argument("millisecond"));
+
+        ZegoExpressEngine.getEngine().startAudioSpectrumMonitor(millisecond);
 
         result.success(null);
     }
@@ -1448,6 +1472,34 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void mediaPlayerSetPlayVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            mediaPlayer.setPlayVolume(volume);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetPublishVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            mediaPlayer.setPublishVolume(volume);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mediaPlayerSetProgressInterval(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
@@ -1461,14 +1513,43 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void mediaPlayerGetVolume(MethodCall call, Result result) {
+        // TODO: Deprecated since 1.15.0
 
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
         if (mediaPlayer != null) {
             int volume = mediaPlayer.getVolume();
+            result.success(volume);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetPlayVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = mediaPlayer.getPlayVolume();
+            result.success(volume);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetPublishVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = mediaPlayer.getPublishVolume();
             result.success(volume);
         } else {
             result.success(0);
