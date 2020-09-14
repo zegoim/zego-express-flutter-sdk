@@ -206,11 +206,18 @@
         return;
     }
     
-    _displayLink = [CADisplayLink displayLinkWithTarget:self
-                                               selector:@selector(onDisplayLink:)];
+    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    // 30帧刷新，对于 120hz刷新率的ipad，则为60帧刷新
-    _displayLink.frameInterval = 2;
+
+
+    if (@available(iOS 10.0, *)) {
+        // Set the FPS to 30Hz
+        _displayLink.preferredFramesPerSecond = 30;
+    } else {
+        // The FPS of iOS9 and below is 60Hz, so set triggered every two frames, that is, 30Hz
+        _displayLink.frameInterval = 2;
+    }
+
     _displayLink.paused = NO;
     
     self.isRendering = YES;
@@ -222,7 +229,7 @@
     }
     
     // TODO: 暂时先限定死只有在所有renderer都不存在时，停止渲染才成功
-    if (self.capturedRenderers.count == 0 && self.remoteRenderers == 0) {
+    if (self.capturedRenderers.count == 0 && self.remoteRenderers.count == 0) {
         self.displayLink.paused = YES;
         [_displayLink invalidate];
         
