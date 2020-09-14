@@ -75,6 +75,10 @@
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
+    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:self.eventHandler];
+
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+
     result(nil);
 }
 
@@ -91,6 +95,35 @@
 
     result(nil);
 }
+
+- (void)setEngineConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoEngineConfig *configObject = nil;
+
+    if (configMap && configMap.count > 0) {
+
+        configObject = [[ZegoEngineConfig alloc] init];
+        configObject.advancedConfig = configMap[@"advancedConfig"];
+
+        NSDictionary *logConfigMap = call.arguments[@"logConfig"];
+        ZegoLogConfig *logConfigObject = nil;
+        if (logConfigMap && logConfigMap.count > 0) {
+            logConfigObject = [[ZegoLogConfig alloc] init];
+            logConfigObject.logPath = logConfigMap[@"logPath"];
+            logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:logConfigMap[@"logSize"]];
+
+            configObject.logConfig = logConfigObject;
+        }
+
+        [ZegoExpressEngine setEngineConfig:configObject];
+
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"setEngineConfig_null_config" uppercaseString] message:@"Invoke `setEngineConfig` with null config" details:nil]);
+    }
+}
+
 
 - (void)uploadLog:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -172,8 +205,22 @@
 
     NSString *fromRoomID = call.arguments[@"fromRoomID"];
     NSString *toRoomID = call.arguments[@"toRoomID"];
+    NSDictionary *configMap = call.arguments[@"config"];
 
-    [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID];
+    if (configMap && configMap.count > 0) {
+        unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
+        BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
+        NSString *token = configMap[@"token"];
+
+        ZegoRoomConfig *configObject = [[ZegoRoomConfig alloc] init];
+        configObject.maxMemberCount = maxMemberCount;
+        configObject.isUserStatusNotify = isUserStatusNotify;
+        configObject.token = token;
+
+        [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID config:configObject];
+    } else {
+        [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID];
+    }
 
     result(nil);
 }
@@ -248,9 +295,12 @@
 
                 [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
             } else {
-                // Preview video without creating the PlatfromView in advance
-                // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                // TODO: Throw Flutter Exception
+                // Preview video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPreview_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
         } else {
@@ -260,7 +310,10 @@
             } else {
                 // Preview video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                // TODO: Throw Flutter Exception
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPreview_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
             // Using Custom Video Renderer
@@ -447,6 +500,15 @@
     result(nil);
 }
 
+- (void)setAudioCaptureStereoMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setAudioCaptureStereoMode:(ZegoAudioCaptureStereoMode)mode];
+
+    result(nil);
+}
+
 - (void)addPublishCdnUrl:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *targetURL = call.arguments[@"targetURL"];
@@ -593,9 +655,12 @@
                     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas];
                 }
             } else {
-                // Play video without creating the PlatfromView in advance
-                // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                // TODO: Throw Flutter Exception
+                // Play video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPlayingStream_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
         } else {
@@ -605,7 +670,10 @@
             } else {
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                // TODO: Throw Flutter Exception
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
             // Using Custom Video Renderer
@@ -933,7 +1001,8 @@
 
 - (void)startSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
+    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+    [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor:millisecond];
 
     result(nil);
 }
@@ -947,7 +1016,8 @@
 
 - (void)startAudioSpectrumMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    [[ZegoExpressEngine sharedEngine] startAudioSpectrumMonitor];
+    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+    [[ZegoExpressEngine sharedEngine] startAudioSpectrumMonitor:millisecond];
 
     result(nil);
 }
@@ -1305,6 +1375,30 @@
     result(nil);
 }
 
+- (void)mediaPlayerSetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+    [mediaPlayer setPlayVolume:volume];
+
+    result(nil);
+}
+
+- (void)mediaPlayerSetPublishVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+    [mediaPlayer setPlayVolume:volume];
+
+    result(nil);
+}
+
 - (void)mediaPlayerSetProgressInterval:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
@@ -1318,12 +1412,39 @@
 }
 
 - (void)mediaPlayerGetVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.15.0
 
     NSNumber *index = call.arguments[@"index"];
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
         int volume = mediaPlayer.volume;
+        result(@(volume));
+    } else {
+        result(@(0));
+    }
+}
+
+- (void)mediaPlayerGetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        int volume = mediaPlayer.playVolume;
+        result(@(volume));
+    } else {
+        result(@(0));
+    }
+}
+
+- (void)mediaPlayerGetPublishVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        int volume = mediaPlayer.publishVolume;
         result(@(volume));
     } else {
         result(@(0));
@@ -1402,9 +1523,11 @@
 - (void)destroyPlatformView:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int viewID = [ZegoUtils intValue:call.arguments[@"viewID"]];
-    [[ZegoPlatformViewFactory sharedInstance] destroyPlatformView:@(viewID)];
+    BOOL state = [[ZegoPlatformViewFactory sharedInstance] destroyPlatformView:@(viewID)];
 
-    result(nil);
+    ZGLog(@"[destroyPlatformView] viewID: %d, success: %@", viewID, state ? @"true" : @"false");
+
+    result(@(state));
 }
 
 
@@ -1417,6 +1540,8 @@
 
     int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:_textureRegistry viewWidth:viewWidth viewHeight:viewHeight];
 
+    ZGLog(@"[createTextureRenderer][Result] w: %d, h: %d, textureID: %ld", viewWidth, viewHeight, (long)textureID);
+
     result(@(textureID));
 }
 
@@ -1425,17 +1550,21 @@
     int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
     int viewWidth = [ZegoUtils intValue:call.arguments[@"width"]];
     int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
-    [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
+    BOOL state = [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
 
-    result(nil);
+    ZGLog(@"[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %ld, success: %@", viewWidth, viewHeight, (long)textureID, state ? @"true" : @"false");
+
+    result(@(state));
 }
 
 - (void)destroyTextureRenderer:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
-    [[ZegoTextureRendererController sharedInstance] destroyTextureRenderer:textureID];
+    BOOL state = [[ZegoTextureRendererController sharedInstance] destroyTextureRenderer:textureID];
 
-    result(nil);
+    ZGLog(@"[destroyTextureRenderer][Result] textureID: %ld, success: %@", (long)textureID, state ? @"true" : @"false");
+
+    result(@(state));
 }
 
 

@@ -7,6 +7,7 @@
 //
 
 #import "ZegoPlatformViewFactory.h"
+#import "ZegoLog.h"
 
 @interface ZegoPlatformViewFactory()
 
@@ -33,32 +34,52 @@
     return self;
 }
 
-- (BOOL)addPlatformView:(ZegoPlatformView *)view viewID:(NSNumber *)viewID {
-    if (!viewID || !view)
-        return NO;
-
-    [self.platformViewMap setObject:view forKey:viewID];
-
-    return YES;
-}
-
 - (BOOL)destroyPlatformView:(NSNumber *)viewID {
-    if (!viewID)
+
+    ZegoPlatformView *platformView = self.platformViewMap[viewID];
+
+    if (!platformView) {
+        ZGLog(@"[destroyPlatformView] platform view for viewID:%d not exists", viewID.intValue);
+        [self logCurrentPlatformViews];
         return NO;
-    
-    if (![[self.platformViewMap allKeys] containsObject:viewID])
-        return NO;
-    
+    }
+
+    ZGLog(@"[destroyPlatformView] viewID:%d, UIView:%p", viewID.intValue, [platformView getUIView]);
+
     [self.platformViewMap removeObjectForKey:viewID];
+
+    [self logCurrentPlatformViews];
+
     return YES;
 }
 
 - (nullable ZegoPlatformView *)getPlatformView:(NSNumber *)viewID {
-    if (!viewID) {
-        return nil;
-    }
+
+    ZGLog(@"[getPlatformView] viewID:%d", viewID.intValue);
+
+    [self logCurrentPlatformViews];
     
     return [self.platformViewMap objectForKey:viewID];
+}
+
+- (void)addPlatformView:(ZegoPlatformView *)view viewID:(NSNumber *)viewID {
+
+    ZGLog(@"[createPlatformView] viewID:%d, UIView:%p", viewID.intValue, [view getUIView]);
+
+    [self.platformViewMap setObject:view forKey:viewID];
+
+    [self logCurrentPlatformViews];
+}
+
+- (void)logCurrentPlatformViews {
+    NSMutableString *desc = [[NSMutableString alloc] init];
+    for (NSNumber *i in self.platformViewMap) {
+        ZegoPlatformView *eachPlatformView = self.platformViewMap[i];
+        if (eachPlatformView) {
+            [desc appendFormat:@"[ID:%d|View:%p] ", i.intValue, eachPlatformView.getUIView];
+        }
+    }
+    ZGLog(@"[ZegoPlatformViewFactory] currentPlatformViews: %@", desc);
 }
 
 #pragma mark FlutterPlatformViewFactory Delegate

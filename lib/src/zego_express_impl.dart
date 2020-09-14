@@ -50,6 +50,12 @@ class ZegoExpressImpl {
     return null;
   }
 
+  static Future<void> setEngineConfig(ZegoEngineConfig config) async {
+    return await _channel.invokeMethod('setEngineConfig', {
+      'config': config.toMap()
+    });
+  }
+
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
   }
@@ -89,10 +95,11 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> switchRoom(String fromRoomID, String toRoomID) async {
+  Future<void> switchRoom(String fromRoomID, String toRoomID, {ZegoRoomConfig config}) async {
     return await _channel.invokeMethod('switchRoom', {
       'fromRoomID': fromRoomID,
-      'toRoomID': toRoomID
+      'toRoomID': toRoomID,
+      'config': config?.toMap() ?? {}
     });
   }
 
@@ -216,6 +223,12 @@ class ZegoExpressImpl {
   Future<void> setCaptureVolume(int volume) async {
     return await _channel.invokeMethod('setCaptureVolume', {
       'volume': volume
+    });
+  }
+
+  Future<void> setAudioCaptureStereoMode(ZegoAudioCaptureStereoMode mode) async {
+    return await _channel.invokeMethod('setAudioCaptureStereoMode', {
+      'mode': mode.index
     });
   }
 
@@ -418,16 +431,20 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> startSoundLevelMonitor() async {
-    return await _channel.invokeMethod('startSoundLevelMonitor');
+  Future<void> startSoundLevelMonitor({int millisecond}) async {
+    return await _channel.invokeMethod('startSoundLevelMonitor', {
+      'millisecond': millisecond ?? 100
+    });
   }
 
   Future<void> stopSoundLevelMonitor() async {
     return await _channel.invokeMethod('stopSoundLevelMonitor');
   }
 
-  Future<void> startAudioSpectrumMonitor() async {
-    return await _channel.invokeMethod('startAudioSpectrumMonitor');
+  Future<void> startAudioSpectrumMonitor({int millisecond}) async {
+    return await _channel.invokeMethod('startAudioSpectrumMonitor', {
+      'millisecond': millisecond ?? 100
+    });
   }
 
   Future<void> stopAudioSpectrumMonitor() async {
@@ -1220,6 +1237,22 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
+  Future<void> setPlayVolume(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetPlayVolume', {
+      'index': _index,
+      'volume': volume
+    });
+  }
+
+  @override
+  Future<void> setPublishVolume(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetPublishVolume', {
+      'index': _index,
+      'volume': volume
+    });
+  }
+
+  @override
   Future<void> setProgressInterval(int millisecond) async {
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetProgressInterval', {
       'index': _index,
@@ -1229,7 +1262,22 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<int> getVolume() async {
+    // TODO: Deprecated since 1.15.0
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetVolume', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<int> getPlayVolume() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetPlayVolume', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<int> getPublishVolume() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetPublishVolume', {
       'index': _index
     });
   }

@@ -1,5 +1,29 @@
 # Change Log
 
+## 1.15.0
+
+### **New Features**
+
+1. Add media player volume control function
+
+    Allows to set and get the local playback volume and publish volume of the media player separately.
+
+    For related API, please refer to `setPlayVolume`, `setPublishVolume`, `getPlayVolume`, `getPublishVolume` of the `ZegoMediaPlayer`.
+
+2. Add the function of setting audio capture dual channel mode
+
+3. The API for start sound level / audio spectrum monitoring supports setting the callback interval
+
+4. Added the function to configure advanced properties when switching rooms
+
+    Switch room allows developer to configure the properties of the next room, such as login authentication
+    
+5. Add `setEngineConfig` API to set log path and size, and advanced special configuration
+
+### **Deleted**
+
+1. Deprecated the `getVolume` interface in the mediaplayer, please use `getPlayVolume` and `getPublishVolume` instead
+
 ## 1.14.0
 
 1. Update native SDK to version 1.14.0

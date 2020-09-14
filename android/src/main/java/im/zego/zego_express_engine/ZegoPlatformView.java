@@ -8,6 +8,8 @@
 
 package im.zego.zego_express_engine;
 
+import android.util.Log;
+
 import android.content.Context;
 import android.view.SurfaceView;
 import android.view.View;
@@ -20,6 +22,11 @@ public class ZegoPlatformView implements PlatformView {
 
     ZegoPlatformView(Context context) {
         this.surfaceView = new SurfaceView(context);
+        ZegoLog.log("[ZegoPlatformView] [init] surfaceView:%s", this.surfaceView.hashCode());
+    }
+
+    public SurfaceView getSurfaceView() {
+        return this.surfaceView;
     }
 
     @Override
@@ -29,6 +36,7 @@ public class ZegoPlatformView implements PlatformView {
 
     @Override
     public void dispose() {
+        ZegoLog.log("[ZegoPlatformView] [dispose] surfaceView:%s", this.surfaceView.hashCode());
         this.surfaceView = null;
     }
 }

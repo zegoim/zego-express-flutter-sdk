@@ -26,23 +26,23 @@ public class ZegoLog {
                 engineClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineJniAPI");
                 logMethod = engineClass.getMethod("logNoticeJni", String.class, String.class);
             } catch (ClassNotFoundException e) {
-                Log.e("ZEGO", "[Flutter-Native] logNotice failed, class ZegoExpressEngineJniAPI not found.");
+                Log.e("ZEGO", "[Flutter] logNotice failed, class ZegoExpressEngineJniAPI not found.");
             } catch (NoSuchMethodException e) {
-                Log.e("ZEGO", "[Flutter-Native] logNotice failed, method logNoticeJni not found.");
+                Log.e("ZEGO", "[Flutter] logNotice failed, method logNoticeJni not found.");
             }
         }
 
         String message = String.format(Locale.ENGLISH, format, args);
-        Log.d("ZEGO", "[Flutter-Native] " + message);
+        Log.d("ZEGO", "[Flutter] " + message);
 
         try {
             if (logMethod != null) {
-                logMethod.invoke(null, message, "Flutter-Native");
+                logMethod.invoke(null, message, "Flutter");
             }
         } catch (IllegalAccessException e) {
-            Log.e("ZEGO", "[Flutter-Native] logNotice failed, IllegalAccessException.");
+            Log.e("ZEGO", "[Flutter] logNotice failed, IllegalAccessException.");
         } catch (InvocationTargetException e) {
-            Log.e("ZEGO", "[Flutter-Native] logNotice failed, InvocationTargetException.");
+            Log.e("ZEGO", "[Flutter] logNotice failed, InvocationTargetException.");
         }
     }
 }

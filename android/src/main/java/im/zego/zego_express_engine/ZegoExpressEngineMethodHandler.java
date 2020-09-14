@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
@@ -34,6 +35,7 @@ import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
 import im.zego.zegoexpress.constants.ZegoANSMode;
+import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
@@ -54,6 +56,8 @@ import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
+import im.zego.zegoexpress.entity.ZegoEngineConfig;
+import im.zego.zegoexpress.entity.ZegoLogConfig;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
 import im.zego.zegoexpress.entity.ZegoMixerOutput;
@@ -101,6 +105,8 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
 
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario.name());
+
         result.success(null);
     }
 
@@ -110,6 +116,33 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.destroyEngine(null);
 
         result.success(null);
+    }
+
+    @SuppressWarnings({"unused", "unchecked"})
+    public static void setEngineConfig(MethodCall call, Result result) {
+
+        HashMap<String, Object> configMap = call.argument("config");
+        ZegoEngineConfig configObject = null;
+        if (configMap != null && !configMap.isEmpty()) {
+            configObject = new ZegoEngineConfig();
+            configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
+
+            HashMap<String, Object> logConfigMap = call.argument("logConfig");
+            ZegoLogConfig logConfigObject = null;
+            if (logConfigMap != null && !logConfigMap.isEmpty()) {
+                logConfigObject = new ZegoLogConfig();
+                logConfigObject.logPath = (String) logConfigMap.get("logPath");
+                logConfigObject.logSize = intValue((Number) configMap.get("logSize"));
+
+                configObject.logConfig = logConfigObject;
+            }
+
+            ZegoExpressEngine.setEngineConfig(configObject);
+
+            result.success(null);
+        } else {
+            result.error("setEngineConfig_null_config".toUpperCase(), "Invoke `setEngineConfig` with null config", null);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -197,7 +230,16 @@ public class ZegoExpressEngineMethodHandler {
         String fromRoomID = call.argument("fromRoomID");
         String toRoomID = call.argument("toRoomID");
 
-        ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
+        HashMap<String, Object> configMap = call.argument("config");
+        if (configMap != null && !configMap.isEmpty()) {
+            ZegoRoomConfig roomConfig = new ZegoRoomConfig();
+            roomConfig.isUserStatusNotify = boolValue((Boolean)configMap.get("isUserStatusNotify"));
+            roomConfig.maxMemberCount = intValue((Number)configMap.get("maxMemberCount"));
+            roomConfig.token = (String)configMap.get("token");
+            ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID, roomConfig);
+        } else {
+            ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
+        }
 
         result.success(null);
     }
@@ -275,19 +317,21 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = intValue((Number) canvasMap.get("backgroundColor"));
 
-            Object view = null;
+            Object view;
 
             if (enablePlatformView) {
                 // Render with PlatformView
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getView();
+                    view = platformView.getSurfaceView();
                 } else {
-                    // Preview video without creating the PlatfromView in advance
-                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Preview video without creating the PlatfromView in advance");
+                    // Preview video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    result.error("startPreview_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
                 }
 
             } else {
@@ -299,8 +343,10 @@ public class ZegoExpressEngineMethodHandler {
                 } else {
                     // Preview video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Preview video without creating TextureRenderer in advance");
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    result.error("startPreview_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
                 }
             }
 
@@ -380,7 +426,7 @@ public class ZegoExpressEngineMethodHandler {
 
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("captureWidth", config.captureWidth);
-        resultMap.put("captureWidth", config.captureHeight);
+        resultMap.put("captureHeight", config.captureHeight);
         resultMap.put("encodeWidth", config.encodeWidth);
         resultMap.put("encodeHeight", config.encodeHeight);
         resultMap.put("fps", config.fps);
@@ -493,6 +539,16 @@ public class ZegoExpressEngineMethodHandler {
         int volume = intValue((Number) call.argument("volume"));
 
         ZegoExpressEngine.getEngine().setCaptureVolume(volume);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setAudioCaptureStereoMode(MethodCall call, Result result) {
+
+        ZegoAudioCaptureStereoMode mode = ZegoAudioCaptureStereoMode.getZegoAudioCaptureStereoMode(intValue((Number) call.argument("mode")));
+
+        ZegoExpressEngine.getEngine().setAudioCaptureStereoMode(mode);
 
         result.success(null);
     }
@@ -644,19 +700,21 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = intValue((Number) canvasMap.get("backgroundColor"));
 
-            Object view = null;
+            Object view;
 
             if (enablePlatformView) {
                 // Render with PlatformView
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getView();
+                    view = platformView.getSurfaceView();
                 } else {
-                    // Play video without creating the PlatfromView in advance
-                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Play video without creating the PlatfromView in advance");
+                    // Play video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
                 }
 
             } else {
@@ -668,8 +726,10 @@ public class ZegoExpressEngineMethodHandler {
                 } else {
                     // Play video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Play video without creating TextureRenderer in advance");
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
                 }
             }
 
@@ -1015,7 +1075,9 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void startSoundLevelMonitor(MethodCall call, Result result) {
 
-        ZegoExpressEngine.getEngine().startSoundLevelMonitor();
+        int millisecond = intValue((Number) call.argument("millisecond"));
+
+        ZegoExpressEngine.getEngine().startSoundLevelMonitor(millisecond);
 
         result.success(null);
     }
@@ -1031,7 +1093,9 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void startAudioSpectrumMonitor(MethodCall call, Result result) {
 
-        ZegoExpressEngine.getEngine().startAudioSpectrumMonitor();
+        int millisecond = intValue((Number) call.argument("millisecond"));
+
+        ZegoExpressEngine.getEngine().startAudioSpectrumMonitor(millisecond);
 
         result.success(null);
     }
@@ -1448,6 +1512,34 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void mediaPlayerSetPlayVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            mediaPlayer.setPlayVolume(volume);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetPublishVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            mediaPlayer.setPublishVolume(volume);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mediaPlayerSetProgressInterval(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
@@ -1461,14 +1553,43 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void mediaPlayerGetVolume(MethodCall call, Result result) {
+        // TODO: Deprecated since 1.15.0
 
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
         if (mediaPlayer != null) {
             int volume = mediaPlayer.getVolume();
+            result.success(volume);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetPlayVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = mediaPlayer.getPlayVolume();
+            result.success(volume);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetPublishVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int volume = mediaPlayer.getPublishVolume();
             result.success(volume);
         } else {
             result.success(0);
@@ -1555,9 +1676,11 @@ public class ZegoExpressEngineMethodHandler {
 
         int viewID = intValue((Number) call.argument("viewID"));
 
-        ZegoPlatformViewFactory.getInstance().destroyPlatformView(viewID);
+        Boolean state = ZegoPlatformViewFactory.getInstance().destroyPlatformView(viewID);
 
-        result.success(null);
+        ZegoLog.log("[destroyPlatformView][Result] viewID: %d, success: %s", viewID, state ? "true" : "false");
+
+        result.success(state);
     }
 
 
@@ -1571,6 +1694,8 @@ public class ZegoExpressEngineMethodHandler {
 
         Long textureID = ZegoTextureRendererController.getInstance().createTextureRenderer(textureRegistry.createSurfaceTexture(), width, height);
 
+        ZegoLog.log("[createTextureRenderer][Result] w: %d, h: %d, textureID: %d", width, height, textureID);
+
         result.success(textureID);
     }
 
@@ -1581,9 +1706,11 @@ public class ZegoExpressEngineMethodHandler {
         int width = intValue((Number) call.argument("width"));
         int height = intValue((Number) call.argument("height"));
 
-        ZegoTextureRendererController.getInstance().updateTextureRendererSize(textureID, width, height);
+        Boolean state = ZegoTextureRendererController.getInstance().updateTextureRendererSize(textureID, width, height);
 
-        result.success(null);
+        ZegoLog.log("[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %d, success: %s", width, height, textureID, state ? "true" : "false");
+
+        result.success(state);
     }
 
     @SuppressWarnings("unused")
@@ -1591,9 +1718,11 @@ public class ZegoExpressEngineMethodHandler {
 
         Long textureID = longValue((Number) call.argument("textureID"));
 
-        ZegoTextureRendererController.getInstance().destroyTextureRenderer(textureID);
+        Boolean state = ZegoTextureRendererController.getInstance().destroyTextureRenderer(textureID);
 
-        result.success(null);
+        ZegoLog.log("[destroyTextureRenderer][Result] textureID: %d, success: %s", textureID, state ? "true" : "false");
+
+        result.success(state);
     }
 
 
@@ -1625,13 +1754,13 @@ public class ZegoExpressEngineMethodHandler {
             Method jniMethod = jniClass.getMethod("setPlatformLanguageJni", int.class);
             jniMethod.invoke(null, 4);
         } catch (ClassNotFoundException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
         } catch (NoSuchMethodException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, method setPlatformLanguageJni not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguageJni not found.");
         } catch (IllegalAccessException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, illegal access.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, illegal access.");
         } catch (InvocationTargetException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, invocation failed.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, invocation failed.");
         }
     }
 }

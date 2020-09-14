@@ -13,7 +13,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
   /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
   ///
-  /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [channel] Publish stream channel
   Future<void> startPublishingStream(String streamID, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.startPublishingStream(streamID, channel: channel);
@@ -180,6 +180,16 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setCaptureVolume(volume);
   }
 
+  /// Set audio capture stereo mode
+  ///
+  /// This API is used to set the audio stereo capture mode. The default is mono, that is, dual channel collection is not enabled.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  ///
+  /// - [mode] Audio stereo capture mode
+  Future<void> setAudioCaptureStereoMode(ZegoAudioCaptureStereoMode mode) async {
+    return await ZegoExpressImpl.instance.setAudioCaptureStereoMode(mode);
+  }
+
   /// Adds a target CDN URL to which the stream will be relayed from ZEGO's cloud streaming server.
   ///
   /// You can call this api to publish the audio and video streams that have been published to the ZEGO real-time audio and video cloud to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
@@ -222,7 +232,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets up the stream watermark before stream publishing (for the specified channel).
   ///
-  /// Set before publishing. The layout of the watermark cannot exceed the video encoding resolution of stream.
+  /// The layout of the watermark cannot exceed the video encoding resolution of the stream. It can be set at any time before or during the publishing stream.
   ///
   /// - [watermark] The upper left corner of the watermark layout is the origin of the coordinate system, and the area cannot exceed the size set by the encoding resolution. If it is null, the watermark is cancelled.
   /// - [isPreviewVisible] the watermark is visible on local preview

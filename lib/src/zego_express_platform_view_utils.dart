@@ -35,7 +35,8 @@ extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
     }
 
     /// Destroy the PlatformView and releases its resources
-    Future<void> destroyPlatformView(int viewID) async {
+    /// If it returns false, it's probably because the `viewID` to be destroyed doesn't exist.
+    Future<bool> destroyPlatformView(int viewID) async {
         return await ZegoExpressImpl.methodChannel.invokeMethod('destroyPlatformView', {
             'viewID': viewID
         });

@@ -7,6 +7,7 @@
 //
 
 #import "ZegoTextureRendererController.h"
+#import "ZegoLog.h"
 
 @interface ZegoTextureRendererController()
 
@@ -49,35 +50,64 @@
 - (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height {
     
     ZegoTextureRenderer *renderer = [[ZegoTextureRenderer alloc] initWithTextureRegistry:registry viewWidth:width viewHeight:height];
+
+    ZGLog(@"[createTextureRenderer] textureID:%ld, renderer:%p", (long)renderer.textureID, renderer);
     
     [self.allRenderers setObject:renderer forKey:@(renderer.textureID)];
+
+    [self logCurrentRenderers];
     
     return renderer.textureID;
 }
 
-- (void)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height {
+- (BOOL)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height {
     
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
-        return;
+        ZGLog(@"[updateTextureRendererSize] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
+        return NO;
     }
+
+    ZGLog(@"[updateTextureRendererSize] textureID:%ld, renderer:%p", (long)textureID, renderer);
     
     [renderer updateRenderSize:CGSizeMake(width, height)];
+
+    [self logCurrentRenderers];
+
+    return YES;
 }
 
-- (void)destroyTextureRenderer:(int64_t)textureID {
+- (BOOL)destroyTextureRenderer:(int64_t)textureID {
     
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
-        return;
+        ZGLog(@"[destroyTextureRenderer] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
+        return NO;
     }
+
+    ZGLog(@"[destroyTextureRenderer] textureID:%ld, renderer:%p", (long)textureID, renderer);
     
     [self.allRenderers removeObjectForKey:@(renderer.textureID)];
     
     // Release renderer
     [renderer destroy];
+
+    [self logCurrentRenderers];
+
+    return YES;
+}
+
+- (void)logCurrentRenderers {
+    NSMutableString *desc = [[NSMutableString alloc] init];
+    for (NSNumber *i in self.allRenderers) {
+        ZegoTextureRenderer *eachRenderer = self.allRenderers[i];
+        [desc appendFormat:@"[ID:%d|Rnd:%p] ", i.intValue, eachRenderer];
+    }
+    ZGLog(@"[ZegoTextureRendererController] currentRenderers: %@", desc);
 }
 
 
@@ -106,15 +136,34 @@
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
+        ZGLog(@"[addCapturedRenderer] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
         return NO;
     }
+
+    ZGLog(@"[addCapturedRenderer] textureID:%ld, renderer:%p, channel:%d", (long)textureID, renderer, channel.intValue);
     
     [self.capturedRenderers setObject:renderer forKey:channel];
+
+    [self logCurrentRenderers];
+
     return YES;
 }
 
 - (void)removeCapturedRenderer:(NSNumber *)channel {
+    ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:channel];
+
+    if (!renderer) {
+        ZGLog(@"[removeCapturedRenderer] renderer for channel:%d not exists", channel.intValue);
+        [self logCurrentRenderers];
+        return;
+    }
+
+    ZGLog(@"[removeCapturedRenderer] channel:%d, renderer:%p", channel.intValue, renderer);
+
     [self.capturedRenderers removeObjectForKey:channel];
+
+    [self logCurrentRenderers];
 }
 
 - (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID {
@@ -122,15 +171,34 @@
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
     if (!renderer) {
+        ZGLog(@"[addRemoteRenderer] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
         return NO;
     }
+
+    ZGLog(@"[addRemoteRenderer] textureID:%ld, renderer:%p, streamID:%@", (long)textureID, renderer, streamID);
     
     [self.remoteRenderers setObject:renderer forKey:streamID];
+
+    [self logCurrentRenderers];
+
     return YES;
 }
 
 - (void)removeRemoteRenderer:(NSString *)streamID {
+    ZegoTextureRenderer *renderer = [self.remoteRenderers objectForKey:streamID];
+
+    if (!renderer) {
+        ZGLog(@"[removeRemoteRenderer] renderer for streamID:%@ not exists", streamID);
+        [self logCurrentRenderers];
+        return;
+    }
+
+    ZGLog(@"[removeRemoteRenderer] streamID:%@, renderer:%p", streamID, renderer);
+
     [self.remoteRenderers removeObjectForKey:streamID];
+
+    [self logCurrentRenderers];
 }
 
 - (void)startRendering {
@@ -138,11 +206,18 @@
         return;
     }
     
-    _displayLink = [CADisplayLink displayLinkWithTarget:self
-                                               selector:@selector(onDisplayLink:)];
+    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    // 30帧刷新，对于 120hz刷新率的ipad，则为60帧刷新
-    _displayLink.frameInterval = 2;
+
+
+    if (@available(iOS 10.0, *)) {
+        // Set the FPS to 30Hz
+        _displayLink.preferredFramesPerSecond = 30;
+    } else {
+        // The FPS of iOS9 and below is 60Hz, so set triggered every two frames, that is, 30Hz
+        _displayLink.frameInterval = 2;
+    }
+
     _displayLink.paused = NO;
     
     self.isRendering = YES;
@@ -154,7 +229,7 @@
     }
     
     // TODO: 暂时先限定死只有在所有renderer都不存在时，停止渲染才成功
-    if (self.capturedRenderers.count == 0 && self.remoteRenderers == 0) {
+    if (self.capturedRenderers.count == 0 && self.remoteRenderers.count == 0) {
         self.displayLink.paused = YES;
         [_displayLink invalidate];
         

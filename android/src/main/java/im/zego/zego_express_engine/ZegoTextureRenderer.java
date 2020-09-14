@@ -33,6 +33,8 @@ class ZegoTextureRenderer {
 
         this.viewWidth = viewWidth;
         this.viewHeight = viewHeight;
+
+        ZegoLog.log("[ZegoTextureRenderer] [init] renderer:%s", this.hashCode());
     }
 
     void updateRenderSize(final int width, final int height) {
@@ -53,6 +55,8 @@ class ZegoTextureRenderer {
         if (this.surface != null) {
             surface.release();
         }
+
+        ZegoLog.log("[ZegoTextureRenderer] [release] renderer:%s", this.hashCode());
     }
 
     Surface getSurface() {

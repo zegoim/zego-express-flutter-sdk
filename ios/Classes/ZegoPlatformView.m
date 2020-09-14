@@ -7,6 +7,7 @@
 //
 
 #import "ZegoPlatformView.h"
+#import "ZegoLog.h"
 
 @interface ZegoPlatformView()
 
@@ -24,12 +25,18 @@
         _uiView.backgroundColor = [UIColor blackColor];
         _viewID = viewID;
     }
+
+    ZGLog(@"[ZegoPlatformView] [init] UIView:%p", self.uiView);
     
     return self;
 }
 
 - (UIView *)getUIView {
     return self.uiView;
+}
+
+- (void)dealloc {
+    ZGLog(@"[ZegoPlatformView] [dispose] UIView:%p", self.uiView);
 }
 
 # pragma mark - Flutter Platform View Delegate

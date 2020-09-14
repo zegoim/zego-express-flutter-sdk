@@ -11,6 +11,7 @@ package im.zego.zego_express_engine;
 import android.view.Surface;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -48,19 +49,27 @@ class ZegoTextureRendererController {
 
         ZegoTextureRenderer renderer = new ZegoTextureRenderer(textureEntry, viewWidth, viewHeight);
 
+        ZegoLog.log("[createTextureRenderer] textureID:%d, renderer:%s", renderer.textureID, renderer.hashCode());
+
         this.renderers.put(renderer.textureID, renderer);
+
+        logCurrentRenderers();
 
         return renderer.textureID;
     }
 
     /// Called when dart invoke `updateTextureRendererSize`
-    void updateTextureRendererSize(Long textureID, int viewWidth, int viewHeight) {
+    Boolean updateTextureRendererSize(Long textureID, int viewWidth, int viewHeight) {
 
         ZegoTextureRenderer renderer = this.renderers.get(textureID);
 
         if (renderer == null) {
-            return;
+            ZegoLog.log("[updateTextureRendererSize] renderer for textureID:%d not exists", textureID);
+            logCurrentRenderers();
+            return false;
         }
+
+        ZegoLog.log("[updateTextureRendererSize] textureID:%d, renderer:%s", textureID, renderer.hashCode());
 
         Surface originSurface = renderer.getSurface();
 
@@ -71,7 +80,7 @@ class ZegoTextureRendererController {
             if (canvas != null && originSurface.equals(canvas.view)) {
                 canvas.view = renderer.getSurface();
                 ZegoExpressEngine.getEngine().startPreview(canvas, channel);
-                return;
+                return true;
             }
         }
 
@@ -81,27 +90,55 @@ class ZegoTextureRendererController {
             if (canvas != null && originSurface.equals(canvas.view)) {
                 canvas.view = renderer.getSurface();
                 ZegoExpressEngine.getEngine().startPlayingStream(streamID, canvas, config);
-                return;
+                return true;
             }
         }
+
+        logCurrentRenderers();
+
+        return true;
     }
 
     /// Called when dart invoke `destroyTextureRenderer`
-    void destroyTextureRenderer(Long textureID) {
+    Boolean destroyTextureRenderer(Long textureID) {
 
         ZegoTextureRenderer renderer = this.renderers.get(textureID);
 
         if (renderer == null) {
-            return;
+            ZegoLog.log("[destroyTextureRenderer] renderer for textureID:%d not exists", textureID);
+            logCurrentRenderers();
+            return false;
         }
+
+        ZegoLog.log("[destroyTextureRenderer] textureID:%d, renderer: %d", textureID, renderer.hashCode());
 
         this.renderers.remove(textureID);
         renderer.release();
+
+        logCurrentRenderers();
+
+        return true;
     }
 
     /// Get TextureRenderer to pass to native when dart invoke `startPreview` or `startPlayingStream`
     ZegoTextureRenderer getTextureRenderer(Long textureID) {
-        return this.renderers.get(textureID);
+
+        ZegoTextureRenderer renderer = this.renderers.get(textureID);
+
+        ZegoLog.log("[getTextureRenderer] textureID:%d, renderer:%s", textureID, renderer == null ? "null" : renderer.hashCode());
+
+        logCurrentRenderers();
+
+        return renderer;
+    }
+
+    private void logCurrentRenderers() {
+        StringBuilder desc = new StringBuilder();
+        for (Long id: this.renderers.keySet()) {
+            ZegoTextureRenderer eachRenderer = this.renderers.get(id);
+            desc.append(String.format(Locale.ENGLISH, "[ID:%d|Rnd:%s] ", id, eachRenderer == null ? "null" : eachRenderer.hashCode()));
+        }
+        ZegoLog.log("[ZegoTextureRendererController] currentRenderers: %s", desc.toString());
     }
 
 }

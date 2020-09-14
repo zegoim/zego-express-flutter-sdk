@@ -118,6 +118,16 @@ enum ZegoAudioChannel {
   Stereo
 }
 
+/// Audio capture stereo mode
+enum ZegoAudioCaptureStereoMode {
+  /// Disable capture stereo, i.e. capture mono
+  None,
+  /// Always enable capture stereo
+  Always,
+  /// Adaptive mode, capture stereo when publishing stream only, capture mono when publishing and playing stream (e.g. talk/intercom scenes)
+  Adaptive
+}
+
 /// Audio Codec ID
 enum ZegoAudioCodecID {
   /// default
@@ -442,6 +452,51 @@ enum ZegoDataRecordState {
   Success
 }
 
+/// Log config
+///
+/// Configure the log file save path and the maximum log file size
+class ZegoLogConfig {
+
+  /// Log file save path
+  String logPath;
+
+  /// The maximum log file size (Bytes). The default maximum size is 5MB (5 * 1024 * 1024 Bytes)
+  int logSize;
+
+  ZegoLogConfig(this.logPath, this.logSize): assert(logPath != null), assert(logSize != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'logPath': this.logPath,
+      'logSize': this.logSize
+    };
+  }
+
+}
+
+/// Advanced engine configuration
+///
+/// When you need to use the advanced functions of SDK, such as custom video capture, custom video rendering and other advanced functions, you need to set the instance corresponding to the advanced function configuration to the corresponding field of this type of instance to achieve the purpose of enabling the corresponding advanced functions of ZegoExpressEngine.
+/// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
+class ZegoEngineConfig {
+
+  /// Log configuration, if not set, use the default configuration. It must be valid before [createEngine], if it is set after SDK initialization, it will take effect the next time [createEngine].
+  ZegoLogConfig logConfig;
+
+  /// Other special function switches, if not set, no other special functions are used by default. Please contact ZEGO technical support before use.
+  Map<String, String> advancedConfig;
+
+  ZegoEngineConfig(this.logConfig, this.advancedConfig);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'logConfig': this.logConfig?.toMap() ?? {},
+      'advancedConfig': this.advancedConfig ?? {}
+    };
+  }
+
+}
+
 /// Advanced room configuration
 ///
 /// Configure maximum number of users in the room and authentication token, etc.
@@ -583,12 +638,12 @@ class ZegoVideoConfig {
 
 }
 
-/// Video config
+/// Voice changer parameter
 ///
-/// developer can use the built-in presets of the SDK to change the parameters of the voice changer
+/// Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
 class ZegoVoiceChangerParam {
 
-  /// pitch
+  /// Pitch parameter, value range [-8.0, 8.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note that the voice changer effect is only valid for the captured sound.
   double pitch;
 
   ZegoVoiceChangerParam(this.pitch): assert(pitch != null);
@@ -675,7 +730,7 @@ class ZegoStream {
   /// User object instance
   ZegoUser user;
 
-  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String streamID;
 
   /// Stream extra info
@@ -880,7 +935,7 @@ class ZegoPlayerConfig {
   /// Set the video layer for playing the stream
   ZegoPlayerVideoLayer videoLayer;
 
-  ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(cdnConfig != null), assert(videoLayer != null);
+  ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(videoLayer != null);
 
   ZegoPlayerConfig.fromMap(Map<dynamic, dynamic> map):
     cdnConfig = ZegoCDNConfig.fromMap(map['cdnConfig']),
@@ -1107,7 +1162,7 @@ class ZegoMixerVideoConfig {
 /// Configure the mix stream input stream ID, type, and the layout
 class ZegoMixerInput {
 
-  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String streamID;
 
   /// Mix stream content type
@@ -1442,10 +1497,20 @@ abstract class ZegoMediaPlayer {
   /// - [mute] Mute local audio flag, The default is false.
   Future<void> muteLocal(bool mute);
 
-  /// Set player volume
+  /// Set mediaplayer volume. Both the local play volume and the publish volume are set
   ///
-  /// - [volume] The range is 0 ~ 100. The default is 50.
+  /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setVolume(int volume);
+
+  /// Set mediaplayer local play volume
+  ///
+  /// - [volume] The range is 0 ~ 200. The default is 60.
+  Future<void> setPlayVolume(int volume);
+
+  /// Set mediaplayer publish volume
+  ///
+  /// - [volume] The range is 0 ~ 200. The default is 60.
+  Future<void> setPublishVolume(int volume);
 
   /// Set playback progress callback interval
   ///
@@ -1455,10 +1520,11 @@ abstract class ZegoMediaPlayer {
   /// - [millisecond] Interval of playback progress callback in milliseconds
   Future<void> setProgressInterval(int millisecond);
 
-  /// Get the current volume
-  ///
-  /// The range is 0 ~ 100. The default is 50
-  Future<int> getVolume();
+  /// Gets the current local playback volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60
+  Future<int> getPlayVolume();
+
+  /// Gets the current publish volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60
+  Future<int> getPublishVolume();
 
   /// Get the total progress of your media resources
   ///
@@ -1477,6 +1543,11 @@ abstract class ZegoMediaPlayer {
 
   /// Get media player index
   int getIndex();
+
+  /// Gets the play volume
+  ///
+  /// @deprecated This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.
+  Future<int> getVolume();
 
 }
 

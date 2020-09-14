@@ -31,6 +31,15 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.destroyEngine();
   }
 
+  /// Sets up the advanced engine configurations. This API will only take effect when called before [createEngine].
+  ///
+  /// Developers need to call this interface to set advanced function configuration when they need advanced functions of the engine.
+  ///
+  /// - [config] Advanced engine configuration
+  static Future<void> setEngineConfig(ZegoEngineConfig config) async {
+    return await ZegoExpressImpl.setEngineConfig(config);
+  }
+
   /// Gets the SDK's version number.
   ///
   /// When the SDK is running, the developer finds that it does not match the expected situation and submits the problem and related logs to the ZEGO technical staff for locating. The ZEGO technical staff may need the information of the engine version to assist in locating the problem.
@@ -93,6 +102,7 @@ class ZegoExpressEngine {
   /// If developers need to use ZEGO room users notifications, please make sure that each login user sets isUserStatusNotify to true
   /// When a user logs in to a room for the first time, other users already exist in this room, and a user list of the type of addition is received.
   /// When the user is already in the room, other users in this room will trigger this callback to notify the changed users when they enter or exit the room.
+  /// The number of people the callback can return is 500.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
