@@ -7,6 +7,7 @@
 //
 
 #import "ZegoTextureRenderer.h"
+#import "ZegoLog.h"
 
 @interface ZegoTextureRenderer()
 
@@ -76,6 +77,8 @@
                 [strong_ptr setupGL];
         });
     }
+
+    ZGLog(@"[ZegoTextureRenderer] [init] renderer:%p", self);
     
     return self;
 }
@@ -126,6 +129,8 @@
     
     // Release GPU Resource
     [self.registry unregisterTexture:_textureID];
+
+    ZGLog(@"[ZegoTextureRenderer] [release] renderer:%p", self);
 }
 
 
@@ -502,7 +507,7 @@
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture>*)texture {
-    NSLog(@"[TextureRenderer] %@ unregistered", texture);
+    ZGLog(@"[ZegoTextureRenderer] [unregistered] renderer:%p", texture);
 }
 
 #pragma mark OpenGL Methods

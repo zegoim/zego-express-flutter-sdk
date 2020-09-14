@@ -1636,9 +1636,11 @@ public class ZegoExpressEngineMethodHandler {
 
         int viewID = intValue((Number) call.argument("viewID"));
 
-        ZegoPlatformViewFactory.getInstance().destroyPlatformView(viewID);
+        Boolean state = ZegoPlatformViewFactory.getInstance().destroyPlatformView(viewID);
 
-        result.success(null);
+        ZegoLog.log("[destroyPlatformView][Result] viewID: %d, success: %s", viewID, state ? "true" : "false");
+
+        result.success(state);
     }
 
 
@@ -1652,6 +1654,8 @@ public class ZegoExpressEngineMethodHandler {
 
         Long textureID = ZegoTextureRendererController.getInstance().createTextureRenderer(textureRegistry.createSurfaceTexture(), width, height);
 
+        ZegoLog.log("[createTextureRenderer][Result] w: %d, h: %d, textureID: %d", width, height, textureID);
+
         result.success(textureID);
     }
 
@@ -1662,9 +1666,11 @@ public class ZegoExpressEngineMethodHandler {
         int width = intValue((Number) call.argument("width"));
         int height = intValue((Number) call.argument("height"));
 
-        ZegoTextureRendererController.getInstance().updateTextureRendererSize(textureID, width, height);
+        Boolean state = ZegoTextureRendererController.getInstance().updateTextureRendererSize(textureID, width, height);
 
-        result.success(null);
+        ZegoLog.log("[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %d, success: %s", width, height, textureID, state ? "true" : "false");
+
+        result.success(state);
     }
 
     @SuppressWarnings("unused")
@@ -1672,9 +1678,11 @@ public class ZegoExpressEngineMethodHandler {
 
         Long textureID = longValue((Number) call.argument("textureID"));
 
-        ZegoTextureRendererController.getInstance().destroyTextureRenderer(textureID);
+        Boolean state = ZegoTextureRendererController.getInstance().destroyTextureRenderer(textureID);
 
-        result.success(null);
+        ZegoLog.log("[destroyTextureRenderer][Result] textureID: %d, success: %s", textureID, state ? "true" : "false");
+
+        result.success(state);
     }
 
 

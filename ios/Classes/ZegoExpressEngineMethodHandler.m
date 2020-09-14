@@ -1478,9 +1478,11 @@
 - (void)destroyPlatformView:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int viewID = [ZegoUtils intValue:call.arguments[@"viewID"]];
-    [[ZegoPlatformViewFactory sharedInstance] destroyPlatformView:@(viewID)];
+    BOOL state = [[ZegoPlatformViewFactory sharedInstance] destroyPlatformView:@(viewID)];
 
-    result(nil);
+    ZGLog(@"[destroyPlatformView] viewID: %d, success: %@", viewID, state ? @"true" : @"false");
+
+    result(@(state));
 }
 
 
@@ -1493,6 +1495,8 @@
 
     int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:_textureRegistry viewWidth:viewWidth viewHeight:viewHeight];
 
+    ZGLog(@"[createTextureRenderer][Result] w: %d, h: %d, textureID: %ld", viewWidth, viewHeight, (long)textureID);
+
     result(@(textureID));
 }
 
@@ -1501,17 +1505,21 @@
     int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
     int viewWidth = [ZegoUtils intValue:call.arguments[@"width"]];
     int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
-    [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
+    BOOL state = [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
 
-    result(nil);
+    ZGLog(@"[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %ld, success: %@", viewWidth, viewHeight, (long)textureID, state ? @"true" : @"false");
+
+    result(@(state));
 }
 
 - (void)destroyTextureRenderer:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
-    [[ZegoTextureRendererController sharedInstance] destroyTextureRenderer:textureID];
+    BOOL state = [[ZegoTextureRendererController sharedInstance] destroyTextureRenderer:textureID];
 
-    result(nil);
+    ZGLog(@"[destroyTextureRenderer][Result] textureID: %ld, success: %@", (long)textureID, state ? @"true" : @"false");
+
+    result(@(state));
 }
 
 

@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when dart invoke `destroyPlatformView`
 - (BOOL)destroyPlatformView:(NSNumber *)viewID;
 
-/// Get PlatfromView to pass to native when dart invoke `startPreview` or `startPlayingStream`
+/// Get PlatformView to pass to native when dart invoke `startPreview` or `startPlayingStream`
 - (nullable ZegoPlatformView *)getPlatformView:(NSNumber *)viewID;
 
 @end

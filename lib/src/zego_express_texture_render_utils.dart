@@ -15,7 +15,8 @@ extension ZegoExpressTextureRenderUtils on ZegoExpressEngine {
     }
 
     /// Update the size of the Texture renderer
-    Future<void> updateTextureRendererSize(int textureID, int width, int height) async {
+    /// If it returns false, it's probably because the `textureID` to be updated doesn't exist.
+    Future<bool> updateTextureRendererSize(int textureID, int width, int height) async {
         return await ZegoExpressImpl.methodChannel.invokeMethod('updateTextureRendererSize', {
             'textureID': textureID,
             'width': width,
@@ -24,7 +25,8 @@ extension ZegoExpressTextureRenderUtils on ZegoExpressEngine {
     }
 
     /// Destroys the Texture renderer and releases its resources
-    Future<void> destroyTextureRenderer(int textureID) async {
+    /// If it returns false, it's probably because the `textureID` to be destroyed doesn't exist.
+    Future<bool> destroyTextureRenderer(int textureID) async {
         return await ZegoExpressImpl.methodChannel.invokeMethod('destroyTextureRenderer', {
             'textureID': textureID
         });

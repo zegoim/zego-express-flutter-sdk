@@ -29,10 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height;
 
 /// Called when dart invoke `updateTextureRendererSize`
-- (void)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height;
+- (BOOL)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height;
 
 /// Called when dart invoke `destroyTextureRenderer`
-- (void)destroyTextureRenderer:(int64_t)textureID;
+- (BOOL)destroyTextureRenderer:(int64_t)textureID;
 
 
 
