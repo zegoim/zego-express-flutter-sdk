@@ -75,6 +75,8 @@
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
+    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:self.eventHandler];
+
     ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
