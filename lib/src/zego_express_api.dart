@@ -31,6 +31,15 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.destroyEngine();
   }
 
+  /// Sets up the advanced engine configurations. This API will only take effect when called before [createEngine].
+  ///
+  /// Developers need to call this interface to set advanced function configuration when they need advanced functions of the engine.
+  ///
+  /// - [config] Advanced engine configuration
+  static Future<void> setEngineConfig(ZegoEngineConfig config) async {
+    return await ZegoExpressImpl.setEngineConfig(config);
+  }
+
   /// Gets the SDK's version number.
   ///
   /// When the SDK is running, the developer finds that it does not match the expected situation and submits the problem and related logs to the ZEGO technical staff for locating. The ZEGO technical staff may need the information of the engine version to assist in locating the problem.

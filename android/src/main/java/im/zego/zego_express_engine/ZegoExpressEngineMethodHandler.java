@@ -56,6 +56,8 @@ import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
+import im.zego.zegoexpress.entity.ZegoEngineConfig;
+import im.zego.zegoexpress.entity.ZegoLogConfig;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
 import im.zego.zegoexpress.entity.ZegoMixerOutput;
@@ -103,7 +105,7 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
 
-        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%d", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario);
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
         result.success(null);
     }
@@ -114,6 +116,33 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.destroyEngine(null);
 
         result.success(null);
+    }
+
+    @SuppressWarnings({"unused", "unchecked"})
+    public static void setEngineConfig(MethodCall call, Result result) {
+
+        HashMap<String, Object> configMap = call.argument("config");
+        ZegoEngineConfig configObject = null;
+        if (configMap != null && !configMap.isEmpty()) {
+            configObject = new ZegoEngineConfig();
+            configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
+
+            HashMap<String, Object> logConfigMap = call.argument("logConfig");
+            ZegoLogConfig logConfigObject = null;
+            if (logConfigMap != null && !logConfigMap.isEmpty()) {
+                logConfigObject = new ZegoLogConfig();
+                logConfigObject.logPath = (String) logConfigMap.get("logPath");
+                logConfigObject.logSize = intValue((Number) configMap.get("logSize"));
+
+                configObject.logConfig = logConfigObject;
+            }
+
+            ZegoExpressEngine.setEngineConfig(configObject);
+
+            result.success(null);
+        } else {
+            result.error("setEngineConfig_null_config".toUpperCase(), "Invoke `setEngineConfig` with null config", null);
+        }
     }
 
     @SuppressWarnings("unused")

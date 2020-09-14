@@ -50,6 +50,12 @@ class ZegoExpressImpl {
     return null;
   }
 
+  static Future<void> setEngineConfig(ZegoEngineConfig config) async {
+    return await _channel.invokeMethod('setEngineConfig', {
+      'config': config.toMap()
+    });
+  }
+
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
   }

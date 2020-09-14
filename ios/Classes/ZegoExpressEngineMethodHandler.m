@@ -96,6 +96,35 @@
     result(nil);
 }
 
+- (void)setEngineConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoEngineConfig *configObject = nil;
+
+    if (configMap && configMap.count > 0) {
+
+        configObject = [[ZegoEngineConfig alloc] init];
+        configObject.advancedConfig = configMap[@"advancedConfig"];
+
+        NSDictionary *logConfigMap = call.arguments[@"logConfig"];
+        ZegoLogConfig *logConfigObject = nil;
+        if (logConfigMap && logConfigMap.count > 0) {
+            logConfigObject = [[ZegoLogConfig alloc] init];
+            logConfigObject.logPath = logConfigMap[@"logPath"];
+            logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:logConfigMap[@"logSize"]];
+
+            configObject.logConfig = logConfigObject;
+        }
+
+        [ZegoExpressEngine setEngineConfig:configObject];
+
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"setEngineConfig_null_config" uppercaseString] message:@"Invoke `setEngineConfig` with null config" details:nil]);
+    }
+}
+
+
 - (void)uploadLog:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     [[ZegoExpressEngine sharedEngine] uploadLog];

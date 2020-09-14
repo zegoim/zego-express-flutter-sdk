@@ -452,6 +452,51 @@ enum ZegoDataRecordState {
   Success
 }
 
+/// Log config
+///
+/// Configure the log file save path and the maximum log file size
+class ZegoLogConfig {
+
+  /// Log file save path
+  String logPath;
+
+  /// The maximum log file size (Bytes). The default maximum size is 5MB (5 * 1024 * 1024 Bytes)
+  int logSize;
+
+  ZegoLogConfig(this.logPath, this.logSize): assert(logPath != null), assert(logSize != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'logPath': this.logPath,
+      'logSize': this.logSize
+    };
+  }
+
+}
+
+/// Advanced engine configuration
+///
+/// When you need to use the advanced functions of SDK, such as custom video capture, custom video rendering and other advanced functions, you need to set the instance corresponding to the advanced function configuration to the corresponding field of this type of instance to achieve the purpose of enabling the corresponding advanced functions of ZegoExpressEngine.
+/// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
+class ZegoEngineConfig {
+
+  /// Log configuration, if not set, use the default configuration. It must be valid before [createEngine], if it is set after SDK initialization, it will take effect the next time [createEngine].
+  ZegoLogConfig logConfig;
+
+  /// Other special function switches, if not set, no other special functions are used by default. Please contact ZEGO technical support before use.
+  Map<String, String> advancedConfig;
+
+  ZegoEngineConfig(this.logConfig, this.advancedConfig);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'logConfig': this.logConfig?.toMap() ?? {},
+      'advancedConfig': this.advancedConfig ?? {}
+    };
+  }
+
+}
+
 /// Advanced room configuration
 ///
 /// Configure maximum number of users in the room and authentication token, etc.
@@ -890,7 +935,7 @@ class ZegoPlayerConfig {
   /// Set the video layer for playing the stream
   ZegoPlayerVideoLayer videoLayer;
 
-  ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(cdnConfig != null), assert(videoLayer != null);
+  ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(videoLayer != null);
 
   ZegoPlayerConfig.fromMap(Map<dynamic, dynamic> map):
     cdnConfig = ZegoCDNConfig.fromMap(map['cdnConfig']),
@@ -1502,7 +1547,6 @@ abstract class ZegoMediaPlayer {
   /// Gets the play volume
   ///
   /// @deprecated This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.
-  @Deprecated('This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.')
   Future<int> getVolume();
 
 }
