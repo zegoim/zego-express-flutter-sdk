@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
@@ -101,6 +102,8 @@ public class ZegoExpressEngineMethodHandler {
         setPlatformLanguage();
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
+
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%d", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario);
 
         result.success(null);
     }
@@ -285,19 +288,21 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = intValue((Number) canvasMap.get("backgroundColor"));
 
-            Object view = null;
+            Object view;
 
             if (enablePlatformView) {
                 // Render with PlatformView
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getView();
+                    view = platformView.getSurfaceView();
                 } else {
-                    // Preview video without creating the PlatfromView in advance
-                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Preview video without creating the PlatfromView in advance");
+                    // Preview video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    result.error("startPreview_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
                 }
 
             } else {
@@ -309,8 +314,10 @@ public class ZegoExpressEngineMethodHandler {
                 } else {
                     // Preview video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Preview video without creating TextureRenderer in advance");
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    result.error("startPreview_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
                 }
             }
 
@@ -664,19 +671,21 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = intValue((Number) canvasMap.get("backgroundColor"));
 
-            Object view = null;
+            Object view;
 
             if (enablePlatformView) {
                 // Render with PlatformView
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getView();
+                    view = platformView.getSurfaceView();
                 } else {
-                    // Play video without creating the PlatfromView in advance
-                    // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Play video without creating the PlatfromView in advance");
+                    // Play video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
                 }
 
             } else {
@@ -688,8 +697,10 @@ public class ZegoExpressEngineMethodHandler {
                 } else {
                     // Play video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    // TODO: Throw Flutter Exception
-                    Log.e("ZEGO", "[Flutter-Native] Play video without creating TextureRenderer in advance");
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
                 }
             }
 
@@ -1714,13 +1725,13 @@ public class ZegoExpressEngineMethodHandler {
             Method jniMethod = jniClass.getMethod("setPlatformLanguageJni", int.class);
             jniMethod.invoke(null, 4);
         } catch (ClassNotFoundException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
         } catch (NoSuchMethodException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, method setPlatformLanguageJni not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguageJni not found.");
         } catch (IllegalAccessException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, illegal access.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, illegal access.");
         } catch (InvocationTargetException e) {
-            Log.e("ZEGO", "[Flutter-Native] Set platform language failed, invocation failed.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, invocation failed.");
         }
     }
 }

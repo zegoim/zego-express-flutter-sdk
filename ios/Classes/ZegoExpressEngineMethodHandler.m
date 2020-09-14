@@ -75,6 +75,8 @@
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+
     result(nil);
 }
 
@@ -262,9 +264,12 @@
 
                 [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
             } else {
-                // Preview video without creating the PlatfromView in advance
-                // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                // TODO: Throw Flutter Exception
+                // Preview video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPreview_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
         } else {
@@ -274,7 +279,10 @@
             } else {
                 // Preview video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                // TODO: Throw Flutter Exception
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPreview_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
             // Using Custom Video Renderer
@@ -616,9 +624,12 @@
                     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas];
                 }
             } else {
-                // Play video without creating the PlatfromView in advance
-                // Need to invoke dart `createPlatformView` method in advance to create PlatfromView and get viewID (PlatformViewID)
-                // TODO: Throw Flutter Exception
+                // Play video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPlayingStream_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
         } else {
@@ -628,7 +639,10 @@
             } else {
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                // TODO: Throw Flutter Exception
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                return;
             }
 
             // Using Custom Video Renderer

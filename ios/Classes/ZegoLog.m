@@ -11,7 +11,7 @@
 
 static Class engineClass;
 static SEL logSelector;
-static const char *moduleName = "Flutter-Native";
+static const char *moduleName = "Flutter";
 
 @implementation ZegoLog
 
@@ -28,7 +28,7 @@ static const char *moduleName = "Flutter-Native";
 
     NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
     ((void (*)(id, SEL, const char *, const char *))objc_msgSend)(engineClass, logSelector, [message UTF8String], moduleName);
-    NSLog(@"[%s] %@", moduleName, message);
+    NSLog(@"[ZEGO] [%s] %@", moduleName, message);
 
     va_end(args);
 }
