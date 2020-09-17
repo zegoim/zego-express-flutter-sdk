@@ -75,6 +75,12 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
+import static im.zego.zego_express_engine.ZegoUtils.boolValue;
+import static im.zego.zego_express_engine.ZegoUtils.intValue;
+import static im.zego.zego_express_engine.ZegoUtils.longValue;
+import static im.zego.zego_express_engine.ZegoUtils.floatValue;
+import static im.zego.zego_express_engine.ZegoUtils.doubleValue;
+
 public class ZegoExpressEngineMethodHandler {
 
     private static boolean enablePlatformView = false;
@@ -1723,29 +1729,6 @@ public class ZegoExpressEngineMethodHandler {
         ZegoLog.log("[destroyTextureRenderer][Result] textureID: %d, success: %s", textureID, state ? "true" : "false");
 
         result.success(state);
-    }
-
-
-    /* Utils */
-
-    private static boolean boolValue(Boolean number) {
-        return number != null && number;
-    }
-
-    private static int intValue(Number number) {
-        return number != null ? number.intValue() : 0;
-    }
-
-    private static long longValue(Number number) {
-        return number != null ? number.longValue() : 0;
-    }
-
-    private static float floatValue(Number number) {
-        return number != null ? number.floatValue() : .0f;
-    }
-
-    private static double doubleValue(Number number) {
-        return number != null ? number.doubleValue() : .0f;
     }
 
     private static void setPlatformLanguage() {

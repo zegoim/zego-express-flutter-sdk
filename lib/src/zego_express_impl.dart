@@ -626,6 +626,13 @@ class ZegoExpressImpl {
     });
   }
 
+  /* Custom Video Capture */
+  Future<void> enableCustomVideoCapture(bool enable) async {
+    return await _channel.invokeMethod('enableCustomVideoCapture', {
+      'enable': enable
+    });
+  }
+
 
   /* EventHandler */
 

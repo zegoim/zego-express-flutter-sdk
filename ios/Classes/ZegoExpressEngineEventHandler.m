@@ -8,6 +8,8 @@
 
 #import "ZegoExpressEngineEventHandler.h"
 #import "ZegoLog.h"
+#import "ZegoCustomVideoCaptureManager.h"
+#import <objc/message.h>
 
 @interface ZegoExpressEngineEventHandler ()
 

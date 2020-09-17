@@ -13,6 +13,7 @@
 
 #import "ZegoPlatformViewFactory.h"
 #import "ZegoTextureRendererController.h"
+#import "ZegoCustomVideoCaptureManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -20,7 +21,7 @@
 
 @interface ZegoExpressEngineMethodHandler ()
 
-@property (nonatomic, assign) BOOL enablePlatformView;
+//@property (nonatomic, assign) BOOL enablePlatformView;
 
 @property (nonatomic, strong) id<FlutterTextureRegistry> textureRegistry;
 
@@ -69,7 +70,7 @@
 
     // Create engine
     [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self.eventHandler];
-
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler: [ZegoCustomVideoCaptureManager sharedInstance]];
     // Init texture renderer
     if (!self.enablePlatformView) {
         [[ZegoTextureRendererController sharedInstance] initController];
@@ -1216,6 +1217,12 @@
     }];
 }
 
+#pragma mark - CustomVideoCapture
+- (void)enableCustomVideoCapture:(FlutterMethodCall *)call result:(FlutterResult)result {
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
+    [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config];
+}
 
 #pragma mark - MediaPlayer
 

@@ -66,6 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// For video preview/play
 - (void)stopRendering;
 
+
+- (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:(ZegoVideoFrameParam *)param flipMode:(ZegoVideoFlipMode)flipMode channel:(ZegoPublishChannel)channel;
+
 @end
 
 NS_ASSUME_NONNULL_END
