@@ -23,7 +23,7 @@
 - (void)setVideoMirrorMode:(int)mode {
     _mirrorMode = mode;
     if([ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
-        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode];
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode channel:_channel];
     }
 }
 
