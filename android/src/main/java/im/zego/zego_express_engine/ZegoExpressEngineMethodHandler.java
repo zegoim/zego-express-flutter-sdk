@@ -48,6 +48,7 @@ import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
+import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
@@ -55,6 +56,7 @@ import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
@@ -110,6 +112,7 @@ public class ZegoExpressEngineMethodHandler {
         setPlatformLanguage();
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
+        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
@@ -1335,6 +1338,15 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    /* CustomVideoCapture */
+
+    @SuppressWarnings("unused")
+    public static void enableCustomVideoCapture(MethodCall call, Result result) {
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoCustomVideoCaptureConfig config = new ZegoCustomVideoCaptureConfig();
+        config.bufferType = ZegoVideoBufferType.RAW_DATA;
+        ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config);
+    }
 
     /* MediaPlayer */
 

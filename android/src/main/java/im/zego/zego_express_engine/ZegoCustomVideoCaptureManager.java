@@ -5,6 +5,7 @@ import java.util.HashMap;
 import im.zego.zego_express_engine.internal.IZegoCustomVideoCaptureCallback;
 import im.zego.zego_express_engine.internal.ZegoCustomVideoCaptureClient;
 import im.zego.zego_express_engine.internal.ZegoCustomVideoCaptureClientImpl;
+
 import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 
@@ -23,7 +24,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
         return singleton;
     }
 
-    public void setCustomVideoCaptureHandler(IZegoCustomVideoCaptureCallback handler, int channel) {
+    public void setCustomVideoCaptureCallback(IZegoCustomVideoCaptureCallback handler, int channel) {
         mHandlers.put(channel, handler);
     }
 
