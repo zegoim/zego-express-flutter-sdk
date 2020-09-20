@@ -172,6 +172,9 @@ class ZegoErrorCode {
   /// Stream publishing is temporarily interrupted. Retrying...
   static const int PublisherErrorNetworkInterrupt                                         = 1003020;
 
+  /// Stream publish retry has exceeds the maximum retry time.
+  static const int PublisherErrorRetryTimeout                                             = 1003021;
+
   /// Failed to publish the stream. The user is already publishing streams.
   static const int PublisherErrorAlreadyDoPublish                                         = 1003023;
 

@@ -627,9 +627,11 @@ class ZegoExpressImpl {
   }
 
   /* Custom Video Capture */
-  Future<void> enableCustomVideoCapture(bool enable) async {
+  Future<void> enableCustomVideoCapture(bool enable, ZegoCustomVideoCaptureConfig config, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('enableCustomVideoCapture', {
-      'enable': enable
+      'enable': enable,
+      'config': config.toMap(),
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 

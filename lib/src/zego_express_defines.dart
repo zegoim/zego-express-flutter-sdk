@@ -474,16 +474,39 @@ class ZegoLogConfig {
 
 }
 
+/// Custom video capture configuration
+///
+/// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
+/// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the corresponding parameter of the [ZegoEngineConfig] instance.
+/// Because when using custom video capture, SDK will no longer start the camera to capture video data. You need to collect video data from video sources by yourself.
+class ZegoCustomVideoCaptureConfig {
+
+  /// Custom video capture video frame data type
+  ZegoVideoBufferType bufferType;
+
+  ZegoCustomVideoCaptureConfig(this.bufferType): assert(bufferType != null);
+
+  ZegoCustomVideoCaptureConfig.fromMap(Map<dynamic, dynamic> map):
+    bufferType = map['bufferType'];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'bufferType': this.bufferType.index
+    };
+  }
+
+}
+
 /// Advanced engine configuration
 ///
 /// When you need to use the advanced functions of SDK, such as custom video capture, custom video rendering and other advanced functions, you need to set the instance corresponding to the advanced function configuration to the corresponding field of this type of instance to achieve the purpose of enabling the corresponding advanced functions of ZegoExpressEngine.
 /// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
 class ZegoEngineConfig {
 
-  /// Log configuration, if not set, use the default configuration. It must be valid before [createEngine], if it is set after SDK initialization, it will take effect the next time [createEngine].
+  /// Log configuration, if not set, use the default configuration. It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].
   ZegoLogConfig logConfig;
 
-  /// Other special function switches, if not set, no other special functions are used by default. Please contact ZEGO technical support before use.
+  /// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
   Map<String, String> advancedConfig;
 
   ZegoEngineConfig(this.logConfig, this.advancedConfig);
