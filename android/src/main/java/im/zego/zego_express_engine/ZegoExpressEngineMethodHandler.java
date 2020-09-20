@@ -1346,9 +1346,20 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void enableCustomVideoCapture(MethodCall call, Result result) {
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Double> configMap = call.argument("config");
         ZegoCustomVideoCaptureConfig config = new ZegoCustomVideoCaptureConfig();
-        config.bufferType = ZegoVideoBufferType.RAW_DATA;
+
+        if(configMap != null) {
+            int bufferType = intValue(configMap.get("bufferType"));
+            config.bufferType = ZegoVideoBufferType.getZegoVideoBufferType(bufferType);
+        } else {
+            // config 为空，则配置默认配置（Android平台下为raw data）
+            config.bufferType = ZegoVideoBufferType.RAW_DATA;
+        }
+
         ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config);
+
+        result.success(null);
     }
 
     /* MediaPlayer */

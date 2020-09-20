@@ -1220,8 +1220,20 @@
 #pragma mark - CustomVideoCapture
 - (void)enableCustomVideoCapture:(FlutterMethodCall *)call result:(FlutterResult)result {
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *configMap = call.arguments[@"config"];
     ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
-    [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config];
+    
+    if(configMap) {
+        ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
+        config.bufferType = bufferType;
+    } else {
+        // config 为空，则配置默认配置（iOS平台下为cvpixelbuffer）
+        config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
+    }
+    
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    
+    [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
 }
 
 #pragma mark - MediaPlayer
