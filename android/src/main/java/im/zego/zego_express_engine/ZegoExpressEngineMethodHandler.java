@@ -93,8 +93,11 @@ public class ZegoExpressEngineMethodHandler {
 
     private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
-    /* Main */
+    public static boolean isEnablePlatformView() {
+        return enablePlatformView;
+    }
 
+    /* Main */
     @SuppressWarnings("unused")
     public static void createEngine(MethodCall call, Result result, Application application, EventChannel.EventSink sink, TextureRegistry registry) {
 

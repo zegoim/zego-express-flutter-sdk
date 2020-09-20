@@ -19,7 +19,7 @@ import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import io.flutter.view.TextureRegistry;
 
-class ZegoTextureRendererController {
+public class ZegoTextureRendererController {
 
     private static ZegoTextureRendererController instance;
 
@@ -31,7 +31,7 @@ class ZegoTextureRendererController {
 
     public HashMap<String, ZegoPlayerConfig> playerConfigInUse = new HashMap<>(); // Key is playing streamID
 
-    static ZegoTextureRendererController getInstance() {
+    public static ZegoTextureRendererController getInstance() {
         if (instance == null) {
             synchronized (ZegoTextureRendererController.class) {
                 if (instance == null) {

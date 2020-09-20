@@ -1,16 +1,23 @@
 package im.zego.zego_express_engine.internal;
 
+import android.graphics.SurfaceTexture;
+
 import java.nio.ByteBuffer;
 
+import im.zego.zego_express_engine.ZegoExpressEngineMethodHandler;
+import im.zego.zego_express_engine.ZegoExpressEnginePlugin;
+import im.zego.zego_express_engine.ZegoTextureRendererController;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormat;
+import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.entity.ZegoVideoFrameParam;
 
 public class ZegoCustomVideoCaptureClientImpl extends ZegoCustomVideoCaptureClient {
 
     private ZegoPublishChannel mChannel;
     private ZegoVideoFrameParam mParam;
+    private ZegoVideoMirrorMode mMirrorMode;
 
     public ZegoCustomVideoCaptureClientImpl(ZegoPublishChannel channel) {
         this.mChannel = channel;
@@ -18,7 +25,8 @@ public class ZegoCustomVideoCaptureClientImpl extends ZegoCustomVideoCaptureClie
 
     @Override
     public void setVideoMirrorMode(int mode) {
-
+        mMirrorMode = ZegoVideoMirrorMode.getZegoVideoMirrorMode(mode);
+        ZegoExpressEngine.getEngine().setVideoMirrorMode(mMirrorMode, mChannel);
     }
 
     @Override
@@ -36,6 +44,13 @@ public class ZegoCustomVideoCaptureClientImpl extends ZegoCustomVideoCaptureClie
         mParam.strides[3] = param.strides[3];
 
         ZegoExpressEngine.getEngine().sendCustomVideoCaptureRawData(data, dataLength, mParam, referenceTimeMillisecond, mChannel);
+
+        // Android 使用 Texture Renderer 和 PlatformView 行为一致
+    }
+
+    @Override
+    public SurfaceTexture getSurfaceTexture() {
+        return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(mChannel);
     }
 
 }

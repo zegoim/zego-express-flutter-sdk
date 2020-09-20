@@ -1,6 +1,7 @@
 package im.zego.zego_express_engine.internal;
 
 import android.graphics.SurfaceTexture;
+import android.view.Surface;
 
 
 import java.nio.ByteBuffer;
@@ -105,4 +106,6 @@ public abstract class ZegoCustomVideoCaptureClient {
     public abstract void setVideoMirrorMode(int mode);
 
     public abstract void sendByteBuffer(ByteBuffer data, int dataLength, ZegoCustomVideoCaptureClient.VideoFrameParam param, long referenceTimeMillisecond);
+
+    public abstract SurfaceTexture getSurfaceTexture();
 }
