@@ -1357,7 +1357,13 @@ public class ZegoExpressEngineMethodHandler {
             config.bufferType = ZegoVideoBufferType.RAW_DATA;
         }
 
-        ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config);
+        int channel = intValue((Number) call.argument("channel"));
+        ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
+        if(enable) {
+            ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.NO_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
+        } else {
+            ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.ONLY_PREVIEW_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
+        }
 
         result.success(null);
     }

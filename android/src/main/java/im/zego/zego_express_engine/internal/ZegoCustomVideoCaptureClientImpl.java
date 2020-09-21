@@ -53,4 +53,9 @@ public class ZegoCustomVideoCaptureClientImpl extends ZegoCustomVideoCaptureClie
         return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(mChannel);
     }
 
+    @Override
+    public void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond) {
+        ZegoExpressEngine.getEngine().sendCustomVideoCaptureTextureData(textureID, width, height, referenceTimeMillisecond, mChannel);
+    }
+
 }

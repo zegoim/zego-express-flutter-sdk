@@ -108,4 +108,7 @@ public abstract class ZegoCustomVideoCaptureClient {
     public abstract void sendByteBuffer(ByteBuffer data, int dataLength, ZegoCustomVideoCaptureClient.VideoFrameParam param, long referenceTimeMillisecond);
 
     public abstract SurfaceTexture getSurfaceTexture();
+
+    public abstract void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond);
+
 }

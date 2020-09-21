@@ -1223,7 +1223,7 @@
     NSDictionary *configMap = call.arguments[@"config"];
     ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
     
-    if(configMap) {
+    if(![ZegoUtils isNullObject:configMap]) {
         ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
         config.bufferType = bufferType;
     } else {
@@ -1234,6 +1234,13 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
     
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
+    
+    // 使用外部采集时，关闭预览镜像(需要讨论)
+    if(enable) {
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeNoMirror channel:(ZegoPublishChannel)channel];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeOnlyPreviewMirror channel:(ZegoPublishChannel)channel];
+    }
 }
 
 #pragma mark - MediaPlayer

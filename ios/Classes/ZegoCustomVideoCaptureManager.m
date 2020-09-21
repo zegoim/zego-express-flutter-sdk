@@ -35,6 +35,12 @@
     }
 }
 
+- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp {
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureTextureData:textureID size:size timestamp:timestamp];
+    // 使用 Texture 方式渲染时，此方法无法直接渲染
+    // TODO: 考虑使用 gltexture -> cvpixelbuffer 的转换
+}
+
 + (instancetype)new {
     return nil;
 }
