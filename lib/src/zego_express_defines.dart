@@ -480,10 +480,10 @@ class ZegoLogConfig {
 /// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
 class ZegoEngineConfig {
 
-  /// Log configuration, if not set, use the default configuration. It must be valid before [createEngine], if it is set after SDK initialization, it will take effect the next time [createEngine].
+  /// Log configuration, if not set, use the default configuration. It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].
   ZegoLogConfig logConfig;
 
-  /// Other special function switches, if not set, no other special functions are used by default. Please contact ZEGO technical support before use.
+  /// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
   Map<String, String> advancedConfig;
 
   ZegoEngineConfig(this.logConfig, this.advancedConfig);
