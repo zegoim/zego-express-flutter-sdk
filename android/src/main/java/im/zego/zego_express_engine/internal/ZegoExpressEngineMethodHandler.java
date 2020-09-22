@@ -6,7 +6,7 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
-package im.zego.zego_express_engine;
+package im.zego.zego_express_engine.internal;
 
 import android.app.Application;
 import android.graphics.Rect;
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
@@ -77,11 +78,11 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
-import static im.zego.zego_express_engine.ZegoUtils.boolValue;
-import static im.zego.zego_express_engine.ZegoUtils.intValue;
-import static im.zego.zego_express_engine.ZegoUtils.longValue;
-import static im.zego.zego_express_engine.ZegoUtils.floatValue;
-import static im.zego.zego_express_engine.ZegoUtils.doubleValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.boolValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.intValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.longValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.floatValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.doubleValue;
 
 public class ZegoExpressEngineMethodHandler {
 

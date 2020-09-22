@@ -8,6 +8,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import im.zego.zego_express_engine.internal.ZegoLog;
+import im.zego.zego_express_engine.internal.ZegoPlatformViewFactory;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.EventChannel;
@@ -33,7 +36,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
     public ZegoExpressEnginePlugin() {
         try {
-            this.manager = Class.forName("im.zego.zego_express_engine.ZegoExpressEngineMethodHandler");
+            this.manager = Class.forName("im.zego.zego_express_engine.internal.ZegoExpressEngineMethodHandler");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

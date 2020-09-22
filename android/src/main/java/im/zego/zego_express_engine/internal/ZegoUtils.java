@@ -1,4 +1,4 @@
-package im.zego.zego_express_engine;
+package im.zego.zego_express_engine.internal;
 
 public class ZegoUtils {
     /* Utils */

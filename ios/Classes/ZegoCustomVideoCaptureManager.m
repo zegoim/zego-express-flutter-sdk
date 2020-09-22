@@ -52,7 +52,7 @@
 - (instancetype)initWithChannel:(ZegoPublishChannel)channel{
     if(self = [super init]) {
         _channel = channel;
-        _mirrorMode = ZegoVideoMirrorModeOnlyPreviewMirror;
+        _mirrorMode = ZegoVideoMirrorModeNoMirror;
         _videoParam = [[ZegoVideoFrameParam alloc] init];
     }
     

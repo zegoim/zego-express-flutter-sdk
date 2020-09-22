@@ -1,4 +1,4 @@
-package im.zego.zego_express_engine.internal;
+package im.zego.zego_express_engine;
 
 import android.graphics.SurfaceTexture;
 import android.view.Surface;

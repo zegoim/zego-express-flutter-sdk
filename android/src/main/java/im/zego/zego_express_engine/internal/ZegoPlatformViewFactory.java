@@ -6,7 +6,7 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
-package im.zego.zego_express_engine;
+package im.zego.zego_express_engine.internal;
 
 import android.content.Context;
 
@@ -29,7 +29,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
         this.platformViews = new HashMap<>();
     }
 
-    static ZegoPlatformViewFactory getInstance() {
+    public static ZegoPlatformViewFactory getInstance() {
         if (instance == null) {
             synchronized (ZegoPlatformViewFactory.class) {
                 if (instance == null) {

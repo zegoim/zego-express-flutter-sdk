@@ -2,8 +2,8 @@ package im.zego.zego_express_engine;
 
 import java.util.HashMap;
 
-import im.zego.zego_express_engine.internal.IZegoCustomVideoCaptureCallback;
-import im.zego.zego_express_engine.internal.ZegoCustomVideoCaptureClient;
+import im.zego.zego_express_engine.IZegoCustomVideoCaptureCallback;
+import im.zego.zego_express_engine.ZegoCustomVideoCaptureClient;
 import im.zego.zego_express_engine.internal.ZegoCustomVideoCaptureClientImpl;
 
 import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;

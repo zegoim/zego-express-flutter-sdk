@@ -4,9 +4,7 @@ import android.graphics.SurfaceTexture;
 
 import java.nio.ByteBuffer;
 
-import im.zego.zego_express_engine.ZegoExpressEngineMethodHandler;
-import im.zego.zego_express_engine.ZegoExpressEnginePlugin;
-import im.zego.zego_express_engine.ZegoTextureRendererController;
+import im.zego.zego_express_engine.ZegoCustomVideoCaptureClient;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormat;

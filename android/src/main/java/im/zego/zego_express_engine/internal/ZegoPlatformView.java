@@ -6,7 +6,7 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
-package im.zego.zego_express_engine;
+package im.zego.zego_express_engine.internal;
 
 import android.util.Log;
 
