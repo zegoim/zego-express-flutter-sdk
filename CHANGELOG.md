@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.15.2
+
+### **Bug Fixes**
+
+1. Fixed issue where media player setting local playback volume or publishing stream volume might not work
+
+2. Fixed a problem with the [onRoomUserUpdate] callback that had the probability of triggering a full member callback by mistake
+
 ## 1.15.0
 
 ### **New Features**
