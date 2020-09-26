@@ -35,5 +35,5 @@ android {
 }
 
 dependencies {
-    implementation 'im.zego:express-video:1.15.2'
+    implementation 'im.zego:express-video:1.16.0'
 }
