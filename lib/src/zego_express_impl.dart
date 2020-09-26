@@ -610,6 +610,39 @@ class ZegoExpressImpl {
 
   }
 
+  /* AudioEffectPlayer */
+
+  static final Map<int, ZegoAudioEffectPlayer> audioEffectPlayerMap = Map();
+
+  Future<ZegoAudioEffectPlayer> createAudioEffectPlayer() async {
+
+    int index = await _channel.invokeMethod('createAudioEffectPlayer');
+
+    if (index >= 0) {
+
+      ZegoAudioEffectPlayerImpl audioEffectPlayerInstance = ZegoAudioEffectPlayerImpl(index);
+      audioEffectPlayerMap[index] = audioEffectPlayerInstance;
+
+      return audioEffectPlayerInstance;
+
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyAudioEffectPlayer(ZegoAudioEffectPlayer audioEffectPlayer) async {
+
+    int index = audioEffectPlayer.getIndex();
+
+    await _channel.invokeMethod('destroyAudioEffectPlayer', {
+      'index': index
+    });
+
+    audioEffectPlayerMap.remove(index);
+
+    return;
+  }
+
 
   /* Record */
 
@@ -1119,6 +1152,26 @@ class ZegoExpressImpl {
         break;
 
 
+      /* AudioEffectPlayer */
+
+      case 'onAudioEffectPlayStateUpdate':
+        if (ZegoExpressEngine.onAudioEffectPlayStateUpdate == null) return;
+
+        int audioEffectPlayerIndex = map['audioEffectPlayerIndex'];
+        ZegoAudioEffectPlayer audioEffectPlayer = ZegoExpressImpl.audioEffectPlayerMap[audioEffectPlayerIndex];
+        if (audioEffectPlayer != null) {
+          ZegoExpressEngine.onAudioEffectPlayStateUpdate(
+            audioEffectPlayer,
+            map['audioEffectID'],
+            ZegoAudioEffectPlayState.values[map['state']],
+            map['errorCode']
+          );
+        } else {
+          // TODO: Can't find audio effect player
+        }
+        break;
+
+
       /* Record */
 
       case 'onCapturedDataRecordStateUpdate':
@@ -1303,6 +1356,137 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     });
 
     return ZegoMediaPlayerState.values[state];
+  }
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+}
+
+class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
+
+  int _index;
+
+  ZegoAudioEffectPlayerImpl(int index) : _index = index;
+
+  @override
+  Future<void> start(int audioEffectID, String path, ZegoAudioEffectPlayConfig config) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerStart', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'path': path ?? '',
+      'config': config?.toMap() ?? {}
+    });
+  }
+
+  @override
+  Future<void> stop(int audioEffectID) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerStop', {
+      'index': _index,
+      'audioEffectID': audioEffectID
+    });
+  }
+
+  @override
+  Future<void> pause(int audioEffectID) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerPause', {
+      'index': _index,
+      'audioEffectID': audioEffectID
+    });
+  }
+
+  @override
+  Future<void> resume(int audioEffectID) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerResume', {
+      'index': _index,
+      'audioEffectID': audioEffectID
+    });
+  }
+
+  @override
+  Future<void> stopAll() async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerStopAll', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> pauseAll() async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerPauseAll', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> resumeAll() async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerResumeAll', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<ZegoAudioEffectPlayerSeekToResult> seekTo(int audioEffectID, int millisecond) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerSeekTo', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'millisecond': millisecond
+    });
+
+    return ZegoAudioEffectPlayerSeekToResult.fromMap(map);
+  }
+
+  @override
+  Future<void> setVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerSetVolume', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'volume': volume
+    });
+  }
+
+  @override
+  Future<void> setVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerSetVolumeAll', {
+      'index': _index,
+      'volume': volume
+    });
+  }
+
+  @override
+  Future<int> getTotalDuration(int audioEffectID) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerGetTotalDuration', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+    });
+  }
+
+  @override
+  Future<int> getCurrentProgress(int audioEffectID) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerGetCurrentProgress', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+    });
+  }
+
+  @override
+  Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerLoadResource', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'path': path ?? ''
+    });
+
+    return ZegoAudioEffectPlayerLoadResourceResult.fromMap(map);
+  }
+
+  @override
+  Future<void> unloadResource(int audioEffectID) async {
+    return await ZegoExpressImpl._channel.invokeMethod('audioEffectPlayerUnloadResource', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+    });
   }
 
   @override

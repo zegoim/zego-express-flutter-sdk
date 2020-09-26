@@ -28,6 +28,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaPlayer *> *mediaPlayerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
+
 @end
 
 @implementation ZegoExpressEngineMethodHandler
@@ -1487,6 +1489,275 @@
         result(@(currentState));
     } else {
         result(@(0));
+    }
+}
+
+
+#pragma mark - AudioEffectPlayer
+
+- (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.audioEffectPlayerMap) {
+        self.audioEffectPlayerMap = [NSMutableDictionary dictionary];
+    }
+
+    ZegoAudioEffectPlayer *audioEffectPlayer = [[ZegoExpressEngine sharedEngine] createAudioEffectPlayer];
+
+    if (audioEffectPlayer) {
+        NSNumber *index = [audioEffectPlayer getIndex];
+
+        [audioEffectPlayer setEventHandler:_eventHandler];
+        self.audioEffectPlayerMap[index] = audioEffectPlayer;
+
+        result(index);
+
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [[ZegoExpressEngine sharedEngine] destroyAudioEffectPlayer:audioEffectPlayer];
+        [self.audioEffectPlayerMap removeObjectForKey:index];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"destroyAudioEffectPlayer_Can_not_find_player" uppercaseString] message:@"Invoke `destroyAudioEffectPlayer` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerStart:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        NSString *path = call.arguments[@"path"];
+
+        NSDictionary *configMap = call.arguments[@"config"];
+        ZegoAudioEffectPlayConfig *configObject = nil;
+
+        if (configMap && configMap.count > 0) {
+            configObject = [[ZegoAudioEffectPlayConfig alloc] init];
+            configObject.playCount = [ZegoUtils unsignedIntValue:configMap[@"playCount"]];
+            configObject.isPublishOut = [ZegoUtils boolValue:configMap[@"isPublishOut"]];;
+        }
+
+        [audioEffectPlayer start:audioEffectID path:path config:configObject];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerStart_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerStart` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerStop:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer stop:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerStop_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerStop` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerPause:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer pause:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerPause_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerPause` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerResume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer resume:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerResume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerResume` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerStopAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [audioEffectPlayer stopAll];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerStopAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerStopAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerPauseAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [audioEffectPlayer pauseAll];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerPauseAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerPauseAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerResumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [audioEffectPlayer resumeAll];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerResumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerResumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSeekTo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        unsigned long long millisecond = [ZegoUtils unsignedLongLongValue:call.arguments[@"millisecond"]];
+        [audioEffectPlayer seekTo:millisecond audioEffectID:audioEffectID callback:^(int errorCode) {
+            result(@{@"errorCode": @(errorCode)});
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSeekTo_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSeekTo` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setVolume:volume audioEffectID:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetVolume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetVolume` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setVolumeAll:volume];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerGetTotalDuration:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        unsigned long long totalDuration = [audioEffectPlayer getTotalDuration:audioEffectID];
+        result(@(totalDuration));
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerGetTotalDuration_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerGetTotalDuration` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerGetCurrentProgress:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        unsigned long long currentProgress = [audioEffectPlayer getCurrentProgress:audioEffectID];
+        result(@(currentProgress));
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerGetCurrentProgress_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerGetCurrentProgress` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerLoadResource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        NSString *path = call.arguments[@"path"];
+
+        [audioEffectPlayer loadResource:path audioEffectID:audioEffectID callback:^(int errorCode) {
+            result(@{@"errorCode": @(errorCode)});
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerLoadResource_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerLoadResource` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerUnloadResource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer unloadResource:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerUnloadResource_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerUnloadResource` but can't find specific player" details:nil]);
     }
 }
 

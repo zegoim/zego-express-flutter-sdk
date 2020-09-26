@@ -4,6 +4,7 @@ export 'src/zego_express_defines.dart';
 
 export 'src/zego_express_api.dart';
 
+export 'src/zego_express_api_audio_effect_player.dart';
 export 'src/zego_express_api_room.dart';
 export 'src/zego_express_api_publisher.dart';
 export 'src/zego_express_api_player.dart';

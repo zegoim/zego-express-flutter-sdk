@@ -430,6 +430,18 @@ enum ZegoMediaPlayerNetworkEvent {
   BufferEnded
 }
 
+/// AudioEffectPlayer state
+enum ZegoAudioEffectPlayState {
+  /// Not playing
+  NoPlay,
+  /// Playing
+  Playing,
+  /// Pausing
+  Pausing,
+  /// End of play
+  PlayEnded
+}
+
 /// Record type
 enum ZegoDataRecordType {
   /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
@@ -1445,6 +1457,26 @@ class ZegoDataRecordProgress {
 
 }
 
+/// AudioEffectPlayer play configuration
+class ZegoAudioEffectPlayConfig {
+
+  /// The number of play counts. When set to 0, it will play in an infinite loop until the user invoke [stop]. The default is 1, which means it will play only once.
+  int playCount;
+
+  /// Whether to mix audio effects into the publishing stream, the default is false.
+  bool isPublishOut;
+
+  ZegoAudioEffectPlayConfig(this.playCount, this.isPublishOut): assert(playCount != null), assert(isPublishOut != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'playCount': this.playCount,
+      'isPublishOut': this.isPublishOut
+    };
+  }
+
+}
+
 /// Zego MediaPlayer
 ///
 /// Yon can use ZegoMediaPlayer to play media resource files on the local or remote server, and can mix the sound of the media resource files that are played into the publish stream to achieve the effect of background music.
@@ -1548,6 +1580,100 @@ abstract class ZegoMediaPlayer {
   ///
   /// @deprecated This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.
   Future<int> getVolume();
+
+}
+
+/// Audio effect player
+abstract class ZegoAudioEffectPlayer {
+
+  /// Start playing audio effect
+  ///
+  /// The default is only played once and is not mixed into the publishing stream, if you want to change this please modify [config].
+  ///
+  /// - [audioEffectID] ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique id. The recommended methods are static self-incrementing id or the hash of the incoming sound effect file path.
+  /// - [path] The absolute path of the local resource. `assets://`、`ipod-library://` and network url are not supported. Set path as null if resource is loaded already using [loadResource]
+  /// - [config] Audio effect playback configuration. Set null will only be played once, and will not be mixed into the publishing stream.
+  Future<void> start(int audioEffectID, String path, ZegoAudioEffectPlayConfig config);
+
+  /// Stop playing audio effect
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<void> stop(int audioEffectID);
+
+  /// Pause playing audio effect
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<void> pause(int audioEffectID);
+
+  /// Resume playing audio effect
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<void> resume(int audioEffectID);
+
+  /// Stop playing all audio effect
+  Future<void> stopAll();
+
+  /// Pause playing all audio effect
+  Future<void> pauseAll();
+
+  /// Resume playing all audio effect
+  Future<void> resumeAll();
+
+  /// Set the specified playback progress
+  ///
+  /// Unit is millisecond
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - [millisecond] Point in time of specified playback progress
+  /// - Returns Result for audio effect player seek to playback progress
+  Future<ZegoAudioEffectPlayerSeekToResult> seekTo(int audioEffectID, int millisecond);
+
+  /// Set volume for the audio effect. Both the local play volume and the publish volume are set
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - [volume] The range is 0 ~ 200. The default is 100.
+  Future<void> setVolume(int audioEffectID, int volume);
+
+  /// Set volume for all audio effect. Both the local play volume and the publish volume are set
+  ///
+  /// - [volume] The range is 0 ~ 200. The default is 100.
+  Future<void> setVolumeAll(int volume);
+
+  /// Get the total progress of your media resources
+  ///
+  /// You should load resource before invoking this API, otherwise the return value is 0
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - Returns Unit is millisecond
+  Future<int> getTotalDuration(int audioEffectID);
+
+  /// Get current playing progress
+  ///
+  /// You should load resource before invoking this API, otherwise the return value is 0
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<int> getCurrentProgress(int audioEffectID);
+
+  /// Load audio effect resource
+  ///
+  /// In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file. Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - [path] the absolute path of the audio effect resource.
+  /// - Returns Result for audio effect player loads resources
+  Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path);
+
+  /// Unload audio effect resource
+  ///
+  /// After the sound effects are used up, related resources can be released through this interface; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
+  ///
+  /// - [audioEffectID] ID for the audio effect loaded
+  Future<void> unloadResource(int audioEffectID);
+
+  /// Get audio effect player index
+  ///
+  /// - Returns Audio effect player index
+  int getIndex();
 
 }
 
@@ -1713,6 +1839,36 @@ class ZegoMediaPlayerSeekToResult {
   ZegoMediaPlayerSeekToResult(this.errorCode): assert(errorCode != null);
 
   ZegoMediaPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for audio effect player loads resources
+///
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+class ZegoAudioEffectPlayerLoadResourceResult {
+
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  int errorCode;
+
+  ZegoAudioEffectPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
+
+  ZegoAudioEffectPlayerLoadResourceResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for audio effect player seek to playback progress
+///
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+class ZegoAudioEffectPlayerSeekToResult {
+
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  int errorCode;
+
+  ZegoAudioEffectPlayerSeekToResult(this.errorCode): assert(errorCode != null);
+
+  ZegoAudioEffectPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
     errorCode = map['errorCode'];
 
 }
