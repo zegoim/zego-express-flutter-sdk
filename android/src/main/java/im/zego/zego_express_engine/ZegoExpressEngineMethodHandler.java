@@ -1750,13 +1750,14 @@ public class ZegoExpressEngineMethodHandler {
 
     private static void setPlatformLanguage() {
         try {
-            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineJniAPI");
-            Method jniMethod = jniClass.getMethod("setPlatformLanguageJni", int.class);
+            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineInternalImpl");
+            Method jniMethod = jniClass.getDeclaredMethod("setPlatformLanguage", int.class);
+            jniMethod.setAccessible(true);
             jniMethod.invoke(null, 4);
         } catch (ClassNotFoundException e) {
-            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineInternalImpl not found.");
         } catch (NoSuchMethodException e) {
-            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguageJni not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguage not found.");
         } catch (IllegalAccessException e) {
             Log.e("ZEGO", "[Flutter] Set platform language failed, illegal access.");
         } catch (InvocationTargetException e) {
