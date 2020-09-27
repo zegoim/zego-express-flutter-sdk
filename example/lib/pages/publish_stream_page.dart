@@ -51,8 +51,6 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
       _controller.text = ZegoConfig.instance.streamID;
     }
 
-    ZegoExpressEngine.instance.enableCustomVideoCapture(true);
-
     setPublisherCallback();
 
     if (ZegoConfig.instance.enablePlatformView) {
@@ -184,7 +182,6 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
 
     // Logout room
     ZegoExpressEngine.instance.logoutRoom(ZegoConfig.instance.roomID);
-    ZegoExpressEngine.instance.enableCustomVideoCapture(false);
   }
 
   void onPublishButtonPressed() {
