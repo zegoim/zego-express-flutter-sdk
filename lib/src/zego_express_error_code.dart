@@ -145,7 +145,7 @@ class ZegoErrorCode {
   /// The business server has sent a signal to kick the user out of the room. Please check the reason for the kick-out.
   static const int RoomManualKickedOut                                                    = 1002055;
 
-  /// You must log in to the main room with [loginRoom] before logging in to multi room
+  /// You must log in to the main room with `loginRoom` before logging in to multi room
   static const int RoomWrongLoginSequence                                                 = 1002061;
 
   /// You must log out of the multi room before logging out of the main room
@@ -489,5 +489,20 @@ class ZegoErrorCode {
 
   /// Timestamp error (the later frame timestamp is smaller than the previous frame timestamp)
   static const int MediaDataPublisherTimestampGoBackError                                 = 1013004;
+
+  /// The AudioEffectPlayer instance is not created.
+  static const int AudioEffectPlayerNoInstance                                            = 1014000;
+
+  /// loadResource failed
+  static const int AudioEffectPlayerLoadFailed                                            = 1014001;
+
+  /// play audio effect failed
+  static const int AudioEffectPlayerPlayFailed                                            = 1014002;
+
+  /// seekTo failed
+  static const int AudioEffectPlayerSeekFailed                                            = 1014003;
+
+  /// The number of AudioEffectPlayer instances exceeds the maximum number allowed.
+  static const int AudioEffectPlayerExceedMaxCount                                        = 1014004;
 
 }

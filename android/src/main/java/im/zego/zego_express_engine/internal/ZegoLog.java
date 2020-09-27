@@ -23,12 +23,13 @@ public class ZegoLog {
     public static void log(String format, Object... args) {
         if (engineClass == null || logMethod == null) {
             try {
-                engineClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineJniAPI");
-                logMethod = engineClass.getMethod("logNoticeJni", String.class, String.class);
+                engineClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineInternalImpl");
+                logMethod = engineClass.getDeclaredMethod("logNotice", String.class, String.class);
+                logMethod.setAccessible(true);
             } catch (ClassNotFoundException e) {
-                Log.e("ZEGO", "[Flutter] logNotice failed, class ZegoExpressEngineJniAPI not found.");
+                Log.e("ZEGO", "[Flutter] logNotice failed, class ZegoExpressEngineInternalImpl not found.");
             } catch (NoSuchMethodException e) {
-                Log.e("ZEGO", "[Flutter] logNotice failed, method logNoticeJni not found.");
+                Log.e("ZEGO", "[Flutter] logNotice failed, method logNotice not found.");
             }
         }
 

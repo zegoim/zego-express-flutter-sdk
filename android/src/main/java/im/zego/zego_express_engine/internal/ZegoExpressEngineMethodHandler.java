@@ -22,8 +22,11 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
+import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerLoadResourceCallback;
+import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerSeekToCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendCustomCommandCallback;
@@ -54,6 +57,7 @@ import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
+import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
@@ -93,6 +97,8 @@ public class ZegoExpressEngineMethodHandler {
     private static ZegoExpressEngineEventHandler eventHandler = null;
 
     private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
+
+    private static HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
 
     public static boolean isEnablePlatformView() {
         return enablePlatformView;
@@ -1678,6 +1684,298 @@ public class ZegoExpressEngineMethodHandler {
     }
 
 
+    /* AudioEffectPlayer */
+
+    @SuppressWarnings("unused")
+    public static void createAudioEffectPlayer(MethodCall call, Result result) {
+
+        ZegoAudioEffectPlayer audioEffectPlayer = ZegoExpressEngine.getEngine().createAudioEffectPlayer();
+
+        if (audioEffectPlayer != null) {
+            int index = audioEffectPlayer.getIndex();
+
+            audioEffectPlayer.setEventHandler(eventHandler.audioEffectPlayerEventHandler);
+            audioEffectPlayerHashMap.put(index, audioEffectPlayer);
+
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyAudioEffectPlayer(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyAudioEffectPlayer(audioEffectPlayer);
+            audioEffectPlayerHashMap.remove(index);
+
+            result.success(null);
+
+        } else {
+            result.error("destroyAudioEffectPlayer_Can_not_find_player".toUpperCase(), "Invoke `destroyAudioEffectPlayer` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerStart(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            String path = call.argument("path");
+
+            HashMap<String, Object> configMap = call.argument("config");
+
+            ZegoAudioEffectPlayConfig config = null;
+            if (configMap != null && !configMap.isEmpty()) {
+                config = new ZegoAudioEffectPlayConfig();
+                config.playCount = intValue((Number) configMap.get("playCount"));
+                config.isPublishOut = boolValue((Boolean) configMap.get("isPublishOut"));
+            }
+
+            audioEffectPlayer.start(audioEffectID, path, config);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerStart_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerStart` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerStop(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.stop(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerStop_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerStop` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerPause(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.pause(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerPause_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerPause` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerResume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.resume(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerResume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerResume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerStopAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.stopAll();
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerStopAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerStopAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerPauseAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.pauseAll();
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerPauseAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerPauseAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerResumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.resumeAll();
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerResumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerResumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSeekTo(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            long millisecond = longValue((Number) call.argument("millisecond"));
+            audioEffectPlayer.seekTo(audioEffectID, millisecond, new IZegoAudioEffectPlayerSeekToCallback() {
+                @Override
+                public void onSeekToCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("audioEffectPlayerSeekTo_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSeekTo` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            int volume = intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setVolume(audioEffectID, volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetVolume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetVolume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetVolumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setVolumeAll(volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerGetTotalDuration(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            long totalDuration = audioEffectPlayer.getTotalDuration(audioEffectID);
+            result.success(totalDuration);
+
+        } else {
+            result.error("audioEffectPlayerGetTotalDuration_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerGetTotalDuration` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerGetCurrentProgress(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            long currentProgress = audioEffectPlayer.getCurrentProgress(audioEffectID);
+            result.success(currentProgress);
+
+        } else {
+            result.error("audioEffectPlayerGetCurrentProgress_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerGetCurrentProgress` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerLoadResource(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            String path = call.argument("path");
+            audioEffectPlayer.loadResource(audioEffectID, path, new IZegoAudioEffectPlayerLoadResourceCallback() {
+                @Override
+                public void onLoadResourceCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("audioEffectPlayerLoadResource_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerLoadResource` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerUnloadResource(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.unloadResource(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerUnloadResource_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerUnloadResource` but can't find specific player", null);
+        }
+    }
+
     /* Record */
 
     @SuppressWarnings("unused")
@@ -1766,13 +2064,14 @@ public class ZegoExpressEngineMethodHandler {
 
     private static void setPlatformLanguage() {
         try {
-            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineJniAPI");
-            Method jniMethod = jniClass.getMethod("setPlatformLanguageJni", int.class);
+            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineInternalImpl");
+            Method jniMethod = jniClass.getDeclaredMethod("setPlatformLanguage", int.class);
+            jniMethod.setAccessible(true);
             jniMethod.invoke(null, 4);
         } catch (ClassNotFoundException e) {
-            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineInternalImpl not found.");
         } catch (NoSuchMethodException e) {
-            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguageJni not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguage not found.");
         } catch (IllegalAccessException e) {
             Log.e("ZEGO", "[Flutter] Set platform language failed, illegal access.");
         } catch (InvocationTargetException e) {

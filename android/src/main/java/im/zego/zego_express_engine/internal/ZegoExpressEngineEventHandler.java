@@ -13,10 +13,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerEventHandler;
+import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerLoadResourceCallback;
 import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
+import im.zego.zegoexpress.constants.ZegoAudioEffectPlayState;
 import im.zego.zegoexpress.constants.ZegoDataRecordState;
 import im.zego.zegoexpress.constants.ZegoEngineState;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
@@ -754,6 +758,25 @@ class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerPlayingProgress");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("millisecond", millisecond);
+
+            sink.success(map);
+        }
+    };
+
+
+    IZegoAudioEffectPlayerEventHandler audioEffectPlayerEventHandler = new IZegoAudioEffectPlayerEventHandler() {
+        @Override
+        public void onAudioEffectPlayStateUpdate(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode) {
+            super.onAudioEffectPlayStateUpdate(audioEffectPlayer, audioEffectID, state, errorCode);
+            ZegoLog.log("[onAudioEffectPlayStateUpdate] idx: %d, effectID: %d, state: %s, errorCode: %d", audioEffectPlayer.getIndex(), audioEffectID, state.name(), errorCode);
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAudioEffectPlayStateUpdate");
+            map.put("audioEffectPlayerIndex", audioEffectPlayer.getIndex());
+            map.put("audioEffectID", audioEffectID);
+            map.put("state", state.value());
+            map.put("errorCode", errorCode);
 
             sink.success(map);
         }

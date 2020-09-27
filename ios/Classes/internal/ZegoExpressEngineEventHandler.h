@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZegoExpressEngineEventHandler : NSObject<ZegoEventHandler, ZegoMediaPlayerEventHandler, ZegoDataRecordEventHandler, ZegoCustomVideoCaptureHandler>
+@interface ZegoExpressEngineEventHandler : NSObject<ZegoEventHandler, ZegoMediaPlayerEventHandler, ZegoAudioEffectPlayerEventHandler, ZegoDataRecordEventHandler, ZegoCustomVideoCaptureHandler>
 
 - (instancetype)initWithSink:(FlutterEventSink)sink;
 

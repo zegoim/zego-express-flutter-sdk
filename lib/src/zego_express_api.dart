@@ -401,6 +401,16 @@ class ZegoExpressEngine {
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
 
+  /// Audio effect playback state callback
+  ///
+  /// This callback is triggered when the playback state of a audio effect of the audio effect player changes.
+  ///
+  /// - [audioEffectPlayer] Audio effect player instance that triggers this callback
+  /// - [audioEffectID] The ID of the audio effect resource that triggered this callback
+  /// - [state] The playback state of the audio effect
+  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  static void Function(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode) onAudioEffectPlayStateUpdate;
+
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
   /// - [state] File recording status, according to which you should determine the state of the file recording or the prompt of the UI.

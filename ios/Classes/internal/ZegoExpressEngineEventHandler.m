@@ -652,7 +652,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer stateUpdate:(ZegoMediaPlayerState)state errorCode:(int)errorCode {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaPlayerStateUpdate] state: %d, errorCode: %d", (int)state, errorCode);
+    ZGLog(@"[onMediaPlayerStateUpdate] idx: %d, state: %d, errorCode: %d", mediaPlayer.index.intValue, (int)state, errorCode);
 
     if (sink) {
         sink(@{
@@ -666,7 +666,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer networkEvent:(ZegoMediaPlayerNetworkEvent)networkEvent {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaPlayerNetworkEvent] networkEvent: %d", (int)networkEvent);
+    ZGLog(@"[onMediaPlayerNetworkEvent] idx: %d, networkEvent: %d", mediaPlayer.index.intValue, (int)networkEvent);
 
     if (sink) {
         sink(@{
@@ -686,6 +686,23 @@
             @"method": @"onMediaPlayerPlayingProgress",
             @"mediaPlayerIndex": mediaPlayer.index,
             @"millisecond": @(millisecond)
+        });
+    }
+}
+
+
+# pragma mark - ZegoAudioEffectPlayerEventHandler
+- (void)audioEffectPlayer:(ZegoAudioEffectPlayer *)audioEffectPlayer audioEffectID:(unsigned int)audioEffectID playStateUpdate:(ZegoAudioEffectPlayState)state errorCode:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAudioEffectPlayStateUpdate] idx: %d, state: %d, errorCode: %d", [audioEffectPlayer getIndex].intValue, (int)state, errorCode);
+
+    if (sink) {
+        sink(@{
+            @"method": @"onAudioEffectPlayStateUpdate",
+            @"audioEffectPlayerIndex": [audioEffectPlayer getIndex],
+            @"audioEffectID": @(audioEffectID),
+            @"state": @(state),
+            @"errorCode": @(errorCode)
         });
     }
 }
