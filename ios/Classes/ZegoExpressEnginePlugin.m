@@ -11,7 +11,7 @@
 
 @interface ZegoExpressEnginePlugin() <FlutterStreamHandler>
 
-@property (nonatomic, strong) id<FlutterTextureRegistry> textureRegistry;
+@property (nonatomic, strong) id<FlutterPluginRegistrar> registrar;
 
 @property (nonatomic, strong) FlutterMethodChannel *methodChannel;
 @property (nonatomic, strong) FlutterEventChannel *eventChannel;
@@ -26,7 +26,7 @@
 
     ZegoExpressEnginePlugin *instance = [[ZegoExpressEnginePlugin alloc] init];
 
-    instance.textureRegistry = [registrar textures];
+    instance.registrar = registrar;
 
     FlutterMethodChannel *methodChannel = [FlutterMethodChannel
       methodChannelWithName:@"plugins.zego.im/zego_express_engine"
@@ -93,7 +93,7 @@
         NSMutableDictionary *argumentsMap = [NSMutableDictionary dictionaryWithDictionary:call.arguments];
 
         argumentsMap[@"eventSink"] = _eventSink;
-        argumentsMap[@"textureRegistry"] = _textureRegistry;
+        argumentsMap[@"registrar"] = _registrar;
 
         call = [FlutterMethodCall methodCallWithMethodName:@"createEngine" arguments:argumentsMap];
     }

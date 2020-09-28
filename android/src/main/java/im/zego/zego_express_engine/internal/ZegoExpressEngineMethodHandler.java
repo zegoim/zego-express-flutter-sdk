@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -77,9 +78,11 @@ import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.TextureRegistry;
 
 import static im.zego.zego_express_engine.internal.ZegoUtils.boolValue;
@@ -90,9 +93,15 @@ import static im.zego.zego_express_engine.internal.ZegoUtils.doubleValue;
 
 public class ZegoExpressEngineMethodHandler {
 
-    private static boolean enablePlatformView = false;
+    private static Registrar registrar = null;
+
+    private static FlutterPluginBinding pluginBinding = null;
+
+    private static Application application = null;
 
     private static TextureRegistry textureRegistry = null;
+
+    private static boolean enablePlatformView = false;
 
     private static ZegoExpressEngineEventHandler eventHandler = null;
 
@@ -100,13 +109,9 @@ public class ZegoExpressEngineMethodHandler {
 
     private static HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
 
-    public static boolean isEnablePlatformView() {
-        return enablePlatformView;
-    }
-
     /* Main */
     @SuppressWarnings("unused")
-    public static void createEngine(MethodCall call, Result result, Application application, EventChannel.EventSink sink, TextureRegistry registry) {
+    public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         long appID = longValue((Number)call.argument("appID"));
         String appSign = call.argument("appSign");
@@ -114,7 +119,17 @@ public class ZegoExpressEngineMethodHandler {
         ZegoScenario scenario = ZegoScenario.getZegoScenario(intValue((Number)call.argument("scenario")));
 
         enablePlatformView = boolValue((Boolean) call.argument("enablePlatformView"));
-        textureRegistry = registry;
+
+        if (binding != null) {
+            application = (Application) binding.getApplicationContext();
+            textureRegistry = binding.getTextureRegistry();
+        } else {
+            application = (Application) reg.context();
+            textureRegistry = reg.textures();
+        }
+
+        registrar = reg;
+        pluginBinding = binding;
 
         eventHandler = new ZegoExpressEngineEventHandler(sink);
 
@@ -141,13 +156,13 @@ public class ZegoExpressEngineMethodHandler {
     public static void setEngineConfig(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
-        ZegoEngineConfig configObject = null;
+        ZegoEngineConfig configObject;
         if (configMap != null && !configMap.isEmpty()) {
             configObject = new ZegoEngineConfig();
             configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
 
             HashMap<String, Object> logConfigMap = call.argument("logConfig");
-            ZegoLogConfig logConfigObject = null;
+            ZegoLogConfig logConfigObject;
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
                 logConfigObject.logPath = (String) logConfigMap.get("logPath");
@@ -2061,6 +2076,34 @@ public class ZegoExpressEngineMethodHandler {
 
         result.success(state);
     }
+
+
+    /* Assets Utils */
+
+    @SuppressWarnings("unused")
+    public static void getAssetAbsolutePath(MethodCall call, Result result) {
+
+        String assetPath = call.argument("assetPath");
+        if (assetPath == null) {
+            result.success("");
+            return;
+        }
+
+        String assetKey;
+        if (pluginBinding != null) {
+            assetKey = pluginBinding.getFlutterAssets().getAssetFilePathByName(assetPath);
+        } else {
+            assetKey = registrar.lookupKeyForAsset(assetPath);
+        }
+        String realPath = application.getFilesDir().getAbsolutePath() + File.separator + assetKey;
+
+        ZegoLog.log("[getAssetAbsolutePath] assetPath: %s, realPath: %s", assetPath, realPath);
+
+        result.success(realPath);
+    }
+
+
+    /* Private functions */
 
     private static void setPlatformLanguage() {
         try {

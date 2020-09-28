@@ -18,3 +18,4 @@ export 'src/zego_express_api_custom_video_io.dart';
 
 export 'src/zego_express_texture_render_utils.dart';
 export 'src/zego_express_platform_view_utils.dart';
+export 'src/zego_express_assets_utils.dart';

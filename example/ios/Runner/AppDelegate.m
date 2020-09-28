@@ -1,10 +1,7 @@
 #import "AppDelegate.h"
 #import "GeneratedPluginRegistrant.h"
-#import "CustomCamera.h"
 
 @interface AppDelegate()
-
-@property(nonatomic, strong)CustomCamera *camera;
 
 @end
 

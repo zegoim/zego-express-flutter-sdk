@@ -11,6 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
+#import <ZegoExpressEngine/ZegoExpressEventHandler.h>
 
 @interface ZegoCustomVideoCaptureClient : NSObject
 
@@ -36,7 +37,7 @@
 
 @end
 
-@interface ZegoCustomVideoCaptureManager : NSObject
+@interface ZegoCustomVideoCaptureManager : NSObject<ZegoCustomVideoCaptureHandler>
 
 + (instancetype)sharedInstance;
 

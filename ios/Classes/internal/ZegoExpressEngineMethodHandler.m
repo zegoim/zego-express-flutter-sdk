@@ -21,9 +21,7 @@
 
 @interface ZegoExpressEngineMethodHandler ()
 
-//@property (nonatomic, assign) BOOL enablePlatformView;
-
-@property (nonatomic, strong) id<FlutterTextureRegistry> textureRegistry;
+@property (nonatomic, strong) id<FlutterPluginRegistrar> registrar;
 
 @property (nonatomic, strong) ZegoExpressEngineEventHandler *eventHandler;
 
@@ -65,7 +63,7 @@
     int scenario = [ZegoUtils intValue:call.arguments[@"scenario"]];
 
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
-    _textureRegistry = call.arguments[@"textureRegistry"];
+    _registrar = call.arguments[@"registrar"];
 
     // Init the event handler
     self.eventHandler = [[ZegoExpressEngineEventHandler alloc] initWithSink:call.arguments[@"eventSink"]];
@@ -1835,7 +1833,7 @@
     int viewWidth = [ZegoUtils intValue:call.arguments[@"width"]];
     int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
 
-    int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:_textureRegistry viewWidth:viewWidth viewHeight:viewHeight];
+    int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:[_registrar textures] viewWidth:viewWidth viewHeight:viewHeight];
 
     ZGLog(@"[createTextureRenderer][Result] w: %d, h: %d, textureID: %ld", viewWidth, viewHeight, (long)textureID);
 
@@ -1864,5 +1862,18 @@
     result(@(state));
 }
 
+
+#pragma mark - Assets Utils
+
+- (void)getAssetAbsolutePath:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *assetPath = call.arguments[@"assetPath"];
+    NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
+    NSString *realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+
+    ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
+
+    result(realPath);
+}
 
 @end

@@ -8,9 +8,10 @@
 #import "ZegoCustomVideoCaptureManager.h"
 #import "ZegoTextureRendererController.h"
 #import "ZegoExpressEngineMethodHandler.h"
+#import "ZegoLog.h"
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
-@interface ZegoCustomVideoCaptureClient()<ZegoCustomVideoCaptureHandler>
+@interface ZegoCustomVideoCaptureClient()
 
 @property (nonatomic, assign)ZegoPublishChannel channel;
 @property (nonatomic, assign)ZegoVideoMirrorMode mirrorMode;
@@ -60,7 +61,7 @@
 }
 
 - (void) dealloc {
-    NSLog(@"[CustomVideoCaptureClient] dealloc");
+    ZGLog(@"[CustomVideoCaptureClient] dealloc");
 }
 
 @end
@@ -99,7 +100,7 @@
 
 # pragma mark ZegoCustomVideoCaptureHandler
 - (void)onStart:(ZegoPublishChannel)channel {
-    NSLog(@"[CustomVideoCapture] onStart");
+    ZGLog(@"[CustomVideoCapture] onStart");
     
     ZegoCustomVideoCaptureClient *client = [[ZegoCustomVideoCaptureClient alloc] initWithChannel:channel];
     id<ZegoCustomVideoCaptureDelegate> delegate = [self.delegates objectForKey:@(channel)];
@@ -112,7 +113,7 @@
 
 
 - (void)onStop:(ZegoPublishChannel)channel {
-    NSLog(@"[CustomVideoCapture] onStop");
+    ZGLog(@"[CustomVideoCapture] onStop");
     
     [self.clients removeObjectForKey:@(channel)];
     id<ZegoCustomVideoCaptureDelegate> delegate = [self.delegates objectForKey:@(channel)];
