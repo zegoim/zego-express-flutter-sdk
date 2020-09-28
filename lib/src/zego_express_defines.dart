@@ -32,7 +32,7 @@ enum ZegoEngineState {
 enum ZegoRoomState {
   /// Unconnected state, enter this state before logging in and after exiting the room. If there is a steady state abnormality in the process of logging in to the room, such as AppID and AppSign are incorrect, or if the same user name is logged in elsewhere and the local end is KickOut, it will enter this state.
   Disconnected,
-  /// The state that the connection is being requested. It will enter this state after successful execution login room function. The display of the application interface is usually performed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting connection status.
+  /// The state that the connection is being requested. It will enter this state after successful execution login room function. The display of the UI is usually performed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting connection status.
   Connecting,
   /// The status that is successfully connected. Entering this status indicates that the login to the room has been successful. The user can receive the callback notification of the user and the stream information in the room.
   Connected
@@ -72,7 +72,7 @@ enum ZegoVideoMirrorMode {
 enum ZegoPublisherState {
   /// The state is not published, and it is in this state before publishing the stream. If a steady-state exception occurs in the publish process, such as AppID and AppSign are incorrect, or if other users are already publishing the stream, there will be a failure and enter this state.
   NoPublish,
-  /// The state that it is requesting to publish the stream. After the publish stream interface is successfully called, and the application interface is usually displayed using the state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
+  /// The state that it is requesting to publish the stream after the [startPublishingStream] function is successfully called. The UI is usually displayed through this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
   PublishRequesting,
   /// The state that the stream is being published, entering the state indicates that the stream has been successfully published, and the user can communicate normally.
   Publishing
@@ -210,7 +210,7 @@ enum ZegoTrafficControlMinVideoBitrateMode {
 enum ZegoPlayerState {
   /// The state of the flow is not played, and it is in this state before the stream is played. If the steady flow anomaly occurs during the playing process, such as AppID and AppSign are incorrect, it will enter this state.
   NoPlay,
-  /// The state that the stream is being requested for playing. After the stream playing interface is successfully called, it will enter the state, and the application interface is usually displayed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
+  /// The state that the stream is being requested for playing. After the [startPlayingStream] function is successfully called, it will enter the state. The UI is usually displayed through this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
   PlayRequesting,
   /// The state that the stream is being playing, entering the state indicates that the stream has been successfully played, and the user can communicate normally.
   Playing
@@ -458,7 +458,7 @@ enum ZegoDataRecordType {
 enum ZegoDataRecordState {
   /// Unrecorded state, which is the state when a recording error occurs or before recording starts.
   NoRecord,
-  /// Recording in progress, in this state after successfully call [startCapturedMediaRecord]
+  /// Recording in progress, in this state after successfully call [startRecordingCapturedData] function
   Recording,
   /// Record successs
   Success
@@ -1569,7 +1569,7 @@ abstract class ZegoMediaPlayer {
 
   /// Set playback progress callback interval
   ///
-  /// This interface can control the callback frequency of [onMediaPlayerPlayingProgress]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1s
+  /// This function can control the callback frequency of [onMediaPlayerPlayingProgress]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1s
   /// This callback are not returned exactly at the set callback interval, but rather at the frequency at which the audio or video frames are processed to determine whether the callback is needed to call
   ///
   /// - [millisecond] Interval of playback progress callback in milliseconds
@@ -1583,14 +1583,14 @@ abstract class ZegoMediaPlayer {
 
   /// Get the total progress of your media resources
   ///
-  /// You should load resource before invoking this API, otherwise the return value is 0
+  /// You should load resource before invoking this function, otherwise the return value is 0
   ///
   /// - Returns Unit is millisecond
   Future<int> getTotalDuration();
 
   /// Get current playing progress
   ///
-  /// You should load resource before invoking this API, otherwise the return value is 0
+  /// You should load resource before invoking this function, otherwise the return value is 0
   Future<int> getCurrentProgress();
 
   /// Get the current playback status
@@ -1601,7 +1601,8 @@ abstract class ZegoMediaPlayer {
 
   /// Gets the play volume
   ///
-  /// @deprecated This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.
+  /// @deprecated This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.
+  @Deprecated('This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.')
   Future<int> getVolume();
 
 }
@@ -1664,7 +1665,7 @@ abstract class ZegoAudioEffectPlayer {
 
   /// Get the total progress of your media resources
   ///
-  /// You should load resource before invoking this API, otherwise the return value is 0
+  /// You should load resource before invoking this function, otherwise the return value is 0
   ///
   /// - [audioEffectID] ID for the audio effect
   /// - Returns Unit is millisecond
@@ -1672,7 +1673,7 @@ abstract class ZegoAudioEffectPlayer {
 
   /// Get current playing progress
   ///
-  /// You should load resource before invoking this API, otherwise the return value is 0
+  /// You should load resource before invoking this function, otherwise the return value is 0
   ///
   /// - [audioEffectID] ID for the audio effect
   Future<int> getCurrentProgress(int audioEffectID);
@@ -1688,7 +1689,7 @@ abstract class ZegoAudioEffectPlayer {
 
   /// Unload audio effect resource
   ///
-  /// After the sound effects are used up, related resources can be released through this interface; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
+  /// After the sound effects are used up, related resources can be released through this function; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
   ///
   /// - [audioEffectID] ID for the audio effect loaded
   Future<void> unloadResource(int audioEffectID);

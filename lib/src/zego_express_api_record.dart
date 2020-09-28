@@ -8,7 +8,7 @@ extension ZegoExpressEngineRecord on ZegoExpressEngine {
   /// Starts to record locally captured audio or video and directly save the data to a file.
   ///
   /// Currently only one task can be recorded simultaneously.
-  /// This API needs to be called after the success of [startPreview] or [startPublishingStream] to be effective.
+  /// This function needs to be called after the success of [startPreview] or [startPublishingStream] to be effective.
   /// Developers should not [stopPreview] or [stopPublishingStream] during recording, otherwise the SDK will end the current recording task.
   /// Developers will receive the [onCapturedDataRecordStateUpdate] and the [onCapturedDataRecordProgressUpdate] callback after start recording.
   ///

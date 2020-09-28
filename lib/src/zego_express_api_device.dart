@@ -9,8 +9,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// This api is used to control whether the collected audio data is used. When the microphone is muted (disabled), the data is collected and discarded, and the microphone is still occupied.
   /// The microphone is still occupied because closing or opening the microphone on the hardware is a relatively heavy operation, and real users may have frequent operations. For trade-off reasons, this api simply discards the collected data.
-  /// If you really want SDK to give up occupy the microphone, you can call the [enableAudioCaptureDevice] interface.
-  /// Developers who want to control whether to use microphone on the UI should use this interface to avoid unnecessary performance overhead by using the [enableAudioCaptureDevice].
+  /// If you really want SDK to give up occupy the microphone, you can call the [enableAudioCaptureDevice] function.
+  /// Developers who want to control whether to use microphone on the UI should use this function to avoid unnecessary performance overhead by using the [enableAudioCaptureDevice].
   ///
   /// - [mute] Whether to mute (disable) the microphone, true: mute (disable) microphone, false: enable microphone. The default is false.
   Future<void> muteMicrophone(bool mute) async {
@@ -47,7 +47,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Enables or disables the audio capture device.
   ///
   /// This api is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
-  /// Occupying the audio capture device and giving up Occupying the audio device is a relatively heavy operation, and the [muteMicrophone] interface is generally recommended.
+  /// Occupying the audio capture device and giving up Occupying the audio device is a relatively heavy operation, and the [muteMicrophone] function is generally recommended.
   ///
   /// - [enable] Whether to enable the audio capture device, true: disable audio capture device, false: enable audio capture device
   Future<void> enableAudioCaptureDevice(bool enable) async {
@@ -65,7 +65,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Turns on/off the camera (for the specified channel).
   ///
-  /// This interface is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
+  /// This function is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
   /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
@@ -76,7 +76,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Switches to the front or the rear camera (for the specified channel).
   ///
-  /// This interface is used to control the front or rear camera
+  /// This function is used to control the front or rear camera
   /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
   ///
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
@@ -133,7 +133,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// set headphone monitor volume, this setting takes effect when the headset is connected.
   ///
-  /// - [volume] headphone monitor volume, range from 0 to 100, 80 as default
+  /// - [volume] headphone monitor volume, range from 0 to 200, 100 as default
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
