@@ -103,8 +103,6 @@ public class ZegoExpressEngineMethodHandler {
 
     private static boolean enablePlatformView = false;
 
-    private static ZegoExpressEngineEventHandler eventHandler = null;
-
     private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
     private static HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
@@ -131,15 +129,19 @@ public class ZegoExpressEngineMethodHandler {
         registrar = reg;
         pluginBinding = binding;
 
-        eventHandler = new ZegoExpressEngineEventHandler(sink);
+        // Set eventSink for ZegoExpressEngineEventHandler
+        if (sink == null) {
+            ZegoLog.error("[createEngine] FlutterEventSink is null");
+        }
+        ZegoExpressEngineEventHandler.getInstance().sink = sink;
 
-        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, eventHandler.eventHandler);
+        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, ZegoExpressEngineEventHandler.getInstance().eventHandler);
         setPlatformLanguage();
 
-        ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
+        ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
 
-        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario.name());
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
         result.success(null);
     }
@@ -363,7 +365,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Preview video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
-                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_PlatformView".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -378,7 +380,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Preview video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
-                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -746,7 +748,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
-                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -761,7 +763,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
-                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -1367,21 +1369,25 @@ public class ZegoExpressEngineMethodHandler {
 
     @SuppressWarnings("unused")
     public static void enableCustomVideoCapture(MethodCall call, Result result) {
+
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         HashMap<String, Double> configMap = call.argument("config");
+        int channel = intValue((Number) call.argument("channel"));
+
         ZegoCustomVideoCaptureConfig config = new ZegoCustomVideoCaptureConfig();
 
-        if(configMap != null) {
+        if (configMap != null && !configMap.isEmpty()) {
             int bufferType = intValue(configMap.get("bufferType"));
             config.bufferType = ZegoVideoBufferType.getZegoVideoBufferType(bufferType);
         } else {
-            // config 为空，则配置默认配置（Android平台下为raw data）
+            // If `config` is empty, set the default configuration (raw data for Android)
             config.bufferType = ZegoVideoBufferType.RAW_DATA;
         }
 
-        int channel = intValue((Number) call.argument("channel"));
         ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
-        if(enable) {
+
+        // When using custom video capture, turn off preview mirroring
+        if (enable) {
             ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.NO_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
         } else {
             ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.ONLY_PREVIEW_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
@@ -1400,7 +1406,7 @@ public class ZegoExpressEngineMethodHandler {
         if (mediaPlayer != null) {
             int index = mediaPlayer.getIndex();
 
-            mediaPlayer.setEventHandler(eventHandler.mediaPlayerEventHandler);
+            mediaPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
 
             result.success(index);
@@ -1709,7 +1715,7 @@ public class ZegoExpressEngineMethodHandler {
         if (audioEffectPlayer != null) {
             int index = audioEffectPlayer.getIndex();
 
-            audioEffectPlayer.setEventHandler(eventHandler.audioEffectPlayerEventHandler);
+            audioEffectPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().audioEffectPlayerEventHandler);
             audioEffectPlayerHashMap.put(index, audioEffectPlayer);
 
             result.success(index);

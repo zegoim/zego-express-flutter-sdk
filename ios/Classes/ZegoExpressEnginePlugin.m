@@ -61,6 +61,7 @@
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(FlutterEventSink)events {
     self.eventSink = events;
+    ZGLog(@"[FlutterEventSink] [onListen] set eventSink: %p", _eventSink);
     return nil;
 }
 
@@ -78,6 +79,7 @@
  * @return A FlutterError instance, if teardown fails.
  */
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    ZGLog(@"[FlutterEventSink] [onCancel] set eventSink: %p to nil", _eventSink);
     self.eventSink = nil;
     return nil;
 }

@@ -21,6 +21,18 @@ public class ZegoLog {
     static Method logMethod;
 
     public static void log(String format, Object... args) {
+        String message = String.format(Locale.ENGLISH, format, args);
+        Log.d("ZEGO", "[Flutter] " + message);
+        ZegoLog.logNotice(message);
+    }
+
+    public static void error(String format, Object... args) {
+        String message = String.format(Locale.ENGLISH, format, args);
+        Log.e("ZEGO", "[Flutter] [ERROR] " + message);
+        ZegoLog.logNotice(message);
+    }
+
+    private static void logNotice(String message) {
         if (engineClass == null || logMethod == null) {
             try {
                 engineClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineInternalImpl");
@@ -32,9 +44,6 @@ public class ZegoLog {
                 Log.e("ZEGO", "[Flutter] logNotice failed, method logNotice not found.");
             }
         }
-
-        String message = String.format(Locale.ENGLISH, format, args);
-        Log.d("ZEGO", "[Flutter] " + message);
 
         try {
             if (logMethod != null) {

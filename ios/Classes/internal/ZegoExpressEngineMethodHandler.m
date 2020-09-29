@@ -23,8 +23,6 @@
 
 @property (nonatomic, strong) id<FlutterPluginRegistrar> registrar;
 
-@property (nonatomic, strong) ZegoExpressEngineEventHandler *eventHandler;
-
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaPlayer *> *mediaPlayerMap;
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
@@ -51,11 +49,6 @@
 }
 
 - (void)createEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // Set platform language to dart
-    SEL selector = NSSelectorFromString(@"setPlatformLanguage:");
-    if ([ZegoExpressEngine respondsToSelector:selector]) {
-        ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
-    }
 
     unsigned int appID = [ZegoUtils unsignedIntValue:call.arguments[@"appID"]];
     NSString *appSign = call.arguments[@"appSign"];
@@ -65,20 +58,31 @@
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
     _registrar = call.arguments[@"registrar"];
 
-    // Init the event handler
-    self.eventHandler = [[ZegoExpressEngineEventHandler alloc] initWithSink:call.arguments[@"eventSink"]];
+    // Set eventSink for ZegoExpressEngineEventHandler
+    FlutterEventSink sink = call.arguments[@"eventSink"];
+    if (!sink) {
+        ZGError(@"[createEngine] FlutterEventSink is nil");
+    }
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
-    [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self.eventHandler];
-    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler: [ZegoCustomVideoCaptureManager sharedInstance]];
+    [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+
+    // Set platform language to dart
+    SEL selector = NSSelectorFromString(@"setPlatformLanguage:");
+    if ([ZegoExpressEngine respondsToSelector:selector]) {
+        ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
+    }
+
+    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:[ZegoCustomVideoCaptureManager sharedInstance]];
+
     // Init texture renderer
     if (!self.enablePlatformView) {
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
-    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:self.eventHandler];
-
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }
@@ -91,8 +95,6 @@
     if (!self.enablePlatformView) {
         [[ZegoTextureRendererController sharedInstance] uninitController];
     }
-
-    self.eventHandler = nil;
 
     result(nil);
 }
@@ -299,7 +301,7 @@
                 // Preview video without creating the PlatformView in advance
                 // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
-                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                ZGError(@"[startPreview] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPreview_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -312,7 +314,7 @@
                 // Preview video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
-                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                ZGError(@"[startPreview] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPreview_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -659,7 +661,7 @@
                 // Play video without creating the PlatformView in advance
                 // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
-                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                ZGError(@"[startPlayingStream] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPlayingStream_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -672,7 +674,7 @@
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
-                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                ZGError(@"[startPlayingStream] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -1217,31 +1219,35 @@
     }];
 }
 
+
 #pragma mark - CustomVideoCapture
+
 - (void)enableCustomVideoCapture:(FlutterMethodCall *)call result:(FlutterResult)result {
+
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     NSDictionary *configMap = call.arguments[@"config"];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
     ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
     
-    if(![ZegoUtils isNullObject:configMap]) {
+    if (configMap && configMap.count > 0) {
         ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
         config.bufferType = bufferType;
     } else {
-        // config 为空，则配置默认配置（iOS平台下为cvpixelbuffer）
+        // If `config` is empty, set the default configuration (pixel buffer for iOS)
         config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
     }
     
-    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
-    
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
     
-    // 使用外部采集时，关闭预览镜像(需要讨论)
-    if(enable) {
+    // When using custom video capture, turn off preview mirroring
+    if (enable) {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeNoMirror channel:(ZegoPublishChannel)channel];
     } else {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeOnlyPreviewMirror channel:(ZegoPublishChannel)channel];
     }
 }
+
 
 #pragma mark - MediaPlayer
 
@@ -1256,7 +1262,7 @@
     if (mediaPlayer) {
         NSNumber *index = mediaPlayer.index;
 
-        [mediaPlayer setEventHandler:_eventHandler];
+        [mediaPlayer setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);
@@ -1530,7 +1536,7 @@
     if (audioEffectPlayer) {
         NSNumber *index = [audioEffectPlayer getIndex];
 
-        [audioEffectPlayer setEventHandler:_eventHandler];
+        [audioEffectPlayer setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
         self.audioEffectPlayerMap[index] = audioEffectPlayer;
 
         result(index);

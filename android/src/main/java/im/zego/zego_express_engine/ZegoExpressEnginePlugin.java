@@ -115,10 +115,12 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     @Override
     public void onListen(Object arguments, EventChannel.EventSink events) {
         this.sink = events;
+        ZegoLog.log("[FlutterEventSink] [onListen] set eventSink: %d", this.sink.hashCode());
     }
 
     @Override
     public void onCancel(Object arguments) {
+        ZegoLog.log("[FlutterEventSink] [onCancel] set eventSink: %d to null", this.sink.hashCode());
         this.sink = null;
     }
 
