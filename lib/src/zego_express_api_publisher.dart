@@ -7,9 +7,9 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
-  /// Starts publishing a stream (for the specified channel). You can call this API to publish a second stream.
+  /// Starts publishing a stream (for the specified channel). You can call this function to publish a second stream.
   ///
-  /// This interface allows users to publish their local audio and video streams to the ZEGO real-time audio and video cloud. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
+  /// This function allows users to publish their local audio and video streams to the ZEGO real-time audio and video cloud. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
   /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
   /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
   ///
@@ -21,10 +21,10 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Stops publishing a stream (for the specified channel).
   ///
-  /// This interface allows the user to stop sending local audio and video streams and end the call.
-  /// If the user has initiated publish flow, this interface must be called to stop the publish of the current stream before publishing the new stream (new streamID), otherwise the new stream publish will return a failure.
+  /// This function allows the user to stop sending local audio and video streams and end the call.
+  /// If the user has initiated publish flow, this function must be called to stop the publish of the current stream before publishing the new stream (new streamID), otherwise the new stream publish will return a failure.
   /// After stopping streaming, the developer should stop the local preview based on whether the business situation requires it.
-  /// Use this API to stop publishing stream of aux channel.
+  /// Use this function to stop publishing stream of aux channel.
   ///
   /// - [channel] Publish stream channel
   Future<void> stopPublishingStream({ZegoPublishChannel channel}) async {
@@ -33,7 +33,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the extra information of the stream being published (for the specified channel).
   ///
-  /// User this interface to set the extra info of the stream, the result will be notified via the [ZegoPublisherSetStreamExtraInfoResult].
+  /// Use this function to set the extra info of the stream, the result will be notified via the [ZegoPublisherSetStreamExtraInfoResult].
   /// The stream extra information is an extra information identifier of the stream ID. Unlike the stream ID, which cannot be modified during the publishing process, the stream extra information can be modified midway through the stream corresponding to the stream ID.
   /// Developers can synchronize variable content related to stream IDs based on stream additional information.
   ///
@@ -46,9 +46,9 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Starts/Updates the local video preview (for the specified channel).
   ///
-  /// The user can see his own local image by calling this interface. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default.
-  /// Local view and preview modes can be updated by calling this interface again.
-  /// You can set the mirror mode of the preview by calling the [setVideoMirrorMode] interface. The default preview setting is image mirrored.
+  /// The user can see his own local image by calling this function. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default.
+  /// Local view and preview modes can be updated by calling this function again.
+  /// You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored.
   /// When this api is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video. In addition to calling this api normally to preview the local screen, developers can also pass [null] to the canvas parameter, in conjunction with ZegoExpressEngine's sound wave function, in order to achieve the purpose of detecting whether the audio equipment is working properly before logging in to the room.
   ///
   /// - [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
@@ -90,7 +90,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the video mirroring mode (for the specified channel).
   ///
-  /// This interface can be called to set whether the local preview video and the published video have mirror mode enabled.
+  /// This function can be called to set whether the local preview video and the published video have mirror mode enabled.
   ///
   /// - [mirrorMode] Mirror mode for previewing or publishing the stream
   /// - [channel] Publish stream channel
@@ -100,7 +100,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the video orientation (for the specified channel).
   ///
-  /// This interface sets the orientation of the video. The captured image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
+  /// This function sets the orientation of the video. The captured image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
   ///
   /// - [orientation] Video orientation
   /// - [channel] Publish stream channel
@@ -110,7 +110,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets up the audio configurations.
   ///
-  /// You can set the combined value of the audio codec, bit rate, and audio channel through this interface. If this interface is not called, the default is standard quality mode. Should be used before publishing.
+  /// You can set the combined value of the audio codec, bit rate, and audio channel through this function. If this function is not called, the default is standard quality mode. Should be used before publishing.
   /// If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
   ///
   /// - [config] Audio config
@@ -120,7 +120,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Gets the current audio configurations.
   ///
-  /// You can get the current audio codec, bit rate, and audio channel through this interface.
+  /// You can get the current audio codec, bit rate, and audio channel through this function.
   ///
   /// - Returns Audio config
   Future<ZegoAudioConfig> getAudioConfig() async {
@@ -129,7 +129,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Stops or resumes sending the audio part of a stream (for the specified channel).
   ///
-  /// This interface can be called when publishing the stream to publish only the video stream without publishing the audio. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before publishing.
+  /// This function can be called when publishing the stream to publish only the video stream without publishing the audio. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before publishing.
   /// If you stop sending audio streams, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteMicStateUpdate] callbacks,
   ///
   /// - [mute] Whether to stop sending audio streams, true means that only the video stream is sent without sending the audio stream, and false means that the audio and video streams are sent simultaneously. The default is false.
@@ -140,7 +140,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Stops or resumes sending the video part of a stream (for the specified channel).
   ///
-  /// When publishing the stream, this interface can be called to publish only the audio stream without publishing the video stream. The local camera can still work normally, and can normally capture, preview and process the video picture, but does not send the video data to the network. It can be set before publishing.
+  /// When publishing the stream, this function can be called to publish only the audio stream without publishing the video stream. The local camera can still work normally, and can normally capture, preview and process the video picture, but does not send the video data to the network. It can be set before publishing.
   /// If you stop sending video streams locally, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteCameraStateUpdate] callbacks,
   ///
   /// - [mute] Whether to stop sending video streams, true means that only the audio stream is sent without sending the video stream, and false means that the audio and video streams are sent at the same time. The default is false.
@@ -173,7 +173,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the audio recording volume for stream publishing.
   ///
-  /// This interface is used to set the audio collection volume. The local user can control the volume of the audio stream sent to the far end. It can be set before publishing.
+  /// This function is used to set the audio collection volume. The local user can control the volume of the audio stream sent to the far end. It can be set before publishing.
   ///
   /// - [volume] Volume percentage. The range is 0 to 200. Default value is 100.
   Future<void> setCaptureVolume(int volume) async {
@@ -182,7 +182,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Set audio capture stereo mode
   ///
-  /// This API is used to set the audio stereo capture mode. The default is mono, that is, dual channel collection is not enabled.
+  /// This function is used to set the audio stereo capture mode. The default is mono, that is, dual channel collection is not enabled.
   /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
   ///
   /// - [mode] Audio stereo capture mode
@@ -195,9 +195,9 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// You can call this api to publish the audio and video streams that have been published to the ZEGO real-time audio and video cloud to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
   /// Because this called api is essentially a dynamic relay of the audio and video streams published to the ZEGO audio and video cloud to different CDNs, this api needs to be called after the audio and video stream is published to ZEGO real-time cloud successfully.
   /// Since ZEGO's audio and video cloud service itself can be configured to support CDN(content distribution networks), this api is mainly used by developers who have CDN content distribution services themselves.
-  /// You can use ZEGO's CDN audio and video streaming content distribution service at the same time by calling this interface and then use the developer who owns the CDN content distribution service.
-  /// This interface supports dynamic relay to the CDN content distribution network, so developers can use this api as a disaster recovery solution for CDN content distribution services.
-  /// When the [enablePublishDirectToCDN] api is set to true to publish the stream straight to the CDN, then calling this interface will have no effect.
+  /// You can use ZEGO's CDN audio and video streaming content distribution service at the same time by calling this function and then use the developer who owns the CDN content distribution service.
+  /// This function supports dynamic relay to the CDN content distribution network, so developers can use this api as a disaster recovery solution for CDN content distribution services.
+  /// When the [enablePublishDirectToCDN] api is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
   ///
   /// - [streamID] Stream ID
   /// - [targetURL] CDN relay address, supported address format is rtmp.
@@ -221,7 +221,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Whether to publish streams directly from the client to CDN without passing through ZEGO's cloud streaming server (for the specified channel).
   ///
   /// This api needs to be set before start publishing stream.
-  /// After calling this api to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two API relay or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
+  /// After calling this api to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two function relay or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
   ///
   /// - [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
   /// - [config] CDN configuration, if null, use Zego's background default configuration
@@ -243,7 +243,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sends Supplemental Enhancement Information (for the specified channel).
   ///
-  /// This interface can synchronize some other additional information while the developer publishes streaming audio and video streaming data while sending streaming media enhancement supplementary information.
+  /// This function can synchronize some other additional information while the developer publishes streaming audio and video streaming data while sending streaming media enhancement supplementary information.
   /// Generally, for scenarios such as synchronizing music lyrics or precise layout of video canvas, you can choose to use this api.
   /// After the anchor sends the SEI, the audience can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
   /// Since SEI information follows video frames or audio frames, and because of network problems, frames may be dropped, so SEI information may also be dropped. To solve this situation, it should be sent several times within the limited frequency.
@@ -261,7 +261,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Enables or disables hardware encoding.
   ///
   /// Whether to use the hardware encoding function when publishing the stream, the GPU is used to encode the stream and to reduce the CPU usage. The setting can take effect before the stream published. If it is set after the stream published, the stream should be stopped first before it takes effect.
-  /// Because hard-coded support is not particularly good for a few models, SDK uses software encoding by default. If the developer finds that the device is hot when publishing a high-resolution audio and video stream during testing of some models, you can consider calling this interface to enable hard coding.
+  /// Because hard-coded support is not particularly good for a few models, SDK uses software encoding by default. If the developer finds that the device is hot when publishing a high-resolution audio and video stream during testing of some models, you can consider calling this function to enable hard coding.
   ///
   /// - [enable] Whether to enable hardware encoding, true: enable hardware encoding, false: disable hardware encoding
   Future<void> enableHardwareEncoder(bool enable) async {
@@ -270,7 +270,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the timing of video scaling in the video capture workflow. You can choose to do video scaling right after video capture (the default value) or before encoding.
   ///
-  /// This interface needs to be set before previewing or streaming.
+  /// This function needs to be set before previewing or streaming.
   /// The main effect is whether the local preview is affected when the acquisition resolution is different from the encoding resolution.
   ///
   /// - [mode] capture scale mode

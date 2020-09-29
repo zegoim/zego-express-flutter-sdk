@@ -182,7 +182,6 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
 
     // Logout room
     ZegoExpressEngine.instance.logoutRoom(ZegoConfig.instance.roomID);
-
   }
 
   void onPublishButtonPressed() {

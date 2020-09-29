@@ -23,7 +23,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
   /// Logs in multi room
   ///
-  /// You must log in the main room with [loginRoom] before invoke this interface to logging in to multi room.
+  /// You must log in the main room with [loginRoom] before invoke this function to logging in to multi room.
   /// Currently supports logging into 1 main room and 1 multi room at the same time.
   /// When logging out, you must log out of the multi room before logging out of the main room.
   /// User can only publish the stream in the main room, but can play the stream in the main room and multi room at the same time, and can receive the signaling and callback in each room.
@@ -43,7 +43,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
   /// Logs out of a room.
   ///
-  /// Exiting the room will stop all publishing and playing streams for user, and then SDK will auto stop local preview UI. After calling this interface, you will receive [onRoomStateUpdate] callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification(On the premise of enabling isUserStatusNotify configuration).
+  /// Exiting the room will stop all publishing and playing streams for user, and then SDK will auto stop local preview UI. After calling this function, you will receive [onRoomStateUpdate] callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification(On the premise of enabling isUserStatusNotify configuration).
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   Future<void> logoutRoom(String roomID) async {
@@ -52,9 +52,9 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
   /// Switch the room with advanced room configurations
   ///
-  /// After successfully login room, if you need to quickly switch to the next room, you can call this API.
-  /// Calling this API is faster and easier to use than calling [logoutRoom] and then [loginRoom].
-  /// When this API is called, all streams currently publishing or playing will stop (but the local preview will not stop).
+  /// After successfully login room, if you need to quickly switch to the next room, you can call this function.
+  /// Calling this function is faster and easier to use than calling [logoutRoom] and then [loginRoom].
+  /// When this function is called, all streams currently publishing or playing will stop (but the local preview will not stop).
   /// To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over.
   ///
   /// - [fromRoomID] Current roomID

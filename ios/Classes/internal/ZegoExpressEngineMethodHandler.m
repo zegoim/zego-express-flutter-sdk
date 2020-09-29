@@ -13,6 +13,7 @@
 
 #import "ZegoPlatformViewFactory.h"
 #import "ZegoTextureRendererController.h"
+#import "ZegoCustomVideoCaptureManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -20,13 +21,11 @@
 
 @interface ZegoExpressEngineMethodHandler ()
 
-@property (nonatomic, assign) BOOL enablePlatformView;
-
-@property (nonatomic, strong) id<FlutterTextureRegistry> textureRegistry;
-
-@property (nonatomic, strong) ZegoExpressEngineEventHandler *eventHandler;
+@property (nonatomic, strong) id<FlutterPluginRegistrar> registrar;
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaPlayer *> *mediaPlayerMap;
+
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
 
 @end
 
@@ -50,11 +49,6 @@
 }
 
 - (void)createEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // Set platform language to dart
-    SEL selector = NSSelectorFromString(@"setPlatformLanguage:");
-    if ([ZegoExpressEngine respondsToSelector:selector]) {
-        ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
-    }
 
     unsigned int appID = [ZegoUtils unsignedIntValue:call.arguments[@"appID"]];
     NSString *appSign = call.arguments[@"appSign"];
@@ -62,22 +56,33 @@
     int scenario = [ZegoUtils intValue:call.arguments[@"scenario"]];
 
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
-    _textureRegistry = call.arguments[@"textureRegistry"];
+    _registrar = call.arguments[@"registrar"];
 
-    // Init the event handler
-    self.eventHandler = [[ZegoExpressEngineEventHandler alloc] initWithSink:call.arguments[@"eventSink"]];
+    // Set eventSink for ZegoExpressEngineEventHandler
+    FlutterEventSink sink = call.arguments[@"eventSink"];
+    if (!sink) {
+        ZGError(@"[createEngine] FlutterEventSink is nil");
+    }
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
-    [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:self.eventHandler];
+    [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+
+    // Set platform language to dart
+    SEL selector = NSSelectorFromString(@"setPlatformLanguage:");
+    if ([ZegoExpressEngine respondsToSelector:selector]) {
+        ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
+    }
+
+    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:[ZegoCustomVideoCaptureManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
-    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:self.eventHandler];
-
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }
@@ -90,8 +95,6 @@
     if (!self.enablePlatformView) {
         [[ZegoTextureRendererController sharedInstance] uninitController];
     }
-
-    self.eventHandler = nil;
 
     result(nil);
 }
@@ -298,7 +301,7 @@
                 // Preview video without creating the PlatformView in advance
                 // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
-                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                ZGError(@"[startPreview] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPreview_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -311,7 +314,7 @@
                 // Preview video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
-                ZGLog(@"[ERROR] [startPreview] %@", errorMessage);
+                ZGError(@"[startPreview] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPreview_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -658,7 +661,7 @@
                 // Play video without creating the PlatformView in advance
                 // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
-                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                ZGError(@"[startPlayingStream] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPlayingStream_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -671,7 +674,7 @@
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
-                ZGLog(@"[ERROR] [startPlayingStream] %@", errorMessage);
+                ZGError(@"[startPlayingStream] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
@@ -1217,6 +1220,35 @@
 }
 
 
+#pragma mark - CustomVideoCapture
+
+- (void)enableCustomVideoCapture:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
+    
+    if (configMap && configMap.count > 0) {
+        ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
+        config.bufferType = bufferType;
+    } else {
+        // If `config` is empty, set the default configuration (pixel buffer for iOS)
+        config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
+    }
+    
+    [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
+    
+    // When using custom video capture, turn off preview mirroring
+    if (enable) {
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeNoMirror channel:(ZegoPublishChannel)channel];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeOnlyPreviewMirror channel:(ZegoPublishChannel)channel];
+    }
+}
+
+
 #pragma mark - MediaPlayer
 
 - (void)createMediaPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1230,7 +1262,7 @@
     if (mediaPlayer) {
         NSNumber *index = mediaPlayer.index;
 
-        [mediaPlayer setEventHandler:_eventHandler];
+        [mediaPlayer setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);
@@ -1491,6 +1523,275 @@
 }
 
 
+#pragma mark - AudioEffectPlayer
+
+- (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.audioEffectPlayerMap) {
+        self.audioEffectPlayerMap = [NSMutableDictionary dictionary];
+    }
+
+    ZegoAudioEffectPlayer *audioEffectPlayer = [[ZegoExpressEngine sharedEngine] createAudioEffectPlayer];
+
+    if (audioEffectPlayer) {
+        NSNumber *index = [audioEffectPlayer getIndex];
+
+        [audioEffectPlayer setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        self.audioEffectPlayerMap[index] = audioEffectPlayer;
+
+        result(index);
+
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [[ZegoExpressEngine sharedEngine] destroyAudioEffectPlayer:audioEffectPlayer];
+        [self.audioEffectPlayerMap removeObjectForKey:index];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"destroyAudioEffectPlayer_Can_not_find_player" uppercaseString] message:@"Invoke `destroyAudioEffectPlayer` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerStart:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        NSString *path = call.arguments[@"path"];
+
+        NSDictionary *configMap = call.arguments[@"config"];
+        ZegoAudioEffectPlayConfig *configObject = nil;
+
+        if (configMap && configMap.count > 0) {
+            configObject = [[ZegoAudioEffectPlayConfig alloc] init];
+            configObject.playCount = [ZegoUtils unsignedIntValue:configMap[@"playCount"]];
+            configObject.isPublishOut = [ZegoUtils boolValue:configMap[@"isPublishOut"]];;
+        }
+
+        [audioEffectPlayer start:audioEffectID path:path config:configObject];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerStart_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerStart` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerStop:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer stop:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerStop_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerStop` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerPause:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer pause:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerPause_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerPause` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerResume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer resume:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerResume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerResume` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerStopAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [audioEffectPlayer stopAll];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerStopAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerStopAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerPauseAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [audioEffectPlayer pauseAll];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerPauseAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerPauseAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerResumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        [audioEffectPlayer resumeAll];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerResumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerResumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSeekTo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        unsigned long long millisecond = [ZegoUtils unsignedLongLongValue:call.arguments[@"millisecond"]];
+        [audioEffectPlayer seekTo:millisecond audioEffectID:audioEffectID callback:^(int errorCode) {
+            result(@{@"errorCode": @(errorCode)});
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSeekTo_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSeekTo` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setVolume:volume audioEffectID:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetVolume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetVolume` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setVolumeAll:volume];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerGetTotalDuration:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        unsigned long long totalDuration = [audioEffectPlayer getTotalDuration:audioEffectID];
+        result(@(totalDuration));
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerGetTotalDuration_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerGetTotalDuration` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerGetCurrentProgress:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        unsigned long long currentProgress = [audioEffectPlayer getCurrentProgress:audioEffectID];
+        result(@(currentProgress));
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerGetCurrentProgress_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerGetCurrentProgress` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerLoadResource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        NSString *path = call.arguments[@"path"];
+
+        [audioEffectPlayer loadResource:path audioEffectID:audioEffectID callback:^(int errorCode) {
+            result(@{@"errorCode": @(errorCode)});
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerLoadResource_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerLoadResource` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerUnloadResource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        [audioEffectPlayer unloadResource:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerUnloadResource_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerUnloadResource` but can't find specific player" details:nil]);
+    }
+}
+
+
 #pragma mark - Record
 
 - (void)startRecordingCapturedData:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1538,7 +1839,7 @@
     int viewWidth = [ZegoUtils intValue:call.arguments[@"width"]];
     int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
 
-    int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:_textureRegistry viewWidth:viewWidth viewHeight:viewHeight];
+    int64_t textureID = [[ZegoTextureRendererController sharedInstance] createTextureRenderer:[_registrar textures] viewWidth:viewWidth viewHeight:viewHeight];
 
     ZGLog(@"[createTextureRenderer][Result] w: %d, h: %d, textureID: %ld", viewWidth, viewHeight, (long)textureID);
 
@@ -1567,5 +1868,18 @@
     result(@(state));
 }
 
+
+#pragma mark - Assets Utils
+
+- (void)getAssetAbsolutePath:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *assetPath = call.arguments[@"assetPath"];
+    NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
+    NSString *realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+
+    ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
+
+    result(realPath);
+}
 
 @end

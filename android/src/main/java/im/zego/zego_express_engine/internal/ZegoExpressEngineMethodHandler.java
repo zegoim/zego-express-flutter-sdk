@@ -6,7 +6,7 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
-package im.zego.zego_express_engine;
+package im.zego.zego_express_engine.internal;
 
 import android.app.Application;
 import android.graphics.Rect;
@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,8 +22,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
+import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerLoadResourceCallback;
+import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerSeekToCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBroadcastMessageCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendCustomCommandCallback;
@@ -48,13 +53,16 @@ import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
+import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
+import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
@@ -70,25 +78,38 @@ import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.TextureRegistry;
+
+import static im.zego.zego_express_engine.internal.ZegoUtils.boolValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.intValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.longValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.floatValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.doubleValue;
 
 public class ZegoExpressEngineMethodHandler {
 
-    private static boolean enablePlatformView = false;
+    private static Registrar registrar = null;
+
+    private static FlutterPluginBinding pluginBinding = null;
+
+    private static Application application = null;
 
     private static TextureRegistry textureRegistry = null;
 
-    private static ZegoExpressEngineEventHandler eventHandler = null;
+    private static boolean enablePlatformView = false;
 
     private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
-    /* Main */
+    private static HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
 
+    /* Main */
     @SuppressWarnings("unused")
-    public static void createEngine(MethodCall call, Result result, Application application, EventChannel.EventSink sink, TextureRegistry registry) {
+    public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         long appID = longValue((Number)call.argument("appID"));
         String appSign = call.argument("appSign");
@@ -96,16 +117,31 @@ public class ZegoExpressEngineMethodHandler {
         ZegoScenario scenario = ZegoScenario.getZegoScenario(intValue((Number)call.argument("scenario")));
 
         enablePlatformView = boolValue((Boolean) call.argument("enablePlatformView"));
-        textureRegistry = registry;
 
-        eventHandler = new ZegoExpressEngineEventHandler(sink);
+        if (binding != null) {
+            application = (Application) binding.getApplicationContext();
+            textureRegistry = binding.getTextureRegistry();
+        } else {
+            application = (Application) reg.context();
+            textureRegistry = reg.textures();
+        }
 
-        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, eventHandler.eventHandler);
+        registrar = reg;
+        pluginBinding = binding;
+
+        // Set eventSink for ZegoExpressEngineEventHandler
+        if (sink == null) {
+            ZegoLog.error("[createEngine] FlutterEventSink is null");
+        }
+        ZegoExpressEngineEventHandler.getInstance().sink = sink;
+
+        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, ZegoExpressEngineEventHandler.getInstance().eventHandler);
         setPlatformLanguage();
 
-        ZegoExpressEngine.getEngine().setDataRecordEventHandler(eventHandler.dataRecordEventHandler);
+        ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
+        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
 
-        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", appID, appSign, isTestEnv ? "true" : "false", scenario.name());
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
         result.success(null);
     }
@@ -122,13 +158,13 @@ public class ZegoExpressEngineMethodHandler {
     public static void setEngineConfig(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
-        ZegoEngineConfig configObject = null;
+        ZegoEngineConfig configObject;
         if (configMap != null && !configMap.isEmpty()) {
             configObject = new ZegoEngineConfig();
             configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
 
             HashMap<String, Object> logConfigMap = call.argument("logConfig");
-            ZegoLogConfig logConfigObject = null;
+            ZegoLogConfig logConfigObject;
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
                 logConfigObject.logPath = (String) logConfigMap.get("logPath");
@@ -329,7 +365,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Preview video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
-                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_PlatformView".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -344,7 +380,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Preview video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
-                    ZegoLog.log("[ERROR] [startPreview] %s", errorMessage);
+                    ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -712,7 +748,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
-                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -727,7 +763,7 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating TextureRenderer in advance
                     // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
-                    ZegoLog.log("[ERROR] [startPlayingStream] %s", errorMessage);
+                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
                 }
@@ -1329,6 +1365,36 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    /* CustomVideoCapture */
+
+    @SuppressWarnings("unused")
+    public static void enableCustomVideoCapture(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Double> configMap = call.argument("config");
+        int channel = intValue((Number) call.argument("channel"));
+
+        ZegoCustomVideoCaptureConfig config = new ZegoCustomVideoCaptureConfig();
+
+        if (configMap != null && !configMap.isEmpty()) {
+            int bufferType = intValue(configMap.get("bufferType"));
+            config.bufferType = ZegoVideoBufferType.getZegoVideoBufferType(bufferType);
+        } else {
+            // If `config` is empty, set the default configuration (raw data for Android)
+            config.bufferType = ZegoVideoBufferType.RAW_DATA;
+        }
+
+        ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
+
+        // When using custom video capture, turn off preview mirroring
+        if (enable) {
+            ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.NO_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
+        } else {
+            ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.ONLY_PREVIEW_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
+        }
+
+        result.success(null);
+    }
 
     /* MediaPlayer */
 
@@ -1340,7 +1406,7 @@ public class ZegoExpressEngineMethodHandler {
         if (mediaPlayer != null) {
             int index = mediaPlayer.getIndex();
 
-            mediaPlayer.setEventHandler(eventHandler.mediaPlayerEventHandler);
+            mediaPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
 
             result.success(index);
@@ -1639,6 +1705,298 @@ public class ZegoExpressEngineMethodHandler {
     }
 
 
+    /* AudioEffectPlayer */
+
+    @SuppressWarnings("unused")
+    public static void createAudioEffectPlayer(MethodCall call, Result result) {
+
+        ZegoAudioEffectPlayer audioEffectPlayer = ZegoExpressEngine.getEngine().createAudioEffectPlayer();
+
+        if (audioEffectPlayer != null) {
+            int index = audioEffectPlayer.getIndex();
+
+            audioEffectPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().audioEffectPlayerEventHandler);
+            audioEffectPlayerHashMap.put(index, audioEffectPlayer);
+
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyAudioEffectPlayer(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyAudioEffectPlayer(audioEffectPlayer);
+            audioEffectPlayerHashMap.remove(index);
+
+            result.success(null);
+
+        } else {
+            result.error("destroyAudioEffectPlayer_Can_not_find_player".toUpperCase(), "Invoke `destroyAudioEffectPlayer` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerStart(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            String path = call.argument("path");
+
+            HashMap<String, Object> configMap = call.argument("config");
+
+            ZegoAudioEffectPlayConfig config = null;
+            if (configMap != null && !configMap.isEmpty()) {
+                config = new ZegoAudioEffectPlayConfig();
+                config.playCount = intValue((Number) configMap.get("playCount"));
+                config.isPublishOut = boolValue((Boolean) configMap.get("isPublishOut"));
+            }
+
+            audioEffectPlayer.start(audioEffectID, path, config);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerStart_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerStart` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerStop(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.stop(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerStop_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerStop` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerPause(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.pause(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerPause_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerPause` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerResume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.resume(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerResume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerResume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerStopAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.stopAll();
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerStopAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerStopAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerPauseAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.pauseAll();
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerPauseAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerPauseAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerResumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            audioEffectPlayer.resumeAll();
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerResumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerResumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSeekTo(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            long millisecond = longValue((Number) call.argument("millisecond"));
+            audioEffectPlayer.seekTo(audioEffectID, millisecond, new IZegoAudioEffectPlayerSeekToCallback() {
+                @Override
+                public void onSeekToCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("audioEffectPlayerSeekTo_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSeekTo` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            int volume = intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setVolume(audioEffectID, volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetVolume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetVolume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetVolumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int volume = intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setVolumeAll(volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerGetTotalDuration(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            long totalDuration = audioEffectPlayer.getTotalDuration(audioEffectID);
+            result.success(totalDuration);
+
+        } else {
+            result.error("audioEffectPlayerGetTotalDuration_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerGetTotalDuration` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerGetCurrentProgress(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            long currentProgress = audioEffectPlayer.getCurrentProgress(audioEffectID);
+            result.success(currentProgress);
+
+        } else {
+            result.error("audioEffectPlayerGetCurrentProgress_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerGetCurrentProgress` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerLoadResource(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            String path = call.argument("path");
+            audioEffectPlayer.loadResource(audioEffectID, path, new IZegoAudioEffectPlayerLoadResourceCallback() {
+                @Override
+                public void onLoadResourceCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("audioEffectPlayerLoadResource_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerLoadResource` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerUnloadResource(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = intValue((Number) call.argument("audioEffectID"));
+            audioEffectPlayer.unloadResource(audioEffectID);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerUnloadResource_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerUnloadResource` but can't find specific player", null);
+        }
+    }
+
     /* Record */
 
     @SuppressWarnings("unused")
@@ -1726,37 +2084,43 @@ public class ZegoExpressEngineMethodHandler {
     }
 
 
-    /* Utils */
+    /* Assets Utils */
 
-    private static boolean boolValue(Boolean number) {
-        return number != null && number;
+    @SuppressWarnings("unused")
+    public static void getAssetAbsolutePath(MethodCall call, Result result) {
+
+        String assetPath = call.argument("assetPath");
+        if (assetPath == null) {
+            result.success("");
+            return;
+        }
+
+        String assetKey;
+        if (pluginBinding != null) {
+            assetKey = pluginBinding.getFlutterAssets().getAssetFilePathByName(assetPath);
+        } else {
+            assetKey = registrar.lookupKeyForAsset(assetPath);
+        }
+        String realPath = application.getFilesDir().getAbsolutePath() + File.separator + assetKey;
+
+        ZegoLog.log("[getAssetAbsolutePath] assetPath: %s, realPath: %s", assetPath, realPath);
+
+        result.success(realPath);
     }
 
-    private static int intValue(Number number) {
-        return number != null ? number.intValue() : 0;
-    }
 
-    private static long longValue(Number number) {
-        return number != null ? number.longValue() : 0;
-    }
-
-    private static float floatValue(Number number) {
-        return number != null ? number.floatValue() : .0f;
-    }
-
-    private static double doubleValue(Number number) {
-        return number != null ? number.doubleValue() : .0f;
-    }
+    /* Private functions */
 
     private static void setPlatformLanguage() {
         try {
-            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineJniAPI");
-            Method jniMethod = jniClass.getMethod("setPlatformLanguageJni", int.class);
+            Class<?> jniClass = Class.forName("im.zego.zegoexpress.internal.ZegoExpressEngineInternalImpl");
+            Method jniMethod = jniClass.getDeclaredMethod("setPlatformLanguage", int.class);
+            jniMethod.setAccessible(true);
             jniMethod.invoke(null, 4);
         } catch (ClassNotFoundException e) {
-            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineJniAPI not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, class ZegoExpressEngineInternalImpl not found.");
         } catch (NoSuchMethodException e) {
-            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguageJni not found.");
+            Log.e("ZEGO", "[Flutter] Set platform language failed, method setPlatformLanguage not found.");
         } catch (IllegalAccessException e) {
             Log.e("ZEGO", "[Flutter] Set platform language failed, illegal access.");
         } catch (InvocationTargetException e) {

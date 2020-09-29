@@ -29,6 +29,8 @@
 
 + (double)doubleValue:(NSNumber *)number;
 
++ (BOOL)isNullObject:(id)object;
+
 @end
 
 #endif /* ZegoFlutterUtils_h */

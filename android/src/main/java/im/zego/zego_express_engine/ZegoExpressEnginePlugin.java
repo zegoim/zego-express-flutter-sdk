@@ -1,12 +1,13 @@
 package im.zego.zego_express_engine;
 
-import android.app.Application;
-
 import androidx.annotation.NonNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+
+import im.zego.zego_express_engine.internal.ZegoLog;
+import im.zego.zego_express_engine.internal.ZegoPlatformViewFactory;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
@@ -15,13 +16,12 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-import io.flutter.view.TextureRegistry;
 
 /** ZegoExpressEnginePlugin */
 public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
 
-    private Application application;
-    private TextureRegistry textureRegistry;
+    private Registrar registrar;
+    private FlutterPluginBinding pluginBinding;
 
     private MethodChannel methodChannel;
     private EventChannel eventChannel;
@@ -33,7 +33,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
     public ZegoExpressEnginePlugin() {
         try {
-            this.manager = Class.forName("im.zego.zego_express_engine.ZegoExpressEngineMethodHandler");
+            this.manager = Class.forName("im.zego.zego_express_engine.internal.ZegoExpressEngineMethodHandler");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -48,15 +48,13 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
-        Application application = (Application) flutterPluginBinding.getApplicationContext();
-        TextureRegistry textureRegistry =  flutterPluginBinding.getTextureRegistry();
         MethodChannel methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_engine");
         EventChannel eventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_event_handler");
 
         // Register platform view factory
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
 
-        this.setupPlugin(application, textureRegistry, methodChannel, eventChannel);
+        this.setupPlugin(null, flutterPluginBinding, methodChannel, eventChannel);
     }
 
     @Override
@@ -86,8 +84,6 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     @SuppressWarnings("unused")
     public static void registerWith(Registrar registrar) {
 
-        Application application = (Application) registrar.context();
-        TextureRegistry textureRegistry = registrar.textures();
         MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "plugins.zego.im/zego_express_engine");
         EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.zego.im/zego_express_event_handler");
 
@@ -95,16 +91,16 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         registrar.platformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
 
         ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin();
-        plugin.setupPlugin(application, textureRegistry, methodChannel, eventChannel);
+        plugin.setupPlugin(registrar, null, methodChannel, eventChannel);
     }
 
 
     /* Setup ZegoExpressEngine Plugin */
 
-    private void setupPlugin(Application application, TextureRegistry textureRegistry, MethodChannel methodChannel, EventChannel eventChannel) {
+    private void setupPlugin(Registrar registrar, FlutterPluginBinding pluginBinding, MethodChannel methodChannel, EventChannel eventChannel) {
 
-        this.application = application;
-        this.textureRegistry =  textureRegistry;
+        this.registrar = registrar;
+        this.pluginBinding = pluginBinding;
 
         this.methodChannel = methodChannel;
         this.methodChannel.setMethodCallHandler(this);
@@ -119,10 +115,12 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     @Override
     public void onListen(Object arguments, EventChannel.EventSink events) {
         this.sink = events;
+        ZegoLog.log("[FlutterEventSink] [onListen] set eventSink: %d", this.sink.hashCode());
     }
 
     @Override
     public void onCancel(Object arguments) {
+        ZegoLog.log("[FlutterEventSink] [onCancel] set eventSink: %d to null", this.sink.hashCode());
         this.sink = null;
     }
 
@@ -137,7 +135,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             Method method = methodHashMap.get(call.method);
             if (method == null) {
                 if (call.method.equals("createEngine")) {
-                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Application.class, EventChannel.EventSink.class, TextureRegistry.class);
+                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
                 } else {
                     method = this.manager.getMethod(call.method, MethodCall.class, Result.class);
                 }
@@ -145,7 +143,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             }
 
             if (call.method.equals("createEngine")) {
-                method.invoke(null, call, result, this.application, this.sink, this.textureRegistry);
+                method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
             } else {
                 method.invoke(null, call, result);
             }

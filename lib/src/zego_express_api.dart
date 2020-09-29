@@ -13,7 +13,7 @@ class ZegoExpressEngine {
 
   /// Creates a singleton instance of ZegoExpressEngine.
   ///
-  /// The engine needs to be created and initialized before calling other APIs. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this interface return the same object.
+  /// The engine needs to be created and initialized before calling other functions. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
   ///
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
   /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
@@ -33,7 +33,7 @@ class ZegoExpressEngine {
 
   /// Set advanced engine configuration
   ///
-  /// Developers need to call this API to set advanced function configuration when they need advanced functions of the engine.
+  /// Developers need to call this function to set advanced function configuration when they need advanced functions of the engine.
   ///
   /// - [config] Advanced engine configuration
   static Future<void> setEngineConfig(ZegoEngineConfig config) async {
@@ -52,9 +52,9 @@ class ZegoExpressEngine {
 
   /// Uploads logs to the ZEGO server.
   ///
-  /// By default, SDK creates and prints log files in the app's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this interface, SDK will auto package and upload the log files to the ZEGO server.
-  /// Developers can provide a business “feedback” channel in the app. When users feedback problems, they can call this interface to upload the local log information of SDK to help locate user problems.
-  /// The API is valid for the entire life cycle of the SDK.
+  /// By default, SDK creates and prints log files in the app's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
+  /// Developers can provide a business “feedback” channel in the app. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
+  /// The function is valid for the entire life cycle of the SDK.
   Future<void> uploadLog() async {
     return await ZegoExpressImpl.instance.uploadLog();
   }
@@ -71,7 +71,7 @@ class ZegoExpressEngine {
 
   /// The callback for obtaining debugging error information.
   ///
-  /// When the APIs are not used correctly, the callback prompts for detailed error information, which is controlled by the [setDebugVerbose] interface
+  /// When the SDK functions are not used correctly, the callback prompts for detailed error information, which is controlled by the [setDebugVerbose] function
   ///
   /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
   /// - [funcName] Function name
@@ -80,7 +80,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the audio/video engine state changes.
   ///
-  /// When the developer calls the API that enables audio and video related functions, such as calling [startPreview], [startPublishingStream], [startPlayingStream] and MediaPlayer related API, the audio/video engine will start; when all audio and video functions are stopped, the engine state will become stopped.
+  /// When the developer calls the function that enables audio and video related functions, such as calling [startPreview], [startPublishingStream], [startPlayingStream] and MediaPlayer related function, the audio/video engine will start; when all audio and video functions are stopped, the engine state will become stopped.
   /// When the developer has been [loginRoom], once [logoutRoom] is called, the audio/video engine will stop (preview, publishing/playing stream, MediaPlayer and other audio and video related functions will also stop).
   ///
   /// - [state] The audio/video engine state
@@ -110,7 +110,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered every 30 seconds to report the current number of online users.
   ///
-  /// This interface is called back every 30 seconds.
+  /// This function is called back every 30 seconds.
   /// Developers can use this callback to show the number of user online in the current room.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
@@ -148,7 +148,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of stream publishing changes.
   ///
-  /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback interface.
+  /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback function.
   /// You can roughly judge the user's uplink network status based on whether the state parameter is in [PUBLISH_REQUESTING].
   /// ExtendedData is extended information with state updates. If you use ZEGO's CDN content distribution network, after the stream is successfully published, the keys of the content of this parameter are flv_url_list, rtmp_url_list, hls_url_list. These correspond to the publishing stream URLs of the flv, rtmp, and hls protocols.
   ///
@@ -161,23 +161,23 @@ class ZegoExpressEngine {
   /// The callback triggered every 3 seconds to report the current stream publishing quality.
   ///
   /// After the successful publish, the callback will be received every 3 seconds. Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data of the published audio and video stream can be obtained, and the health of the publish stream can be monitored in real time.
-  /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callback api, in order to show the uplink network status in real time on the device UI interface.
+  /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callback api, in order to show the uplink network status in real time on the device UI.
   /// If you does not know how to use the parameters of this callback api, you can only pay attention to the level field of the quality parameter, which is a comprehensive value describing the uplink network calculated by SDK based on the quality parameters.
   ///
   /// - [streamID] Stream ID
-  /// - [quality] Published stream quality, including audio and video frame rate, bit rate, resolution, RTT, etc.
+  /// - [quality] Publishing stream quality, including audio and video framerate, bitrate, RTT, etc.
   static void Function(String streamID, ZegoPublishStreamQuality quality) onPublisherQualityUpdate;
 
   /// The callback triggered when the first audio frame is captured.
   ///
-  /// After the startPublishingStream interface is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
+  /// After the [startPublishingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
   /// In the case of no startPublishingStream audio and video stream or preview, the first startPublishingStream audio and video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect audio data of the local device and receive this callback.
   /// Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
   static void Function() onPublisherCapturedAudioFirstFrame;
 
   /// The callback triggered when the first video frame is captured.
   ///
-  /// After the startPublishingStream interface is called successfully, the SDK will receive this callback notification when it collects the first frame of video data.
+  /// After the [startPublishingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of video data.
   /// In the case of no startPublishingStream video stream or preview, the first startPublishingStream video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect video data of the local device and receive this callback.
   /// Developers can use this callback to determine whether SDK has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
   ///
@@ -207,7 +207,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of stream playing changes.
   ///
-  /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback interface.
+  /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback function.
   /// You can roughly judge the user's downlink network status based on whether the state parameter is in [PLAY_REQUESTING].
   ///
   /// - [streamID] stream ID
@@ -219,17 +219,17 @@ class ZegoExpressEngine {
   /// The callback triggered every 3 seconds to report the current stream playing quality.
   ///
   /// After calling the startPlayingStream successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data  can be obtained, such the health of the publish stream can be monitored in real time.
-  /// You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback api, in order to show the downlink network status on the device UI interface in real time.
+  /// You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback api, in order to show the downlink network status on the device UI in real time.
   /// If you does not know how to use the various parameters of the callback api, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
   ///
   /// - [streamID] Stream ID
-  /// - [quality] Playing stream quality, including audio and video frame rate, bit rate, resolution, RTT, etc.
+  /// - [quality] Playing stream quality, including audio and video framerate, bitrate, RTT, etc.
   static void Function(String streamID, ZegoPlayStreamQuality quality) onPlayerQualityUpdate;
 
   /// The callback triggered when a media event occurs during streaming playing.
   ///
   /// This callback is triggered when an event such as audio and video jamming and recovery occurs in the playing stream.
-  /// You can use this callback to make statistics on stutters or to make friendly displays in the UI interface of the app.
+  /// You can use this callback to make statistics on stutters or to make friendly displays in the UI of the app.
   ///
   /// - [streamID] Stream ID
   /// - [event] Play media event callback
@@ -237,22 +237,22 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the first audio frame is received.
   ///
-  /// After the startPlayingStream interface is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
+  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
   ///
   /// - [streamID] Stream ID
   static void Function(String streamID) onPlayerRecvAudioFirstFrame;
 
   /// The callback triggered when the first video frame is received.
   ///
-  /// After the startPlayingStream interface is called successfully, the SDK will receive this callback notification when it collects the first frame of video  data.
+  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of video  data.
   ///
   /// - [streamID] Stream ID
   static void Function(String streamID) onPlayerRecvVideoFirstFrame;
 
   /// The callback triggered when the first video frame is rendered.
   ///
-  /// After the startPlayingStream interface is called successfully, the SDK will receive this callback notification when it rendered the first frame of video  data.
-  /// You can use this callback to count time consuming that take the first frame time or update the playback stream.
+  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it rendered the first frame of video  data.
+  /// Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
   ///
   /// - [streamID] Stream ID
   static void Function(String streamID) onPlayerRenderVideoFirstFrame;
@@ -311,28 +311,28 @@ class ZegoExpressEngine {
 
   /// The callback triggered every 100ms to report the sound level of the locally captured audio.
   ///
-  /// Callback notification period is 100 ms'. To trigger this callback API, the [startSoundLevelMonitor] interface must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
+  /// Callback notification period is 100 ms'. To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
   ///
   /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0
   static void Function(double soundLevel) onCapturedSoundLevelUpdate;
 
   /// The callback triggered every 100ms to report the sound level of the remote stream.
   ///
-  /// Callback notification period is 100 ms'. To trigger this callback API, the [startSoundLevelMonitor] interface must be called to start the sound level monitor and you must be in a state where it is playing the audio and video stream.
+  /// Callback notification period is 100 ms'. To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is playing the audio and video stream.
   ///
   /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
   static void Function(Map<String, double> soundLevels) onRemoteSoundLevelUpdate;
 
   /// The callback triggered every 100ms to report the audio spectrum of the locally captured audio.
   ///
-  /// Callback notification period is 100 ms'. To trigger this callback API, the [startAudioSpectrumMonitor] interface must be called to start the audio spectrum monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
+  /// Callback notification period is 100 ms'. To trigger this callback function, the [startAudioSpectrumMonitor] function must be called to start the audio spectrum monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
   ///
   /// - [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30]
   static void Function(List<double> audioSpectrum) onCapturedAudioSpectrumUpdate;
 
   /// The callback triggered every 100ms to report the audio spectrum of the remote stream.
   ///
-  /// Callback notification period is 100 ms'. To trigger this callback API, the [startAudioSpectrumMonitor] interface must be called to start the audio spectrum monitor and you must be in a state where it is playing the audio and video stream.
+  /// Callback notification period is 100 ms'. To trigger this callback function, the [startAudioSpectrumMonitor] function must be called to start the audio spectrum monitor and you must be in a state where it is playing the audio and video stream.
   ///
   /// - [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
   static void Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate;
@@ -400,6 +400,16 @@ class ZegoExpressEngine {
   /// - [mediaPlayer] Callback player object
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
+
+  /// Audio effect playback state callback
+  ///
+  /// This callback is triggered when the playback state of a audio effect of the audio effect player changes.
+  ///
+  /// - [audioEffectPlayer] Audio effect player instance that triggers this callback
+  /// - [audioEffectID] The ID of the audio effect resource that triggered this callback
+  /// - [state] The playback state of the audio effect
+  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  static void Function(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode) onAudioEffectPlayStateUpdate;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///

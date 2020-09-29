@@ -54,4 +54,8 @@
     return [number isKindOfClass:[NSNull class]] ? 0.0 : [number doubleValue];
 }
 
++ (BOOL)isNullObject:(id)object {
+    return [object isKindOfClass:[NSNull class]];
+}
+
 @end

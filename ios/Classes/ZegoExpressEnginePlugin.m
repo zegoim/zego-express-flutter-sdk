@@ -11,7 +11,7 @@
 
 @interface ZegoExpressEnginePlugin() <FlutterStreamHandler>
 
-@property (nonatomic, strong) id<FlutterTextureRegistry> textureRegistry;
+@property (nonatomic, strong) id<FlutterPluginRegistrar> registrar;
 
 @property (nonatomic, strong) FlutterMethodChannel *methodChannel;
 @property (nonatomic, strong) FlutterEventChannel *eventChannel;
@@ -26,7 +26,7 @@
 
     ZegoExpressEnginePlugin *instance = [[ZegoExpressEnginePlugin alloc] init];
 
-    instance.textureRegistry = [registrar textures];
+    instance.registrar = registrar;
 
     FlutterMethodChannel *methodChannel = [FlutterMethodChannel
       methodChannelWithName:@"plugins.zego.im/zego_express_engine"
@@ -61,6 +61,7 @@
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(FlutterEventSink)events {
     self.eventSink = events;
+    ZGLog(@"[FlutterEventSink] [onListen] set eventSink: %p", _eventSink);
     return nil;
 }
 
@@ -78,6 +79,7 @@
  * @return A FlutterError instance, if teardown fails.
  */
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    ZGLog(@"[FlutterEventSink] [onCancel] set eventSink: %p to nil", _eventSink);
     self.eventSink = nil;
     return nil;
 }
@@ -93,7 +95,7 @@
         NSMutableDictionary *argumentsMap = [NSMutableDictionary dictionaryWithDictionary:call.arguments];
 
         argumentsMap[@"eventSink"] = _eventSink;
-        argumentsMap[@"textureRegistry"] = _textureRegistry;
+        argumentsMap[@"registrar"] = _registrar;
 
         call = [FlutterMethodCall methodCallWithMethodName:@"createEngine" arguments:argumentsMap];
     }

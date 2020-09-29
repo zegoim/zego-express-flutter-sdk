@@ -32,7 +32,7 @@ enum ZegoEngineState {
 enum ZegoRoomState {
   /// Unconnected state, enter this state before logging in and after exiting the room. If there is a steady state abnormality in the process of logging in to the room, such as AppID and AppSign are incorrect, or if the same user name is logged in elsewhere and the local end is KickOut, it will enter this state.
   Disconnected,
-  /// The state that the connection is being requested. It will enter this state after successful execution login room function. The display of the application interface is usually performed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting connection status.
+  /// The state that the connection is being requested. It will enter this state after successful execution login room function. The display of the UI is usually performed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting connection status.
   Connecting,
   /// The status that is successfully connected. Entering this status indicates that the login to the room has been successful. The user can receive the callback notification of the user and the stream information in the room.
   Connected
@@ -72,7 +72,7 @@ enum ZegoVideoMirrorMode {
 enum ZegoPublisherState {
   /// The state is not published, and it is in this state before publishing the stream. If a steady-state exception occurs in the publish process, such as AppID and AppSign are incorrect, or if other users are already publishing the stream, there will be a failure and enter this state.
   NoPublish,
-  /// The state that it is requesting to publish the stream. After the publish stream interface is successfully called, and the application interface is usually displayed using the state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
+  /// The state that it is requesting to publish the stream after the [startPublishingStream] function is successfully called. The UI is usually displayed through this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
   PublishRequesting,
   /// The state that the stream is being published, entering the state indicates that the stream has been successfully published, and the user can communicate normally.
   Publishing
@@ -210,7 +210,7 @@ enum ZegoTrafficControlMinVideoBitrateMode {
 enum ZegoPlayerState {
   /// The state of the flow is not played, and it is in this state before the stream is played. If the steady flow anomaly occurs during the playing process, such as AppID and AppSign are incorrect, it will enter this state.
   NoPlay,
-  /// The state that the stream is being requested for playing. After the stream playing interface is successfully called, it will enter the state, and the application interface is usually displayed using this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
+  /// The state that the stream is being requested for playing. After the [startPlayingStream] function is successfully called, it will enter the state. The UI is usually displayed through this state. If the connection is interrupted due to poor network quality, the SDK will perform an internal retry and will return to the requesting state.
   PlayRequesting,
   /// The state that the stream is being playing, entering the state indicates that the stream has been successfully played, and the user can communicate normally.
   Playing
@@ -430,6 +430,18 @@ enum ZegoMediaPlayerNetworkEvent {
   BufferEnded
 }
 
+/// AudioEffectPlayer state
+enum ZegoAudioEffectPlayState {
+  /// Not playing
+  NoPlay,
+  /// Playing
+  Playing,
+  /// Pausing
+  Pausing,
+  /// End of play
+  PlayEnded
+}
+
 /// Record type
 enum ZegoDataRecordType {
   /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
@@ -446,7 +458,7 @@ enum ZegoDataRecordType {
 enum ZegoDataRecordState {
   /// Unrecorded state, which is the state when a recording error occurs or before recording starts.
   NoRecord,
-  /// Recording in progress, in this state after successfully call [startCapturedMediaRecord]
+  /// Recording in progress, in this state after successfully call [startRecordingCapturedData] function
   Recording,
   /// Record successs
   Success
@@ -469,6 +481,29 @@ class ZegoLogConfig {
     return {
       'logPath': this.logPath,
       'logSize': this.logSize
+    };
+  }
+
+}
+
+/// Custom video capture configuration
+///
+/// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
+/// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the corresponding parameter of the [ZegoEngineConfig] instance.
+/// Because when using custom video capture, SDK will no longer start the camera to capture video data. You need to collect video data from video sources by yourself.
+class ZegoCustomVideoCaptureConfig {
+
+  /// Custom video capture video frame data type
+  ZegoVideoBufferType bufferType;
+
+  ZegoCustomVideoCaptureConfig(this.bufferType): assert(bufferType != null);
+
+  ZegoCustomVideoCaptureConfig.fromMap(Map<dynamic, dynamic> map):
+    bufferType = map['bufferType'];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'bufferType': this.bufferType.index
     };
   }
 
@@ -1445,6 +1480,26 @@ class ZegoDataRecordProgress {
 
 }
 
+/// AudioEffectPlayer play configuration
+class ZegoAudioEffectPlayConfig {
+
+  /// The number of play counts. When set to 0, it will play in an infinite loop until the user invoke [stop]. The default is 1, which means it will play only once.
+  int playCount;
+
+  /// Whether to mix audio effects into the publishing stream, the default is false.
+  bool isPublishOut;
+
+  ZegoAudioEffectPlayConfig(this.playCount, this.isPublishOut): assert(playCount != null), assert(isPublishOut != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'playCount': this.playCount,
+      'isPublishOut': this.isPublishOut
+    };
+  }
+
+}
+
 /// Zego MediaPlayer
 ///
 /// Yon can use ZegoMediaPlayer to play media resource files on the local or remote server, and can mix the sound of the media resource files that are played into the publish stream to achieve the effect of background music.
@@ -1514,7 +1569,7 @@ abstract class ZegoMediaPlayer {
 
   /// Set playback progress callback interval
   ///
-  /// This interface can control the callback frequency of [onMediaPlayerPlayingProgress]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1s
+  /// This function can control the callback frequency of [onMediaPlayerPlayingProgress]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1s
   /// This callback are not returned exactly at the set callback interval, but rather at the frequency at which the audio or video frames are processed to determine whether the callback is needed to call
   ///
   /// - [millisecond] Interval of playback progress callback in milliseconds
@@ -1528,14 +1583,14 @@ abstract class ZegoMediaPlayer {
 
   /// Get the total progress of your media resources
   ///
-  /// You should load resource before invoking this API, otherwise the return value is 0
+  /// You should load resource before invoking this function, otherwise the return value is 0
   ///
   /// - Returns Unit is millisecond
   Future<int> getTotalDuration();
 
   /// Get current playing progress
   ///
-  /// You should load resource before invoking this API, otherwise the return value is 0
+  /// You should load resource before invoking this function, otherwise the return value is 0
   Future<int> getCurrentProgress();
 
   /// Get the current playback status
@@ -1546,8 +1601,103 @@ abstract class ZegoMediaPlayer {
 
   /// Gets the play volume
   ///
-  /// @deprecated This interface is deprecated, please use `getPlayVolume` and `getPublishVolume` to get the corresponding local playback volume and publish volume.
+  /// @deprecated This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.
+  @Deprecated('This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.')
   Future<int> getVolume();
+
+}
+
+/// Audio effect player
+abstract class ZegoAudioEffectPlayer {
+
+  /// Start playing audio effect
+  ///
+  /// The default is only played once and is not mixed into the publishing stream, if you want to change this please modify [config].
+  ///
+  /// - [audioEffectID] ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique id. The recommended methods are static self-incrementing id or the hash of the incoming sound effect file path.
+  /// - [path] The absolute path of the local resource. `assets://`、`ipod-library://` and network url are not supported. Set path as null if resource is loaded already using [loadResource]
+  /// - [config] Audio effect playback configuration. Set null will only be played once, and will not be mixed into the publishing stream.
+  Future<void> start(int audioEffectID, String path, ZegoAudioEffectPlayConfig config);
+
+  /// Stop playing audio effect
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<void> stop(int audioEffectID);
+
+  /// Pause playing audio effect
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<void> pause(int audioEffectID);
+
+  /// Resume playing audio effect
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<void> resume(int audioEffectID);
+
+  /// Stop playing all audio effect
+  Future<void> stopAll();
+
+  /// Pause playing all audio effect
+  Future<void> pauseAll();
+
+  /// Resume playing all audio effect
+  Future<void> resumeAll();
+
+  /// Set the specified playback progress
+  ///
+  /// Unit is millisecond
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - [millisecond] Point in time of specified playback progress
+  /// - Returns Result for audio effect player seek to playback progress
+  Future<ZegoAudioEffectPlayerSeekToResult> seekTo(int audioEffectID, int millisecond);
+
+  /// Set volume for the audio effect. Both the local play volume and the publish volume are set
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - [volume] The range is 0 ~ 200. The default is 100.
+  Future<void> setVolume(int audioEffectID, int volume);
+
+  /// Set volume for all audio effect. Both the local play volume and the publish volume are set
+  ///
+  /// - [volume] The range is 0 ~ 200. The default is 100.
+  Future<void> setVolumeAll(int volume);
+
+  /// Get the total progress of your media resources
+  ///
+  /// You should load resource before invoking this function, otherwise the return value is 0
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - Returns Unit is millisecond
+  Future<int> getTotalDuration(int audioEffectID);
+
+  /// Get current playing progress
+  ///
+  /// You should load resource before invoking this function, otherwise the return value is 0
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  Future<int> getCurrentProgress(int audioEffectID);
+
+  /// Load audio effect resource
+  ///
+  /// In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file. Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading
+  ///
+  /// - [audioEffectID] ID for the audio effect
+  /// - [path] the absolute path of the audio effect resource.
+  /// - Returns Result for audio effect player loads resources
+  Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path);
+
+  /// Unload audio effect resource
+  ///
+  /// After the sound effects are used up, related resources can be released through this function; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
+  ///
+  /// - [audioEffectID] ID for the audio effect loaded
+  Future<void> unloadResource(int audioEffectID);
+
+  /// Get audio effect player index
+  ///
+  /// - Returns Audio effect player index
+  int getIndex();
 
 }
 
@@ -1713,6 +1863,36 @@ class ZegoMediaPlayerSeekToResult {
   ZegoMediaPlayerSeekToResult(this.errorCode): assert(errorCode != null);
 
   ZegoMediaPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for audio effect player loads resources
+///
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+class ZegoAudioEffectPlayerLoadResourceResult {
+
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  int errorCode;
+
+  ZegoAudioEffectPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
+
+  ZegoAudioEffectPlayerLoadResourceResult.fromMap(Map<dynamic, dynamic> map):
+    errorCode = map['errorCode'];
+
+}
+
+/// Callback for audio effect player seek to playback progress
+///
+/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+class ZegoAudioEffectPlayerSeekToResult {
+
+  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  int errorCode;
+
+  ZegoAudioEffectPlayerSeekToResult(this.errorCode): assert(errorCode != null);
+
+  ZegoAudioEffectPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
     errorCode = map['errorCode'];
 
 }
