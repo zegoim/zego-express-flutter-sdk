@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.16.0
+
+### **New Features**
+
+1. Add audio effect player function
+
+    Sound effects refer to short sound effects played to enhance the sense of reality or to enhance the atmosphere of the scene, such as: playing applause, gift sound effects, prompt sounds, etc. during the live broadcast; in the game, playing bullets, collision sounds.
+
+    The sound effect player supports functions such as sound effect playback (multiple sound effects can be overlapped), playback control (such as pause playback, volume adjustment, set playback progress), pre-loaded sound effects and other functions.
+
+    For related API, please refer to [createAudioEffectPlayer](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAudioEffectPlayer/createAudioEffectPlayer.html), [destroyAudioEffectPlayer](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAudioEffectPlayer/destroyAudioEffectPlayer.html)
+
+### **Bug Fixes**
+
+1. Fix the problem that [onRoomStreamExtraInfoUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRoomStreamExtraInfoUpdate.html) may call back with empty list unexpectedly
+
+2. Fix the problem that an error occurs when calling SDK functions for the first time
+
+3. Fix the problem of no callback after two consecutive calls to [createEngine](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/createEngine.html)
+
 ## 1.15.2
 
 ### **Bug Fixes**
@@ -25,7 +45,7 @@
 4. Added the function to configure advanced properties when switching rooms
 
     Switch room allows developer to configure the properties of the next room, such as login authentication
-    
+
 5. Add `setEngineConfig` API to set log path and size, and advanced special configuration
 
 ### **Deleted**
