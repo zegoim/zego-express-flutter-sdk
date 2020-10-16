@@ -33,7 +33,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.16.0
+  zego_express_engine: ^1.16.1
 ```
 
 - ### 以 git 形式依赖

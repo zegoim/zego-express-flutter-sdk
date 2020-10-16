@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.16.1
+
+### **Enhancements**
+
+1. The fast seek configuration is enabled inside the media player to optimize the slow loading of MP3 files by the media player.
+
+2. Upgrade the third-party library to ensure the security and quality level of the SDK, and FFmpeg is upgraded to version 4.2.2.
+
+### **Bug Fixes**
+
+1. Fixed a problem where Jni caused some machines to crash with low probability when ClassLoad was released.
+
+2. Fix the problem of a small number of users experiencing a sudden drop in video encoding rate.
+
 ## 1.16.0
 
 ### **New Features**
