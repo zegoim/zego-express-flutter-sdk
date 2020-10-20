@@ -136,6 +136,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * 
      * Developers need to pass in the callback object that implements [ZegoCustomVideoCaptureDelegate] and open [enableCustomVideoCapture] in the Dart API to make the custom capture module take effect.
      * When the developer calls [startPreview]/[stopPreview] or [startPublishingStream]/[stopPublishingStream] in the Dart API, the SDK will notify the developer  the start/stop of the custom video capture, and the developer can receive [onStart] and [onStop] Start and stop the external input source after the notification.
+     * This API call is set at any time before [enableCustomVideoCapture] is enabled in Dart
      * @param handler the callback object that implements the [ZegoCustomVideoCaptureDelegate]
      */
     public void setCustomVideoCaptureHandler(IZegoFlutterCustomVideoCaptureHandler handler) {
@@ -166,7 +167,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
      * @param channel publish channel, It is consistent with Dart API
      */
-    public void sendByteBuffer(ByteBuffer data, int dataLength, ZegoCustomVideoCaptureManager.VideoFrameParam param, long referenceTimeMillisecond, int channel) {
+    public void sendRawData(ByteBuffer data, int dataLength, ZegoCustomVideoCaptureManager.VideoFrameParam param, long referenceTimeMillisecond, int channel) {
         if(mParam == null) {
             mParam = new ZegoVideoFrameParam();
         }

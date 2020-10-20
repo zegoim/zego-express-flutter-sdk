@@ -38,6 +38,7 @@
 ///
 /// Developers need to pass in the callback object that implements [ZegoFlutterCustomVideoCaptureHandler] and open [enableCustomVideoCapture] in the Dart API to make the custom capture module take effect.
 /// When the developer calls [startPreview]/[stopPreview] or [startPublishingStream]/[stopPublishingStream] in the Dart API, the SDK will notify the developer  the start/stop of the custom video capture, and the developer can receive [onStart] and [onStop] Start and stop the external input source after the notification.
+/// This API call is set at any time before [enableCustomVideoCapture] is enabled in Dart
 /// @param handler the callback object that implements the [ZegoFlutterCustomVideoCaptureHandler]
 - (void)setCustomVideoCaptureHandler:(id<ZegoFlutterCustomVideoCaptureHandler>)handler;
 
