@@ -11,7 +11,7 @@
 #import "ZegoLog.h"
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
-@interface ZegoCustomVideoCaptureClient()
+/*@interface ZegoCustomVideoCaptureClient()
 
 @property (nonatomic, assign)ZegoPublishChannel channel;
 @property (nonatomic, assign)ZegoVideoMirrorMode mirrorMode;
@@ -21,7 +21,7 @@
 
 @implementation ZegoCustomVideoCaptureClient
 
-- (void)setVideoMirrorMode:(int)mode {
+- (void)setVideoMirrorMode:(ZegoVideoMirrorMode)mode {
     _mirrorMode = mode;
     if([ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode channel:_channel];
@@ -64,13 +64,16 @@
     ZGLog(@"[CustomVideoCaptureClient] dealloc");
 }
 
-@end
+@end*/
 
-@interface ZegoCustomVideoCaptureManager()
+@interface ZegoCustomVideoCaptureManager()<ZegoCustomVideoCaptureHandler>
 
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoCustomVideoCaptureClient *>* clients;
-@property (nonatomic, strong) NSMapTable<NSNumber *, id<ZegoCustomVideoCaptureDelegate>>* delegates;
+//@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoCustomVideoCaptureClient *>* clients;
+//@property (nonatomic, strong) NSMapTable<NSNumber *, id<ZegoFTCustomVideoCaptureHandler>>* delegates;
+@property (nonatomic, weak) id<ZegoFlutterCustomVideoCaptureHandler> handler;
 
+@property (nonatomic, assign)ZegoVideoMirrorMode mirrorMode;
+@property (nonatomic, strong)ZegoVideoFrameParam *videoParam;
 @end
 
 @implementation ZegoCustomVideoCaptureManager
@@ -79,8 +82,8 @@
     if(self = [super init]) {
         //_fps = 15;
         //_timers = [NSMutableDictionary dictionary];
-        _clients = [NSMutableDictionary dictionary];
-        _delegates = [NSMapTable strongToWeakObjectsMapTable];
+        //_clients = [NSMutableDictionary dictionary];
+        //_delegates = [NSMapTable strongToWeakObjectsMapTable];
     }
     return self;
 }
@@ -94,20 +97,45 @@
     return instance;
 }
 
-- (void)setCustomVideoCaptureDelegate:(id<ZegoCustomVideoCaptureDelegate>)delegate channel:(int)channel {
+/*- (void)setCustomVideoCaptureDelegate:(id<ZegoFTCustomVideoCaptureHandler>)delegate channel:(ZegoPublishChannel)channel {
     [self.delegates setObject:delegate forKey:@(channel)];
+}*/
+
+- (void)setCustomVideoCaptureHandler:(id<ZegoFlutterCustomVideoCaptureHandler>)handler {
+    self.handler = handler;
+}
+
+- (void)setVideoMirrorMode:(int)mode channel:(int)channel{
+    _mirrorMode = mode;
+    if([ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode channel:channel];
+    }
+}
+
+- (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(int)channel{
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoCapturePixelBuffer:buffer timestamp:timestamp];
+    // 使用 Texture 方式渲染时，还需要将数据传给 TextureRednerer
+    if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
+        [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:buffer param:self.videoParam flipMode:(_mirrorMode == ZegoVideoMirrorModeOnlyPreviewMirror || _mirrorMode == ZegoVideoMirrorModeBothMirror) channel:channel];
+    }
+}
+
+- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp channel:(int)channel {
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureTextureData:textureID size:size timestamp:timestamp channel:(ZegoPublishChannel)channel];
+    // 使用 Texture 方式渲染时，此方法无法直接渲染
+    // TODO: 考虑使用 gltexture -> cvpixelbuffer 的转换
 }
 
 # pragma mark ZegoCustomVideoCaptureHandler
 - (void)onStart:(ZegoPublishChannel)channel {
     ZGLog(@"[CustomVideoCapture] onStart");
     
-    ZegoCustomVideoCaptureClient *client = [[ZegoCustomVideoCaptureClient alloc] initWithChannel:channel];
-    id<ZegoCustomVideoCaptureDelegate> delegate = [self.delegates objectForKey:@(channel)];
-    [self.clients setObject:client forKey:@(channel)];
+    //ZegoCustomVideoCaptureClient *client = [[ZegoCustomVideoCaptureClient alloc] initWithChannel:channel];
+    //id<ZegoFTCustomVideoCaptureHandler> delegate = [self.delegates objectForKey:@(channel)];
+    //[self.clients setObject:client forKey:@(channel)];
     
-    if([delegate respondsToSelector:@selector(onStart:)]) {
-        [delegate onStart:client];
+    if([self.handler respondsToSelector:@selector(onStart:)]) {
+        [self.handler onStart:(int)channel];
     }
 }
 
@@ -115,10 +143,10 @@
 - (void)onStop:(ZegoPublishChannel)channel {
     ZGLog(@"[CustomVideoCapture] onStop");
     
-    [self.clients removeObjectForKey:@(channel)];
-    id<ZegoCustomVideoCaptureDelegate> delegate = [self.delegates objectForKey:@(channel)];
-    if([delegate respondsToSelector:@selector(onStop)]) {
-        [delegate onStop];
+    //[self.clients removeObjectForKey:@(channel)];
+    //id<ZegoFTCustomVideoCaptureHandler> delegate = [self.delegates objectForKey:@(channel)];
+    if([self.handler respondsToSelector:@selector(onStop:)]) {
+        [self.handler onStop:(int)channel];
     }
 }
 
