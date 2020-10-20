@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.16.2
+
+### **Enhancements**
+
+1. Optimize custom video capture API style. and add necessary notes.
+
 ## 1.16.1
 
 ### **Enhancements**
