@@ -139,7 +139,6 @@ public class ZegoExpressEngineMethodHandler {
         setPlatformLanguage();
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
-        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
@@ -1384,6 +1383,7 @@ public class ZegoExpressEngineMethodHandler {
             config.bufferType = ZegoVideoBufferType.RAW_DATA;
         }
 
+        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
         ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
 
         // When using custom video capture, turn off preview mirroring

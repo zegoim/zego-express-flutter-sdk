@@ -75,7 +75,6 @@
     }
 
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:[ZegoCustomVideoCaptureManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -1238,6 +1237,7 @@
         config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
     }
     
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:(id<ZegoCustomVideoCaptureHandler>)[ZegoCustomVideoCaptureManager sharedInstance]];
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
     
     // When using custom video capture, turn off preview mirroring

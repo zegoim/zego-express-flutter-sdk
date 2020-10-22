@@ -11,65 +11,8 @@
 #import "ZegoLog.h"
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
-/*@interface ZegoCustomVideoCaptureClient()
-
-@property (nonatomic, assign)ZegoPublishChannel channel;
-@property (nonatomic, assign)ZegoVideoMirrorMode mirrorMode;
-@property (nonatomic, strong)ZegoVideoFrameParam *videoParam;
-
-@end
-
-@implementation ZegoCustomVideoCaptureClient
-
-- (void)setVideoMirrorMode:(ZegoVideoMirrorMode)mode {
-    _mirrorMode = mode;
-    if([ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
-        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode channel:_channel];
-    }
-}
-
-- (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp {
-    [[ZegoExpressEngine sharedEngine] sendCustomVideoCapturePixelBuffer:buffer timestamp:timestamp];
-    // 使用 Texture 方式渲染时，还需要将数据传给 TextureRednerer
-    if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:buffer param:self.videoParam flipMode:(_mirrorMode == ZegoVideoMirrorModeOnlyPreviewMirror || _mirrorMode == ZegoVideoMirrorModeBothMirror) channel:_channel];
-    }
-}
-
-- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp {
-    [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureTextureData:textureID size:size timestamp:timestamp];
-    // 使用 Texture 方式渲染时，此方法无法直接渲染
-    // TODO: 考虑使用 gltexture -> cvpixelbuffer 的转换
-}
-
-+ (instancetype)new {
-    return nil;
-}
-
-- (instancetype)init {
-    return nil;
-}
-
-- (instancetype)initWithChannel:(ZegoPublishChannel)channel{
-    if(self = [super init]) {
-        _channel = channel;
-        _mirrorMode = ZegoVideoMirrorModeNoMirror;
-        _videoParam = [[ZegoVideoFrameParam alloc] init];
-    }
-    
-    return self;
-}
-
-- (void) dealloc {
-    ZGLog(@"[CustomVideoCaptureClient] dealloc");
-}
-
-@end*/
-
 @interface ZegoCustomVideoCaptureManager()<ZegoCustomVideoCaptureHandler>
 
-//@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoCustomVideoCaptureClient *>* clients;
-//@property (nonatomic, strong) NSMapTable<NSNumber *, id<ZegoFTCustomVideoCaptureHandler>>* delegates;
 @property (nonatomic, weak) id<ZegoFlutterCustomVideoCaptureHandler> handler;
 
 @property (nonatomic, assign)ZegoVideoMirrorMode mirrorMode;
@@ -77,16 +20,6 @@
 @end
 
 @implementation ZegoCustomVideoCaptureManager
-
-- (instancetype)init {
-    if(self = [super init]) {
-        //_fps = 15;
-        //_timers = [NSMutableDictionary dictionary];
-        //_clients = [NSMutableDictionary dictionary];
-        //_delegates = [NSMapTable strongToWeakObjectsMapTable];
-    }
-    return self;
-}
 
 + (instancetype)sharedInstance {
     static ZegoCustomVideoCaptureManager *instance = nil;
@@ -97,11 +30,8 @@
     return instance;
 }
 
-/*- (void)setCustomVideoCaptureDelegate:(id<ZegoFTCustomVideoCaptureHandler>)delegate channel:(ZegoPublishChannel)channel {
-    [self.delegates setObject:delegate forKey:@(channel)];
-}*/
-
 - (void)setCustomVideoCaptureHandler:(id<ZegoFlutterCustomVideoCaptureHandler>)handler {
+    
     self.handler = handler;
 }
 
@@ -129,11 +59,7 @@
 # pragma mark ZegoCustomVideoCaptureHandler
 - (void)onStart:(ZegoPublishChannel)channel {
     ZGLog(@"[CustomVideoCapture] onStart");
-    
-    //ZegoCustomVideoCaptureClient *client = [[ZegoCustomVideoCaptureClient alloc] initWithChannel:channel];
-    //id<ZegoFTCustomVideoCaptureHandler> delegate = [self.delegates objectForKey:@(channel)];
-    //[self.clients setObject:client forKey:@(channel)];
-    
+
     if([self.handler respondsToSelector:@selector(onStart:)]) {
         [self.handler onStart:(int)channel];
     }
@@ -143,8 +69,6 @@
 - (void)onStop:(ZegoPublishChannel)channel {
     ZGLog(@"[CustomVideoCapture] onStop");
     
-    //[self.clients removeObjectForKey:@(channel)];
-    //id<ZegoFTCustomVideoCaptureHandler> delegate = [self.delegates objectForKey:@(channel)];
     if([self.handler respondsToSelector:@selector(onStop:)]) {
         [self.handler onStop:(int)channel];
     }
