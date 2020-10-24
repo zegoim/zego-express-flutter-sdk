@@ -78,6 +78,42 @@ enum ZegoPublisherState {
   Publishing
 }
 
+/// Voice changer preset value
+enum ZegoVoiceChangerPreset {
+  /// No Voice changer
+  None,
+  /// Male to child voice (loli voice effect)
+  MenToChild,
+  /// Male to female voice (kindergarten voice effect)
+  MenToWomen,
+  /// Female to child voice
+  WomenToChild,
+  /// Female to male voice
+  WomenToMen,
+  /// Foreigner voice effect
+  Foreigner,
+  /// Autobot Optimus Prime voice effect
+  OptimusPrime,
+  /// Android robot voice effect
+  Android,
+  /// Ethereal voice effect
+  Ethereal
+}
+
+/// Reverberation preset value
+enum ZegoReverbPreset {
+  /// No Reverberation
+  None,
+  /// Soft room reverb effect
+  SoftRoom,
+  /// Large room reverb effect
+  LargeRoom,
+  /// Concer hall reverb effect
+  ConcerHall,
+  /// Valley reverb effect
+  Valley
+}
+
 /// Video configuration resolution and bitrate preset enumeration. The preset resolutions are adapted for mobile and desktop. On mobile, height is longer than width, and desktop is the opposite. For example, 1080p is actually 1080(w) x 1920(h) on mobile and 1920(w) x 1080(h) on desktop.
 enum ZegoVideoConfigPreset {
   /// Set the resolution to 320x180, the default is 15 fps, the code rate is 300 kbps
@@ -146,11 +182,11 @@ enum ZegoAudioCodecID {
   Low3
 }
 
-/// Video Codec ID
+/// Video codec ID
 enum ZegoVideoCodecID {
-  /// default
+  /// Default (H.264)
   Default,
-  /// SVC
+  /// Scalable Video Coding (H.264 SVC)
   Svc,
   /// VP8
   Vp8
@@ -176,7 +212,7 @@ enum ZegoAECMode {
   Soft
 }
 
-/// Audio Noise Suppression mode
+/// Active Noise Suppression mode
 enum ZegoANSMode {
   /// Soft ANS
   Soft,
@@ -430,6 +466,16 @@ enum ZegoMediaPlayerNetworkEvent {
   BufferEnded
 }
 
+/// Audio channel
+enum ZegoMediaPlayerAudioChannel {
+  /// Audio channel left
+  Left,
+  /// Audio channel right
+  Right,
+  /// Audio channel all
+  All
+}
+
 /// AudioEffectPlayer state
 enum ZegoAudioEffectPlayState {
   /// Not playing
@@ -571,10 +617,10 @@ class ZegoRoomConfig {
 /// Developers should note that the width and height resolution of the mobile and desktop are opposite. For example, 360p, the resolution of the mobile is 360x640, and the desktop is 640x360.
 class ZegoVideoConfig {
 
-  /// Capture resolution width, control the width of camera image acquisition. Only the camera is not started and the custom video capture is not used, the setting is effective
+  /// Capture resolution width, control the width of camera image acquisition. Only the camera is not started and the custom video capture is not used, the setting is effective. For performance reasons, the SDK scales the video frame to the encoding resolution after capturing from camera and before rendering to the preview view. Therefore, the resolution of the preview image is the encoding resolution. If you need the resolution of the preview image to be this value, Please call [setCapturePipelineScaleMode] first to change the capture pipeline scale mode to [Post]
   int captureWidth;
 
-  /// Capture resolution height, control the height of camera image acquisition. Only the camera is not started and the custom video capture is not used, the setting is effective
+  /// Capture resolution height, control the height of camera image acquisition. Only the camera is not started and the custom video capture is not used, the setting is effective. For performance reasons, the SDK scales the video frame to the encoding resolution after capturing from camera and before rendering to the preview view. Therefore, the resolution of the preview image is the encoding resolution. If you need the resolution of the preview image to be this value, Please call [setCapturePipelineScaleMode] first to change the capture pipeline scale mode to [Post]
   int captureHeight;
 
   /// Encode resolution width, control the image width of the encoder when publishing stream. The settings before and after publishing stream can be effective
@@ -583,7 +629,7 @@ class ZegoVideoConfig {
   /// Encode resolution height, control the image height of the encoder when publishing stream. The settings before and after publishing stream can be effective
   int encodeHeight;
 
-  /// frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective
+  /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective
   int fps;
 
   /// Bit rate in kbps. The settings before and after publishing stream can be effective
@@ -696,26 +742,58 @@ class ZegoVoiceChangerParam {
 /// Developers can use the SDK's built-in presets to change the parameters of the reverb.
 class ZegoReverbParam {
 
+  /// Room size, in the range [0.0, 1.0], to control the size of the "room" in which the reverb is generated, the larger the room, the stronger the reverb.
+  double roomSize;
+
+  /// Echo, in the range [0.0, 0.5], to control the trailing length of the reverb.
+  double reverberance;
+
   /// Reverb Damping, range [0.0, 2.0], controls the attenuation of the reverb, the higher the damping, the higher the attenuation.
   double damping;
 
   /// Dry/wet ratio, the range is greater than or equal to 0.0, to control the ratio between reverberation, direct sound and early reflections; dry part is set to 1 by default; the smaller the dry/wet ratio, the larger the wet ratio, the stronger the reverberation effect.
   double dryWetRatio;
 
-  /// Echo, in the range [0.0, 0.5], to control the trailing length of the reverb.
-  double reverberance;
-
-  /// Room size, in the range [0.0, 1.0], to control the size of the "room" in which the reverb is generated, the larger the room, the stronger the reverb.
-  double roomSize;
-
-  ZegoReverbParam(this.damping, this.dryWetRatio, this.reverberance, this.roomSize): assert(damping != null), assert(dryWetRatio != null), assert(reverberance != null), assert(roomSize != null);
+  ZegoReverbParam(this.roomSize, this.reverberance, this.damping, this.dryWetRatio): assert(roomSize != null), assert(reverberance != null), assert(damping != null), assert(dryWetRatio != null);
 
   Map<String, dynamic> toMap() {
     return {
-      'damping': this.damping,
-      'dryWetRatio': this.dryWetRatio,
+      'roomSize': this.roomSize,
       'reverberance': this.reverberance,
-      'roomSize': this.roomSize
+      'damping': this.damping,
+      'dryWetRatio': this.dryWetRatio
+    };
+  }
+
+}
+
+/// Audio reverberation echo parameters
+class ZegoReverbEchoParam {
+
+  /// Gain of input audio signal, in the range [0.0, 1.0]
+  double inGain;
+
+  /// Gain of output audio signal, in the range [0.0, 1.0]
+  double outGain;
+
+  /// Number of echos, in the range [0, 7]
+  int numDelays;
+
+  /// Respective delay of echo signal, in milliseconds, in the range [0, 5000] ms
+  List<int> delay;
+
+  /// Respective decay coefficient of echo signal, in the range [0.0, 1.0]
+  List<double> decay;
+
+  ZegoReverbEchoParam(this.inGain, this.outGain, this.numDelays, this.delay, this.decay): assert(inGain != null), assert(outGain != null), assert(numDelays != null), assert(delay != null), assert(decay != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'inGain': this.inGain,
+      'outGain': this.outGain,
+      'numDelays': this.numDelays,
+      'delay': this.delay,
+      'decay': this.decay
     };
   }
 
@@ -876,6 +954,9 @@ class ZegoPublishStreamQuality {
   /// Whether to enable hardware encoding
   bool isHardwareEncode;
 
+  /// Video codec ID
+  ZegoVideoCodecID videoCodecID;
+
   /// Total number of bytes sent, including audio, video, SEI
   double totalSendBytes;
 
@@ -885,7 +966,7 @@ class ZegoPublishStreamQuality {
   /// Number of video bytes sent
   double videoSendBytes;
 
-  ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode, this.totalSendBytes, this.audioSendBytes, this.videoSendBytes): assert(videoCaptureFPS != null), assert(videoEncodeFPS != null), assert(videoSendFPS != null), assert(videoKBPS != null), assert(audioCaptureFPS != null), assert(audioSendFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(isHardwareEncode != null), assert(totalSendBytes != null), assert(audioSendBytes != null), assert(videoSendBytes != null);
+  ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode, this.videoCodecID, this.totalSendBytes, this.audioSendBytes, this.videoSendBytes): assert(videoCaptureFPS != null), assert(videoEncodeFPS != null), assert(videoSendFPS != null), assert(videoKBPS != null), assert(audioCaptureFPS != null), assert(audioSendFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(isHardwareEncode != null), assert(videoCodecID != null), assert(totalSendBytes != null), assert(audioSendBytes != null), assert(videoSendBytes != null);
 
   ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map) {
     videoCaptureFPS = map['videoCaptureFPS'];
@@ -990,8 +1071,11 @@ class ZegoPlayerConfig {
 /// Audio and video parameters and network quality, etc.
 class ZegoPlayStreamQuality {
 
-  /// Video reception frame rate. The unit of frame rate is f/s
+  /// Video receiving frame rate. The unit of frame rate is f/s
   double videoRecvFPS;
+
+  /// Video dejitter frame rate. The unit of frame rate is f/s
+  double videoDejitterFPS;
 
   /// Video decoding frame rate. The unit of frame rate is f/s
   double videoDecodeFPS;
@@ -1002,8 +1086,14 @@ class ZegoPlayStreamQuality {
   /// Video bit rate in kbps
   double videoKBPS;
 
-  /// Audio reception frame rate. The unit of frame rate is f/s
+  /// Video break rate, the unit is (number of breaks / every 10 seconds)
+  double videoBreakRate;
+
+  /// Audio receiving frame rate. The unit of frame rate is f/s
   double audioRecvFPS;
+
+  /// Audio dejitter frame rate. The unit of frame rate is f/s
+  double audioDejitterFPS;
 
   /// Audio decoding frame rate. The unit of frame rate is f/s
   double audioDecodeFPS;
@@ -1013,6 +1103,9 @@ class ZegoPlayStreamQuality {
 
   /// Audio bit rate in kbps
   double audioKBPS;
+
+  /// Audio break rate, the unit is (number of breaks / every 10 seconds)
+  double audioBreakRate;
 
   /// Server to local delay, in milliseconds
   int rtt;
@@ -1035,6 +1128,9 @@ class ZegoPlayStreamQuality {
   /// Whether to enable hardware decoding
   bool isHardwareDecode;
 
+  /// Video codec ID
+  ZegoVideoCodecID videoCodecID;
+
   /// Total number of bytes received, including audio, video, SEI
   double totalRecvBytes;
 
@@ -1044,7 +1140,7 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
-  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.audioRecvFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.isHardwareDecode, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes): assert(videoRecvFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(audioRecvFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(peerToPeerDelay != null), assert(peerToPeerPacketLostRate != null), assert(level != null), assert(delay != null), assert(isHardwareDecode != null), assert(totalRecvBytes != null), assert(audioRecvBytes != null), assert(videoRecvBytes != null);
+  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes): assert(videoRecvFPS != null), assert(videoDejitterFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(videoBreakRate != null), assert(audioRecvFPS != null), assert(audioDejitterFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(audioBreakRate != null), assert(rtt != null), assert(packetLostRate != null), assert(peerToPeerDelay != null), assert(peerToPeerPacketLostRate != null), assert(level != null), assert(delay != null), assert(isHardwareDecode != null), assert(videoCodecID != null), assert(totalRecvBytes != null), assert(audioRecvBytes != null), assert(videoRecvBytes != null);
 
   ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map) {
     videoRecvFPS = map['videoRecvFPS'];
@@ -1592,6 +1688,20 @@ abstract class ZegoMediaPlayer {
   ///
   /// You should load resource before invoking this function, otherwise the return value is 0
   Future<int> getCurrentProgress();
+
+  /// Get the number of audio tracks of the playback file
+  Future<int> getAudioTrackCount();
+
+  /// Set the audio track of the playback file
+  ///
+  /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
+  Future<void> setAudioTrackIndex(int index);
+
+  /// Setting up the specific voice changer parameters.
+  ///
+  /// - [audioChannel] The audio channel to be voice changed
+  /// - [param] Voice changer parameters
+  Future<void> setVoiceChangerParam(ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param);
 
   /// Get the current playback status
   Future<ZegoMediaPlayerState> getCurrentState();
