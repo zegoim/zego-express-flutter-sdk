@@ -183,7 +183,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Set audio capture stereo mode
   ///
   /// This function is used to set the audio stereo capture mode. The default is mono, that is, dual channel collection is not enabled.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
   ///
   /// - [mode] Audio stereo capture mode
   Future<void> setAudioCaptureStereoMode(ZegoAudioCaptureStereoMode mode) async {
@@ -201,7 +201,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [targetURL] CDN relay address, supported address format is rtmp.
-  /// - Returns The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
+  /// - Returns The execution result of update the relay CDN operation
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(String streamID, String targetURL) async {
     return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
   }
@@ -213,7 +213,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [targetURL] CDN relay address, supported address format rtmp.
-  /// - Returns The execution result notification of the relay CDN operation, and proceed to the next step according to the execution result.
+  /// - Returns The execution result of update the relay CDN operation
   Future<ZegoPublisherUpdateCdnUrlResult> removePublishCdnUrl(String streamID, String targetURL) async {
     return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
   }

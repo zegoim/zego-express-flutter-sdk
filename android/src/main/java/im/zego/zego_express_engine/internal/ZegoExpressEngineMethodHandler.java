@@ -46,17 +46,20 @@ import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
+import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
 import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
+import im.zego.zegoexpress.constants.ZegoReverbPreset;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
+import im.zego.zegoexpress.constants.ZegoVoiceChangerPreset;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
@@ -72,6 +75,7 @@ import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
+import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoReverbParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -86,6 +90,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.TextureRegistry;
 
 import static im.zego.zego_express_engine.internal.ZegoUtils.boolValue;
+import static im.zego.zego_express_engine.internal.ZegoUtils.floatArrayValueFromDoubleArray;
+import static im.zego.zego_express_engine.internal.ZegoUtils.intArrayValue;
 import static im.zego.zego_express_engine.internal.ZegoUtils.intValue;
 import static im.zego.zego_express_engine.internal.ZegoUtils.longValue;
 import static im.zego.zego_express_engine.internal.ZegoUtils.floatValue;
@@ -139,7 +145,6 @@ public class ZegoExpressEngineMethodHandler {
         setPlatformLanguage();
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
-        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
@@ -429,7 +434,10 @@ public class ZegoExpressEngineMethodHandler {
     public static void setVideoConfig(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
-        if (configMap == null || configMap.isEmpty()) { return; }
+        if (configMap == null || configMap.isEmpty()) {
+            result.error("setVideoConfig_Null_Config".toUpperCase(), "[setVideoConfig] Null config", null);
+            return;
+        }
 
         int captureWidth = intValue((Number) configMap.get("captureWidth"));
         int captureHeight = intValue((Number) configMap.get("captureHeight"));
@@ -497,7 +505,10 @@ public class ZegoExpressEngineMethodHandler {
     public static void setAudioConfig(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
-        if (configMap == null || configMap.isEmpty()) { return; }
+        if (configMap == null || configMap.isEmpty()) {
+            result.error("setAudioConfig_Null_Config".toUpperCase(), "[setAudioConfig] Null config", null);
+            return;
+        }
 
         int bitrate = intValue((Number) configMap.get("bitrate"));
         int channel = intValue((Number) configMap.get("channel"));
@@ -1208,6 +1219,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void enableTransientANS(MethodCall call, Result result) {
+
+        boolean enable = boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableTransientANS(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setANSMode(MethodCall call, Result result) {
 
         ZegoANSMode mode = ZegoANSMode.getZegoANSMode(intValue((Number) call.argument("mode")));
@@ -1232,7 +1253,10 @@ public class ZegoExpressEngineMethodHandler {
     public static void setBeautifyOption(MethodCall call, Result result) {
 
         HashMap<String, Double> optionMap = call.argument("option");
-        if (optionMap == null || optionMap.isEmpty()) { return; }
+        if (optionMap == null || optionMap.isEmpty()) {
+            result.error("setBeautifyOption_Null_Option".toUpperCase(), "[setBeautifyOption] Null option", null);
+            return;
+        }
 
         double polishStep = doubleValue(optionMap.get("polishStep"));
         double whitenFactor = doubleValue(optionMap.get("whitenFactor"));
@@ -1262,10 +1286,23 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setVoiceChangerPreset(MethodCall call, Result result) {
+
+        ZegoVoiceChangerPreset preset = ZegoVoiceChangerPreset.getZegoVoiceChangerPreset(intValue((Number) call.argument("preset")));
+
+        ZegoExpressEngine.getEngine().setVoiceChangerPreset(preset);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setVoiceChangerParam(MethodCall call, Result result) {
 
         HashMap<String, Double> paramMap = call.argument("param");
-        if (paramMap == null || paramMap.isEmpty()) { return; }
+        if (paramMap == null || paramMap.isEmpty()) {
+            result.error("setVoiceChangerParam_Null_Param".toUpperCase(), "[setVoiceChangerParam] Null param", null);
+            return;
+        }
 
         ZegoVoiceChangerParam param = new ZegoVoiceChangerParam();
         param.pitch = floatValue(paramMap.get("pitch"));
@@ -1276,10 +1313,23 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setReverbPreset(MethodCall call, Result result) {
+
+        ZegoReverbPreset preset = ZegoReverbPreset.getZegoReverbPreset(intValue((Number) call.argument("preset")));
+
+        ZegoExpressEngine.getEngine().setReverbPreset(preset);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setReverbParam(MethodCall call, Result result) {
 
         HashMap<String, Double> paramMap = call.argument("param");
-        if (paramMap == null || paramMap.isEmpty()) { return; }
+        if (paramMap == null || paramMap.isEmpty()) {
+            result.error("setReverbParam_Null_Param".toUpperCase(), "[setReverbParam] Null param", null);
+            return;
+        }
 
         ZegoReverbParam param = new ZegoReverbParam();
         param.damping = floatValue(paramMap.get("damping"));
@@ -1288,6 +1338,28 @@ public class ZegoExpressEngineMethodHandler {
         param.roomSize = floatValue(paramMap.get("roomSize"));
 
         ZegoExpressEngine.getEngine().setReverbParam(param);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings({"unused", "unchecked"})
+    public static void setReverbEchoParam(MethodCall call, Result result) {
+
+        HashMap<String, Object> paramMap = call.argument("param");
+        if (paramMap == null || paramMap.isEmpty()) {
+            result.error("setReverbEchoParam_Null_Param".toUpperCase(), "[setReverbEchoParam] Null param", null);
+            return;
+        }
+
+        ZegoReverbEchoParam param = new ZegoReverbEchoParam();
+
+        param.inGain = floatValue((Number) paramMap.get("inGain"));
+        param.outGain = floatValue((Number) paramMap.get("outGain"));
+        param.numDelays = intValue((Number) paramMap.get("numDelays"));
+        param.delay = intArrayValue((ArrayList<Integer>) paramMap.get("delay"));
+        param.decay = floatArrayValueFromDoubleArray((ArrayList<Double>) paramMap.get("decay"));
+
+        ZegoExpressEngine.getEngine().setReverbEchoParam(param);
 
         result.success(null);
     }
@@ -1343,7 +1415,10 @@ public class ZegoExpressEngineMethodHandler {
         ArrayList<ZegoUser> toUserList = new ArrayList<>();
 
         ArrayList<HashMap<String, Object>> toUserMapList = call.argument("toUserList");
-        if (toUserMapList == null) { return; }
+        if (toUserMapList == null) {
+            result.error("sendCustomCommand_Null_toUserList".toUpperCase(), "[sendCustomCommand] Null toUserList", null);
+            return;
+        }
 
         for (HashMap<String, Object> userMap: toUserMapList) {
             String userID = (String) userMap.get("userID");
@@ -1384,6 +1459,7 @@ public class ZegoExpressEngineMethodHandler {
             config.bufferType = ZegoVideoBufferType.RAW_DATA;
         }
 
+        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
         ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
 
         // When using custom video capture, turn off preview mirroring
@@ -1688,6 +1764,58 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             result.success(0);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetAudioTrackCount(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int audioTrackCount = mediaPlayer.getAudioTrackCount();
+            result.success(audioTrackCount);
+        } else {
+            result.success(0);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetAudioTrackIndex(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int trackIndex = intValue((Number) call.argument("trackIndex"));
+            mediaPlayer.setAudioTrackIndex(trackIndex);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetVoiceChangerParam(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            HashMap<String, Double> paramMap = call.argument("param");
+            if (paramMap == null || paramMap.isEmpty()) {
+                result.error("mediaPlayer_SetVoiceChangerParam_Null_Param".toUpperCase(), "[mediaPlayerSetVoiceChangerParam] Null param", null);
+                return;
+            }
+
+            ZegoMediaPlayerAudioChannel audioChannel = ZegoMediaPlayerAudioChannel.getZegoMediaPlayerAudioChannel(intValue((Number) call.argument("audioChannel")));
+
+            ZegoVoiceChangerParam param = new ZegoVoiceChangerParam();
+            param.pitch = floatValue(paramMap.get("pitch"));
+
+            mediaPlayer.setVoiceChangerParam(audioChannel, param);
+        }
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -2003,7 +2131,10 @@ public class ZegoExpressEngineMethodHandler {
     public static void startRecordingCapturedData(MethodCall call, Result result) {
 
         HashMap<String, Object> configMap = call.argument("config");
-        if (configMap == null || configMap.isEmpty()) { return; }
+        if (configMap == null || configMap.isEmpty()) {
+            result.error("startRecordingCapturedData_Null_Config".toUpperCase(), "[startRecordingCapturedData] Null config", null);
+            return;
+        }
 
         ZegoDataRecordConfig config = new ZegoDataRecordConfig();
         config.filePath = (String) configMap.get("filePath");

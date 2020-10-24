@@ -5,50 +5,60 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
-  /// Enables or disables Acoustic Echo Cancellation (AEC).
+  /// Enables or disables acoustic echo cancellation (AEC).
   ///
   /// Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
   ///
-  /// - [enable] Whether to enable echo cancellation, true: enable echo cancellation, false: disable echo cancellation
+  /// - [enable] Whether to enable echo cancellation, true: enable, false: disable
   Future<void> enableAEC(bool enable) async {
     return await ZegoExpressImpl.instance.enableAEC(enable);
   }
 
-  /// Sets the Acoustic Echo Cancellation (AEC) mode.
+  /// Sets the acoustic echo cancellation (AEC) mode.
   ///
   /// Switch different echo cancellation modes to control the extent to which echo data is eliminated.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
   ///
   /// - [mode] Echo cancellation mode
   Future<void> setAECMode(ZegoAECMode mode) async {
     return await ZegoExpressImpl.instance.setAECMode(mode);
   }
 
-  /// Enables or disables Automatic Gain Control (AGC).
+  /// Enables or disables automatic gain control (AGC).
   ///
   /// When the auto gain is turned on, the sound will be amplified, but it will affect the sound quality to some extent.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
   ///
-  /// - [enable] Whether to enable automatic gain control, true: enable AGC, false: disable AGC
+  /// - [enable] Whether to enable automatic gain control, true: enable, false: disable
   Future<void> enableAGC(bool enable) async {
     return await ZegoExpressImpl.instance.enableAGC(enable);
   }
 
-  /// Enables or disables Automatic Noise Suppression (ANS).
+  /// Enables or disables active noise suppression (ANS, aka ANC).
   ///
   /// Turning on the noise suppression switch can reduce the noise in the audio data and make the human voice clearer.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
   ///
-  /// - [enable] Whether to enable noise suppression, true: enable AGC, false: disable AGC
+  /// - [enable] Whether to enable noise suppression, true: enable, false: disable
   Future<void> enableANS(bool enable) async {
     return await ZegoExpressImpl.instance.enableANS(enable);
   }
 
-  /// Sets the Automatic Noise Suppression (ANS) mode.
+  /// Enables or disables transient noise suppression.
+  ///
+  /// Suppress transient noises such as keyboard and desk knocks
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  ///
+  /// - [enable] Whether to enable transient noise suppression, true: enable, false: disable
+  Future<void> enableTransientANS(bool enable) async {
+    return await ZegoExpressImpl.instance.enableTransientANS(enable);
+  }
+
+  /// Sets the automatic noise suppression (ANS) mode.
   ///
   /// Default is medium mode
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream] or [startPreview] to take effect.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
   ///
   /// - [mode] Audio Noise Suppression mode
   Future<void> setANSMode(ZegoANSMode mode) async {
@@ -86,22 +96,61 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setAudioEqualizerGain(bandIndex, bandGain);
   }
 
-  /// Sets up the voice changer parameters.
+  /// Setting up the voice changer via preset enumeration
   ///
-  /// sound change effect only works on capture sounds.
+  /// Voice changer effect is only effective for the captured sound.
+  /// This function is an encapsulated version of [setVoiceChangerParam], which provides some preset values. If you need to configure the voice changer effects, please use [setVoiceChangerParam]
+  /// This function is mutually exclusive with [setReverbPreset]. If used at the same time, it will produce undefined effects.
+  /// Some enumerated preset will modify the parameters of reverberation or reverberation echo, so after calling this function, calling [setVoiceChangerParam], [setReverbParam], [setReverbEchoParam] may affect the voice changer effect.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  ///
+  /// - [preset] The voice changer preset enumeration
+  Future<void> setVoiceChangerPreset(ZegoVoiceChangerPreset preset) async {
+    return await ZegoExpressImpl.instance.setVoiceChangerPreset(preset);
+  }
+
+  /// Setting up the specific voice changer parameters.
+  ///
+  /// Voice changer effect is only effective for the captured sound.
+  /// This function is an advanced version of [setVoiceChangerPreset], you can configure the voice changer effect by yourself.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [param] Voice changer parameters
   Future<void> setVoiceChangerParam(ZegoVoiceChangerParam param) async {
     return await ZegoExpressImpl.instance.setVoiceChangerParam(param);
   }
 
-  /// Sets up the reverberation parameters.
+  /// Setting up the reverberation via preset enumeration
   ///
-  /// Different values set dynamically after a successful publishing will take effect, When all of the parameters is set to 0, the reverb is turned off.
+  /// Support dynamic settings when publishing stream.
+  /// This function is a encapsulated version of [setReverbParam], which provides some preset values. If you need to configure the reverb, please use [setReverbParam]
+  /// This function is mutually exclusive with [setVoiceChangerPreset]. If used at the same time, it will produce undefined effects.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  ///
+  /// - [preset] The reverberation preset enumeration
+  Future<void> setReverbPreset(ZegoReverbPreset preset) async {
+    return await ZegoExpressImpl.instance.setReverbPreset(preset);
+  }
+
+  /// Setting up the specific reverberation parameters.
+  ///
+  /// Different values dynamically set during publishing stream will take effect. When all parameters are set to 0, the reverberation is turned off.
+  /// This function is an advanced version of [setReverbPreset], you can configure the reverb effect by yourself.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [param] Reverb parameter
   Future<void> setReverbParam(ZegoReverbParam param) async {
     return await ZegoExpressImpl.instance.setReverbParam(param);
+  }
+
+  /// Setting up the specific reverberation echo parameters
+  ///
+  /// This function can be used with voice changer and reverb to achieve a variety of custom sound effects
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  ///
+  /// - [param] The reverberation echo parameter
+  Future<void> setReverbEchoParam(ZegoReverbEchoParam param) async {
+    return await ZegoExpressImpl.instance.setReverbEchoParam(param);
   }
 
   /// Enables the virtual stereo feature.

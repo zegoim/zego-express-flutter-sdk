@@ -249,6 +249,7 @@
                 @"packetLostRate": @(quality.packetLostRate),
                 @"level": @(quality.level),
                 @"isHardwareEncode": @(quality.isHardwareEncode),
+                @"videoCodecID": @(quality.videoCodecID),
                 @"totalSendBytes": @(quality.totalSendBytes),
                 @"audioSendBytes": @(quality.audioSendBytes),
                 @"videoSendBytes": @(quality.videoSendBytes)
@@ -361,13 +362,17 @@
             @"method": @"onPlayerQualityUpdate",
             @"quality": @{
                 @"videoRecvFPS": @(quality.videoRecvFPS),
+                @"videoDejitterFPS": @(quality.videoDejitterFPS),
                 @"videoDecodeFPS": @(quality.videoDecodeFPS),
                 @"videoRenderFPS": @(quality.videoRenderFPS),
                 @"videoKBPS": @(quality.videoKBPS),
+                @"videoBreakRate": @(quality.videoBreakRate),
                 @"audioRecvFPS": @(quality.audioRecvFPS),
+                @"audioDejitterFPS": @(quality.audioDejitterFPS),
                 @"audioDecodeFPS": @(quality.audioDecodeFPS),
                 @"audioRenderFPS": @(quality.audioRenderFPS),
                 @"audioKBPS": @(quality.audioKBPS),
+                @"audioBreakRate": @(quality.audioBreakRate),
                 @"rtt": @(quality.rtt),
                 @"packetLostRate": @(quality.packetLostRate),
                 @"peerToPeerDelay": @(quality.peerToPeerDelay),
@@ -375,6 +380,7 @@
                 @"level": @(quality.level),
                 @"delay": @(quality.delay),
                 @"isHardwareDecode": @(quality.isHardwareDecode),
+                @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
                 @"audioRecvBytes": @(quality.audioRecvBytes),
                 @"videoRecvBytes": @(quality.videoRecvBytes)

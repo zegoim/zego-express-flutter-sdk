@@ -7,8 +7,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
 
   /// Sends a Broadcast Message
   ///
-  /// The total sending frequency limit of [sendBroadcastMessage] and [sendCustomCommand] is 600 times per minute by default.
-  /// Users of a certain number of advanced rooms in the same room can receive this callback. It is generally used when the number of people in the live room is less than a certain number. The specific number is determined by the configuration of the ZEGO server.
+  /// The sending frequency of broadcast messages in the same room cannot be higher than 10 messages/s.
+  /// A certain number of users in the same room who entered the room earlier can receive this callback. The message is reliable. It is generally used when the number of people in the live room is less than a certain number. The specific number is determined by the configuration of the ZEGO server.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [message] Message content, no longer than 1024 bytes
@@ -19,8 +19,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
 
   /// Sends a Barrage Message (bullet screen) to all users in the same room, without guaranteeing the delivery.
   ///
-  /// There is no limit on the number of transmissions, but the server will actively drop messages if it is sent too frequently.
-  /// The api [sendBroadcastMessage] only supports that a certain number of users who entered the room can receive the sent message，but [sendBarrageMessage] can be received by users with more than the number of people in the same room, but it is not reliable, that is, when there are many users in the room or messages are sent frequently between users, the users who receive the messages may not be able to receive them. Generally used for sending live barrage.
+  /// The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s.
+  /// The message is unreliable. When the frequency of sending barrage messages in the entire room is greater than 20 messages/s, the recipient may not receive the message. It is generally used in scenarios where there is a large number of messages sent and received in the room and the reliability of the messages is not required, such as live broadcast barrage.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [message] Message content, no longer than 1024 bytes
@@ -31,8 +31,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
 
   /// Sends a Custom Command to the specified users in the same room.
   ///
-  /// The total sending frequency limit of [sendBroadcastMessage] and [sendCustomCommand] is 600 times per minute by default.
-  /// The type of point-to-point signaling in the same room is generally used for remote control signaling or message sending between users.
+  /// The frequency of custom messages sent to a single user in the same room cannot be higher than 200 messages/s, and the frequency of custom messages sent to multiple users cannot be higher than 10 messages/s.
+  /// The point-to-point signaling type in the same room is generally used for remote control signaling or for sending messages between users. The messages are reliable.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [command] Custom command content, no longer than 1024 bytes

@@ -187,6 +187,9 @@ class ZegoErrorCode {
   /// The connection to the RTMP server is interrupted. Please check whether there is any problem with the network connection or the stream publishing URL.
   static const int PublisherRtmpServerDisconnect                                          = 1003029;
 
+  /// Failed to take publish stream snapshot, please check whether the state of the publish channel to be snapshot is normal.
+  static const int PublisherTakePublishStreamSnapshotFailed                               = 1003030;
+
   /// Failed to get status updates of relayed streaming to CDN. Please check whether the URL is valid.
   static const int PublisherUpdateCdnTargetError                                          = 1003040;
 
@@ -231,6 +234,9 @@ class ZegoErrorCode {
 
   /// Stream playing is temporarily interrupted. Retrying...
   static const int PlayerErrorNetworkInterrupt                                            = 1004020;
+
+  /// Failed to take play stream snapshot, please check whether the state of the stream to be snapshot is normal.
+  static const int PlayerTakePlayStreamSnapshotFailed                                     = 1004030;
 
   /// Stream playing failed due to system internal exceptions.
   static const int PlayerInnerError                                                       = 1004099;
@@ -379,6 +385,12 @@ class ZegoErrorCode {
   /// The voice changer param is invalid. The value should be in the range of -8.0 ~ 8.0.
   static const int PreprocessVoiceChangerParamInvalid                                     = 1007016;
 
+  /// The reverberation echo parameters is null. Please check the input parameter.
+  static const int PreprocessReverbEchoParamNull                                          = 1007017;
+
+  /// The reverberation echo parameters is invalid.
+  static const int PreprocessReverbEchoParamInvalid                                       = 1007018;
+
   /// The MediaPlayer instance is not created.
   static const int MediaPlayerNoInstance                                                  = 1008001;
 
@@ -408,6 +420,12 @@ class ZegoErrorCode {
 
   /// The number of MediaPlayer instances exceeds the maximum number allowed. Up to 4 instances can be created.
   static const int MediaPlayerExceedMaxCount                                              = 1008030;
+
+  /// The media player failed to specify the audio track index
+  static const int MediaPlayerSetAudioTrackIndexError                                     = 1008040;
+
+  /// Invalid voice changing parameters set by media player
+  static const int MediaPlayerSetVoiceChangerParamInvalid                                 = 1008041;
 
   /// MediaPlayer internal error.
   static const int MediaPlayerInnerError                                                  = 1008099;

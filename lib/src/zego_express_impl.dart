@@ -490,6 +490,12 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> enableTransientANS(bool enable) async {
+    return await _channel.invokeMethod('enableTransientANS', {
+      'enable': enable
+    });
+  }
+
   Future<void> setANSMode(ZegoANSMode mode) async {
     return await _channel.invokeMethod('setANSMode', {
       'mode': mode.index
@@ -517,14 +523,32 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setVoiceChangerPreset(ZegoVoiceChangerPreset preset) async {
+    return await _channel.invokeMethod('setVoiceChangerPreset', {
+      'preset': preset.index
+    });
+  }
+
   Future<void> setVoiceChangerParam(ZegoVoiceChangerParam param) async {
     return await _channel.invokeMethod('setVoiceChangerParam', {
       'param': param.toMap()
     });
   }
 
+  Future<void> setReverbPreset(ZegoReverbPreset preset) async {
+    return await _channel.invokeMethod('setReverbPreset', {
+      'preset': preset.index
+    });
+  }
+
   Future<void> setReverbParam(ZegoReverbParam param) async {
     return await _channel.invokeMethod('setReverbParam', {
+      'param': param.toMap()
+    });
+  }
+
+  Future<void> setReverbEchoParam(ZegoReverbEchoParam param) async {
+    return await _channel.invokeMethod('setReverbEchoParam', {
       'param': param.toMap()
     });
   }
@@ -1355,6 +1379,30 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   Future<int> getCurrentProgress() async {
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetCurrentProgress', {
       'index': _index
+    });
+  }
+
+  @override
+  Future<int> getAudioTrackCount() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetAudioTrackCount', {
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> setAudioTrackIndex(int index) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetAudioTrackIndex', {
+      'index': _index,
+      'trackIndex': index
+    });
+  }
+
+  @override
+  Future<void> setVoiceChangerParam(ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetVoiceChangerParam', {
+      'index': _index,
+      'audioChannel': audioChannel.index,
+      'param': param.toMap()
     });
   }
 

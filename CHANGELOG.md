@@ -1,5 +1,41 @@
 # Change Log
 
+## 1.17.0
+
+### **New Features**
+
+1. Added support for more voice changer effects.
+
+    Added 4 voice changer effects - Foreigner, Optimus Prime, Robot, and Ethereal - to easily create unique sound effects and make users' voices more interesting. Create a quirky atmosphere between friends' voices in voice scenes to enhance entertainment.
+
+    For related API, please refer to [setVoiceChangerPreset](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setVoiceChangerPreset.html)
+
+2. Added support for setting reverb echo parameters
+
+    Allows to set up to 7 echoes (delay), and supports to individually set the delay and decay of each echo, and overall input and output gain values.
+
+    For related API, please refer to [setReverbEchoParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setReverbEchoParam.html)
+
+3. Added support for transient noise suppression
+
+    Can be used to suppress transient noises such as keyboard and desk knocks.
+
+    For related API, please refer to [enableTransientANS](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableTransientANS.html)
+
+4. Media Player added support for switching audio tracks.
+
+5. Media Player added support for setting voice changer effects.
+
+### **Enhancements**
+
+1. Added parameters like [videoBreakRate], [audioBreakRate] to the play stream quality parameter to count the break rate.
+
+    For related API, please refer to [onPlayerQualityUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerQualityUpdate.html)
+
+### **Bug Fixes**
+
+1. Fix the issue that calling media player's [enableRepeat] does not take effect before receives the [loadResource] callback.
+
 ## 1.16.2
 
 ### **Enhancements**

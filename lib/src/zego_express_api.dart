@@ -191,7 +191,7 @@ class ZegoExpressEngine {
   /// You can use this callback to remove the cover of the local preview UI and similar operations.You can also dynamically adjust the scale of the preview view based on the resolution of the callback.
   ///
   /// - [width] Video capture resolution width
-  /// - [height] Video capture resolution width
+  /// - [height] Video capture resolution height
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
   static void Function(int width, int height, ZegoPublishChannel channel) onPublisherVideoSizeChanged;
 
@@ -265,8 +265,8 @@ class ZegoExpressEngine {
   /// This callback will be triggered when the played audio and video stream is actually rendered to the set UI play canvas. You can use this callback notification to update or switch UI components that actually play the stream.
   ///
   /// - [streamID] Stream ID
-  /// - [width] The width of the video
-  /// - [height] The height of the video
+  /// - [width] Video decoding resolution width
+  /// - [height] Video decoding resolution height
   static void Function(String streamID, int width, int height) onPlayerVideoSizeChanged;
 
   /// The callback triggered when Supplemental Enhancement Information is received.
@@ -365,17 +365,23 @@ class ZegoExpressEngine {
 
   /// The callback triggered when Broadcast Messages are received.
   ///
+  /// Note that only broadcast messages sent by other users can be notified through this callback, and broadcast messages sent by users themselves will not be notified through this callback.
+  ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
   static void Function(String roomID, List<ZegoBroadcastMessageInfo> messageList) onIMRecvBroadcastMessage;
 
   /// The callback triggered when Barrage Messages are received.
   ///
+  /// Note that only barrage messages sent by other users can be notified through this callback, and barrage messages sent by users themselves will not be notified through this callback.
+  ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
   static void Function(String roomID, List<ZegoBarrageMessageInfo> messageList) onIMRecvBarrageMessage;
 
   /// The callback triggered when a Custom Command is received.
+  ///
+  /// Note that only custom command sent by other users can be notified through this callback, and custom command sent by users themselves will not be notified through this callback.
   ///
   /// - [roomID] Room ID
   /// - [fromUser] Sender of the command
