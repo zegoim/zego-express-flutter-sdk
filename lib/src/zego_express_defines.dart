@@ -980,6 +980,7 @@ class ZegoPublishStreamQuality {
     packetLostRate = map['packetLostRate'];
     level = ZegoStreamQualityLevel.values[map['level']];
     isHardwareEncode = map['isHardwareEncode'];
+    videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']];
     totalSendBytes = map['totalSendBytes'];
     audioSendBytes = map['audioSendBytes'];
     videoSendBytes = map['videoSendBytes'];
@@ -1144,13 +1145,17 @@ class ZegoPlayStreamQuality {
 
   ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map) {
     videoRecvFPS = map['videoRecvFPS'];
+    videoDejitterFPS = map['videoDejitterFPS'];
     videoDecodeFPS = map['videoDecodeFPS'];
     videoRenderFPS = map['videoRenderFPS'];
     videoKBPS = map['videoKBPS'];
+    videoBreakRate = map['videoBreakRate'];
     audioRecvFPS = map['audioRecvFPS'];
+    audioDejitterFPS = map['audioDejitterFPS'];
     audioDecodeFPS = map['audioDecodeFPS'];
     audioRenderFPS = map['audioRenderFPS'];
     audioKBPS = map['audioKBPS'];
+    audioBreakRate = map['audioBreakRate'];
     rtt = map['rtt'];
     packetLostRate = map['packetLostRate'];
     peerToPeerDelay = map['peerToPeerDelay'];
@@ -1158,6 +1163,7 @@ class ZegoPlayStreamQuality {
     level = ZegoStreamQualityLevel.values[map['level']];
     delay = map['delay'];
     isHardwareDecode = map['isHardwareDecode'];
+    videoCodecID = map['videoCodecID'];
     totalRecvBytes = map['totalRecvBytes'];
     audioRecvBytes = map['audioRecvBytes'];
     videoRecvBytes = map['videoRecvBytes'];

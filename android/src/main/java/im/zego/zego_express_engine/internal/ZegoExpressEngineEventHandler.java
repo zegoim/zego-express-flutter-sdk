@@ -243,6 +243,7 @@ class ZegoExpressEngineEventHandler {
             qualityMap.put("packetLostRate", quality.packetLostRate);
             qualityMap.put("level", quality.level.value());
             qualityMap.put("isHardwareEncode", quality.isHardwareEncode);
+            qualityMap.put("videoCodecID", quality.videoCodecID.value());
             qualityMap.put("totalSendBytes", quality.totalSendBytes);
             qualityMap.put("audioSendBytes", quality.audioSendBytes);
             qualityMap.put("videoSendBytes", quality.videoSendBytes);
@@ -348,13 +349,17 @@ class ZegoExpressEngineEventHandler {
 
             HashMap<String, Object> qualityMap = new HashMap<>();
             qualityMap.put("videoRecvFPS", quality.videoRecvFPS);
+            qualityMap.put("videoDejitterFPS", quality.videoDejitterFPS);
             qualityMap.put("videoDecodeFPS", quality.videoDecodeFPS);
             qualityMap.put("videoRenderFPS", quality.videoRenderFPS);
             qualityMap.put("videoKBPS", quality.videoKBPS);
+            qualityMap.put("videoBreakRate", quality.videoBreakRate);
             qualityMap.put("audioRecvFPS", quality.audioRecvFPS);
+            qualityMap.put("audioDejitterFPS", quality.audioDejitterFPS);
             qualityMap.put("audioDecodeFPS", quality.audioDecodeFPS);
             qualityMap.put("audioRenderFPS", quality.audioRenderFPS);
             qualityMap.put("audioKBPS", quality.audioKBPS);
+            qualityMap.put("audioBreakRate", quality.audioBreakRate);
             qualityMap.put("rtt", quality.rtt);
             qualityMap.put("packetLostRate", quality.packetLostRate);
             qualityMap.put("peerToPeerDelay", quality.peerToPeerDelay);
@@ -362,6 +367,7 @@ class ZegoExpressEngineEventHandler {
             qualityMap.put("level", quality.level.value());
             qualityMap.put("delay", quality.delay);
             qualityMap.put("isHardwareDecode", quality.isHardwareDecode);
+            qualityMap.put("videoCodecID", quality.videoCodecID.value());
             qualityMap.put("totalRecvBytes", quality.totalRecvBytes);
             qualityMap.put("audioRecvBytes", quality.audioRecvBytes);
             qualityMap.put("videoRecvBytes", quality.videoRecvBytes);
