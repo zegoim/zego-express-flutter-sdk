@@ -6,6 +6,16 @@ ZegoExpressEngine Audio/Video Flutter SDK is a flutter plugin wrapper based on [
 
 Learn more about the solution: [https://www.zego.im](https://www.zego.im)
 
+> Example demo
+
+1. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example)**
+
+    A simple publish & play stream example demo, in the `example` directory of this repository, shows the basic function of the SDK.
+
+2. **[https://github.com/zegoim/zego-express-example-screen-capture-flutter](https://github.com/zegoim/zego-express-example-screen-capture-flutter)**
+
+    An example demo that implements screen capture and live broadcast on iOS/Android.
+
 ## 1️⃣ Download and Install Flutter
 
 ### **[Flutter Get Started](https://flutter.dev/docs/get-started/install)**
@@ -33,7 +43,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.17.0
+  zego_express_engine: ^1.17.5
 ```
 
 - ### Depends on git

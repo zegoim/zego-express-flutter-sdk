@@ -16,31 +16,33 @@ This document briefly describes some guidance on how you can contribute to this 
 
 4. ***[lib/src/zego_express_texture_render_utils.dart](lib/src/zego_express_texture_render_utils.dart)***: Dart utility methods for managing texture renderer.
 
+5. ***[lib/src/zego_express_assets_utils.dart](lib/src/zego_express_assets_utils.dart)***: Dart utility methods for managing assets.
+
 - ***[example](example)***: Example demo for quick start.
 
 ### iOS
 
 1. ***[ios/Classes/ZegoExpressEnginePlugin.m](ios/Classes/ZegoExpressEnginePlugin.m)***: iOS native implementation, handle the life cycle of flutter plugin.
 
-2. ***[ios/Classes/ZegoExpressEngineMethodHandler.m](ios/Classes/ZegoExpressEngineMethodHandler.m)***: iOS native implementation, handle the method call of dart.
+2. ***[ios/Classes/internal/ZegoExpressEngineMethodHandler.m](ios/Classes/internal/ZegoExpressEngineMethodHandler.m)***: iOS native implementation, handle the method call of dart.
 
-3. ***[ios/Classes/ZegoExpressEngineEventHandler.m](ios/Classes/ZegoExpressEngineEventHandler.m)***: iOS native implementation, handle native callbacks.
+3. ***[ios/Classes/internal/ZegoExpressEngineEventHandler.m](ios/Classes/internal/ZegoExpressEngineEventHandler.m)***: iOS native implementation, handle native callbacks.
 
-4. ***[ios/Classes/ZegoPlatformView.m](ios/Classes/ZegoPlatformView.m)*** & ***[ios/Classes/ZegoPlatformViewFactory.m](ios/Classes/ZegoPlatformViewFactory.m)***: iOS native implementation, handle platform view.
+4. ***[ios/Classes/internal/ZegoPlatformView.m](ios/Classes/internal/ZegoPlatformView.m)*** & ***[ios/Classes/internal/ZegoPlatformViewFactory.m](ios/Classes/internal/ZegoPlatformViewFactory.m)***: iOS native implementation, handle platform view.
 
-5. ***[ios/Classes/ZegoTextureRenderer.m](ios/Classes/ZegoTextureRenderer.m)*** & ***[ios/Classes/ZegoTextureRendererController.m](ios/Classes/ZegoTextureRendererController.m)***: iOS native implementation, handle texture renderer.
+5. ***[ios/Classes/internal/ZegoTextureRenderer.m](ios/Classes/internal/ZegoTextureRenderer.m)*** & ***[ios/Classes/internal/ZegoTextureRendererController.m](ios/Classes/internal/ZegoTextureRendererController.m)***: iOS native implementation, handle texture renderer.
 
 ### Android
 
 1. ***[android/src/main/java/im/zego/zego_express_engine/ZegoExpressEnginePlugin.java](android/src/main/java/im/zego/zego_express_engine/ZegoExpressEnginePlugin.java)***: Android native implementation, handle the life cycle of flutter plugin.
 
-2. ***[android/src/main/java/im/zego/zego_express_engine/ZegoExpressEngineMethodHandler.java](android/src/main/java/im/zego/zego_express_engine/ZegoExpressEngineMethodHandler.java)***: Android native implementation, handle the method call of dart.
+2. ***[android/src/main/java/im/zego/zego_express_engine/internal/ZegoExpressEngineMethodHandler.java](android/src/main/java/im/zego/zego_express_engine/internal/ZegoExpressEngineMethodHandler.java)***: Android native implementation, handle the method call of dart.
 
-3. ***[android/src/main/java/im/zego/zego_express_engine/ZegoExpressEngineEventHandler.java](android/src/main/java/im/zego/zego_express_engine/ZegoExpressEngineEventHandler.java)***: Android native implementation, handle native callbacks.
+3. ***[android/src/main/java/im/zego/zego_express_engine/internal/ZegoExpressEngineEventHandler.java](android/src/main/java/im/zego/zego_express_engine/internal/ZegoExpressEngineEventHandler.java)***: Android native implementation, handle native callbacks.
 
-4. ***[android/src/main/java/im/zego/zego_express_engine/ZegoPlatformView.java](android/src/main/java/im/zego/zego_express_engine/ZegoPlatformView.java)*** & ***[android/src/main/java/im/zego/zego_express_engine/ZegoPlatformViewFactory.java](android/src/main/java/im/zego/zego_express_engine/ZegoPlatformViewFactory.java)***: Android native implementation, handle platform view.
+4. ***[android/src/main/java/im/zego/zego_express_engine/internal/ZegoPlatformView.java](android/src/main/java/im/zego/zego_express_engine/internal/ZegoPlatformView.java)*** & ***[android/src/main/java/im/zego/zego_express_engine/internal/ZegoPlatformViewFactory.java](android/src/main/java/im/zego/zego_express_engine/internal/ZegoPlatformViewFactory.java)***: Android native implementation, handle platform view.
 
-5. ***[android/src/main/java/im/zego/zego_express_engine/ZegoTextureRenderer.java](android/src/main/java/im/zego/zego_express_engine/ZegoTextureRenderer.java)*** & ***[android/src/main/java/im/zego/zego_express_engine/ZegoTextureRendererController.java](android/src/main/java/im/zego/zego_express_engine/ZegoTextureRendererController.java)***: Android native implementation, handle texture renderer.
+5. ***[android/src/main/java/im/zego/zego_express_engine/internal/ZegoTextureRenderer.java](android/src/main/java/im/zego/zego_express_engine/internal/ZegoTextureRenderer.java)*** & ***[android/src/main/java/im/zego/zego_express_engine/internal/ZegoTextureRendererController.java](android/src/main/java/im/zego/zego_express_engine/internal/ZegoTextureRendererController.java)***: Android native implementation, handle texture renderer.
 
 > The following materials may be helpful to create Pull Request:
 

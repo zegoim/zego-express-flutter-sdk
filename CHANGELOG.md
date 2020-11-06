@@ -1,5 +1,21 @@
 # Change Log
 
+## 1.17.5
+
+### **Enhancements**
+
+1. When the login room is inconsistent with the room ID sent by the real-time message, an accurate error code (1009005) is thrown.
+
+    For related API, please refer to [loginRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/loginRoom.html), [sendBroadcastMessage](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineIM/sendBroadcastMessage.html), [sendBarrageMessage](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineIM/sendBarrageMessage.html), [sendCustomCommand](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineIM/sendCustomCommand.html)
+
+### **Bug Fixes**
+
+1. Fixed an issue where the play-stream end did not receive the SEI when the aux publisher sent it.
+
+    For related API, please refer to [sendSEI](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/sendSEI.html)
+
+2. Fix the issue that sometimes audio and video are out of sync in publish iOS screen capture stream.
+
 ## 1.17.0
 
 ### **New Features**

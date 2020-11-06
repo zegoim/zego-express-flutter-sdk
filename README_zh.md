@@ -6,6 +6,16 @@
 
 了解更多解决方案：[https://www.zego.im](https://www.zego.im)
 
+> 示例 Demo
+
+1. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example)**
+
+    一个简易的推拉流示例 Demo，内置于此仓库的 `example` 目录下，展示了 SDK 最基础的推拉流功能。
+
+2. **[https://github.com/zegoim/zego-express-example-screen-capture-flutter](https://github.com/zegoim/zego-express-example-screen-capture-flutter)**
+
+    一个实现了 iOS/Android 屏幕采集并推流直播的示例 Demo。
+
 ## 1️⃣ 下载并安装 Flutter
 
 ### **[Flutter Get Started](https://flutter.dev/docs/get-started/install)**
@@ -33,7 +43,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.17.0
+  zego_express_engine: ^1.17.5
 ```
 
 - ### 以 git 形式依赖
