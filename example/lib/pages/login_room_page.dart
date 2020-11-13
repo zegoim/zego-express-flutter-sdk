@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:zego_express_engine/zego_express_engine.dart';
 
-import 'package:zego_permission/zego_permission.dart';
 import 'package:zego_express_engine_example/config/zego_config.dart';
 import 'package:zego_express_engine_example/pages/publish_stream_page.dart';
 import 'package:zego_express_engine_example/pages/play_stream_page.dart';
-
-class Authorization {
-  final bool camera;
-  final bool microphone;
-
-  Authorization(this.camera, this.microphone);
-}
 
 class LoginRoomPage extends StatefulWidget {
 
@@ -48,39 +41,29 @@ class _LoginRoomPageState extends State<LoginRoomPage> {
     ZegoExpressEngine.destroyEngine();
   }
 
-  void onButtonPressed() async {
+  Future<bool> requestPermission() async {
+    PermissionStatus microphoneStatus = await Permission.microphone.request();
+    PermissionStatus cameraStatus = await Permission.camera.request();
+    return microphoneStatus.isGranted && cameraStatus.isGranted;
+  }
 
+  void onButtonPressed() async {
     if (widget.isPublish) {
       // Publishing stream requires permission
-
       // Check the permissions before logging into the room
-      Authorization authorization = await checkAuthorization();
+      bool isPermissionGranted = await requestPermission();
 
-      // If the permission object is null
-      // It means that there is no need to dynamically check permissions under the current operating system
-      // (such as Android 6.0 or lower systems)
-      if (authorization == null) {
-        _loginRoom();
-        return;
-      }
-
-      if (!authorization.camera || !authorization.microphone) {
-
+      if (!isPermissionGranted) {
         // The authorization is not allowed, the pop-up window prompts the user to open the permission
         showSettingsLink();
       } else {
-
         // Authorization is complete, allowing login room
         _loginRoom();
       }
-
     } else {
-
       // Playing stream does not need to apply for permission
       _loginRoom();
     }
-
-
   }
 
   void _loginRoom() {
@@ -112,40 +95,6 @@ class _LoginRoomPageState extends State<LoginRoomPage> {
 
   }
 
-  // Apply permission
-  Future<Authorization> checkAuthorization() async {
-    List<Permission> statusList = await ZegoPermission.getPermissions(
-        <PermissionType>[PermissionType.Camera, PermissionType.MicroPhone]);
-
-    if(statusList == null)
-      return null;
-
-    PermissionStatus cameraStatus, micStatus;
-    for (var permission in statusList) {
-      if (permission.permissionType == PermissionType.Camera)
-        cameraStatus = permission.permissionStatus;
-      if (permission.permissionType == PermissionType.MicroPhone)
-        micStatus = permission.permissionStatus;
-    }
-
-    bool camReqResult = true, micReqResult = true;
-    if (cameraStatus != PermissionStatus.granted ||
-        micStatus != PermissionStatus.granted) {
-
-      if (cameraStatus != PermissionStatus.granted) {
-        camReqResult = await ZegoPermission.requestPermission(
-            PermissionType.Camera);
-      }
-
-      if (micStatus != PermissionStatus.granted) {
-        micReqResult = await ZegoPermission.requestPermission(
-            PermissionType.MicroPhone);
-      }
-    }
-
-    return Authorization(camReqResult, micReqResult);
-  }
-
   void showSettingsLink() {
     showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
@@ -153,17 +102,8 @@ class _LoginRoomPageState extends State<LoginRoomPage> {
         content: Text('Please go to the settings page to open the camera/microphone permissions'),
         actions: <Widget>[
           FlatButton(
-            child: Text('Settings'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              ZegoPermission.openAppSettings();
-            },
-          ),
-          FlatButton(
-            child: Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            child: Text('OK'),
+            onPressed: () => Navigator.of(context).pop()
           ),
         ],
       );
@@ -252,4 +192,3 @@ class _LoginRoomPageState extends State<LoginRoomPage> {
   }
 
 }
-
