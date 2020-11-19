@@ -131,7 +131,7 @@
     [self removeAllRenderer];
 }
 
-- (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel {
+- (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel viewMode:(ZegoViewMode)viewMode {
     
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
@@ -141,7 +141,9 @@
         return NO;
     }
 
-    ZGLog(@"[addCapturedRenderer] textureID:%ld, renderer:%p, channel:%d", (long)textureID, renderer, channel.intValue);
+    [renderer setViewMode:viewMode];
+
+    ZGLog(@"[addCapturedRenderer] textureID:%ld, renderer:%p, channel:%d, viewMode: %d", (long)textureID, renderer, channel.intValue, (int)viewMode);
     
     [self.capturedRenderers setObject:renderer forKey:channel];
 
@@ -166,7 +168,7 @@
     [self logCurrentRenderers];
 }
 
-- (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID {
+- (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID viewMode:(ZegoViewMode)viewMode {
     
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
     
@@ -176,7 +178,9 @@
         return NO;
     }
 
-    ZGLog(@"[addRemoteRenderer] textureID:%ld, renderer:%p, streamID:%@", (long)textureID, renderer, streamID);
+    [renderer setViewMode:viewMode];
+
+    ZGLog(@"[addRemoteRenderer] textureID:%ld, renderer:%p, streamID:%@, viewMode: %d", (long)textureID, renderer, streamID, (int)viewMode);
     
     [self.remoteRenderers setObject:renderer forKey:streamID];
 

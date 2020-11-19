@@ -35,7 +35,7 @@
     CVOpenGLESTextureRef m_output_texture;
     GLint m_position;
     GLint m_texcoord;
-    int m_view_mode;
+    ZegoViewMode m_view_mode;
     
     int m_img_width;
     int m_img_height;
@@ -53,7 +53,7 @@
         _registry = registry;
         m_pRenderFrameBuffer = nil;
         m_output_texture = nil;
-        m_view_mode = ZegoRendererScaleAspectFit;
+        m_view_mode = ZegoViewModeAspectFit;
         _textureID  = [registry registerTexture:self];
         m_opengl_queue = dispatch_queue_create([[NSString stringWithFormat:@"opengl_queue%lld", _textureID] UTF8String], NULL);
        _lock = dispatch_semaphore_create(1);
@@ -177,7 +177,7 @@
     
 }
 
-- (void)setVideoMode:(ZegoRendererViewMode)mode {
+- (void)setViewMode:(ZegoViewMode)mode {
     
     dispatch_async(m_opengl_queue, ^{
         if(self->m_view_mode == mode)
@@ -357,7 +357,7 @@
     float fViewRate = (float)self.viewWidth / (float)self.viewHeight;
     float fImageRate = (float)imageWidth / (float)imageHeight;
     
-    if (m_view_mode == 0) {
+    if (m_view_mode == ZegoViewModeAspectFit) {
         // * blackbar
         if(fImageRate > fViewRate) {
             float actualHeight = self.viewWidth / fImageRate;
@@ -366,7 +366,7 @@
             float actualWidth = self.viewHeight * fImageRate;
             fWidthScale = actualWidth / (float)self.viewWidth;
         }
-    } else if(m_view_mode == 1) {
+    } else if(m_view_mode == ZegoViewModeAspectFill) {
         // * crop
         if(fImageRate > fViewRate) {
             float actualWidth = self.viewHeight * fImageRate;
@@ -377,7 +377,7 @@
             fHeightScale = actualHeight / (float)self.viewHeight;
             
         }
-    } else if(m_view_mode == 2) {
+    } else if(m_view_mode == ZegoViewModeScaleToFill) {
         // * stretch
     }
     

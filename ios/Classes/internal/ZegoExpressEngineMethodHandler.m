@@ -307,7 +307,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel)]) {
+            if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel) viewMode:(ZegoViewMode)viewMode]) {
                 [[ZegoTextureRendererController sharedInstance] startRendering];
             } else {
                 // Preview video without creating TextureRenderer in advance
@@ -667,7 +667,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID]) {
+            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID viewMode:(ZegoViewMode)viewMode]) {
                 [[ZegoTextureRendererController sharedInstance] startRendering];
             } else {
                 // Play video without creating TextureRenderer in advance

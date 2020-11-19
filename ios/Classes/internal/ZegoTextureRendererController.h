@@ -47,13 +47,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// Called when dart invoke `startPreview`
-- (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel;
+- (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel viewMode:(ZegoViewMode)viewMode;
 
 /// Called when dart invoke `stopPreview`
 - (void)removeCapturedRenderer:(NSNumber *)channel;
 
 /// Called when dart invoke `startPlayingStream`
-- (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID;
+- (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID viewMode:(ZegoViewMode)viewMode;
 
 /// Called when dart invoke `stopPlayingStream`
 - (void)removeRemoteRenderer:(NSString *)streamID;
