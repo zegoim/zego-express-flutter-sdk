@@ -220,6 +220,9 @@ class ZegoErrorCode {
   /// Incorrect watermark layout. The layout area cannot exceed the encoding resolution.
   static const int PublisherWatermarkLayoutInvalid                                        = 1003058;
 
+  /// The publish stream encryption key is invalid, the key length only supports 16/24/32 bytes.
+  static const int PublisherEncryptionKeyInvalid                                          = 1003060;
+
   /// Stream publishing failed due to system internal exceptions.
   static const int PublisherInnerError                                                    = 1003099;
 
@@ -237,6 +240,9 @@ class ZegoErrorCode {
 
   /// Failed to take play stream snapshot, please check whether the state of the stream to be snapshot is normal.
   static const int PlayerTakePlayStreamSnapshotFailed                                     = 1004030;
+
+  /// The play stream decryption key is invalid, the key length only supports 16/24/32 bytes.
+  static const int PlayerDecryptionKeyInvalid                                             = 1004060;
 
   /// Stream playing failed due to system internal exceptions.
   static const int PlayerInnerError                                                       = 1004099;
@@ -436,6 +442,9 @@ class ZegoErrorCode {
   /// The input message content is too long. The maximum length should be less than 1024 bytes.
   static const int IMContentTooLong                                                       = 1009002;
 
+  /// The room where the message is sent is different from the room currently logged in
+  static const int IMInconsistentRoomId                                                   = 1009005;
+
   /// Failed to send the message, possibly due to network problems.
   static const int IMSendFailed                                                           = 1009010;
 
@@ -492,6 +501,9 @@ class ZegoErrorCode {
 
   /// Failed to enable/disable custom audio IO. Please make sure to enable/disable it before the engine is started (i.e., before calling `startPreview`, `startPublishingStream` or `startPlayingStream`).
   static const int CustomAudioIOEnableCustomAudioIoFailed                                 = 1012004;
+
+  /// The sample rate parameter is illegal, please confirm whether the sample rate parameter value allowed by the interface is legal
+  static const int CustomAudioIOAudioDataCallbackSampleRateNoSupport                      = 1012010;
 
   /// The MediaDataPublisher instance is not created.
   static const int MediaDataPublisherNoInstance                                           = 1013000;

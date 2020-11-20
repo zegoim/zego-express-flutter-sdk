@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-/// Application scenario
+/// Application scenario.
 enum ZegoScenario {
   /// General scenario
   General,
@@ -12,7 +12,7 @@ enum ZegoScenario {
   Live
 }
 
-/// Language
+/// Language.
 enum ZegoLanguage {
   /// English
   English,
@@ -20,7 +20,7 @@ enum ZegoLanguage {
   Chinese
 }
 
-/// engine state
+/// engine state.
 enum ZegoEngineState {
   /// The engine has started
   Start,
@@ -28,7 +28,7 @@ enum ZegoEngineState {
   Stop
 }
 
-/// Room state
+/// Room state.
 enum ZegoRoomState {
   /// Unconnected state, enter this state before logging in and after exiting the room. If there is a steady state abnormality in the process of logging in to the room, such as AppID and AppSign are incorrect, or if the same user name is logged in elsewhere and the local end is KickOut, it will enter this state.
   Disconnected,
@@ -38,7 +38,7 @@ enum ZegoRoomState {
   Connected
 }
 
-/// Publish channel
+/// Publish channel.
 enum ZegoPublishChannel {
   /// Main publish channel
   Main,
@@ -46,7 +46,7 @@ enum ZegoPublishChannel {
   Aux
 }
 
-/// Video rendering fill mode
+/// Video rendering fill mode.
 enum ZegoViewMode {
   /// The proportional scaling up, there may be black borders
   AspectFit,
@@ -56,7 +56,7 @@ enum ZegoViewMode {
   ScaleToFill
 }
 
-/// Mirror mode for previewing or playing the  of the stream
+/// Mirror mode for previewing or playing the  of the stream.
 enum ZegoVideoMirrorMode {
   /// The mirror image only for previewing locally. This mode is used by default.
   OnlyPreviewMirror,
@@ -68,7 +68,7 @@ enum ZegoVideoMirrorMode {
   OnlyPublishMirror
 }
 
-/// Publish stream status
+/// Publish stream status.
 enum ZegoPublisherState {
   /// The state is not published, and it is in this state before publishing the stream. If a steady-state exception occurs in the publish process, such as AppID and AppSign are incorrect, or if other users are already publishing the stream, there will be a failure and enter this state.
   NoPublish,
@@ -78,7 +78,7 @@ enum ZegoPublisherState {
   Publishing
 }
 
-/// Voice changer preset value
+/// Voice changer preset value.
 enum ZegoVoiceChangerPreset {
   /// No Voice changer
   None,
@@ -100,7 +100,7 @@ enum ZegoVoiceChangerPreset {
   Ethereal
 }
 
-/// Reverberation preset value
+/// Reverberation preset value.
 enum ZegoReverbPreset {
   /// No Reverberation
   None,
@@ -130,7 +130,7 @@ enum ZegoVideoConfigPreset {
   Preset1080P
 }
 
-/// Stream quality level
+/// Stream quality level.
 enum ZegoStreamQualityLevel {
   /// Excellent
   Excellent,
@@ -144,7 +144,7 @@ enum ZegoStreamQualityLevel {
   Die
 }
 
-/// Audio channel type
+/// Audio channel type.
 enum ZegoAudioChannel {
   /// Unknown
   Unknown,
@@ -154,7 +154,7 @@ enum ZegoAudioChannel {
   Stereo
 }
 
-/// Audio capture stereo mode
+/// Audio capture stereo mode.
 enum ZegoAudioCaptureStereoMode {
   /// Disable capture stereo, i.e. capture mono
   None,
@@ -164,7 +164,7 @@ enum ZegoAudioCaptureStereoMode {
   Adaptive
 }
 
-/// Audio Codec ID
+/// Audio Codec ID.
 enum ZegoAudioCodecID {
   /// default
   Default,
@@ -182,7 +182,7 @@ enum ZegoAudioCodecID {
   Low3
 }
 
-/// Video codec ID
+/// Video codec ID.
 enum ZegoVideoCodecID {
   /// Default (H.264)
   Default,
@@ -192,7 +192,7 @@ enum ZegoVideoCodecID {
   Vp8
 }
 
-/// Player video layer
+/// Player video layer.
 enum ZegoPlayerVideoLayer {
   /// The layer to be played depends on the network status
   Auto,
@@ -202,7 +202,7 @@ enum ZegoPlayerVideoLayer {
   BaseExtend
 }
 
-/// Audio echo cancellation mode
+/// Audio echo cancellation mode.
 enum ZegoAECMode {
   /// Aggressive echo cancellation may affect the sound quality slightly, but the echo will be very clean
   Aggressive,
@@ -212,7 +212,7 @@ enum ZegoAECMode {
   Soft
 }
 
-/// Active Noise Suppression mode
+/// Active Noise Suppression mode.
 enum ZegoANSMode {
   /// Soft ANS
   Soft,
@@ -222,7 +222,7 @@ enum ZegoANSMode {
   Aggressive
 }
 
-/// Traffic control property (bitmask enumeration)
+/// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
   /// Basic
   static const int Basic = 0;
@@ -234,7 +234,7 @@ class ZegoTrafficControlProperty {
   static const int AdaptiveAudioBitrate = 1 << 2;
 }
 
-/// Video transmission mode when current bitrate is lower than the set minimum bitrate
+/// Video transmission mode when current bitrate is lower than the set minimum bitrate.
 enum ZegoTrafficControlMinVideoBitrateMode {
   /// Stop video transmission when current bitrate is lower than the set minimum bitrate
   NoVideo,
@@ -242,7 +242,7 @@ enum ZegoTrafficControlMinVideoBitrateMode {
   UltraLowFPS
 }
 
-/// Playing stream status
+/// Playing stream status.
 enum ZegoPlayerState {
   /// The state of the flow is not played, and it is in this state before the stream is played. If the steady flow anomaly occurs during the playing process, such as AppID and AppSign are incorrect, it will enter this state.
   NoPlay,
@@ -252,7 +252,7 @@ enum ZegoPlayerState {
   Playing
 }
 
-/// Media event when playing
+/// Media event when playing.
 enum ZegoPlayerMediaEvent {
   /// Audio stuck event when playing
   AudioBreakOccur,
@@ -264,7 +264,7 @@ enum ZegoPlayerMediaEvent {
   VideoBreakResume
 }
 
-/// Update type
+/// Update type.
 enum ZegoUpdateType {
   /// Add
   Add,
@@ -272,7 +272,7 @@ enum ZegoUpdateType {
   Delete
 }
 
-/// State of CDN relay
+/// State of CDN relay.
 enum ZegoStreamRelayCDNState {
   /// The state indicates that there is no CDN relay
   NoRelay,
@@ -282,7 +282,7 @@ enum ZegoStreamRelayCDNState {
   Relaying
 }
 
-/// Reason for state of CDN relay changed
+/// Reason for state of CDN relay changed.
 enum ZegoStreamRelayCDNUpdateReason {
   /// No error
   None,
@@ -302,7 +302,7 @@ enum ZegoStreamRelayCDNUpdateReason {
   Disconnected
 }
 
-/// Beauty feature (bitmask enumeration)
+/// Beauty feature (bitmask enumeration).
 class ZegoBeautifyFeature {
   /// No beautifying
   static const int None = 0;
@@ -316,7 +316,7 @@ class ZegoBeautifyFeature {
   static const int Sharpen = 1 << 3;
 }
 
-/// Remote device status
+/// Remote device status.
 enum ZegoRemoteDeviceState {
   /// Device on
   Open,
@@ -350,7 +350,7 @@ enum ZegoRemoteDeviceState {
   BySystemPressure
 }
 
-/// Audio device type
+/// Audio device type.
 enum ZegoAudioDeviceType {
   /// Audio input type
   Input,
@@ -358,7 +358,7 @@ enum ZegoAudioDeviceType {
   Output
 }
 
-/// Mix stream content type
+/// Mix stream content type.
 enum ZegoMixerInputContentType {
   /// Mix stream for audio only
   Audio,
@@ -366,7 +366,7 @@ enum ZegoMixerInputContentType {
   Video
 }
 
-/// Capture pipeline scale mode
+/// Capture pipeline scale mode.
 enum ZegoCapturePipelineScaleMode {
   /// Zoom immediately after acquisition, default
   Pre,
@@ -374,7 +374,7 @@ enum ZegoCapturePipelineScaleMode {
   Post
 }
 
-/// Video frame format
+/// Video frame format.
 enum ZegoVideoFrameFormat {
   /// Unknown format, will take platform default
   Unknown,
@@ -396,7 +396,7 @@ enum ZegoVideoFrameFormat {
   I422
 }
 
-/// Video frame buffer type
+/// Video frame buffer type.
 enum ZegoVideoBufferType {
   /// Raw data type video frame
   Unknown,
@@ -412,7 +412,7 @@ enum ZegoVideoBufferType {
   SurfaceTexture
 }
 
-/// Video frame format series
+/// Video frame format series.
 enum ZegoVideoFrameFormatSeries {
   /// RGB series
   RGB,
@@ -420,7 +420,7 @@ enum ZegoVideoFrameFormatSeries {
   YUV
 }
 
-/// Video frame flip mode
+/// Video frame flip mode.
 enum ZegoVideoFlipMode {
   /// No flip
   None,
@@ -432,7 +432,7 @@ enum ZegoVideoFlipMode {
   XY
 }
 
-/// Audio Config Preset
+/// Audio Config Preset.
 enum ZegoAudioConfigPreset {
   /// Basic sound quality (16 kbps, Mono, ZegoAudioCodecIDDefault)
   BasicQuality,
@@ -446,7 +446,7 @@ enum ZegoAudioConfigPreset {
   HighQualityStereo
 }
 
-/// Player state
+/// Player state.
 enum ZegoMediaPlayerState {
   /// Not playing
   NoPlay,
@@ -458,7 +458,7 @@ enum ZegoMediaPlayerState {
   PlayEnded
 }
 
-/// Player network event
+/// Player network event.
 enum ZegoMediaPlayerNetworkEvent {
   /// Network resources are not playing well, and start trying to cache data
   BufferBegin,
@@ -466,7 +466,7 @@ enum ZegoMediaPlayerNetworkEvent {
   BufferEnded
 }
 
-/// Audio channel
+/// Audio channel.
 enum ZegoMediaPlayerAudioChannel {
   /// Audio channel left
   Left,
@@ -476,7 +476,7 @@ enum ZegoMediaPlayerAudioChannel {
   All
 }
 
-/// AudioEffectPlayer state
+/// AudioEffectPlayer state.
 enum ZegoAudioEffectPlayState {
   /// Not playing
   NoPlay,
@@ -488,7 +488,7 @@ enum ZegoAudioEffectPlayState {
   PlayEnded
 }
 
-/// Record type
+/// Record type.
 enum ZegoDataRecordType {
   /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
   Default,
@@ -500,7 +500,7 @@ enum ZegoDataRecordType {
   AudioAndVideo
 }
 
-/// Record state
+/// Record state.
 enum ZegoDataRecordState {
   /// Unrecorded state, which is the state when a recording error occurs or before recording starts.
   NoRecord,
@@ -510,7 +510,7 @@ enum ZegoDataRecordState {
   Success
 }
 
-/// Log config
+/// Log config.
 ///
 /// Configure the log file save path and the maximum log file size
 class ZegoLogConfig {
@@ -532,7 +532,7 @@ class ZegoLogConfig {
 
 }
 
-/// Custom video capture configuration
+/// Custom video capture configuration.
 ///
 /// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
 /// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the corresponding parameter of the [ZegoEngineConfig] instance.
@@ -555,7 +555,7 @@ class ZegoCustomVideoCaptureConfig {
 
 }
 
-/// Advanced engine configuration
+/// Advanced engine configuration.
 ///
 /// When you need to use the advanced functions of SDK, such as custom video capture, custom video rendering and other advanced functions, you need to set the instance corresponding to the advanced function configuration to the corresponding field of this type of instance to achieve the purpose of enabling the corresponding advanced functions of ZegoExpressEngine.
 /// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
@@ -578,7 +578,7 @@ class ZegoEngineConfig {
 
 }
 
-/// Advanced room configuration
+/// Advanced room configuration.
 ///
 /// Configure maximum number of users in the room and authentication token, etc.
 class ZegoRoomConfig {
@@ -611,7 +611,7 @@ class ZegoRoomConfig {
 
 }
 
-/// Video config
+/// Video config.
 ///
 /// Configure parameters used for publishing stream, such as bitrate, frame rate, and resolution.
 /// Developers should note that the width and height resolution of the mobile and desktop are opposite. For example, 360p, the resolution of the mobile is 360x640, and the desktop is 640x360.
@@ -719,7 +719,7 @@ class ZegoVideoConfig {
 
 }
 
-/// Voice changer parameter
+/// Voice changer parameter.
 ///
 /// Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
 class ZegoVoiceChangerParam {
@@ -737,7 +737,7 @@ class ZegoVoiceChangerParam {
 
 }
 
-/// Audio reverberation parameters
+/// Audio reverberation parameters.
 ///
 /// Developers can use the SDK's built-in presets to change the parameters of the reverb.
 class ZegoReverbParam {
@@ -767,7 +767,7 @@ class ZegoReverbParam {
 
 }
 
-/// Audio reverberation echo parameters
+/// Audio reverberation echo parameters.
 class ZegoReverbEchoParam {
 
   /// Gain of input audio signal, in the range [0.0, 1.0]
@@ -799,7 +799,7 @@ class ZegoReverbEchoParam {
 
 }
 
-/// User object
+/// User object.
 ///
 /// Configure user ID and username to identify users in the room.
 /// Note that the userID must be unique under the same appID, otherwise mutual kicks out will occur.
@@ -835,7 +835,7 @@ class ZegoUser {
 
 }
 
-/// Stream object
+/// Stream object.
 ///
 /// Identify an stream object
 class ZegoStream {
@@ -858,7 +858,7 @@ class ZegoStream {
 
 }
 
-/// Room extra information
+/// Room extra information.
 class ZegoRoomExtraInfo {
 
   /// The key of the room extra information.
@@ -883,7 +883,7 @@ class ZegoRoomExtraInfo {
 
 }
 
-/// View object
+/// View object.
 ///
 /// Configure view object, view Mode, background color
 class ZegoCanvas {
@@ -916,7 +916,7 @@ class ZegoCanvas {
 
 }
 
-/// Published stream quality information
+/// Published stream quality information.
 ///
 /// Audio and video parameters and network quality, etc.
 class ZegoPublishStreamQuality {
@@ -988,7 +988,7 @@ class ZegoPublishStreamQuality {
 
 }
 
-/// CDN config object
+/// CDN config object.
 ///
 /// Includes CDN URL and authentication parameter string
 class ZegoCDNConfig {
@@ -1014,7 +1014,7 @@ class ZegoCDNConfig {
 
 }
 
-/// Relay to CDN info
+/// Relay to CDN info.
 ///
 /// Including the URL of the relaying CDN, relaying state, etc.
 class ZegoStreamRelayCDNInfo {
@@ -1041,7 +1041,7 @@ class ZegoStreamRelayCDNInfo {
 
 }
 
-/// Advanced player configuration
+/// Advanced player configuration.
 ///
 /// Configure playing stream CDN configuration, video layer
 class ZegoPlayerConfig {
@@ -1067,7 +1067,7 @@ class ZegoPlayerConfig {
 
 }
 
-/// Played stream quality information
+/// Played stream quality information.
 ///
 /// Audio and video parameters and network quality, etc.
 class ZegoPlayStreamQuality {
@@ -1171,7 +1171,7 @@ class ZegoPlayStreamQuality {
 
 }
 
-/// Device Info
+/// Device Info.
 ///
 /// Including device ID and name
 class ZegoDeviceInfo {
@@ -1190,7 +1190,7 @@ class ZegoDeviceInfo {
 
 }
 
-/// Beauty configuration options
+/// Beauty configuration options.
 ///
 /// Configure the parameters of skin peeling, whitening and sharpening
 class ZegoBeautifyOption {
@@ -1223,7 +1223,7 @@ class ZegoBeautifyOption {
 
 }
 
-/// Mix stream audio configuration
+/// Mix stream audio configuration.
 ///
 /// Configure video frame rate, bitrate, and resolution for mixer task
 class ZegoMixerAudioConfig {
@@ -1256,7 +1256,7 @@ class ZegoMixerAudioConfig {
 
 }
 
-/// Mix stream video config object
+/// Mix stream video config object.
 ///
 /// Configure video frame rate, bitrate, and resolution for mixer task
 class ZegoMixerVideoConfig {
@@ -1294,7 +1294,7 @@ class ZegoMixerVideoConfig {
 
 }
 
-/// Mixer input
+/// Mixer input.
 ///
 /// Configure the mix stream input stream ID, type, and the layout
 class ZegoMixerInput {
@@ -1327,7 +1327,7 @@ class ZegoMixerInput {
 
 }
 
-/// Mixer output object
+/// Mixer output object.
 ///
 /// Configure mix stream output target URL or stream ID
 class ZegoMixerOutput {
@@ -1345,7 +1345,7 @@ class ZegoMixerOutput {
 
 }
 
-/// Watermark object
+/// Watermark object.
 ///
 /// Configure a watermark image URL and the layout of the watermark in the screen
 class ZegoWatermark {
@@ -1370,7 +1370,7 @@ class ZegoWatermark {
 
 }
 
-/// Mix stream task object
+/// Mix stream task object.
 ///
 /// This class is the configuration class of the mixing stream task. When a mixing stream task is requested to the ZEGO audio and video cloud, the configuration of the mixing task is required.
 /// This class describes the detailed configuration information of this mixed task.
@@ -1427,7 +1427,7 @@ class ZegoMixerTask {
 
 }
 
-/// Broadcast message info
+/// Broadcast message info.
 ///
 /// The received object of the room broadcast message, including the message content, message ID, sender, sending time
 class ZegoBroadcastMessageInfo {
@@ -1454,7 +1454,7 @@ class ZegoBroadcastMessageInfo {
 
 }
 
-/// Barrage message info
+/// Barrage message info.
 ///
 /// The received object of the room barrage message, including the message content, message ID, sender, sending time
 class ZegoBarrageMessageInfo {
@@ -1481,7 +1481,7 @@ class ZegoBarrageMessageInfo {
 
 }
 
-/// Audio configuration
+/// Audio configuration.
 ///
 /// Configure audio bitrate, audio channel, audio encoding for publishing stream
 class ZegoAudioConfig {
@@ -1540,7 +1540,7 @@ class ZegoAudioConfig {
 
 }
 
-/// Record config
+/// Record config.
 class ZegoDataRecordConfig {
 
   /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently only support .mp4 or .flv, if multiple recording for the same path, will overwrite the file with the same name. The maximum length should be less than 1024 bytes.
@@ -1565,7 +1565,7 @@ class ZegoDataRecordConfig {
 
 }
 
-/// File recording progress
+/// File recording progress.
 class ZegoDataRecordProgress {
 
   /// Current recording duration in milliseconds
@@ -1582,7 +1582,7 @@ class ZegoDataRecordProgress {
 
 }
 
-/// AudioEffectPlayer play configuration
+/// AudioEffectPlayer play configuration.
 class ZegoAudioEffectPlayConfig {
 
   /// The number of play counts. When set to 0, it will play in an infinite loop until the user invoke [stop]. The default is 1, which means it will play only once.
@@ -1602,12 +1602,12 @@ class ZegoAudioEffectPlayConfig {
 
 }
 
-/// Zego MediaPlayer
+/// Zego MediaPlayer.
 ///
 /// Yon can use ZegoMediaPlayer to play media resource files on the local or remote server, and can mix the sound of the media resource files that are played into the publish stream to achieve the effect of background music.
 abstract class ZegoMediaPlayer {
 
-  /// Load media resource
+  /// Load media resource.
   ///
   /// Yon can pass the absolute path of the local resource or the URL of the network resource
   ///
@@ -1615,21 +1615,21 @@ abstract class ZegoMediaPlayer {
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
-  /// Start playing
+  /// Start playing.
   ///
   /// You need to load resources before playing
   Future<void> start();
 
-  /// Stop playing
+  /// Stop playing.
   Future<void> stop();
 
-  /// Pause playing
+  /// Pause playing.
   Future<void> pause();
 
-  /// resume playing
+  /// resume playing.
   Future<void> resume();
 
-  /// Set the specified playback progress
+  /// Set the specified playback progress.
   ///
   /// Unit is millisecond
   ///
@@ -1637,39 +1637,39 @@ abstract class ZegoMediaPlayer {
   /// - Returns the result notification of set the specified playback progress
   Future<ZegoMediaPlayerSeekToResult> seekTo(int millisecond);
 
-  /// Whether to repeat playback
+  /// Whether to repeat playback.
   ///
   /// - [enable] repeat playback flag. The default is false.
   Future<void> enableRepeat(bool enable);
 
-  /// Whether to mix the player's sound into the stream being published
+  /// Whether to mix the player's sound into the stream being published.
   ///
   /// - [enable] Aux audio flag. The default is false.
   Future<void> enableAux(bool enable);
 
-  /// Whether to play locally silently
+  /// Whether to play locally silently.
   ///
   /// If [enableAux] switch is turned on, there is still sound in the publishing stream. The default is false.
   ///
   /// - [mute] Mute local audio flag, The default is false.
   Future<void> muteLocal(bool mute);
 
-  /// Set mediaplayer volume. Both the local play volume and the publish volume are set
+  /// Set mediaplayer volume. Both the local play volume and the publish volume are set.
   ///
   /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setVolume(int volume);
 
-  /// Set mediaplayer local play volume
+  /// Set mediaplayer local play volume.
   ///
   /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setPlayVolume(int volume);
 
-  /// Set mediaplayer publish volume
+  /// Set mediaplayer publish volume.
   ///
   /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setPublishVolume(int volume);
 
-  /// Set playback progress callback interval
+  /// Set playback progress callback interval.
   ///
   /// This function can control the callback frequency of [onMediaPlayerPlayingProgress]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1s
   /// This callback are not returned exactly at the set callback interval, but rather at the frequency at which the audio or video frames are processed to determine whether the callback is needed to call
@@ -1677,28 +1677,28 @@ abstract class ZegoMediaPlayer {
   /// - [millisecond] Interval of playback progress callback in milliseconds
   Future<void> setProgressInterval(int millisecond);
 
-  /// Gets the current local playback volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60
+  /// Gets the current local playback volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60.
   Future<int> getPlayVolume();
 
-  /// Gets the current publish volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60
+  /// Gets the current publish volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60.
   Future<int> getPublishVolume();
 
-  /// Get the total progress of your media resources
+  /// Get the total progress of your media resources.
   ///
   /// You should load resource before invoking this function, otherwise the return value is 0
   ///
   /// - Returns Unit is millisecond
   Future<int> getTotalDuration();
 
-  /// Get current playing progress
+  /// Get current playing progress.
   ///
   /// You should load resource before invoking this function, otherwise the return value is 0
   Future<int> getCurrentProgress();
 
-  /// Get the number of audio tracks of the playback file
+  /// Get the number of audio tracks of the playback file.
   Future<int> getAudioTrackCount();
 
-  /// Set the audio track of the playback file
+  /// Set the audio track of the playback file.
   ///
   /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
   Future<void> setAudioTrackIndex(int index);
@@ -1709,13 +1709,13 @@ abstract class ZegoMediaPlayer {
   /// - [param] Voice changer parameters
   Future<void> setVoiceChangerParam(ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param);
 
-  /// Get the current playback status
+  /// Get the current playback status.
   Future<ZegoMediaPlayerState> getCurrentState();
 
-  /// Get media player index
+  /// Get media player index.
   int getIndex();
 
-  /// Gets the play volume
+  /// Gets the play volume.
   ///
   /// @deprecated This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.
   @Deprecated('This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.')
@@ -1723,10 +1723,10 @@ abstract class ZegoMediaPlayer {
 
 }
 
-/// Audio effect player
+/// Audio effect player.
 abstract class ZegoAudioEffectPlayer {
 
-  /// Start playing audio effect
+  /// Start playing audio effect.
   ///
   /// The default is only played once and is not mixed into the publishing stream, if you want to change this please modify [config].
   ///
@@ -1735,31 +1735,31 @@ abstract class ZegoAudioEffectPlayer {
   /// - [config] Audio effect playback configuration. Set null will only be played once, and will not be mixed into the publishing stream.
   Future<void> start(int audioEffectID, String path, ZegoAudioEffectPlayConfig config);
 
-  /// Stop playing audio effect
+  /// Stop playing audio effect.
   ///
   /// - [audioEffectID] ID for the audio effect
   Future<void> stop(int audioEffectID);
 
-  /// Pause playing audio effect
+  /// Pause playing audio effect.
   ///
   /// - [audioEffectID] ID for the audio effect
   Future<void> pause(int audioEffectID);
 
-  /// Resume playing audio effect
+  /// Resume playing audio effect.
   ///
   /// - [audioEffectID] ID for the audio effect
   Future<void> resume(int audioEffectID);
 
-  /// Stop playing all audio effect
+  /// Stop playing all audio effect.
   Future<void> stopAll();
 
-  /// Pause playing all audio effect
+  /// Pause playing all audio effect.
   Future<void> pauseAll();
 
-  /// Resume playing all audio effect
+  /// Resume playing all audio effect.
   Future<void> resumeAll();
 
-  /// Set the specified playback progress
+  /// Set the specified playback progress.
   ///
   /// Unit is millisecond
   ///
@@ -1768,18 +1768,18 @@ abstract class ZegoAudioEffectPlayer {
   /// - Returns Result for audio effect player seek to playback progress
   Future<ZegoAudioEffectPlayerSeekToResult> seekTo(int audioEffectID, int millisecond);
 
-  /// Set volume for the audio effect. Both the local play volume and the publish volume are set
+  /// Set volume for the audio effect. Both the local play volume and the publish volume are set.
   ///
   /// - [audioEffectID] ID for the audio effect
   /// - [volume] The range is 0 ~ 200. The default is 100.
   Future<void> setVolume(int audioEffectID, int volume);
 
-  /// Set volume for all audio effect. Both the local play volume and the publish volume are set
+  /// Set volume for all audio effect. Both the local play volume and the publish volume are set.
   ///
   /// - [volume] The range is 0 ~ 200. The default is 100.
   Future<void> setVolumeAll(int volume);
 
-  /// Get the total progress of your media resources
+  /// Get the total progress of your media resources.
   ///
   /// You should load resource before invoking this function, otherwise the return value is 0
   ///
@@ -1787,14 +1787,14 @@ abstract class ZegoAudioEffectPlayer {
   /// - Returns Unit is millisecond
   Future<int> getTotalDuration(int audioEffectID);
 
-  /// Get current playing progress
+  /// Get current playing progress.
   ///
   /// You should load resource before invoking this function, otherwise the return value is 0
   ///
   /// - [audioEffectID] ID for the audio effect
   Future<int> getCurrentProgress(int audioEffectID);
 
-  /// Load audio effect resource
+  /// Load audio effect resource.
   ///
   /// In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file. Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading
   ///
@@ -1803,21 +1803,21 @@ abstract class ZegoAudioEffectPlayer {
   /// - Returns Result for audio effect player loads resources
   Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path);
 
-  /// Unload audio effect resource
+  /// Unload audio effect resource.
   ///
   /// After the sound effects are used up, related resources can be released through this function; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
   ///
   /// - [audioEffectID] ID for the audio effect loaded
   Future<void> unloadResource(int audioEffectID);
 
-  /// Get audio effect player index
+  /// Get audio effect player index.
   ///
   /// - Returns Audio effect player index
   int getIndex();
 
 }
 
-/// Callback for setting room extra information
+/// Callback for setting room extra information.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoRoomSetRoomExtraInfoResult {
@@ -1832,7 +1832,7 @@ class ZegoRoomSetRoomExtraInfoResult {
 
 }
 
-/// Callback for setting stream extra information
+/// Callback for setting stream extra information.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoPublisherSetStreamExtraInfoResult {
@@ -1847,7 +1847,7 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 }
 
-/// Callback for add/remove CDN URL
+/// Callback for add/remove CDN URL.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoPublisherUpdateCdnUrlResult {
@@ -1862,7 +1862,7 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 }
 
-/// Results of starting a mixer task
+/// Results of starting a mixer task.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 /// - [extendedData] Extended Information
@@ -1883,7 +1883,7 @@ class ZegoMixerStartResult {
 
 }
 
-/// Results of stoping a mixer task
+/// Results of stoping a mixer task.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoMixerStopResult {
@@ -1898,7 +1898,7 @@ class ZegoMixerStopResult {
 
 }
 
-/// Callback for sending broadcast messages
+/// Callback for sending broadcast messages.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 /// - [messageID] ID of this message
@@ -1918,7 +1918,7 @@ class ZegoIMSendBroadcastMessageResult {
 
 }
 
-/// Callback for sending barrage message
+/// Callback for sending barrage message.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 /// - [messageID] ID of this message
@@ -1938,7 +1938,7 @@ class ZegoIMSendBarrageMessageResult {
 
 }
 
-/// Callback for sending custom command
+/// Callback for sending custom command.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoIMSendCustomCommandResult {
@@ -1953,7 +1953,7 @@ class ZegoIMSendCustomCommandResult {
 
 }
 
-/// Callback for media player loads resources
+/// Callback for media player loads resources.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoMediaPlayerLoadResourceResult {
@@ -1968,7 +1968,7 @@ class ZegoMediaPlayerLoadResourceResult {
 
 }
 
-/// Callback for media player seek to playback progress
+/// Callback for media player seek to playback progress.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoMediaPlayerSeekToResult {
@@ -1983,7 +1983,7 @@ class ZegoMediaPlayerSeekToResult {
 
 }
 
-/// Callback for audio effect player loads resources
+/// Callback for audio effect player loads resources.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoAudioEffectPlayerLoadResourceResult {
@@ -1998,7 +1998,7 @@ class ZegoAudioEffectPlayerLoadResourceResult {
 
 }
 
-/// Callback for audio effect player seek to playback progress
+/// Callback for audio effect player seek to playback progress.
 ///
 /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
 class ZegoAudioEffectPlayerSeekToResult {

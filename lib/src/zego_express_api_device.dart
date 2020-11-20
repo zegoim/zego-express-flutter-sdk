@@ -7,8 +7,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Mutes or unmutes the microphone.
   ///
-  /// This api is used to control whether the collected audio data is used. When the microphone is muted (disabled), the data is collected and discarded, and the microphone is still occupied.
-  /// The microphone is still occupied because closing or opening the microphone on the hardware is a relatively heavy operation, and real users may have frequent operations. For trade-off reasons, this api simply discards the collected data.
+  /// This function is used to control whether the collected audio data is used. When the microphone is muted (disabled), the data is collected and discarded, and the microphone is still occupied.
+  /// The microphone is still occupied because closing or opening the microphone on the hardware is a relatively heavy operation, and real users may have frequent operations. For trade-off reasons, this function simply discards the collected data.
   /// If you really want SDK to give up occupy the microphone, you can call the [enableAudioCaptureDevice] function.
   /// Developers who want to control whether to use microphone on the UI should use this function to avoid unnecessary performance overhead by using the [enableAudioCaptureDevice].
   ///
@@ -46,7 +46,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Enables or disables the audio capture device.
   ///
-  /// This api is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
+  /// This function is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
   /// Occupying the audio capture device and giving up Occupying the audio device is a relatively heavy operation, and the [muteMicrophone] function is generally recommended.
   ///
   /// - [enable] Whether to enable the audio capture device, true: disable audio capture device, false: enable audio capture device
@@ -66,7 +66,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Turns on/off the camera (for the specified channel).
   ///
   /// This function is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
-  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
+  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this function is no longer valid.
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
   /// - [channel] Publishing stream channel
@@ -77,7 +77,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Switches to the front or the rear camera (for the specified channel).
   ///
   /// This function is used to control the front or rear camera
-  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
+  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this function is no longer valid.
   ///
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
   /// - [channel] Publishing stream channel
@@ -85,10 +85,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }
 
-  /// Starts sound level monitoring.
+  /// Starts sound level monitoring. Support setting the listening interval.
   ///
   /// After starting monitoring, you can receive local audio sound level via [onCapturedSoundLevelUpdate] callback, and receive remote audio sound level via [onRemoteSoundLevelUpdate] callback.
-  /// Before entering the room, you can call [startPreview] with this api and combine it with [onCapturedSoundLevelUpdate] callback to determine whether the audio device is working properly.
+  /// Before entering the room, you can call [startPreview] with this function and combine it with [onCapturedSoundLevelUpdate] callback to determine whether the audio device is working properly.
   /// [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is the value set by the parameter.
   ///
   /// - [millisecond] Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
@@ -103,7 +103,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopSoundLevelMonitor();
   }
 
-  /// Starts audio spectrum monitoring.
+  /// Starts audio spectrum monitoring. Support setting the listening interval.
   ///
   /// After starting monitoring, you can receive local audio spectrum via [onCapturedAudioSpectrumUpdate] callback, and receive remote audio spectrum via [onRemoteAudioSpectrumUpdate] callback.
   /// [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is the value set by the parameter.

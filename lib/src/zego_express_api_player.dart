@@ -12,6 +12,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event.
   /// Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
   /// The developer can update the player canvas by calling this function again (the streamID must be the same).
+  /// After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
@@ -34,7 +35,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// This function is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.
   /// You need to reset after [stopPlayingStream] and [startPlayingStream].
   ///
-  /// - [streamID] Stream ID
+  /// - [streamID] Stream ID. Set volume for all streams playing by set streamID as null or empty.
   /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.
   Future<void> setPlayVolume(String streamID, int volume) async {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
@@ -42,7 +43,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Stops or resumes playing the audio part of a stream.
   ///
-  /// This api can be used to stop playing/retrieving the audio data of the stream. Need to be called after calling startPlayingStream.
+  /// This function can be used to stop playing/retrieving the audio data of the stream. It can be called before and after playing the stream.
   ///
   /// - [streamID] Stream ID
   /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
@@ -52,8 +53,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Stops or resumes playing the video part of a stream.
   ///
-  /// This function can be used to stop playing/retrieving the video data of the stream. Need to be called after calling startPlayingStream.
-  /// This api is only effective for playing stream from ZEGO real-time audio and video cloud (not ZEGO CDN or third-party CDN).
+  /// This function can be used to stop playing/retrieving the video data of the stream. It can be called before and after playing the stream.
   ///
   /// - [streamID] Stream ID
   /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
