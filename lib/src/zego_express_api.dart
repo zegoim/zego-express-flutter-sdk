@@ -126,7 +126,8 @@ class ZegoExpressEngine {
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
   /// - [streamList] Updated stream list
-  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList) onRoomStreamUpdate;
+  /// - [extendedData] Extended information with stream updates.
+  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList, Map<String, dynamic> extendedData) onRoomStreamUpdate;
 
   /// The callback triggered when there is an update on the extra information of the streams published by other users in the same room.
   ///

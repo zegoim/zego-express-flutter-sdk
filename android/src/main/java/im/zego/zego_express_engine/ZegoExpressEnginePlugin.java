@@ -28,8 +28,8 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
     private EventChannel.EventSink sink;
 
-    private Class<?> manager;
-    private HashMap<String, Method> methodHashMap = new HashMap<>();
+    private final Class<?> manager;
+    private final HashMap<String, Method> methodHashMap = new HashMap<>();
 
     public ZegoExpressEnginePlugin() {
         try {

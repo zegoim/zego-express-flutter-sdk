@@ -120,9 +120,9 @@
     }
 }
 
-- (void)onRoomStreamUpdate:(ZegoUpdateType)updateType streamList:(NSArray<ZegoStream *> *)streamList roomID:(NSString *)roomID {
+- (void)onRoomStreamUpdate:(ZegoUpdateType)updateType streamList:(NSArray<ZegoStream *> *)streamList extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onRoomStreamUpdate] updateType: %@, streamsCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)streamList.count, roomID);
+    ZGLog(@"[onRoomStreamUpdate] updateType: %@, streamsCount: %d, extendedDataLength: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)streamList.count, (int)extendedData.count, roomID);
 
     GUARD_SINK
     if (sink) {
@@ -138,11 +138,23 @@
             }];
         }
 
+        NSString *extendedDataJsonString = @"{}";
+        if (extendedData) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+            if (!jsonData) {
+                ZGLog(@"[onRoomStateUpdate] extendedData error: %@", error);
+            }else{
+                extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+        }
+
         sink(@{
             @"method": @"onRoomStreamUpdate",
             @"updateType": @(updateType),
             @"streamList": streamListArray,
-            @"roomID": roomID
+            @"roomID": roomID,
+            @"extendedData": extendedDataJsonString
         });
     }
 }

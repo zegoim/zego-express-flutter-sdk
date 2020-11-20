@@ -777,10 +777,13 @@ class ZegoExpressImpl {
           streamList.add(stream);
         }
 
+        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+
         ZegoExpressEngine.onRoomStreamUpdate(
           map['roomID'],
           ZegoUpdateType.values[map['updateType']],
-          streamList
+          streamList,
+          Map<String, dynamic>.from(extendedData)
         );
         break;
 

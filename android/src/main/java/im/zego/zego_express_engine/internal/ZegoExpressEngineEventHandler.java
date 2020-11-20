@@ -156,9 +156,9 @@ class ZegoExpressEngineEventHandler {
         }
 
         @Override
-        public void onRoomStreamUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoStream> streamList) {
-            super.onRoomStreamUpdate(roomID, updateType, streamList);
-            ZegoLog.log("[onRoomStreamUpdate] roomID: %s, updateType: %s, streamListCount: %d", roomID, updateType.name(), streamList.size());
+        public void onRoomStreamUpdate(String roomID, ZegoUpdateType updateType, ArrayList<ZegoStream> streamList, JSONObject extendedData) {
+            super.onRoomStreamUpdate(roomID, updateType, streamList, extendedData);
+            ZegoLog.log("[onRoomStreamUpdate] roomID: %s, updateType: %s, streamListCount: %d, extendedDataLength: %d", roomID, updateType.name(), streamList.size(), extendedData.length());
 
             if (guardSink()) { return; }
 
@@ -168,6 +168,7 @@ class ZegoExpressEngineEventHandler {
             map.put("roomID", roomID);
             map.put("updateType", updateType.value());
             map.put("streamList", this.mapListFromStreamList(streamList));
+            map.put("extendedData", extendedData.toString());
 
             sink.success(map);
         }
