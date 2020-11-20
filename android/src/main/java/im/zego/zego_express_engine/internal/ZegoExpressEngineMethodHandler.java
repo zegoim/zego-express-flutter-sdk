@@ -112,9 +112,9 @@ public class ZegoExpressEngineMethodHandler {
 
     private static boolean enablePlatformView = false;
 
-    private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
+    private static final HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
-    private static HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
+    private static final HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
 
     /* Main */
     @SuppressWarnings("unused")
@@ -1362,8 +1362,9 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void setReverbParam(MethodCall call, Result result) {
+        // TODO: Deprecated since 1.18.0
 
         HashMap<String, Double> paramMap = call.argument("param");
         if (paramMap == null || paramMap.isEmpty()) {

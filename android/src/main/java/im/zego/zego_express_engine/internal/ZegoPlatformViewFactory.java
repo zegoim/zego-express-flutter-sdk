@@ -22,7 +22,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
 
     private static ZegoPlatformViewFactory instance;
 
-    private HashMap<Integer, ZegoPlatformView> platformViews;
+    private final HashMap<Integer, ZegoPlatformView> platformViews;
 
     private ZegoPlatformViewFactory(MessageCodec<Object> createArgsCodec) {
         super(createArgsCodec);

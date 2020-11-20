@@ -1205,6 +1205,7 @@
 }
 
 - (void)setReverbParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.18.0
 
     NSDictionary *paramMap = call.arguments[@"param"];
     ZegoReverbParam *param = [[ZegoReverbParam alloc] init];
@@ -1213,7 +1214,10 @@
     param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
     param.dryWetRatio = [ZegoUtils floatValue:paramMap[@"dryWetRatio"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setReverbParam:param];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -1547,7 +1551,10 @@
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         int volume = mediaPlayer.volume;
+#pragma clang diagnostic pop
         result(@(volume));
     } else {
         result(@(0));

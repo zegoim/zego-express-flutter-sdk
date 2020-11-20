@@ -18,7 +18,7 @@ class ZegoTextureRenderer {
     final long textureID;
 
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
-    private SurfaceTexture surfaceTexture;
+    private final SurfaceTexture surfaceTexture;
     private Surface surface;
 
     private int viewWidth;
