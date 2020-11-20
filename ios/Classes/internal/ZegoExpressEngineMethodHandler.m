@@ -453,6 +453,16 @@
     });
 }
 
+- (void)setPublishStreamEncryptionKey:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *key = call.arguments[@"key"];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setPublishStreamEncryptionKey:key channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
@@ -571,6 +581,20 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setPublishWatermark:watermarkObject isPreviewVisible:isPreviewVisible channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setSEIConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"watermark"];
+
+    ZegoSEIConfig *config = [ZegoSEIConfig defaultConfig]; // Use default config
+    if (configMap && configMap.count > 0) {
+        config.type = (ZegoSEIType)[ZegoUtils intValue:configMap[@"type"]];
+    }
+
+    [[ZegoExpressEngine sharedEngine] setSEIConfig:config];
 
     result(nil);
 }
@@ -709,6 +733,16 @@
         [[ZegoTextureRendererController sharedInstance] removeRemoteRenderer:streamID];
         [[ZegoTextureRendererController sharedInstance] stopRendering];
     }
+
+    result(nil);
+}
+
+- (void)setPlayStreamDecryptionKey:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *key = call.arguments[@"key"];
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamDecryptionKey:key streamID:streamID];
 
     result(nil);
 }

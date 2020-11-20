@@ -53,6 +53,7 @@ import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoReverbPreset;
+import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
@@ -78,6 +79,7 @@ import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoReverbParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
+import im.zego.zegoexpress.entity.ZegoSEIConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
@@ -537,6 +539,17 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setPublishStreamEncryptionKey(MethodCall call, Result result) {
+
+        String key = call.argument("key");
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setPublishStreamEncryptionKey(key, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mutePublishStreamAudio(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -671,6 +684,21 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setPublishWatermark(watermark, isPreviewVisible, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setSEIConfig(MethodCall call, Result result) {
+
+        HashMap<String, Object> configMap = call.argument("config");
+
+        ZegoSEIConfig config = new ZegoSEIConfig(); // Use default config
+        if (configMap != null && !configMap.isEmpty()) {
+            config.type = ZegoSEIType.getZegoSEIType(intValue((Number) configMap.get("type")));
+        }
+
+        ZegoExpressEngine.getEngine().setSEIConfig(config);
 
         result.success(null);
     }
@@ -819,6 +847,17 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamDecryptionKey(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        String key = call.argument("key");
+
+        ZegoExpressEngine.getEngine().setPlayStreamDecryptionKey(streamID, key);
 
         result.success(null);
     }

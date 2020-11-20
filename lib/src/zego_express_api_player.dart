@@ -30,6 +30,18 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopPlayingStream(streamID);
   }
 
+  /// Set decryption key for the playing stream.
+  ///
+  /// Called before and after [startPlayingStream] can both take effect.
+  /// Calling [stopPlayingStream] or [logoutRoom] will clear the decryption key.
+  /// Support calling this function to update the decryption key while playing stream. Note that developers need to update the player's decryption key before updating the publisher's encryption key.
+  ///
+  /// - [streamID] Stream ID
+  /// - [key] The decryption key, note that the key length only supports 16/24/32 bytes.
+  Future<void> setPlayStreamDecryptionKey(String streamID, String key) async {
+    return await ZegoExpressImpl.instance.setPlayStreamDecryptionKey(streamID, key);
+  }
+
   /// Sets the stream playback volume.
   ///
   /// This function is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.

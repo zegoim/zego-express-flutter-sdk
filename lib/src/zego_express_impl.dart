@@ -192,6 +192,13 @@ class ZegoExpressImpl {
     return ZegoAudioConfig.fromMap(map);
   }
 
+  Future<void> setPublishStreamEncryptionKey(String key, {ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('setPublishStreamEncryptionKey', {
+      'key': key,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('mutePublishStreamAudio', {
       'mute': mute,
@@ -267,6 +274,12 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setSEIConfig(ZegoSEIConfig config) async {
+    return await _channel.invokeMethod('setSEIConfig', {
+      'config': config.toMap()
+    });
+  }
+
   Future<void> sendSEI(Uint8List data, int dataLength, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('sendSEI', {
       'data': data,
@@ -301,6 +314,13 @@ class ZegoExpressImpl {
   Future<void> stopPlayingStream(String streamID) async {
     return await _channel.invokeMethod('stopPlayingStream', {
       'streamID': streamID
+    });
+  }
+
+  Future<void> setPlayStreamDecryptionKey(String streamID, String key) async {
+    return await _channel.invokeMethod('setPlayStreamDecryptionKey', {
+      'streamID': streamID,
+      'key': key
     });
   }
 

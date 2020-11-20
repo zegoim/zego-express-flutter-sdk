@@ -128,6 +128,18 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getAudioConfig();
   }
 
+  /// Set encryption key for the publishing stream.
+  ///
+  /// Called before and after [startPublishingStream] can both take effect.
+  /// Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
+  /// Support calling this function to update the encryption key while publishing stream. Note that developers need to update the player's decryption key before updating the publisher's encryption key.
+  ///
+  /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.
+  /// - [channel] Publish stream channel
+  Future<void> setPublishStreamEncryptionKey(String key, {ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.setPublishStreamEncryptionKey(key, channel: channel);
+  }
+
   /// Stops or resumes sending the audio part of a stream (for the specified channel).
   ///
   /// This function can be called when publishing the stream to realize not publishing the audio data stream. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before and after publishing.
@@ -240,6 +252,15 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [channel] Publish stream channel
   Future<void> setPublishWatermark({ZegoWatermark watermark, bool isPreviewVisible, ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.setPublishWatermark(watermark: watermark, isPreviewVisible: isPreviewVisible, channel: channel);
+  }
+
+  /// Set the Supplemental Enhancement Information type
+  ///
+  /// It must be set before publishing stream.
+  ///
+  /// - [config] SEI configuration. The SEI defined by ZEGO is used by default.
+  Future<void> setSEIConfig(ZegoSEIConfig config) async {
+    return await ZegoExpressImpl.instance.setSEIConfig(config);
   }
 
   /// Sends Supplemental Enhancement Information (for the specified channel).
