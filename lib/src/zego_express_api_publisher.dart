@@ -12,6 +12,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// This function allows users to publish their local audio and video streams to the ZEGO real-time audio and video cloud. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
   /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
   /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
+  /// After the first publish stream failure due to network reasons or the publish stream is interrupted, the default time for SDK reconnection is 20min.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [channel] Publish stream channel
@@ -49,7 +50,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// The user can see his own local image by calling this function. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default.
   /// Local view and preview modes can be updated by calling this function again.
   /// You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored.
-  /// When this api is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video. In addition to calling this api normally to preview the local screen, developers can also pass [null] to the canvas parameter, in conjunction with ZegoExpressEngine's sound wave function, in order to achieve the purpose of detecting whether the audio equipment is working properly before logging in to the room.
+  /// When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video. In addition to calling this function normally to preview the local screen, developers can also pass [null] to the canvas parameter, in conjunction with ZegoExpressEngine's sound wave function, in order to achieve the purpose of detecting whether the audio equipment is working properly before logging in to the room.
   ///
   /// - [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
   /// - [channel] Publish stream channel
@@ -59,7 +60,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Stops the local video preview (for the specified channel).
   ///
-  /// This api can be called to stop previewing when there is no need to see the preview locally.
+  /// This function can be called to stop previewing when there is no need to see the preview locally.
   ///
   /// - [channel] Publish stream channel
   Future<void> stopPreview({ZegoPublishChannel channel}) async {
@@ -68,7 +69,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets up the video configurations (for the specified channel).
   ///
-  /// This api can be used to set the video frame rate, bit rate, video capture resolution, and video encoding output resolution. If you do not call this api, the default resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
+  /// This function can be used to set the video frame rate, bit rate, video capture resolution, and video encoding output resolution. If you do not call this function, the default resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
   /// It is necessary to set the relevant video configuration before publishing the stream, and only support the modification of the encoding resolution and the bit rate after publishing the stream.
   /// Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
   ///
@@ -80,7 +81,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Gets the current video configurations (for the specified channel).
   ///
-  /// This api can be used to get the specified publish channel's current video frame rate, bit rate, video capture resolution, and video encoding output resolution.
+  /// This function can be used to get the specified publish channel's current video frame rate, bit rate, video capture resolution, and video encoding output resolution.
   ///
   /// - [channel] Publish stream channel
   /// - Returns Video configuration object
@@ -127,12 +128,24 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getAudioConfig();
   }
 
+  /// Set encryption key for the publishing stream.
+  ///
+  /// Called before and after [startPublishingStream] can both take effect.
+  /// Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
+  /// Support calling this function to update the encryption key while publishing stream. Note that developers need to update the player's decryption key before updating the publisher's encryption key.
+  ///
+  /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.
+  /// - [channel] Publish stream channel
+  Future<void> setPublishStreamEncryptionKey(String key, {ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.setPublishStreamEncryptionKey(key, channel: channel);
+  }
+
   /// Stops or resumes sending the audio part of a stream (for the specified channel).
   ///
-  /// This function can be called when publishing the stream to publish only the video stream without publishing the audio. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before publishing.
+  /// This function can be called when publishing the stream to realize not publishing the audio data stream. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before and after publishing.
   /// If you stop sending audio streams, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteMicStateUpdate] callbacks,
   ///
-  /// - [mute] Whether to stop sending audio streams, true means that only the video stream is sent without sending the audio stream, and false means that the audio and video streams are sent simultaneously. The default is false.
+  /// - [mute] Whether to stop sending audio streams, true means not to send audio stream, and false means sending audio stream. The default is false.
   /// - [channel] Publish stream channel
   Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.mutePublishStreamAudio(mute, channel: channel);
@@ -140,10 +153,10 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Stops or resumes sending the video part of a stream (for the specified channel).
   ///
-  /// When publishing the stream, this function can be called to publish only the audio stream without publishing the video stream. The local camera can still work normally, and can normally capture, preview and process the video picture, but does not send the video data to the network. It can be set before publishing.
+  /// This function can be called when publishing the stream to realize not publishing the video stream. The local camera can still work normally, can capture, preview and process video images normally, but does not send the video data to the network. It can be set before and after publishing.
   /// If you stop sending video streams locally, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteCameraStateUpdate] callbacks,
   ///
-  /// - [mute] Whether to stop sending video streams, true means that only the audio stream is sent without sending the video stream, and false means that the audio and video streams are sent at the same time. The default is false.
+  /// - [mute] Whether to stop sending video streams, true means not to send video stream, and false means sending video stream. The default is false.
   /// - [channel] Publish stream channel
   Future<void> mutePublishStreamVideo(bool mute, {ZegoPublishChannel channel}) async {
     return await ZegoExpressImpl.instance.mutePublishStreamVideo(mute, channel: channel);
@@ -163,7 +176,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the minimum video bitrate for traffic control.
   ///
   /// Set how should SDK send video data when the network conditions are poor and the minimum video bitrate cannot be met.
-  /// When this api is not called, the SDK will automatically adjust the sent video data frames according to the current network uplink conditions by default.
+  /// When this function is not called, the SDK will automatically adjust the sent video data frames according to the current network uplink conditions by default.
   ///
   /// - [bitrate] Minimum video bitrate (kbps)
   /// - [mode] Video sending mode below the minimum bitrate.
@@ -180,7 +193,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setCaptureVolume(volume);
   }
 
-  /// Set audio capture stereo mode
+  /// Set audio capture stereo mode.
   ///
   /// This function is used to set the audio stereo capture mode. The default is mono, that is, dual channel collection is not enabled.
   /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
@@ -192,12 +205,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Adds a target CDN URL to which the stream will be relayed from ZEGO's cloud streaming server.
   ///
-  /// You can call this api to publish the audio and video streams that have been published to the ZEGO real-time audio and video cloud to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
-  /// Because this called api is essentially a dynamic relay of the audio and video streams published to the ZEGO audio and video cloud to different CDNs, this api needs to be called after the audio and video stream is published to ZEGO real-time cloud successfully.
-  /// Since ZEGO's audio and video cloud service itself can be configured to support CDN(content distribution networks), this api is mainly used by developers who have CDN content distribution services themselves.
+  /// Developers can call this function to publish the audio and video streams that have been published to the ZEGO real-time audio and video cloud to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
+  /// Because this called function is essentially a dynamic relay of the audio and video streams published to the ZEGO audio and video cloud to different CDNs, this function needs to be called after the audio and video stream is published to ZEGO real-time cloud successfully.
+  /// Since ZEGO's audio and video cloud service itself can be configured to support CDN(content distribution networks), this function is mainly used by developers who have CDN content distribution services themselves.
   /// You can use ZEGO's CDN audio and video streaming content distribution service at the same time by calling this function and then use the developer who owns the CDN content distribution service.
-  /// This function supports dynamic relay to the CDN content distribution network, so developers can use this api as a disaster recovery solution for CDN content distribution services.
-  /// When the [enablePublishDirectToCDN] api is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
+  /// This function supports dynamic relay to the CDN content distribution network, so developers can use this function as a disaster recovery solution for CDN content distribution services.
+  /// When the [enablePublishDirectToCDN] function is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
   ///
   /// - [streamID] Stream ID
   /// - [targetURL] CDN relay address, supported address format is rtmp.
@@ -208,8 +221,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Deletes the specified CDN URL, which is used for relaying streams from ZEGO's cloud streaming server to CDN.
   ///
-  /// This api is called when a CDN relayed address has been added and needs to stop propagating the stream to the CDN.
-  /// This api does not stop publishing audio and video stream to the ZEGO audio and video cloud.
+  /// This function is called when a CDN relayed address has been added and needs to stop propagating the stream to the CDN.
+  /// This function does not stop publishing audio and video stream to the ZEGO audio and video cloud.
   ///
   /// - [streamID] Stream ID
   /// - [targetURL] CDN relay address, supported address format rtmp.
@@ -220,8 +233,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Whether to publish streams directly from the client to CDN without passing through ZEGO's cloud streaming server (for the specified channel).
   ///
-  /// This api needs to be set before start publishing stream.
-  /// After calling this api to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two function relay or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
+  /// This function needs to be set before start publishing stream.
+  /// After calling this function to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two function relay or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
   ///
   /// - [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
   /// - [config] CDN configuration, if null, use Zego's background default configuration
@@ -241,14 +254,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPublishWatermark(watermark: watermark, isPreviewVisible: isPreviewVisible, channel: channel);
   }
 
+  /// Set the Supplemental Enhancement Information type
+  ///
+  /// It must be set before publishing stream.
+  ///
+  /// - [config] SEI configuration. The SEI defined by ZEGO is used by default.
+  Future<void> setSEIConfig(ZegoSEIConfig config) async {
+    return await ZegoExpressImpl.instance.setSEIConfig(config);
+  }
+
   /// Sends Supplemental Enhancement Information (for the specified channel).
   ///
   /// This function can synchronize some other additional information while the developer publishes streaming audio and video streaming data while sending streaming media enhancement supplementary information.
-  /// Generally, for scenarios such as synchronizing music lyrics or precise layout of video canvas, you can choose to use this api.
+  /// Generally, for scenarios such as synchronizing music lyrics or precise layout of video canvas, you can choose to use this function.
   /// After the anchor sends the SEI, the audience can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
   /// Since SEI information follows video frames or audio frames, and because of network problems, frames may be dropped, so SEI information may also be dropped. To solve this situation, it should be sent several times within the limited frequency.
   /// Limit frequency: Do not exceed 30 times per second.
-  /// Note: This api is effective only when there is video data published. SEI information will not be sent without publishing video data.
+  /// Note: This function is effective only when there is video data published. SEI information will not be sent without publishing video data.
   /// The SEI data length is limited to 4096 bytes.
   ///
   /// - [data] SEI data

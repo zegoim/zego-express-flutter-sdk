@@ -14,15 +14,9 @@
 #import <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
+#import <ZegoExpressEngine/ZegoExpressDefines.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef enum
-{
-    ZegoRendererScaleAspectFit = 0,    ///< 等比缩放，可能有黑边
-    ZegoRendererScaleAspectFill = 1,   ///< 等比缩放填充整View，可能有部分被裁减
-    ZegoRendererScaleToFill = 2,       ///< 填充整个View
-}ZegoRendererViewMode;
 
 @interface ZegoTextureRenderer : NSObject <FlutterTexture>
 
@@ -34,7 +28,7 @@ typedef enum
 - (void)destroy;
 
 - (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer;
-- (void)setVideoMode:(ZegoRendererViewMode)mode;
+- (void)setViewMode:(ZegoViewMode)mode;
 - (void)setUseMirrorEffect:(BOOL)isUse;
 - (void)setBackgroundColor:(int)color;
 - (void)updateRenderSize:(CGSize)size;

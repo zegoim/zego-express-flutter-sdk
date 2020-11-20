@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineIM on ZegoExpressEngine {
 
-  /// Sends a Broadcast Message
+  /// Sends a Broadcast Message.
   ///
   /// The sending frequency of broadcast messages in the same room cannot be higher than 10 messages/s.
   /// A certain number of users in the same room who entered the room earlier can receive this callback. The message is reliable. It is generally used when the number of people in the live room is less than a certain number. The specific number is determined by the configuration of the ZEGO server.

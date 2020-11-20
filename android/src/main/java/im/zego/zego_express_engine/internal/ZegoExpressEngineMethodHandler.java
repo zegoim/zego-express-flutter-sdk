@@ -53,6 +53,7 @@ import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoReverbPreset;
+import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
@@ -75,9 +76,11 @@ import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
+import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoReverbParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
+import im.zego.zegoexpress.entity.ZegoSEIConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
@@ -109,9 +112,9 @@ public class ZegoExpressEngineMethodHandler {
 
     private static boolean enablePlatformView = false;
 
-    private static HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
+    private static final HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
-    private static HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
+    private static final HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
 
     /* Main */
     @SuppressWarnings("unused")
@@ -537,6 +540,17 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setPublishStreamEncryptionKey(MethodCall call, Result result) {
+
+        String key = call.argument("key");
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setPublishStreamEncryptionKey(key, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mutePublishStreamAudio(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -671,6 +685,21 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setPublishWatermark(watermark, isPreviewVisible, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setSEIConfig(MethodCall call, Result result) {
+
+        HashMap<String, Object> configMap = call.argument("config");
+
+        ZegoSEIConfig config = new ZegoSEIConfig(); // Use default config
+        if (configMap != null && !configMap.isEmpty()) {
+            config.type = ZegoSEIType.getZegoSEIType(intValue((Number) configMap.get("type")));
+        }
+
+        ZegoExpressEngine.getEngine().setSEIConfig(config);
 
         result.success(null);
     }
@@ -819,6 +848,17 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         ZegoExpressEngine.getEngine().stopPlayingStream(streamID);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamDecryptionKey(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        String key = call.argument("key");
+
+        ZegoExpressEngine.getEngine().setPlayStreamDecryptionKey(streamID, key);
 
         result.success(null);
     }
@@ -1322,8 +1362,9 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void setReverbParam(MethodCall call, Result result) {
+        // TODO: Deprecated since 1.18.0
 
         HashMap<String, Double> paramMap = call.argument("param");
         if (paramMap == null || paramMap.isEmpty()) {
@@ -1332,12 +1373,38 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         ZegoReverbParam param = new ZegoReverbParam();
+        param.roomSize = floatValue(paramMap.get("roomSize"));
+        param.reverberance = floatValue(paramMap.get("reverberance"));
         param.damping = floatValue(paramMap.get("damping"));
         param.dryWetRatio = floatValue(paramMap.get("dryWetRatio"));
-        param.reverberance = floatValue(paramMap.get("reverberance"));
-        param.roomSize = floatValue(paramMap.get("roomSize"));
 
         ZegoExpressEngine.getEngine().setReverbParam(param);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setReverbAdvancedParam(MethodCall call, Result result) {
+
+        HashMap<String, Object> paramMap = call.argument("param");
+        if (paramMap == null || paramMap.isEmpty()) {
+            result.error("setReverbAdvancedParam_Null_Param".toUpperCase(), "[setReverbAdvancedParam] Null param", null);
+            return;
+        }
+
+        ZegoReverbAdvancedParam param = new ZegoReverbAdvancedParam();
+        param.roomSize = floatValue((Number) paramMap.get("roomSize"));
+        param.reverberance = floatValue((Number) paramMap.get("reverberance"));
+        param.damping = floatValue((Number) paramMap.get("damping"));
+        param.wetOnly = boolValue((Boolean) paramMap.get("wetOnly"));
+        param.wetGain = floatValue((Number) paramMap.get("wetGain"));
+        param.dryGain = floatValue((Number) paramMap.get("dryGain"));
+        param.toneLow = floatValue((Number) paramMap.get("toneLow"));
+        param.toneHigh = floatValue((Number) paramMap.get("toneHigh"));
+        param.preDelay = floatValue((Number) paramMap.get("preDelay"));
+        param.stereoWidth = floatValue((Number) paramMap.get("stereoWidth"));
+
+        ZegoExpressEngine.getEngine().setReverbAdvancedParam(param);
 
         result.success(null);
     }

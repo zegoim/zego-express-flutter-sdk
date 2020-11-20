@@ -307,7 +307,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel)]) {
+            if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel) viewMode:(ZegoViewMode)viewMode]) {
                 [[ZegoTextureRendererController sharedInstance] startRendering];
             } else {
                 // Preview video without creating TextureRenderer in advance
@@ -453,6 +453,16 @@
     });
 }
 
+- (void)setPublishStreamEncryptionKey:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *key = call.arguments[@"key"];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setPublishStreamEncryptionKey:key channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
@@ -575,6 +585,20 @@
     result(nil);
 }
 
+- (void)setSEIConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"watermark"];
+
+    ZegoSEIConfig *config = [ZegoSEIConfig defaultConfig]; // Use default config
+    if (configMap && configMap.count > 0) {
+        config.type = (ZegoSEIType)[ZegoUtils intValue:configMap[@"type"]];
+    }
+
+    [[ZegoExpressEngine sharedEngine] setSEIConfig:config];
+
+    result(nil);
+}
+
 - (void)sendSEI:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     FlutterStandardTypedData *data = call.arguments[@"byteData"];
@@ -667,7 +691,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID]) {
+            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID viewMode:(ZegoViewMode)viewMode]) {
                 [[ZegoTextureRendererController sharedInstance] startRendering];
             } else {
                 // Play video without creating TextureRenderer in advance
@@ -709,6 +733,16 @@
         [[ZegoTextureRendererController sharedInstance] removeRemoteRenderer:streamID];
         [[ZegoTextureRendererController sharedInstance] stopRendering];
     }
+
+    result(nil);
+}
+
+- (void)setPlayStreamDecryptionKey:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *key = call.arguments[@"key"];
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamDecryptionKey:key streamID:streamID];
 
     result(nil);
 }
@@ -1171,15 +1205,39 @@
 }
 
 - (void)setReverbParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.18.0
 
     NSDictionary *paramMap = call.arguments[@"param"];
     ZegoReverbParam *param = [[ZegoReverbParam alloc] init];
+    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
+    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
     param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
     param.dryWetRatio = [ZegoUtils floatValue:paramMap[@"dryWetRatio"]];
-    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
-    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setReverbParam:param];
+#pragma clang diagnostic pop
+
+    result(nil);
+}
+
+- (void)setReverbAdvancedParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *paramMap = call.arguments[@"param"];
+    ZegoReverbAdvancedParam *param = [[ZegoReverbAdvancedParam alloc] init];
+    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
+    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
+    param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
+    param.wetOnly = [ZegoUtils boolValue:paramMap[@"wetOnly"]];
+    param.wetGain = [ZegoUtils floatValue:paramMap[@"wetGain"]];
+    param.dryGain = [ZegoUtils floatValue:paramMap[@"dryGain"]];
+    param.toneLow = [ZegoUtils floatValue:paramMap[@"toneLow"]];
+    param.toneHigh = [ZegoUtils floatValue:paramMap[@"toneHigh"]];
+    param.preDelay = [ZegoUtils floatValue:paramMap[@"preDelay"]];
+    param.stereoWidth = [ZegoUtils floatValue:paramMap[@"stereoWidth"]];
+
+    [[ZegoExpressEngine sharedEngine] setReverbAdvancedParam:param];
 
     result(nil);
 }
@@ -1493,7 +1551,10 @@
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         int volume = mediaPlayer.volume;
+#pragma clang diagnostic pop
         result(@(volume));
     } else {
         result(@(0));

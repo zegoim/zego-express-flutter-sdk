@@ -69,7 +69,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   ///
   /// The current beauty function is simple and may not meet the developer's expectations, it is recommended to use [enableCustomVideoCapture] function to connect to a third party professional beauty SDK to get the best results.
   /// The [setBeautifyOption] function can be called to adjust the beauty parameters after the beauty function is enabled.
-  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
+  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this function is no longer valid.
   ///
   /// - [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
   /// - [channel] Publishing stream channel
@@ -80,7 +80,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Sets up the beauty parameters (for the specified channel).
   ///
   /// Developer need to call [enableBeautify] function first to enable the beautify function before calling this function
-  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this api is no longer valid.
+  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this function is no longer valid.
   ///
   /// - [option] Beauty configuration options
   /// - [channel] Publishing stream channel
@@ -88,7 +88,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
   }
 
-  /// Set the sound equalizer (EQ)
+  /// Set the sound equalizer (EQ).
   ///
   /// - [bandIndex] The value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
   /// - [bandGain] The value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
@@ -96,7 +96,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setAudioEqualizerGain(bandIndex, bandGain);
   }
 
-  /// Setting up the voice changer via preset enumeration
+  /// Setting up the voice changer via preset enumeration.
   ///
   /// Voice changer effect is only effective for the captured sound.
   /// This function is an encapsulated version of [setVoiceChangerParam], which provides some preset values. If you need to configure the voice changer effects, please use [setVoiceChangerParam]
@@ -120,7 +120,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setVoiceChangerParam(param);
   }
 
-  /// Setting up the reverberation via preset enumeration
+  /// Setting up the reverberation via preset enumeration.
   ///
   /// Support dynamic settings when publishing stream.
   /// This function is a encapsulated version of [setReverbParam], which provides some preset values. If you need to configure the reverb, please use [setReverbParam]
@@ -138,12 +138,25 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// This function is an advanced version of [setReverbPreset], you can configure the reverb effect by yourself.
   /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
+  /// @deprecated This method is deprecated after 1.18.0. Please use [setReverbAdvancedParam] instead
   /// - [param] Reverb parameter
+  @Deprecated('This method is deprecated after 1.18.0. Please use [setReverbAdvancedParam] instead')
   Future<void> setReverbParam(ZegoReverbParam param) async {
     return await ZegoExpressImpl.instance.setReverbParam(param);
   }
 
-  /// Setting up the specific reverberation echo parameters
+  /// Setting up the specific reverberation parameters.
+  ///
+  /// Different values dynamically set during publishing stream will take effect. When all parameters are set to 0, the reverberation is turned off.
+  /// This function is an advanced version of [setReverbPreset], you can configure the reverb effect by yourself.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  ///
+  /// - [param] Reverb advanced parameter
+  Future<void> setReverbAdvancedParam(ZegoReverbAdvancedParam param) async {
+    return await ZegoExpressImpl.instance.setReverbAdvancedParam(param);
+  }
+
+  /// Setting up the specific reverberation echo parameters.
   ///
   /// This function can be used with voice changer and reverb to achieve a variety of custom sound effects
   /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.

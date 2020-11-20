@@ -17,8 +17,8 @@ class ZegoExpressEngine {
   ///
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
   /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
-  /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 30 rooms and 230 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
-  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific api to set specific parameters if they have customized parameter settings.
+  /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
+  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
   static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool enablePlatformView}) async {
     return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
@@ -31,7 +31,7 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.destroyEngine();
   }
 
-  /// Set advanced engine configuration
+  /// Set advanced engine configuration.
   ///
   /// Developers need to call this function to set advanced function configuration when they need advanced functions of the engine.
   ///
@@ -126,7 +126,8 @@ class ZegoExpressEngine {
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
   /// - [streamList] Updated stream list
-  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList) onRoomStreamUpdate;
+  /// - [extendedData] Extended information with stream updates.
+  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList, Map<String, dynamic> extendedData) onRoomStreamUpdate;
 
   /// The callback triggered when there is an update on the extra information of the streams published by other users in the same room.
   ///
@@ -161,8 +162,8 @@ class ZegoExpressEngine {
   /// The callback triggered every 3 seconds to report the current stream publishing quality.
   ///
   /// After the successful publish, the callback will be received every 3 seconds. Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data of the published audio and video stream can be obtained, and the health of the publish stream can be monitored in real time.
-  /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callback api, in order to show the uplink network status in real time on the device UI.
-  /// If you does not know how to use the parameters of this callback api, you can only pay attention to the level field of the quality parameter, which is a comprehensive value describing the uplink network calculated by SDK based on the quality parameters.
+  /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callback function, in order to show the uplink network status in real time on the device UI.
+  /// If you does not know how to use the parameters of this callback function, you can only pay attention to the level field of the quality parameter, which is a comprehensive value describing the uplink network calculated by SDK based on the quality parameters.
   ///
   /// - [streamID] Stream ID
   /// - [quality] Publishing stream quality, including audio and video framerate, bitrate, RTT, etc.
@@ -219,8 +220,8 @@ class ZegoExpressEngine {
   /// The callback triggered every 3 seconds to report the current stream playing quality.
   ///
   /// After calling the startPlayingStream successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data  can be obtained, such the health of the publish stream can be monitored in real time.
-  /// You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback api, in order to show the downlink network status on the device UI in real time.
-  /// If you does not know how to use the various parameters of the callback api, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
+  /// You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback function, in order to show the downlink network status on the device UI in real time.
+  /// If you does not know how to use the various parameters of the callback function, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
   ///
   /// - [streamID] Stream ID
   /// - [quality] Playing stream quality, including audio and video framerate, bitrate, RTT, etc.
@@ -272,6 +273,7 @@ class ZegoExpressEngine {
   /// The callback triggered when Supplemental Enhancement Information is received.
   ///
   /// After the remote stream is successfully played, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
+  /// Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set.
   ///
   /// - [streamID] Stream ID
   /// - [data] SEI content
@@ -279,7 +281,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of relayed streaming of the mixed stream to CDN changes.
   ///
-  /// In the general case of the ZEGO audio and video cloud mixing stream task, the output stream is published to the CDN using the rtmp protocol, and changes in the state during the publish will be notified from this callback api.
+  /// In the general case of the ZEGO audio and video cloud mixing stream task, the output stream is published to the CDN using the rtmp protocol, and changes in the state during the publish will be notified from this callback function.
   ///
   /// - [taskID] Mix stream task ID
   /// - [infoList] List of information that the current CDN is being mixed
@@ -365,7 +367,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when Broadcast Messages are received.
   ///
-  /// Note that only broadcast messages sent by other users can be notified through this callback, and broadcast messages sent by users themselves will not be notified through this callback.
+  /// This callback is used to receive broadcast messages sent by other users, and barrage messages sent by users themselves will not be notified through this callback.
   ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
@@ -373,7 +375,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when Barrage Messages are received.
   ///
-  /// Note that only barrage messages sent by other users can be notified through this callback, and barrage messages sent by users themselves will not be notified through this callback.
+  /// This callback is used to receive barrage messages sent by other users, and barrage messages sent by users themselves will not be notified through this callback.
   ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
@@ -381,7 +383,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when a Custom Command is received.
   ///
-  /// Note that only custom command sent by other users can be notified through this callback, and custom command sent by users themselves will not be notified through this callback.
+  /// This callback is used to receive custom signaling sent by other users, and barrage messages sent by users themselves will not be notified through this callback.
   ///
   /// - [roomID] Room ID
   /// - [fromUser] Sender of the command
@@ -407,7 +409,7 @@ class ZegoExpressEngine {
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
 
-  /// Audio effect playback state callback
+  /// Audio effect playback state callback.
   ///
   /// This callback is triggered when the playback state of a audio effect of the audio effect player changes.
   ///

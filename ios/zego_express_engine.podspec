@@ -4,10 +4,10 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'zego_express_engine'
-  s.version          = '1.0.0'
+  s.version          = '1.18.0'
   s.summary          = 'Zego Express Audio/Video Live SDK for Flutter'
   s.description      = <<-DESC
-A new Flutter plugin.
+ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZegoExpressEngine native Android / iOS SDK, providing live video and real-time audio/video services.
                        DESC
   s.homepage         = 'https://zego.im'
   s.license          = { :file => '../LICENSE' }
@@ -17,7 +17,7 @@ A new Flutter plugin.
   s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'ZegoExpressEngine', '1.17.5'
+  s.dependency 'ZegoExpressEngine', '1.18.0'
   s.platform = :ios, '8.0'
   s.ios.deployment_target = '8.0'
 

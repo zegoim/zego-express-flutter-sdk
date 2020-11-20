@@ -1,5 +1,57 @@
 # Change Log
 
+## 1.18.0
+
+### **New Features**
+
+1. Added advanced reverb parameters and preset values for reverb/voice change.
+
+    Advanced reverberation parameters can be used to adjust finer reverberation effects as needed. In the original preset reverberation, effects such as studio, KTV, rock and concert have been added, and magnetic male and female voices have been added to the preset voice change. Fresh female voice effect, increase the interest of real-time voice, can adapt to more scenes.
+
+    For related API, please refer to [setReverbAdvancedParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setReverbAdvancedParam.html), [setReverbPreset](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setReverbPreset.html), [setVoiceChangerPreset](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setVoiceChangerPreset.html)
+
+2. Added SEI setting type function.
+
+    By setting the SEI type, the developer can correctly parse the SEI when decoding with other decoders.
+
+    For related API, please refer to [setSEIConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setSEIConfig.html)
+
+3. Added a callback with additional information when the stream is updated, such as the reason information of the deleted stream.
+
+    For related API, please refer to [onRoomStreamUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRoomStreamUpdate.html)
+
+### **Bug Fixes**
+
+1. Fix the problem that when calling the [startPlayingStream] interface to set the video layer, calling the [mutePlayStreamVideo] interface again will cause the wrong layer selection.
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+2. Optimize [mutePlayStreamAudio] and [mutePlayStreamVideo] call timing, the settings can take effect before and after streaming.
+
+    For related API, please refer to [mutePlayStreamAudio](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/mutePlayStreamAudio.html), [mutePlayStreamVideo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/mutePlayStreamVideo.html)
+
+3. Optimize the SEI sending logic to support normal sending of SEI information when the microphone is turned on and no audio data is sent.
+
+    For related API, please refer to [sendSEI](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/sendSEI.html)
+
+4. Fix the problem that the media player's playback volume or publish volume obtained for the first time is 0 on iOS.
+
+    For related API, please refer to [ZegoMediaPlayer.getPlayVolume](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/getPlayVolume.html), [ZegoMediaPlayer.getPublishVolume](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/getPublishVolume.html)
+
+5. Fix the problem that setting `viewMode` does not work when using Texture to render on iOS.
+
+    For related API, please refer to [ZegoCanvas.viewMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCanvas/viewMode.html)
+
+### **Deleted**
+
+1. Deprecate the original [setReverbParam] interface, and use [setReverbAdvancedParam] instead if necessary.
+
+    For related API, please refer to [setReverbAdvancedParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setReverbAdvancedParam.html)
+
+2. Deprecate the original [onRoomStreamUpdate] callback, please use the callback of the same name with additional [extendedData] parameter instead.
+
+    For related API, please refer to [onRoomStreamUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRoomStreamUpdate.html)
+
 ## 1.17.5
 
 ### **Enhancements**
