@@ -76,6 +76,7 @@ import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
+import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoReverbParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
@@ -1371,12 +1372,38 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         ZegoReverbParam param = new ZegoReverbParam();
+        param.roomSize = floatValue(paramMap.get("roomSize"));
+        param.reverberance = floatValue(paramMap.get("reverberance"));
         param.damping = floatValue(paramMap.get("damping"));
         param.dryWetRatio = floatValue(paramMap.get("dryWetRatio"));
-        param.reverberance = floatValue(paramMap.get("reverberance"));
-        param.roomSize = floatValue(paramMap.get("roomSize"));
 
         ZegoExpressEngine.getEngine().setReverbParam(param);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setReverbAdvancedParam(MethodCall call, Result result) {
+
+        HashMap<String, Object> paramMap = call.argument("param");
+        if (paramMap == null || paramMap.isEmpty()) {
+            result.error("setReverbAdvancedParam_Null_Param".toUpperCase(), "[setReverbAdvancedParam] Null param", null);
+            return;
+        }
+
+        ZegoReverbAdvancedParam param = new ZegoReverbAdvancedParam();
+        param.roomSize = floatValue((Number) paramMap.get("roomSize"));
+        param.reverberance = floatValue((Number) paramMap.get("reverberance"));
+        param.damping = floatValue((Number) paramMap.get("damping"));
+        param.wetOnly = boolValue((Boolean) paramMap.get("wetOnly"));
+        param.wetGain = floatValue((Number) paramMap.get("wetGain"));
+        param.dryGain = floatValue((Number) paramMap.get("dryGain"));
+        param.toneLow = floatValue((Number) paramMap.get("toneLow"));
+        param.toneHigh = floatValue((Number) paramMap.get("toneHigh"));
+        param.preDelay = floatValue((Number) paramMap.get("preDelay"));
+        param.stereoWidth = floatValue((Number) paramMap.get("stereoWidth"));
+
+        ZegoExpressEngine.getEngine().setReverbAdvancedParam(param);
 
         result.success(null);
     }

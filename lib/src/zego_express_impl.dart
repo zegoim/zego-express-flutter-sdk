@@ -567,6 +567,12 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setReverbAdvancedParam(ZegoReverbAdvancedParam param) async {
+    return await _channel.invokeMethod('setReverbAdvancedParam', {
+      'param': param.toMap()
+    });
+  }
+
   Future<void> setReverbEchoParam(ZegoReverbEchoParam param) async {
     return await _channel.invokeMethod('setReverbEchoParam', {
       'param': param.toMap()

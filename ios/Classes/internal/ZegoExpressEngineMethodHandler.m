@@ -1208,12 +1208,32 @@
 
     NSDictionary *paramMap = call.arguments[@"param"];
     ZegoReverbParam *param = [[ZegoReverbParam alloc] init];
+    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
+    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
     param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
     param.dryWetRatio = [ZegoUtils floatValue:paramMap[@"dryWetRatio"]];
-    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
-    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
 
     [[ZegoExpressEngine sharedEngine] setReverbParam:param];
+
+    result(nil);
+}
+
+- (void)setReverbAdvancedParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *paramMap = call.arguments[@"param"];
+    ZegoReverbAdvancedParam *param = [[ZegoReverbAdvancedParam alloc] init];
+    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
+    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
+    param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
+    param.wetOnly = [ZegoUtils boolValue:paramMap[@"wetOnly"]];
+    param.wetGain = [ZegoUtils floatValue:paramMap[@"wetGain"]];
+    param.dryGain = [ZegoUtils floatValue:paramMap[@"dryGain"]];
+    param.toneLow = [ZegoUtils floatValue:paramMap[@"toneLow"]];
+    param.toneHigh = [ZegoUtils floatValue:paramMap[@"toneHigh"]];
+    param.preDelay = [ZegoUtils floatValue:paramMap[@"preDelay"]];
+    param.stereoWidth = [ZegoUtils floatValue:paramMap[@"stereoWidth"]];
+
+    [[ZegoExpressEngine sharedEngine] setReverbAdvancedParam:param];
 
     result(nil);
 }

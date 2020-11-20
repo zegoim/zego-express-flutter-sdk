@@ -105,7 +105,11 @@ enum ZegoVoiceChangerPreset {
   /// Android robot voice effect
   Android,
   /// Ethereal voice effect
-  Ethereal
+  Ethereal,
+  /// Magnetic(Male) voice effect
+  MaleMagnetic,
+  /// Fresh(Female) voice effect
+  FemaleFresh
 }
 
 /// Reverberation preset value.
@@ -119,7 +123,19 @@ enum ZegoReverbPreset {
   /// Concer hall reverb effect
   ConcerHall,
   /// Valley reverb effect
-  Valley
+  Valley,
+  /// Recording studio reverb effect
+  RecordingStudio,
+  /// Basement reverb effect
+  Basement,
+  /// KTV reverb effect
+  KTV,
+  /// Popular reverb effect
+  Popular,
+  /// Rock reverb effect
+  Rock,
+  /// Vocal concert reverb effect
+  VocalConcert
 }
 
 /// Video configuration resolution and bitrate preset enumeration. The preset resolutions are adapted for mobile and desktop. On mobile, height is longer than width, and desktop is the opposite. For example, 1080p is actually 1080(w) x 1920(h) on mobile and 1920(w) x 1080(h) on desktop.
@@ -788,6 +804,60 @@ class ZegoReverbParam {
       'reverberance': this.reverberance,
       'damping': this.damping,
       'dryWetRatio': this.dryWetRatio
+    };
+  }
+
+}
+
+/// Audio reverberation advanced parameters.
+///
+/// Developers can use the SDK's built-in presets to change the parameters of the reverb.
+class ZegoReverbAdvancedParam {
+
+  /// Room size(%), in the range [0.0, 1.0], to control the size of the "room" in which the reverb is generated, the larger the room, the stronger the reverb.
+  double roomSize;
+
+  /// Echo(%), in the range [0.0, 100.0], to control the trailing length of the reverb.
+  double reverberance;
+
+  /// Reverb Damping(%), range [0.0, 100.0], controls the attenuation of the reverb, the higher the damping, the higher the attenuation.
+  double damping;
+
+  /// only wet
+  bool wetOnly;
+
+  /// wet gain(dB), range [-20.0, 10.0]
+  double wetGain;
+
+  /// dry gain(dB), range [-20.0, 10.0]
+  double dryGain;
+
+  /// Tone Low. 100% by default
+  double toneLow;
+
+  /// Tone High. 100% by default
+  double toneHigh;
+
+  /// PreDelay(ms), range [0.0, 200.0]
+  double preDelay;
+
+  /// Stereo Width(%). 0% by default
+  double stereoWidth;
+
+  ZegoReverbAdvancedParam(this.roomSize, this.reverberance, this.damping, this.wetOnly, this.wetGain, this.dryGain, this.toneLow, this.toneHigh, this.preDelay, this.stereoWidth): assert(roomSize != null), assert(reverberance != null), assert(damping != null), assert(wetOnly != null), assert(wetGain != null), assert(dryGain != null), assert(toneLow != null), assert(toneHigh != null), assert(preDelay != null), assert(stereoWidth != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'roomSize': this.roomSize,
+      'reverberance': this.reverberance,
+      'damping': this.damping,
+      'wetOnly': this.wetOnly,
+      'wetGain': this.wetGain,
+      'dryGain': this.dryGain,
+      'toneLow': this.toneLow,
+      'toneHigh': this.toneHigh,
+      'preDelay': this.preDelay,
+      'stereoWidth': this.stereoWidth
     };
   }
 
