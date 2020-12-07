@@ -367,6 +367,7 @@ class ZegoExpressEngineEventHandler {
             qualityMap.put("peerToPeerPacketLostRate", quality.peerToPeerPacketLostRate);
             qualityMap.put("level", quality.level.value());
             qualityMap.put("delay", quality.delay);
+            qualityMap.put("avTimestampDiff", quality.avTimestampDiff);
             qualityMap.put("isHardwareDecode", quality.isHardwareDecode);
             qualityMap.put("videoCodecID", quality.videoCodecID.value());
             qualityMap.put("totalRecvBytes", quality.totalRecvBytes);

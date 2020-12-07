@@ -391,6 +391,7 @@
                 @"peerToPeerPacketLostRate": @(quality.peerToPeerPacketLostRate),
                 @"level": @(quality.level),
                 @"delay": @(quality.delay),
+                @"avTimestampDiff": @(quality.avTimestampDiff),
                 @"isHardwareDecode": @(quality.isHardwareDecode),
                 @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
