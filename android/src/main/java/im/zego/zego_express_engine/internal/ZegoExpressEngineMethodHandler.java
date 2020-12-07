@@ -875,6 +875,20 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setPlayStreamVideoLayer(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+
+        ZegoPlayerVideoLayer videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) call.argument("videoLayer")));
+
+        int volume = intValue((Number) call.argument("volume"));
+
+        ZegoExpressEngine.getEngine().setPlayStreamVideoLayer(streamID, videoLayer);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mutePlayStreamAudio(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");

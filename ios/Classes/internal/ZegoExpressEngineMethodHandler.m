@@ -757,6 +757,16 @@
     result(nil);
 }
 
+- (void)setPlayStreamVideoLayer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int videoLayer = [ZegoUtils intValue:call.arguments[@"videoLayer"]];
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamVideoLayer:(ZegoPlayerVideoLayer)videoLayer streamID:streamID];
+
+    result(nil);
+}
+
 - (void)mutePlayStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];

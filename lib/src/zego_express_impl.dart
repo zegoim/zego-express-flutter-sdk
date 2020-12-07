@@ -331,6 +331,13 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setPlayStreamVideoLayer(String streamID, ZegoPlayerVideoLayer videoLayer) async {
+    return await _channel.invokeMethod('setPlayStreamVideoLayer', {
+      'streamID': streamID,
+      'videoLayer': videoLayer.index
+    });
+  }
+
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     return await _channel.invokeMethod('mutePlayStreamAudio', {
       'streamID': streamID,

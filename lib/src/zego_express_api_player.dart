@@ -53,6 +53,18 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
   }
 
+  /// Set the selected video layer of playing stream.
+  ///
+  /// When the publisher has set the codecID to SVC through [setVideoConfig], the player can dynamically set whether to use the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer)
+  /// Under normal circumstances, when the network is weak or the rendered UI form is small, you can choose to use the video that plays the base layer to save bandwidth.
+  /// It can be set before and after playing stream.
+  ///
+  /// - [streamID] Stream ID.
+  /// - [videoLayer] Video layer of playing stream. AUTO by default.
+  Future<void> setPlayStreamVideoLayer(String streamID, ZegoPlayerVideoLayer videoLayer) async {
+    return await ZegoExpressImpl.instance.setPlayStreamVideoLayer(streamID, videoLayer);
+  }
+
   /// Stops or resumes playing the audio part of a stream.
   ///
   /// This function can be used to stop playing/retrieving the audio data of the stream. It can be called before and after playing the stream.
