@@ -2206,6 +2206,7 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+
     /* Record */
 
     @SuppressWarnings("unused")
@@ -2234,6 +2235,27 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().stopRecordingCapturedData(channel);
+
+        result.success(null);
+    }
+
+
+    /*  Utilities */
+
+    @SuppressWarnings("unused")
+    public static void startPerformanceMonitor(MethodCall call, Result result) {
+
+        int millisecond = intValue((Number) call.argument("millisecond"));
+
+        ZegoExpressEngine.getEngine().startPerformanceMonitor(millisecond);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopPerformanceMonitor(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopPerformanceMonitor();
 
         result.success(null);
     }

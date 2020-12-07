@@ -667,6 +667,7 @@ class ZegoExpressImpl {
 
   }
 
+
   /* AudioEffectPlayer */
 
   static final Map<int, ZegoAudioEffectPlayer> audioEffectPlayerMap = Map();
@@ -716,13 +717,27 @@ class ZegoExpressImpl {
     });
   }
 
+
   /* Custom Video Capture */
+
   Future<void> enableCustomVideoCapture(bool enable, {ZegoCustomVideoCaptureConfig config, ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('enableCustomVideoCapture', {
       'enable': enable,
       'config':  config?.toMap() ?? {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
+  }
+
+  /* Utilities */
+
+  Future<void> startPerformanceMonitor({int millisecond}) async {
+    return await _channel.invokeMethod('startPerformanceMonitor', {
+      'millisecond': millisecond ?? 2000
+    });
+  }
+
+  Future<void> stopPerformanceMonitor() async {
+    return await _channel.invokeMethod('stopPerformanceMonitor');
   }
 
 
@@ -1168,6 +1183,17 @@ class ZegoExpressImpl {
           map['roomID'],
           ZegoUser.fromMap(map['fromUser']),
           map['command']
+        );
+        break;
+
+
+      /* Utilities */
+
+      case 'onPerformanceStatusUpdate':
+        if (ZegoExpressEngine.onPerformanceStatusUpdate == null) return;
+
+        ZegoExpressEngine.onPerformanceStatusUpdate(
+          ZegoPerformanceStatus.fromMap(map['status'])
         );
         break;
 

@@ -1973,6 +1973,25 @@
 }
 
 
+#pragma mark - Utilities
+
+- (void)startPerformanceMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+
+    [[ZegoExpressEngine sharedEngine] startPerformanceMonitor:millisecond];
+
+    result(nil);
+}
+
+- (void)stopPerformanceMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] stopPerformanceMonitor];
+
+    result(nil);
+}
+
+
 #pragma mark - PlatformView Utils
 
 - (void)destroyPlatformView:(FlutterMethodCall *)call result:(FlutterResult)result {

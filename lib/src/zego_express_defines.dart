@@ -1290,6 +1290,35 @@ class ZegoDeviceInfo {
 
 }
 
+/// System performance monitoring status
+class ZegoPerformanceStatus {
+
+  /// Current CPU usage of the app, value range [0, 1]
+  double cpuUsageApp;
+
+  /// Current CPU usage of the system, value range [0, 1]
+  double cpuUsageSystem;
+
+  /// Current memory usage of the app, value range [0, 1]
+  double memoryUsageApp;
+
+  /// Current memory usage of the system, value range [0, 1]
+  double memoryUsageSystem;
+
+  /// Current memory used of the app, in MB
+  double memoryUsedApp;
+
+  ZegoPerformanceStatus(this.cpuUsageApp, this.cpuUsageSystem, this.memoryUsageApp, this.memoryUsageSystem, this.memoryUsedApp): assert(cpuUsageApp != null), assert(cpuUsageSystem != null), assert(memoryUsageApp != null), assert(memoryUsageSystem != null), assert(memoryUsedApp != null);
+
+  ZegoPerformanceStatus.fromMap(Map<dynamic, dynamic> map):
+    cpuUsageApp = map['cpuUsageApp'],
+    cpuUsageSystem = map['cpuUsageSystem'],
+    memoryUsageApp = map['memoryUsageApp'],
+    memoryUsageSystem = map['memoryUsageSystem'],
+    memoryUsedApp = map['memoryUsedApp'];
+
+}
+
 /// Beauty configuration options.
 ///
 /// Configure the parameters of skin peeling, whitening and sharpening
