@@ -1,5 +1,57 @@
 # Change Log
 
+## 1.19.0
+
+### **New Features**
+
+1. Added system performance monitoring function, supports monitoring of CPU and memory usage.
+
+    Developers can start monitoring after [createEngine], and support setting the monitoring callback interval (the default is 2s), which can generally be used to compare the memory growth before and after publish/play stream.
+
+    For related API, please refer to [startPerformanceMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/startPerformanceMonitor.html), [stopPerformanceMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/stopPerformanceMonitor.html)
+
+2. Added streaming media encryption function.
+
+    Support the use of AES-128/192/256 to encrypt streaming media data.
+
+    For related API, please refer to [setPublishStreamEncryptionKey](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setPublishStreamEncryptionKey.html), [setPlayStreamDecryptionKey](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/setPlayStreamDecryptionKey.html)
+
+3. Added the difference between the video timestamp and the audio timestamp, which is located in [ZegoPlayStreamQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPlayStreamQuality-class.html) to reflect the synchronization of audio and video in the playing stream.
+
+    This value is less than 0 means the number of milliseconds that the video leads the audio, greater than 0 means the number of milliseconds that the video lags the audio, and 0 means no difference. When the absolute value is less than 200, it can basically be regarded as synchronized audio and video, when the absolute value is greater than 200 for 10 consecutive seconds, it can be regarded as abnormal.
+
+    For related API, please refer to [onPlayerQualityUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerQualityUpdate.html)
+
+4. Added setting to select the video layer function for streaming.
+
+    When the publisher has set the codecID of [setVideoConfig] to SVC, the player can call [setPlayStreamVideoLayer] API to select the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer) to saving bandwidth.
+
+    For related API, please refer to [setPlayStreamVideoLayer](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/setPlayStreamVideoLayer.html)
+
+### **Enhancements**
+
+1. Added error code 1002035 for room login failure, that is the maximum number of concurrent rooms in the test environment exceeds the upper limit.
+
+    For related API, please refer to [loginRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/loginRoom.html)
+
+2. Added error code 1009015 for room broadcast message sending failure, that is broadcast message QPS exceeds the limit, the maximum QPS is 2.
+
+    For related API, please refer to [sendBroadcastMessage](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineIM/sendBroadcastMessage.html)
+
+3. Added support for AAC file format for local media recording.
+
+    For related API, please refer to [startRecordingCapturedData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRecord/startRecordingCapturedData.html)
+
+4. The media player newly supports m3u8 format, if you need to use it, please contact ZEGO technical support.
+
+    For related APIs, please refer to [ZegoMediaPlayer.loadResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/loadResource.html)
+
+### **Deleted**
+
+1. Deprecated the `videoLayer` property in [ZegoPlayerConfig], please use [setPlayStreamVideoLayer] instead.
+
+    For related API, please refer to [setPlayStreamVideoLayer](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/setPlayStreamVideoLayer.html)
+
 ## 1.18.0
 
 ### **New Features**

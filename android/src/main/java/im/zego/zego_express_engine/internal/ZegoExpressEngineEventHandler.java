@@ -35,6 +35,7 @@ import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
+import im.zego.zegoexpress.entity.ZegoPerformanceStatus;
 import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
 import im.zego.zegoexpress.entity.ZegoRoomExtraInfo;
@@ -367,6 +368,7 @@ class ZegoExpressEngineEventHandler {
             qualityMap.put("peerToPeerPacketLostRate", quality.peerToPeerPacketLostRate);
             qualityMap.put("level", quality.level.value());
             qualityMap.put("delay", quality.delay);
+            qualityMap.put("avTimestampDiff", quality.avTimestampDiff);
             qualityMap.put("isHardwareDecode", quality.isHardwareDecode);
             qualityMap.put("videoCodecID", quality.videoCodecID.value());
             qualityMap.put("totalRecvBytes", quality.totalRecvBytes);
@@ -721,7 +723,30 @@ class ZegoExpressEngineEventHandler {
         }
 
 
-        /* Utils */
+        /* Utilities */
+
+        @Override
+        public void onPerformanceStatusUpdate(ZegoPerformanceStatus status) {
+            super.onPerformanceStatusUpdate(status);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> statusMap = new HashMap<>();
+            statusMap.put("cpuUsageApp", status.cpuUsageApp);
+            statusMap.put("cpuUsageSystem", status.cpuUsageSystem);
+            statusMap.put("memoryUsageApp", status.memoryUsageApp);
+            statusMap.put("memoryUsageSystem", status.memoryUsageSystem);
+            statusMap.put("memoryUsedApp", status.memoryUsedApp);
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPerformanceStatusUpdate");
+            map.put("status", statusMap);
+
+            sink.success(map);
+        }
+
+        /* Private Utils */
 
         private ArrayList<HashMap<String, Object>> mapListFromUserList(ArrayList<ZegoUser> users) {
 

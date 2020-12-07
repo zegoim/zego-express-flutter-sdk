@@ -127,8 +127,11 @@ class ZegoErrorCode {
   /// Room login authentication failed.
   static const int RoomErrorAuthenticationFailed                                          = 1002033;
 
-  /// The number of users logging into the room exceeds the maximum number of concurrent users configured for the room.
+  /// The number of users logging into the room exceeds the maximum number of concurrent users configured for the room. (In the test environment, the default maximum number of users in the room is 50)
   static const int RoomErrorExceedMaximumMember                                           = 1002034;
+
+  /// The total number of rooms logged in at the same time exceeds the limit. (In the test environment, the maximum number of concurrent rooms is 10)
+  static const int RoomErrorExceedMaximumRoomCount                                        = 1002035;
 
   /// The user is kicked out of the room, possibly because the same user ID is logged in on another device.
   static const int RoomKickedOut                                                          = 1002050;
@@ -243,6 +246,9 @@ class ZegoErrorCode {
 
   /// The play stream decryption key is invalid, the key length only supports 16/24/32 bytes.
   static const int PlayerDecryptionKeyInvalid                                             = 1004060;
+
+  /// Decrypt the play stream failed, please check whether the decryption key is correct
+  static const int PlayerDecryptionFailed                                                 = 1004061;
 
   /// Stream playing failed due to system internal exceptions.
   static const int PlayerInnerError                                                       = 1004099;
@@ -448,6 +454,9 @@ class ZegoErrorCode {
   /// Failed to send the message, possibly due to network problems.
   static const int IMSendFailed                                                           = 1009010;
 
+  /// Failed to send broadcast message, QPS exceeds the limit, the maximum QPS is 2
+  static const int IMBroadcastMessageQpsOverload                                          = 1009015;
+
   /// The file name suffix is not supported. Only .mp4 and .flv are supported currently. Depending on file name suffix, SDK sets the specified recording format accordingly.
   static const int RecorderFileSuffixNameFormatNotSupport                                 = 1010002;
 
@@ -534,5 +543,17 @@ class ZegoErrorCode {
 
   /// The number of AudioEffectPlayer instances exceeds the maximum number allowed.
   static const int AudioEffectPlayerExceedMaxCount                                        = 1014004;
+
+  /// Network connectivity test failed.
+  static const int UtilitiesNetworkConnectivityTestFailed                                 = 1015001;
+
+  /// Network speed test connection failure.
+  static const int UtilitiesNetworkToolConnectServerFailed                                = 1015002;
+
+  /// Network test internal error.
+  static const int UtilitiesNetworkToolInnerError                                         = 1015009;
+
+  /// The set system performance monitoring interval is out of range.
+  static const int UtilitiesPerformanceMonitorIntervalInvalid                             = 1015031;
 
 }

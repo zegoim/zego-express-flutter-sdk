@@ -62,12 +62,12 @@ class _InitPageState extends State<InitPage> {
     }
 
     bool isTestEnv = ZegoConfig.instance.isTestEnv;
-    int scenario = ZegoConfig.instance.scenario;
+    ZegoScenario scenario = ZegoConfig.instance.scenario;
 
     bool enablePlatformView = ZegoConfig.instance.enablePlatformView;
 
     // Step1: Create ZegoExpressEngine
-    ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, ZegoScenario.values[scenario], enablePlatformView: enablePlatformView);
+    ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
 
     ZegoConfig.instance.appID = appID;
     ZegoConfig.instance.appSign = appSign;

@@ -391,6 +391,7 @@
                 @"peerToPeerPacketLostRate": @(quality.peerToPeerPacketLostRate),
                 @"level": @(quality.level),
                 @"delay": @(quality.delay),
+                @"avTimestampDiff": @(quality.avTimestampDiff),
                 @"isHardwareDecode": @(quality.isHardwareDecode),
                 @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
@@ -688,6 +689,27 @@
     }
 }
 
+#pragma mark Utilities Callback
+
+- (void)onPerformanceStatusUpdate:(ZegoPerformanceStatus *)status {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPerformanceStatusUpdate",
+            @"status": @{
+                @"cpuUsageApp": @(status.cpuUsageApp),
+                @"cpuUsageSystem": @(status.cpuUsageSystem),
+                @"memoryUsageApp": @(status.memoryUsageApp),
+                @"memoryUsageSystem": @(status.memoryUsageSystem),
+                @"memoryUsedApp": @(status.memoryUsedApp),
+            }
+        });
+    }
+}
+
 
 #pragma mark - ZegoMediaPlayerEventHandler
 
@@ -736,6 +758,7 @@
 
 
 # pragma mark - ZegoAudioEffectPlayerEventHandler
+
 - (void)audioEffectPlayer:(ZegoAudioEffectPlayer *)audioEffectPlayer audioEffectID:(unsigned int)audioEffectID playStateUpdate:(ZegoAudioEffectPlayState)state errorCode:(int)errorCode {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onAudioEffectPlayStateUpdate] idx: %d, state: %d, errorCode: %d", [audioEffectPlayer getIndex].intValue, (int)state, errorCode);

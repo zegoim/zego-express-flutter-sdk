@@ -738,8 +738,9 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Player */
 
-    @SuppressWarnings({"unused", "unchecked"})
+    @SuppressWarnings({"unused", "unchecked", "deprecation"})
     public static void startPlayingStream(MethodCall call, Result result) {
+        // TODO: Deprecated since 1.19.0
 
         String streamID = call.argument("streamID");
 
@@ -870,6 +871,20 @@ public class ZegoExpressEngineMethodHandler {
         int volume = intValue((Number) call.argument("volume"));
 
         ZegoExpressEngine.getEngine().setPlayVolume(streamID, volume);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamVideoLayer(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+
+        ZegoPlayerVideoLayer videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) call.argument("videoLayer")));
+
+        int volume = intValue((Number) call.argument("volume"));
+
+        ZegoExpressEngine.getEngine().setPlayStreamVideoLayer(streamID, videoLayer);
 
         result.success(null);
     }
@@ -2192,6 +2207,7 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+
     /* Record */
 
     @SuppressWarnings("unused")
@@ -2220,6 +2236,27 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().stopRecordingCapturedData(channel);
+
+        result.success(null);
+    }
+
+
+    /*  Utilities */
+
+    @SuppressWarnings("unused")
+    public static void startPerformanceMonitor(MethodCall call, Result result) {
+
+        int millisecond = intValue((Number) call.argument("millisecond"));
+
+        ZegoExpressEngine.getEngine().startPerformanceMonitor(millisecond);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopPerformanceMonitor(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopPerformanceMonitor();
 
         result.success(null);
     }

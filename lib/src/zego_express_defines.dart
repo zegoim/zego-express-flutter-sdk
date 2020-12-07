@@ -514,13 +514,13 @@ enum ZegoAudioEffectPlayState {
 
 /// Record type.
 enum ZegoDataRecordType {
-  /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
+  /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
   Default,
   /// only record audio
   OnlyAudio,
-  /// only record video, Audio-only SDK is invalid.
+  /// only record video, Audio SDK and recording .aac format files are invalid.
   OnlyVideo,
-  /// record audio and video, Audio-only SDK will be recorded only audio.
+  /// record audio and video. Express-Audio SDK and .aac format files are recorded only audio.
   AudioAndVideo
 }
 
@@ -1222,6 +1222,9 @@ class ZegoPlayStreamQuality {
   /// Delay after the data is received by the local end, in milliseconds
   int delay;
 
+  /// The difference between the video timestamp and the audio timestamp, used to reflect the synchronization of audio and video, in milliseconds. This value is less than 0 means the number of milliseconds that the video leads the audio, greater than 0 means the number of milliseconds that the video lags the audio, and 0 means no difference. When the absolute value is less than 200, it can basically be regarded as synchronized audio and video, when the absolute value is greater than 200 for 10 consecutive seconds, it can be regarded as abnormal
+  int avTimestampDiff;
+
   /// Whether to enable hardware decoding
   bool isHardwareDecode;
 
@@ -1237,7 +1240,7 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
-  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes): assert(videoRecvFPS != null), assert(videoDejitterFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(videoBreakRate != null), assert(audioRecvFPS != null), assert(audioDejitterFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(audioBreakRate != null), assert(rtt != null), assert(packetLostRate != null), assert(peerToPeerDelay != null), assert(peerToPeerPacketLostRate != null), assert(level != null), assert(delay != null), assert(isHardwareDecode != null), assert(videoCodecID != null), assert(totalRecvBytes != null), assert(audioRecvBytes != null), assert(videoRecvBytes != null);
+  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes): assert(videoRecvFPS != null), assert(videoDejitterFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(videoBreakRate != null), assert(audioRecvFPS != null), assert(audioDejitterFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(audioBreakRate != null), assert(rtt != null), assert(packetLostRate != null), assert(peerToPeerDelay != null), assert(peerToPeerPacketLostRate != null), assert(level != null), assert(delay != null), assert(avTimestampDiff != null), assert(isHardwareDecode != null), assert(videoCodecID != null), assert(totalRecvBytes != null), assert(audioRecvBytes != null), assert(videoRecvBytes != null);
 
   ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map) {
     videoRecvFPS = map['videoRecvFPS'];
@@ -1258,6 +1261,7 @@ class ZegoPlayStreamQuality {
     peerToPeerPacketLostRate = map['peerToPeerPacketLostRate'];
     level = ZegoStreamQualityLevel.values[map['level']];
     delay = map['delay'];
+    avTimestampDiff = map['avTimestampDiff'];
     isHardwareDecode = map['isHardwareDecode'];
     videoCodecID = map['videoCodecID'];
     totalRecvBytes = map['totalRecvBytes'];
@@ -1283,6 +1287,35 @@ class ZegoDeviceInfo {
   ZegoDeviceInfo.fromMap(Map<dynamic, dynamic> map):
     deviceID = map['deviceID'],
     deviceName = map['deviceName'];
+
+}
+
+/// System performance monitoring status
+class ZegoPerformanceStatus {
+
+  /// Current CPU usage of the app, value range [0, 1]
+  double cpuUsageApp;
+
+  /// Current CPU usage of the system, value range [0, 1]
+  double cpuUsageSystem;
+
+  /// Current memory usage of the app, value range [0, 1]
+  double memoryUsageApp;
+
+  /// Current memory usage of the system, value range [0, 1]
+  double memoryUsageSystem;
+
+  /// Current memory used of the app, in MB
+  double memoryUsedApp;
+
+  ZegoPerformanceStatus(this.cpuUsageApp, this.cpuUsageSystem, this.memoryUsageApp, this.memoryUsageSystem, this.memoryUsedApp): assert(cpuUsageApp != null), assert(cpuUsageSystem != null), assert(memoryUsageApp != null), assert(memoryUsageSystem != null), assert(memoryUsedApp != null);
+
+  ZegoPerformanceStatus.fromMap(Map<dynamic, dynamic> map):
+    cpuUsageApp = map['cpuUsageApp'],
+    cpuUsageSystem = map['cpuUsageSystem'],
+    memoryUsageApp = map['memoryUsageApp'],
+    memoryUsageSystem = map['memoryUsageSystem'],
+    memoryUsedApp = map['memoryUsedApp'];
 
 }
 
@@ -1639,7 +1672,7 @@ class ZegoAudioConfig {
 /// Record config.
 class ZegoDataRecordConfig {
 
-  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently only support .mp4 or .flv, if multiple recording for the same path, will overwrite the file with the same name. The maximum length should be less than 1024 bytes.
+  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently supports .mp4/.flv/.aac format files, if multiple recording for the same path, will overwrite the file with the same name. The maximum length should be less than 1024 bytes.
   String filePath;
 
   /// Type of recording media

@@ -631,6 +631,7 @@
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.19.0
 
     NSString *streamID = call.arguments[@"streamID"];
 
@@ -643,7 +644,10 @@
     if (playerConfigMap && playerConfigMap.count > 0) {
 
         playerConfig = [[ZegoPlayerConfig alloc] init];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
+#pragma clang diagnostic pop
         NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
 
         if (cdnConfigMap && cdnConfigMap.count > 0) {
@@ -753,6 +757,16 @@
     NSString *streamID = call.arguments[@"streamID"];
 
     [[ZegoExpressEngine sharedEngine] setPlayVolume:volume streamID:streamID];
+
+    result(nil);
+}
+
+- (void)setPlayStreamVideoLayer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int videoLayer = [ZegoUtils intValue:call.arguments[@"videoLayer"]];
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamVideoLayer:(ZegoPlayerVideoLayer)videoLayer streamID:streamID];
 
     result(nil);
 }
@@ -1958,6 +1972,25 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] stopRecordingCapturedData:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+
+#pragma mark - Utilities
+
+- (void)startPerformanceMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+
+    [[ZegoExpressEngine sharedEngine] startPerformanceMonitor:millisecond];
+
+    result(nil);
+}
+
+- (void)stopPerformanceMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] stopPerformanceMonitor];
 
     result(nil);
 }

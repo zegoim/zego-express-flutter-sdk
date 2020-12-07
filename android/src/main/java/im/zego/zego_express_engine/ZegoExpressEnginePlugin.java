@@ -2,6 +2,8 @@ package im.zego.zego_express_engine;
 
 import androidx.annotation.NonNull;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -16,6 +18,8 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+
+import static im.zego.zego_express_engine.internal.ZegoUtils.getStackTrace;
 
 /** ZegoExpressEnginePlugin */
 public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
@@ -149,10 +153,13 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             }
 
         } catch (NoSuchMethodException e) {
+            ZegoLog.log("[DartCall] [NoSuchMethodException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
             result.notImplemented();
         } catch (IllegalAccessException e) {
+            ZegoLog.log("[DartCall] [IllegalAccessException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
             result.notImplemented();
         } catch (InvocationTargetException e) {
+            ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
             result.notImplemented();
         }
     }
