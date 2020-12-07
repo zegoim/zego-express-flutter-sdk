@@ -631,6 +631,7 @@
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.19.0
 
     NSString *streamID = call.arguments[@"streamID"];
 
@@ -643,7 +644,10 @@
     if (playerConfigMap && playerConfigMap.count > 0) {
 
         playerConfig = [[ZegoPlayerConfig alloc] init];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
+#pragma clang diagnostic pop
         NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
 
         if (cdnConfigMap && cdnConfigMap.count > 0) {

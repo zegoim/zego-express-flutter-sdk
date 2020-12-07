@@ -738,8 +738,9 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Player */
 
-    @SuppressWarnings({"unused", "unchecked"})
+    @SuppressWarnings({"unused", "unchecked", "deprecation"})
     public static void startPlayingStream(MethodCall call, Result result) {
+        // TODO: Deprecated since 1.19.0
 
         String streamID = call.argument("streamID");
 
