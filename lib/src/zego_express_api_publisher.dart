@@ -133,6 +133,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Called before and after [startPublishingStream] can both take effect.
   /// Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
   /// Support calling this function to update the encryption key while publishing stream. Note that developers need to update the player's decryption key before updating the publisher's encryption key.
+  /// This API is only valid when publishing stream to the Zego RTC server.
   ///
   /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.
   /// - [channel] Publish stream channel
@@ -270,7 +271,6 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// After the anchor sends the SEI, the audience can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
   /// Since SEI information follows video frames or audio frames, and because of network problems, frames may be dropped, so SEI information may also be dropped. To solve this situation, it should be sent several times within the limited frequency.
   /// Limit frequency: Do not exceed 30 times per second.
-  /// Note: This function is effective only when there is video data published. SEI information will not be sent without publishing video data.
   /// The SEI data length is limited to 4096 bytes.
   ///
   /// - [data] SEI data

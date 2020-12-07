@@ -514,13 +514,13 @@ enum ZegoAudioEffectPlayState {
 
 /// Record type.
 enum ZegoDataRecordType {
-  /// This field indicates that the audio-only SDK records audio by default, and the audio and video SDK records audio and video by default.
+  /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
   Default,
   /// only record audio
   OnlyAudio,
-  /// only record video, Audio-only SDK is invalid.
+  /// only record video, Audio SDK and recording .aac format files are invalid.
   OnlyVideo,
-  /// record audio and video, Audio-only SDK will be recorded only audio.
+  /// record audio and video. Express-Audio SDK and .aac format files are recorded only audio.
   AudioAndVideo
 }
 
@@ -1639,7 +1639,7 @@ class ZegoAudioConfig {
 /// Record config.
 class ZegoDataRecordConfig {
 
-  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently only support .mp4 or .flv, if multiple recording for the same path, will overwrite the file with the same name. The maximum length should be less than 1024 bytes.
+  /// The path to save the recording file, absolute path, need to include the file name, the file name need to specify the suffix, currently supports .mp4/.flv/.aac format files, if multiple recording for the same path, will overwrite the file with the same name. The maximum length should be less than 1024 bytes.
   String filePath;
 
   /// Type of recording media
