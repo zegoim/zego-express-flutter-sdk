@@ -43,4 +43,16 @@ public class ZegoUtils {
         }
         return ret;
     }
+
+    public static String getStackTrace(Exception e) {
+        StringBuilder message = new StringBuilder();
+        if (e != null) {
+            message.append(e.getClass()).append(": ").append(e.getMessage()).append(" | ");
+            StackTraceElement[] elements = e.getStackTrace();
+            for (StackTraceElement stackTraceElement : elements) {
+                message.append(stackTraceElement.toString()).append(" | ");
+            }
+        }
+        return message.toString();
+    }
 }
