@@ -68,11 +68,12 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
   /// Set room extra information.
   ///
-  /// After the user in the room calls this function to set the extra info of the room, other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback function. Only one key-value pair is supported by default, Please contact ZEGO technical support for more key-value pairs.
+  /// After the user in the room calls this function to set the extra info of the room, other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback function.
+  /// For restrictions on the use of this fucntion, please refer to https://doc-zh.zego.im/zh/4720.html or contact ZEGO technical support.
   ///
   /// - [roomID] Room ID.
-  /// - [key] key of the extra info. Cannot exceed 10 bytes, and cannot be an empty string.
-  /// - [value] value if the extra info. Cannot exceed 128 bytes, and cannot be an empty string.
+  /// - [key] key of the extra info.
+  /// - [value] value if the extra info.
   /// - Returns Set room extra info execution result notification
   Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(String roomID, String key, String value) async {
     return await ZegoExpressImpl.instance.setRoomExtraInfo(roomID, key, value);

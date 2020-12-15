@@ -73,7 +73,7 @@ class ZegoExpressEngine {
   ///
   /// When the SDK functions are not used correctly, the callback prompts for detailed error information, which is controlled by the [setDebugVerbose] function
   ///
-  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [funcName] Function name
   /// - [info] Detailed error information
   static void Function(int errorCode, String funcName, String info) onDebugError;
@@ -92,7 +92,7 @@ class ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   /// - [state] Changed room state
-  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
   static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData) onRoomStateUpdate;
 
@@ -155,7 +155,7 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [state] Status of publishing stream
-  /// - [errorCode] The error code corresponding to the status change of the publish stream. Please refer to the Error Codes https://doc-en.zego.im/en/308.html for details.
+  /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended information with state updates.
   static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData) onPublisherStateUpdate;
 
@@ -213,7 +213,7 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] stream ID
   /// - [state] Current play state
-  /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the Error Codes https://doc-en.zego.im/en/308.html for details.
+  /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
   static void Function(String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData) onPlayerStateUpdate;
 
@@ -355,7 +355,7 @@ class ZegoExpressEngine {
   ///
   /// This callback is triggered when an exception occurs when reading or writing the audio and video device.
   ///
-  /// - [errorCode] The error code corresponding to the status change of the playing stream. Please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [deviceName] device name
   static void Function(int errorCode, String deviceName) onDeviceError;
 
@@ -406,7 +406,7 @@ class ZegoExpressEngine {
   ///
   /// - [mediaPlayer] Callback player object
   /// - [state] Media player status
-  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state, int errorCode) onMediaPlayerStateUpdate;
 
   /// The callback triggered when the network status of the media player changes.
@@ -428,13 +428,13 @@ class ZegoExpressEngine {
   /// - [audioEffectPlayer] Audio effect player instance that triggers this callback
   /// - [audioEffectID] The ID of the audio effect resource that triggered this callback
   /// - [state] The playback state of the audio effect
-  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   static void Function(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode) onAudioEffectPlayStateUpdate;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
   /// - [state] File recording status, according to which you should determine the state of the file recording or the prompt of the UI.
-  /// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [config] Record config
   /// - [channel] Publishing stream channel
   static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordStateUpdate;
