@@ -79,6 +79,9 @@ class ZegoErrorCode {
   /// The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room and one multi room at the same time.
   static const int RoomCountExceed                                                        = 1002001;
 
+  /// The input room ID is incorrect, please check if this room ID is currently logged in.
+  static const int RoomRoomidIncorrect                                                    = 1002002;
+
   /// The input user ID is empty.
   static const int RoomUserIdNull                                                         = 1002005;
 
