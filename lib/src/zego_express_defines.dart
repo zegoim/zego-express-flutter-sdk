@@ -1263,7 +1263,7 @@ class ZegoPlayStreamQuality {
     delay = map['delay'];
     avTimestampDiff = map['avTimestampDiff'];
     isHardwareDecode = map['isHardwareDecode'];
-    videoCodecID = map['videoCodecID'];
+    videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']];
     totalRecvBytes = map['totalRecvBytes'];
     audioRecvBytes = map['audioRecvBytes'];
     videoRecvBytes = map['videoRecvBytes'];
