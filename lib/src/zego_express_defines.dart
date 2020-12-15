@@ -1263,7 +1263,7 @@ class ZegoPlayStreamQuality {
     delay = map['delay'];
     avTimestampDiff = map['avTimestampDiff'];
     isHardwareDecode = map['isHardwareDecode'];
-    videoCodecID = map['videoCodecID'];
+    videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']];
     totalRecvBytes = map['totalRecvBytes'];
     audioRecvBytes = map['audioRecvBytes'];
     videoRecvBytes = map['videoRecvBytes'];
@@ -1948,10 +1948,10 @@ abstract class ZegoAudioEffectPlayer {
 
 /// Callback for setting room extra information.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoRoomSetRoomExtraInfoResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoRoomSetRoomExtraInfoResult(this.errorCode): assert(errorCode != null);
@@ -1963,10 +1963,10 @@ class ZegoRoomSetRoomExtraInfoResult {
 
 /// Callback for setting stream extra information.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoPublisherSetStreamExtraInfoResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoPublisherSetStreamExtraInfoResult(this.errorCode): assert(errorCode != null);
@@ -1978,10 +1978,10 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 /// Callback for add/remove CDN URL.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoPublisherUpdateCdnUrlResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoPublisherUpdateCdnUrlResult(this.errorCode): assert(errorCode != null);
@@ -1993,11 +1993,11 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 /// Results of starting a mixer task.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 /// - [extendedData] Extended Information
 class ZegoMixerStartResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   /// Extended Information
@@ -2014,10 +2014,10 @@ class ZegoMixerStartResult {
 
 /// Results of stoping a mixer task.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoMixerStopResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoMixerStopResult(this.errorCode): assert(errorCode != null);
@@ -2029,11 +2029,11 @@ class ZegoMixerStopResult {
 
 /// Callback for sending broadcast messages.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 /// - [messageID] ID of this message
 class ZegoIMSendBroadcastMessageResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   /// ID of this message
@@ -2049,11 +2049,11 @@ class ZegoIMSendBroadcastMessageResult {
 
 /// Callback for sending barrage message.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 /// - [messageID] ID of this message
 class ZegoIMSendBarrageMessageResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   /// ID of this message
@@ -2069,10 +2069,10 @@ class ZegoIMSendBarrageMessageResult {
 
 /// Callback for sending custom command.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoIMSendCustomCommandResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode): assert(errorCode != null);
@@ -2084,10 +2084,10 @@ class ZegoIMSendCustomCommandResult {
 
 /// Callback for media player loads resources.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoMediaPlayerLoadResourceResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoMediaPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
@@ -2099,10 +2099,10 @@ class ZegoMediaPlayerLoadResourceResult {
 
 /// Callback for media player seek to playback progress.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoMediaPlayerSeekToResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoMediaPlayerSeekToResult(this.errorCode): assert(errorCode != null);
@@ -2114,10 +2114,10 @@ class ZegoMediaPlayerSeekToResult {
 
 /// Callback for audio effect player loads resources.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoAudioEffectPlayerLoadResourceResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoAudioEffectPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
@@ -2129,10 +2129,10 @@ class ZegoAudioEffectPlayerLoadResourceResult {
 
 /// Callback for audio effect player seek to playback progress.
 ///
-/// - [errorCode] Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 class ZegoAudioEffectPlayerSeekToResult {
 
-  /// Error code, please refer to the Error Codes https://doc-en.zego.im/en/308.html for details
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
   ZegoAudioEffectPlayerSeekToResult(this.errorCode): assert(errorCode != null);

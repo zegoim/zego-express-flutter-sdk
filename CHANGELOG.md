@@ -1,5 +1,33 @@
 # Change Log
 
+## 1.19.1
+
+### **Enhancements**
+
+1. Added error code 1002002, which means the RoomID is wrong, please check whether you are currently logged in to this room.
+
+    After logging in to the room, if you log out or switch rooms, and the incoming RoomID is empty or the RoomID does not exist, the 1002002 error code will be thrown.
+
+    For related API, please refer to [loginRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/loginRoom.html), [logoutRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/logoutRoom.html), [switchRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/switchRoom.html)
+
+### **Bug Fixes**
+
+1. Fixed the occasional popping sound when the sound effect player set the specified playback progress.
+
+    For related API, please refer to [ZegoAudioEffectPlayer.seekTo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoAudioEffectPlayer/seekTo.html)
+
+2. Fixed a crash when setting the media enhancement supplementary information type on Android.
+
+    For related API, please refer to [setSEIConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setSEIConfig.html)
+
+3. Fixed the issue that switching rendering view does not take effect when playing the stream on Android.
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+4. Fixed the crash of FEC module under weak network conditions.
+
+5. Fixed the occasional issue of abnormality when switching from media volume to call volume on iOS.
+
 ## 1.19.0
 
 ### **New Features**
