@@ -2,19 +2,23 @@
 
 [English](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README_zh.md)
 
-即构科技 (ZEGO) 极速音视频 Flutter SDK 是一个基于 [ZegoExpressEngine](https://doc-zh.zego.im/zh/693.html) 原生 Android / iOS SDK 的 Flutter Plugin Wrapper，提供视频直播以及实时音视频服务。仅需4行代码，30分钟即可轻松接入。
+即构科技 (ZEGO) 极速音视频 Flutter SDK 是一个基于 [ZegoExpressEngine](https://doc-zh.zego.im/zh/693.html) 原生 Android/iOS SDK 的 Flutter Plugin Wrapper，提供视频直播以及实时音视频服务。🚀 仅需 4 行代码，30 分钟即可轻松接入。
 
 了解更多解决方案：[https://www.zego.im](https://www.zego.im)
 
-> 示例 Demo
+> 🔥 示例 Demo
 
-1. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example)**
+1. **[https://github.com/zegoim/zego-express-example-topics-flutter](https://github.com/zegoim/zego-express-example-topics-flutter)**
 
-    一个简易的推拉流示例 Demo，内置于此仓库的 `example` 目录下，展示了 SDK 最基础的推拉流功能。
+    🧬 一个展示 SDK 推拉流以及各种丰富功能的示例专题 Demo（包括 `快速开始` Demo 在内），持续更新中。
 
-2. **[https://github.com/zegoim/zego-express-example-screen-capture-flutter](https://github.com/zegoim/zego-express-example-screen-capture-flutter)**
+2. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example)**
 
-    一个实现了 iOS/Android 屏幕采集并推流直播的示例 Demo。
+    🧪 一个简易的推拉流示例 Demo，内置于此仓库的 `example` 目录下，展示了 SDK 最基础的推拉流功能。
+
+3. **[https://github.com/zegoim/zego-express-example-screen-capture-flutter](https://github.com/zegoim/zego-express-example-screen-capture-flutter)**
+
+    📲 一个实现了 Android/iOS 屏幕采集并推流直播的示例 Demo。
 
 ## 1️⃣ 下载并安装 Flutter
 
@@ -43,7 +47,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.19.0
+  zego_express_engine: ^1.19.1
 ```
 
 - ### 以 git 形式依赖
@@ -67,7 +71,7 @@ dependencies:
 
 打开 `app/src/main/AndroidManifest.xml` 文件，添加如下内容：
 
-![Add Android Privacy](https://storage.zego.im/sdk-doc/Pics/Android/ZegoLiveRoom/ZegoLiveRoom-IntegrationGuide/3.2-insert_sourceSets_node-4.png)
+<center><img src=https://storage.zego.im/sdk-doc/Pics/Android/ZegoLiveRoom/ZegoLiveRoom-IntegrationGuide/3.2-insert_sourceSets_node-4.png width=60%></center>
 
 ```xml
     <!-- SDK 必须使用的权限 -->
@@ -80,14 +84,11 @@ dependencies:
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <!-- App 需要使用的部分权限 -->
+    <!-- Demo App 需要使用的部分权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
-
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 ```
@@ -107,13 +108,15 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 }
 ```
 
+> 如果打包 release apk 时 (`flutter build apk`) 开启了混淆功能 (Flutter 新版本默认开启)，需要为 ZEGO 相关的类配置防止混淆，参考 [常见问题-4](#4-android-flutter-升级至-v110-或以上时android-release-下出现-noclassdeffounderror-导致-crash)
+
 ### iOS
 
-选择项目 TARGETS -> Info -> Custom iOS Target Properties
+选择项目 `TARGETS` -> `Info` -> `Custom iOS Target Properties`
 
-![Add iOS Privacy](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png)
+<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png width=80%></center>
 
-点击 + 添加按钮，添加摄像头和麦克风权限。
+点击 `+` 添加按钮，添加摄像头和麦克风权限。
 
 1. `Privacy - Camera Usage Description`
 
@@ -121,9 +124,9 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
 添加权限完成后如图所示：
 
-![Add iOS Privacy Done](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
+<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png width=80%></center>
 
-> 如果需要使用 Platform View，iOS 端还需额外添加一行描述，参考 [常见问题-1](#1-ios-使用-platform-view-时报错verbose-2platform_view_layercc28-trying-to-embed-a-platform-view-but-the-paintcontext-does-not-support-embedding)
+> 如果需要使用 Platform View，并且 Flutter 版本小于 1.22，iOS 端还需额外添加一行描述，参考 [常见问题-1](#1-ios-使用-platform-view-时报错verbose-2platform_view_layercc28-trying-to-embed-a-platform-view-but-the-paintcontext-does-not-support-embedding)
 
 ## 6️⃣ 初始化 SDK
 
@@ -143,14 +146,10 @@ class _MyAppState extends State<MyApp> {
 
     // Apply appID and appSign from ZEGO
     final int appID = 1234567890;
-
-    // Apply appID and appSign from ZEGO
     final String appSign = 'abcdefghijklmnopqrstuvwzyv123456789abcdefghijklmnopqrstuvwzyz123';
 
-    // Specify test environment
+    // Specify test environment and app scenario
     final bool isTestEnv = true;
-
-    // Specify a general scenario
     final ZegoScenario scenario = ZegoScenario.General;
 
     @override
@@ -158,33 +157,25 @@ class _MyAppState extends State<MyApp> {
         super.initState();
 
         // Get SDK Version
-        ZegoExpressEngine.getVersion().then((ver) {
-            setState(() {
-              version = ver;
-            });
+        ZegoExpressEngine.getVersion().then((value) {
+            setState(() => version = value);
         });
 
-        // Create ZegoExpressEngine
+        // Create ZegoExpressEngine (Init SDK)
         ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario);
     }
 
     @override
     Widget build(BuildContext context) {
-        return MaterialApp(
-            home: Scaffold(
-                appBar: AppBar(
-                    title: const Text('ZegoExpressEngine'),
-                ),
-                body: Center(
-                    child: Text('Version: $version\n'),
-                ),
-            ),
-        );
+        return MaterialApp(home: Scaffold(
+            appBar: AppBar(title: const Text('ZegoExpressEngine')),
+            body: Center(child: Text('Version: $version')),
+        ));
     }
 }
 ```
 
-更多功能请参考 API 文档。
+🔮 更多功能和使用方法请参考 **[示例专题 Demo](https://github.com/zegoim/zego-express-example-topics-flutter)** 和 API 文档。
 
 ## 7️⃣ API 文档
 
@@ -194,9 +185,11 @@ class _MyAppState extends State<MyApp> {
 
 ### 1. iOS: 使用 Platform View 时报错：`[VERBOSE-2:platform_view_layer.cc(28)] Trying to embed a platform view but the PaintContext does not support embedding`
 
-打开需要使用 Platform View 的 iOS 工程，在 `Info.plist` 中添加字段 `io.flutter.embedded_views_preview`，其值为 `YES`。
+> Flutter 1.22 及以后的版本不再需要此设置。
 
-![iOS-Enable-PlatformView-Guide](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png)
+打开需要使用 Platform View 的 iOS 原生工程 (Runner.xcworkspace) ，在 `Info.plist` 中添加字段 `io.flutter.embedded_views_preview`，其值为 `YES`。
+
+<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png width=80%></center>
 
 ### 2. iOS: `fatal error: lipo: -extract armv7 specified but fat file: [...] does not contain that architecture`
 
@@ -218,4 +211,4 @@ Flutter 在 1.10 或以上版本默认开启了混淆，请在项目中 `app/pro
 
 ## 9️⃣ How to contribute
 
-We welcome contributions, information on how to get started can be found at our [contributor guide](CONTRIBUTING.md).
+🎉 We welcome contributions, information on how to get started can be found at our [contributor guide](CONTRIBUTING.md).
