@@ -367,6 +367,9 @@ class ZegoErrorCode {
   /// The set audio spectrum monitoring interval is out of range.
   static const int DeviceAudioSpectrumIntervalInvalid                                     = 1006032;
 
+  /// The set camera zoom factor is out of range.
+  static const int DeviceZoomFactorInvalid                                                = 1006040;
+
   /// Device internal error.
   static const int DeviceInnerError                                                       = 1006099;
 
@@ -552,6 +555,18 @@ class ZegoErrorCode {
 
   /// Network speed test connection failure.
   static const int UtilitiesNetworkToolConnectServerFailed                                = 1015002;
+
+  /// RTP timeout, please check whether the network is normal.
+  static const int UtilitiesNetworkToolRtpTimeoutError                                    = 1015003;
+
+  /// engine denied to continue testing network.
+  static const int UtilitiesNetworkToolEngineDenied                                       = 1015004;
+
+  /// Actively stop network test when starting to publish the stream.
+  static const int UtilitiesNetworkToolStoppedByPublishingStream                          = 1015005;
+
+  /// Actively stop network test when starting to play the stream.
+  static const int UtilitiesNetworkToolStoppedByPlayingStream                             = 1015006;
 
   /// Network test internal error.
   static const int UtilitiesNetworkToolInnerError                                         = 1015009;
