@@ -323,7 +323,13 @@ enum ZegoStreamRelayCDNUpdateReason {
   /// CDN server actively disconnected
   CDNServerDisconnected,
   /// Active disconnect
-  Disconnected
+  Disconnected,
+  /// All mixer input streams sessions closed
+  MixStreamAllInputStreamClosed,
+  /// All mixer input streams have no data
+  MixStreamAllInputStreamNoData,
+  /// Internal error of stream mixer server
+  MixStreamServerInternalError
 }
 
 /// Beauty feature (bitmask enumeration).
@@ -433,7 +439,9 @@ enum ZegoVideoBufferType {
   /// CVPixelBuffer type video frame
   CVPixelBuffer,
   /// Surface Texture type video frame
-  SurfaceTexture
+  SurfaceTexture,
+  /// GL_TEXTURE_EXTERNAL_OES type video frame
+  GLTextureExternalOES
 }
 
 /// Video frame format series.

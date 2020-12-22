@@ -90,8 +90,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
 
   /// Set the sound equalizer (EQ).
   ///
-  /// - [bandIndex] The value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
-  /// - [bandGain] The value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
+  /// - [bandIndex] Band frequency index, the value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
+  /// - [bandGain] Band gain for the index, the value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
   Future<void> setAudioEqualizerGain(int bandIndex, double bandGain) async {
     return await ZegoExpressImpl.instance.setAudioEqualizerGain(bandIndex, bandGain);
   }
