@@ -1175,6 +1175,27 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setCameraZoomFactor(MethodCall call, Result result) {
+
+        float factor = floatValue((Number) call.argument("factor"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraZoomFactor(factor, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void getCameraMaxZoomFactor(MethodCall call, Result result) {
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        float factor = ZegoExpressEngine.getEngine().getCameraMaxZoomFactor(channel);
+
+        result.success(factor);
+    }
+
+    @SuppressWarnings("unused")
     public static void startSoundLevelMonitor(MethodCall call, Result result) {
 
         int millisecond = intValue((Number) call.argument("millisecond"));

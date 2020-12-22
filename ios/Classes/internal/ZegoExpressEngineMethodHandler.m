@@ -1049,6 +1049,25 @@
     result(nil);
 }
 
+- (void)setCameraZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    float factor = [ZegoUtils floatValue:call.arguments[@"factor"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraZoomFactor:factor channel:channel];
+
+    result(nil);
+}
+
+- (void)getCameraMaxZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    float factor = [[ZegoExpressEngine sharedEngine] getCameraMaxZoomFactor:channel];
+
+    result(@(factor));
+}
+
 - (void)startSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];

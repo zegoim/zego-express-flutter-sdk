@@ -458,6 +458,19 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('setCameraZoomFactor', {
+      'factor': factor,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<double> getCameraMaxZoomFactor({ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('getCameraMaxZoomFactor', {
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<void> startSoundLevelMonitor({int millisecond}) async {
     return await _channel.invokeMethod('startSoundLevelMonitor', {
       'millisecond': millisecond ?? 100
