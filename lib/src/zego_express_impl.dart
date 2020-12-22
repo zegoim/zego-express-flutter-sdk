@@ -1154,6 +1154,14 @@ class ZegoExpressImpl {
         );
         break;
 
+      case 'onAudioRouteChange':
+        if (ZegoExpressEngine.onAudioRouteChange == null) return;
+
+        ZegoExpressEngine.onAudioRouteChange(
+          ZegoAudioRoute.values[map['audioRoute']]
+        );
+        break;
+
 
       /* IM */
 
@@ -1207,6 +1215,14 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onPerformanceStatusUpdate(
           ZegoPerformanceStatus.fromMap(map['status'])
+        );
+        break;
+
+      case 'onNetworkModeChanged':
+        if (ZegoExpressEngine.onNetworkModeChanged == null) return;
+
+        ZegoExpressEngine.onNetworkModeChanged(
+          ZegoNetworkMode.values[map['mode']]
         );
         break;
 

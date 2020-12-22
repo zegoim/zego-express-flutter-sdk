@@ -388,6 +388,22 @@ enum ZegoAudioDeviceType {
   Output
 }
 
+/// Audio route
+enum ZegoAudioRoute {
+  /// Speaker
+  Speaker,
+  /// Headphone
+  Headphone,
+  /// Bluetooth device
+  Bluetooth,
+  /// Receiver
+  Receiver,
+  /// External USB audio device
+  ExternalUSB,
+  /// Apple AirPlay
+  AirPlay
+}
+
 /// Mix stream content type.
 enum ZegoMixerInputContentType {
   /// Mix stream for audio only
@@ -540,6 +556,26 @@ enum ZegoDataRecordState {
   Recording,
   /// Record successs
   Success
+}
+
+/// Network mode
+enum ZegoNetworkMode {
+  /// Offline (No network)
+  Offline,
+  /// Unknown network mode
+  Unknown,
+  /// Wired Ethernet (LAN)
+  Ethernet,
+  /// Wi-Fi (WLAN)
+  WiFi,
+  /// 2G Network (GPRS/EDGE/CDMA1x/etc.)
+  Mode2G,
+  /// 3G Network (WCDMA/HSDPA/EVDO/etc.)
+  Mode3G,
+  /// 4G Network (LTE)
+  Mode4G,
+  /// 5G Network (NR (NSA/SA))
+  Mode5G
 }
 
 /// Log config.

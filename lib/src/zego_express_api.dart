@@ -369,6 +369,13 @@ class ZegoExpressEngine {
   /// - [state] Remote microphone status
   static void Function(String streamID, ZegoRemoteDeviceState state) onRemoteMicStateUpdate;
 
+  /// Callback for device's audio route changed.
+  ///
+  /// This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+  ///
+  /// - [audioRoute] Current audio route
+  static void Function(ZegoAudioRoute audioRoute) onAudioRouteChange;
+
   /// The callback triggered when Broadcast Messages are received.
   ///
   /// This callback is used to receive broadcast messages sent by other users, and barrage messages sent by users themselves will not be notified through this callback.
@@ -445,5 +452,12 @@ class ZegoExpressEngine {
   ///
   /// - [status] The system performance status.
   static void Function(ZegoPerformanceStatus status) onPerformanceStatusUpdate;
+
+  /// Callback for network mode changed.
+  ///
+  /// This callback will be called when the device's network mode changes, such as switching from WiFi to 5G, or when the network is disconnected.
+  ///
+  /// - [mode] Current network mode.
+  static void Function(ZegoNetworkMode mode) onNetworkModeChanged;
 
 }
