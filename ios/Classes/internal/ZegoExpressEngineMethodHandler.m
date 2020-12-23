@@ -463,6 +463,24 @@
     result(nil);
 }
 
+- (void)takePublishStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, UIImage * _Nullable image) {
+        NSData *imageData = nil;
+        if (image) {
+            imageData = UIImagePNGRepresentation(image);
+        }
+
+        result(@{
+            @"errorCode": @(errorCode),
+            @"image": imageData ?: [[NSNull alloc] init]
+        });
+
+    } channel:(ZegoPublishChannel)channel];
+}
+
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
@@ -749,6 +767,23 @@
     [[ZegoExpressEngine sharedEngine] setPlayStreamDecryptionKey:key streamID:streamID];
 
     result(nil);
+}
+
+- (void)takePlayStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, UIImage * _Nullable image) {
+        NSData *imageData = nil;
+        if (image) {
+            imageData = UIImagePNGRepresentation(image);
+        }
+
+        result(@{
+            @"errorCode": @(errorCode),
+            @"image": imageData ?: [[NSNull alloc] init]
+        });
+    }];
 }
 
 - (void)setPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {

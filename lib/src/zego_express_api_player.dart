@@ -43,6 +43,16 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayStreamDecryptionKey(streamID, key);
   }
 
+  /// Take a snapshot of the playing stream.
+  ///
+  /// Please call this function after calling [startPlayingStream]
+  ///
+  /// - [streamID] Stream ID to be snapshot
+  /// - Returns Results of take play stream snapshot
+  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(String streamID) async {
+    return await ZegoExpressImpl.instance.takePlayStreamSnapshot(streamID);
+  }
+
   /// Sets the stream playback volume.
   ///
   /// This function is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.

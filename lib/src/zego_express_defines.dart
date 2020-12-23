@@ -2035,6 +2035,48 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 }
 
+/// Results of take publish stream snapshot.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [image] Snapshot image
+class ZegoPublisherTakeSnapshotResult {
+
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  int errorCode;
+
+  /// Snapshot image
+  MemoryImage image;
+
+  ZegoPublisherTakeSnapshotResult(this.errorCode, this.image): assert(errorCode != null), assert(image != null);
+
+  ZegoPublisherTakeSnapshotResult.fromMap(Map<dynamic, dynamic> map) {
+    errorCode = map['errorCode'];
+    image = map['image'] != null ? MemoryImage(map['image']) : null;
+  }
+
+}
+
+/// Results of take play stream snapshot.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [image] Snapshot image
+class ZegoPlayerTakeSnapshotResult {
+
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  int errorCode;
+
+  /// Snapshot image
+  MemoryImage image;
+
+  ZegoPlayerTakeSnapshotResult(this.errorCode, this.image): assert(errorCode != null), assert(image != null);
+
+  ZegoPlayerTakeSnapshotResult.fromMap(Map<dynamic, dynamic> map) {
+    errorCode = map['errorCode'];
+    image = map['image'] != null ? MemoryImage(map['image']) : null;
+  }
+
+}
+
 /// Results of starting a mixer task.
 ///
 /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.

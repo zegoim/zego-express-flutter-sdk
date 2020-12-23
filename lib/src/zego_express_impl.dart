@@ -199,6 +199,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshot({ZegoPublishChannel channel}) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('takePublishStreamSnapshot', {
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+
+    return ZegoPublisherTakeSnapshotResult.fromMap(map);
+  }
+
   Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('mutePublishStreamAudio', {
       'mute': mute,
@@ -322,6 +330,14 @@ class ZegoExpressImpl {
       'streamID': streamID,
       'key': key
     });
+  }
+
+  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(String streamID) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('takePlayStreamSnapshot', {
+      'streamID': streamID
+    });
+
+    return ZegoPlayerTakeSnapshotResult.fromMap(map);
   }
 
   Future<void> setPlayVolume(String streamID, int volume) async {
