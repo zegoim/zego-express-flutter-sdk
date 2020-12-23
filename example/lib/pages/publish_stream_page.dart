@@ -5,6 +5,7 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 
 import 'package:zego_express_engine_example/config/zego_config.dart';
 import 'package:zego_express_engine_example/pages/publish_settings_page.dart';
+import 'package:zego_express_engine_example/ui/zego_ui_tool.dart';
 
 class PublishStreamPage extends StatefulWidget {
 
@@ -38,6 +39,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
 
   bool _isUseMic = true;
   bool _isUseFrontCamera = true;
+  bool _isEnableCamera = true;
 
   TextEditingController _controller = new TextEditingController();
 
@@ -193,17 +195,31 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
 
   }
 
-  void onCamStateChanged() {
+  void onCameraStateChanged() {
+    setState(() {
+      _isEnableCamera = !_isEnableCamera;
+    });
+    ZegoExpressEngine.instance.enableCamera(_isEnableCamera);
+  }
 
-    _isUseFrontCamera = !_isUseFrontCamera;
+  void onFrontCameraStateChanged() {
+    setState(() {
+      _isUseFrontCamera = !_isUseFrontCamera;
+    });
     ZegoExpressEngine.instance.useFrontCamera(_isUseFrontCamera);
   }
 
   void onMicStateChanged() {
-
     setState(() {
       _isUseMic = !_isUseMic;
-      ZegoExpressEngine.instance.muteMicrophone(!_isUseMic);
+    });
+    ZegoExpressEngine.instance.muteMicrophone(!_isUseMic);
+  }
+
+  void onSnapshotButtonClicked() async {
+    ZegoExpressEngine.instance.takePublishStreamSnapshot().then((result) {
+      print('[takePublishStreamSnapshot], errorCode: ${result.errorCode}, is null image?: ${result.image != null ? "false" : "true"}');
+      ZegoUITool.showImage(context, result.image);
     });
   }
 
@@ -211,13 +227,17 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
     ZegoExpressEngine.instance.setVideoMirrorMode(ZegoVideoMirrorMode.values[mode]);
   }
 
+  void onSettingsButtonClicked() {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return PublishSettingsPage();
+    },fullscreenDialog: true));
+  }
 
-  Widget showPreviewToolPage() {
+
+  Widget prepareToolWidget() {
     return GestureDetector(
-
       behavior: HitTestBehavior.translucent,
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30.0),
         child: Column(
@@ -265,9 +285,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             ),
             Text(
               'StreamID must be globally unique and the length should not exceed 255 bytes',
-              style: TextStyle(
-                color: Colors.white
-              ),
+              style: TextStyle(color: Colors.white),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 30.0),
@@ -282,9 +300,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
               height: 60.0,
               child: CupertinoButton(
                 child: Text('Start Publishing',
-                  style: TextStyle(
-                      color: Colors.white
-                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
                 onPressed: onPublishButtonPressed,
               ),
@@ -295,149 +311,112 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
     );
   }
 
-  Widget showPublishingToolPage() {
+  Widget publishingToolWidget() {
     return Container(
       padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: MediaQuery.of(context).padding.bottom + 20.0),
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-          ),
-          Row(
-            children: <Widget>[
-              Text('RoomID: ${ZegoConfig.instance.roomID} |  StreamID: ${ZegoConfig.instance.streamID}',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 9
+          SizedBox(height: 10),
+          Column(
+            children: [
+              Row(children: <Widget>[
+                Text('RoomID: ${ZegoConfig.instance.roomID} |  StreamID: ${ZegoConfig.instance.streamID}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
                 ),
-              ),
+              ]),
+              Row(children: <Widget>[
+                Text('Rendering with: ${ZegoConfig.instance.enablePlatformView ? 'PlatformView' : 'TextureRenderer'}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('Resolution: $_publishWidth x $_publishHeight',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('FPS(Capture): ${_publishCaptureFPS.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('FPS(Encode): ${_publishEncodeFPS.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('FPS(Send): ${_publishSendFPS.toStringAsFixed(2)}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('Bitrate(Video): ${_publishVideoBitrate.toStringAsFixed(2)} kb/s',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('Bitrate(Audio): ${_publishAudioBitrate.toStringAsFixed(2)} kb/s',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('HardwareEncode: ${_isHardwareEncode ? '✅' : '❎'}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('NetworkQuality: $_networkQuality',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
             ],
           ),
+          Expanded(child: SizedBox()),
           Row(
             children: <Widget>[
-              Text('Rendering with: ${ZegoConfig.instance.enablePlatformView ? 'PlatformView' : 'TextureRenderer'}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('Resolution: $_publishWidth x $_publishHeight',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('FPS(Capture): ${_publishCaptureFPS.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('FPS(Encode): ${_publishEncodeFPS.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('FPS(Send): ${_publishSendFPS.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('Bitrate(Video): ${_publishVideoBitrate.toStringAsFixed(2)} kb/s',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('Bitrate(Audio): ${_publishAudioBitrate.toStringAsFixed(2)} kb/s',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('HardwareEncode: ${_isHardwareEncode ? '✅' : '❎'}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('NetworkQuality: $_networkQuality',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 9
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Padding(padding: const EdgeInsets.only(top: 10.0)),
-          ),
-          Row(
-            children: <Widget>[
+              SizedBox(width: 10.0),
               CupertinoButton(
                 padding: const EdgeInsets.all(0.0),
                 pressedOpacity: 1.0,
-                borderRadius: BorderRadius.circular(
-                    0.0),
-                child: Image(
-                  width: 44.0,
-                  image:AssetImage('resources/images/bottom_switchcamera_icon.png'),
+                borderRadius: BorderRadius.circular(0.0),
+                child: Icon(
+                  _isEnableCamera ? Icons.camera_enhance : Icons.camera_enhance_outlined,
+                  size: 44.0,
+                  color: Colors.white
                 ),
-                onPressed: onCamStateChanged,
+                onPressed: onCameraStateChanged,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-              ),
+              SizedBox(width: 10.0),
               CupertinoButton(
                 padding: const EdgeInsets.all(0.0),
                 pressedOpacity: 1.0,
-                borderRadius: BorderRadius.circular(
-                    0.0),
-                child: Image(
-                  width: 44.0,
-                  image: _isUseMic
-                      ? AssetImage('resources/images/bottom_microphone_on_icon.png')
-                      : AssetImage('resources/images/bottom_microphone_off_icon.png'),
+                borderRadius: BorderRadius.circular(0.0),
+                child: Icon(_isUseFrontCamera ? Icons.flip_camera_android : Icons.flip_camera_android_outlined,
+                  size: 44.0,
+                  color: Colors.white
+                ),
+                onPressed: onFrontCameraStateChanged,
+              ),
+              SizedBox(width: 10.0),
+              CupertinoButton(
+                padding: const EdgeInsets.all(0.0),
+                pressedOpacity: 1.0,
+                borderRadius: BorderRadius.circular(0.0),
+                child: Icon(
+                  _isUseMic ? Icons.mic : Icons.mic_none,
+                  size: 44.0,
+                  color: Colors.white
                 ),
                 onPressed: onMicStateChanged,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-              )
+              SizedBox(width: 10.0),
+              CupertinoButton(
+                padding: const EdgeInsets.all(0.0),
+                pressedOpacity: 1.0,
+                borderRadius: BorderRadius.circular(0.0),
+                child: Icon(Icons.camera, size: 44.0, color: Colors.white),
+                onPressed: onSnapshotButtonClicked,
+              ),
             ],
           ),
         ],
@@ -445,26 +424,17 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
     );
   }
 
-  void onSettingsButtonClicked() {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return PublishSettingsPage();
-    },fullscreenDialog: true));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        title: Text(_title),
-      ),
+      appBar: AppBar(title: Text(_title)),
       floatingActionButton: CupertinoButton(
-          child: Icon(
-            Icons.settings,
-            size: 40,
-            color: Colors.white,
-          ),
-          onPressed: onSettingsButtonClicked
+        padding: const EdgeInsets.all(0.0),
+        pressedOpacity: 1.0,
+        borderRadius: BorderRadius.circular(0.0),
+        child: Icon(Icons.settings, size: 44, color: Colors.white),
+        onPressed: onSettingsButtonClicked
       ),
       body: Stack(
         children: <Widget>[
@@ -473,7 +443,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
             height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
             child: _previewViewWidget,
           ),
-          _isPublishing ? showPublishingToolPage() : showPreviewToolPage(),
+          _isPublishing ? publishingToolWidget() : prepareToolWidget(),
         ],
       )
     );

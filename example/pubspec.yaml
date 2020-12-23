@@ -39,8 +39,6 @@ flutter:
 
   assets:
     - resources/images/
-    - resources/images/2.0x/
-    - resources/images/3.0x/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
