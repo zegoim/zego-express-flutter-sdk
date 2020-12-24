@@ -615,6 +615,19 @@
     }
 }
 
+- (void)onAudioRouteChange:(ZegoAudioRoute)audioRoute {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAudioRouteChange] audioRoute: %d", (int)audioRoute);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onAudioRouteChange",
+            @"audioRoute": @(audioRoute),
+        });
+    }
+}
+
 #pragma mark IM Callback
 
 - (void)onIMRecvBroadcastMessage:(NSArray<ZegoBroadcastMessageInfo *> *)messageList roomID:(NSString *)roomID {
@@ -706,6 +719,19 @@
                 @"memoryUsageSystem": @(status.memoryUsageSystem),
                 @"memoryUsedApp": @(status.memoryUsedApp),
             }
+        });
+    }
+}
+
+- (void)onNetworkModeChanged:(ZegoNetworkMode)mode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onNetworkModeChanged] mode: %d", (int)mode);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onNetworkModeChanged",
+            @"mode": @(mode)
         });
     }
 }

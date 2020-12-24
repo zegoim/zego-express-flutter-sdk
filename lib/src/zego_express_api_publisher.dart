@@ -141,6 +141,17 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPublishStreamEncryptionKey(key, channel: channel);
   }
 
+  /// Take a snapshot of the publishing stream (for the specified channel).
+  ///
+  /// Please call this function after calling [startPublishingStream] or [startPreview]
+  /// The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post]
+  ///
+  /// - [channel] Publish stream channel
+  /// - Returns Results of take publish stream snapshot
+  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshot({ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.takePublishStreamSnapshot(channel: channel);
+  }
+
   /// Stops or resumes sending the audio part of a stream (for the specified channel).
   ///
   /// This function can be called when publishing the stream to realize not publishing the audio data stream. The SDK still collects and processes the audio, but does not send the audio data to the network. It can be set before and after publishing.

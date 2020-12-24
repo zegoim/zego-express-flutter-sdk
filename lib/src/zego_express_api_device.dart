@@ -85,6 +85,26 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }
 
+  /// Set the camera zoom factor.
+  ///
+  /// Every time the camera is restarted, the camera zoom factor will be restored to its initial value.
+  ///
+  /// - [factor] The zoom factor of the camera, the minimum value is 1.0, and the maximum value is the return value of [getCameraMaxZoomFactor].
+  /// - [channel] Publishing stream channel
+  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.setCameraZoomFactor(factor, channel: channel);
+  }
+
+  /// Get the maximum zoom factor of the camera.
+  ///
+  /// This is only available after the camera has been successfully started, and can generally be called when the captured first frame is received, aka [onPublisherCapturedVideoFirstFrame] callback.
+  ///
+  /// - [channel] Publishing stream channel
+  /// - Returns The maximum zoom factor of the camera.
+  Future<double> getCameraMaxZoomFactor({ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance.getCameraMaxZoomFactor(channel: channel);
+  }
+
   /// Starts sound level monitoring. Support setting the listening interval.
   ///
   /// After starting monitoring, you can receive local audio sound level via [onCapturedSoundLevelUpdate] callback, and receive remote audio sound level via [onRemoteSoundLevelUpdate] callback.

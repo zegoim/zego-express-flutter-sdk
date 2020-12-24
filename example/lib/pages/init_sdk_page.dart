@@ -142,13 +142,7 @@ class _InitPageState extends State<InitPage> {
                     children: <Widget>[
                       Text('AppID:'),
                       GestureDetector(
-                        child: Container(
-                          width: 40.0,
-                          height: 40.0,
-                          child: Image(
-                              image: AssetImage('resources/images/settings_tips.png')
-                          ),
-                        ),
+                        child: Icon(Icons.help_outline),
                         onTap: () {
                           ZegoUITool.showAlert(context, 'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
                         },
@@ -178,7 +172,6 @@ class _InitPageState extends State<InitPage> {
                   ),
                   Row(
                     children: <Widget>[
-
                       Text('AppSign:'),
                     ],
                   ),

@@ -323,7 +323,13 @@ enum ZegoStreamRelayCDNUpdateReason {
   /// CDN server actively disconnected
   CDNServerDisconnected,
   /// Active disconnect
-  Disconnected
+  Disconnected,
+  /// All mixer input streams sessions closed
+  MixStreamAllInputStreamClosed,
+  /// All mixer input streams have no data
+  MixStreamAllInputStreamNoData,
+  /// Internal error of stream mixer server
+  MixStreamServerInternalError
 }
 
 /// Beauty feature (bitmask enumeration).
@@ -382,6 +388,22 @@ enum ZegoAudioDeviceType {
   Output
 }
 
+/// Audio route
+enum ZegoAudioRoute {
+  /// Speaker
+  Speaker,
+  /// Headphone
+  Headphone,
+  /// Bluetooth device
+  Bluetooth,
+  /// Receiver
+  Receiver,
+  /// External USB audio device
+  ExternalUSB,
+  /// Apple AirPlay
+  AirPlay
+}
+
 /// Mix stream content type.
 enum ZegoMixerInputContentType {
   /// Mix stream for audio only
@@ -433,7 +455,9 @@ enum ZegoVideoBufferType {
   /// CVPixelBuffer type video frame
   CVPixelBuffer,
   /// Surface Texture type video frame
-  SurfaceTexture
+  SurfaceTexture,
+  /// GL_TEXTURE_EXTERNAL_OES type video frame
+  GLTextureExternalOES
 }
 
 /// Video frame format series.
@@ -532,6 +556,26 @@ enum ZegoDataRecordState {
   Recording,
   /// Record successs
   Success
+}
+
+/// Network mode
+enum ZegoNetworkMode {
+  /// Offline (No network)
+  Offline,
+  /// Unknown network mode
+  Unknown,
+  /// Wired Ethernet (LAN)
+  Ethernet,
+  /// Wi-Fi (WLAN)
+  WiFi,
+  /// 2G Network (GPRS/EDGE/CDMA1x/etc.)
+  Mode2G,
+  /// 3G Network (WCDMA/HSDPA/EVDO/etc.)
+  Mode3G,
+  /// 4G Network (LTE)
+  Mode4G,
+  /// 5G Network (NR (NSA/SA))
+  Mode5G
 }
 
 /// Log config.
@@ -1988,6 +2032,48 @@ class ZegoPublisherUpdateCdnUrlResult {
 
   ZegoPublisherUpdateCdnUrlResult.fromMap(Map<dynamic, dynamic> map):
     errorCode = map['errorCode'];
+
+}
+
+/// Results of take publish stream snapshot.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [image] Snapshot image
+class ZegoPublisherTakeSnapshotResult {
+
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  int errorCode;
+
+  /// Snapshot image
+  MemoryImage image;
+
+  ZegoPublisherTakeSnapshotResult(this.errorCode, this.image): assert(errorCode != null), assert(image != null);
+
+  ZegoPublisherTakeSnapshotResult.fromMap(Map<dynamic, dynamic> map) {
+    errorCode = map['errorCode'];
+    image = map['image'] != null ? MemoryImage(map['image']) : null;
+  }
+
+}
+
+/// Results of take play stream snapshot.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [image] Snapshot image
+class ZegoPlayerTakeSnapshotResult {
+
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  int errorCode;
+
+  /// Snapshot image
+  MemoryImage image;
+
+  ZegoPlayerTakeSnapshotResult(this.errorCode, this.image): assert(errorCode != null), assert(image != null);
+
+  ZegoPlayerTakeSnapshotResult.fromMap(Map<dynamic, dynamic> map) {
+    errorCode = map['errorCode'];
+    image = map['image'] != null ? MemoryImage(map['image']) : null;
+  }
 
 }
 

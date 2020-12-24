@@ -9,11 +9,15 @@
 package im.zego.zego_express_engine.internal;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.*;
 import java.lang.reflect.InvocationTargetException;
@@ -35,7 +39,9 @@ import im.zego.zegoexpress.callback.IZegoMediaPlayerLoadResourceCallback;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerSeekToCallback;
 import im.zego.zegoexpress.callback.IZegoMixerStartCallback;
 import im.zego.zegoexpress.callback.IZegoMixerStopCallback;
+import im.zego.zegoexpress.callback.IZegoPlayerTakeSnapshotCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherSetStreamExtraInfoCallback;
+import im.zego.zegoexpress.callback.IZegoPublisherTakeSnapshotCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
@@ -551,6 +557,45 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void takePublishStreamSnapshot(MethodCall call, final Result result) {
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().takePublishStreamSnapshot(new IZegoPublisherTakeSnapshotCallback() {
+            @Override
+            public void onPublisherTakeSnapshotResult(final int errorCode, final Bitmap image) {
+
+                if (image != null) {
+                    new Thread(new Runnable(){
+                        public void run() {
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                            final byte[] imageData = stream.toByteArray();
+                            image.recycle();
+
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HashMap<String, Object> resultMap = new HashMap<>();
+                                    resultMap.put("errorCode", errorCode);
+                                    resultMap.put("image", imageData);
+                                    result.success(resultMap);
+                                }
+                            });
+                        }
+                    }).start();
+
+                } else {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("image", null);
+                    result.success(resultMap);
+                }
+            }
+        }, channel);
+    }
+
+    @SuppressWarnings("unused")
     public static void mutePublishStreamAudio(MethodCall call, Result result) {
 
         boolean mute = boolValue((Boolean) call.argument("mute"));
@@ -865,6 +910,45 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void takePlayStreamSnapshot(MethodCall call, final Result result) {
+
+        String streamID = call.argument("streamID");
+
+        ZegoExpressEngine.getEngine().takePlayStreamSnapshot(streamID, new IZegoPlayerTakeSnapshotCallback() {
+            @Override
+            public void onPlayerTakeSnapshotResult(final int errorCode, final Bitmap image) {
+
+                if (image != null) {
+                    new Thread(new Runnable(){
+                        public void run() {
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                            final byte[] imageData = stream.toByteArray();
+                            image.recycle();
+
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HashMap<String, Object> resultMap = new HashMap<>();
+                                    resultMap.put("errorCode", errorCode);
+                                    resultMap.put("image", imageData);
+                                    result.success(resultMap);
+                                }
+                            });
+                        }
+                    }).start();
+
+                } else {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("image", null);
+                    result.success(resultMap);
+                }
+            }
+        });
+    }
+
+    @SuppressWarnings("unused")
     public static void setPlayVolume(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -1172,6 +1256,27 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().useFrontCamera(enable, channel);
 
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCameraZoomFactor(MethodCall call, Result result) {
+
+        float factor = floatValue((Number) call.argument("factor"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraZoomFactor(factor, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void getCameraMaxZoomFactor(MethodCall call, Result result) {
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
+
+        float factor = ZegoExpressEngine.getEngine().getCameraMaxZoomFactor(channel);
+
+        result.success(factor);
     }
 
     @SuppressWarnings("unused")

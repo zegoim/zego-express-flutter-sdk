@@ -343,14 +343,6 @@ class ZegoExpressEngine {
   /// - [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
   static void Function(Map<String, List<double>> audioSpectrums) onRemoteAudioSpectrumUpdate;
 
-  /// The system performance status callback.
-  ///
-  /// To trigger this callback function, the [startPerformanceMonitor] function must be called to start the system performance monitor.
-  /// The callback notification period is the setting parameter of [startPerformanceMonitor].
-  ///
-  /// - [status] The system performance status.
-  static void Function(ZegoPerformanceStatus status) onPerformanceStatusUpdate;
-
   /// The callback triggered when a device exception occurs.
   ///
   /// This callback is triggered when an exception occurs when reading or writing the audio and video device.
@@ -376,6 +368,13 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID
   /// - [state] Remote microphone status
   static void Function(String streamID, ZegoRemoteDeviceState state) onRemoteMicStateUpdate;
+
+  /// Callback for device's audio route changed.
+  ///
+  /// This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+  ///
+  /// - [audioRoute] Current audio route
+  static void Function(ZegoAudioRoute audioRoute) onAudioRouteChange;
 
   /// The callback triggered when Broadcast Messages are received.
   ///
@@ -445,5 +444,20 @@ class ZegoExpressEngine {
   /// - [config] Record config
   /// - [channel] Publishing stream channel
   static void Function(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel) onCapturedDataRecordProgressUpdate;
+
+  /// The system performance status callback.
+  ///
+  /// To trigger this callback function, the [startPerformanceMonitor] function must be called to start the system performance monitor.
+  /// The callback notification period is the setting parameter of [startPerformanceMonitor].
+  ///
+  /// - [status] The system performance status.
+  static void Function(ZegoPerformanceStatus status) onPerformanceStatusUpdate;
+
+  /// Callback for network mode changed.
+  ///
+  /// This callback will be called when the device's network mode changes, such as switching from WiFi to 5G, or when the network is disconnected.
+  ///
+  /// - [mode] Current network mode.
+  static void Function(ZegoNetworkMode mode) onNetworkModeChanged;
 
 }

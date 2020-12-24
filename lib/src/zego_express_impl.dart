@@ -199,6 +199,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshot({ZegoPublishChannel channel}) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('takePublishStreamSnapshot', {
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+
+    return ZegoPublisherTakeSnapshotResult.fromMap(map);
+  }
+
   Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('mutePublishStreamAudio', {
       'mute': mute,
@@ -322,6 +330,14 @@ class ZegoExpressImpl {
       'streamID': streamID,
       'key': key
     });
+  }
+
+  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(String streamID) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('takePlayStreamSnapshot', {
+      'streamID': streamID
+    });
+
+    return ZegoPlayerTakeSnapshotResult.fromMap(map);
   }
 
   Future<void> setPlayVolume(String streamID, int volume) async {
@@ -454,6 +470,19 @@ class ZegoExpressImpl {
   Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
     return await _channel.invokeMethod('useFrontCamera', {
       'enable': enable,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('setCameraZoomFactor', {
+      'factor': factor,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<double> getCameraMaxZoomFactor({ZegoPublishChannel channel}) async {
+    return await _channel.invokeMethod('getCameraMaxZoomFactor', {
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -1141,6 +1170,14 @@ class ZegoExpressImpl {
         );
         break;
 
+      case 'onAudioRouteChange':
+        if (ZegoExpressEngine.onAudioRouteChange == null) return;
+
+        ZegoExpressEngine.onAudioRouteChange(
+          ZegoAudioRoute.values[map['audioRoute']]
+        );
+        break;
+
 
       /* IM */
 
@@ -1194,6 +1231,14 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onPerformanceStatusUpdate(
           ZegoPerformanceStatus.fromMap(map['status'])
+        );
+        break;
+
+      case 'onNetworkModeChanged':
+        if (ZegoExpressEngine.onNetworkModeChanged == null) return;
+
+        ZegoExpressEngine.onNetworkModeChanged(
+          ZegoNetworkMode.values[map['mode']]
         );
         break;
 

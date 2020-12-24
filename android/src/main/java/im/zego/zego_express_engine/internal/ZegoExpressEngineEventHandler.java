@@ -20,10 +20,12 @@ import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
 import im.zego.zegoexpress.constants.ZegoAudioEffectPlayState;
+import im.zego.zegoexpress.constants.ZegoAudioRoute;
 import im.zego.zegoexpress.constants.ZegoDataRecordState;
 import im.zego.zegoexpress.constants.ZegoEngineState;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
+import im.zego.zegoexpress.constants.ZegoNetworkMode;
 import im.zego.zegoexpress.constants.ZegoPlayerMediaEvent;
 import im.zego.zegoexpress.constants.ZegoPlayerState;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -633,6 +635,21 @@ class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onAudioRouteChange(ZegoAudioRoute audioRoute) {
+            super.onAudioRouteChange(audioRoute);
+            ZegoLog.log("[onAudioRouteChange] audioRoute: %s", audioRoute.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAudioRouteChange");
+            map.put("audioRoute", audioRoute.value());
+
+            sink.success(map);
+        }
+
 
         /* IM */
 
@@ -742,6 +759,20 @@ class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onPerformanceStatusUpdate");
             map.put("status", statusMap);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onNetworkModeChanged(ZegoNetworkMode mode) {
+            super.onNetworkModeChanged(mode);
+            ZegoLog.log("[onNetworkModeChanged] mode: %s", mode.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onNetworkModeChanged");
+            map.put("mode", mode.value());
 
             sink.success(map);
         }

@@ -463,6 +463,27 @@
     result(nil);
 }
 
+- (void)takePublishStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, UIImage * _Nullable image) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = nil;
+            if (image) {
+                imageData = UIImageJPEGRepresentation(image, 1);
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                result(@{
+                    @"errorCode": @(errorCode),
+                    @"image": imageData ?: [[NSNull alloc] init]
+                });
+            });
+        });
+    } channel:(ZegoPublishChannel)channel];
+}
+
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
@@ -749,6 +770,27 @@
     [[ZegoExpressEngine sharedEngine] setPlayStreamDecryptionKey:key streamID:streamID];
 
     result(nil);
+}
+
+- (void)takePlayStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, UIImage * _Nullable image) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = nil;
+            if (image) {
+                imageData = UIImageJPEGRepresentation(image, 1);
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                result(@{
+                    @"errorCode": @(errorCode),
+                    @"image": imageData ?: [[NSNull alloc] init]
+                });
+            });
+        });
+    }];
 }
 
 - (void)setPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1047,6 +1089,25 @@
     [[ZegoExpressEngine sharedEngine] useFrontCamera:enable channel:(ZegoPublishChannel)channel];
 
     result(nil);
+}
+
+- (void)setCameraZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    float factor = [ZegoUtils floatValue:call.arguments[@"factor"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraZoomFactor:factor channel:channel];
+
+    result(nil);
+}
+
+- (void)getCameraMaxZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    float factor = [[ZegoExpressEngine sharedEngine] getCameraMaxZoomFactor:channel];
+
+    result(@(factor));
 }
 
 - (void)startSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {

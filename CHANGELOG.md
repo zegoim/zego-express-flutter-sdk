@@ -1,5 +1,39 @@
 # Change Log
 
+## 1.20.0
+
+### **New Features**
+
+1. Added the ability to take snapshots of the publishing stream or the playing stream.
+
+    It supports taking snapshots of the screen during publishing or playing stream, which can be used for scenes such as pornographic identification.
+
+    For related API, please refer to [takePublishStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/takePublishStreamSnapshot.html), [takePlayStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/takePlayStreamSnapshot.html)
+
+2. Added network mode changed notification callback.
+
+    This callback will be called when the device's network mode changes, such as switching from WiFi to 5G, or when the network is disconnected.
+
+    For related API, please refer to [onNetworkModeChanged](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onNetworkModeChanged.html)
+
+3. Added camera zoom function.
+
+    Set the zoom factor of the camera through the SDK to achieve the effect of zooming in on distant objects during shooting. For detailed function implementation, please refer to [Advanced Features - Zoom].
+
+    For related API, please refer to [getCameraMaxZoomFactor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/getCameraMaxZoomFactor.html), [setCameraZoomFactor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/setCameraZoomFactor.html)
+
+4. Added audio route changed notification callback.
+
+    This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+
+    For related API, please refer to [onAudioRouteChange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onAudioRouteChange.html)
+
+### **Bug Fixes**
+
+1. Fixed the occasional crash of the local recording function under abnormal conditions.
+
+    For related API, please refer to [startRecordingCapturedData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/muteMicrophone.html), [stopRecordingCapturedData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRecord/stopRecordingCapturedData.html)
+
 ## 1.19.1
 
 ### **Enhancements**
