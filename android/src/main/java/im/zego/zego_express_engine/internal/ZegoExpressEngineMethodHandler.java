@@ -569,7 +569,7 @@ public class ZegoExpressEngineMethodHandler {
                     new Thread(new Runnable(){
                         public void run() {
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                             final byte[] imageData = stream.toByteArray();
                             image.recycle();
 
@@ -922,7 +922,7 @@ public class ZegoExpressEngineMethodHandler {
                     new Thread(new Runnable(){
                         public void run() {
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                             final byte[] imageData = stream.toByteArray();
                             image.recycle();
 
