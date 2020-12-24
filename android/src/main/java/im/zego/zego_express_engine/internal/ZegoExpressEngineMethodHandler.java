@@ -11,6 +11,8 @@ package im.zego.zego_express_engine.internal;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -561,23 +563,34 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoExpressEngine.getEngine().takePublishStreamSnapshot(new IZegoPublisherTakeSnapshotCallback() {
             @Override
-            public void onPublisherTakeSnapshotResult(int errorCode, Bitmap image) {
-
-                HashMap<String, Object> resultMap = new HashMap<>();
-                resultMap.put("errorCode", errorCode);
+            public void onPublisherTakeSnapshotResult(final int errorCode, final Bitmap image) {
 
                 if (image != null) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] imageData = stream.toByteArray();
-                    image.recycle();
+                    new Thread(new Runnable(){
+                        public void run() {
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            final byte[] imageData = stream.toByteArray();
+                            image.recycle();
 
-                    resultMap.put("image", imageData);
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HashMap<String, Object> resultMap = new HashMap<>();
+                                    resultMap.put("errorCode", errorCode);
+                                    resultMap.put("image", imageData);
+                                    result.success(resultMap);
+                                }
+                            });
+                        }
+                    }).start();
+
                 } else {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
                     resultMap.put("image", null);
+                    result.success(resultMap);
                 }
-
-                result.success(resultMap);
             }
         }, channel);
     }
@@ -903,23 +916,34 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoExpressEngine.getEngine().takePlayStreamSnapshot(streamID, new IZegoPlayerTakeSnapshotCallback() {
             @Override
-            public void onPlayerTakeSnapshotResult(int errorCode, Bitmap image) {
-
-                HashMap<String, Object> resultMap = new HashMap<>();
-                resultMap.put("errorCode", errorCode);
+            public void onPlayerTakeSnapshotResult(final int errorCode, final Bitmap image) {
 
                 if (image != null) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] imageData = stream.toByteArray();
-                    image.recycle();
+                    new Thread(new Runnable(){
+                        public void run() {
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            final byte[] imageData = stream.toByteArray();
+                            image.recycle();
 
-                    resultMap.put("image", imageData);
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HashMap<String, Object> resultMap = new HashMap<>();
+                                    resultMap.put("errorCode", errorCode);
+                                    resultMap.put("image", imageData);
+                                    result.success(resultMap);
+                                }
+                            });
+                        }
+                    }).start();
+
                 } else {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
                     resultMap.put("image", null);
+                    result.success(resultMap);
                 }
-
-                result.success(resultMap);
             }
         });
     }

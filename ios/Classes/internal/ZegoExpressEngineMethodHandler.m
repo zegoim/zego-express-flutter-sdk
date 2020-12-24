@@ -468,16 +468,19 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, UIImage * _Nullable image) {
-        NSData *imageData = nil;
-        if (image) {
-            imageData = UIImagePNGRepresentation(image);
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = nil;
+            if (image) {
+                imageData = UIImagePNGRepresentation(image);
+            }
 
-        result(@{
-            @"errorCode": @(errorCode),
-            @"image": imageData ?: [[NSNull alloc] init]
+            dispatch_async(dispatch_get_main_queue(), ^{
+                result(@{
+                    @"errorCode": @(errorCode),
+                    @"image": imageData ?: [[NSNull alloc] init]
+                });
+            });
         });
-
     } channel:(ZegoPublishChannel)channel];
 }
 
@@ -774,14 +777,18 @@
     NSString *streamID = call.arguments[@"streamID"];
 
     [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, UIImage * _Nullable image) {
-        NSData *imageData = nil;
-        if (image) {
-            imageData = UIImagePNGRepresentation(image);
-        }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = nil;
+            if (image) {
+                imageData = UIImagePNGRepresentation(image);
+            }
 
-        result(@{
-            @"errorCode": @(errorCode),
-            @"image": imageData ?: [[NSNull alloc] init]
+            dispatch_async(dispatch_get_main_queue(), ^{
+                result(@{
+                    @"errorCode": @(errorCode),
+                    @"image": imageData ?: [[NSNull alloc] init]
+                });
+            });
         });
     }];
 }
