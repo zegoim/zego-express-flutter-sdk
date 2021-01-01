@@ -2056,6 +2056,28 @@
     result(nil);
 }
 
+- (void)startNetworkSpeedTest:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    ZegoNetworkSpeedTestConfig *config = [[ZegoNetworkSpeedTestConfig alloc] init];
+    config.testUplink = configMap[@"testUplink"];
+    config.expectedUplinkBitrate = [ZegoUtils boolValue:configMap[@"expectedUplinkBitrate"]];
+    config.testDownlink = configMap[@"testDownlink"];
+    config.expectedDownlinkBitrate = [ZegoUtils boolValue:configMap[@"expectedDownlinkBitrate"]];
+
+    [[ZegoExpressEngine sharedEngine] startNetworkSpeedTest:config];
+
+    result(nil);
+}
+
+- (void)stopNetworkSpeedTest:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] stopNetworkSpeedTest];
+
+    result(nil);
+}
+
 
 #pragma mark - PlatformView Utils
 

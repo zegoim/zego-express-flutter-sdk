@@ -460,4 +460,18 @@ class ZegoExpressEngine {
   /// - [mode] Current network mode.
   static void Function(ZegoNetworkMode mode) onNetworkModeChanged;
 
+  /// The callback triggered when error occurred when testing network speed.
+  ///
+  /// - [errorCode] The error code corresponding to the network speed test, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [type] Uplink or downlink
+  static void Function(int errorCode, ZegoNetworkSpeedTestType type) onNetworkSpeedTestError;
+
+  /// The callback triggered when quality updated when testing network speed.
+  ///
+  /// When error occurs or called stopNetworkSpeedTest, this callback will be stopped.
+  ///
+  /// - [quality] Network speed quality
+  /// - [type] Uplink or downlink
+  static void Function(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type) onNetworkSpeedTestQualityUpdate;
+
 }

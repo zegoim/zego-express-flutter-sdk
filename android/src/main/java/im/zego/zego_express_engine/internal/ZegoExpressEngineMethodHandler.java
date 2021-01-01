@@ -81,6 +81,7 @@ import im.zego.zegoexpress.entity.ZegoMixerInput;
 import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
+import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
@@ -2362,6 +2363,34 @@ public class ZegoExpressEngineMethodHandler {
     public static void stopPerformanceMonitor(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().stopPerformanceMonitor();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void startNetworkSpeedTest(MethodCall call, Result result) {
+
+        HashMap<String, Object> configMap = call.argument("config");
+        if (configMap == null || configMap.isEmpty()) {
+            result.error("startNetworkSpeedTest_Null_Config".toUpperCase(), "[startNetworkSpeedTest] Null config", null);
+            return;
+        }
+
+        ZegoNetworkSpeedTestConfig config = new ZegoNetworkSpeedTestConfig();
+        config.testUplink = boolValue((Boolean) configMap.get("testUplink"));
+        config.expectedUplinkBitrate = intValue((Number) call.argument("expectedUplinkBitrate"));
+        config.testDownlink = boolValue((Boolean) configMap.get("testDownlink"));
+        config.expectedDownlinkBitrate = intValue((Number) call.argument("expectedDownlinkBitrate"));
+
+        ZegoExpressEngine.getEngine().startNetworkSpeedTest(config);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopNetworkSpeedTest(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopNetworkSpeedTest();
 
         result.success(null);
     }

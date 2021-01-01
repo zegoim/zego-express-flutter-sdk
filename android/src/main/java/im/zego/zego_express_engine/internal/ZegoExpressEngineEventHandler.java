@@ -26,6 +26,7 @@ import im.zego.zegoexpress.constants.ZegoEngineState;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoNetworkMode;
+import im.zego.zegoexpress.constants.ZegoNetworkSpeedTestType;
 import im.zego.zegoexpress.constants.ZegoPlayerMediaEvent;
 import im.zego.zegoexpress.constants.ZegoPlayerState;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -37,6 +38,7 @@ import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
+import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestQuality;
 import im.zego.zegoexpress.entity.ZegoPerformanceStatus;
 import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
@@ -773,6 +775,41 @@ class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onNetworkModeChanged");
             map.put("mode", mode.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onNetworkSpeedTestError(int errorCode, ZegoNetworkSpeedTestType type) {
+            super.onNetworkSpeedTestError(errorCode, type);
+            ZegoLog.log("[onNetworkSpeedTestError] errorCode: %d, type: %s", errorCode, type.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onNetworkSpeedTestError");
+            map.put("errorCode", errorCode);
+            map.put("type", type.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onNetworkSpeedTestQualityUpdate(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type) {
+            super.onNetworkSpeedTestQualityUpdate(quality, type);
+            ZegoLog.log("[onNetworkSpeedTestQualityUpdate] cost: %d, rtt: %d, plr: %.2f, type: %s", quality.connectCost, quality.rtt, quality.packetLostRate, type.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> qualityMap = new HashMap<>();
+            qualityMap.put("connectCost", quality.connectCost);
+            qualityMap.put("rtt", quality.rtt);
+            qualityMap.put("packetLostRate", quality.packetLostRate);
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onNetworkSpeedTestQualityUpdate");
+            map.put("quality", qualityMap);
+            map.put("type", type.value());
 
             sink.success(map);
         }

@@ -769,6 +769,16 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('stopPerformanceMonitor');
   }
 
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config) async {
+    return await _channel.invokeMethod('startNetworkSpeedTest', {
+      'config': config.toMap()
+    });
+  }
+
+  Future<void> stopNetworkSpeedTest() async {
+    return await _channel.invokeMethod('stopNetworkSpeedTest');
+  }
+
 
   /* EventHandler */
 
@@ -1239,6 +1249,24 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onNetworkModeChanged(
           ZegoNetworkMode.values[map['mode']]
+        );
+        break;
+
+      case 'onNetworkSpeedTestError':
+        if (ZegoExpressEngine.onNetworkSpeedTestError == null) return;
+
+        ZegoExpressEngine.onNetworkSpeedTestError(
+          map['errorCode'],
+          ZegoNetworkSpeedTestType.values[map['type']]
+        );
+        break;
+
+      case 'onNetworkSpeedTestQualityUpdate':
+        if (ZegoExpressEngine.onNetworkSpeedTestQualityUpdate == null) return;
+
+        ZegoExpressEngine.onNetworkSpeedTestQualityUpdate(
+          ZegoNetworkSpeedTestQuality.fromMap(map['quality']),
+          ZegoNetworkSpeedTestType.values[map['type']]
         );
         break;
 

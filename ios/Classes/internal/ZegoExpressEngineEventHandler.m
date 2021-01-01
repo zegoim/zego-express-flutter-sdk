@@ -736,6 +736,38 @@
     }
 }
 
+- (void)onNetworkSpeedTestError:(int)errorCode type:(ZegoNetworkSpeedTestType)type {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onNetworkSpeedTestError] errorCode: %d, type: %d", errorCode, (int)type);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onNetworkSpeedTestError",
+            @"errorCode": @(errorCode),
+            @"type": @(type)
+        });
+    }
+}
+
+- (void)onNetworkSpeedTestQualityUpdate:(ZegoNetworkSpeedTestQuality *)quality type:(ZegoNetworkSpeedTestType)type {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onNetworkSpeedTestQualityUpdate",
+            @"quality": @{
+                @"connectCost": @(quality.connectCost),
+                @"rtt": @(quality.rtt),
+                @"packetLostRate": @(quality.packetLostRate),
+            },
+            @"type": @(type)
+        });
+    }
+}
+
 
 #pragma mark - ZegoMediaPlayerEventHandler
 

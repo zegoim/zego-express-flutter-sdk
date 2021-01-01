@@ -578,6 +578,14 @@ enum ZegoNetworkMode {
   Mode5G
 }
 
+/// network speed test type
+enum ZegoNetworkSpeedTestType {
+  /// uplink
+  Uplink,
+  /// downlink
+  Downlink
+}
+
 /// Log config.
 ///
 /// Configure the log file save path and the maximum log file size
@@ -1752,6 +1760,55 @@ class ZegoDataRecordProgress {
   ZegoDataRecordProgress.fromMap(Map<dynamic, dynamic> map):
     duration = map['duration'],
     currentFileSize = map['currentFileSize'];
+
+}
+
+/// Network speed test config
+class ZegoNetworkSpeedTestConfig {
+
+  /// Test uplink or not
+  bool testUplink;
+
+  /// The unit is kbps. Recommended to use the bitrate in ZegoVideoConfig when call startPublishingStream to determine whether the network uplink environment is suitable.
+  int expectedUplinkBitrate;
+
+  /// Test downlink or not
+  bool testDownlink;
+
+  /// The unit is kbps. Recommended to use the bitrate in ZegoVideoConfig when call startPublishingStream to determine whether the network downlink environment is suitable.
+  int expectedDownlinkBitrate;
+
+  ZegoNetworkSpeedTestConfig(this.testUplink, this.expectedUplinkBitrate, this.testDownlink, this.expectedDownlinkBitrate): assert(testUplink != null), assert(expectedUplinkBitrate != null), assert(testDownlink != null), assert(expectedDownlinkBitrate != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'testUplink': this.testUplink,
+      'expectedUplinkBitrate': this.expectedUplinkBitrate,
+      'testDownlink': this.testDownlink,
+      'expectedDownlinkBitrate': this.expectedDownlinkBitrate
+    };
+  }
+
+}
+
+/// network speed test quality
+class ZegoNetworkSpeedTestQuality {
+
+  /// Time to connect to the server, in milliseconds
+  int connectCost;
+
+  /// rtt, in milliseconds
+  int rtt;
+
+  /// packet lost rate. in percentage, 0.0 ~ 1.0
+  double packetLostRate;
+
+  ZegoNetworkSpeedTestQuality(this.connectCost, this.rtt, this.packetLostRate): assert(connectCost != null), assert(rtt != null), assert(packetLostRate != null);
+
+  ZegoNetworkSpeedTestQuality.fromMap(Map<dynamic, dynamic> map):
+    connectCost = map['connectCost'],
+    rtt = map['rtt'],
+    packetLostRate = map['packetLostRate'];
 
 }
 
