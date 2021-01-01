@@ -597,12 +597,6 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> setReverbParam(ZegoReverbParam param) async {
-    return await _channel.invokeMethod('setReverbParam', {
-      'param': param.toMap()
-    });
-  }
-
   Future<void> setReverbAdvancedParam(ZegoReverbAdvancedParam param) async {
     return await _channel.invokeMethod('setReverbAdvancedParam', {
       'param': param.toMap()
@@ -1478,14 +1472,6 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetProgressInterval', {
       'index': _index,
       'millisecond': millisecond
-    });
-  }
-
-  @override
-  Future<int> getVolume() async {
-    // TODO: Deprecated since 1.15.0
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetVolume', {
-      'index': _index
     });
   }
 

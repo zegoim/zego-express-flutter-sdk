@@ -1483,27 +1483,6 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings({"unused", "deprecation"})
-    public static void setReverbParam(MethodCall call, Result result) {
-        // TODO: Deprecated since 1.18.0
-
-        HashMap<String, Double> paramMap = call.argument("param");
-        if (paramMap == null || paramMap.isEmpty()) {
-            result.error("setReverbParam_Null_Param".toUpperCase(), "[setReverbParam] Null param", null);
-            return;
-        }
-
-        ZegoReverbParam param = new ZegoReverbParam();
-        param.roomSize = floatValue(paramMap.get("roomSize"));
-        param.reverberance = floatValue(paramMap.get("reverberance"));
-        param.damping = floatValue(paramMap.get("damping"));
-        param.dryWetRatio = floatValue(paramMap.get("dryWetRatio"));
-
-        ZegoExpressEngine.getEngine().setReverbParam(param);
-
-        result.success(null);
-    }
-
     @SuppressWarnings("unused")
     public static void setReverbAdvancedParam(MethodCall call, Result result) {
 
@@ -1881,21 +1860,6 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         result.success(null);
-    }
-
-    @SuppressWarnings({"unused", "deprecation"})
-    public static void mediaPlayerGetVolume(MethodCall call, Result result) {
-        // TODO: Deprecated since 1.15.0
-
-        Integer index = call.argument("index");
-        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
-
-        if (mediaPlayer != null) {
-            int volume = mediaPlayer.getVolume();
-            result.success(volume);
-        } else {
-            result.success(0);
-        }
     }
 
     @SuppressWarnings("unused")

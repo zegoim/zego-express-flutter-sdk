@@ -1942,12 +1942,6 @@ abstract class ZegoMediaPlayer {
   /// Get media player index.
   int getIndex();
 
-  /// Gets the play volume.
-  ///
-  /// @deprecated This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.
-  @Deprecated('This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.')
-  Future<int> getVolume();
-
 }
 
 /// Audio effect player.
