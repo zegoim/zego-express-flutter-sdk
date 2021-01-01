@@ -14,6 +14,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// If the network is temporarily interrupted due to network quality reasons, the SDK will automatically reconnect internally. You can get the current connection status of the local room by listening to the [onRoomStateUpdate] callback method, and other users in the same room will receive [onRoomUserUpdate] callback notification.
   /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
   /// After the first login failure due to network reasons or the room is disconnected, the default time of SDK reconnection is 20min.
+  /// For restrictions on the use of this function, please refer to https://doc-en.zego.im/en/6419.html or contact ZEGO technical support.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
@@ -69,7 +70,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Set room extra information.
   ///
   /// After the user in the room calls this function to set the extra info of the room, other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback function.
-  /// For restrictions on the use of this fucntion, please refer to https://doc-zh.zego.im/zh/4720.html or contact ZEGO technical support.
+  /// For restrictions on the use of this function, please refer to https://doc-en.zego.im/en/6419.html or contact ZEGO technical support.
   ///
   /// - [roomID] Room ID.
   /// - [key] key of the extra info.

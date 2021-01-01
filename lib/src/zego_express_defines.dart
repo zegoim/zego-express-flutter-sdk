@@ -56,7 +56,7 @@ enum ZegoViewMode {
   ScaleToFill
 }
 
-/// Mirror mode for previewing or playing the  of the stream.
+/// Mirror mode for previewing or playing the of the stream.
 enum ZegoVideoMirrorMode {
   /// The mirror image only for previewing locally. This mode is used by default.
   OnlyPreviewMirror,
@@ -588,7 +588,7 @@ enum ZegoNetworkSpeedTestType {
 
 /// Log config.
 ///
-/// Configure the log file save path and the maximum log file size
+/// Configure the log file save path and the maximum log file size.
 class ZegoLogConfig {
 
   /// Log file save path
@@ -611,7 +611,7 @@ class ZegoLogConfig {
 /// Custom video capture configuration.
 ///
 /// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
-/// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the corresponding parameter of the [ZegoEngineConfig] instance.
+/// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the [enableCustomVideoCapture] function.
 /// Because when using custom video capture, SDK will no longer start the camera to capture video data. You need to collect video data from video sources by yourself.
 class ZegoCustomVideoCaptureConfig {
 
@@ -632,9 +632,6 @@ class ZegoCustomVideoCaptureConfig {
 }
 
 /// Advanced engine configuration.
-///
-/// When you need to use the advanced functions of SDK, such as custom video capture, custom video rendering and other advanced functions, you need to set the instance corresponding to the advanced function configuration to the corresponding field of this type of instance to achieve the purpose of enabling the corresponding advanced functions of ZegoExpressEngine.
-/// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
 class ZegoEngineConfig {
 
   /// Log configuration, if not set, use the default configuration. It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].

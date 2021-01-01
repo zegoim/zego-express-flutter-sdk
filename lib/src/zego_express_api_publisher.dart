@@ -133,7 +133,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Called before and after [startPublishingStream] can both take effect.
   /// Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
   /// Support calling this function to update the encryption key while publishing stream. Note that developers need to update the player's decryption key before updating the publisher's encryption key.
-  /// This API is only valid when publishing stream to the Zego RTC server.
+  /// This function is only valid when publishing stream to the Zego RTC server.
   ///
   /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.
   /// - [channel] Publish stream channel

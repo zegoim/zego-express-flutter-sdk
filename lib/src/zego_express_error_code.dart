@@ -343,7 +343,7 @@ class ZegoErrorCode {
   /// No permission to access the device. Please check the permissions of the camera or microphone.
   static const int DeviceErrorTypeNoAuthorization                                         = 1006003;
 
-  /// The sampling frame rate of the video capture device is 0.
+  /// The frame rate of the capture device is 0.
   static const int DeviceErrorTypeZeroFps                                                 = 1006004;
 
   /// The device is occupied.
