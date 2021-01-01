@@ -35,6 +35,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
   double _publishVideoBitrate = 0.0;
   double _publishAudioBitrate = 0.0;
   bool _isHardwareEncode = false;
+  String _videoCodecID = '';
   String _networkQuality = '';
 
   bool _isUseMic = true;
@@ -116,6 +117,7 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
         _publishVideoBitrate = quality.videoKBPS;
         _publishAudioBitrate = quality.audioKBPS;
         _isHardwareEncode = quality.isHardwareEncode;
+        _videoCodecID = quality.videoCodecID.toString();
 
         switch (quality.level) {
           case ZegoStreamQualityLevel.Excellent:
@@ -361,6 +363,11 @@ class _PublishStreamPageState extends State<PublishStreamPage> {
               ]),
               Row(children: <Widget>[
                 Text('HardwareEncode: ${_isHardwareEncode ? '✅' : '❎'}',
+                  style: TextStyle(color: Colors.white, fontSize: 9),
+                ),
+              ]),
+              Row(children: <Widget>[
+                Text('VideoCodecID: $_videoCodecID',
                   style: TextStyle(color: Colors.white, fontSize: 9),
                 ),
               ]),

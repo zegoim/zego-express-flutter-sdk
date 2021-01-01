@@ -28,12 +28,16 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
 
   int _playWidth = 0;
   int _playHeight = 0;
-  double _playRecvFPS = 0.0;
-  double _playDecodeFPS = 0.0;
-  double _playRenderFPS = 0.0;
+  double _playVideoFPS = 0.0;
+  double _playAudioFPS = 0.0;
   double _playVideoBitrate = 0.0;
   double _playAudioBitrate = 0.0;
+  int _rtt = 0;
+  int _peerToPeerDelay = 0;
+  int _delay = 0;
+  int _avTimestampDiff = 0;
   bool _isHardwareDecode = false;
+  String _videoCodecID = '';
   String _networkQuality = '';
 
   bool _isUseSpeaker = true;
@@ -77,12 +81,16 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
     ZegoExpressEngine.onPlayerQualityUpdate = (String streamID, ZegoPlayStreamQuality quality) {
 
       setState(() {
-        _playRecvFPS = quality.videoRecvFPS;
-        _playDecodeFPS = quality.videoDecodeFPS;
-        _playRenderFPS = quality.videoRenderFPS;
+        _playVideoFPS = quality.videoRecvFPS;
+        _playAudioFPS = quality.audioRecvFPS;
         _playVideoBitrate = quality.videoKBPS;
         _playAudioBitrate = quality.audioKBPS;
+        _rtt = quality.rtt;
+        _peerToPeerDelay = quality.peerToPeerDelay;
+        _delay = quality.delay;
+        _avTimestampDiff = quality.avTimestampDiff;
         _isHardwareDecode = quality.isHardwareDecode;
+        _videoCodecID = quality.videoCodecID.toString();
 
         switch (quality.level) {
           case ZegoStreamQualityLevel.Excellent:
@@ -300,39 +308,65 @@ class _PlayStreamPageState extends State<PlayStreamPage> {
           ),
           Row(
             children: <Widget>[
-              Text('FPS(Recv): ${_playRecvFPS.toStringAsFixed(2)}',
+              Text('VideoRecvFPS: ${_playVideoFPS.toStringAsFixed(2)}',
                 style: TextStyle(color: Colors.white, fontSize: 9),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('FPS(Decode): ${_playDecodeFPS.toStringAsFixed(2)}',
+              Text('AudioRecvFPS: ${_playAudioFPS.toStringAsFixed(2)}',
                 style: TextStyle(color: Colors.white, fontSize: 9),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('FPS(Render): ${_playRenderFPS.toStringAsFixed(2)}',
+              Text('VideoBitrate: ${_playVideoBitrate.toStringAsFixed(2)} kb/s',
                 style: TextStyle(color: Colors.white, fontSize: 9),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('Bitrate(Video): ${_playVideoBitrate.toStringAsFixed(2)} kb/s',
+              Text('AudioBitrate: ${_playAudioBitrate.toStringAsFixed(2)} kb/s',
                 style: TextStyle(color: Colors.white, fontSize: 9),
               ),
             ],
           ),
           Row(
             children: <Widget>[
-              Text('Bitrate(Audio): ${_playAudioBitrate.toStringAsFixed(2)} kb/s',
+              Text('RTT: $_rtt ms',
                 style: TextStyle(color: Colors.white, fontSize: 9),
               ),
             ],
           ),
+          Row(
+            children: <Widget>[
+              Text('P2P Delay: $_peerToPeerDelay ms',
+                style: TextStyle(color: Colors.white, fontSize: 9),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('Delay: $_delay ms',
+                style: TextStyle(color: Colors.white, fontSize: 9),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('avTimestampDiff: $_avTimestampDiff ms',
+                style: TextStyle(color: Colors.white, fontSize: 9),
+              ),
+            ],
+          ),
+          Row(children: <Widget>[
+            Text('VideoCodecID: $_videoCodecID',
+              style: TextStyle(color: Colors.white, fontSize: 9),
+            ),
+          ]),
           Row(
             children: <Widget>[
               Text('HardwareDecode: ${_isHardwareDecode ? '✅' : '❎'}',
