@@ -377,10 +377,10 @@
     ZegoVideoConfig *configObject = [[ZegoExpressEngine sharedEngine] getVideoConfig:(ZegoPublishChannel)channel];
 
     result(@{
-        @"captureWidth": @(configObject.captureResolution.width),
-        @"captureHeight": @(configObject.captureResolution.height),
-        @"encodeWidth": @(configObject.encodeResolution.width),
-        @"encodeHeight": @(configObject.encodeResolution.height),
+        @"captureWidth": @((int)configObject.captureResolution.width),
+        @"captureHeight": @((int)configObject.captureResolution.height),
+        @"encodeWidth": @((int)configObject.encodeResolution.width),
+        @"encodeHeight": @((int)configObject.encodeResolution.height),
         @"bitrate": @(configObject.bitrate),
         @"fps": @(configObject.fps),
         @"codecID": @(configObject.codecID)
