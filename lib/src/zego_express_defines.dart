@@ -290,6 +290,18 @@ enum ZegoPlayerMediaEvent {
   VideoBreakResume
 }
 
+/// Stream Resource Mode
+enum ZegoStreamResourceMode {
+  /// Default mode. The SDK will automatically select the streaming resource according to the cdnConfig parameters set by the player config and the ready-made background configuration.
+  Default,
+  /// Playing stream only from CDN.
+  OnlyCDN,
+  /// Playing stream only from L3.
+  OnlyL3,
+  /// Playing stream only from RTC.
+  OnlyRTC
+}
+
 /// Update type.
 enum ZegoUpdateType {
   /// Add
@@ -1193,22 +1205,24 @@ class ZegoStreamRelayCDNInfo {
 /// Configure playing stream CDN configuration, video layer
 class ZegoPlayerConfig {
 
+  /// Stream resource mode
+  ZegoStreamResourceMode resourceMode;
+
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
   ZegoCDNConfig cdnConfig;
 
-  /// Set the video layer for playing the stream
-  ZegoPlayerVideoLayer videoLayer;
+  ZegoPlayerConfig(this.resourceMode, this.cdnConfig): assert(resourceMode != null);
 
-  ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(videoLayer != null);
-
-  ZegoPlayerConfig.fromMap(Map<dynamic, dynamic> map):
-    cdnConfig = ZegoCDNConfig.fromMap(map['cdnConfig']),
-    videoLayer = map['videoLayer'];
+  /// Create a default advanced player config object
+  ZegoPlayerConfig.defaultConfig() {
+    resourceMode = ZegoStreamResourceMode.Default;
+    cdnConfig = null;
+  }
 
   Map<String, dynamic> toMap() {
     return {
-      'cdnConfig': this.cdnConfig.toMap(),
-      'videoLayer': this.videoLayer.index
+      'resourceMode': this.resourceMode.index,
+      'cdnConfig': this.cdnConfig?.toMap() ?? {}
     };
   }
 

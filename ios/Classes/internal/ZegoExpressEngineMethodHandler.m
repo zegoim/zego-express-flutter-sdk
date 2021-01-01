@@ -665,6 +665,7 @@
     if (playerConfigMap && playerConfigMap.count > 0) {
 
         playerConfig = [[ZegoPlayerConfig alloc] init];
+        playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];

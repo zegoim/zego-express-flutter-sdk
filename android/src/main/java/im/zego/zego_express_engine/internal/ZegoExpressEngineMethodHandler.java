@@ -61,6 +61,7 @@ import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoReverbPreset;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
@@ -799,6 +800,7 @@ public class ZegoExpressEngineMethodHandler {
         if (playerConfigMap != null && !playerConfigMap.isEmpty()) {
 
             playerConfig = new ZegoPlayerConfig();
+            playerConfig.resourceMode = ZegoStreamResourceMode.getZegoStreamResourceMode(intValue((Number) playerConfigMap.get("resourceMode")));
             playerConfig.videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) playerConfigMap.get("videoLayer")));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
