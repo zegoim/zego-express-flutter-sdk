@@ -213,7 +213,9 @@ enum ZegoVideoCodecID {
   /// Scalable Video Coding (H.264 SVC)
   Svc,
   /// VP8
-  Vp8
+  Vp8,
+  /// H.265
+  H265
 }
 
 /// Player video layer.
