@@ -47,7 +47,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.20.0
+  zego_express_engine: ^2.0.0
 ```
 
 - ### 以 git 形式依赖
@@ -71,8 +71,6 @@ dependencies:
 
 打开 `app/src/main/AndroidManifest.xml` 文件，添加如下内容：
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/Android/ZegoLiveRoom/ZegoLiveRoom-IntegrationGuide/3.2-insert_sourceSets_node-4.png width=60%></center>
-
 ```xml
     <!-- SDK 必须使用的权限 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -93,28 +91,13 @@ dependencies:
     <uses-feature android:name="android.hardware.camera.autofocus" />
 ```
 
-> 请注意：因为 Android 6.0 在一些比较重要的权限上要求必须申请动态权限，不能只通过 `AndroidMainfest.xml` 文件申请静态权限。因此还需要参考执行如下代码（ `requestPermissions` 是 `Activity` 的方法）
-
-```java
-String[] permissionNeeded = {
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"};
-
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    if (ContextCompat.checkSelfPermission(this, "android.permission.CAMERA") != PackageManager.PERMISSION_GRANTED ||
-        ContextCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") != PackageManager.PERMISSION_GRANTED) {
-        requestPermissions(permissionNeeded, 101);
-    }
-}
-```
-
 > 如果打包 release apk 时 (`flutter build apk`) 开启了混淆功能 (Flutter 新版本默认开启)，需要为 ZEGO 相关的类配置防止混淆，参考 [常见问题-4](#4-android-flutter-升级至-v110-或以上时android-release-下出现-noclassdeffounderror-导致-crash)
 
 ### iOS
 
 选择项目 `TARGETS` -> `Info` -> `Custom iOS Target Properties`
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png width=80%></center>
+![iOS Privacy Description](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png)
 
 点击 `+` 添加按钮，添加摄像头和麦克风权限。
 
@@ -124,7 +107,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
 添加权限完成后如图所示：
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png width=80%></center>
+![iOS Privacy Description Done](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
 
 > 如果需要使用 Platform View，并且 Flutter 版本小于 1.22，iOS 端还需额外添加一行描述，参考 [常见问题-1](#1-ios-使用-platform-view-时报错verbose-2platform_view_layercc28-trying-to-embed-a-platform-view-but-the-paintcontext-does-not-support-embedding)
 
@@ -189,7 +172,7 @@ class _MyAppState extends State<MyApp> {
 
 打开需要使用 Platform View 的 iOS 原生工程 (Runner.xcworkspace) ，在 `Info.plist` 中添加字段 `io.flutter.embedded_views_preview`，其值为 `YES`。
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png width=80%></center>
+![flutter enable platform view](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png)
 
 ### 2. iOS: `fatal error: lipo: -extract armv7 specified but fat file: [...] does not contain that architecture`
 
@@ -208,6 +191,15 @@ Flutter 在 1.10 或以上版本默认开启了混淆，请在项目中 `app/pro
 ```java
 -keep class **.zego.**{*;}
 ```
+
+### 5. Android: 频繁创建销毁 `TextureRenderer` 时，可能出现以下 Crash
+
+```text
+OpenGLRenderer  E  [SurfaceTexture-0-4944-46] updateTexImage: SurfaceTexture is abandoned!
+       flutter  E  [ERROR:flutter/shell/platform/android/platform_view_android_jni.cc(39)] java.lang.RuntimeException: Error during updateTexImage (see logcat for details)
+```
+
+此问题是 Flutter Engine 内部在调用 SurfaceTexture 的 updateTexImage() 与 release() 时线程不安全引起的，并已经在 Flutter `1.24-candidate.2` 版本修复，具体详见：[https://github.com/flutter/engine/pull/21777](https://github.com/flutter/engine/pull/21777)
 
 ## 9️⃣ How to contribute
 

@@ -101,8 +101,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Voice changer effect is only effective for the captured sound.
   /// This function is an encapsulated version of [setVoiceChangerParam], which provides some preset values. If you need to configure the voice changer effects, please use [setVoiceChangerParam]
   /// This function is mutually exclusive with [setReverbPreset]. If used at the same time, it will produce undefined effects.
-  /// Some enumerated preset will modify the parameters of reverberation or reverberation echo, so after calling this function, calling [setVoiceChangerParam], [setReverbParam], [setReverbEchoParam] may affect the voice changer effect.
-  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  /// Some enumerated preset will modify the parameters of reverberation or reverberation echo, so after calling this function, calling [setVoiceChangerParam], [setReverbAdvancedParam], [setReverbEchoParam] may affect the voice changer effect.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [preset] The voice changer preset enumeration
   Future<void> setVoiceChangerPreset(ZegoVoiceChangerPreset preset) async {
@@ -113,7 +113,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   ///
   /// Voice changer effect is only effective for the captured sound.
   /// This function is an advanced version of [setVoiceChangerPreset], you can configure the voice changer effect by yourself.
-  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [param] Voice changer parameters
   Future<void> setVoiceChangerParam(ZegoVoiceChangerParam param) async {
@@ -123,9 +123,9 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Setting up the reverberation via preset enumeration.
   ///
   /// Support dynamic settings when publishing stream.
-  /// This function is a encapsulated version of [setReverbParam], which provides some preset values. If you need to configure the reverb, please use [setReverbParam]
+  /// This function is a encapsulated version of [setReverbAdvancedParam], which provides some preset values. If you need to configure the reverb, please use [setReverbAdvancedParam]
   /// This function is mutually exclusive with [setVoiceChangerPreset]. If used at the same time, it will produce undefined effects.
-  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [preset] The reverberation preset enumeration
   Future<void> setReverbPreset(ZegoReverbPreset preset) async {
@@ -136,20 +136,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   ///
   /// Different values dynamically set during publishing stream will take effect. When all parameters are set to 0, the reverberation is turned off.
   /// This function is an advanced version of [setReverbPreset], you can configure the reverb effect by yourself.
-  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
-  ///
-  /// @deprecated This method is deprecated after 1.18.0. Please use [setReverbAdvancedParam] instead
-  /// - [param] Reverb parameter
-  @Deprecated('This method is deprecated after 1.18.0. Please use [setReverbAdvancedParam] instead')
-  Future<void> setReverbParam(ZegoReverbParam param) async {
-    return await ZegoExpressImpl.instance.setReverbParam(param);
-  }
-
-  /// Setting up the specific reverberation parameters.
-  ///
-  /// Different values dynamically set during publishing stream will take effect. When all parameters are set to 0, the reverberation is turned off.
-  /// This function is an advanced version of [setReverbPreset], you can configure the reverb effect by yourself.
-  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [param] Reverb advanced parameter
   Future<void> setReverbAdvancedParam(ZegoReverbAdvancedParam param) async {
@@ -159,7 +146,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Setting up the specific reverberation echo parameters.
   ///
   /// This function can be used with voice changer and reverb to achieve a variety of custom sound effects
-  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbParam], [setReverbEchoParam], [setVoiceChangerParam] together.
+  /// If you need to configure the reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [param] The reverberation echo parameter
   Future<void> setReverbEchoParam(ZegoReverbEchoParam param) async {

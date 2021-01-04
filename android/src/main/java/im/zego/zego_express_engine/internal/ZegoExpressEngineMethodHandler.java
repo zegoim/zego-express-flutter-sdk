@@ -61,6 +61,7 @@ import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoReverbPreset;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
@@ -81,6 +82,7 @@ import im.zego.zegoexpress.entity.ZegoMixerInput;
 import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
+import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
@@ -798,6 +800,7 @@ public class ZegoExpressEngineMethodHandler {
         if (playerConfigMap != null && !playerConfigMap.isEmpty()) {
 
             playerConfig = new ZegoPlayerConfig();
+            playerConfig.resourceMode = ZegoStreamResourceMode.getZegoStreamResourceMode(intValue((Number) playerConfigMap.get("resourceMode")));
             playerConfig.videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) playerConfigMap.get("videoLayer")));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
@@ -1482,27 +1485,6 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings({"unused", "deprecation"})
-    public static void setReverbParam(MethodCall call, Result result) {
-        // TODO: Deprecated since 1.18.0
-
-        HashMap<String, Double> paramMap = call.argument("param");
-        if (paramMap == null || paramMap.isEmpty()) {
-            result.error("setReverbParam_Null_Param".toUpperCase(), "[setReverbParam] Null param", null);
-            return;
-        }
-
-        ZegoReverbParam param = new ZegoReverbParam();
-        param.roomSize = floatValue(paramMap.get("roomSize"));
-        param.reverberance = floatValue(paramMap.get("reverberance"));
-        param.damping = floatValue(paramMap.get("damping"));
-        param.dryWetRatio = floatValue(paramMap.get("dryWetRatio"));
-
-        ZegoExpressEngine.getEngine().setReverbParam(param);
-
-        result.success(null);
-    }
-
     @SuppressWarnings("unused")
     public static void setReverbAdvancedParam(MethodCall call, Result result) {
 
@@ -1880,21 +1862,6 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         result.success(null);
-    }
-
-    @SuppressWarnings({"unused", "deprecation"})
-    public static void mediaPlayerGetVolume(MethodCall call, Result result) {
-        // TODO: Deprecated since 1.15.0
-
-        Integer index = call.argument("index");
-        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
-
-        if (mediaPlayer != null) {
-            int volume = mediaPlayer.getVolume();
-            result.success(volume);
-        } else {
-            result.success(0);
-        }
     }
 
     @SuppressWarnings("unused")
@@ -2362,6 +2329,34 @@ public class ZegoExpressEngineMethodHandler {
     public static void stopPerformanceMonitor(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().stopPerformanceMonitor();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void startNetworkSpeedTest(MethodCall call, Result result) {
+
+        HashMap<String, Object> configMap = call.argument("config");
+        if (configMap == null || configMap.isEmpty()) {
+            result.error("startNetworkSpeedTest_Null_Config".toUpperCase(), "[startNetworkSpeedTest] Null config", null);
+            return;
+        }
+
+        ZegoNetworkSpeedTestConfig config = new ZegoNetworkSpeedTestConfig();
+        config.testUplink = boolValue((Boolean) configMap.get("testUplink"));
+        config.expectedUplinkBitrate = intValue((Number) call.argument("expectedUplinkBitrate"));
+        config.testDownlink = boolValue((Boolean) configMap.get("testDownlink"));
+        config.expectedDownlinkBitrate = intValue((Number) call.argument("expectedDownlinkBitrate"));
+
+        ZegoExpressEngine.getEngine().startNetworkSpeedTest(config);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopNetworkSpeedTest(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopNetworkSpeedTest();
 
         result.success(null);
     }

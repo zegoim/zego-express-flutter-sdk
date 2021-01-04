@@ -597,12 +597,6 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> setReverbParam(ZegoReverbParam param) async {
-    return await _channel.invokeMethod('setReverbParam', {
-      'param': param.toMap()
-    });
-  }
-
   Future<void> setReverbAdvancedParam(ZegoReverbAdvancedParam param) async {
     return await _channel.invokeMethod('setReverbAdvancedParam', {
       'param': param.toMap()
@@ -767,6 +761,16 @@ class ZegoExpressImpl {
 
   Future<void> stopPerformanceMonitor() async {
     return await _channel.invokeMethod('stopPerformanceMonitor');
+  }
+
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config) async {
+    return await _channel.invokeMethod('startNetworkSpeedTest', {
+      'config': config.toMap()
+    });
+  }
+
+  Future<void> stopNetworkSpeedTest() async {
+    return await _channel.invokeMethod('stopNetworkSpeedTest');
   }
 
 
@@ -1242,6 +1246,24 @@ class ZegoExpressImpl {
         );
         break;
 
+      case 'onNetworkSpeedTestError':
+        if (ZegoExpressEngine.onNetworkSpeedTestError == null) return;
+
+        ZegoExpressEngine.onNetworkSpeedTestError(
+          map['errorCode'],
+          ZegoNetworkSpeedTestType.values[map['type']]
+        );
+        break;
+
+      case 'onNetworkSpeedTestQualityUpdate':
+        if (ZegoExpressEngine.onNetworkSpeedTestQualityUpdate == null) return;
+
+        ZegoExpressEngine.onNetworkSpeedTestQualityUpdate(
+          ZegoNetworkSpeedTestQuality.fromMap(map['quality']),
+          ZegoNetworkSpeedTestType.values[map['type']]
+        );
+        break;
+
 
       /* MediaPlayer */
 
@@ -1450,14 +1472,6 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetProgressInterval', {
       'index': _index,
       'millisecond': millisecond
-    });
-  }
-
-  @override
-  Future<int> getVolume() async {
-    // TODO: Deprecated since 1.15.0
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerGetVolume', {
-      'index': _index
     });
   }
 

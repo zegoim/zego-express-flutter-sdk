@@ -219,7 +219,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered every 3 seconds to report the current stream playing quality.
   ///
-  /// After calling the startPlayingStream successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data  can be obtained, such the health of the publish stream can be monitored in real time.
+  /// After calling the startPlayingStream successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, such the health of the publish stream can be monitored in real time.
   /// You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback function, in order to show the downlink network status on the device UI in real time.
   /// If you does not know how to use the various parameters of the callback function, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
   ///
@@ -245,14 +245,14 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the first video frame is received.
   ///
-  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of video  data.
+  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of video data.
   ///
   /// - [streamID] Stream ID
   static void Function(String streamID) onPlayerRecvVideoFirstFrame;
 
   /// The callback triggered when the first video frame is rendered.
   ///
-  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it rendered the first frame of video  data.
+  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it rendered the first frame of video data.
   /// Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
   ///
   /// - [streamID] Stream ID
@@ -459,5 +459,19 @@ class ZegoExpressEngine {
   ///
   /// - [mode] Current network mode.
   static void Function(ZegoNetworkMode mode) onNetworkModeChanged;
+
+  /// The callback triggered when error occurred when testing network speed.
+  ///
+  /// - [errorCode] The error code corresponding to the network speed test, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [type] Uplink or downlink
+  static void Function(int errorCode, ZegoNetworkSpeedTestType type) onNetworkSpeedTestError;
+
+  /// The callback triggered when quality updated when testing network speed.
+  ///
+  /// When error occurs or called stopNetworkSpeedTest, this callback will be stopped.
+  ///
+  /// - [quality] Network speed quality
+  /// - [type] Uplink or downlink
+  static void Function(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type) onNetworkSpeedTestQualityUpdate;
 
 }

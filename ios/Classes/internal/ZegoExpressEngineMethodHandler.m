@@ -377,10 +377,10 @@
     ZegoVideoConfig *configObject = [[ZegoExpressEngine sharedEngine] getVideoConfig:(ZegoPublishChannel)channel];
 
     result(@{
-        @"captureWidth": @(configObject.captureResolution.width),
-        @"captureHeight": @(configObject.captureResolution.height),
-        @"encodeWidth": @(configObject.encodeResolution.width),
-        @"encodeHeight": @(configObject.encodeResolution.height),
+        @"captureWidth": @((int)configObject.captureResolution.width),
+        @"captureHeight": @((int)configObject.captureResolution.height),
+        @"encodeWidth": @((int)configObject.encodeResolution.width),
+        @"encodeHeight": @((int)configObject.encodeResolution.height),
         @"bitrate": @(configObject.bitrate),
         @"fps": @(configObject.fps),
         @"codecID": @(configObject.codecID)
@@ -665,6 +665,7 @@
     if (playerConfigMap && playerConfigMap.count > 0) {
 
         playerConfig = [[ZegoPlayerConfig alloc] init];
+        playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
@@ -1279,24 +1280,6 @@
     result(nil);
 }
 
-- (void)setReverbParam:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // TODO: Deprecated since 1.18.0
-
-    NSDictionary *paramMap = call.arguments[@"param"];
-    ZegoReverbParam *param = [[ZegoReverbParam alloc] init];
-    param.roomSize = [ZegoUtils floatValue:paramMap[@"roomSize"]];
-    param.reverberance = [ZegoUtils floatValue:paramMap[@"reverberance"]];
-    param.damping = [ZegoUtils floatValue:paramMap[@"damping"]];
-    param.dryWetRatio = [ZegoUtils floatValue:paramMap[@"dryWetRatio"]];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[ZegoExpressEngine sharedEngine] setReverbParam:param];
-#pragma clang diagnostic pop
-
-    result(nil);
-}
-
 - (void)setReverbAdvancedParam:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSDictionary *paramMap = call.arguments[@"param"];
@@ -1617,23 +1600,6 @@
     [mediaPlayer setProgressInterval:millisecond];
 
     result(nil);
-}
-
-- (void)mediaPlayerGetVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // TODO: Deprecated since 1.15.0
-
-    NSNumber *index = call.arguments[@"index"];
-    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
-
-    if (mediaPlayer) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        int volume = mediaPlayer.volume;
-#pragma clang diagnostic pop
-        result(@(volume));
-    } else {
-        result(@(0));
-    }
 }
 
 - (void)mediaPlayerGetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2052,6 +2018,28 @@
 - (void)stopPerformanceMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     [[ZegoExpressEngine sharedEngine] stopPerformanceMonitor];
+
+    result(nil);
+}
+
+- (void)startNetworkSpeedTest:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    ZegoNetworkSpeedTestConfig *config = [[ZegoNetworkSpeedTestConfig alloc] init];
+    config.testUplink = configMap[@"testUplink"];
+    config.expectedUplinkBitrate = [ZegoUtils boolValue:configMap[@"expectedUplinkBitrate"]];
+    config.testDownlink = configMap[@"testDownlink"];
+    config.expectedDownlinkBitrate = [ZegoUtils boolValue:configMap[@"expectedDownlinkBitrate"]];
+
+    [[ZegoExpressEngine sharedEngine] startNetworkSpeedTest:config];
+
+    result(nil);
+}
+
+- (void)stopNetworkSpeedTest:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] stopNetworkSpeedTest];
 
     result(nil);
 }

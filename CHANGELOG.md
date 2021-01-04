@@ -1,5 +1,39 @@
 # Change Log
 
+## 2.0.0
+
+### **New Features**
+
+1. Added low latency live broadcast feature.
+
+    Low latency live broadcast focuses on providing stable and reliable live broadcast services. Compared with standard live video products, audio and video delays are lower, synchronization is stronger, and weak network resistance is better. It can provide users with a millisecond-level live broadcast experience; usage scenarios as education class, live show broadcast, e-commerce live broadcast, watch together, online auction. For more details, please refer to [Low Latency Live](https://doc-en.zego.im/en/6823.html).
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+2. Added support for H.265 (HEVC) encoding.
+
+    Added support for H.265 encoding, which can reduce the bit rate at the same resolution and frame rate.
+
+    For related API, please refer to [setVideoConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoConfig.html)
+
+### **Bug Fixes**
+
+1. Fixed a parameter type convert issue for [getVideoConfig] on iOS.
+
+### **Deleted**
+
+1. Deleted [muteAudioOutput], please use [muteSpeaker] instead.
+
+    The naming style and semantics of the legacy function are not clear. [muteSpeaker] uses the definition of Speaker to correspond to the Microphone.
+
+    For related API, please refer to [muteSpeaker](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/muteSpeaker.html)
+
+2. Deleted [ZegoMediaPlayer.getVolume], please use [getPublishVolume], [getPlayVolume] instead.
+
+    The engine provides the function of separately acquiring the player's publish volume and local playback volume, so the original unified acquisition interface is deprecated.
+
+    For related APIs, please refer to [ZegoMediaPlayer.getPublishVolume](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/getPublishVolume.html), [ZegoMediaPlayer.getPlayVolume](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/getPlayVolume.html)
+
 ## 1.20.0
 
 ### **New Features**

@@ -56,7 +56,7 @@ enum ZegoViewMode {
   ScaleToFill
 }
 
-/// Mirror mode for previewing or playing the  of the stream.
+/// Mirror mode for previewing or playing the of the stream.
 enum ZegoVideoMirrorMode {
   /// The mirror image only for previewing locally. This mode is used by default.
   OnlyPreviewMirror,
@@ -213,7 +213,9 @@ enum ZegoVideoCodecID {
   /// Scalable Video Coding (H.264 SVC)
   Svc,
   /// VP8
-  Vp8
+  Vp8,
+  /// H.265
+  H265
 }
 
 /// Player video layer.
@@ -286,6 +288,18 @@ enum ZegoPlayerMediaEvent {
   VideoBreakOccur,
   /// Video stuck event recovery when playing
   VideoBreakResume
+}
+
+/// Stream Resource Mode
+enum ZegoStreamResourceMode {
+  /// Default mode. The SDK will automatically select the streaming resource according to the cdnConfig parameters set by the player config and the ready-made background configuration.
+  Default,
+  /// Playing stream only from CDN.
+  OnlyCDN,
+  /// Playing stream only from L3.
+  OnlyL3,
+  /// Playing stream only from RTC.
+  OnlyRTC
 }
 
 /// Update type.
@@ -578,9 +592,17 @@ enum ZegoNetworkMode {
   Mode5G
 }
 
+/// network speed test type
+enum ZegoNetworkSpeedTestType {
+  /// uplink
+  Uplink,
+  /// downlink
+  Downlink
+}
+
 /// Log config.
 ///
-/// Configure the log file save path and the maximum log file size
+/// Configure the log file save path and the maximum log file size.
 class ZegoLogConfig {
 
   /// Log file save path
@@ -603,7 +625,7 @@ class ZegoLogConfig {
 /// Custom video capture configuration.
 ///
 /// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
-/// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the corresponding parameter of the [ZegoEngineConfig] instance.
+/// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the [enableCustomVideoCapture] function.
 /// Because when using custom video capture, SDK will no longer start the camera to capture video data. You need to collect video data from video sources by yourself.
 class ZegoCustomVideoCaptureConfig {
 
@@ -624,9 +646,6 @@ class ZegoCustomVideoCaptureConfig {
 }
 
 /// Advanced engine configuration.
-///
-/// When you need to use the advanced functions of SDK, such as custom video capture, custom video rendering and other advanced functions, you need to set the instance corresponding to the advanced function configuration to the corresponding field of this type of instance to achieve the purpose of enabling the corresponding advanced functions of ZegoExpressEngine.
-/// The configuration of the corresponding advanced functions needs to be set before [createEngine], and it is invalid to set after [createEngine].
 class ZegoEngineConfig {
 
   /// Log configuration, if not set, use the default configuration. It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].
@@ -1186,22 +1205,24 @@ class ZegoStreamRelayCDNInfo {
 /// Configure playing stream CDN configuration, video layer
 class ZegoPlayerConfig {
 
+  /// Stream resource mode
+  ZegoStreamResourceMode resourceMode;
+
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
   ZegoCDNConfig cdnConfig;
 
-  /// Set the video layer for playing the stream
-  ZegoPlayerVideoLayer videoLayer;
+  ZegoPlayerConfig(this.resourceMode, this.cdnConfig): assert(resourceMode != null);
 
-  ZegoPlayerConfig(this.cdnConfig, this.videoLayer): assert(videoLayer != null);
-
-  ZegoPlayerConfig.fromMap(Map<dynamic, dynamic> map):
-    cdnConfig = ZegoCDNConfig.fromMap(map['cdnConfig']),
-    videoLayer = map['videoLayer'];
+  /// Create a default advanced player config object
+  ZegoPlayerConfig.defaultConfig() {
+    resourceMode = ZegoStreamResourceMode.Default;
+    cdnConfig = null;
+  }
 
   Map<String, dynamic> toMap() {
     return {
-      'cdnConfig': this.cdnConfig.toMap(),
-      'videoLayer': this.videoLayer.index
+      'resourceMode': this.resourceMode.index,
+      'cdnConfig': this.cdnConfig?.toMap() ?? {}
     };
   }
 
@@ -1755,6 +1776,55 @@ class ZegoDataRecordProgress {
 
 }
 
+/// Network speed test config
+class ZegoNetworkSpeedTestConfig {
+
+  /// Test uplink or not
+  bool testUplink;
+
+  /// The unit is kbps. Recommended to use the bitrate in ZegoVideoConfig when call startPublishingStream to determine whether the network uplink environment is suitable.
+  int expectedUplinkBitrate;
+
+  /// Test downlink or not
+  bool testDownlink;
+
+  /// The unit is kbps. Recommended to use the bitrate in ZegoVideoConfig when call startPublishingStream to determine whether the network downlink environment is suitable.
+  int expectedDownlinkBitrate;
+
+  ZegoNetworkSpeedTestConfig(this.testUplink, this.expectedUplinkBitrate, this.testDownlink, this.expectedDownlinkBitrate): assert(testUplink != null), assert(expectedUplinkBitrate != null), assert(testDownlink != null), assert(expectedDownlinkBitrate != null);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'testUplink': this.testUplink,
+      'expectedUplinkBitrate': this.expectedUplinkBitrate,
+      'testDownlink': this.testDownlink,
+      'expectedDownlinkBitrate': this.expectedDownlinkBitrate
+    };
+  }
+
+}
+
+/// network speed test quality
+class ZegoNetworkSpeedTestQuality {
+
+  /// Time to connect to the server, in milliseconds
+  int connectCost;
+
+  /// rtt, in milliseconds
+  int rtt;
+
+  /// packet lost rate. in percentage, 0.0 ~ 1.0
+  double packetLostRate;
+
+  ZegoNetworkSpeedTestQuality(this.connectCost, this.rtt, this.packetLostRate): assert(connectCost != null), assert(rtt != null), assert(packetLostRate != null);
+
+  ZegoNetworkSpeedTestQuality.fromMap(Map<dynamic, dynamic> map):
+    connectCost = map['connectCost'],
+    rtt = map['rtt'],
+    packetLostRate = map['packetLostRate'];
+
+}
+
 /// AudioEffectPlayer play configuration.
 class ZegoAudioEffectPlayConfig {
 
@@ -1887,12 +1957,6 @@ abstract class ZegoMediaPlayer {
 
   /// Get media player index.
   int getIndex();
-
-  /// Gets the play volume.
-  ///
-  /// @deprecated This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.
-  @Deprecated('This function is deprecated, please use [getPlayVolume] and [getPublishVolume] to get the corresponding local playback volume and publish volume.')
-  Future<int> getVolume();
 
 }
 

@@ -47,7 +47,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^1.20.0
+  zego_express_engine: ^2.0.0
 ```
 
 - ### Depends on git
@@ -71,8 +71,6 @@ After saving the file, execute `flutter pub get`
 
 Open the file `app/src/main/AndroidManifest.xml`, and add the following contents:
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/Android/ZegoLiveRoom/ZegoLiveRoom-IntegrationGuide/3.2-insert_sourceSets_node-4.png width=60%></center>
-
 ```xml
     <!-- Permissions required by the SDK -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -93,28 +91,13 @@ Open the file `app/src/main/AndroidManifest.xml`, and add the following contents
     <uses-feature android:name="android.hardware.camera.autofocus" />
 ```
 
-> Note: Because Android 6.0 requires dynamic permissions for some of the more important permissions, you cannot apply for static permissions only through the `AndroidMainfest.xml` file. Therefore, you need to refer to the following code (requestPermissions is the Activity method)
-
-```java
-String[] permissionNeeded = {
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"};
-
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    if (ContextCompat.checkSelfPermission(this, "android.permission.CAMERA") != PackageManager.PERMISSION_GRANTED ||
-        ContextCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") != PackageManager.PERMISSION_GRANTED) {
-        requestPermissions(permissionNeeded, 101);
-    }
-}
-```
-
 > If the obfuscation is enabled during building release apk (`flutter build apk`) (default is enabled), you need to configure ZEGO-related classes to prevent obfuscation, refer to [FAQ-4](#4-android-building-release-crashes-with-noclassdeffounderror-when-flutter-is-upgraded-to-v110-or-above)
 
 ### iOS
 
 Choose the option `TARGETS` -> `Info` -> `Custom iOS Target Properties`
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png width=80%></center>
+![iOS Privacy Description](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description.png)
 
 Click the `+` Add button to add camera and microphone permissions.
 
@@ -124,7 +107,7 @@ Click the `+` Add button to add camera and microphone permissions.
 
 After adding permissions, it will be as shown:
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png width=80%></center>
+![iOS Privacy Description Done](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/privacy-description-done.png)
 
 > If you use Platform View, and Flutter version is lower than 1.22, you need to add an additional description for iOS, refer to [FAQ-1](#1-ios-error-when-using-platform-view-verbose-2platform_view_layercc28-trying-to-embed-a-platform-view-but-the-paintcontext-does-not-support-embedding)
 
@@ -189,7 +172,7 @@ class _MyAppState extends State<MyApp> {
 
 Open the iOS native project (Runner.xcworkspace) that requires Platform View and add the field `io.flutter.embedded_views_preview` to `Info.plist` with a value of `YES`.
 
-<center><img src=https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png width=80%></center>
+![flutter enable platform view](https://storage.zego.im/sdk-doc/Pics/iOS/ZegoExpressEngine/Common/flutter_embeded_views_plist.png)
 
 ### 2. iOS: `fatal error: lipo: -extract armv7 specified but fat file: [...] does not contain that architecture`
 
@@ -208,6 +191,15 @@ Flutter is enabled obfuscation by default in version 1.10 or above. Please add t
 ```java
 -keep class **.zego.**{*;}
 ```
+
+### 5. Android: When `TextureRenderer` is frequently created and destroyed, the following crash may occur
+
+```text
+OpenGLRenderer  E  [SurfaceTexture-0-4944-46] updateTexImage: SurfaceTexture is abandoned!
+       flutter  E  [ERROR:flutter/shell/platform/android/platform_view_android_jni.cc(39)] java.lang.RuntimeException: Error during updateTexImage (see logcat for details)
+```
+
+This issue is caused by thread unsafe when calling SurfaceTexture's updateTexImage() and release() internally in Flutter Engine. It has been fixed in Flutter `1.24-candidate.2` version. For details, see: [https://github.com/flutter/engine/pull/21777](https://github.com/flutter/engine/pull/21777)
 
 ## 9️⃣ How to contribute
 
