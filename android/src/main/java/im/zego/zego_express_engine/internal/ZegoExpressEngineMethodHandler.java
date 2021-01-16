@@ -728,7 +728,7 @@ public class ZegoExpressEngineMethodHandler {
             watermark = new ZegoWatermark((String) watermarkMap.get("imageURL"), rect);
         }
 
-        boolean isPreviewVisible = boolValue((Boolean) call.argument("enable"));
+        boolean isPreviewVisible = boolValue((Boolean) call.argument("isPreviewVisible"));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setPublishWatermark(watermark, isPreviewVisible, channel);
