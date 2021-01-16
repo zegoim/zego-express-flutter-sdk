@@ -966,12 +966,21 @@ public class ZegoExpressEngineMethodHandler {
     public static void setPlayStreamVideoLayer(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
-
         ZegoPlayerVideoLayer videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) call.argument("videoLayer")));
 
-        int volume = intValue((Number) call.argument("volume"));
-
         ZegoExpressEngine.getEngine().setPlayStreamVideoLayer(streamID, videoLayer);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamBufferIntervalRange(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        int minBufferInterval = intValue((Number) call.argument("minBufferInterval"));
+        int maxBufferInterval = intValue((Number) call.argument("maxBufferInterval"));
+
+        ZegoExpressEngine.getEngine().setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
 
         result.success(null);
     }

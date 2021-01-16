@@ -814,6 +814,18 @@
     result(nil);
 }
 
+- (void)setPlayStreamBufferIntervalRange:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int minBufferInterval = [ZegoUtils intValue:call.arguments[@"minBufferInterval"]];
+    int maxBufferInterval = [ZegoUtils intValue:call.arguments[@"maxBufferInterval"]];
+    NSString *streamID = call.arguments[@"streamID"];
+    NSRange range = NSMakeRange(minBufferInterval, maxBufferInterval - minBufferInterval);
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamBufferIntervalRange:range streamID:streamID];
+
+    result(nil);
+}
+
 - (void)mutePlayStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];

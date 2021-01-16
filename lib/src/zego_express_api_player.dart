@@ -76,6 +76,19 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayStreamVideoLayer(streamID, videoLayer);
   }
 
+  /// Set the adaptive adjustment interval range of the buffer for playing stream.
+  ///
+  /// When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms.
+  /// When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
+  /// It can be set before and after playing stream.
+  ///
+  /// - [streamID] Stream ID.
+  /// - [minBufferInterval] The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms
+  /// - [maxBufferInterval] The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms
+  Future<void> setPlayStreamBufferIntervalRange(String streamID, int minBufferInterval, int maxBufferInterval) async {
+    return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
+  }
+
   /// Stops or resumes playing the audio part of a stream.
   ///
   /// This function can be used to stop playing/retrieving the audio data of the stream. It can be called before and after playing the stream.
