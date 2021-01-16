@@ -1,5 +1,29 @@
 # Change Log
 
+## 2.1.0
+
+### **New Features**
+
+1. Added the function of setting the buffer interval value.
+
+    This function is used to specify the range of adaptive adjustment of the playback buffer, and the developer can set it according to the scene.
+
+    For related API, please refer to [setPlayStreamBufferIntervalRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/setPlayStreamBufferIntervalRange.html)
+
+2. Enhance the function of setting publish watermark, add new adaptation to Flutter assets resources.
+
+    Set the 'imageURL' parameter of the watermark object to the prefix of 'flutter-asset://' and append the relative path of the resource file declared in 'pubspec.yaml'.
+
+    For related API, please refer to [setPublishWatermark](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setPublishWatermark.html)
+
+### **Enhancements**
+
+1. Optimization and refactoring of the JNI layer.
+
+### **Bug Fixes**
+
+1. Fix known problems
+
 ## 2.0.0
 
 ### **New Features**

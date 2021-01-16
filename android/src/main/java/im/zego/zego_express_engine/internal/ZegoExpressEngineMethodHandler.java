@@ -725,10 +725,18 @@ public class ZegoExpressEngineMethodHandler {
             int right = intValue((Number) watermarkMap.get("right"));
             int bottom = intValue((Number) watermarkMap.get("bottom"));
             Rect rect = new Rect(left, top, right, bottom);
-            watermark = new ZegoWatermark((String) watermarkMap.get("imageURL"), rect);
+            String imageURL = (String) watermarkMap.get("imageURL");
+
+            if (imageURL != null && imageURL.startsWith("flutter-asset://")) {
+                String processedURL = imageURL.replace("flutter-asset://", "asset://flutter_assets/");
+                ZegoLog.log("[setPublishWatermark] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", imageURL, processedURL);
+                imageURL = processedURL;
+            }
+
+            watermark = new ZegoWatermark(imageURL, rect);
         }
 
-        boolean isPreviewVisible = boolValue((Boolean) call.argument("enable"));
+        boolean isPreviewVisible = boolValue((Boolean) call.argument("isPreviewVisible"));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setPublishWatermark(watermark, isPreviewVisible, channel);
@@ -966,12 +974,21 @@ public class ZegoExpressEngineMethodHandler {
     public static void setPlayStreamVideoLayer(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
-
         ZegoPlayerVideoLayer videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(intValue((Number) call.argument("videoLayer")));
 
-        int volume = intValue((Number) call.argument("volume"));
-
         ZegoExpressEngine.getEngine().setPlayStreamVideoLayer(streamID, videoLayer);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamBufferIntervalRange(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        int minBufferInterval = intValue((Number) call.argument("minBufferInterval"));
+        int maxBufferInterval = intValue((Number) call.argument("maxBufferInterval"));
+
+        ZegoExpressEngine.getEngine().setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
 
         result.success(null);
     }

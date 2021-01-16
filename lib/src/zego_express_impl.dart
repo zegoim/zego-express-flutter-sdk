@@ -354,6 +354,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setPlayStreamBufferIntervalRange(String streamID, int minBufferInterval, int maxBufferInterval) async {
+    return await _channel.invokeMethod('setPlayStreamBufferIntervalRange', {
+      'streamID': streamID,
+      'minBufferInterval': minBufferInterval,
+      'maxBufferInterval': maxBufferInterval
+    });
+  }
+
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     return await _channel.invokeMethod('mutePlayStreamAudio', {
       'streamID': streamID,

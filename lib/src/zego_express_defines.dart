@@ -624,7 +624,7 @@ class ZegoLogConfig {
 
 /// Custom video capture configuration.
 ///
-/// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
+/// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO RTC server. This feature is generally used by developers who use third-party beauty features or record game screen living.
 /// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the [enableCustomVideoCapture] function.
 /// Because when using custom video capture, SDK will no longer start the camera to capture video data. You need to collect video data from video sources by yourself.
 class ZegoCustomVideoCaptureConfig {
@@ -1499,7 +1499,7 @@ class ZegoMixerInput {
   /// Mix stream content type
   ZegoMixerInputContentType contentType;
 
-  /// Stream layout
+  /// Stream layout. When the mixed stream is an audio stream (that is, the ContentType parameter is set to the audio mixed stream type), the layout field is not processed inside the SDK, and there is no need to pay attention to this parameter.
   Rect layout;
 
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
@@ -1541,7 +1541,7 @@ class ZegoMixerOutput {
 
 /// Watermark object.
 ///
-/// Configure a watermark image URL and the layout of the watermark in the screen
+/// Configure a watermark image URL and the layout of the watermark in the screen.
 class ZegoWatermark {
 
   /// Watermark image URL, only png or jpg format surpport.
@@ -1566,8 +1566,8 @@ class ZegoWatermark {
 
 /// Mix stream task object.
 ///
-/// This class is the configuration class of the mixing stream task. When a mixing stream task is requested to the ZEGO audio and video cloud, the configuration of the mixing task is required.
-/// This class describes the detailed configuration information of this mixed task.
+/// This class is the configuration class of the stream mixing task. When a stream mixing task is requested to the ZEGO RTC server, the configuration of the stream mixing task is required.
+/// This class describes the detailed configuration information of this stream mixing task.
 class ZegoMixerTask {
 
   /// The task ID of the task
@@ -1807,7 +1807,7 @@ class ZegoNetworkSpeedTestConfig {
 /// network speed test quality
 class ZegoNetworkSpeedTestQuality {
 
-  /// Time to connect to the server, in milliseconds
+  /// Time to connect to the server, in milliseconds. During the speed test, if the network connection is disconnected, it will automatically initiate a reconnection, and this variable will be updated accordingly.
   int connectCost;
 
   /// rtt, in milliseconds
@@ -1968,7 +1968,7 @@ abstract class ZegoAudioEffectPlayer {
   /// The default is only played once and is not mixed into the publishing stream, if you want to change this please modify [config].
   ///
   /// - [audioEffectID] ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique id. The recommended methods are static self-incrementing id or the hash of the incoming sound effect file path.
-  /// - [path] The absolute path of the local resource. `assets://`、`ipod-library://` and network url are not supported. Set path as null if resource is loaded already using [loadResource]
+  /// - [path] The absolute path of the local resource. "assets://"、"ipod-library://" and network url are not supported. Set path as null or "" if resource is loaded already using [loadResource]
   /// - [config] Audio effect playback configuration. Set null will only be played once, and will not be mixed into the publishing stream.
   Future<void> start(int audioEffectID, String path, ZegoAudioEffectPlayConfig config);
 

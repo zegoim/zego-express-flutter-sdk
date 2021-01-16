@@ -595,6 +595,21 @@
         int bottom = [ZegoUtils intValue:watermarkMap[@"bottom"]];
         int right = [ZegoUtils intValue:watermarkMap[@"right"]];
         CGRect rect = CGRectMake(left, top, right - left, bottom - top);
+
+        NSString *flutterAssetPrefix = @"flutter-asset://";
+        if ([imageURL hasPrefix:flutterAssetPrefix]) {
+            NSString *assetName = [imageURL substringFromIndex:flutterAssetPrefix.length];
+            NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+            NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+            NSString *processedURL = [NSString stringWithFormat:@"file://%@", assetRealPath];
+            ZGLog(@"[setPublishWatermark] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", imageURL, processedURL);
+            if (!assetRealPath) {
+                ZGLog(@"[setPublishWatermark] Can not get real path for flutter asset: '%@', please check if the asset is correctly declared in flutter project's pubspec.yaml", assetName);
+            } else {
+                imageURL = processedURL;
+            }
+        }
+
         watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
     }
 
@@ -810,6 +825,18 @@
     NSString *streamID = call.arguments[@"streamID"];
 
     [[ZegoExpressEngine sharedEngine] setPlayStreamVideoLayer:(ZegoPlayerVideoLayer)videoLayer streamID:streamID];
+
+    result(nil);
+}
+
+- (void)setPlayStreamBufferIntervalRange:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int minBufferInterval = [ZegoUtils intValue:call.arguments[@"minBufferInterval"]];
+    int maxBufferInterval = [ZegoUtils intValue:call.arguments[@"maxBufferInterval"]];
+    NSString *streamID = call.arguments[@"streamID"];
+    NSRange range = NSMakeRange(minBufferInterval, maxBufferInterval - minBufferInterval);
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamBufferIntervalRange:range streamID:streamID];
 
     result(nil);
 }

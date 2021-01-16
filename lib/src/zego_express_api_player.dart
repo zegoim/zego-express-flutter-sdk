@@ -5,9 +5,9 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
-  /// Starts playing a stream from ZEGO's streaming cloud or from third-party CDN.
+  /// Starts playing a stream from ZEGO RTC server or from third-party CDN.
   ///
-  /// This function allows users to play audio and video streams both from the ZEGO real-time audio and video cloud and from third-party cdn.
+  /// This function allows users to play audio and video streams both from the ZEGO RTC server or from third-party cdn.
   /// Before starting to play the stream, you need to join the room first, you can get the new streamID in the room by listening to the [onRoomStreamUpdate] event callback.
   /// In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event.
   /// Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
@@ -76,12 +76,25 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayStreamVideoLayer(streamID, videoLayer);
   }
 
+  /// Set the adaptive adjustment interval range of the buffer for playing stream.
+  ///
+  /// When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms.
+  /// When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
+  /// It can be set before and after playing stream.
+  ///
+  /// - [streamID] Stream ID.
+  /// - [minBufferInterval] The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms
+  /// - [maxBufferInterval] The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms
+  Future<void> setPlayStreamBufferIntervalRange(String streamID, int minBufferInterval, int maxBufferInterval) async {
+    return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
+  }
+
   /// Stops or resumes playing the audio part of a stream.
   ///
   /// This function can be used to stop playing/retrieving the audio data of the stream. It can be called before and after playing the stream.
   ///
   /// - [streamID] Stream ID
-  /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
+  /// - [mute] Mute flag, true: mute play stream audio, false: resume play stream audio
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
   }

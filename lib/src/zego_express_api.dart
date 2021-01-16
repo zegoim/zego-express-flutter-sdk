@@ -151,19 +151,19 @@ class ZegoExpressEngine {
   ///
   /// After publishing the stream successfully, the notification of the publish stream state change can be obtained through the callback function.
   /// You can roughly judge the user's uplink network status based on whether the state parameter is in [PUBLISH_REQUESTING].
-  /// ExtendedData is extended information with state updates. If you use ZEGO's CDN content distribution network, after the stream is successfully published, the keys of the content of this parameter are flv_url_list, rtmp_url_list, hls_url_list. These correspond to the publishing stream URLs of the flv, rtmp, and hls protocols.
+  /// The parameter [extendedData] is extended information with state updates. If you use ZEGO's CDN content distribution network, after the stream is successfully published, the keys of the content of this parameter are [flv_url_list], [rtmp_url_list], [hls_url_list]. These correspond to the publishing stream URLs of the flv, rtmp, and hls protocols.
   ///
   /// - [streamID] Stream ID
-  /// - [state] Status of publishing stream
+  /// - [state] State of publishing stream
   /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended information with state updates.
   static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData) onPublisherStateUpdate;
 
-  /// The callback triggered every 3 seconds to report the current stream publishing quality.
+  /// Callback for current stream publishing quality.
   ///
-  /// After the successful publish, the callback will be received every 3 seconds. Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data of the published audio and video stream can be obtained, and the health of the publish stream can be monitored in real time.
+  /// After calling the [startPublishingStream] successfully, the callback will be received every 3 seconds. Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data of the published audio and video stream can be obtained, and the health of the publish stream can be monitored in real time.
   /// You can monitor the health of the published audio and video streams in real time according to the quality parameters of the callback function, in order to show the uplink network status in real time on the device UI.
-  /// If you does not know how to use the parameters of this callback function, you can only pay attention to the level field of the quality parameter, which is a comprehensive value describing the uplink network calculated by SDK based on the quality parameters.
+  /// If you does not know how to use the parameters of this callback function, you can only pay attention to the [level] field of the [quality] parameter, which is a comprehensive value describing the uplink network calculated by SDK based on the quality parameters.
   ///
   /// - [streamID] Stream ID
   /// - [quality] Publishing stream quality, including audio and video framerate, bitrate, RTT, etc.
@@ -171,14 +171,14 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the first audio frame is captured.
   ///
-  /// After the [startPublishingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
+  /// After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data.
   /// In the case of no startPublishingStream audio and video stream or preview, the first startPublishingStream audio and video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect audio data of the local device and receive this callback.
   /// Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
   static void Function() onPublisherCapturedAudioFirstFrame;
 
   /// The callback triggered when the first video frame is captured.
   ///
-  /// After the [startPublishingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of video data.
+  /// After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
   /// In the case of no startPublishingStream video stream or preview, the first startPublishingStream video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect video data of the local device and receive this callback.
   /// Developers can use this callback to determine whether SDK has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
   ///
@@ -198,7 +198,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of relayed streaming to CDN changes.
   ///
-  /// After the ZEGO real-time audio and video cloud relays the audio and video streams to the CDN, this callback will be received if the CDN relay status changes, such as a stop or a retry.
+  /// After the ZEGO RTC server relays the audio and video streams to the CDN, this callback will be received if the CDN relay status changes, such as a stop or a retry.
   /// Developers can use this callback to determine whether the audio and video streams of the relay CDN are normal. If they are abnormal, further locate the cause of the abnormal audio and video streams of the relay CDN and make corresponding disaster recovery strategies.
   /// If you do not understand the cause of the abnormality, you can contact ZEGO technicians to analyze the specific cause of the abnormality.
   ///
@@ -212,14 +212,14 @@ class ZegoExpressEngine {
   /// You can roughly judge the user's downlink network status based on whether the state parameter is in [PLAY_REQUESTING].
   ///
   /// - [streamID] stream ID
-  /// - [state] Current play state
-  /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [state] State of playing stream
+  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
   static void Function(String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData) onPlayerStateUpdate;
 
-  /// The callback triggered every 3 seconds to report the current stream playing quality.
+  /// Callback for current stream playing quality.
   ///
-  /// After calling the startPlayingStream successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, such the health of the publish stream can be monitored in real time.
+  /// After calling the [startPlayingStream] successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, such the health of the publish stream can be monitored in real time.
   /// You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback function, in order to show the downlink network status on the device UI in real time.
   /// If you does not know how to use the various parameters of the callback function, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
   ///
@@ -233,26 +233,26 @@ class ZegoExpressEngine {
   /// You can use this callback to make statistics on stutters or to make friendly displays in the UI of the app.
   ///
   /// - [streamID] Stream ID
-  /// - [event] Play media event callback
+  /// - [event] Specific events received when playing the stream.
   static void Function(String streamID, ZegoPlayerMediaEvent event) onPlayerMediaEvent;
 
   /// The callback triggered when the first audio frame is received.
   ///
-  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of audio data.
+  /// After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data.
   ///
   /// - [streamID] Stream ID
   static void Function(String streamID) onPlayerRecvAudioFirstFrame;
 
   /// The callback triggered when the first video frame is received.
   ///
-  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it collects the first frame of video data.
+  /// After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
   ///
   /// - [streamID] Stream ID
   static void Function(String streamID) onPlayerRecvVideoFirstFrame;
 
   /// The callback triggered when the first video frame is rendered.
   ///
-  /// After the [startPlayingStream] function is called successfully, the SDK will receive this callback notification when it rendered the first frame of video data.
+  /// After the [startPlayingStream] function is called successfully, this callback will be called when SDK rendered the first frame of video data.
   /// Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
   ///
   /// - [streamID] Stream ID
@@ -281,9 +281,9 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of relayed streaming of the mixed stream to CDN changes.
   ///
-  /// In the general case of the ZEGO audio and video cloud mixing stream task, the output stream is published to the CDN using the rtmp protocol, and changes in the state during the publish will be notified from this callback function.
+  /// In the general case of the ZEGO RTC server's stream mixing task, the output stream is published to the CDN using the RTMP protocol, and changes in the state during the publish will be notified from this callback function.
   ///
-  /// - [taskID] Mix stream task ID
+  /// - [taskID] Stream mixing task ID
   /// - [infoList] List of information that the current CDN is being mixed
   static void Function(String taskID, List<ZegoStreamRelayCDNInfo> infoList) onMixerRelayCDNStateUpdate;
 
@@ -355,6 +355,7 @@ class ZegoExpressEngine {
   ///
   /// When the state of the remote camera device changes, such as switching the camera, by monitoring this callback, it is possible to obtain an event related to the far-end camera, which can be used to prompt the user that the video may be abnormal.
   /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the camera device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+  /// This callback will not be called back when the remote stream is play from the CDN, and will not be called back if the remote stream end user has enabled custom video capture function.
   ///
   /// - [streamID] Stream ID
   /// - [state] Remote camera status
@@ -364,6 +365,7 @@ class ZegoExpressEngine {
   ///
   /// When the state of the remote microphone device is changed, such as switching a microphone, etc., by listening to the callback, it is possible to obtain an event related to the remote microphone, which can be used to prompt the user that the audio may be abnormal.
   /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the microphone device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+  /// This callback will not be called back when the remote stream is play from the CDN, and will not be called back if the remote stream end user has enabled custom audio capture function.
   ///
   /// - [streamID] Stream ID
   /// - [state] Remote microphone status
