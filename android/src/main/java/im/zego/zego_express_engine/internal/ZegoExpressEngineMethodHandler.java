@@ -725,7 +725,15 @@ public class ZegoExpressEngineMethodHandler {
             int right = intValue((Number) watermarkMap.get("right"));
             int bottom = intValue((Number) watermarkMap.get("bottom"));
             Rect rect = new Rect(left, top, right, bottom);
-            watermark = new ZegoWatermark((String) watermarkMap.get("imageURL"), rect);
+            String imageURL = (String) watermarkMap.get("imageURL");
+
+            if (imageURL != null && imageURL.startsWith("flutter-asset://")) {
+                String processedURL = imageURL.replace("flutter-asset://", "asset://flutter_assets/");
+                ZegoLog.log("[setPublishWatermark] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", imageURL, processedURL);
+                imageURL = processedURL;
+            }
+
+            watermark = new ZegoWatermark(imageURL, rect);
         }
 
         boolean isPreviewVisible = boolValue((Boolean) call.argument("isPreviewVisible"));
