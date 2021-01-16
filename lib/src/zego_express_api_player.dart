@@ -5,9 +5,9 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
-  /// Starts playing a stream from ZEGO's streaming cloud or from third-party CDN.
+  /// Starts playing a stream from ZEGO RTC server or from third-party CDN.
   ///
-  /// This function allows users to play audio and video streams both from the ZEGO real-time audio and video cloud and from third-party cdn.
+  /// This function allows users to play audio and video streams both from the ZEGO RTC server or from third-party cdn.
   /// Before starting to play the stream, you need to join the room first, you can get the new streamID in the room by listening to the [onRoomStreamUpdate] event callback.
   /// In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event.
   /// Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.

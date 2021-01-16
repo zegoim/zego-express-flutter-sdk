@@ -9,7 +9,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Starts publishing a stream (for the specified channel). You can call this function to publish a second stream.
   ///
-  /// This function allows users to publish their local audio and video streams to the ZEGO real-time audio and video cloud. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
+  /// This function allows users to publish their local audio and video streams to the ZEGO RTC server. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
   /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
   /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
   /// After the first publish stream failure due to network reasons or the publish stream is interrupted, the default time for SDK reconnection is 20min.
@@ -215,11 +215,11 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setAudioCaptureStereoMode(mode);
   }
 
-  /// Adds a target CDN URL to which the stream will be relayed from ZEGO's cloud streaming server.
+  /// Adds a target CDN URL to which the stream will be relayed from ZEGO RTC server.
   ///
-  /// Developers can call this function to publish the audio and video streams that have been published to the ZEGO real-time audio and video cloud to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
-  /// Because this called function is essentially a dynamic relay of the audio and video streams published to the ZEGO audio and video cloud to different CDNs, this function needs to be called after the audio and video stream is published to ZEGO real-time cloud successfully.
-  /// Since ZEGO's audio and video cloud service itself can be configured to support CDN(content distribution networks), this function is mainly used by developers who have CDN content distribution services themselves.
+  /// Developers can call this function to publish the audio and video streams that have been published to the ZEGO RTC server to a custom CDN content distribution network that has high latency but supports high concurrent playing stream.
+  /// Because this called function is essentially a dynamic relay of the audio and video streams published to the ZEGO RTC server to different CDNs, this function needs to be called after the audio and video stream is published to ZEGO RTC server successfully.
+  /// Since ZEGO RTC server itself can be configured to support CDN(content distribution networks), this function is mainly used by developers who have CDN content distribution services themselves.
   /// You can use ZEGO's CDN audio and video streaming content distribution service at the same time by calling this function and then use the developer who owns the CDN content distribution service.
   /// This function supports dynamic relay to the CDN content distribution network, so developers can use this function as a disaster recovery solution for CDN content distribution services.
   /// When the [enablePublishDirectToCDN] function is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
@@ -231,10 +231,10 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
   }
 
-  /// Deletes the specified CDN URL, which is used for relaying streams from ZEGO's cloud streaming server to CDN.
+  /// Deletes the specified CDN URL, which is used for relaying streams from ZEGO RTC server to CDN.
   ///
   /// This function is called when a CDN relayed address has been added and needs to stop propagating the stream to the CDN.
-  /// This function does not stop publishing audio and video stream to the ZEGO audio and video cloud.
+  /// This function does not stop publishing audio and video stream to the ZEGO ZEGO RTC server.
   ///
   /// - [streamID] Stream ID
   /// - [targetURL] CDN relay address, supported address format rtmp.

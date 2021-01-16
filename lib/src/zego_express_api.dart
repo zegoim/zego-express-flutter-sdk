@@ -198,7 +198,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of relayed streaming to CDN changes.
   ///
-  /// After the ZEGO real-time audio and video cloud relays the audio and video streams to the CDN, this callback will be received if the CDN relay status changes, such as a stop or a retry.
+  /// After the ZEGO RTC server relays the audio and video streams to the CDN, this callback will be received if the CDN relay status changes, such as a stop or a retry.
   /// Developers can use this callback to determine whether the audio and video streams of the relay CDN are normal. If they are abnormal, further locate the cause of the abnormal audio and video streams of the relay CDN and make corresponding disaster recovery strategies.
   /// If you do not understand the cause of the abnormality, you can contact ZEGO technicians to analyze the specific cause of the abnormality.
   ///
@@ -281,7 +281,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of relayed streaming of the mixed stream to CDN changes.
   ///
-  /// In the general case of the ZEGO audio and video cloud mixing stream task, the output stream is published to the CDN using the rtmp protocol, and changes in the state during the publish will be notified from this callback function.
+  /// In the general case of the ZEGO RTC server's stream mixing task, the output stream is published to the CDN using the RTMP protocol, and changes in the state during the publish will be notified from this callback function.
   ///
   /// - [taskID] Stream mixing task ID
   /// - [infoList] List of information that the current CDN is being mixed

@@ -624,7 +624,7 @@ class ZegoLogConfig {
 
 /// Custom video capture configuration.
 ///
-/// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO audio and video cloud.This feature is generally used by developers who use third-party beauty features or record game screen living.
+/// Custom video capture, that is, the developer is responsible for collecting video data and sending the collected video data to SDK for video data encoding and publishing to the ZEGO RTC server. This feature is generally used by developers who use third-party beauty features or record game screen living.
 /// When you need to use the custom video capture function, you need to set an instance of this class as a parameter to the [enableCustomVideoCapture] function.
 /// Because when using custom video capture, SDK will no longer start the camera to capture video data. You need to collect video data from video sources by yourself.
 class ZegoCustomVideoCaptureConfig {
@@ -1541,7 +1541,7 @@ class ZegoMixerOutput {
 
 /// Watermark object.
 ///
-/// Configure a watermark image URL and the layout of the watermark in the screen
+/// Configure a watermark image URL and the layout of the watermark in the screen.
 class ZegoWatermark {
 
   /// Watermark image URL, only png or jpg format surpport.
@@ -1566,8 +1566,8 @@ class ZegoWatermark {
 
 /// Mix stream task object.
 ///
-/// This class is the configuration class of the mixing stream task. When a mixing stream task is requested to the ZEGO audio and video cloud, the configuration of the mixing task is required.
-/// This class describes the detailed configuration information of this mixed task.
+/// This class is the configuration class of the stream mixing task. When a stream mixing task is requested to the ZEGO RTC server, the configuration of the stream mixing task is required.
+/// This class describes the detailed configuration information of this stream mixing task.
 class ZegoMixerTask {
 
   /// The task ID of the task
