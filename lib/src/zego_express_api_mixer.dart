@@ -13,8 +13,8 @@ extension ZegoExpressEngineMixer on ZegoExpressEngine {
   /// If an exception occurs when requesting to start the mixing stream task, for example, the most common mix input stream does not exist, it will be given from the callback error code. For specific error codes, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// If an input stream does not exist in the middle, the mixing stream task will automatically retry playing the input stream for 90 seconds, and will not retry after 90 seconds.
   ///
-  /// - [task] Mix stream task object
-  /// - Returns Start mix stream task result callback notification
+  /// - [task] Stream mixing task object
+  /// - Returns Start stream mixing task result callback notification
   Future<ZegoMixerStartResult> startMixerTask(ZegoMixerTask task) async {
     return await ZegoExpressImpl.instance.startMixerTask(task);
   }
@@ -25,8 +25,8 @@ extension ZegoExpressEngineMixer on ZegoExpressEngine {
   /// If you starts the next mixing stream task without stopping the previous mixing stream task, the previous mixing stream task will not stop automatically. The previous mixing stream task will not be stopped automatically until 90 seconds after the input stream of the previous mixing stream task does not exist.
   /// When using the mixing stream function of the ZEGO audio and video cloud service, you should pay attention to the start of the next mixing stream task, and should stop the previous mixing stream task, so as not to cause the anchor has started the next streaming task and mixing with other anchors, and the audience is still playing the output stream of the previous mixing stream task.
   ///
-  /// - [task] Mix stream task object
-  /// - Returns Stop mix stream task result callback notification
+  /// - [task] Stream mixing task object
+  /// - Returns Stop stream mixing task result
   Future<ZegoMixerStopResult> stopMixerTask(ZegoMixerTask task) async {
     return await ZegoExpressImpl.instance.stopMixerTask(task);
   }

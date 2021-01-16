@@ -243,10 +243,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
   }
 
-  /// Whether to publish streams directly from the client to CDN without passing through ZEGO's cloud streaming server (for the specified channel).
+  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server.
   ///
-  /// This function needs to be set before start publishing stream.
-  /// After calling this function to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically repost to the CDN no longer takes effect, because these two function relay or stop the audio and video stream from the ZEGO real-time audio and video cloud If it is published to CDN, if the direct audio and video stream is directly published to the CDN, the audio and video stream cannot be dynamically relay to the CDN through the ZEGO real-time audio and video cloud.
+  /// This function needs to be set before [startPublishingStream].
+  /// After calling this function to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically relay to the CDN no longer takes effect,
+  /// because these two functions are to relay or stop relaying the audio and video stream from ZEGO RTC server to CDN,
+  /// if you enable the direct publish of audio and video streams to CDN, you will not be able to dynamically relay the audio and video streams to the CDN through the ZEGO RTC server.
   ///
   /// - [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN
   /// - [config] CDN configuration, if null, use Zego's background default configuration
@@ -268,19 +270,20 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Set the Supplemental Enhancement Information type
   ///
-  /// It must be set before publishing stream.
+  /// It must be set before [startPublishingStream].
   ///
   /// - [config] SEI configuration. The SEI defined by ZEGO is used by default.
   Future<void> setSEIConfig(ZegoSEIConfig config) async {
     return await ZegoExpressImpl.instance.setSEIConfig(config);
   }
 
-  /// Sends Supplemental Enhancement Information (for the specified channel).
+  /// Sends Supplemental Enhancement Information.
   ///
   /// This function can synchronize some other additional information while the developer publishes streaming audio and video streaming data while sending streaming media enhancement supplementary information.
   /// Generally, for scenarios such as synchronizing music lyrics or precise layout of video canvas, you can choose to use this function.
   /// After the anchor sends the SEI, the audience can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
-  /// Since SEI information follows video frames or audio frames, and because of network problems, frames may be dropped, so SEI information may also be dropped. To solve this situation, it should be sent several times within the limited frequency.
+  /// Since SEI information follows video frames, and because of network problems, frames may be dropped, so SEI information may also be dropped. To solve this situation, it should be sent several times within the limited frequency.
+  /// After calling [startPublishingStream] to publish the stream successfully, you can call this function.
   /// Limit frequency: Do not exceed 30 times per second.
   /// The SEI data length is limited to 4096 bytes.
   ///
@@ -306,7 +309,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// This function needs to be set before previewing or streaming.
   /// The main effect is whether the local preview is affected when the acquisition resolution is different from the encoding resolution.
   ///
-  /// - [mode] capture scale mode
+  /// - [mode] The capture scale timing mode
   Future<void> setCapturePipelineScaleMode(ZegoCapturePipelineScaleMode mode) async {
     return await ZegoExpressImpl.instance.setCapturePipelineScaleMode(mode);
   }

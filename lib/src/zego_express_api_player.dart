@@ -81,7 +81,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// This function can be used to stop playing/retrieving the audio data of the stream. It can be called before and after playing the stream.
   ///
   /// - [streamID] Stream ID
-  /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
+  /// - [mute] Mute flag, true: mute play stream audio, false: resume play stream audio
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
   }
