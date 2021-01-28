@@ -47,7 +47,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^2.1.0
+  zego_express_engine: ^2.1.1
 ```
 
 - ### 以 git 形式依赖

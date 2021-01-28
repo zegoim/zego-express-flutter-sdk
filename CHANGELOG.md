@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.1.1
+
+### **Bug Fixes**
+
+1. Fix the problem that the AudioEffectPlayer loads resources and the timing of callback loading results is inaccurate.
+
+2. Fix a crash that may occur when [startPlayingStream], [stopPlayingStream] are invoked repeatedly at very high frequency.
+
 ## 2.1.0
 
 ### **New Features**
