@@ -48,7 +48,7 @@ import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
 import io.flutter.plugin.common.EventChannel;
 
-class ZegoExpressEngineEventHandler {
+public class ZegoExpressEngineEventHandler {
 
     private static ZegoExpressEngineEventHandler instance;
 

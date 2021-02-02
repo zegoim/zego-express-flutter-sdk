@@ -8,8 +8,6 @@
 
 package im.zego.zego_express_engine.internal;
 
-import android.util.Log;
-
 import android.content.Context;
 import android.view.SurfaceView;
 import android.view.View;
