@@ -1,5 +1,33 @@
 # Change Log
 
+## 2.2.0
+
+### **New Features**
+
+1. Add RoomSessionID information for audio and video calls.
+
+    Multiple users conduct audio and video communication in the room, and each audio and video communication will have a unique RoomSessionID, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
+
+2. Added SEI callback for media player.
+
+    Use a media player to play a media file. When the media player parses that the media file contains SEI, it will trigger the [onMediaPlayerRecvSEI] callback.
+
+    For related API, please refer to [onMediaPlayerRecvSEI](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onMediaPlayerRecvSEI.html)
+
+3. Support setting advanced configuration when start mixer task.
+
+    add [advancedConfig] into [ZegoMixerTask] to support advance config for mixer task. if you need to use it, please contact ZEGO technical support.
+
+    For related API, please refer to [ZegoMixerTask.advancedConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMixerTask/advancedConfig.html)
+
+4. Added prism related quality report.
+
+    Added Prism related quality reports to facilitate developers to discover, locate, and solve problems in a timely manner, so as to better and more comprehensively improve user experience.
+
+### **Enhancements**
+
+1. When the unknown error code 100XX99 appears when logging in to the room, publishing stream, or playing stream, the original server code will be thrown in the [extendedData] field, which is convenient for developers to feedback detailed problems.
+
 ## 2.1.1
 
 ### **Bug Fixes**
