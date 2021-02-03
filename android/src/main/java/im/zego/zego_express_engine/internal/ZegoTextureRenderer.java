@@ -13,7 +13,7 @@ import android.view.Surface;
 
 import io.flutter.view.TextureRegistry;
 
-class ZegoTextureRenderer {
+public class ZegoTextureRenderer {
 
     final long textureID;
 

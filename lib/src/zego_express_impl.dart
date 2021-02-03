@@ -1321,6 +1321,21 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onMediaPlayerRecvSEI':
+        if (ZegoExpressEngine.onMediaPlayerRecvSEI == null) return;
+
+        int mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer mediaPlayer = ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerRecvSEI(
+              mediaPlayer,
+              map['data']
+          );
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
+
 
       /* AudioEffectPlayer */
 

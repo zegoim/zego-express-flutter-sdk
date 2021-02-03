@@ -93,7 +93,7 @@ class ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   /// - [state] Changed room state
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
-  /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
+  /// - [extendedData] Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
   static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData) onRoomStateUpdate;
 
   /// The callback triggered when the number of other users in the room increases or decreases.
@@ -421,6 +421,12 @@ class ZegoExpressEngine {
   /// - [mediaPlayer] Callback player object
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
+
+  /// The callback triggered when the media player got media side info.
+  ///
+  /// - [mediaPlayer] Callback player object
+  /// - [data] SEI content
+  static void Function(ZegoMediaPlayer mediaPlayer, Uint8List data) onMediaPlayerRecvSEI;
 
   /// Audio effect playback state callback.
   ///
