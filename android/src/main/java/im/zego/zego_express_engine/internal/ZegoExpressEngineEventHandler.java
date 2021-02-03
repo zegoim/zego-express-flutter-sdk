@@ -488,7 +488,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onMixerRelayCDNStateUpdate(String taskID, ArrayList<ZegoStreamRelayCDNInfo> infoList) {
             super.onMixerRelayCDNStateUpdate(taskID, infoList);
-            ZegoLog.log("[onPlayerRecvSEI] taskID: %s, infosCount: %d", taskID, infoList.size());
+            ZegoLog.log("[onMixerRelayCDNStateUpdate] taskID: %s, infosCount: %d", taskID, infoList.size());
 
             if (guardSink()) { return; }
 
@@ -937,6 +937,22 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerPlayingProgress");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("millisecond", millisecond);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaPlayerRecvSEI(ZegoMediaPlayer mediaPlayer, byte[] data) {
+            super.onMediaPlayerRecvSEI(mediaPlayer, data);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerRecvSEI");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("data", data);
 
             sink.success(map);
         }

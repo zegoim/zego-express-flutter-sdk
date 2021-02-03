@@ -814,6 +814,20 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer recvSEI:(NSData *)data {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerPlayingProgress",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
+        });
+    }
+}
+
 
 # pragma mark - ZegoAudioEffectPlayerEventHandler
 

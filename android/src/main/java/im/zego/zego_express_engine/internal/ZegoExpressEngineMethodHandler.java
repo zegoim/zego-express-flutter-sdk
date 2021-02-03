@@ -1111,16 +1111,17 @@ public class ZegoExpressEngineMethodHandler {
 
         // Background Image
         String backgroundImageURL = call.argument("backgroundImageURL");
-
         if (backgroundImageURL != null && backgroundImageURL.length() > 0) {
             taskObject.setBackgroundImageURL(backgroundImageURL);
         }
 
         // Enable SoundLevel
         boolean enableSoundLevel = ZegoUtils.boolValue((Boolean) call.argument("enableSoundLevel"));
-
         taskObject.enableSoundLevel(enableSoundLevel);
 
+        // Set AdvancedConfig
+        HashMap<String, String> advancedConfig = call.argument("advancedConfig");
+        taskObject.setAdvancedConfig(advancedConfig);
 
         ZegoExpressEngine.getEngine().startMixerTask(taskObject, new IZegoMixerStartCallback() {
             @Override

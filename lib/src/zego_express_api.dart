@@ -422,6 +422,12 @@ class ZegoExpressEngine {
   /// - [millisecond] Progress in milliseconds
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond) onMediaPlayerPlayingProgress;
 
+  /// The callback triggered when the media player got media side info.
+  ///
+  /// - [mediaPlayer] Callback player object
+  /// - [data] SEI content
+  static void Function(ZegoMediaPlayer mediaPlayer, Uint8List data) onMediaPlayerRecvSEI;
+
   /// Audio effect playback state callback.
   ///
   /// This callback is triggered when the playback state of a audio effect of the audio effect player changes.

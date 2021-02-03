@@ -1594,6 +1594,9 @@ class ZegoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback.
   bool enableSoundLevel;
 
+  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.
+  Map<String, String> advancedConfig;
+
   /// Create a mix stream task object with TaskID
   ZegoMixerTask(String taskID) {
     this.taskID = taskID;
@@ -1604,6 +1607,7 @@ class ZegoMixerTask {
     watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0));
     backgroundImageURL = "";
     enableSoundLevel = false;
+    advancedConfig = {};
   }
 
   Map<String, dynamic> toMap() {
@@ -1615,7 +1619,8 @@ class ZegoMixerTask {
       'outputList': this.outputList,
       'watermark': this.watermark.toMap(),
       'backgroundImageURL': this.backgroundImageURL,
-      'enableSoundLevel': this.enableSoundLevel
+      'enableSoundLevel': this.enableSoundLevel,
+      'advancedConfig': this.advancedConfig
     };
   }
 

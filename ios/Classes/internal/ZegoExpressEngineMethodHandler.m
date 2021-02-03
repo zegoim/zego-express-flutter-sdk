@@ -965,15 +965,17 @@
 
     // Background Image
     NSString *backgroundImageURL = call.arguments[@"backgroundImageURL"];
-
     if (backgroundImageURL.length > 0) {
         [taskObject setBackgroundImageURL:backgroundImageURL];
     }
 
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
-
     [taskObject enableSoundLevel:enableSoundLevel];
+
+    // Set AdvancedConfig
+    NSDictionary<NSString *, NSString *> *advancedConfig = call.arguments[@"advancedConfig"];
+    [taskObject setAdvancedConfig:advancedConfig];
 
     [[ZegoExpressEngine sharedEngine] startMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
 
