@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.1
+
+### **Bug Fixes**
+
+1. Fixed the problem that the publish watermark may not be deleted.
+
+    For related API, please refer to [setPublishWatermark](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setPublishWatermark.html)
+
 ## 2.2.0
 
 ### **New Features**
