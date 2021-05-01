@@ -15,15 +15,17 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 import 'package:zego_express_engine_example/utils/zego_utils.dart';
 
+import 'dart:io';
+
 class GlobalSettingPage extends StatefulWidget {
   @override
   _GlobalSettingPageState createState() => new _GlobalSettingPageState();
 }
 
 class _GlobalSettingPageState extends State<GlobalSettingPage> {
-
   final TextEditingController _appIDEdController = new TextEditingController();
-  final TextEditingController _appSignEdController = new TextEditingController();
+  final TextEditingController _appSignEdController =
+      new TextEditingController();
 
   String _version;
 
@@ -54,8 +56,12 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     _scenario = ZegoConfig.instance.scenario;
     _enablePlatformView = ZegoConfig.instance.enablePlatformView;
 
-    Permission.camera.status.then((value) => setState(() => _isCameraPermissionGranted = value == PermissionStatus.granted));
-    Permission.microphone.status.then((value) => setState(() => _isMicrophonePermissionGranted = value == PermissionStatus.granted));
+    if (Platform.isAndroid || Platform.isIOS) {
+      Permission.camera.status.then((value) => setState(() =>
+          _isCameraPermissionGranted = value == PermissionStatus.granted));
+      Permission.microphone.status.then((value) => setState(() =>
+          _isMicrophonePermissionGranted = value == PermissionStatus.granted));
+    }
   }
 
   Future<void> requestCameraPermission() async {
@@ -69,30 +75,31 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   }
 
   Future<bool> _onWillPop() {
-    return showDialog(context: context, builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Do you need to save the settings before exiting?'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('NO, EXIT'),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          ),
-          FlatButton(
-            child: Text('OK, SAVE'),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-              _onSaveButtonClicked();
-            },
-          ),
-        ],
-      );
-    });
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Do you need to save the settings before exiting?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO, EXIT'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              FlatButton(
+                child: Text('OK, SAVE'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                  _onSaveButtonClicked();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void _onSaveButtonClicked() {
-
     String strAppID = _appIDEdController.text.trim();
     String appSign = _appSignEdController.text.trim();
 
@@ -108,12 +115,14 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     // }
 
     if (!_isCameraPermissionGranted) {
-      ZegoUtils.showAlert(context, 'Camera permission is not granted, please click the camera icon to request permission');
+      ZegoUtils.showAlert(context,
+          'Camera permission is not granted, please click the camera icon to request permission');
       return;
     }
 
     if (!_isMicrophonePermissionGranted) {
-      ZegoUtils.showAlert(context, 'Microphone permission is not granted, please click the mic icon to request permission');
+      ZegoUtils.showAlert(context,
+          'Microphone permission is not granted, please click the mic icon to request permission');
       return;
     }
 
@@ -138,31 +147,27 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         ],
       ),
       body: SafeArea(
-        child: WillPopScope(
-          onWillPop: _onWillPop,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: Column(
-                children: <Widget>[
-                  userInfoWidget(),
-                  checkPermissionWidget(),
-
-                  appIDWidget(),
-                  appSignWidget(),
-
-                  selectEnvironmentWidget(),
-                  selectScenarioWidget(),
-                  selectRendererWidget(),
-                ],
-              ),
-            ),
-          )
-        )
-      ),
+          child: WillPopScope(
+              onWillPop: _onWillPop,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () =>
+                    FocusScope.of(context).requestFocus(new FocusNode()),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Column(
+                    children: <Widget>[
+                      userInfoWidget(),
+                      checkPermissionWidget(),
+                      appIDWidget(),
+                      appSignWidget(),
+                      selectEnvironmentWidget(),
+                      selectScenarioWidget(),
+                      selectRendererWidget(),
+                    ],
+                  ),
+                ),
+              ))),
     );
   }
 
@@ -178,10 +183,11 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             Row(
               children: [
                 IconButton(
-                  icon: _isCameraPermissionGranted ? Icon(Icons.camera_alt) : Icon(Icons.camera_alt_outlined),
-                  iconSize: 50.0,
-                  onPressed: requestCameraPermission
-                ),
+                    icon: _isCameraPermissionGranted
+                        ? Icon(Icons.camera_alt)
+                        : Icon(Icons.camera_alt_outlined),
+                    iconSize: 50.0,
+                    onPressed: requestCameraPermission),
                 Text(_isCameraPermissionGranted ? '✅' : '❗️')
               ],
             ),
@@ -189,10 +195,11 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             Row(
               children: [
                 IconButton(
-                  icon: _isMicrophonePermissionGranted ? Icon(Icons.mic) : Icon(Icons.mic_none),
-                  iconSize: 50.0,
-                  onPressed: requestMicrophonePermission
-                ),
+                    icon: _isMicrophonePermissionGranted
+                        ? Icon(Icons.mic)
+                        : Icon(Icons.mic_none),
+                    iconSize: 50.0,
+                    onPressed: requestMicrophonePermission),
                 Text(_isMicrophonePermissionGranted ? '✅' : '❗️')
               ],
             )
@@ -203,35 +210,33 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   }
 
   Widget userInfoWidget() {
-    return Column(
-      children: [
-        Padding(padding: const EdgeInsets.only(top: 20.0)),
-        Row(
-          children: <Widget>[
-            Text('Native SDK Version: '),
-            Expanded(child: Text('$_version')),
-          ],
-        ),
-        Padding(padding: const EdgeInsets.only(top: 10.0)),
-        Row(
-          children: <Widget>[
-            Text('User ID: '),
-            Padding(padding: const EdgeInsets.only(left: 10.0)),
-            Text(ZegoConfig.instance.userID??'unknown'),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-        ),
-        Row(
-          children: <Widget>[
-            Text('User Name: '),
-            Padding(padding: const EdgeInsets.only(top: 10.0)),
-            Text(ZegoConfig.instance.userName??'unknown'),
-          ],
-        ),
-      ]
-    );
+    return Column(children: [
+      Padding(padding: const EdgeInsets.only(top: 20.0)),
+      Row(
+        children: <Widget>[
+          Text('Native SDK Version: '),
+          Expanded(child: Text('$_version')),
+        ],
+      ),
+      Padding(padding: const EdgeInsets.only(top: 10.0)),
+      Row(
+        children: <Widget>[
+          Text('User ID: '),
+          Padding(padding: const EdgeInsets.only(left: 10.0)),
+          Text(ZegoConfig.instance.userID ?? 'unknown'),
+        ],
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+      ),
+      Row(
+        children: <Widget>[
+          Text('User Name: '),
+          Padding(padding: const EdgeInsets.only(top: 10.0)),
+          Text(ZegoConfig.instance.userName ?? 'unknown'),
+        ],
+      ),
+    ]);
   }
 
   Widget appIDWidget() {
@@ -243,7 +248,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             GestureDetector(
               child: Icon(Icons.help_outline),
               onTap: () {
-                ZegoUtils.showAlert(context, 'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
+                ZegoUtils.showAlert(context,
+                    'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
               },
             ),
           ],
@@ -251,10 +257,13 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         TextField(
           controller: _appIDEdController,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+            contentPadding:
+                const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
             hintText: 'Please enter AppID',
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xff0e88eb))),
+            enabledBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff0e88eb))),
           ),
         ),
       ],
@@ -271,7 +280,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             GestureDetector(
               child: Icon(Icons.help_outline),
               onTap: () {
-                ZegoUtils.showAlert(context, 'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
+                ZegoUtils.showAlert(context,
+                    'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
               },
             ),
           ],
@@ -279,10 +289,13 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         TextField(
           controller: _appSignEdController,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+            contentPadding:
+                const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
             hintText: 'Please enter AppSign',
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xff0e88eb))),
+            enabledBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff0e88eb))),
           ),
         ),
       ],
@@ -292,14 +305,17 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   Widget selectEnvironmentWidget() {
     void onEnvironmentChanged(int value) {
       setState(() => this._isTestEnv = value > 0 ? true : false);
-    };
+    }
+
+    ;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(padding: const EdgeInsets.only(top: 20.0)),
         Text('SDK Environment'),
-        Text('(Please select the environment corresponding to AppID)', style: TextStyle(fontSize: 10.0)),
+        Text('(Please select the environment corresponding to AppID)',
+            style: TextStyle(fontSize: 10.0)),
         Row(
           children: <Widget>[
             Radio(
@@ -333,17 +349,20 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             ChoiceChip(
               label: Text('General'),
               selected: this._scenario.index == 0,
-              onSelected: (value) => setState(() => this._scenario = ZegoScenario.General),
+              onSelected: (value) =>
+                  setState(() => this._scenario = ZegoScenario.General),
             ),
             ChoiceChip(
               label: Text('Communication'),
               selected: this._scenario.index == 1,
-              onSelected: (value) => setState(() => this._scenario = value ? ZegoScenario.Communication : ZegoScenario.General),
+              onSelected: (value) => setState(() => this._scenario =
+                  value ? ZegoScenario.Communication : ZegoScenario.General),
             ),
             ChoiceChip(
               label: Text('Live'),
               selected: this._scenario.index == 2,
-              onSelected: (value) => setState(() => this._scenario = value ? ZegoScenario.Live : ZegoScenario.General),
+              onSelected: (value) => setState(() => this._scenario =
+                  value ? ZegoScenario.Live : ZegoScenario.General),
             ),
           ],
         ),
@@ -352,29 +371,27 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   }
 
   Widget selectRendererWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: const EdgeInsets.only(top: 20.0)),
-        Text('Rendering options'),
-        Text('(Ways to render video frames)', style: TextStyle(fontSize: 10.0)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            ChoiceChip(
-              label: Text('TextureRenderer'),
-              selected: !this._enablePlatformView,
-              onSelected: (value) => setState(() => this._enablePlatformView = !value),
-            ),
-            ChoiceChip(
-              label: Text('PlatformView'),
-              selected: this._enablePlatformView,
-              onSelected: (value) => setState(() => this._enablePlatformView = value),
-            ),
-          ],
-        ),
-      ]
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(padding: const EdgeInsets.only(top: 20.0)),
+      Text('Rendering options'),
+      Text('(Ways to render video frames)', style: TextStyle(fontSize: 10.0)),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          ChoiceChip(
+            label: Text('TextureRenderer'),
+            selected: !this._enablePlatformView,
+            onSelected: (value) =>
+                setState(() => this._enablePlatformView = !value),
+          ),
+          ChoiceChip(
+            label: Text('PlatformView'),
+            selected: this._enablePlatformView,
+            onSelected: (value) =>
+                setState(() => this._enablePlatformView = value),
+          ),
+        ],
+      ),
+    ]);
   }
-
 }

@@ -14,6 +14,9 @@
 #include <memory>
 #include <sstream>
 
+#include <ZegoExpressSDK.h>
+using namespace ZEGO;
+
 namespace {
 
 class ZegoExpressEnginePlugin : public flutter::Plugin {
@@ -36,7 +39,7 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          registrar->messenger(), "zego_express_engine",
+          registrar->messenger(), "plugins.zego.im/zego_express_engine",
           &flutter::StandardMethodCodec::GetInstance());
 
   auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
@@ -56,20 +59,12 @@ ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {}
 void ZegoExpressEnginePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  if (method_call.method_name().compare("getPlatformVersion") == 0) {
-    std::ostringstream version_stream;
-    version_stream << "Windows ";
-    if (IsWindows10OrGreater()) {
-      version_stream << "10+";
-    } else if (IsWindows8OrGreater()) {
-      version_stream << "8";
-    } else if (IsWindows7OrGreater()) {
-      version_stream << "7";
+    if(method_call.method_name() == "getVersion") {
+      
+      result->Success(flutter::EncodableValue(EXPRESS::ZegoExpressSDK::getVersion()));
+     } else {
+      result->NotImplemented();
     }
-    result->Success(flutter::EncodableValue(version_stream.str()));
-  } else {
-    result->NotImplemented();
-  }
 }
 
 }  // namespace
