@@ -11,16 +11,20 @@ set(PLUGIN_NAME "zego_express_engine_plugin")
 
 # Setup deps: native SDK header and link search path
 include_directories(${CMAKE_CURRENT_LIST_DIR}/deps/include)
+
+# It seems that flutter doesn't support windows on x86
 link_directories(${CMAKE_CURRENT_LIST_DIR}/deps/lib/x64)
 
 add_library(${PLUGIN_NAME} SHARED
-  "zego_express_engine_plugin.cpp"
+  ${CMAKE_CURRENT_LIST_DIR}/zego_express_engine_plugin.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineMethodHandler.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineMethodHandler.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.h
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
-
-
 
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

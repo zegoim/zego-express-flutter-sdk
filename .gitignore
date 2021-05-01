@@ -20,3 +20,4 @@ example/windows/flutter/generated_plugins.cmake
 example/windows/flutter/generated_plugin_registrant.cc
 example/windows/flutter/generated_plugin_registrant.h
 windows/deps/*
+.vscode/settings.json
