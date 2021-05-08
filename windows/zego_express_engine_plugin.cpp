@@ -45,6 +45,9 @@ private:
     void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+private:
+    std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
+
 };
 
 // static
@@ -76,7 +79,11 @@ std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpres
     const flutter::EncodableValue* arguments,
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& events) {
 
-    ZegoExpressEngineEventHandler::getInstance().setEventSink(std::move(events));
+    //ZegoExpressEngineEventHandler::getInstance()->setEventSink(std::move(events));
+    if (!eventHandler_) {
+        eventHandler_ = std::make_shared<ZegoExpressEngineEventHandler>();
+    }
+    eventHandler_->setEventSink(std::move(events));
     std::cout << "on listen event" << std::endl;
 
     return nullptr;
@@ -85,7 +92,10 @@ std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpres
 std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpressEnginePlugin::OnCancelInternal(
     const flutter::EncodableValue* arguments) {
 
-    ZegoExpressEngineEventHandler::getInstance().clearEventSink();
+    if (eventHandler_) {
+        eventHandler_->clearEventSink();
+        eventHandler_.reset();
+    }
     std::cout << "on listen event" << std::endl;
 
     return nullptr;
@@ -94,11 +104,21 @@ std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpres
 void ZegoExpressEnginePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    auto argument = std::get<flutter::EncodableMap>(*method_call.arguments());
+
     if(method_call.method_name() == "getVersion") {
       
       auto version = ZegoExpressEngineMethodHandler::getInstance().getVersion();
       result->Success(flutter::EncodableValue(version));
-     } else {
+    }
+    else if (method_call.method_name() == "createEngine") {
+        ZegoExpressEngineMethodHandler::getInstance().createEngine(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "destroyEngine") {
+        ZegoExpressEngineMethodHandler::getInstance().destroyEngine(argument, std::move(result));
+    }
+    else {
       result->NotImplemented();
     }
 }
