@@ -46,6 +46,8 @@ private:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
 private:
+
+private:
     std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
 
 };
@@ -56,7 +58,7 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWind
       (registrar->messenger(), "plugins.zego.im/zego_express_engine", &flutter::StandardMethodCodec::GetInstance());
 
     auto eventChannel = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>
-        (registrar->messenger(), "plugins.zego.im/zego_express_event_handler", &flutter::StandardMethodCodec::GetInstance());
+      (registrar->messenger(), "plugins.zego.im/zego_express_event_handler", &flutter::StandardMethodCodec::GetInstance());
 
     auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
 
@@ -79,11 +81,11 @@ std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpres
     const flutter::EncodableValue* arguments,
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& events) {
 
-    //ZegoExpressEngineEventHandler::getInstance()->setEventSink(std::move(events));
-    if (!eventHandler_) {
+    ZegoExpressEngineEventHandler::getInstance()->setEventSink(std::move(events));
+    /*if (!eventHandler_) {
         eventHandler_ = std::make_shared<ZegoExpressEngineEventHandler>();
     }
-    eventHandler_->setEventSink(std::move(events));
+    eventHandler_->setEventSink(std::move(events));*/
     std::cout << "on listen event" << std::endl;
 
     return nullptr;
@@ -92,11 +94,12 @@ std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpres
 std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> ZegoExpressEnginePlugin::OnCancelInternal(
     const flutter::EncodableValue* arguments) {
 
-    if (eventHandler_) {
+    ZegoExpressEngineEventHandler::getInstance()->clearEventSink();
+    /*if (eventHandler_) {
         eventHandler_->clearEventSink();
         eventHandler_.reset();
-    }
-    std::cout << "on listen event" << std::endl;
+    }*/
+    std::cout << "on cancel listen event" << std::endl;
 
     return nullptr;
 }
@@ -105,18 +108,23 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
 
-    auto argument = std::get<flutter::EncodableMap>(*method_call.arguments());
+    flutter::EncodableMap argument;
+    if (std::holds_alternative<flutter::EncodableMap>(*method_call.arguments())) {
+        argument = std::get<flutter::EncodableMap>(*method_call.arguments());
+    }
 
     if(method_call.method_name() == "getVersion") {
       
-      auto version = ZegoExpressEngineMethodHandler::getInstance().getVersion();
-      result->Success(flutter::EncodableValue(version));
+      ZegoExpressEngineMethodHandler::getInstance().getVersion(argument, std::move(result));
     }
     else if (method_call.method_name() == "createEngine") {
         ZegoExpressEngineMethodHandler::getInstance().createEngine(argument, std::move(result));
     }
     else if (method_call.method_name() == "destroyEngine") {
         ZegoExpressEngineMethodHandler::getInstance().destroyEngine(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "loginRoom") {
+        ZegoExpressEngineMethodHandler::getInstance().loginRoom(argument, std::move(result));
     }
     else {
       result->NotImplemented();

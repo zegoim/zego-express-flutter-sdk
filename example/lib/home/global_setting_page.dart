@@ -61,6 +61,9 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
           _isCameraPermissionGranted = value == PermissionStatus.granted));
       Permission.microphone.status.then((value) => setState(() =>
           _isMicrophonePermissionGranted = value == PermissionStatus.granted));
+    } else {
+      _isCameraPermissionGranted = true;
+      _isMicrophonePermissionGranted = true;
     }
   }
 

@@ -2,9 +2,7 @@
 #include <flutter/encodable_value.h>
 #include <memory>
 
-#define FTValue(varName) flutter::EncodableValue(varName)
-#define FTMap flutter::EncodableMap
-#define FTArray flutter::EncodableList
+std::shared_ptr<ZegoExpressEngineEventHandler> ZegoExpressEngineEventHandler::m_instance = nullptr;
 
 void ZegoExpressEngineEventHandler::setEventSink(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& eventSink)
 {
@@ -15,6 +13,11 @@ void ZegoExpressEngineEventHandler::clearEventSink()
 {
 	eventSink_.reset();
 }
+
+/*std::shared_ptr<ZegoExpressEngineEventHandler> ZegoExpressEngineEventHandler::getSharedPtr()
+{
+	return shared_from_this();
+}*/
 
 void ZegoExpressEngineEventHandler::onDebugError(int errorCode, const std::string& funcName, const std::string& info) {
 
@@ -42,6 +45,7 @@ void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState
 
 void ZegoExpressEngineEventHandler::onRoomStateUpdate(const std::string& roomID, EXPRESS::ZegoRoomState state, int errorCode, const std::string& extendedData) {
 
+	std::cout << "on room state update" << std::endl;
 	if (eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onRoomStateUpdate");

@@ -6,20 +6,39 @@
 #include <ZegoExpressSDK.h>
 using namespace ZEGO;
 
-class ZegoExpressEngineEventHandler : EXPRESS::IZegoEventHandler
+#define FTValue(varName) flutter::EncodableValue(varName)
+#define FTMap flutter::EncodableMap
+#define FTArray flutter::EncodableList
+
+class ZegoExpressEngineEventHandler 
+    : public EXPRESS::IZegoEventHandler
+    //, public std::enable_shared_from_this<ZegoExpressEngineEventHandler>
 {
 public:
-    ~ZegoExpressEngineEventHandler(){}
-    ZegoExpressEngineEventHandler() {}
+    ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
+    ZegoExpressEngineEventHandler() { std::cout << "event handler create" << std::endl; }
 
-    /*static std::shared_ptr<ZegoExpressEngineEventHandler> getInstance()
+    /*static ZegoExpressEngineEventHandler & getInstance()
     {
-        static std::shared_ptr<ZegoExpressEngineEventHandler> m_instance = std::make_shared<ZegoExpressEngineEventHandler>();
+        static ZegoExpressEngineEventHandler m_instance;
         return m_instance;
     }*/
 
+    static std::shared_ptr<ZegoExpressEngineEventHandler>& getInstance()
+    {
+        if (!m_instance) {
+            m_instance = std::shared_ptr<ZegoExpressEngineEventHandler>(new ZegoExpressEngineEventHandler);
+        }
+
+        return m_instance;
+    }
+
     void setEventSink(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> &&eventSink);
     void clearEventSink();
+    //std::shared_ptr<ZegoExpressEngineEventHandler> getSharedPtr();
+
+private:
+    static std::shared_ptr<ZegoExpressEngineEventHandler> m_instance;
 
 protected:
     void onDebugError(int errorCode, const std::string& funcName, const std::string& info) override;

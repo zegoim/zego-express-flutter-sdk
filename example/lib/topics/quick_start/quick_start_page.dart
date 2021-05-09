@@ -192,7 +192,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
     // Can destroy the engine when you don't need audio and video calls
     //
     // Destroy engine will automatically logout room and stop publishing/playing stream.
-    ZegoExpressEngine.destroyEngine();
+    ZegoExpressEngine.destroyEngine()
+        .then((ret) => print('already destroy engine'));
 
     print('🏳️ Destroy ZegoExpressEngine');
 

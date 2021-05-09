@@ -5,20 +5,37 @@
 #include <functional>
 #include <flutter/encodable_value.h>
 
-std::string ZegoExpressEngineMethodHandler::getVersion()
+void ZegoExpressEngineMethodHandler::getVersion(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    return EXPRESS::ZegoExpressSDK::getVersion();
+    result->Success(EXPRESS::ZegoExpressSDK::getVersion());
 }
 
 void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    unsigned int appID = (unsigned int)std::get<int64_t>(argument["appID"]);
-    std::string appSign = std::get<std::string>(argument["appSign"]);
-    bool isTestEnv = std::get<bool>(argument["isTestEnv"]);
-    int scenario = std::get<int32_t>(argument["scenario"]);
+    //auto it = argument.find(FTValue("appID"));
+    /*auto value = argument[FTValue("appID")];
+    if (std::holds_alternative<int32_t>(value)) {
+        auto var = std::get<int64_t>(value);
+        std::cout << "print test value: " << var << std::endl;
+    }
+    else {
+        auto appSign = std::get<int32_t>(value);
+        std::cout << "print test value: " << appSign << std::endl;
+    }*/
 
-    EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, nullptr);
+    // TODO: need to write getValue utils
+    unsigned int appID = (unsigned int)std::get<int32_t>(argument[FTValue("appID")]);
+    std::string appSign = std::get<std::string>(argument[FTValue("appSign")]);
+    bool isTestEnv = std::get<bool>(argument[FTValue("isTestEnv")]);
+    int scenario = std::get<int32_t>(argument[FTValue("scenario")]);
+
+    //auto eventInstance = ZegoExpressEngineEventHandler::getInstance();
+
+    EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
+
+    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::destroyEngine(flutter::EncodableMap& argument,
@@ -56,18 +73,22 @@ void ZegoExpressEngineMethodHandler::uploadLog(flutter::EncodableMap& argument,
 void ZegoExpressEngineMethodHandler::loginRoom(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto roomID = std::get<std::string>(argument["roomID"]);
-    auto userMap = std::get<flutter::EncodableMap>(argument["user"]);
+    auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
+    auto userMap = std::get<flutter::EncodableMap>(argument[FTValue("user")]);
 
-    EXPRESS::ZegoUser user{ std::get<std::string>(userMap["userID"]), std::get<std::string>(userMap["userName"]) };
+    EXPRESS::ZegoUser user{ std::get<std::string>(userMap[FTValue("userID")]), std::get<std::string>(userMap[FTValue("userName")]) };
 
-    if (std::holds_alternative<flutter::EncodableMap>(argument["config"])) {
-        auto configMap = std::get<flutter::EncodableMap>(argument["config"]);
+    flutter::EncodableMap configMap;
+    if (std::holds_alternative<flutter::EncodableMap>(argument[FTValue("config")])) {
+        configMap = std::get<flutter::EncodableMap>(argument[FTValue("config")]);
+    }
+    
+    if (configMap.size() > 0) {
    
         EXPRESS::ZegoRoomConfig config;
-        config.maxMemberCount = (unsigned int)std::get<int64_t>(configMap["maxMemberCount"]);
-        config.isUserStatusNotify = std::get<bool>(configMap["isUserStatusNotify"]);
-        config.token = std::get<std::string>(configMap["token"]);
+        config.maxMemberCount = (unsigned int)std::get<int32_t>(configMap[FTValue("maxMemberCount")]);
+        config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
+        config.token = std::get<std::string>(configMap[FTValue("token")]);
 
         EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user, config);
     }
@@ -99,11 +120,13 @@ void ZegoExpressEngineMethodHandler::switchRoom(flutter::EncodableMap& argument,
     if (std::holds_alternative<flutter::EncodableMap>(argument["config"])) {
         auto configMap = std::get<flutter::EncodableMap>(argument["config"]);
 
-        configPtr = std::make_unique<EXPRESS::ZegoRoomConfig>();
-        
-        configPtr->maxMemberCount = (unsigned int)std::get<int64_t>(configMap["maxMemberCount"]);
-        configPtr->isUserStatusNotify = std::get<bool>(configMap["isUserStatusNotify"]);
-        configPtr->token = std::get<std::string>(configMap["token"]);
+        if (configMap.size() > 0) {
+            configPtr = std::make_unique<EXPRESS::ZegoRoomConfig>();
+
+            configPtr->maxMemberCount = (unsigned int)std::get<int64_t>(configMap["maxMemberCount"]);
+            configPtr->isUserStatusNotify = std::get<bool>(configMap["isUserStatusNotify"]);
+            configPtr->token = std::get<std::string>(configMap["token"]);
+        }
     }
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchRoom(fromRoomID, toRoomID, configPtr.get());
@@ -266,17 +289,25 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
     auto streamID = std::get<std::string>(argument["streamID"]);
     
     
+    flutter::EncodableMap configMap;
     if (std::holds_alternative<flutter::EncodableMap>(argument["config"])) {
-        auto configMap = std::get<flutter::EncodableMap>(argument["config"]);
+        configMap = std::get<flutter::EncodableMap>(argument["config"]);
+    }
+    
+    if (configMap.size() > 0) {
+
         EXPRESS::ZegoPlayerConfig config;
         config.resourceMode = (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(argument["resourceMode"]);
 
         std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
         if (std::holds_alternative<flutter::EncodableMap>(configMap["cdnConfig"])) {
             auto cdnConfigMap = std::get<flutter::EncodableMap>(argument["cdnConfig"]);
-            cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
-            cdnConfigPtr->url = std::get<std::string>(cdnConfigMap["url"]);
-            cdnConfigPtr->authParam = std::get<std::string>(cdnConfigMap["authParam"]);
+            if (cdnConfigMap.size() > 0) {
+                cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
+                cdnConfigPtr->url = std::get<std::string>(cdnConfigMap["url"]);
+                cdnConfigPtr->authParam = std::get<std::string>(cdnConfigMap["authParam"]);
+            }
+            
         }
 
         config.cdnConfig = cdnConfigPtr.get();

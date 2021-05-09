@@ -18,7 +18,8 @@ public:
     }
 
 public:
-    std::string getVersion();
+    void getVersion(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void createEngine(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void destroyEngine(flutter::EncodableMap& argument,
