@@ -14,24 +14,16 @@ void ZegoExpressEngineMethodHandler::getVersion(flutter::EncodableMap& argument,
 void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    //auto it = argument.find(FTValue("appID"));
-    /*auto value = argument[FTValue("appID")];
-    if (std::holds_alternative<int32_t>(value)) {
-        auto var = std::get<int64_t>(value);
-        std::cout << "print test value: " << var << std::endl;
-    }
-    else {
-        auto appSign = std::get<int32_t>(value);
-        std::cout << "print test value: " << appSign << std::endl;
-    }*/
-
     // TODO: need to write getValue utils
-    unsigned int appID = (unsigned int)std::get<int32_t>(argument[FTValue("appID")]);
+    unsigned int appID = 0;
+    if(std::holds_alternative<int32_t>(argument[FTValue("appID")])) {
+        appID = (unsigned int)std::get<int32_t>(argument[FTValue("appID")]);
+    } else {
+        appID = (unsigned int)std::get<int64_t>(argument[FTValue("appID")]);
+    }
     std::string appSign = std::get<std::string>(argument[FTValue("appSign")]);
     bool isTestEnv = std::get<bool>(argument[FTValue("isTestEnv")]);
     int scenario = std::get<int32_t>(argument[FTValue("scenario")]);
-
-    //auto eventInstance = ZegoExpressEngineEventHandler::getInstance();
 
     EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
 
@@ -50,13 +42,37 @@ void ZegoExpressEngineMethodHandler::destroyEngine(flutter::EncodableMap& argume
 void ZegoExpressEngineMethodHandler::setEngineConfig(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
+    FTMap configMap = std::get<FTMap>(argument[FTValue("config")]);
+    std::unique_ptr<EXPRESS::ZegoEngineConfig> configPtr = nullptr;
 
+    if(configMap.size() > 0) {
+        configPtr = std::make_unique<EXPRESS::ZegoEngineConfig>();
+
+        FTMap logConfigMap = std::get<FTMap>(argument[FTValue("logConfig")]);
+        std::unique_ptr<EXPRESS::ZegoLogConfig> logConfigPtr = nullptr;
+        if(logConfigMap.size() > 0) {
+            logConfigPtr = std::make_unique<EXPRESS::ZegoLogConfig>();
+            logConfigPtr->logPath = std::get<std::string>(logConfigMap[FTValue("logPath")]);
+            logConfigPtr->logSize = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+        }
+
+        configPtr->logConfig = logConfigPtr.get();
+
+        FTMap advancedConfigMap = std::get<FTMap>(argument[FTValue("advancedConfig")]);
+        for (auto& cfg : advancedConfigMap) {
+            std::string key = std::get<std::string>(cfg.first);
+            std::string value = std::get<std::string>(cfg.second);
+			configPtr->advancedConfig[key] = value;
+		}
+    }
+
+    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::setLogConfig(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-
+    // TODO: 
 }
 
 void ZegoExpressEngineMethodHandler::uploadLog(flutter::EncodableMap& argument,
@@ -144,7 +160,7 @@ void ZegoExpressEngineMethodHandler::setRoomExtraInfo(flutter::EncodableMap& arg
     EXPRESS::ZegoExpressSDK::getEngine()->setRoomExtraInfo(roomID, key, value, [&](int errorCode) {
         FTMap retMap;
         retMap[FTValue("errorCode")] = FTValue(errorCode);
-        //retMap.insert(flutter::EncodableValue("errorCode"), flutter::EncodableValue(errorCode));
+
         result->Success(retMap);
     });
 }
@@ -178,7 +194,7 @@ void ZegoExpressEngineMethodHandler::setStreamExtraInfo(flutter::EncodableMap& a
         
         FTMap retMap;
         retMap[FTValue("errorCode")] = FTValue(errorCode);
-        //retMap.insert(flutter::EncodableValue("errorCode"), flutter::EncodableValue(errorCode));
+        
         result->Success(retMap);
 
     }, (EXPRESS::ZegoPublishChannel)channel);
@@ -449,7 +465,7 @@ void ZegoExpressEngineMethodHandler::useAudioDevice(flutter::EncodableMap& argum
     auto type = std::get<int32_t>(argument[FTValue("type")]);
     auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
     EXPRESS::ZegoExpressSDK::getEngine()->useAudioDevice((EXPRESS::ZegoAudioDeviceType)type, deviceID);
-    
+
     result->Success();
 }
 

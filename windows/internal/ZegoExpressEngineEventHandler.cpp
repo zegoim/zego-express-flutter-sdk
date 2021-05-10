@@ -350,13 +350,24 @@ void ZegoExpressEngineEventHandler::onMixerSoundLevelUpdate(const std::unordered
 }*/
 
 void ZegoExpressEngineEventHandler::onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) {
+	
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onAudioDeviceStateChanged");
 
+		FTMap deviceInfoMap;
+		deviceInfoMap[FTValue("deviceID")] = FTValue(deviceInfo.deviceID);
+		deviceInfoMap[FTValue("deviceName")] = FTValue(deviceInfo.deviceName);
 
+		retMap[FTValue("deviceInfo")] = FTValue(deviceInfoMap);
+
+		eventSink_->Success(retMap);
+	}
 }
 
-void ZegoExpressEngineEventHandler::onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume) {
+/*void ZegoExpressEngineEventHandler::onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume) {
 
-}
+}*/
 
 /*void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo& deviceInfo) {
 
