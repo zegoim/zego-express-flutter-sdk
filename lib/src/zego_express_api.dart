@@ -294,14 +294,14 @@ class ZegoExpressEngine {
   /// - [soundLevels] Sound level hash map, key is the soundLevelID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0
   static void Function(Map<int, double> soundLevels) onMixerSoundLevelUpdate;
 
-  /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
+  /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted). (Only for desktop)
   ///
   /// This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceType] Audio device type
   /// - [deviceInfo] Audio device information
-  static void Function(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType, List<ZegoDeviceInfo> deviceInfo) onAudioDeviceStateChanged;
+  static void Function(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType, ZegoDeviceInfo deviceInfo) onAudioDeviceStateChanged;
 
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
@@ -309,7 +309,7 @@ class ZegoExpressEngine {
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
-  static void Function(ZegoUpdateType updateType, List<ZegoDeviceInfo> deviceInfo) onVideoDeviceStateChanged;
+  static void Function(ZegoUpdateType updateType, ZegoDeviceInfo deviceInfo) onVideoDeviceStateChanged;
 
   /// The local captured audio sound level callback.
   ///

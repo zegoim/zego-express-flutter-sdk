@@ -243,7 +243,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
   }
 
-  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server.
+  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server (for the specified channel).
   ///
   /// This function needs to be set before [startPublishingStream].
   /// After calling this function to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically relay to the CDN no longer takes effect,

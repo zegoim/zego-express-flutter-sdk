@@ -44,6 +44,30 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
+  /// Gets a list of audio devices. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - Returns Audo device List
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getAudioDeviceList(deviceType);
+  }
+
+  /// Get the device ID of the default audio device. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - Returns Default Audio device ID
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getDefaultAudioDeviceID(deviceType);
+  }
+
+  /// Chooses to use the specified audio device. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  Future<void> useAudioDevice(ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance.useAudioDevice(deviceType, deviceID);
+  }
+
   /// Enables or disables the audio capture device.
   ///
   /// This function is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
@@ -157,5 +181,4 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
-
 }

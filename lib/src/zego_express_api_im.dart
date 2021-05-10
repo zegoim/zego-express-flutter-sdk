@@ -31,6 +31,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
 
   /// Sends a Custom Command to the specified users in the same room.
   ///
+  /// Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   /// The frequency of custom messages sent to a single user in the same room cannot be higher than 200 messages/s, and the frequency of custom messages sent to multiple users cannot be higher than 10 messages/s.
   /// The point-to-point signaling type in the same room is generally used for remote control signaling or for sending messages between users. The messages are reliable.
   ///
