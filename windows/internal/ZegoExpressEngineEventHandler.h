@@ -99,7 +99,7 @@ protected:
 
     void onDeviceError(int errorCode, const std::string& deviceName) override;
 
-    void onRemoteCameraStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) override;
+    //void onRemoteCameraStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) override;
 
     void onRemoteMicStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) override;
 

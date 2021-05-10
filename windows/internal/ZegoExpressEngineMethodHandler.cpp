@@ -187,8 +187,8 @@ void ZegoExpressEngineMethodHandler::setStreamExtraInfo(flutter::EncodableMap& a
 void ZegoExpressEngineMethodHandler::startPreview(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->startPreview(nullptr, (EXPRESS::ZegoPublishChannel)channel);
+    //auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->startPreview();
 
     result->Success();
 }
@@ -196,8 +196,8 @@ void ZegoExpressEngineMethodHandler::startPreview(flutter::EncodableMap& argumen
 void ZegoExpressEngineMethodHandler::stopPreview(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
+    //auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview();
 
     result->Success();
 }
@@ -309,10 +309,10 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
 
         config.cdnConfig = cdnConfigPtr.get();
 
-        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr, config);
+        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, config);
     }
     else {
-        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr);
+        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID);
     }
 
     result->Success();

@@ -409,7 +409,7 @@ void ZegoExpressEngineEventHandler::onDeviceError(int errorCode, const std::stri
 	}
 }
 
-void ZegoExpressEngineEventHandler::onRemoteCameraStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) {
+/*void ZegoExpressEngineEventHandler::onRemoteCameraStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) {
 
 	if (eventSink_) {
 		FTMap retMap;
@@ -419,7 +419,7 @@ void ZegoExpressEngineEventHandler::onRemoteCameraStateUpdate(const std::string&
 
 		eventSink_->Success(retMap);
 	}
-}
+}*/
 
 void ZegoExpressEngineEventHandler::onRemoteMicStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) {
 
