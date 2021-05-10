@@ -419,19 +419,38 @@ void ZegoExpressEngineMethodHandler::isSpeakerMuted(flutter::EncodableMap& argum
 void ZegoExpressEngineMethodHandler::getAudioDeviceList(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
+    auto type = std::get<int32_t>(argument[FTValue("type")]);
 
+    FTArray deviceListArray;
+    auto deviceList = EXPRESS::ZegoExpressSDK::getEngine()->getAudioDeviceList((EXPRESS::ZegoAudioDeviceType)type);
+    for(auto &deviceInfo : deviceList) {
+        FTMap deviceMap;
+        deviceMap[FTValue("deviceID")] = FTValue(deviceInfo.deviceID);
+        deviceMap[FTValue("deviceName")] = FTValue(deviceInfo.deviceName);
+
+        deviceListArray.emplace_back(FTValue(deviceMap));
+    }
+
+    result->Success(deviceListArray);
 }
 
 void ZegoExpressEngineMethodHandler::getDefaultAudioDeviceID(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-
+    auto type = std::get<int32_t>(argument[FTValue("type")]);
+    auto deviceID = EXPRESS::ZegoExpressSDK::getEngine()->getDefaultAudioDeviceID((EXPRESS::ZegoAudioDeviceType)type);
+    
+    result->Success(FTValue(deviceID));
 }
 
 void ZegoExpressEngineMethodHandler::useAudioDevice(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-
+    auto type = std::get<int32_t>(argument[FTValue("type")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->useAudioDevice((EXPRESS::ZegoAudioDeviceType)type, deviceID);
+    
+    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::startSoundLevelMonitor(flutter::EncodableMap& argument,
