@@ -14,11 +14,6 @@ void ZegoExpressEngineEventHandler::clearEventSink()
 	eventSink_.reset();
 }
 
-/*std::shared_ptr<ZegoExpressEngineEventHandler> ZegoExpressEngineEventHandler::getSharedPtr()
-{
-	return shared_from_this();
-}*/
-
 void ZegoExpressEngineEventHandler::onDebugError(int errorCode, const std::string& funcName, const std::string& info) {
 
 	if (eventSink_) {

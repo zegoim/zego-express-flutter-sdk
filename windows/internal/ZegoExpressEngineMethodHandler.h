@@ -46,7 +46,7 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setStreamExtraInfo(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void startPreivew(flutter::EncodableMap& argument,
+    void startPreview(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopPreview(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

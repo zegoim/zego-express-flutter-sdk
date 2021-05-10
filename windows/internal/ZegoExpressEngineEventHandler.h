@@ -12,17 +12,10 @@ using namespace ZEGO;
 
 class ZegoExpressEngineEventHandler 
     : public EXPRESS::IZegoEventHandler
-    //, public std::enable_shared_from_this<ZegoExpressEngineEventHandler>
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
     ZegoExpressEngineEventHandler() { std::cout << "event handler create" << std::endl; }
-
-    /*static ZegoExpressEngineEventHandler & getInstance()
-    {
-        static ZegoExpressEngineEventHandler m_instance;
-        return m_instance;
-    }*/
 
     static std::shared_ptr<ZegoExpressEngineEventHandler>& getInstance()
     {
@@ -35,7 +28,6 @@ public:
 
     void setEventSink(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> &&eventSink);
     void clearEventSink();
-    //std::shared_ptr<ZegoExpressEngineEventHandler> getSharedPtr();
 
 private:
     static std::shared_ptr<ZegoExpressEngineEventHandler> m_instance;

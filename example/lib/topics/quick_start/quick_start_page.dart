@@ -13,6 +13,8 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 
+import 'dart:io';
+
 class QuickStartPage extends StatefulWidget {
   @override
   _QuickStartPageState createState() => _QuickStartPageState();
@@ -119,26 +121,31 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📤 Start publishing stream, streamID: $streamID');
     }
 
-    if (ZegoConfig.instance.enablePlatformView) {
-      // Render with PlatformView
-      setState(() {
-        _previewViewWidget =
-            ZegoExpressEngine.instance.createPlatformView((viewID) {
+    if (Platform.isIOS || Platform.isAndroid) {
+      if (ZegoConfig.instance.enablePlatformView) {
+        // Render with PlatformView
+        setState(() {
+          _previewViewWidget =
+              ZegoExpressEngine.instance.createPlatformView((viewID) {
+            _previewViewID = viewID;
+            _startPreview(_previewViewID);
+            _startPublishingStream(streamID);
+          });
+        });
+      } else {
+        // Render with TextureRenderer
+        ZegoExpressEngine.instance
+            .createTextureRenderer(width.toInt(), height.toInt())
+            .then((viewID) {
           _previewViewID = viewID;
-          _startPreview(_previewViewID);
+          setState(() => _previewViewWidget = Texture(textureId: viewID));
+          _startPreview(viewID);
           _startPublishingStream(streamID);
         });
-      });
+      }
     } else {
-      // Render with TextureRenderer
-      ZegoExpressEngine.instance
-          .createTextureRenderer(width.toInt(), height.toInt())
-          .then((viewID) {
-        _previewViewID = viewID;
-        setState(() => _previewViewWidget = Texture(textureId: viewID));
-        _startPreview(viewID);
-        _startPublishingStream(streamID);
-      });
+      ZegoExpressEngine.instance.startPreview();
+      ZegoExpressEngine.instance.startPublishingStream(streamID);
     }
   }
 
@@ -157,29 +164,34 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (ZegoConfig.instance.enablePlatformView) {
-      // Render with PlatformView
-      setState(() {
-        _playViewWidget =
-            ZegoExpressEngine.instance.createPlatformView((viewID) {
+    if (Platform.isIOS || Platform.isAndroid) {
+      if (ZegoConfig.instance.enablePlatformView) {
+        // Render with PlatformView
+        setState(() {
+          _playViewWidget =
+              ZegoExpressEngine.instance.createPlatformView((viewID) {
+            _playViewID = viewID;
+            _startPlayingStream(viewID, streamID);
+          });
+        });
+      } else {
+        // Render with TextureRenderer
+        ZegoExpressEngine.instance
+            .createTextureRenderer(width.toInt(), height.toInt())
+            .then((viewID) {
           _playViewID = viewID;
+          setState(() => _playViewWidget = Texture(textureId: viewID));
           _startPlayingStream(viewID, streamID);
         });
-      });
+      }
     } else {
-      // Render with TextureRenderer
-      ZegoExpressEngine.instance
-          .createTextureRenderer(width.toInt(), height.toInt())
-          .then((viewID) {
-        _playViewID = viewID;
-        setState(() => _playViewWidget = Texture(textureId: viewID));
-        _startPlayingStream(viewID, streamID);
-      });
+      ZegoExpressEngine.instance.startPlayingStream(streamID);
     }
   }
 
   void stopPlayingStream(String streamID) {
     ZegoExpressEngine.instance.stopPlayingStream(streamID);
+
     clearPlayView();
   }
 
@@ -242,6 +254,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPreviewView() {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+
     if (_previewViewWidget == null) {
       return;
     }
@@ -257,6 +271,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPlayView() {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+
     if (_playViewWidget == null) {
       return;
     }
