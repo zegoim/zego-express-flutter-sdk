@@ -984,31 +984,20 @@ class ZegoExpressImpl {
       case 'onAudioDeviceStateChanged':
         if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoDeviceInfo info = ZegoDeviceInfo.fromMap(infoMap);
-          infoList.add(info);
-        }
-
+        ZegoDeviceInfo info = ZegoDeviceInfo.fromMap(map['deviceInfo']);
         ZegoExpressEngine.onAudioDeviceStateChanged(
             ZegoUpdateType.values[map['updateType']],
             ZegoAudioDeviceType.values[map['deviceType']],
-            infoList);
+            info);
         break;
 
       case 'onVideoDeviceStateChanged':
         if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoDeviceInfo info = ZegoDeviceInfo.fromMap(infoMap);
-          infoList.add(info);
-        }
+        ZegoDeviceInfo info = ZegoDeviceInfo.fromMap(map['deviceInfo']);
 
         ZegoExpressEngine.onVideoDeviceStateChanged(
-            ZegoUpdateType.values[map['updateType']], infoList);
+            ZegoUpdateType.values[map['updateType']], info);
         break;
 
       case 'onCapturedSoundLevelUpdate':
