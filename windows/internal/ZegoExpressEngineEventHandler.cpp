@@ -443,3 +443,18 @@ void ZegoExpressEngineEventHandler::onRemoteMicStateUpdate(const std::string& st
 		eventSink_->Success(retMap);
 	}
 }
+
+// Audio Effect Player
+void ZegoExpressEngineEventHandler::onAudioEffectPlayStateUpdate(EXPRESS::IZegoAudioEffectPlayer* audioEffectPlayer, unsigned int audioEffectID, EXPRESS::ZegoAudioEffectPlayState state, int errorCode)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onAudioEffectPlayStateUpdate");
+		retMap[FTValue("audioEffectPlayerIndex")] = FTValue(audioEffectPlayer->getIndex());
+		retMap[FTValue("audioEffectID")] = FTValue((int32_t)audioEffectID);
+		retMap[FTValue("state")] = FTValue(state);
+		retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+		eventSink_->Success(retMap);
+	}
+}

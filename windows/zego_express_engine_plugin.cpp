@@ -258,6 +258,55 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     else if (method_call.method_name() == "enableVirtualStereo") {
         ZegoExpressEngineMethodHandler::getInstance().enableVirtualStereo(argument, std::move(result));
     }
+    // Audio Effect Player
+    else if (method_call.method_name() == "createAudioEffectPlayer") {
+        ZegoExpressEngineMethodHandler::getInstance().createAudioEffectPlayer(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "destroyAudioEffectPlayer") {
+        ZegoExpressEngineMethodHandler::getInstance().destroyAudioEffectPlayer(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerStart") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerStart(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerStop") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerStop(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerPause") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerPause(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerResume") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerResume(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerStopAll") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerStopAll(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerPauseAll") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerPauseAll(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerResumeAll") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerResumeAll(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerSeekTo") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSeekTo(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerSetVolume") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSetVolume(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerSetVolumeAll") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSetVolumeAll(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerGetTotalDuration") {
+    ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerGetTotalDuration(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerGetCurrentProgress") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerGetCurrentProgress(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerLoadResource") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerLoadResource(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "audioEffectPlayerUnloadResource") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerUnloadResource(argument, std::move(result));
+    }
     else {
       result->NotImplemented();
     }

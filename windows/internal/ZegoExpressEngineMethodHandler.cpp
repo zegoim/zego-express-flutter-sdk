@@ -182,6 +182,8 @@ void ZegoExpressEngineMethodHandler::stopPublishingStream(flutter::EncodableMap&
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->stopPublishingStream((EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::setStreamExtraInfo(flutter::EncodableMap& argument,
@@ -663,4 +665,300 @@ void ZegoExpressEngineMethodHandler::enableVirtualStereo(flutter::EncodableMap& 
 
     result->Success();
 }
+
+void ZegoExpressEngineMethodHandler::createAudioEffectPlayer(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto player = EXPRESS::ZegoExpressSDK::getEngine()->createAudioEffectPlayer();
+    if(player) {
+
+        int index = player->getIndex();
+        player->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        audioEffectPlayerMap_[index] = player;
+
+        result->Success(FTValue(index));
+
+    } else {
+        result->Success(FTValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyAudioEffectPlayer(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if(player) {
+
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyAudioEffectPlayer(player);
+        audioEffectPlayerMap_.erase(index);
+
+        result->Success();
+    } else {
+        result->Error("destroyAudioEffectPlayer_Can_not_find_player", "Invoke `destroyAudioEffectPlayer` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerStart(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        std::string path = std::get<std::string>(argument[FTValue("path")]);
+
+        FTMap configMap = std::get<FTMap>(argument[FTValue("config")]);
+        std::unique_ptr<EXPRESS::ZegoAudioEffectPlayConfig> configPtr = nullptr;
+
+        if (configMap.size() > 0) {
+            configPtr = std::make_unique<EXPRESS::ZegoAudioEffectPlayConfig>();
+            configPtr->playCount = std::get<int32_t>(configMap[FTValue("playCount")]);
+            configPtr->isPublishOut = std::get<bool>(configMap[FTValue("isPublishOut")]);
+        }
+
+        player->start(audioEffectID, path, configPtr.get());
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerStart_Can_not_find_player", "Invoke `audioEffectPlayerStart` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerStop(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        player->stop(audioEffectID);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerStop_Can_not_find_player", "Invoke `audioEffectPlayerStop` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerPause(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        player->pause(audioEffectID);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerPause_Can_not_find_player", "Invoke `audioEffectPlayerPause` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerResume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        player->resume(audioEffectID);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerResume_Can_not_find_player", "Invoke `audioEffectPlayerResume` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerStopAll(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        player->stopAll();
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerStopAll_Can_not_find_player", "Invoke `audioEffectPlayerStopAll` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerPauseAll(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        player->pauseAll();
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerPauseAll_Can_not_find_player", "Invoke `audioEffectPlayerPauseAll` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerResumeAll(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        player->resumeAll();
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerResumeAll_Can_not_find_player", "Invoke `audioEffectPlayerResumeAll` but can't find specific player");
+    }
+}
+    
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSeekTo(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        unsigned long long millisecond = 0;
+        if (std::holds_alternative<int32_t>(argument[FTValue("millisecond")])) {
+            millisecond = (unsigned long long)std::get<int32_t>(argument[FTValue("millisecond")]);
+        }
+        else {
+            millisecond = (unsigned long long)std::get<int64_t>(argument[FTValue("millisecond")]);
+        }
+
+        player->seekTo(audioEffectID, millisecond, [&](int errorCode) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            result->Success(retMap);
+        });
+    }
+    else {
+        result->Error("audioEffectPlayerSeekTo_Can_not_find_player", "Invoke `audioEffectPlayerSeekTo` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+        player->setVolume(audioEffectID, volume);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerSetVolume_Can_not_find_player", "Invoke `audioEffectPlayerSetVolume` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolumeAll(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+        player->setVolumeAll(volume);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerSetVolumeAll_Can_not_find_player", "Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerGetTotalDuration(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        auto totalDuration = player->getTotalDuration(audioEffectID);
+
+        result->Success(FTValue((int64_t)totalDuration));
+    }
+    else {
+        result->Error("audioEffectPlayerGetTotalDuration_Can_not_find_player", "Invoke `audioEffectPlayerGetTotalDuration` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerGetCurrentProgress(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        auto currentProgress = player->getCurrentProgress(audioEffectID);
+
+        result->Success(FTValue((int64_t)currentProgress));
+    }
+    else {
+        result->Error("audioEffectPlayerGetCurrentProgress_Can_not_find_player", "Invoke `audioEffectPlayerGetCurrentProgress` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerLoadResource(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        std::string path = std::get<std::string>(argument[FTValue("path")]);
+
+        player->loadResource(audioEffectID, path, [&](int errorCode) {
+            
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            result->Success(retMap);
+        });
+    }
+    else {
+        result->Error("audioEffectPlayerLoadResource_Can_not_find_player", "Invoke `audioEffectPlayerLoadResource` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerUnloadResource(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        player->unloadResource(audioEffectID);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerUnLoadResource_Can_not_find_player", "Invoke `audioEffectPlayerUnloadResource` but can't find specific player");
+    }
+}
+        
 
