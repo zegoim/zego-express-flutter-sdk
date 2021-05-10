@@ -1,10 +1,8 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineDevice on ZegoExpressEngine {
-
   /// Mutes or unmutes the microphone.
   ///
   /// This function is used to control whether the collected audio data is used. When the microphone is muted (disabled), the data is collected and discarded, and the microphone is still occupied.
@@ -44,6 +42,32 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
+  /// Gets a list of audio devices. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - Returns Audo device List
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(
+      ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getAudioDeviceList(deviceType);
+  }
+
+  /// Get the device ID of the default audio device. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - Returns Default Audio device ID
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getDefaultAudioDeviceID(deviceType);
+  }
+
+  /// Chooses to use the specified audio device. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  Future<void> useAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance.useAudioDevice(deviceType, deviceID);
+  }
+
   /// Enables or disables the audio capture device.
   ///
   /// This function is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
@@ -71,7 +95,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
   /// - [channel] Publishing stream channel
   Future<void> enableCamera(bool enable, {ZegoPublishChannel channel}) async {
-    return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
+    return await ZegoExpressImpl.instance
+        .enableCamera(enable, channel: channel);
   }
 
   /// Switches to the front or the rear camera (for the specified channel).
@@ -82,7 +107,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
   /// - [channel] Publishing stream channel
   Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
-    return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
+    return await ZegoExpressImpl.instance
+        .useFrontCamera(enable, channel: channel);
   }
 
   /// Set the camera zoom factor.
@@ -91,8 +117,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [factor] The zoom factor of the camera, the minimum value is 1.0, and the maximum value is the return value of [getCameraMaxZoomFactor].
   /// - [channel] Publishing stream channel
-  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel channel}) async {
-    return await ZegoExpressImpl.instance.setCameraZoomFactor(factor, channel: channel);
+  Future<void> setCameraZoomFactor(double factor,
+      {ZegoPublishChannel channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraZoomFactor(factor, channel: channel);
   }
 
   /// Get the maximum zoom factor of the camera.
@@ -102,7 +130,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [channel] Publishing stream channel
   /// - Returns The maximum zoom factor of the camera.
   Future<double> getCameraMaxZoomFactor({ZegoPublishChannel channel}) async {
-    return await ZegoExpressImpl.instance.getCameraMaxZoomFactor(channel: channel);
+    return await ZegoExpressImpl.instance
+        .getCameraMaxZoomFactor(channel: channel);
   }
 
   /// Starts sound level monitoring. Support setting the listening interval.
@@ -113,7 +142,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [millisecond] Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
   Future<void> startSoundLevelMonitor({int millisecond}) async {
-    return await ZegoExpressImpl.instance.startSoundLevelMonitor(millisecond: millisecond);
+    return await ZegoExpressImpl.instance
+        .startSoundLevelMonitor(millisecond: millisecond);
   }
 
   /// Stops sound level monitoring.
@@ -130,7 +160,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
   Future<void> startAudioSpectrumMonitor({int millisecond}) async {
-    return await ZegoExpressImpl.instance.startAudioSpectrumMonitor(millisecond: millisecond);
+    return await ZegoExpressImpl.instance
+        .startAudioSpectrumMonitor(millisecond: millisecond);
   }
 
   /// Stops audio spectrum monitoring.
@@ -157,5 +188,4 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
-
 }

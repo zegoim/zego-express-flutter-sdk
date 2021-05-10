@@ -499,6 +499,22 @@ class ZegoExpressImpl {
         .invokeMethod('enableHeadphoneMonitor', {'volume': volume});
   }
 
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(
+      ZegoAudioDeviceType type) async {
+    return await _channel
+        .invokeMethod('getAudioDeviceList', {'type': type.index});
+  }
+
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType type) async {
+    return await _channel
+        .invokeMethod('getDefaultAudioDeviceID', {'type': type.index});
+  }
+
+  Future<void> useAudioDevice(ZegoAudioDeviceType type, String deviceID) async {
+    return await _channel.invokeMethod(
+        'useAudioDevice', {'type': type.index, 'deviceID': deviceID});
+  }
+
   /* PreProcess */
 
   Future<void> enableAEC(bool enable) async {
