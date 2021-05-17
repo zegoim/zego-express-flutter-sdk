@@ -6,8 +6,9 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 # not be changed
 set(PLUGIN_NAME "zego_express_engine_plugin")
 
-# TODO: Download native windows sdk with a script(python)
-
+# Download native windows sdk with a script(python)
+# If developers need to copy sdk locally, this command can be commented
+execute_process(COMMAND python ${CMAKE_CURRENT_LIST_DIR}/download_native_sdk.py)
 
 # Setup deps: native SDK header and link search path
 include_directories(${CMAKE_CURRENT_LIST_DIR}/deps/include)

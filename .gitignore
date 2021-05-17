@@ -20,3 +20,5 @@ example/windows/flutter/generated_plugins.cmake
 example/windows/flutter/generated_plugin_registrant.cc
 example/windows/flutter/generated_plugin_registrant.h
 .vscode/settings.json
+windows/deps/include/*
+windows/deps/lib/*
