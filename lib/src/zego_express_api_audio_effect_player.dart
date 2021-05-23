@@ -10,7 +10,7 @@ extension ZegoExpressEngineAudioEffectPlayer on ZegoExpressEngine {
   /// Currently, a maximum of 1 instances can be created, after which it will return null.
   ///
   /// - Returns audio effect player instance, null will be returned when the maximum number is exceeded.
-  Future<ZegoAudioEffectPlayer> createAudioEffectPlayer() async {
+  Future<ZegoAudioEffectPlayer?> createAudioEffectPlayer() async {
     return await ZegoExpressImpl.instance.createAudioEffectPlayer();
   }
 

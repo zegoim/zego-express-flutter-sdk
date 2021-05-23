@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 /// Application scenario.
 enum ZegoScenario {
@@ -611,14 +610,7 @@ class ZegoLogConfig {
   /// The maximum log file size (Bytes). The default maximum size is 5MB (5 * 1024 * 1024 Bytes)
   int logSize;
 
-  ZegoLogConfig(this.logPath, this.logSize): assert(logPath != null), assert(logSize != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'logPath': this.logPath,
-      'logSize': this.logSize
-    };
-  }
+  ZegoLogConfig(this.logPath, this.logSize);
 
 }
 
@@ -632,16 +624,7 @@ class ZegoCustomVideoCaptureConfig {
   /// Custom video capture video frame data type
   ZegoVideoBufferType bufferType;
 
-  ZegoCustomVideoCaptureConfig(this.bufferType): assert(bufferType != null);
-
-  ZegoCustomVideoCaptureConfig.fromMap(Map<dynamic, dynamic> map):
-    bufferType = map['bufferType'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'bufferType': this.bufferType.index
-    };
-  }
+  ZegoCustomVideoCaptureConfig(this.bufferType);
 
 }
 
@@ -649,19 +632,12 @@ class ZegoCustomVideoCaptureConfig {
 class ZegoEngineConfig {
 
   /// Log configuration, if not set, use the default configuration. It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].
-  ZegoLogConfig logConfig;
+  ZegoLogConfig? logConfig;
 
   /// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
-  Map<String, String> advancedConfig;
+  Map<String, String>? advancedConfig;
 
   ZegoEngineConfig(this.logConfig, this.advancedConfig);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'logConfig': this.logConfig?.toMap() ?? {},
-      'advancedConfig': this.advancedConfig ?? {}
-    };
-  }
 
 }
 
@@ -679,14 +655,13 @@ class ZegoRoomConfig {
   /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description https://doc-en.zego.im/en/3881.html Default is empty string, that is, no authentication
   String token;
 
-  ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token): assert(maxMemberCount != null), assert(isUserStatusNotify != null), assert(token != null);
+  ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token);
 
   /// Create a default room configuration
-  ZegoRoomConfig.defaultConfig() {
-    maxMemberCount = 0;
-    isUserStatusNotify = false;
-    token = "";
-  }
+  ZegoRoomConfig.defaultConfig()
+    : maxMemberCount = 0,
+      isUserStatusNotify = false,
+      token = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -725,11 +700,17 @@ class ZegoVideoConfig {
   /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
   ZegoVideoCodecID codecID;
 
-  ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID): assert(captureWidth != null), assert(captureHeight != null), assert(encodeWidth != null), assert(encodeHeight != null), assert(fps != null), assert(bitrate != null), assert(codecID != null);
+  ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID);
 
   /// Create video configuration with preset enumeration values
-  ZegoVideoConfig.preset(ZegoVideoConfigPreset preset): assert(preset != null) {
-    codecID = ZegoVideoCodecID.Default;
+  ZegoVideoConfig.preset(ZegoVideoConfigPreset preset)
+    : captureWidth = 720,
+      captureHeight = 1280,
+      encodeWidth = 720,
+      encodeHeight = 1280,
+      fps = 15,
+      bitrate = 1200,
+      codecID = ZegoVideoCodecID.Default {
     switch (preset) {
       case ZegoVideoConfigPreset.Preset180P:
         captureWidth = 180;
@@ -782,16 +763,6 @@ class ZegoVideoConfig {
     }
   }
 
-  ZegoVideoConfig.fromMap(Map<dynamic, dynamic> map) {
-    captureWidth = map['captureWidth'];
-    captureHeight = map['captureHeight'];
-    encodeWidth = map['encodeWidth'];
-    encodeHeight = map['encodeHeight'];
-    fps = map['fps'];
-    bitrate = map['bitrate'];
-    codecID = ZegoVideoCodecID.values[map['codecID']];
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'captureWidth': this.captureWidth,
@@ -814,13 +785,7 @@ class ZegoSEIConfig {
   /// SEI type
   ZegoSEIType type;
 
-  ZegoSEIConfig(this.type): assert(type != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'type': this.type.index
-    };
-  }
+  ZegoSEIConfig(this.type);
 
 }
 
@@ -832,13 +797,7 @@ class ZegoVoiceChangerParam {
   /// Pitch parameter, value range [-8.0, 8.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note that the voice changer effect is only valid for the captured sound.
   double pitch;
 
-  ZegoVoiceChangerParam(this.pitch): assert(pitch != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'pitch': this.pitch
-    };
-  }
+  ZegoVoiceChangerParam(this.pitch);
 
 }
 
@@ -859,16 +818,7 @@ class ZegoReverbParam {
   /// Dry/wet ratio, the range is greater than or equal to 0.0, to control the ratio between reverberation, direct sound and early reflections; dry part is set to 1 by default; the smaller the dry/wet ratio, the larger the wet ratio, the stronger the reverberation effect.
   double dryWetRatio;
 
-  ZegoReverbParam(this.roomSize, this.reverberance, this.damping, this.dryWetRatio): assert(roomSize != null), assert(reverberance != null), assert(damping != null), assert(dryWetRatio != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'roomSize': this.roomSize,
-      'reverberance': this.reverberance,
-      'damping': this.damping,
-      'dryWetRatio': this.dryWetRatio
-    };
-  }
+  ZegoReverbParam(this.roomSize, this.reverberance, this.damping, this.dryWetRatio);
 
 }
 
@@ -907,22 +857,7 @@ class ZegoReverbAdvancedParam {
   /// Stereo Width(%). 0% by default
   double stereoWidth;
 
-  ZegoReverbAdvancedParam(this.roomSize, this.reverberance, this.damping, this.wetOnly, this.wetGain, this.dryGain, this.toneLow, this.toneHigh, this.preDelay, this.stereoWidth): assert(roomSize != null), assert(reverberance != null), assert(damping != null), assert(wetOnly != null), assert(wetGain != null), assert(dryGain != null), assert(toneLow != null), assert(toneHigh != null), assert(preDelay != null), assert(stereoWidth != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'roomSize': this.roomSize,
-      'reverberance': this.reverberance,
-      'damping': this.damping,
-      'wetOnly': this.wetOnly,
-      'wetGain': this.wetGain,
-      'dryGain': this.dryGain,
-      'toneLow': this.toneLow,
-      'toneHigh': this.toneHigh,
-      'preDelay': this.preDelay,
-      'stereoWidth': this.stereoWidth
-    };
-  }
+  ZegoReverbAdvancedParam(this.roomSize, this.reverberance, this.damping, this.wetOnly, this.wetGain, this.dryGain, this.toneLow, this.toneHigh, this.preDelay, this.stereoWidth);
 
 }
 
@@ -944,17 +879,7 @@ class ZegoReverbEchoParam {
   /// Respective decay coefficient of echo signal, in the range [0.0, 1.0]
   List<double> decay;
 
-  ZegoReverbEchoParam(this.inGain, this.outGain, this.numDelays, this.delay, this.decay): assert(inGain != null), assert(outGain != null), assert(numDelays != null), assert(delay != null), assert(decay != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'inGain': this.inGain,
-      'outGain': this.outGain,
-      'numDelays': this.numDelays,
-      'delay': this.delay,
-      'decay': this.decay
-    };
-  }
+  ZegoReverbEchoParam(this.inGain, this.outGain, this.numDelays, this.delay, this.decay);
 
 }
 
@@ -971,26 +896,14 @@ class ZegoUser {
   /// User Name, a string with a maximum length of 256 bytes or less
   String userName;
 
-  ZegoUser(this.userID, this.userName): assert(userID != null), assert(userName != null);
+  ZegoUser(this.userID, this.userName);
 
   /// Create a ZegoUser object
   ///
   /// userName and userID are set to match
-  ZegoUser.id(String userID): assert(userID != null) {
-    this.userID = userID;
-    this.userName = userID;
-  }
-
-  ZegoUser.fromMap(Map<dynamic, dynamic> map):
-    userID = map['userID'],
-    userName = map['userName'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'userID': this.userID,
-      'userName': this.userName
-    };
-  }
+  ZegoUser.id(String userID)
+    : this.userID = userID,
+      this.userName = userID;
 
 }
 
@@ -1008,12 +921,7 @@ class ZegoStream {
   /// Stream extra info
   String extraInfo;
 
-  ZegoStream(this.user, this.streamID, this.extraInfo): assert(user != null), assert(streamID != null), assert(extraInfo != null);
-
-  ZegoStream.fromMap(Map<dynamic, dynamic> map):
-    user = ZegoUser.fromMap(map['user']),
-    streamID = map['streamID'],
-    extraInfo = map['extraInfo'];
+  ZegoStream(this.user, this.streamID, this.extraInfo);
 
 }
 
@@ -1032,13 +940,7 @@ class ZegoRoomExtraInfo {
   /// Update time of the room extra information, UNIX timestamp, in milliseconds.
   int updateTime;
 
-  ZegoRoomExtraInfo(this.key, this.value, this.updateUser, this.updateTime): assert(key != null), assert(value != null), assert(updateUser != null), assert(updateTime != null);
-
-  ZegoRoomExtraInfo.fromMap(Map<dynamic, dynamic> map):
-    key = map['key'],
-    value = map['value'],
-    updateUser = ZegoUser.fromMap(map['updateUser']),
-    updateTime = map['updateTime'];
+  ZegoRoomExtraInfo(this.key, this.value, this.updateUser, this.updateTime);
 
 }
 
@@ -1051,27 +953,18 @@ class ZegoCanvas {
   int view;
 
   /// View mode, default is ZegoViewModeAspectFit
-  ZegoViewMode viewMode;
+  ZegoViewMode? viewMode;
 
   /// Background color, the format is 0xRRGGBB, default is black, which is 0x000000
-  int backgroundColor;
+  int? backgroundColor;
 
-  ZegoCanvas(this.view, this.viewMode, this.backgroundColor): assert(view != null), assert(viewMode != null), assert(backgroundColor != null);
+  ZegoCanvas(this.view, this.viewMode, this.backgroundColor);
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
-  ZegoCanvas.view(int view): assert(view != null) {
-    this.view = view;
-    this.viewMode = ZegoViewMode.AspectFit;
-    this.backgroundColor = 0x000000;
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'view': this.view,
-      'viewMode': this.viewMode.index,
-      'backgroundColor': this.backgroundColor
-    };
-  }
+  ZegoCanvas.view(int view)
+    : this.view = view,
+      this.viewMode = ZegoViewMode.AspectFit,
+      this.backgroundColor = 0x000000;
 
 }
 
@@ -1125,25 +1018,24 @@ class ZegoPublishStreamQuality {
   /// Number of video bytes sent
   double videoSendBytes;
 
-  ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode, this.videoCodecID, this.totalSendBytes, this.audioSendBytes, this.videoSendBytes): assert(videoCaptureFPS != null), assert(videoEncodeFPS != null), assert(videoSendFPS != null), assert(videoKBPS != null), assert(audioCaptureFPS != null), assert(audioSendFPS != null), assert(audioKBPS != null), assert(rtt != null), assert(packetLostRate != null), assert(level != null), assert(isHardwareEncode != null), assert(videoCodecID != null), assert(totalSendBytes != null), assert(audioSendBytes != null), assert(videoSendBytes != null);
+  ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode, this.videoCodecID, this.totalSendBytes, this.audioSendBytes, this.videoSendBytes);
 
-  ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map) {
-    videoCaptureFPS = map['videoCaptureFPS'];
-    videoEncodeFPS = map['videoEncodeFPS'];
-    videoSendFPS = map['videoSendFPS'];
-    videoKBPS = map['videoKBPS'];
-    audioCaptureFPS = map['audioCaptureFPS'];
-    audioSendFPS = map['audioSendFPS'];
-    audioKBPS = map['audioKBPS'];
-    rtt = map['rtt'];
-    packetLostRate = map['packetLostRate'];
-    level = ZegoStreamQualityLevel.values[map['level']];
-    isHardwareEncode = map['isHardwareEncode'];
-    videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']];
-    totalSendBytes = map['totalSendBytes'];
-    audioSendBytes = map['audioSendBytes'];
-    videoSendBytes = map['videoSendBytes'];
-  }
+  ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map)
+    : videoCaptureFPS = map['videoCaptureFPS'],
+      videoEncodeFPS = map['videoEncodeFPS'],
+      videoSendFPS = map['videoSendFPS'],
+      videoKBPS = map['videoKBPS'],
+      audioCaptureFPS = map['audioCaptureFPS'],
+      audioSendFPS = map['audioSendFPS'],
+      audioKBPS = map['audioKBPS'],
+      rtt = map['rtt'],
+      packetLostRate = map['packetLostRate'],
+      level = ZegoStreamQualityLevel.values[map['level']],
+      isHardwareEncode = map['isHardwareEncode'],
+      videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']],
+      totalSendBytes = map['totalSendBytes'],
+      audioSendBytes = map['audioSendBytes'],
+      videoSendBytes = map['videoSendBytes'];
 
 }
 
@@ -1158,18 +1050,7 @@ class ZegoCDNConfig {
   /// Auth param of URL
   String authParam;
 
-  ZegoCDNConfig(this.url, this.authParam): assert(url != null), assert(authParam != null);
-
-  ZegoCDNConfig.fromMap(Map<dynamic, dynamic> map):
-    url = map['url'],
-    authParam = map['authParam'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'url': this.url,
-      'authParam': this.authParam
-    };
-  }
+  ZegoCDNConfig(this.url, this.authParam);
 
 }
 
@@ -1190,13 +1071,7 @@ class ZegoStreamRelayCDNInfo {
   /// The timestamp when the state changed, UNIX timestamp, in milliseconds.
   int stateTime;
 
-  ZegoStreamRelayCDNInfo(this.url, this.state, this.updateReason, this.stateTime): assert(url != null), assert(state != null), assert(updateReason != null), assert(stateTime != null);
-
-  ZegoStreamRelayCDNInfo.fromMap(Map<dynamic, dynamic> map):
-    url = map['url'],
-    state = map['state'],
-    updateReason = map['updateReason'],
-    stateTime = map['stateTime'];
+  ZegoStreamRelayCDNInfo(this.url, this.state, this.updateReason, this.stateTime);
 
 }
 
@@ -1209,21 +1084,14 @@ class ZegoPlayerConfig {
   ZegoStreamResourceMode resourceMode;
 
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
-  ZegoCDNConfig cdnConfig;
+  ZegoCDNConfig? cdnConfig;
 
-  ZegoPlayerConfig(this.resourceMode, this.cdnConfig): assert(resourceMode != null);
+  ZegoPlayerConfig(this.resourceMode, this.cdnConfig);
 
   /// Create a default advanced player config object
-  ZegoPlayerConfig.defaultConfig() {
-    resourceMode = ZegoStreamResourceMode.Default;
+  ZegoPlayerConfig.defaultConfig()
+   : resourceMode = ZegoStreamResourceMode.Default {
     cdnConfig = null;
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'resourceMode': this.resourceMode.index,
-      'cdnConfig': this.cdnConfig?.toMap() ?? {}
-    };
   }
 
 }
@@ -1305,34 +1173,33 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
-  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes): assert(videoRecvFPS != null), assert(videoDejitterFPS != null), assert(videoDecodeFPS != null), assert(videoRenderFPS != null), assert(videoKBPS != null), assert(videoBreakRate != null), assert(audioRecvFPS != null), assert(audioDejitterFPS != null), assert(audioDecodeFPS != null), assert(audioRenderFPS != null), assert(audioKBPS != null), assert(audioBreakRate != null), assert(rtt != null), assert(packetLostRate != null), assert(peerToPeerDelay != null), assert(peerToPeerPacketLostRate != null), assert(level != null), assert(delay != null), assert(avTimestampDiff != null), assert(isHardwareDecode != null), assert(videoCodecID != null), assert(totalRecvBytes != null), assert(audioRecvBytes != null), assert(videoRecvBytes != null);
+  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes);
 
-  ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map) {
-    videoRecvFPS = map['videoRecvFPS'];
-    videoDejitterFPS = map['videoDejitterFPS'];
-    videoDecodeFPS = map['videoDecodeFPS'];
-    videoRenderFPS = map['videoRenderFPS'];
-    videoKBPS = map['videoKBPS'];
-    videoBreakRate = map['videoBreakRate'];
-    audioRecvFPS = map['audioRecvFPS'];
-    audioDejitterFPS = map['audioDejitterFPS'];
-    audioDecodeFPS = map['audioDecodeFPS'];
-    audioRenderFPS = map['audioRenderFPS'];
-    audioKBPS = map['audioKBPS'];
-    audioBreakRate = map['audioBreakRate'];
-    rtt = map['rtt'];
-    packetLostRate = map['packetLostRate'];
-    peerToPeerDelay = map['peerToPeerDelay'];
-    peerToPeerPacketLostRate = map['peerToPeerPacketLostRate'];
-    level = ZegoStreamQualityLevel.values[map['level']];
-    delay = map['delay'];
-    avTimestampDiff = map['avTimestampDiff'];
-    isHardwareDecode = map['isHardwareDecode'];
-    videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']];
-    totalRecvBytes = map['totalRecvBytes'];
-    audioRecvBytes = map['audioRecvBytes'];
-    videoRecvBytes = map['videoRecvBytes'];
-  }
+  ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map)
+    : videoRecvFPS = map['videoRecvFPS'],
+      videoDejitterFPS = map['videoDejitterFPS'],
+      videoDecodeFPS = map['videoDecodeFPS'],
+      videoRenderFPS = map['videoRenderFPS'],
+      videoKBPS = map['videoKBPS'],
+      videoBreakRate = map['videoBreakRate'],
+      audioRecvFPS = map['audioRecvFPS'],
+      audioDejitterFPS = map['audioDejitterFPS'],
+      audioDecodeFPS = map['audioDecodeFPS'],
+      audioRenderFPS = map['audioRenderFPS'],
+      audioKBPS = map['audioKBPS'],
+      audioBreakRate = map['audioBreakRate'],
+      rtt = map['rtt'],
+      packetLostRate = map['packetLostRate'],
+      peerToPeerDelay = map['peerToPeerDelay'],
+      peerToPeerPacketLostRate = map['peerToPeerPacketLostRate'],
+      level = ZegoStreamQualityLevel.values[map['level']],
+      delay = map['delay'],
+      avTimestampDiff = map['avTimestampDiff'],
+      isHardwareDecode = map['isHardwareDecode'],
+      videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']],
+      totalRecvBytes = map['totalRecvBytes'],
+      audioRecvBytes = map['audioRecvBytes'],
+      videoRecvBytes = map['videoRecvBytes'];
 
 }
 
@@ -1347,11 +1214,7 @@ class ZegoDeviceInfo {
   /// Device name
   String deviceName;
 
-  ZegoDeviceInfo(this.deviceID, this.deviceName): assert(deviceID != null), assert(deviceName != null);
-
-  ZegoDeviceInfo.fromMap(Map<dynamic, dynamic> map):
-    deviceID = map['deviceID'],
-    deviceName = map['deviceName'];
+  ZegoDeviceInfo(this.deviceID, this.deviceName);
 
 }
 
@@ -1373,14 +1236,7 @@ class ZegoPerformanceStatus {
   /// Current memory used of the app, in MB
   double memoryUsedApp;
 
-  ZegoPerformanceStatus(this.cpuUsageApp, this.cpuUsageSystem, this.memoryUsageApp, this.memoryUsageSystem, this.memoryUsedApp): assert(cpuUsageApp != null), assert(cpuUsageSystem != null), assert(memoryUsageApp != null), assert(memoryUsageSystem != null), assert(memoryUsedApp != null);
-
-  ZegoPerformanceStatus.fromMap(Map<dynamic, dynamic> map):
-    cpuUsageApp = map['cpuUsageApp'],
-    cpuUsageSystem = map['cpuUsageSystem'],
-    memoryUsageApp = map['memoryUsageApp'],
-    memoryUsageSystem = map['memoryUsageSystem'],
-    memoryUsedApp = map['memoryUsedApp'];
+  ZegoPerformanceStatus(this.cpuUsageApp, this.cpuUsageSystem, this.memoryUsageApp, this.memoryUsageSystem, this.memoryUsedApp);
 
 }
 
@@ -1398,22 +1254,13 @@ class ZegoBeautifyOption {
   /// Beauty sharpening parameter, the larger the value, the stronger the sharpening, value range [0,1], default 0.1
   double sharpenFactor;
 
-  ZegoBeautifyOption(this.polishStep, this.whitenFactor, this.sharpenFactor): assert(polishStep != null), assert(whitenFactor != null), assert(sharpenFactor != null);
+  ZegoBeautifyOption(this.polishStep, this.whitenFactor, this.sharpenFactor);
 
   /// Create a default beauty parameter object
-  ZegoBeautifyOption.defaultConfig() {
-    polishStep = 0.2;
-    whitenFactor = 0.5;
-    sharpenFactor = 0.1;
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'polishStep': this.polishStep,
-      'whitenFactor': this.whitenFactor,
-      'sharpenFactor': this.sharpenFactor
-    };
-  }
+  ZegoBeautifyOption.defaultConfig()
+    : polishStep = 0.2,
+      whitenFactor = 0.5,
+      sharpenFactor = 0.1;
 
 }
 
@@ -1431,14 +1278,13 @@ class ZegoMixerAudioConfig {
   /// codec ID, default is ZegoAudioCodecIDDefault
   ZegoAudioCodecID codecID;
 
-  ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID): assert(bitrate != null), assert(channel != null), assert(codecID != null);
+  ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID);
 
   /// Create a default mix stream audio configuration
-  ZegoMixerAudioConfig.defaultConfig() {
-    bitrate = 48;
-    channel = ZegoAudioChannel.Mono;
-    codecID = ZegoAudioCodecID.Normal;
-  }
+  ZegoMixerAudioConfig.defaultConfig()
+    : bitrate = 48,
+      channel = ZegoAudioChannel.Mono,
+      codecID = ZegoAudioCodecID.Normal;
 
   Map<String, dynamic> toMap() {
     return {
@@ -1467,15 +1313,14 @@ class ZegoMixerVideoConfig {
   /// Video bitrate in kbps
   int bitrate;
 
-  ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate): assert(width != null), assert(height != null), assert(fps != null), assert(bitrate != null);
+  ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate);
 
   /// Create a default mixer video configuration
-  ZegoMixerVideoConfig.defaultConfig() {
-    width = 360;
-    height = 640;
-    fps = 15;
-    bitrate = 600;
-  }
+  ZegoMixerVideoConfig.defaultConfig()
+    : width = 360,
+      height = 640,
+      fps = 15,
+      bitrate = 600;
 
   Map<String, dynamic> toMap() {
     return {
@@ -1505,7 +1350,7 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
-  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID): assert(streamID != null), assert(contentType != null), assert(layout != null), assert(soundLevelID != null);
+  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID);
 
   Map<String, dynamic> toMap() {
     return {
@@ -1529,13 +1374,7 @@ class ZegoMixerOutput {
   /// Mix stream output target, URL or stream ID, if set to be URL format, only RTMP URL surpported, for example rtmp://xxxxxxxx
   String target;
 
-  ZegoMixerOutput(this.target): assert(target != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'target': this.target
-    };
-  }
+  ZegoMixerOutput(this.target);
 
 }
 
@@ -1550,7 +1389,7 @@ class ZegoWatermark {
   /// Watermark image layout
   Rect layout;
 
-  ZegoWatermark(this.imageURL, this.layout): assert(imageURL != null), assert(layout != null);
+  ZegoWatermark(this.imageURL, this.layout);
 
   Map<String, dynamic> toMap() {
     return {
@@ -1598,17 +1437,16 @@ class ZegoMixerTask {
   Map<String, String> advancedConfig;
 
   /// Create a mix stream task object with TaskID
-  ZegoMixerTask(String taskID) {
-    this.taskID = taskID;
-    inputList = List<ZegoMixerInput>();
-    outputList = List<ZegoMixerOutput>();
-    audioConfig = ZegoMixerAudioConfig.defaultConfig();
-    videoConfig = ZegoMixerVideoConfig.defaultConfig();
-    watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0));
-    backgroundImageURL = "";
-    enableSoundLevel = false;
-    advancedConfig = {};
-  }
+  ZegoMixerTask(String taskID)
+    : this.taskID = taskID,
+      inputList = [],
+      outputList = [],
+      audioConfig = ZegoMixerAudioConfig.defaultConfig(),
+      videoConfig = ZegoMixerVideoConfig.defaultConfig(),
+      watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0)),
+      backgroundImageURL = "",
+      enableSoundLevel = false,
+      advancedConfig = {};
 
   Map<String, dynamic> toMap() {
     return {
@@ -1643,13 +1481,7 @@ class ZegoBroadcastMessageInfo {
   /// Message sender
   ZegoUser fromUser;
 
-  ZegoBroadcastMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser): assert(message != null), assert(messageID != null), assert(sendTime != null), assert(fromUser != null);
-
-  ZegoBroadcastMessageInfo.fromMap(Map<dynamic, dynamic> map):
-    message = map['message'],
-    messageID = map['messageID'],
-    sendTime = map['sendTime'],
-    fromUser = ZegoUser.fromMap(map['fromUser']);
+  ZegoBroadcastMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);
 
 }
 
@@ -1670,13 +1502,7 @@ class ZegoBarrageMessageInfo {
   /// Message sender
   ZegoUser fromUser;
 
-  ZegoBarrageMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser): assert(message != null), assert(messageID != null), assert(sendTime != null), assert(fromUser != null);
-
-  ZegoBarrageMessageInfo.fromMap(Map<dynamic, dynamic> map):
-    message = map['message'],
-    messageID = map['messageID'],
-    sendTime = map['sendTime'],
-    fromUser = ZegoUser.fromMap(map['fromUser']);
+  ZegoBarrageMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);
 
 }
 
@@ -1694,11 +1520,13 @@ class ZegoAudioConfig {
   /// codec ID, default is ZegoAudioCodecIDDefault. The setting only take effect before publishing stream
   ZegoAudioCodecID codecID;
 
-  ZegoAudioConfig(this.bitrate, this.channel, this.codecID): assert(bitrate != null), assert(channel != null), assert(codecID != null);
+  ZegoAudioConfig(this.bitrate, this.channel, this.codecID);
 
   /// Create a audio configuration with preset enumeration values
-  ZegoAudioConfig.preset(ZegoAudioConfigPreset preset): assert(preset != null) {
-    codecID = ZegoAudioCodecID.Default;
+  ZegoAudioConfig.preset(ZegoAudioConfigPreset preset)
+    : bitrate = 48,
+      channel = ZegoAudioChannel.Mono,
+      codecID = ZegoAudioCodecID.Default {
     switch (preset) {
       case ZegoAudioConfigPreset.BasicQuality:
         bitrate = 16;
@@ -1723,20 +1551,6 @@ class ZegoAudioConfig {
     }
   }
 
-  ZegoAudioConfig.fromMap(Map<dynamic, dynamic> map) {
-    bitrate = map['bitrate'];
-    channel = ZegoAudioChannel.values[map['channel']];
-    codecID = ZegoAudioCodecID.values[map['codecID']];
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'bitrate': this.bitrate,
-      'channel': this.channel.index,
-      'codecID': this.codecID.index
-    };
-  }
-
 }
 
 /// Record config.
@@ -1748,19 +1562,7 @@ class ZegoDataRecordConfig {
   /// Type of recording media
   ZegoDataRecordType recordType;
 
-  ZegoDataRecordConfig(this.filePath, this.recordType): assert(filePath != null), assert(recordType != null);
-
-  ZegoDataRecordConfig.fromMap(Map<dynamic, dynamic> map) {
-    filePath = map['filePath'];
-    recordType = ZegoDataRecordType.values[map['recordType']];
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'filePath': this.filePath,
-      'recordType': this.recordType.index
-    };
-  }
+  ZegoDataRecordConfig(this.filePath, this.recordType);
 
 }
 
@@ -1773,11 +1575,7 @@ class ZegoDataRecordProgress {
   /// Current recording file size in byte
   int currentFileSize;
 
-  ZegoDataRecordProgress(this.duration, this.currentFileSize): assert(duration != null), assert(currentFileSize != null);
-
-  ZegoDataRecordProgress.fromMap(Map<dynamic, dynamic> map):
-    duration = map['duration'],
-    currentFileSize = map['currentFileSize'];
+  ZegoDataRecordProgress(this.duration, this.currentFileSize);
 
 }
 
@@ -1796,16 +1594,7 @@ class ZegoNetworkSpeedTestConfig {
   /// The unit is kbps. Recommended to use the bitrate in ZegoVideoConfig when call startPublishingStream to determine whether the network downlink environment is suitable.
   int expectedDownlinkBitrate;
 
-  ZegoNetworkSpeedTestConfig(this.testUplink, this.expectedUplinkBitrate, this.testDownlink, this.expectedDownlinkBitrate): assert(testUplink != null), assert(expectedUplinkBitrate != null), assert(testDownlink != null), assert(expectedDownlinkBitrate != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'testUplink': this.testUplink,
-      'expectedUplinkBitrate': this.expectedUplinkBitrate,
-      'testDownlink': this.testDownlink,
-      'expectedDownlinkBitrate': this.expectedDownlinkBitrate
-    };
-  }
+  ZegoNetworkSpeedTestConfig(this.testUplink, this.expectedUplinkBitrate, this.testDownlink, this.expectedDownlinkBitrate);
 
 }
 
@@ -1821,12 +1610,7 @@ class ZegoNetworkSpeedTestQuality {
   /// packet lost rate. in percentage, 0.0 ~ 1.0
   double packetLostRate;
 
-  ZegoNetworkSpeedTestQuality(this.connectCost, this.rtt, this.packetLostRate): assert(connectCost != null), assert(rtt != null), assert(packetLostRate != null);
-
-  ZegoNetworkSpeedTestQuality.fromMap(Map<dynamic, dynamic> map):
-    connectCost = map['connectCost'],
-    rtt = map['rtt'],
-    packetLostRate = map['packetLostRate'];
+  ZegoNetworkSpeedTestQuality(this.connectCost, this.rtt, this.packetLostRate);
 
 }
 
@@ -1839,14 +1623,7 @@ class ZegoAudioEffectPlayConfig {
   /// Whether to mix audio effects into the publishing stream, the default is false.
   bool isPublishOut;
 
-  ZegoAudioEffectPlayConfig(this.playCount, this.isPublishOut): assert(playCount != null), assert(isPublishOut != null);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'playCount': this.playCount,
-      'isPublishOut': this.isPublishOut
-    };
-  }
+  ZegoAudioEffectPlayConfig(this.playCount, this.isPublishOut);
 
 }
 
@@ -1975,7 +1752,7 @@ abstract class ZegoAudioEffectPlayer {
   /// - [audioEffectID] ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique id. The recommended methods are static self-incrementing id or the hash of the incoming sound effect file path.
   /// - [path] The absolute path of the local resource. "assets://"、"ipod-library://" and network url are not supported. Set path as null or "" if resource is loaded already using [loadResource]
   /// - [config] Audio effect playback configuration. Set null will only be played once, and will not be mixed into the publishing stream.
-  Future<void> start(int audioEffectID, String path, ZegoAudioEffectPlayConfig config);
+  Future<void> start(int audioEffectID, {String? path, ZegoAudioEffectPlayConfig? config});
 
   /// Stop playing audio effect.
   ///
@@ -2067,10 +1844,7 @@ class ZegoRoomSetRoomExtraInfoResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoRoomSetRoomExtraInfoResult(this.errorCode): assert(errorCode != null);
-
-  ZegoRoomSetRoomExtraInfoResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoRoomSetRoomExtraInfoResult(this.errorCode);
 
 }
 
@@ -2082,10 +1856,7 @@ class ZegoPublisherSetStreamExtraInfoResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoPublisherSetStreamExtraInfoResult(this.errorCode): assert(errorCode != null);
-
-  ZegoPublisherSetStreamExtraInfoResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoPublisherSetStreamExtraInfoResult(this.errorCode);
 
 }
 
@@ -2097,10 +1868,7 @@ class ZegoPublisherUpdateCdnUrlResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoPublisherUpdateCdnUrlResult(this.errorCode): assert(errorCode != null);
-
-  ZegoPublisherUpdateCdnUrlResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoPublisherUpdateCdnUrlResult(this.errorCode);
 
 }
 
@@ -2114,14 +1882,9 @@ class ZegoPublisherTakeSnapshotResult {
   int errorCode;
 
   /// Snapshot image
-  MemoryImage image;
+  MemoryImage? image;
 
-  ZegoPublisherTakeSnapshotResult(this.errorCode, this.image): assert(errorCode != null), assert(image != null);
-
-  ZegoPublisherTakeSnapshotResult.fromMap(Map<dynamic, dynamic> map) {
-    errorCode = map['errorCode'];
-    image = map['image'] != null ? MemoryImage(map['image']) : null;
-  }
+  ZegoPublisherTakeSnapshotResult(this.errorCode, this.image);
 
 }
 
@@ -2135,14 +1898,9 @@ class ZegoPlayerTakeSnapshotResult {
   int errorCode;
 
   /// Snapshot image
-  MemoryImage image;
+  MemoryImage? image;
 
-  ZegoPlayerTakeSnapshotResult(this.errorCode, this.image): assert(errorCode != null), assert(image != null);
-
-  ZegoPlayerTakeSnapshotResult.fromMap(Map<dynamic, dynamic> map) {
-    errorCode = map['errorCode'];
-    image = map['image'] != null ? MemoryImage(map['image']) : null;
-  }
+  ZegoPlayerTakeSnapshotResult(this.errorCode, this.image);
 
 }
 
@@ -2158,12 +1916,7 @@ class ZegoMixerStartResult {
   /// Extended Information
   Map<dynamic, dynamic> extendedData;
 
-  ZegoMixerStartResult(this.errorCode, this.extendedData): assert(errorCode != null), assert(extendedData != null);
-
-  ZegoMixerStartResult.fromMap(Map<dynamic, dynamic> map) {
-    errorCode = map['errorCode'];
-    extendedData = jsonDecode(map['extendedData']);
-  }
+  ZegoMixerStartResult(this.errorCode, this.extendedData);
 
 }
 
@@ -2175,10 +1928,7 @@ class ZegoMixerStopResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoMixerStopResult(this.errorCode): assert(errorCode != null);
-
-  ZegoMixerStopResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoMixerStopResult(this.errorCode);
 
 }
 
@@ -2194,11 +1944,7 @@ class ZegoIMSendBroadcastMessageResult {
   /// ID of this message
   int messageID;
 
-  ZegoIMSendBroadcastMessageResult(this.errorCode, this.messageID): assert(errorCode != null), assert(messageID != null);
-
-  ZegoIMSendBroadcastMessageResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    messageID = map['messageID'];
+  ZegoIMSendBroadcastMessageResult(this.errorCode, this.messageID);
 
 }
 
@@ -2214,11 +1960,7 @@ class ZegoIMSendBarrageMessageResult {
   /// ID of this message
   String messageID;
 
-  ZegoIMSendBarrageMessageResult(this.errorCode, this.messageID): assert(errorCode != null), assert(messageID != null);
-
-  ZegoIMSendBarrageMessageResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    messageID = map['messageID'];
+  ZegoIMSendBarrageMessageResult(this.errorCode, this.messageID);
 
 }
 
@@ -2230,10 +1972,7 @@ class ZegoIMSendCustomCommandResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoIMSendCustomCommandResult(this.errorCode): assert(errorCode != null);
-
-  ZegoIMSendCustomCommandResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoIMSendCustomCommandResult(this.errorCode);
 
 }
 
@@ -2245,10 +1984,7 @@ class ZegoMediaPlayerLoadResourceResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoMediaPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
-
-  ZegoMediaPlayerLoadResourceResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoMediaPlayerLoadResourceResult(this.errorCode);
 
 }
 
@@ -2260,10 +1996,7 @@ class ZegoMediaPlayerSeekToResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoMediaPlayerSeekToResult(this.errorCode): assert(errorCode != null);
-
-  ZegoMediaPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoMediaPlayerSeekToResult(this.errorCode);
 
 }
 
@@ -2275,10 +2008,7 @@ class ZegoAudioEffectPlayerLoadResourceResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoAudioEffectPlayerLoadResourceResult(this.errorCode): assert(errorCode != null);
-
-  ZegoAudioEffectPlayerLoadResourceResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoAudioEffectPlayerLoadResourceResult(this.errorCode);
 
 }
 
@@ -2290,10 +2020,7 @@ class ZegoAudioEffectPlayerSeekToResult {
   /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   int errorCode;
 
-  ZegoAudioEffectPlayerSeekToResult(this.errorCode): assert(errorCode != null);
-
-  ZegoAudioEffectPlayerSeekToResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'];
+  ZegoAudioEffectPlayerSeekToResult(this.errorCode);
 
 }
 

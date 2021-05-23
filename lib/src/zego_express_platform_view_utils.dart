@@ -7,15 +7,13 @@ import 'zego_express_api.dart';
 extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
 
     /// Create a PlatformView and return the view ID
-    Widget createPlatformView(Function(int viewID) onViewCreated, {Key key}) {
+    Widget? createPlatformView(Function(int viewID) onViewCreated, {Key? key}) {
         if (TargetPlatform.iOS == defaultTargetPlatform) {
             return UiKitView(
                 key: key,
                 viewType: 'plugins.zego.im/zego_express_view',
                 onPlatformViewCreated: (int viewID) {
-                    if (onViewCreated != null) {
-                        onViewCreated(viewID);
-                    }
+                      onViewCreated(viewID);
                 }
             );
         } else if (TargetPlatform.android == defaultTargetPlatform) {
@@ -24,9 +22,7 @@ extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
                 key: key,
                 viewType: 'plugins.zego.im/zego_express_view',
                 onPlatformViewCreated: (int viewID) {
-                    if (onViewCreated != null) {
-                        onViewCreated(viewID);
-                    }
+                      onViewCreated(viewID);
                 }
             );
         }
