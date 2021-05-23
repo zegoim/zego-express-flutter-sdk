@@ -94,7 +94,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
   /// - [channel] Publishing stream channel
-  Future<void> enableCamera(bool enable, {ZegoPublishChannel channel}) async {
+  Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
   }
 
@@ -105,7 +105,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [enable] Whether to use the front camera, true: use the front camera, false: use the the rear camera. The default value is true
   /// - [channel] Publishing stream channel
-  Future<void> useFrontCamera(bool enable, {ZegoPublishChannel channel}) async {
+  Future<void> useFrontCamera(bool enable, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }
 
@@ -115,7 +115,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [factor] The zoom factor of the camera, the minimum value is 1.0, and the maximum value is the return value of [getCameraMaxZoomFactor].
   /// - [channel] Publishing stream channel
-  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel channel}) async {
+  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.setCameraZoomFactor(factor, channel: channel);
   }
 
@@ -125,7 +125,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [channel] Publishing stream channel
   /// - Returns The maximum zoom factor of the camera.
-  Future<double> getCameraMaxZoomFactor({ZegoPublishChannel channel}) async {
+  Future<double> getCameraMaxZoomFactor({ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.getCameraMaxZoomFactor(channel: channel);
   }
 
@@ -136,7 +136,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is the value set by the parameter.
   ///
   /// - [millisecond] Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
-  Future<void> startSoundLevelMonitor({int millisecond}) async {
+  Future<void> startSoundLevelMonitor({int? millisecond}) async {
     return await ZegoExpressImpl.instance.startSoundLevelMonitor(millisecond: millisecond);
   }
 
@@ -153,7 +153,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is the value set by the parameter.
   ///
   /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
-  Future<void> startAudioSpectrumMonitor({int millisecond}) async {
+  Future<void> startAudioSpectrumMonitor({int? millisecond}) async {
     return await ZegoExpressImpl.instance.startAudioSpectrumMonitor(millisecond: millisecond);
   }
 

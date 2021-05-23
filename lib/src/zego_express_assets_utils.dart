@@ -15,7 +15,7 @@ extension ZegoExpressAssetsUtils on ZegoExpressEngine {
   ///
   /// - [assetPath] The resource path configured in the `flutter` -> `assets` field of pubspec.yaml, for example: assets/icon/setting.png
   /// - Returns the actual absolute path of the asset
-  Future<String> getAssetAbsolutePath(String assetPath) async {
+  Future<String?> getAssetAbsolutePath(String assetPath) async {
     return await ZegoExpressImpl.methodChannel.invokeMethod('getAssetAbsolutePath', {
       'assetPath': assetPath
     });

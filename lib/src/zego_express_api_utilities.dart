@@ -11,7 +11,7 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// [onPerformanceStatusUpdate] callback notification period is the value set by the parameter.
   ///
   /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, has a value range of [1000, 10000]. Default is 2000 ms.
-  Future<void> startPerformanceMonitor({int millisecond}) async {
+  Future<void> startPerformanceMonitor({int? millisecond}) async {
     return await ZegoExpressImpl.instance.startPerformanceMonitor(millisecond: millisecond);
   }
 
