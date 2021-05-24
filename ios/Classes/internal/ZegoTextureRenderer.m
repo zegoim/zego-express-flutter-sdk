@@ -21,6 +21,10 @@
 {
     CVPixelBufferRef m_pInputFrameBuffer;
     CVPixelBufferRef m_pRenderFrameBuffer;
+    CVPixelBufferRef m_pTempToCopyFrameBuffer;
+    
+    CVPixelBufferRef m_tmpProcessBufferList[3];
+    int m_tmp_buffer_index;
     
     dispatch_queue_t  m_opengl_queue;
     GLfloat m_lstVertices[8];
@@ -56,7 +60,8 @@
         m_view_mode = ZegoViewModeAspectFit;
         _textureID  = [registry registerTexture:self];
         m_opengl_queue = dispatch_queue_create([[NSString stringWithFormat:@"opengl_queue%lld", _textureID] UTF8String], NULL);
-       _lock = dispatch_semaphore_create(1);
+        _lock = dispatch_semaphore_create(1);
+
         _viewWidth = width;
         _viewHeight = height;
         
@@ -68,7 +73,10 @@
         
         m_isNewFrameAvailable = NO;
         
-        [self createPixelBufferPool:&m_buffer_pool width:_viewWidth height:_viewHeight];
+        m_pTempToCopyFrameBuffer = nil;
+        [self initPixelBuffer];
+        m_tmp_buffer_index = 0;
+        
         
         __weak ZegoTextureRenderer *weak_ptr = self;
         dispatch_async(m_opengl_queue, ^{
@@ -133,6 +141,24 @@
     ZGLog(@"[ZegoTextureRenderer] [release] renderer:%p", self);
 }
 
+- (void)initPixelBuffer {
+    [self createPixelBufferPool:&m_buffer_pool width:_viewWidth height:_viewHeight];
+    
+    CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[0]);
+    CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[1]);
+    CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[2]);
+}
+
+- (CVPixelBufferRef)getCurrentProcessBuffer {
+    if(m_tmp_buffer_index > 2) {
+        m_tmp_buffer_index = 0;
+    }
+    
+    CVPixelBufferRef currentBuffer = CVBufferRetain(m_tmpProcessBufferList[m_tmp_buffer_index]);
+    m_tmp_buffer_index ++;
+    return currentBuffer;
+}
+
 
 - (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer {
     
@@ -144,7 +170,6 @@
             CVBufferRelease(self->m_pInputFrameBuffer);
         }
         self->m_pInputFrameBuffer = srcFrameBuffer;
-        
     });
     
     // TODO: 检查该标志位的位置是否正确
@@ -416,7 +441,16 @@
     }
     
   
-    if(m_pInputFrameBuffer == nil /*|| m_pProcessFrameBuffer == nil*/)
+    //if(m_pInputFrameBuffer == nil /*|| m_pProcessFrameBuffer == nil*/)
+    //    return;
+    
+    CVPixelBufferRef readInputBuffer = nil;
+    if(m_pInputFrameBuffer) {
+        readInputBuffer = m_pInputFrameBuffer;
+        CVBufferRetain(readInputBuffer);
+    }
+    
+    if(readInputBuffer == nil)
         return;
 
     int width = (int)CVPixelBufferGetWidth(m_pInputFrameBuffer);
@@ -426,14 +460,15 @@
     if(m_config_changed || width != m_img_width || height != m_img_height)
         [self setupVAO:width height:height];
 
-    CVPixelBufferRef processBuffer;
-    CVReturn ret = CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &processBuffer);
-    if(ret != kCVReturnSuccess)
-        return;
+    CVPixelBufferRef processBuffer = [self getCurrentProcessBuffer];
+    
+    //CVReturn ret = CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &processBuffer);
+    //if(ret != kCVReturnSuccess)
+    //    return;
 
     /* create input frame texture from sdk */
     CVOpenGLESTextureRef texture_input = NULL;
-    [self createTexture:&texture_input FromPixelBuffer:m_pInputFrameBuffer];
+    [self createTexture:&texture_input FromPixelBuffer:readInputBuffer];
 
     //create output frame texture to flutter
     [self createTexture:&m_output_texture FromPixelBuffer:processBuffer];
@@ -471,8 +506,8 @@
 
         //std::lock_guard<std::mutex> lock(m_mutex);
         dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-        if(self->m_pRenderFrameBuffer)
-            CVBufferRelease(self->m_pRenderFrameBuffer);
+        //if(self->m_pRenderFrameBuffer)
+        //    CVBufferRelease(self->m_pRenderFrameBuffer);
         
         self->m_pRenderFrameBuffer = processBuffer;
         dispatch_semaphore_signal(_lock);
@@ -480,6 +515,8 @@
         
         CFRelease(texture_input);
     }
+    
+    CVBufferRelease(readInputBuffer);
 }
 
 
@@ -492,18 +529,15 @@
         [strong_ptr processingData];
     });
     
-    CVPixelBufferRef temp = nil;
-    
-    //std::lock_guard<std::mutex> lock(m_mutex);
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    if (m_pRenderFrameBuffer) {
-       temp = m_pRenderFrameBuffer;
-        CVBufferRetain(temp);
-    }
-    dispatch_semaphore_signal(_lock);
     
+    CVBufferRelease(m_pTempToCopyFrameBuffer);
+    m_pTempToCopyFrameBuffer = m_pRenderFrameBuffer;
+    CVBufferRetain(m_pTempToCopyFrameBuffer);
+    
+    dispatch_semaphore_signal(_lock);
     m_isNewFrameAvailable = NO;
-    return temp;
+    return m_pTempToCopyFrameBuffer;
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture>*)texture {
@@ -559,7 +593,6 @@
     if (ret != kCVReturnSuccess) {
         return;
     }
-    
 }
 
 - (void)destroyPixelBufferPool:(CVPixelBufferPoolRef)pool {
