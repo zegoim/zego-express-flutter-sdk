@@ -536,6 +536,25 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(ZegoAudioDeviceType deviceType) async {
+    return await _channel.invokeMethod('getAudioDeviceList', {
+      'type': deviceType
+    });
+  }
+
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
+    return await _channel.invokeMethod('getDefaultAudioDeviceID', {
+      'type': deviceType
+    });
+  }
+
+  Future<void> useAudioDevice(ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('useAudioDevice', {
+      'type': deviceType,
+      'deviceID': deviceID
+    });
+  }
+
   Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setCameraZoomFactor', {
       'factor': factor,
@@ -1194,33 +1213,23 @@ class ZegoExpressImpl {
       case 'onAudioDeviceStateChanged':
         if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList as Iterable<Map<dynamic, dynamic>>) {
-          ZegoDeviceInfo info = ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
-          infoList.add(info);
-        }
+        ZegoDeviceInfo info = ZegoDeviceInfo(map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
 
         ZegoExpressEngine.onAudioDeviceStateChanged!(
           ZegoUpdateType.values[map['updateType']],
           ZegoAudioDeviceType.values[map['deviceType']],
-          infoList
+          info
         );
         break;
 
       case 'onVideoDeviceStateChanged':
         if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList as Iterable<Map<dynamic, dynamic>>) {
-          ZegoDeviceInfo info = ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
-          infoList.add(info);
-        }
-
+        ZegoDeviceInfo info = ZegoDeviceInfo(map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
+        
         ZegoExpressEngine.onVideoDeviceStateChanged!(
           ZegoUpdateType.values[map['updateType']],
-          infoList
+          info
         );
         break;
 
