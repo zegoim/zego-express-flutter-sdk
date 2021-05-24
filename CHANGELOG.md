@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.3
+
+1. Fix android native sdk source
+
 ## 2.2.2
 
 1. Fix memory leak in iOS texture rendering
