@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.2
+
+1. Fix memory leak in iOS texture rendering
+2. Update native sdk to 2.7.0
+
 ## 2.2.1
 
 ### **Bug Fixes**

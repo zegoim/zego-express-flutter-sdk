@@ -310,7 +310,7 @@ class ZegoExpressEngine {
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
   static void Function(ZegoUpdateType updateType, ZegoDeviceInfo deviceInfo)? onVideoDeviceStateChanged;
-
+  
   /// The local captured audio sound level callback.
   ///
   /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
