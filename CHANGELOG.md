@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.2
+
+1. Fix memory leak in iOS texture rendering
+
 ## 2.2.1
 
 ### **Bug Fixes**
