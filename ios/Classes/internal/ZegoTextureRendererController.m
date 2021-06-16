@@ -18,6 +18,7 @@
 @property (strong) NSMutableDictionary<NSString *, ZegoTextureRenderer*> *remoteRenderers;
 @property(readonly, nonatomic) CADisplayLink* displayLink;
 @property (nonatomic, assign) BOOL isRendering;
+@property (nonatomic, assign) BOOL isInited;
 
 @end
 
@@ -117,18 +118,26 @@
 
 - (void)initController {
 
-    // Enable custom video render
-    ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
-    renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
-    renderConfig.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
-    [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:YES config:renderConfig];
+    if(!self.isInited) {
+        // Enable custom video render
+        ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
+        renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
+        renderConfig.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
+        [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:YES config:renderConfig];
 
-    // Set up custom video render handler
-    [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:self];
+        // Set up custom video render handler
+        [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:self];
+
+        // To avoid call enableCustomVideoRender many times because of flutter hotreload
+        self.isInited = YES;
+    }
+    
 }
 
 - (void)uninitController {
     [self removeAllRenderer];
+
+    self.isInited = NO;
 }
 
 - (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel viewMode:(ZegoViewMode)viewMode {
