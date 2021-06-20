@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.5.0
+
+1. BREAKING CHANGES: Add null-safety feature. This requires developers to upgrade Flutter to 2.x.
+
+## 2.2.3
+
+1. Fix android native sdk source
+
 ## 2.2.2
 
 1. Fix memory leak in iOS texture rendering
