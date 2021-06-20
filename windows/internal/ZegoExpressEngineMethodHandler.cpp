@@ -960,5 +960,355 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerUnloadResource(flutter::En
         result->Error("audioEffectPlayerUnLoadResource_Can_not_find_player", "Invoke `audioEffectPlayerUnloadResource` but can't find specific player");
     }
 }
+
+void ZegoExpressEngineMethodHandler::createMediaPlayer(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto mediaPlayer = EXPRESS::ZegoExpressSDK::getEngine()->createMediaPlayer();
+    if(mediaPlayer) {
+        auto index = mediaPlayer->getIndex();
+
+        mediaPlayer->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        mediaPlayerMap_[index] = mediaPlayer;
+
+        result->Success(FTValue(index));
+    } else {
+        result->Success(FTValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyMediaPlayer(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyMediaPlayer(mediaPlayer);
+    }
+
+    mediaPlayerMap_.erase(index);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerLoadResource(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        std::string path = std::get<std::string>(argument[FTValue("path")]);
+
+        mediaPlayer->loadResource(path, [=](int errorCode){
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+            result->Success(retMap);
+        });
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerStart(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        mediaPlayer->start();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerStop(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        mediaPlayer->stop();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerPause(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        mediaPlayer->pause();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerResume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        mediaPlayer->resume();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSeekTo(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        unsigned long long millisecond = 0;
+        if (std::holds_alternative<int32_t>(argument[FTValue("millisecond")])) {
+            millisecond = (unsigned long long)std::get<int32_t>(argument[FTValue("millisecond")]);
+        }
+        else {
+            millisecond = (unsigned long long)std::get<int64_t>(argument[FTValue("millisecond")]);
+        }
+
+        mediaPlayer->seekTo(millisecond, [=](int errorCode){
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            result->Success(retMap);
+        });
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableRepeat(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        bool enable = std::get<bool>(argument[FTValue("enable")]);
+
+        mediaPlayer->enableRepeat(enable);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableAux(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        bool enable = std::get<bool>(argument[FTValue("enable")]);
+
+        mediaPlayer->enableAux(enable);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerMuteLocal(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        bool mute = std::get<bool>(argument[FTValue("mute")]);
+
+        mediaPlayer->muteLocal(mute);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+
+        mediaPlayer->setVolume(volume);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+
+        mediaPlayer->setPlayVolume(volume);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetPublishVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+
+        mediaPlayer->setPublishVolume(volume);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetProgressInterval(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        int millsecond = std::get<int32_t>(argument[FTValue("millisecond")]);
+
+        mediaPlayer->setProgressInterval((unsigned long long)millsecond);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetPlayVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        int volume = mediaPlayer->getPlayVolume();
+        result->Success(FTValue(volume));
+    } else {
+        result->Success(FTValue(0));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetPublishVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        int volume = mediaPlayer->getPublishVolume();
+        result->Success(FTValue(volume));
+    } else {
+        result->Success(FTValue(0));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetTotalDuration(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        auto totalDuration = mediaPlayer->getTotalDuration();
+        // TODO: need test
+        result->Success(FTValue((int64_t)totalDuration));
+    } else {
+        result->Success(FTValue(0));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentProgress(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        auto currentProgress = mediaPlayer->getCurrentProgress();
+        // TODO: need test
+        result->Success(FTValue((int64_t)currentProgress));
+    } else {
+        result->Success(FTValue(0));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetAudioTrackCount(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        auto audioTrackCount = mediaPlayer->getAudioTrackCount();
+        result->Success(FTValue((int32_t)audioTrackCount));
+    } else {
+        result->Success(FTValue(0));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackIndex(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        auto trackIndex = std::get<int32_t>(argument[FTValue("trackIndex")]);
+        mediaPlayer->setAudioTrackIndex(trackIndex);
+        
+    }
+    
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetVoiceChangerParam(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        FTMap paramMap = std::get<FTMap>(argument[FTValue("param")]);
+        auto pitch = std::get<double>(paramMap[FTValue("pitch")]);
+
+        auto audioChannel = std::get<int32_t>(argument(FTValue("audioChannel")));
+
+        ZegoVoiceChangerParam param;
+        param.pitch = pitch;
+        mediaPlayer->setVoiceChangerParam((ZegoMediaPlayerAudioChannel)audioChannel, param);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentState(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        auto state = mediaPlayer->getCurrentState();
+        result->Success(FTValue((int32_t)state);
+    } else {
+        result->Success(FTValue(0));
+    }
+}
         
 

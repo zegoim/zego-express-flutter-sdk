@@ -307,6 +307,98 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     else if (method_call.method_name() == "audioEffectPlayerUnloadResource") {
         ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerUnloadResource(argument, std::move(result));
     }
+    else if(method_call.method_name() == "createMediaPlayer")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().createMediaPlayer(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "destroyMediaPlayer")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().destroyMediaPlayer(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerLoadResource")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResource(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerStart")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerStart(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerStop")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerStop(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerPause")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerPause(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerResume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerResume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSeekTo")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSeekTo(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerEnableRepeat")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerEnableRepeat(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerEnableAux")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerEnableAux(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerMuteLocal")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerMuteLocal(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSetVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSetPlayVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetPlayVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSetPublishVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetPublishVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSetProgressInterval")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetProgressInterval(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerGetPlayVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetPlayVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerGetPublishVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetPublishVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerGetTotalDuration")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetTotalDuration(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerGetCurrentProgress")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetCurrentProgress(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerGetAudioTrackCount")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetAudioTrackCount(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSetAudioTrackIndex")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetAudioTrackIndex(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerSetVoiceChangerParam")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetVoiceChangerParam(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "mediaPlayerGetCurrentState")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetCurrentState(argument, std::move(result));
+    }
     else {
       result->NotImplemented();
     }

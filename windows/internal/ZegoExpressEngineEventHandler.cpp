@@ -458,3 +458,55 @@ void ZegoExpressEngineEventHandler::onAudioEffectPlayStateUpdate(EXPRESS::IZegoA
 		eventSink_->Success(retMap);
 	}
 }
+
+void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(IZegoMediaPlayer* mediaPlayer, ZegoMediaPlayerState state, int errorCode)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMediaPlayerStateUpdate");
+		retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+		retMap[FTValue("state")] = FTValue(state);
+		retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onMediaPlayerNetworkEvent(IZegoMediaPlayer* mediaPlayer, ZegoMediaPlayerNetworkEvent networkEvent)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMediaPlayerNetworkEvent");
+		retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+		retMap[FTValue("networkEvent")] = FTValue(networkEvent);
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onMediaPlayerPlayingProgress(IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMediaPlayerPlayingProgress");
+		retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+		// TODO: convert need test?
+		retMap[FTValue("millisecond")] = FTValue((int64_t)millisecond);
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onMediaPlayerRecvSEI(IZegoMediaPlayer* mediaPlayer, const unsigned char* data, unsigned int dataLength)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMediaPlayerRecvSEI");
+		retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+		// TODO: convert need test?
+		std::vector<uint8_t> vec_data(data, data + dataLength);
+		retMap[FTValue("data")] = FTValue(vec_data);
+
+		eventSink_->Success(retMap);
+	}
+}
