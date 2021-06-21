@@ -37,5 +37,5 @@ android {
 
 dependencies {
     // for other module visit
-    api 'com.github.zegolibrary:express-video:2.7.0'
+    api 'com.github.zegolibrary:express-video:2.8.0'
 }

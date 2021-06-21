@@ -19,36 +19,39 @@ class QuickStartPage extends StatefulWidget {
 }
 
 class _QuickStartPageState extends State<QuickStartPage> {
-
   final String _roomID = 'QuickStartRoom-1';
 
-  int _previewViewID;
-  int _playViewID;
-  Widget _previewViewWidget;
-  Widget _playViewWidget;
+  int _previewViewID = -1;
+  int _playViewID = -1;
+  Widget? _previewViewWidget;
+  Widget? _playViewWidget;
   GlobalKey _playViewContainerKey = GlobalKey();
   GlobalKey _previewViewContainerKey = GlobalKey();
-  static const double viewRatio = 3.0/4.0;
+  static const double viewRatio = 3.0 / 4.0;
+
+  ZegoMediaPlayer? mediaPlayer;
 
   bool _isEngineActive = false;
   ZegoRoomState _roomState = ZegoRoomState.Disconnected;
   ZegoPublisherState _publisherState = ZegoPublisherState.NoPublish;
   ZegoPlayerState _playerState = ZegoPlayerState.NoPlay;
 
-  TextEditingController _publishingStreamIDController = new TextEditingController();
-  TextEditingController _playingStreamIDController = new TextEditingController();
+  TextEditingController _publishingStreamIDController =
+      new TextEditingController();
+  TextEditingController _playingStreamIDController =
+      new TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    ZegoExpressEngine.getVersion().then((value) => print('🌞 SDK Version: $value'));
+    ZegoExpressEngine.getVersion()
+        .then((value) => print('🌞 SDK Version: $value'));
 
     setZegoEventCallback();
   }
 
   @override
   void dispose() {
-
     // Can destroy the engine when you don't need audio and video calls
     //
     // Destroy engine will automatically logout room and stop publishing/playing stream.
@@ -61,23 +64,32 @@ class _QuickStartPageState extends State<QuickStartPage> {
     super.dispose();
   }
 
-
   // MARK: - Step 1: CreateEngine
 
   void createEngine() {
-    ZegoExpressEngine.createEngine(ZegoConfig.instance.appID, ZegoConfig.instance.appSign, ZegoConfig.instance.isTestEnv, ZegoConfig.instance.scenario, enablePlatformView: ZegoConfig.instance.enablePlatformView);
+    ZegoExpressEngine.createEngine(
+        ZegoConfig.instance.appID,
+        ZegoConfig.instance.appSign,
+        ZegoConfig.instance.isTestEnv,
+        ZegoConfig.instance.scenario,
+        enablePlatformView: ZegoConfig.instance.enablePlatformView);
 
     // Notify View that engine state changed
     setState(() => _isEngineActive = true);
 
     print('🚀 Create ZegoExpressEngine');
+
+    ZegoExpressEngine.instance
+        .getAudioConfig()
+        .then((value) => print('get audio config: $value'));
   }
 
   // MARK: - Step 2: LoginRoom
 
   void loginRoom() {
     // Instantiate a ZegoUser object
-    ZegoUser user = ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName);
+    ZegoUser user =
+        ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName);
 
     // Login Room
     ZegoExpressEngine.instance.loginRoom(_roomID, user);
@@ -99,8 +111,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   // MARK: - Step 3: StartPublishingStream
 
-  void startPublishingStream(String streamID, {double width = 360, double height = 640}) {
-
+  void startPublishingStream(String streamID,
+      {double width = 360, double height = 640}) {
     void _startPreview(int viewID) {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
       ZegoExpressEngine.instance.startPreview(canvas: canvas);
@@ -115,7 +127,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
     if (ZegoConfig.instance.enablePlatformView) {
       // Render with PlatformView
       setState(() {
-        _previewViewWidget = ZegoExpressEngine.instance.createPlatformView((viewID) {
+        _previewViewWidget =
+            ZegoExpressEngine.instance.createPlatformView((viewID) {
           _previewViewID = viewID;
           _startPreview(_previewViewID);
           _startPublishingStream(streamID);
@@ -123,7 +136,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
       });
     } else {
       // Render with TextureRenderer
-      ZegoExpressEngine.instance.createTextureRenderer(width.toInt(), height.toInt()).then((viewID) {
+      ZegoExpressEngine.instance
+          .createTextureRenderer(width.toInt(), height.toInt())
+          .then((viewID) {
         _previewViewID = viewID;
         setState(() => _previewViewWidget = Texture(textureId: viewID));
         _startPreview(viewID);
@@ -139,8 +154,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   // MARK: - Step 4: StartPlayingStream
 
-  void startPlayingStream(String streamID, {double width = 360, double height = 640}) {
-
+  void startPlayingStream(String streamID,
+      {double width = 360, double height = 640}) {
     void _startPlayingStream(int viewID, String streamID) {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
       ZegoExpressEngine.instance.startPlayingStream(streamID, canvas: canvas);
@@ -150,14 +165,17 @@ class _QuickStartPageState extends State<QuickStartPage> {
     if (ZegoConfig.instance.enablePlatformView) {
       // Render with PlatformView
       setState(() {
-        _playViewWidget = ZegoExpressEngine.instance.createPlatformView((viewID) {
+        _playViewWidget =
+            ZegoExpressEngine.instance.createPlatformView((viewID) {
           _playViewID = viewID;
           _startPlayingStream(viewID, streamID);
         });
       });
     } else {
       // Render with TextureRenderer
-      ZegoExpressEngine.instance.createTextureRenderer(width.toInt(), height.toInt()).then((viewID) {
+      ZegoExpressEngine.instance
+          .createTextureRenderer(width.toInt(), height.toInt())
+          .then((viewID) {
         _playViewID = viewID;
         setState(() => _playViewWidget = Texture(textureId: viewID));
         _startPlayingStream(viewID, streamID);
@@ -173,7 +191,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
   // MARK: - Exit
 
   void destroyEngine() async {
-
     clearPreviewView();
     clearPlayView();
 
@@ -196,19 +213,39 @@ class _QuickStartPageState extends State<QuickStartPage> {
   // MARK: - Zego Event
 
   void setZegoEventCallback() {
-    ZegoExpressEngine.onRoomStateUpdate = (String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData) {
-      print('🚩 🚪 Room state update, state: $state, errorCode: $errorCode, roomID: $roomID');
+    ZegoExpressEngine.onRoomStateUpdate = (String roomID, ZegoRoomState state,
+        int errorCode, Map<String, dynamic> extendedData) {
+      print(
+          '🚩 🚪 Room state update, state: $state, errorCode: $errorCode, roomID: $roomID');
       setState(() => _roomState = state);
     };
 
-    ZegoExpressEngine.onPublisherStateUpdate = (String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData) {
-      print('🚩 📤 Publisher state update, state: $state, errorCode: $errorCode, streamID: $streamID');
+    ZegoExpressEngine.onPublisherStateUpdate = (String streamID,
+        ZegoPublisherState state,
+        int errorCode,
+        Map<String, dynamic> extendedData) {
+      print(
+          '🚩 📤 Publisher state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _publisherState = state);
     };
 
-    ZegoExpressEngine.onPlayerStateUpdate = (String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData) {
-      print('🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
+    ZegoExpressEngine.onPlayerStateUpdate = (String streamID,
+        ZegoPlayerState state,
+        int errorCode,
+        Map<String, dynamic> extendedData) {
+      print(
+          '🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _playerState = state);
+    };
+
+    ZegoExpressEngine.onMediaPlayerStateUpdate =
+        (ZegoMediaPlayer player, ZegoMediaPlayerState state, int error) {
+      print("current mediaplayer state: $state, error: $error");
+    };
+
+    ZegoExpressEngine.onMediaPlayerPlayingProgress =
+        (ZegoMediaPlayer player, int millsecond) {
+      print("current mediaplayer progress: $millsecond");
     };
   }
 
@@ -248,13 +285,80 @@ class _QuickStartPageState extends State<QuickStartPage> {
     setState(() => _playViewWidget = null);
   }
 
+  void _onCreateMP() {
+    print('create mediaplayer');
+    ZegoExpressEngine.instance
+        .createMediaPlayer()
+        .then((value) => mediaPlayer = value);
+  }
+
+  void _onLoadMP() {
+    print('mp load');
+    mediaPlayer
+        ?.loadResource("https://storage.zego.im/demo/sample_astrix.mp3")
+        .then((value) => print('$value'));
+  }
+
+  void _onStartMP() {
+    print('mp start');
+    mediaPlayer?.enableRepeat(true);
+    //mediaPlayer?.enableAux(true);
+    mediaPlayer?.start();
+  }
+
+  void _onStopMP() {
+    print('mp stop');
+    mediaPlayer?.stop();
+  }
+
+  void _onDestroyMP() {
+    print('destroy mediaplayer');
+    ZegoExpressEngine.instance.destroyMediaPlayer(mediaPlayer!);
+  }
+
+  void _onPauseMP() {
+    print('pause mediaplayer');
+    mediaPlayer?.pause();
+  }
+
+  void _onResumeMP() {
+    print('resume mediaplayer');
+    mediaPlayer?.resume();
+  }
+
+  void _onSeekToMP() {
+    print('seek mediaplayer');
+    mediaPlayer?.seekTo(8000).then((value) => print("seek errorCode: $value"));
+  }
+
+  void _onGetMPInfo() {
+    print('get mp');
+    print("current index: ${mediaPlayer?.getIndex()}");
+    mediaPlayer
+        ?.getTotalDuration()
+        .then((value) => print("mp total duration: ${value}"));
+
+    mediaPlayer
+        ?.getCurrentProgress()
+        .then((value) => print("current progress: ${value}"));
+
+    mediaPlayer
+        ?.getPlayVolume()
+        .then((value) => print("current play volume: ${value}"));
+
+    mediaPlayer
+        ?.getPublishVolume()
+        .then((value) => print("current publish volume: ${value}"));
+  }
+
   // MARK: Widget
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('QuickStart')),
-      body: SafeArea(child: GestureDetector(
+      body: SafeArea(
+          child: GestureDetector(
         child: mainContent(),
         behavior: HitTestBehavior.translucent,
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -263,26 +367,23 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   Widget mainContent() {
-    return SingleChildScrollView(child: Column(children: [
+    return SingleChildScrollView(
+        child: Column(children: [
       Divider(),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(children: [
-
           viewsWidget(),
-
           stepOneCreateEngineWidget(),
-
           stepTwoLoginRoomWidget(),
-
           stepThreeStartPublishingStreamWidget(),
-
           stepFourStartPlayingStreamWidget(),
-
           Padding(padding: const EdgeInsets.only(bottom: 20.0)),
-
           CupertinoButton.filled(
-            child: Text('DestroyEngine', style: TextStyle(fontSize: 14.0),),
+            child: Text(
+              'DestroyEngine',
+              style: TextStyle(fontSize: 14.0),
+            ),
             onPressed: destroyEngine,
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
           )
@@ -328,18 +429,26 @@ class _QuickStartPageState extends State<QuickStartPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Step1:', style: TextStyle(fontWeight: FontWeight.bold),),
+        Text(
+          'Step1:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         Row(children: [
-          Column(children: [
-            Text('AppID: ${ZegoConfig.instance.appID}', style: TextStyle(fontSize: 10)),
-            Text('isTestEnv: ${ZegoConfig.instance.isTestEnv}', style: TextStyle(fontSize: 10))
-          ], crossAxisAlignment: CrossAxisAlignment.start,),
+          Column(
+            children: [
+              Text('AppID: ${ZegoConfig.instance.appID}',
+                  style: TextStyle(fontSize: 10)),
+              Text('isTestEnv: ${ZegoConfig.instance.isTestEnv}',
+                  style: TextStyle(fontSize: 10))
+            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
           Spacer(),
           Container(
             width: MediaQuery.of(context).size.width / 2.5,
             child: CupertinoButton.filled(
               child: Text(
-                _isEngineActive ? '✅ CreateEngine': 'CreateEngine',
+                _isEngineActive ? '✅ CreateEngine' : 'CreateEngine',
                 style: TextStyle(fontSize: 14.0),
               ),
               onPressed: createEngine,
@@ -353,125 +462,148 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   Widget stepTwoLoginRoomWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Step2:', style: TextStyle(fontWeight: FontWeight.bold),),
-        Row(children: [
-          Column(children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'Step2:',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      Row(children: [
+        Column(
+          children: [
             Text('RoomID: $_roomID', style: TextStyle(fontSize: 10)),
-            Text('UserID: ${ZegoConfig.instance.userID}', style: TextStyle(fontSize: 10)),
-          ], crossAxisAlignment: CrossAxisAlignment.start,),
-          Spacer(),
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: CupertinoButton.filled(
-              child: Text(
-                _roomState == ZegoRoomState.Connected ? '✅ LoginRoom' : 'LoginRoom',
-                style: TextStyle(fontSize: 14.0),
-              ),
-              onPressed: _roomState == ZegoRoomState.Disconnected ? loginRoom : logoutRoom,
-              padding: EdgeInsets.all(10.0),
+            Text('UserID: ${ZegoConfig.instance.userID}',
+                style: TextStyle(fontSize: 10)),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        Spacer(),
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: CupertinoButton.filled(
+            child: Text(
+              _roomState == ZegoRoomState.Connected
+                  ? '✅ LoginRoom'
+                  : 'LoginRoom',
+              style: TextStyle(fontSize: 14.0),
             ),
-          )
-        ]),
-        Divider(),
-      ]
-    );
+            onPressed: _roomState == ZegoRoomState.Disconnected
+                ? loginRoom
+                : logoutRoom,
+            padding: EdgeInsets.all(10.0),
+          ),
+        )
+      ]),
+      Divider(),
+    ]);
   }
 
   Widget stepThreeStartPublishingStreamWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Step3:', style: TextStyle(fontWeight: FontWeight.bold),),
-        SizedBox(height: 10),
-        Row(children: [
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: TextField(
-              controller: _publishingStreamIDController,
-              decoration: InputDecoration(
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'Step3:',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 10),
+      Row(children: [
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: TextField(
+            controller: _publishingStreamIDController,
+            decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(10.0),
                 isDense: true,
                 labelText: 'Publish StreamID:',
                 labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
                 hintText: 'Please enter streamID',
                 hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xff0e88eb)))
-              ),
-            ),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff0e88eb)))),
           ),
-          Spacer(),
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: CupertinoButton.filled(
-              child: Text(
-                _publisherState == ZegoPublisherState.Publishing ? '✅ StartPublishing' : 'StartPublishing',
-                style: TextStyle(fontSize: 14.0),
-              ),
-              onPressed: _publisherState == ZegoPublisherState.NoPublish ? () {
-                double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                Size widgetSize = _previewViewContainerKey.currentContext.size;
-                startPublishingStream(_publishingStreamIDController.text.trim(), width: widgetSize.width * pixelRatio, height: widgetSize.height * pixelRatio);
-              } : () {
-                stopPublishingStream();
-              },
-              padding: EdgeInsets.all(10.0),
+        ),
+        Spacer(),
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: CupertinoButton.filled(
+            child: Text(
+              _publisherState == ZegoPublisherState.Publishing
+                  ? '✅ StartPublishing'
+                  : 'StartPublishing',
+              style: TextStyle(fontSize: 14.0),
             ),
-          )
-        ]),
-        Divider(),
-      ]
-    );
+            onPressed: _publisherState == ZegoPublisherState.NoPublish
+                ? () {
+                    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+                    Size? widgetSize =
+                        _previewViewContainerKey.currentContext?.size;
+                    startPublishingStream(
+                        _publishingStreamIDController.text.trim(),
+                        width: widgetSize!.width * pixelRatio,
+                        height: widgetSize.height * pixelRatio);
+                  }
+                : () {
+                    stopPublishingStream();
+                  },
+            padding: EdgeInsets.all(10.0),
+          ),
+        )
+      ]),
+      Divider(),
+    ]);
   }
 
   Widget stepFourStartPlayingStreamWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Step4:', style: TextStyle(fontWeight: FontWeight.bold),),
-        SizedBox(height: 10),
-        Row(children: [
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: TextField(
-              controller: _playingStreamIDController,
-              decoration: InputDecoration(
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'Step4:',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 10),
+      Row(children: [
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: TextField(
+            controller: _playingStreamIDController,
+            decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(10.0),
                 isDense: true,
                 labelText: 'Play StreamID:',
                 labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
                 hintText: 'Please enter streamID',
                 hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xff0e88eb)))
-              ),
-            ),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff0e88eb)))),
           ),
-          Spacer(),
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: CupertinoButton.filled(
-              child: Text(
-                _playerState == ZegoPlayerState.Playing ? '✅ StartPlaying' : 'StartPlaying',
-                style: TextStyle(fontSize: 14.0),
-              ),
-              onPressed: _playerState == ZegoPlayerState.NoPlay ? () {
-                double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                Size widgetSize = _playViewContainerKey.currentContext.size;
-                startPlayingStream(_playingStreamIDController.text.trim(), width: widgetSize.width * pixelRatio, height: widgetSize.height * pixelRatio);
-              } : () {
-                stopPlayingStream(_playingStreamIDController.text.trim());
-              },
-              padding: EdgeInsets.all(10.0),
+        ),
+        Spacer(),
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: CupertinoButton.filled(
+            child: Text(
+              _playerState == ZegoPlayerState.Playing
+                  ? '✅ StartPlaying'
+                  : 'StartPlaying',
+              style: TextStyle(fontSize: 14.0),
             ),
-          )
-        ]),
-        Divider(),
-      ]
-    );
+            onPressed: _playerState == ZegoPlayerState.NoPlay
+                ? () {
+                    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+                    Size? widgetSize = _playViewContainerKey.currentContext?.size;
+                    startPlayingStream(_playingStreamIDController.text.trim(),
+                        width: widgetSize!.width * pixelRatio,
+                        height: widgetSize.height * pixelRatio);
+                  }
+                : () {
+                    stopPlayingStream(_playingStreamIDController.text.trim());
+                  },
+            padding: EdgeInsets.all(10.0),
+          ),
+        )
+      ]),
+      Divider(),
+    ]);
   }
-
 }
