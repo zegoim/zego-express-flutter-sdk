@@ -34,9 +34,17 @@ void ZegoExpressEngineMethodHandler::destroyEngine(flutter::EncodableMap& argume
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto engine = EXPRESS::ZegoExpressSDK::getEngine(); 
-    EXPRESS::ZegoExpressSDK::destroyEngine(engine, [&]() {
+
+    if (engine) {
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        EXPRESS::ZegoExpressSDK::destroyEngine(engine, [=]() {
+            sharedPtrResult->Success();
+        });
+    }
+    else {
         result->Success();
-    });
+    }
+    
 }
 
 void ZegoExpressEngineMethodHandler::setEngineConfig(flutter::EncodableMap& argument,
@@ -48,7 +56,7 @@ void ZegoExpressEngineMethodHandler::setEngineConfig(flutter::EncodableMap& argu
     if(configMap.size() > 0) {
         configPtr = std::make_unique<EXPRESS::ZegoEngineConfig>();
 
-        FTMap logConfigMap = std::get<FTMap>(argument[FTValue("logConfig")]);
+        FTMap logConfigMap = std::get<FTMap>(configMap[FTValue("logConfig")]);
         std::unique_ptr<EXPRESS::ZegoLogConfig> logConfigPtr = nullptr;
         if(logConfigMap.size() > 0) {
             logConfigPtr = std::make_unique<EXPRESS::ZegoLogConfig>();
@@ -58,7 +66,7 @@ void ZegoExpressEngineMethodHandler::setEngineConfig(flutter::EncodableMap& argu
 
         configPtr->logConfig = logConfigPtr.get();
 
-        FTMap advancedConfigMap = std::get<FTMap>(argument[FTValue("advancedConfig")]);
+        FTMap advancedConfigMap = std::get<FTMap>(configMap[FTValue("advancedConfig")]);
         for (auto& cfg : advancedConfigMap) {
             std::string key = std::get<std::string>(cfg.first);
             std::string value = std::get<std::string>(cfg.second);
@@ -157,11 +165,12 @@ void ZegoExpressEngineMethodHandler::setRoomExtraInfo(flutter::EncodableMap& arg
     auto key = std::get<std::string>(argument[FTValue("key")]);
     auto value = std::get<std::string>(argument[FTValue("value")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->setRoomExtraInfo(roomID, key, value, [&](int errorCode) {
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    EXPRESS::ZegoExpressSDK::getEngine()->setRoomExtraInfo(roomID, key, value, [=](int errorCode) {
         FTMap retMap;
         retMap[FTValue("errorCode")] = FTValue(errorCode);
 
-        result->Success(retMap);
+        sharedPtrResult->Success(retMap);
     });
 }
 
@@ -192,12 +201,13 @@ void ZegoExpressEngineMethodHandler::setStreamExtraInfo(flutter::EncodableMap& a
     auto extraInfo = std::get<std::string>(argument[FTValue("extraInfo")]);
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->setStreamExtraInfo(extraInfo, [&](int errorCode) {
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    EXPRESS::ZegoExpressSDK::getEngine()->setStreamExtraInfo(extraInfo, [=](int errorCode) {
         
         FTMap retMap;
         retMap[FTValue("errorCode")] = FTValue(errorCode);
         
-        result->Success(retMap);
+        sharedPtrResult->Success(retMap);
 
     }, (EXPRESS::ZegoPublishChannel)channel);
 }
@@ -842,10 +852,11 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerSeekTo(flutter::EncodableM
             millisecond = (unsigned long long)std::get<int64_t>(argument[FTValue("millisecond")]);
         }
 
-        player->seekTo(audioEffectID, millisecond, [&](int errorCode) {
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        player->seekTo(audioEffectID, millisecond, [=](int errorCode) {
             FTMap retMap;
             retMap[FTValue("errorCode")] = FTValue(errorCode);
-            result->Success(retMap);
+            sharedPtrResult->Success(retMap);
         });
     }
     else {
@@ -932,11 +943,12 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerLoadResource(flutter::Enco
         unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
         std::string path = std::get<std::string>(argument[FTValue("path")]);
 
-        player->loadResource(audioEffectID, path, [&](int errorCode) {
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        player->loadResource(audioEffectID, path, [=](int errorCode) {
             
             FTMap retMap;
             retMap[FTValue("errorCode")] = FTValue(errorCode);
-            result->Success(retMap);
+            sharedPtrResult->Success(retMap);
         });
     }
     else {
@@ -1001,11 +1013,13 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResource(flutter::EncodableM
     if(mediaPlayer) {
         std::string path = std::get<std::string>(argument[FTValue("path")]);
 
-        mediaPlayer->loadResource(path, [=](int errorCode){
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+
+        mediaPlayer->loadResource(path, [=](int errorCode) {
             FTMap retMap;
             retMap[FTValue("errorCode")] = FTValue(errorCode);
 
-            result->Success(retMap);
+            sharedPtrResult->Success(retMap);
         });
     }
 }
@@ -1077,10 +1091,11 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSeekTo(flutter::EncodableMap& ar
             millisecond = (unsigned long long)std::get<int64_t>(argument[FTValue("millisecond")]);
         }
 
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
         mediaPlayer->seekTo(millisecond, [=](int errorCode){
             FTMap retMap;
             retMap[FTValue("errorCode")] = FTValue(errorCode);
-            result->Success(retMap);
+            sharedPtrResult->Success(retMap);
         });
     }
 }
@@ -1287,11 +1302,11 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetVoiceChangerParam(flutter::En
         FTMap paramMap = std::get<FTMap>(argument[FTValue("param")]);
         auto pitch = std::get<double>(paramMap[FTValue("pitch")]);
 
-        auto audioChannel = std::get<int32_t>(argument(FTValue("audioChannel")));
+        auto audioChannel = std::get<int32_t>(argument[FTValue("audioChannel")]);
 
-        ZegoVoiceChangerParam param;
-        param.pitch = pitch;
-        mediaPlayer->setVoiceChangerParam((ZegoMediaPlayerAudioChannel)audioChannel, param);
+        EXPRESS::ZegoVoiceChangerParam param;
+        param.pitch = (float)pitch;
+        mediaPlayer->setVoiceChangerParam((EXPRESS::ZegoMediaPlayerAudioChannel)audioChannel, param);
     }
 
     result->Success();
@@ -1305,7 +1320,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentState(flutter::Encodab
 
     if(mediaPlayer) {
         auto state = mediaPlayer->getCurrentState();
-        result->Success(FTValue((int32_t)state);
+        result->Success(FTValue((int32_t)state));
     } else {
         result->Success(FTValue(0));
     }

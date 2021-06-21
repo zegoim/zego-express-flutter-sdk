@@ -459,7 +459,7 @@ void ZegoExpressEngineEventHandler::onAudioEffectPlayStateUpdate(EXPRESS::IZegoA
 	}
 }
 
-void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(IZegoMediaPlayer* mediaPlayer, ZegoMediaPlayerState state, int errorCode)
+void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerState state, int errorCode)
 {
 	if (eventSink_) {
 		FTMap retMap;
@@ -472,7 +472,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(IZegoMediaPlayer* m
 	}
 }
 
-void ZegoExpressEngineEventHandler::onMediaPlayerNetworkEvent(IZegoMediaPlayer* mediaPlayer, ZegoMediaPlayerNetworkEvent networkEvent)
+void ZegoExpressEngineEventHandler::onMediaPlayerNetworkEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerNetworkEvent networkEvent)
 {
 	if (eventSink_) {
 		FTMap retMap;
@@ -484,7 +484,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerNetworkEvent(IZegoMediaPlayer* 
 	}
 }
 
-void ZegoExpressEngineEventHandler::onMediaPlayerPlayingProgress(IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond)
+void ZegoExpressEngineEventHandler::onMediaPlayerPlayingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond)
 {
 	if (eventSink_) {
 		FTMap retMap;
@@ -497,7 +497,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerPlayingProgress(IZegoMediaPlaye
 	}
 }
 
-void ZegoExpressEngineEventHandler::onMediaPlayerRecvSEI(IZegoMediaPlayer* mediaPlayer, const unsigned char* data, unsigned int dataLength)
+void ZegoExpressEngineEventHandler::onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlayer* mediaPlayer, const unsigned char* data, unsigned int dataLength)
 {
 	if (eventSink_) {
 		FTMap retMap;
