@@ -396,6 +396,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
           stepTwoLoginRoomWidget(),
           stepThreeStartPublishingStreamWidget(),
           stepFourStartPlayingStreamWidget(),
+          stepFiveTemp(),
           Padding(padding: const EdgeInsets.only(bottom: 20.0)),
           CupertinoButton.filled(
             child: Text(
@@ -621,6 +622,127 @@ class _QuickStartPageState extends State<QuickStartPage> {
             padding: EdgeInsets.all(10.0),
           ),
         )
+      ]),
+      Divider(),
+    ]);
+  }
+
+  Widget stepFiveTemp() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'Step4:',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 10),
+      Row(children: [
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: TextField(
+            controller: _playingStreamIDController,
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(10.0),
+                isDense: true,
+                labelText: 'Play StreamID:',
+                labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
+                hintText: 'Please enter streamID',
+                hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff0e88eb)))),
+          ),
+        ),
+        Spacer(),
+        Container(
+            width: MediaQuery.of(context).size.width / 2.5,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    CupertinoButton.filled(
+                      child: Text(
+                        "create",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onCreateMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "load",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onLoadMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "start",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onStartMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    CupertinoButton.filled(
+                      child: Text(
+                        "stop",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onStopMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "pause",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onPauseMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "resume",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onResumeMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    CupertinoButton.filled(
+                      child: Text(
+                        "seekto",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onSeekToMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "destroy",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onDestroyMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "get",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onGetMPInfo,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  ],
+                ),
+              ],
+            ))
       ]),
       Divider(),
     ]);
