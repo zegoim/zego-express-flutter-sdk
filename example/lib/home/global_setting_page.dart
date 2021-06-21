@@ -27,7 +27,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   final TextEditingController _appSignEdController =
       new TextEditingController();
 
-  String _version;
+  String _version = "";
 
   bool _isTestEnv = true;
   ZegoScenario _scenario = ZegoScenario.General;
@@ -77,8 +77,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     setState(() => _isMicrophonePermissionGranted = microphoneStatus.isGranted);
   }
 
-  Future<bool> _onWillPop() {
-    return showDialog(
+  Future<bool> _onWillPop() async {
+    var result = await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -100,6 +100,10 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             ],
           );
         });
+    if (result == null)
+      return false;
+    else
+      return true;
   }
 
   void _onSaveButtonClicked() {
@@ -111,7 +115,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     //   return;
     // }
     //
-    int appID = int.tryParse(strAppID);
+    int? appID = int.tryParse(strAppID);
     // if (appID == null) {
     //   ZegoUtils.showAlert(context, 'AppID is invalid, should be int');
     //   return;
@@ -129,7 +133,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
       return;
     }
 
-    ZegoConfig.instance.appID = appID;
+    ZegoConfig.instance.appID = appID ?? 0;
     ZegoConfig.instance.appSign = appSign;
     ZegoConfig.instance.isTestEnv = this._isTestEnv;
     ZegoConfig.instance.scenario = this._scenario;
@@ -226,7 +230,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User ID: '),
           Padding(padding: const EdgeInsets.only(left: 10.0)),
-          Text(ZegoConfig.instance.userID ?? 'unknown'),
+          Text(ZegoConfig.instance.userID),
         ],
       ),
       Padding(
@@ -236,7 +240,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User Name: '),
           Padding(padding: const EdgeInsets.only(top: 10.0)),
-          Text(ZegoConfig.instance.userName ?? 'unknown'),
+          Text(ZegoConfig.instance.userName),
         ],
       ),
     ]);
@@ -306,7 +310,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   }
 
   Widget selectEnvironmentWidget() {
-    void onEnvironmentChanged(int value) {
+    void onEnvironmentChanged(int? value) {
+      if (value == null) return;
       setState(() => this._isTestEnv = value > 0 ? true : false);
     }
 

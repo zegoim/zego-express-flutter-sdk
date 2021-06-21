@@ -23,13 +23,15 @@ class QuickStartPage extends StatefulWidget {
 class _QuickStartPageState extends State<QuickStartPage> {
   final String _roomID = 'QuickStartRoom-1';
 
-  int _previewViewID;
-  int _playViewID;
-  Widget _previewViewWidget;
-  Widget _playViewWidget;
+  int _previewViewID = -1;
+  int _playViewID = -1;
+  Widget? _previewViewWidget;
+  Widget? _playViewWidget;
   GlobalKey _playViewContainerKey = GlobalKey();
   GlobalKey _previewViewContainerKey = GlobalKey();
   static const double viewRatio = 3.0 / 4.0;
+
+  ZegoMediaPlayer? mediaPlayer;
 
   bool _isEngineActive = false;
   ZegoRoomState _roomState = ZegoRoomState.Disconnected;
@@ -79,6 +81,10 @@ class _QuickStartPageState extends State<QuickStartPage> {
     setState(() => _isEngineActive = true);
 
     print('🚀 Create ZegoExpressEngine');
+
+    ZegoExpressEngine.instance
+        .getAudioConfig()
+        .then((value) => print('get audio config: $value'));
   }
 
   // MARK: - Step 2: LoginRoom
@@ -245,6 +251,16 @@ class _QuickStartPageState extends State<QuickStartPage> {
           '🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _playerState = state);
     };
+
+    ZegoExpressEngine.onMediaPlayerStateUpdate =
+        (ZegoMediaPlayer player, ZegoMediaPlayerState state, int error) {
+      print("current mediaplayer state: $state, error: $error");
+    };
+
+    ZegoExpressEngine.onMediaPlayerPlayingProgress =
+        (ZegoMediaPlayer player, int millsecond) {
+      print("current mediaplayer progress: $millsecond");
+    };
   }
 
   void clearZegoEventCallback() {
@@ -285,6 +301,72 @@ class _QuickStartPageState extends State<QuickStartPage> {
       ZegoExpressEngine.instance.destroyTextureRenderer(_playViewID);
     }
     setState(() => _playViewWidget = null);
+  }
+
+  void _onCreateMP() {
+    print('create mediaplayer');
+    ZegoExpressEngine.instance
+        .createMediaPlayer()
+        .then((value) => mediaPlayer = value);
+  }
+
+  void _onLoadMP() {
+    print('mp load');
+    mediaPlayer
+        ?.loadResource("https://storage.zego.im/demo/sample_astrix.mp3")
+        .then((value) => print('$value'));
+  }
+
+  void _onStartMP() {
+    print('mp start');
+    mediaPlayer?.enableRepeat(true);
+    //mediaPlayer?.enableAux(true);
+    mediaPlayer?.start();
+  }
+
+  void _onStopMP() {
+    print('mp stop');
+    mediaPlayer?.stop();
+  }
+
+  void _onDestroyMP() {
+    print('destroy mediaplayer');
+    ZegoExpressEngine.instance.destroyMediaPlayer(mediaPlayer!);
+  }
+
+  void _onPauseMP() {
+    print('pause mediaplayer');
+    mediaPlayer?.pause();
+  }
+
+  void _onResumeMP() {
+    print('resume mediaplayer');
+    mediaPlayer?.resume();
+  }
+
+  void _onSeekToMP() {
+    print('seek mediaplayer');
+    mediaPlayer?.seekTo(8000).then((value) => print("seek errorCode: $value"));
+  }
+
+  void _onGetMPInfo() {
+    print('get mp');
+    print("current index: ${mediaPlayer?.getIndex()}");
+    mediaPlayer
+        ?.getTotalDuration()
+        .then((value) => print("mp total duration: ${value}"));
+
+    mediaPlayer
+        ?.getCurrentProgress()
+        .then((value) => print("current progress: ${value}"));
+
+    mediaPlayer
+        ?.getPlayVolume()
+        .then((value) => print("current play volume: ${value}"));
+
+    mediaPlayer
+        ?.getPublishVolume()
+        .then((value) => print("current publish volume: ${value}"));
   }
 
   // MARK: Widget
@@ -471,11 +553,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
             onPressed: _publisherState == ZegoPublisherState.NoPublish
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size widgetSize =
-                        _previewViewContainerKey.currentContext.size;
+                    Size? widgetSize =
+                        _previewViewContainerKey.currentContext?.size;
                     startPublishingStream(
                         _publishingStreamIDController.text.trim(),
-                        width: widgetSize.width * pixelRatio,
+                        width: widgetSize!.width * pixelRatio,
                         height: widgetSize.height * pixelRatio);
                   }
                 : () {
@@ -527,9 +609,10 @@ class _QuickStartPageState extends State<QuickStartPage> {
             onPressed: _playerState == ZegoPlayerState.NoPlay
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size widgetSize = _playViewContainerKey.currentContext.size;
+                    Size? widgetSize =
+                        _playViewContainerKey.currentContext?.size;
                     startPlayingStream(_playingStreamIDController.text.trim(),
-                        width: widgetSize.width * pixelRatio,
+                        width: widgetSize!.width * pixelRatio,
                         height: widgetSize.height * pixelRatio);
                   }
                 : () {
