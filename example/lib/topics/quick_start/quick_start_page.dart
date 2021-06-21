@@ -535,11 +535,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
             onPressed: _publisherState == ZegoPublisherState.NoPublish
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size widgetSize =
-                        _previewViewContainerKey.currentContext.size;
+                    Size? widgetSize =
+                        _previewViewContainerKey.currentContext?.size;
                     startPublishingStream(
                         _publishingStreamIDController.text.trim(),
-                        width: widgetSize.width * pixelRatio,
+                        width: widgetSize!.width * pixelRatio,
                         height: widgetSize.height * pixelRatio);
                   }
                 : () {
@@ -591,9 +591,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
             onPressed: _playerState == ZegoPlayerState.NoPlay
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size widgetSize = _playViewContainerKey.currentContext.size;
+                    Size? widgetSize = _playViewContainerKey.currentContext?.size;
                     startPlayingStream(_playingStreamIDController.text.trim(),
-                        width: widgetSize.width * pixelRatio,
+                        width: widgetSize!.width * pixelRatio,
                         height: widgetSize.height * pixelRatio);
                   }
                 : () {
