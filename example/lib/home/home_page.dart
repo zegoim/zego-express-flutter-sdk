@@ -21,7 +21,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -30,32 +29,38 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onPressQuickStartButton() {
-    if (ZegoConfig.instance.appID > 0 && ZegoConfig.instance.appSign.isNotEmpty) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+    if (ZegoConfig.instance.appID > 0 &&
+        ZegoConfig.instance.appSign.isNotEmpty) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) {
         return QuickStartPage();
       }));
     } else {
-      showDialog(context: context, builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Tips'),
-          content: Text('Please set up AppID and other necessary configuration first'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            FlatButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
-                  return GlobalSettingPage();
-                }));
-              },
-            )
-          ],
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Tips'),
+              content: Text(
+                  'Please set up AppID and other necessary configuration first'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                FlatButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return GlobalSettingPage();
+                    }));
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 
@@ -68,60 +73,67 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               icon: Icon(Icons.settings),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
                   return GlobalSettingPage();
                 }));
               },
             )
           ],
         ),
-        body: SafeArea(child: Center(
+        body: SafeArea(
+            child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
-                child: Text('This is a simple demo showing how to use the SDK to implement basic publish and play stream functions.', style: TextStyle(fontSize: 10.0),),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 50.0, vertical: 20.0),
+                child: Text(
+                  'This is a simple demo showing how to use the SDK to implement basic publish and play stream functions.',
+                  style: TextStyle(fontSize: 10.0),
+                ),
               ),
-              Container(child: CupertinoButton(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                color: Color(0xff0e88eb),
-                child: Text('Quick Start'),
-                onPressed: onPressQuickStartButton,
-              ), width: 150.0),
+              Container(
+                  child: CupertinoButton(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    color: Color(0xff0e88eb),
+                    child: Text('Quick Start'),
+                    onPressed: onPressQuickStartButton,
+                  ),
+                  width: 150.0),
               SizedBox(height: 30),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                child: Text('For more features, please refer to the example topic demo.', style: TextStyle(fontSize: 10.0),),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 10.0),
+                child: Text(
+                  'For more features, please refer to the example topic demo.',
+                  style: TextStyle(fontSize: 10.0),
+                ),
               ),
-              Container(child: CupertinoButton(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                color: Color(0xff0e88eb),
-                child: Text('Open Github'),
-                onPressed: () => launch('https://github.com/zegoim/zego-express-example-topics-flutter'),
-              ), width: 150.0),
+              Container(
+                  child: CupertinoButton(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    color: Color(0xff0e88eb),
+                    child: Text('Open Github'),
+                    onPressed: () => launch(
+                        'https://github.com/zegoim/zego-express-example-topics-flutter'),
+                  ),
+                  width: 150.0),
             ],
           ),
-        ))
-    );
+        )));
   }
 }
 
-
 class TopicWidget extends ListTile {
+  Widget? targetPage;
+  BuildContext? context;
 
-  Widget targetPage;
-  BuildContext context;
-
-  TopicWidget(
-    String title,
-    Widget targetPage,
-    BuildContext context
-  ) : super(
-    title: Text(title),
-    trailing: Icon(Icons.keyboard_arrow_right),
-    onTap: () {
-
-    },
-  );
+  TopicWidget(String title, Widget targetPage, BuildContext context)
+      : super(
+          title: Text(title),
+          trailing: Icon(Icons.keyboard_arrow_right),
+          onTap: () {},
+        ) {}
 }

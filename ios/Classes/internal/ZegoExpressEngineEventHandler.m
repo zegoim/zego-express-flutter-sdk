@@ -821,7 +821,7 @@
     GUARD_SINK
     if (sink) {
         sink(@{
-            @"method": @"onMediaPlayerPlayingProgress",
+            @"method": @"onMediaPlayerRecvSEI",
             @"mediaPlayerIndex": mediaPlayer.index,
             @"data": [FlutterStandardTypedData typedDataWithBytes:data],
         });
