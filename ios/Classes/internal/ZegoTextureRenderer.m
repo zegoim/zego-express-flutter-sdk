@@ -190,7 +190,10 @@
             strong_ptr.viewHeight = size.height;
             
             [strong_ptr destroyPixelBufferPool:self->m_buffer_pool];
-            [strong_ptr createPixelBufferPool:&self->m_buffer_pool width:strong_ptr.viewWidth height:strong_ptr.viewHeight];
+            // [strong_ptr createPixelBufferPool:&self->m_buffer_pool width:strong_ptr.viewWidth height:strong_ptr.viewHeight];
+
+            // 重新创建 pool 的同时，需要重新创建 pixelbuffer，width/height 作用在 pixelbuffer 上
+            [strong_ptr initPixelBuffer];
             
             self->m_config_changed = YES;
             
