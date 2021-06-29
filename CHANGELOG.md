@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.5
+1. Fix a crash that may occur when multiple accesses to copyPixelBuffer at the same time
+
+## 2.2.4
+1. Fix The adjust texture render size need to rebuild pixel buffer
+
 ## 2.2.3
 
 1. Fix android native sdk source
