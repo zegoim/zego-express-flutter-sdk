@@ -19,7 +19,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration
-  Future<void> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig config}) async {
+  Future<void> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig? config}) async {
     return await ZegoExpressImpl.instance.loginRoom(roomID, user, config: config);
   }
 
@@ -39,7 +39,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [config] Advanced room configuration
-  Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig config}) async {
+  Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
     return await ZegoExpressImpl.instance.loginMultiRoom(roomID, config: config);
   }
 
@@ -63,7 +63,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [fromRoomID] Current roomID
   /// - [toRoomID] The next roomID
   /// - [config] Advanced room configuration
-  Future<void> switchRoom(String fromRoomID, String toRoomID, {ZegoRoomConfig config}) async {
+  Future<void> switchRoom(String fromRoomID, String toRoomID, {ZegoRoomConfig? config}) async {
     return await ZegoExpressImpl.instance.switchRoom(fromRoomID, toRoomID, config: config);
   }
 

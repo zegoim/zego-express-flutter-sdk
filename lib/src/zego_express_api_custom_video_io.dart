@@ -13,7 +13,7 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
   /// - [enable] enable or disable
   /// - [config] custom video capture config
   /// - [channel] publish channel
-  Future<void> enableCustomVideoCapture(bool enable, {ZegoCustomVideoCaptureConfig config, ZegoPublishChannel channel}) async {
+  Future<void> enableCustomVideoCapture(bool enable, {ZegoCustomVideoCaptureConfig? config, ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.enableCustomVideoCapture(enable, config: config, channel: channel);
   }
 

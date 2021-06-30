@@ -14,14 +14,14 @@ extension ZegoExpressEngineRecord on ZegoExpressEngine {
   ///
   /// - [config] Record config
   /// - [channel] Publishing stream channel
-  Future<void> startRecordingCapturedData(ZegoDataRecordConfig config, {ZegoPublishChannel channel}) async {
+  Future<void> startRecordingCapturedData(ZegoDataRecordConfig config, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.startRecordingCapturedData(config, channel: channel);
   }
 
   /// Stops recording locally captured audio or video.
   ///
   /// - [channel] Publishing stream channel
-  Future<void> stopRecordingCapturedData({ZegoPublishChannel channel}) async {
+  Future<void> stopRecordingCapturedData({ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.stopRecordingCapturedData(channel: channel);
   }
 

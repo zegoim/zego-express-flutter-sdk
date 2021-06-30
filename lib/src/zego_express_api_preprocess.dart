@@ -73,7 +73,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   ///
   /// - [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
   /// - [channel] Publishing stream channel
-  Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel channel}) async {
+  Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
   }
 
@@ -84,7 +84,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   ///
   /// - [option] Beauty configuration options
   /// - [channel] Publishing stream channel
-  Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel channel}) async {
+  Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
   }
 

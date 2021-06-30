@@ -47,7 +47,7 @@ dependencies:
   flutter:
   sdk: flutter
 
-  zego_express_engine: ^2.2.1
+  zego_express_engine: ^2.5.0
 ```
 
 - ### Depends on git
@@ -200,6 +200,24 @@ OpenGLRenderer  E  [SurfaceTexture-0-4944-46] updateTexImage: SurfaceTexture is 
 ```
 
 This issue is caused by thread unsafe when calling SurfaceTexture's updateTexImage() and release() internally in Flutter Engine. It has been fixed in Flutter `1.24-candidate.2` version. For details, see: [https://github.com/flutter/engine/pull/21777](https://github.com/flutter/engine/pull/21777)
+
+### 6. Running flutter pub get command failed, indicating that the Dart version is too low
+
+```text
+Running "flutter pub get" in zego-express-flutter-sdk...
+
+The current Dart SDK version is 2.10.4.
+
+Because zego_express_engine requires SDK version >=2.12.0 <3.0.0, version solving failed.
+pub get failed (1; Because zego_express_engine requires SDK version >=2.12.0 <3.0.0, version solving failed.)
+
+```
+
+This issue is because Zego Flutter SDK has added a new feature of null safety support starting from 2.5.0. Therefore, when developers use the Flutter RTC SDK version 2.5.0 or higher, they must upgrade the Flutter version to 2.0 (the corresponding Dart version is 2.12.0) or higher.
+
+
+
+
 
 ## 9️⃣ How to contribute
 
