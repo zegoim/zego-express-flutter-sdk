@@ -25,7 +25,7 @@ void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argumen
     bool isTestEnv = std::get<bool>(argument[FTValue("isTestEnv")]);
     int scenario = std::get<int32_t>(argument[FTValue("scenario")]);
 
-    EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
+    auto engine = EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
     engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
 
     result->Success();
@@ -681,12 +681,12 @@ void startAudioDataObserver(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto bitmask = std::get<int32_t>(argument[FTValue("observerBitMask")]);
-    auto param = std::get<FTMap>(argument[FTValue("param"));
+    auto param = std::get<FTMap>(argument[FTValue("param")]);
 
-    ZegoAudioFrameParam param;
-    param.sampleRate = param[FTValue("sampleRate")];
-    param.channel = param[FTValue("channel")];
-    EXPRESS::ZegoExpressSDK::getEngine()->startAudioDataObserver(bitmask, param);
+    EXPRESS::ZegoAudioFrameParam nativeParam;
+    nativeParam.sampleRate = (EXPRESS::ZegoAudioSampleRate)std::get<int32_t>(param[FTValue("sampleRate")]);
+    nativeParam.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(param[FTValue("channel")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->startAudioDataObserver(bitmask, nativeParam);
 
     result->Success();
 }

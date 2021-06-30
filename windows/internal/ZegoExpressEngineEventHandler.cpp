@@ -511,12 +511,12 @@ void ZegoExpressEngineEventHandler::onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlay
 	}
 }
 
-void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param)
+void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param)
 {
 	if(eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onCapturedAudioData");
-		std::vector<uint8_t> dataVec(data, dataLength);
+		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
@@ -528,12 +528,12 @@ void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* dat
 	}
 }
 
-void ZegoExpressEngineEventHandler::onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param)
+void ZegoExpressEngineEventHandler::onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param)
 {
 	if(eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onPlaybackAudioData");
-		std::vector<uint8_t> dataVec(data, dataLength);
+		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
@@ -545,12 +545,12 @@ void ZegoExpressEngineEventHandler::onPlaybackAudioData(const unsigned char* dat
 	}
 }
 
-void ZegoExpressEngineEventHandler::onMixedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param)
+void ZegoExpressEngineEventHandler::onMixedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param)
 {
 	if(eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onMixedAudioData");
-		std::vector<uint8_t> dataVec(data, dataLength);
+		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
@@ -562,12 +562,12 @@ void ZegoExpressEngineEventHandler::onMixedAudioData(const unsigned char* data, 
 	}
 }
 
-void ZegoExpressEngineEventHandler::onPlayerAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param, const std::string& streamID)
+void ZegoExpressEngineEventHandler::onPlayerAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param, const std::string& streamID)
 {
 	if(eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onPlayerAudioData");
-		std::vector<uint8_t> dataVec(data, dataLength);
+		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;

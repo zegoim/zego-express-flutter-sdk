@@ -119,13 +119,13 @@ protected:
     void onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlayer* mediaPlayer, const unsigned char* data, unsigned int dataLength) override;
 
 protected:
-    void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param) override;
+    void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 
-    void onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param) override;
+    void onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 
-    void onMixedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param) override;
+    void onMixedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 
-    void onPlayerAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param, const std::string& streamID) override;
+    void onPlayerAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param, const std::string& streamID) override;
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
