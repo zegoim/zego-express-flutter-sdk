@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.5.1
+
+1. Fix a bug that List not convert to Iterable
+
 ## 2.5.0
 
 1. BREAKING CHANGES: Add null-safety feature. This requires developers to upgrade Flutter to 2.x.
