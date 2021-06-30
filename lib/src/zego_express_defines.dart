@@ -549,6 +549,26 @@ enum ZegoAudioEffectPlayState {
   PlayEnded
 }
 
+/// audio sample rate.
+enum ZegoAudioSampleRate {
+  /// Unknown
+  Unknown,
+  /// 8K
+  8K,
+  /// 16K
+  16K,
+  /// 22.05K
+  22K,
+  /// 24K
+  24K,
+  /// 32K
+  32K,
+  /// 44.1K
+  44K,
+  /// 48K
+  48K
+}
+
 /// Record type.
 enum ZegoDataRecordType {
   /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
@@ -1502,7 +1522,32 @@ class ZegoBarrageMessageInfo {
   /// Message sender.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser fromUser;
 
-  ZegoBarrageMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);
+  ZegoBarrageMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser): assert(message != null), assert(messageID != null), assert(sendTime != null), assert(fromUser != null);
+}
+
+/// Parameter object for audio frame.
+///
+/// Including the sampling rate and channel of the audio frame
+class ZegoAudioFrameParam {
+
+  /// Sampling Rate
+  ZegoAudioSampleRate sampleRate;
+
+  /// Audio channel, default is Mono
+  ZegoAudioChannel channel;
+
+  ZegoAudioFrameParam(this.sampleRate, this.channel): assert(sampleRate != null), assert(channel != null);
+
+  ZegoAudioFrameParam.fromMap(Map<dynamic, dynamic> map):
+    sampleRate = map['sampleRate'],
+    channel = map['channel'];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'sampleRate': this.sampleRate.index,
+      'channel': this.channel.index
+    };
+  }
 
 }
 

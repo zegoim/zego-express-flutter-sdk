@@ -1,10 +1,8 @@
-
 import 'dart:typed_data';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 class ZegoExpressEngine {
-
   /// Private constructor
   ZegoExpressEngine._internal();
 
@@ -20,8 +18,12 @@ class ZegoExpressEngine {
   /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
   /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
-  static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
-    return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
+  static Future<void> createEngine(
+      int appID, String appSign, bool isTestEnv, ZegoScenario scenario,
+      {bool? enablePlatformView}) async {
+    return await ZegoExpressImpl.createEngine(
+        appID, appSign, isTestEnv, scenario,
+        enablePlatformView: enablePlatformView);
   }
 
   /// Destroys the singleton instance of ZegoExpressEngine asynchronously.
@@ -76,7 +78,8 @@ class ZegoExpressEngine {
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [funcName] Function name
   /// - [info] Detailed error information
-  static void Function(int errorCode, String funcName, String info)? onDebugError;
+  static void Function(int errorCode, String funcName, String info)?
+      onDebugError;
 
   /// The callback triggered when the audio/video engine state changes.
   ///
@@ -94,7 +97,8 @@ class ZegoExpressEngine {
   /// - [state] Changed room state
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
-  static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData)? onRoomStateUpdate;
+  static void Function(String roomID, ZegoRoomState state, int errorCode,
+      Map<String, dynamic> extendedData)? onRoomStateUpdate;
 
   /// The callback triggered when the number of other users in the room increases or decreases.
   ///
@@ -106,7 +110,9 @@ class ZegoExpressEngine {
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
   /// - [userList] List of users changed in the current room
-  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoUser> userList)? onRoomUserUpdate;
+  static void Function(
+          String roomID, ZegoUpdateType updateType, List<ZegoUser> userList)?
+      onRoomUserUpdate;
 
   /// The callback triggered every 30 seconds to report the current number of online users.
   ///
@@ -127,7 +133,11 @@ class ZegoExpressEngine {
   /// - [updateType] Update type (add/delete)
   /// - [streamList] Updated stream list
   /// - [extendedData] Extended information with stream updates.
-  static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList, Map<String, dynamic> extendedData)? onRoomStreamUpdate;
+  static void Function(
+      String roomID,
+      ZegoUpdateType updateType,
+      List<ZegoStream> streamList,
+      Map<String, dynamic> extendedData)? onRoomStreamUpdate;
 
   /// The callback triggered when there is an update on the extra information of the streams published by other users in the same room.
   ///
@@ -137,7 +147,8 @@ class ZegoExpressEngine {
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [streamList] List of streams that the extra info was updated.
-  static void Function(String roomID, List<ZegoStream> streamList)? onRoomStreamExtraInfoUpdate;
+  static void Function(String roomID, List<ZegoStream> streamList)?
+      onRoomStreamExtraInfoUpdate;
 
   /// The callback triggered when there is an update on the extra information of the room.
   ///
@@ -145,7 +156,9 @@ class ZegoExpressEngine {
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [roomExtraInfoList] List of the extra info updated.
-  static void Function(String roomID, List<ZegoRoomExtraInfo> roomExtraInfoList)? onRoomExtraInfoUpdate;
+  static void Function(
+          String roomID, List<ZegoRoomExtraInfo> roomExtraInfoList)?
+      onRoomExtraInfoUpdate;
 
   /// The callback triggered when the state of stream publishing changes.
   ///
@@ -157,7 +170,8 @@ class ZegoExpressEngine {
   /// - [state] State of publishing stream
   /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended information with state updates.
-  static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData)? onPublisherStateUpdate;
+  static void Function(String streamID, ZegoPublisherState state, int errorCode,
+      Map<String, dynamic> extendedData)? onPublisherStateUpdate;
 
   /// Callback for current stream publishing quality.
   ///
@@ -167,7 +181,8 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [quality] Publishing stream quality, including audio and video framerate, bitrate, RTT, etc.
-  static void Function(String streamID, ZegoPublishStreamQuality quality)? onPublisherQualityUpdate;
+  static void Function(String streamID, ZegoPublishStreamQuality quality)?
+      onPublisherQualityUpdate;
 
   /// The callback triggered when the first audio frame is captured.
   ///
@@ -183,7 +198,8 @@ class ZegoExpressEngine {
   /// Developers can use this callback to determine whether SDK has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
   ///
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
-  static void Function(ZegoPublishChannel channel)? onPublisherCapturedVideoFirstFrame;
+  static void Function(ZegoPublishChannel channel)?
+      onPublisherCapturedVideoFirstFrame;
 
   /// The callback triggered when the video capture resolution changes.
   ///
@@ -194,7 +210,8 @@ class ZegoExpressEngine {
   /// - [width] Video capture resolution width
   /// - [height] Video capture resolution height
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
-  static void Function(int width, int height, ZegoPublishChannel channel)? onPublisherVideoSizeChanged;
+  static void Function(int width, int height, ZegoPublishChannel channel)?
+      onPublisherVideoSizeChanged;
 
   /// The callback triggered when the state of relayed streaming to CDN changes.
   ///
@@ -204,7 +221,8 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [infoList] List of information that the current CDN is relaying
-  static void Function(String streamID, List<ZegoStreamRelayCDNInfo> infoList)? onPublisherRelayCDNStateUpdate;
+  static void Function(String streamID, List<ZegoStreamRelayCDNInfo> infoList)?
+      onPublisherRelayCDNStateUpdate;
 
   /// The callback triggered when the state of stream playing changes.
   ///
@@ -215,7 +233,8 @@ class ZegoExpressEngine {
   /// - [state] State of playing stream
   /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned
-  static void Function(String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData)? onPlayerStateUpdate;
+  static void Function(String streamID, ZegoPlayerState state, int errorCode,
+      Map<String, dynamic> extendedData)? onPlayerStateUpdate;
 
   /// Callback for current stream playing quality.
   ///
@@ -225,7 +244,8 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [quality] Playing stream quality, including audio and video framerate, bitrate, RTT, etc.
-  static void Function(String streamID, ZegoPlayStreamQuality quality)? onPlayerQualityUpdate;
+  static void Function(String streamID, ZegoPlayStreamQuality quality)?
+      onPlayerQualityUpdate;
 
   /// The callback triggered when a media event occurs during streaming playing.
   ///
@@ -234,7 +254,8 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [event] Specific events received when playing the stream.
-  static void Function(String streamID, ZegoPlayerMediaEvent event)? onPlayerMediaEvent;
+  static void Function(String streamID, ZegoPlayerMediaEvent event)?
+      onPlayerMediaEvent;
 
   /// The callback triggered when the first audio frame is received.
   ///
@@ -268,7 +289,8 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID
   /// - [width] Video decoding resolution width
   /// - [height] Video decoding resolution height
-  static void Function(String streamID, int width, int height)? onPlayerVideoSizeChanged;
+  static void Function(String streamID, int width, int height)?
+      onPlayerVideoSizeChanged;
 
   /// The callback triggered when Supplemental Enhancement Information is received.
   ///
@@ -285,7 +307,8 @@ class ZegoExpressEngine {
   ///
   /// - [taskID] Stream mixing task ID
   /// - [infoList] List of information that the current CDN is being mixed
-  static void Function(String taskID, List<ZegoStreamRelayCDNInfo> infoList)? onMixerRelayCDNStateUpdate;
+  static void Function(String taskID, List<ZegoStreamRelayCDNInfo> infoList)?
+      onMixerRelayCDNStateUpdate;
 
   /// The callback triggered when the sound level of any input stream changes in the stream mixing process.
   ///
@@ -301,7 +324,10 @@ class ZegoExpressEngine {
   /// - [updateType] Update type (add/delete)
   /// - [deviceType] Audio device type
   /// - [deviceInfo] Audio device information
-  static void Function(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType, ZegoDeviceInfo deviceInfo)? onAudioDeviceStateChanged;
+  static void Function(
+      ZegoUpdateType updateType,
+      ZegoAudioDeviceType deviceType,
+      ZegoDeviceInfo deviceInfo)? onAudioDeviceStateChanged;
 
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
@@ -309,8 +335,9 @@ class ZegoExpressEngine {
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
-  static void Function(ZegoUpdateType updateType, ZegoDeviceInfo deviceInfo)? onVideoDeviceStateChanged;
-  
+  static void Function(ZegoUpdateType updateType, ZegoDeviceInfo deviceInfo)?
+      onVideoDeviceStateChanged;
+
   /// The local captured audio sound level callback.
   ///
   /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
@@ -325,7 +352,8 @@ class ZegoExpressEngine {
   /// The callback notification period is the setting parameter of [startSoundLevelMonitor].
   ///
   /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
-  static void Function(Map<String, double> soundLevels)? onRemoteSoundLevelUpdate;
+  static void Function(Map<String, double> soundLevels)?
+      onRemoteSoundLevelUpdate;
 
   /// The local captured audio spectrum callback.
   ///
@@ -333,7 +361,8 @@ class ZegoExpressEngine {
   /// The callback notification period is the setting parameter of [startAudioSpectrumMonitor].
   ///
   /// - [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30]
-  static void Function(List<double> audioSpectrum)? onCapturedAudioSpectrumUpdate;
+  static void Function(List<double> audioSpectrum)?
+      onCapturedAudioSpectrumUpdate;
 
   /// The remote playing streams audio spectrum callback.
   ///
@@ -341,7 +370,8 @@ class ZegoExpressEngine {
   /// The callback notification period is the setting parameter of [startAudioSpectrumMonitor].
   ///
   /// - [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
-  static void Function(Map<String, List<double>> audioSpectrums)? onRemoteAudioSpectrumUpdate;
+  static void Function(Map<String, List<double>> audioSpectrums)?
+      onRemoteAudioSpectrumUpdate;
 
   /// The callback triggered when a device exception occurs.
   ///
@@ -359,7 +389,8 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [state] Remote camera status
-  static void Function(String streamID, ZegoRemoteDeviceState state)? onRemoteCameraStateUpdate;
+  static void Function(String streamID, ZegoRemoteDeviceState state)?
+      onRemoteCameraStateUpdate;
 
   /// The callback triggered when the state of the remote microphone changes.
   ///
@@ -369,7 +400,8 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID
   /// - [state] Remote microphone status
-  static void Function(String streamID, ZegoRemoteDeviceState state)? onRemoteMicStateUpdate;
+  static void Function(String streamID, ZegoRemoteDeviceState state)?
+      onRemoteMicStateUpdate;
 
   /// Callback for device's audio route changed.
   ///
@@ -384,7 +416,9 @@ class ZegoExpressEngine {
   ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
-  static void Function(String roomID, List<ZegoBroadcastMessageInfo> messageList)? onIMRecvBroadcastMessage;
+  static void Function(
+          String roomID, List<ZegoBroadcastMessageInfo> messageList)?
+      onIMRecvBroadcastMessage;
 
   /// The callback triggered when Barrage Messages are received.
   ///
@@ -392,7 +426,8 @@ class ZegoExpressEngine {
   ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
-  static void Function(String roomID, List<ZegoBarrageMessageInfo> messageList)? onIMRecvBarrageMessage;
+  static void Function(String roomID, List<ZegoBarrageMessageInfo> messageList)?
+      onIMRecvBarrageMessage;
 
   /// The callback triggered when a Custom Command is received.
   ///
@@ -401,32 +436,37 @@ class ZegoExpressEngine {
   /// - [roomID] Room ID
   /// - [fromUser] Sender of the command
   /// - [command] Command content received
-  static void Function(String roomID, ZegoUser fromUser, String command)? onIMRecvCustomCommand;
+  static void Function(String roomID, ZegoUser fromUser, String command)?
+      onIMRecvCustomCommand;
 
   /// The callback triggered when the state of the media player changes.
   ///
   /// - [mediaPlayer] Callback player object
   /// - [state] Media player status
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
-  static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state, int errorCode)? onMediaPlayerStateUpdate;
+  static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state,
+      int errorCode)? onMediaPlayerStateUpdate;
 
   /// The callback triggered when the network status of the media player changes.
   ///
   /// - [mediaPlayer] Callback player object
   /// - [networkEvent] Network status event
-  static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerNetworkEvent networkEvent)? onMediaPlayerNetworkEvent;
+  static void Function(ZegoMediaPlayer mediaPlayer,
+      ZegoMediaPlayerNetworkEvent networkEvent)? onMediaPlayerNetworkEvent;
 
   /// The callback to report the current playback progress of the media player.
   ///
   /// - [mediaPlayer] Callback player object
   /// - [millisecond] Progress in milliseconds
-  static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)? onMediaPlayerPlayingProgress;
+  static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
+      onMediaPlayerPlayingProgress;
 
   /// The callback triggered when the media player got media side info.
   ///
   /// - [mediaPlayer] Callback player object
   /// - [data] SEI content
-  static void Function(ZegoMediaPlayer mediaPlayer, Uint8List data)? onMediaPlayerRecvSEI;
+  static void Function(ZegoMediaPlayer mediaPlayer, Uint8List data)?
+      onMediaPlayerRecvSEI;
 
   /// Audio effect playback state callback.
   ///
@@ -436,7 +476,11 @@ class ZegoExpressEngine {
   /// - [audioEffectID] The ID of the audio effect resource that triggered this callback
   /// - [state] The playback state of the audio effect
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
-  static void Function(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode)? onAudioEffectPlayStateUpdate;
+  static void Function(
+      ZegoAudioEffectPlayer audioEffectPlayer,
+      int audioEffectID,
+      ZegoAudioEffectPlayState state,
+      int errorCode)? onAudioEffectPlayStateUpdate;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
@@ -444,14 +488,21 @@ class ZegoExpressEngine {
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [config] Record config
   /// - [channel] Publishing stream channel
-  static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel)? onCapturedDataRecordStateUpdate;
+  static void Function(
+      ZegoDataRecordState state,
+      int errorCode,
+      ZegoDataRecordConfig config,
+      ZegoPublishChannel channel)? onCapturedDataRecordStateUpdate;
 
   /// The callback to report the current recording progress.
   ///
   /// - [progress] File recording progress, which allows developers to hint at the UI, etc.
   /// - [config] Record config
   /// - [channel] Publishing stream channel
-  static void Function(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel)? onCapturedDataRecordProgressUpdate;
+  static void Function(
+      ZegoDataRecordProgress progress,
+      ZegoDataRecordConfig config,
+      ZegoPublishChannel channel)? onCapturedDataRecordProgressUpdate;
 
   /// The system performance status callback.
   ///
@@ -472,7 +523,8 @@ class ZegoExpressEngine {
   ///
   /// - [errorCode] The error code corresponding to the network speed test, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [type] Uplink or downlink
-  static void Function(int errorCode, ZegoNetworkSpeedTestType type)? onNetworkSpeedTestError;
+  static void Function(int errorCode, ZegoNetworkSpeedTestType type)?
+      onNetworkSpeedTestError;
 
   /// The callback triggered when quality updated when testing network speed.
   ///
@@ -480,6 +532,56 @@ class ZegoExpressEngine {
   ///
   /// - [quality] Network speed quality
   /// - [type] Uplink or downlink
-  static void Function(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type)? onNetworkSpeedTestQualityUpdate;
+  static void Function(
+          ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type)?
+      onNetworkSpeedTestQualityUpdate;
 
+  /// The callback for obtaining the audio data captured by the local microphone.
+  ///
+  /// In non-custom audio capture mode, the SDK capture the microphone's sound, but the developer may also need to get a copy of the audio data captured by the SDK is available through this callback.
+  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0b01 that means 1 << 0, this callback will be triggered only when it is in the publishing stream state.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  static void Function(
+          Uint8List data, int dataLength, ZegoAudioFrameParam param)?
+      onCapturedAudioData;
+
+  /// The callback for obtaining the audio data of all the streams playback by SDK.
+  ///
+  /// This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
+  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0b100 that means 1 << 2, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+  /// When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  static void Function(
+          Uint8List data, int dataLength, ZegoAudioFrameParam param)?
+      onPlaybackAudioData;
+
+  /// The callback for obtaining the mixed audio data. Such mixed auido data are generated by the SDK by mixing the audio data of all the remote playing streams and the auido data captured locally.
+  ///
+  /// The audio data of all playing data is mixed with the data captured by the local microphone before it is sent to the loudspeaker, and calleback out in this way.
+  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0x04, this callback will be triggered only when it is in the publishing stream state or playing stream state.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  static void Function(
+          Uint8List data, int dataLength, ZegoAudioFrameParam param)?
+      onMixedAudioData;
+
+  /// The callback for obtaining the audio data of each stream.
+  ///
+  /// This function will call back the data corresponding to each playing stream. Different from [onPlaybackAudioData], the latter is the mixed data of all playing streams. If developers need to process a piece of data separately, they can use this callback.
+  /// On the premise of calling [setAudioDataHandler] to set up listening for this callback, calling [enableAudioDataCallback] to set the mask 0x08 that is 1 << 3, and this callback will be triggered when the SDK audio and video engine starts to play the stream.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  /// - [streamID] Corresponding stream ID
+  static void Function(Uint8List data, int dataLength,
+      ZegoAudioFrameParam param, String streamID)? onPlayerAudioData;
 }

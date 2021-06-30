@@ -26,6 +26,7 @@ void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argumen
     int scenario = std::get<int32_t>(argument[FTValue("scenario")]);
 
     EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
+    engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
 
     result->Success();
 }
@@ -672,6 +673,28 @@ void ZegoExpressEngineMethodHandler::enableVirtualStereo(flutter::EncodableMap& 
     auto angle = std::get<int32_t>(argument[FTValue("angle")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->enableVirtualStereo(enable, angle);
+
+    result->Success();
+}
+
+void startAudioDataObserver(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto bitmask = std::get<int32_t>(argument[FTValue("observerBitMask")]);
+    auto param = std::get<FTMap>(argument[FTValue("param"));
+
+    ZegoAudioFrameParam param;
+    param.sampleRate = param[FTValue("sampleRate")];
+    param.channel = param[FTValue("channel")];
+    EXPRESS::ZegoExpressSDK::getEngine()->startAudioDataObserver(bitmask, param);
+
+    result->Success();
+}
+
+void stopAudioDataObserver(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    EXPRESS::ZegoExpressSDK::getEngine()->stopAudioDataObserver();
 
     result->Success();
 }

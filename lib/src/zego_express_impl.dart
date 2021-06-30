@@ -797,6 +797,21 @@ class ZegoExpressImpl {
     });
   }
 
+  /* Custom Audio IO */
+  Future<void> startAudioDataObserver(
+      int observerBitMask, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('startAudioDataObserver', {
+      'observerBitMask': observerBitMask,
+      'param': param != null
+          ? {'sampleRate': param.sampleRate, 'channel': param.channel}
+          : {}
+    });
+  }
+
+  Future<void> stopAudioDataObserver() async {
+    return await _channel.invokeMethod('stopAudioDataObserver', {});
+  }
+
   /* Utilities */
 
   Future<void> startPerformanceMonitor({int? millisecond}) async {
@@ -1358,6 +1373,51 @@ class ZegoExpressImpl {
             ZegoDataRecordConfig(map['config']['filePath'],
                 ZegoDataRecordType.values[map['config']['recordType']]),
             ZegoPublishChannel.values[map['channel']]);
+        break;
+
+      case 'onCapturedAudioData':
+        if (ZegoExpressEngine.onCapturedAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        ZegoExpressEngine.onCapturedAudioData!(data, dataLength,
+            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']));
+        break;
+
+      case 'onPlaybackAudioData':
+        if (ZegoExpressEngine.onPlaybackAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        ZegoExpressEngine.onPlaybackAudioData!(data, dataLength,
+            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']));
+        break;
+
+      case 'onMixedAudioData':
+        if (ZegoExpressEngine.onMixedAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        ZegoExpressEngine.onMixedAudioData!(data, dataLength,
+            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']));
+        break;
+
+      case 'onPlayerAudioData':
+        if (ZegoExpressEngine.onPlayerAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        String streamID = map['streamID'];
+
+        ZegoExpressEngine.onPlayerAudioData!(
+            data,
+            dataLength,
+            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']),
+            streamID);
         break;
 
       default:

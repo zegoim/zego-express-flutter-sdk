@@ -14,6 +14,7 @@ class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
     , public EXPRESS::IZegoAudioEffectPlayerEventHandler
     , public EXPRESS::IZegoMediaPlayerEventHandler
+    , public EXPRESS::IZegoAudioDataHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -116,6 +117,15 @@ protected:
     void onMediaPlayerPlayingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) override;
 
     void onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlayer* mediaPlayer, const unsigned char* data, unsigned int dataLength) override;
+
+protected:
+    void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param) override;
+
+    void onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param) override;
+
+    void onMixedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param) override;
+
+    void onPlayerAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param, const std::string& streamID) override;
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;

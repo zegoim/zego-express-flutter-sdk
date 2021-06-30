@@ -510,3 +510,72 @@ void ZegoExpressEngineEventHandler::onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlay
 		eventSink_->Success(retMap);
 	}
 }
+
+void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param)
+{
+	if(eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onCapturedAudioData");
+		std::vector<uint8_t> dataVec(data, dataLength);
+		retMap[FTValue("data")] = dataVec;
+		retMap[FTValue("dataLength")] = (int)dataLength;
+		FTMap paramMap;
+		paramMap["sampleRate"] = param.sampleRate;
+		paramMap["channel"] = param.channel;
+		retMap[FTValue("param")] = paramMap;
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param)
+{
+	if(eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onPlaybackAudioData");
+		std::vector<uint8_t> dataVec(data, dataLength);
+		retMap[FTValue("data")] = dataVec;
+		retMap[FTValue("dataLength")] = (int)dataLength;
+		FTMap paramMap;
+		paramMap["sampleRate"] = param.sampleRate;
+		paramMap["channel"] = param.channel;
+		retMap[FTValue("param")] = paramMap;
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onMixedAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param)
+{
+	if(eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMixedAudioData");
+		std::vector<uint8_t> dataVec(data, dataLength);
+		retMap[FTValue("data")] = dataVec;
+		retMap[FTValue("dataLength")] = (int)dataLength;
+		FTMap paramMap;
+		paramMap["sampleRate"] = param.sampleRate;
+		paramMap["channel"] = param.channel;
+		retMap[FTValue("param")] = paramMap;
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onPlayerAudioData(const unsigned char* data, unsigned int dataLength, ZegoAudioFrameParam param, const std::string& streamID)
+{
+	if(eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onPlayerAudioData");
+		std::vector<uint8_t> dataVec(data, dataLength);
+		retMap[FTValue("data")] = dataVec;
+		retMap[FTValue("dataLength")] = (int)dataLength;
+		FTMap paramMap;
+		paramMap["sampleRate"] = param.sampleRate;
+		paramMap["channel"] = param.channel;
+		retMap[FTValue("param")] = paramMap;
+		retMap[FTValue("streamID")] = streamID;
+
+		eventSink_->Success(retMap);
+	}
+}
