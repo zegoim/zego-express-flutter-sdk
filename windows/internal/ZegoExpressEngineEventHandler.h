@@ -131,5 +131,5 @@ private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 
 private:
-    //ZegoExpressEngineEventHandler() = default;
+    int getAudioSampleRateIndex(EXPRESS::ZegoAudioSampleRate sampleRate);
 };

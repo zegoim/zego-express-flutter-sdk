@@ -677,21 +677,47 @@ void ZegoExpressEngineMethodHandler::enableVirtualStereo(flutter::EncodableMap& 
     result->Success();
 }
 
-void startAudioDataObserver(flutter::EncodableMap& argument,
+void ZegoExpressEngineMethodHandler::startAudioDataObserver(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto bitmask = std::get<int32_t>(argument[FTValue("observerBitMask")]);
     auto param = std::get<FTMap>(argument[FTValue("param")]);
 
     EXPRESS::ZegoAudioFrameParam nativeParam;
-    nativeParam.sampleRate = (EXPRESS::ZegoAudioSampleRate)std::get<int32_t>(param[FTValue("sampleRate")]);
+    switch (std::get<int32_t>(param[FTValue("sampleRate")]))
+    {
+    case 0:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_8K;
+        break;
+    case 1:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_16K;
+        break;
+    case 2:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_22K;
+        break;
+    case 3:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_24K;
+        break;
+    case 4:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_32K;
+        break;
+    case 5:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_44K;
+        break;
+    case 6:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_48K;
+        break;
+    default:
+        nativeParam.sampleRate = EXPRESS::ZEGO_AUDIO_SAMPLE_RATE_UNKNOWN;
+        break;
+    }
     nativeParam.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(param[FTValue("channel")]);
     EXPRESS::ZegoExpressSDK::getEngine()->startAudioDataObserver(bitmask, nativeParam);
 
     result->Success();
 }
 
-void stopAudioDataObserver(flutter::EncodableMap& argument,
+void ZegoExpressEngineMethodHandler::stopAudioDataObserver(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     EXPRESS::ZegoExpressSDK::getEngine()->stopAudioDataObserver();
