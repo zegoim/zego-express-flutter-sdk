@@ -75,6 +75,7 @@
     }
 
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -1352,6 +1353,57 @@
 
     [[ZegoExpressEngine sharedEngine] enableVirtualStereo:enable angle:angle];
 
+    result(nil);
+}
+
+#pragma mark - Audio Data Observer
+
+- (ZegoAudioSampleRate)convertAudioSampleRate:(int)sampleRateIndex {
+    switch (sampleRateIndex) {
+        case 0:
+            return ZegoAudioSampleRate8K;
+            break;
+        case 1:
+            return ZegoAudioSampleRate16K;
+            break;
+        case 2:
+            return ZegoAudioSampleRate22K;
+            break;
+        case 3:
+            return ZegoAudioSampleRate24K;
+            break;
+        case 4:
+            return ZegoAudioSampleRate32K;
+            break;
+        case 5:
+            return ZegoAudioSampleRate44K;
+            break;
+        case 6:
+            return ZegoAudioSampleRate48K;
+            break;
+        default:
+            return ZegoAudioSampleRateUnknown;
+            break;
+    }
+}
+
+- (void)startAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {
+    int bitmask = [ZegoUtils intValue:call.arguments[@"observerBitMask"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+    
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+    
+    [[ZegoExpressEngine sharedEngine] startAudioDataObserver:bitmask param:param];
+    
+    result(nil);
+}
+
+- (void)stopAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    [[ZegoExpressEngine sharedEngine] stopAudioDataObserver];
+    
     result(nil);
 }
 
