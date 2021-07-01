@@ -34,6 +34,7 @@ import im.zego.zegoexpress.constants.ZegoPublisherState;
 import im.zego.zegoexpress.constants.ZegoRemoteDeviceState;
 import im.zego.zegoexpress.constants.ZegoRoomState;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
+import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
@@ -61,6 +62,35 @@ public class ZegoExpressEngineEventHandler {
             }
         }
         return instance;
+    }
+
+    public int getAudioSampleRateIndex(ZegoAudioSampleRate sampleRate) {
+        switch (sampleRate) {
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K:
+                return 0;
+                break;
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K:
+                return 1;
+                break;
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K:
+                return 2;
+                break;
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K:
+                return 3;
+                break;
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K:
+                return 4;
+                break;
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K:
+                return 5;
+                break;
+            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K:
+                return 6;
+                break;
+            case ZegoAudioSampleRate.UNKNOWN:
+            default:
+                break;
+        }
     }
 
     EventChannel.EventSink sink;
@@ -1028,4 +1058,103 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
     };
+
+    IZegoAudioDataHandler audioDataHandler = new IZegoAudioDataHandler() {
+        @Override
+        public void onCapturedAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
+            super.onCapturedAudioData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.audioChannel.vaule());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onCapturedAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+
+            sink.success(map);
+        }
+    
+        @Override
+        public void onPlaybackAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
+            super.onPlaybackAudioData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.audioChannel.vaule());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlaybackAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+
+            sink.success(map);
+        }
+    
+        @Override
+        public void onMixedAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
+            super.onMixedAudioData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.audioChannel.vaule());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMixedAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+
+            sink.success(map);
+        }
+    
+        @Override
+        public void onPlayerAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param, String streamID){
+            super.onPlayerAudioData(data, dataLength, param, streamID);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.audioChannel.vaule());
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+            map.put("streamID", streamID);
+
+            sink.success(map);
+        }
+    }
 }

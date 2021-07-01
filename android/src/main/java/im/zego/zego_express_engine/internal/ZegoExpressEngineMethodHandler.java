@@ -148,6 +148,7 @@ public class ZegoExpressEngineMethodHandler {
         setPlatformLanguage();
 
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
+        ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
@@ -1647,6 +1648,59 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.ONLY_PREVIEW_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
         }
+
+        result.success(null);
+    }
+
+    public ZegoAudioSampleRate convertAudioSampleRate(int index) {
+        switch (index) {
+            case 0:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K;
+                break;
+            case 1:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K;
+                break;
+            case 2:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K;
+                break;
+            case 3:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K;
+                break;
+            case 4:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K;
+                break;
+            case 5:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K;
+                break;
+            case 6:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K;
+                break;
+            default:
+                return ZegoAudioSampleRate.UNKNOWN;
+                break;
+        }
+    }
+
+    /* Audio Data Observer */
+    @SuppressWarnings("unused")
+    public static void startAudioDataObserver(MethodCall call, Result result) {
+
+        int bitmask = ZegoUtils.intValue((Number) call.argument("observerBitMask"));
+        HashMap<String, int> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue(paramMap.get("sampleRate")));
+        param.channel = convertAudioSampleRate(ZegoUtils.intValue(paramMap.get("channel")));
+
+        ZegoExpressEngine.getEngine().startAudioDataObserver(bitmask, param);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopAudioDataObserver(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopAudioDataObserver();
 
         result.success(null);
     }
