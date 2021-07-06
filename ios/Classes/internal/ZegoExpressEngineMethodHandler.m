@@ -1361,24 +1361,27 @@
 - (ZegoAudioSampleRate)convertAudioSampleRate:(int)sampleRateIndex {
     switch (sampleRateIndex) {
         case 0:
-            return ZegoAudioSampleRate8K;
+            return ZegoAudioSampleRateUnknown;
             break;
         case 1:
-            return ZegoAudioSampleRate16K;
+            return ZegoAudioSampleRate8K;
             break;
         case 2:
-            return ZegoAudioSampleRate22K;
+            return ZegoAudioSampleRate16K;
             break;
         case 3:
-            return ZegoAudioSampleRate24K;
+            return ZegoAudioSampleRate22K;
             break;
         case 4:
-            return ZegoAudioSampleRate32K;
+            return ZegoAudioSampleRate24K;
             break;
         case 5:
-            return ZegoAudioSampleRate44K;
+            return ZegoAudioSampleRate32K;
             break;
         case 6:
+            return ZegoAudioSampleRate44K;
+            break;
+        case 7:
             return ZegoAudioSampleRate48K;
             break;
         default:
@@ -1390,20 +1393,20 @@
 - (void)startAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {
     int bitmask = [ZegoUtils intValue:call.arguments[@"observerBitMask"]];
     NSDictionary *paramMap = call.arguments[@"param"];
-    
+
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
     param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
-    
+
     [[ZegoExpressEngine sharedEngine] startAudioDataObserver:bitmask param:param];
-    
+
     result(nil);
 }
 
 - (void)stopAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {
-    
+
     [[ZegoExpressEngine sharedEngine] stopAudioDataObserver];
-    
+
     result(nil);
 }
 
@@ -1468,7 +1471,7 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
-    
+
     if (configMap && configMap.count > 0) {
         ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
         config.bufferType = bufferType;
@@ -1476,10 +1479,10 @@
         // If `config` is empty, set the default configuration (pixel buffer for iOS)
         config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
     }
-    
+
     [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:(id<ZegoCustomVideoCaptureHandler>)[ZegoCustomVideoCaptureManager sharedInstance]];
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
-    
+
     // When using custom video capture, turn off preview mirroring
     if (enable) {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeNoMirror channel:(ZegoPublishChannel)channel];
