@@ -14,6 +14,7 @@ export 'src/zego_express_api_device.dart';
 export 'src/zego_express_api_preprocess.dart';
 export 'src/zego_express_api_im.dart';
 export 'src/zego_express_api_record.dart';
+export 'src/zego_express_api_custom_audio_io.dart';
 export 'src/zego_express_api_custom_video_io.dart';
 export 'src/zego_express_api_utilities.dart';
 
