@@ -802,9 +802,10 @@ class ZegoExpressImpl {
       int observerBitMask, ZegoAudioFrameParam param) async {
     return await _channel.invokeMethod('startAudioDataObserver', {
       'observerBitMask': observerBitMask,
-      'param': param != null
-          ? {'sampleRate': param.sampleRate, 'channel': param.channel}
-          : {}
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      }
     });
   }
 
