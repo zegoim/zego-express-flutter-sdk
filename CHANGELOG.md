@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.5.2
+
+1. Fix the bug that the dart impl file gets zego-user error
+
 ## 2.5.1
 
 1. Fix a bug that List not convert to Iterable
