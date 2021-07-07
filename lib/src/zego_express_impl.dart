@@ -1132,7 +1132,7 @@ class ZegoExpressImpl {
 
         Map<dynamic, dynamic> originAudioSpectrums = map['audioSpectrums'];
         Map<String, List<double>> audioSpectrums = Map();
-        for (String streamID in originAudioSpectrums.keys as Iterable<String>) {
+        for (String streamID in originAudioSpectrums.keys) {
           audioSpectrums[streamID] =
               List<double>.from(originAudioSpectrums[streamID]);
         }
