@@ -877,7 +877,8 @@ class ZegoExpressImpl {
         List<ZegoStream> streamList = [];
         for (Map<dynamic, dynamic> streamMap in streamMapList) {
           ZegoStream stream = ZegoStream(
-              ZegoUser(streamMap['userID'], streamMap['userName']),
+              ZegoUser(
+                  streamMap['user']['userID'], streamMap['user']['userName']),
               streamMap['streamID'],
               streamMap['extraInfo']);
           streamList.add(stream);
@@ -899,7 +900,8 @@ class ZegoExpressImpl {
         List<ZegoStream> streamList = [];
         for (Map<dynamic, dynamic> streamMap in streamMapList) {
           ZegoStream stream = ZegoStream(
-              ZegoUser(streamMap['userID'], streamMap['userName']),
+              ZegoUser(
+                  streamMap['user']['userID'], streamMap['user']['userName']),
               streamMap['streamID'],
               streamMap['extraInfo']);
           streamList.add(stream);
@@ -918,7 +920,8 @@ class ZegoExpressImpl {
           ZegoRoomExtraInfo info = ZegoRoomExtraInfo(
               infoMap['key'],
               infoMap['value'],
-              ZegoUser(infoMap['userID'], infoMap['userName']),
+              ZegoUser(infoMap['updateUser']['userID'],
+                  infoMap['updateUser']['userName']),
               infoMap['updateTime']);
           roomExtraInfoList.add(info);
         }
@@ -1129,7 +1132,7 @@ class ZegoExpressImpl {
 
         Map<dynamic, dynamic> originAudioSpectrums = map['audioSpectrums'];
         Map<String, List<double>> audioSpectrums = Map();
-        for (String streamID in originAudioSpectrums.keys as Iterable<String>) {
+        for (String streamID in originAudioSpectrums.keys) {
           audioSpectrums[streamID] =
               List<double>.from(originAudioSpectrums[streamID]);
         }
