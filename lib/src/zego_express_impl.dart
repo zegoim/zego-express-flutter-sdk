@@ -854,8 +854,7 @@ class ZegoExpressImpl {
 
         List<dynamic> userMapList = map['userList'];
         List<ZegoUser> userList = [];
-        for (Map<dynamic, dynamic> userMap
-            in userMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> userMap in userMapList) {
           ZegoUser user = ZegoUser(userMap['userID'], userMap['userName']);
           userList.add(user);
         }
@@ -876,10 +875,10 @@ class ZegoExpressImpl {
 
         List<dynamic> streamMapList = map['streamList'];
         List<ZegoStream> streamList = [];
-        for (Map<dynamic, dynamic> streamMap
-            in streamMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> streamMap in streamMapList) {
           ZegoStream stream = ZegoStream(
-              ZegoUser(streamMap['userID'], streamMap['userName']),
+              ZegoUser(
+                  streamMap['user']['userID'], streamMap['user']['userName']),
               streamMap['streamID'],
               streamMap['extraInfo']);
           streamList.add(stream);
@@ -899,10 +898,10 @@ class ZegoExpressImpl {
 
         List<dynamic> streamMapList = map['streamList'];
         List<ZegoStream> streamList = [];
-        for (Map<dynamic, dynamic> streamMap
-            in streamMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> streamMap in streamMapList) {
           ZegoStream stream = ZegoStream(
-              ZegoUser(streamMap['userID'], streamMap['userName']),
+              ZegoUser(
+                  streamMap['user']['userID'], streamMap['user']['userName']),
               streamMap['streamID'],
               streamMap['extraInfo']);
           streamList.add(stream);
@@ -917,12 +916,12 @@ class ZegoExpressImpl {
 
         List<dynamic> roomExtraInfoMapList = map['roomExtraInfoList'];
         List<ZegoRoomExtraInfo> roomExtraInfoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in roomExtraInfoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in roomExtraInfoMapList) {
           ZegoRoomExtraInfo info = ZegoRoomExtraInfo(
               infoMap['key'],
               infoMap['value'],
-              ZegoUser(infoMap['userID'], infoMap['userName']),
+              ZegoUser(infoMap['updateUser']['userID'],
+                  infoMap['updateUser']['userName']),
               infoMap['updateTime']);
           roomExtraInfoList.add(info);
         }
@@ -979,8 +978,7 @@ class ZegoExpressImpl {
 
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in infoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in infoMapList) {
           ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
               infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
           infoList.add(info);
@@ -1056,8 +1054,7 @@ class ZegoExpressImpl {
 
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in infoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in infoMapList) {
           ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
               infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
           infoList.add(info);
@@ -1082,8 +1079,7 @@ class ZegoExpressImpl {
 
         List<dynamic> infoMapList = map['deviceInfo'];
         List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in infoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in infoMapList) {
           ZegoDeviceInfo info =
               ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
           infoList.add(info);
@@ -1100,8 +1096,7 @@ class ZegoExpressImpl {
 
         List<dynamic> infoMapList = map['deviceInfo'];
         List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in infoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in infoMapList) {
           ZegoDeviceInfo info =
               ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
           infoList.add(info);
@@ -1137,7 +1132,7 @@ class ZegoExpressImpl {
 
         Map<dynamic, dynamic> originAudioSpectrums = map['audioSpectrums'];
         Map<String, List<double>> audioSpectrums = Map();
-        for (String streamID in originAudioSpectrums.keys as Iterable<String>) {
+        for (String streamID in originAudioSpectrums.keys) {
           audioSpectrums[streamID] =
               List<double>.from(originAudioSpectrums[streamID]);
         }
@@ -1179,13 +1174,13 @@ class ZegoExpressImpl {
 
         List<dynamic> messageMapList = map['messageList'];
         List<ZegoBroadcastMessageInfo> messageList = [];
-        for (Map<dynamic, dynamic> messageMap
-            in messageMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> messageMap in messageMapList) {
           ZegoBroadcastMessageInfo message = ZegoBroadcastMessageInfo(
               messageMap['message'],
               messageMap['messageID'],
               messageMap['sendTime'],
-              ZegoUser(messageMap['userID'], messageMap['userName']));
+              ZegoUser(messageMap['fromUser']['userID'],
+                  messageMap['fromUser']['userName']));
           messageList.add(message);
         }
 
@@ -1197,13 +1192,13 @@ class ZegoExpressImpl {
 
         List<dynamic> messageMapList = map['messageList'];
         List<ZegoBarrageMessageInfo> messageList = [];
-        for (Map<dynamic, dynamic> messageMap
-            in messageMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> messageMap in messageMapList) {
           ZegoBarrageMessageInfo message = ZegoBarrageMessageInfo(
               messageMap['message'],
               messageMap['messageID'],
               messageMap['sendTime'],
-              ZegoUser(messageMap['userID'], messageMap['userName']));
+              ZegoUser(messageMap['fromUser']['userID'],
+                  messageMap['fromUser']['userName']));
           messageList.add(message);
         }
 
@@ -1213,8 +1208,10 @@ class ZegoExpressImpl {
       case 'onIMRecvCustomCommand':
         if (ZegoExpressEngine.onIMRecvCustomCommand == null) return;
 
-        ZegoExpressEngine.onIMRecvCustomCommand!(map['roomID'],
-            ZegoUser(map['userID'], map['userName']), map['command']);
+        ZegoExpressEngine.onIMRecvCustomCommand!(
+            map['roomID'],
+            ZegoUser(map['fromUser']['userID'], map['fromUser']['userName']),
+            map['command']);
         break;
 
       /* Utilities */

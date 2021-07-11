@@ -8,6 +8,7 @@
 
 #import "ZegoTextureRenderer.h"
 #import "ZegoLog.h"
+#import <libkern/OSAtomic.h>
 
 @interface ZegoTextureRenderer()
 
@@ -507,14 +508,23 @@
         glFlush();
         
 
-        //std::lock_guard<std::mutex> lock(m_mutex);
-        dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-        //if(self->m_pRenderFrameBuffer)
-        //    CVBufferRelease(self->m_pRenderFrameBuffer);
+//        //std::lock_guard<std::mutex> lock(m_mutex);
+//        dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+//        //if(self->m_pRenderFrameBuffer)
+//        //    CVBufferRelease(self->m_pRenderFrameBuffer);
+//
+//        self->m_pRenderFrameBuffer = processBuffer;
+//        dispatch_semaphore_signal(_lock);
+//        //CVBufferRetain(self->m_pRenderFrameBuffer);
         
-        self->m_pRenderFrameBuffer = processBuffer;
-        dispatch_semaphore_signal(_lock);
-        //CVBufferRetain(self->m_pRenderFrameBuffer);
+        CVPixelBufferRef old = m_pRenderFrameBuffer;
+        while (!OSAtomicCompareAndSwapPtr(old, processBuffer, (void **)&m_pRenderFrameBuffer)) {
+            old = m_pRenderFrameBuffer;
+        }
+
+        if (old != nil) {
+            CFRelease(old);
+        }
         
         CFRelease(texture_input);
     }
@@ -532,15 +542,23 @@
         [strong_ptr processingData];
     });
     
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    // GPU处理任务过多，会导致copyPixelBuffer堆积，以至于同时多次 release 同一 pixelBuffer
     
-    CVBufferRelease(m_pTempToCopyFrameBuffer);
-    m_pTempToCopyFrameBuffer = m_pRenderFrameBuffer;
-    CVBufferRetain(m_pTempToCopyFrameBuffer);
+//    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+//
+//    CVBufferRelease(m_pTempToCopyFrameBuffer);
+//    m_pTempToCopyFrameBuffer = m_pRenderFrameBuffer;
+//    CVBufferRetain(m_pTempToCopyFrameBuffer);
+//
+//    dispatch_semaphore_signal(_lock);
     
-    dispatch_semaphore_signal(_lock);
+    CVPixelBufferRef pixelBuffer = m_pRenderFrameBuffer;
+    while (!OSAtomicCompareAndSwapPtr(pixelBuffer, nil, (void **)&m_pRenderFrameBuffer)) {
+        pixelBuffer = m_pRenderFrameBuffer;
+    }
+    
     m_isNewFrameAvailable = NO;
-    return m_pTempToCopyFrameBuffer;
+    return pixelBuffer;
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture>*)texture {
