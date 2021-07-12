@@ -171,12 +171,12 @@ public class ZegoExpressEngineMethodHandler {
             configObject = new ZegoEngineConfig();
             configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
 
-            HashMap<String, Object> logConfigMap = call.argument("logConfig");
+            HashMap<String, String> logConfigMap = (HashMap<String, String>) configMap.get("logConfig");
             ZegoLogConfig logConfigObject;
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
                 logConfigObject.logPath = (String) logConfigMap.get("logPath");
-                logConfigObject.logSize = ZegoUtils.intValue((Number) configMap.get("logSize"));
+                logConfigObject.logSize = ZegoUtils.intValue((Number) logConfigMap.get("logSize"));
 
                 configObject.logConfig = logConfigObject;
             }

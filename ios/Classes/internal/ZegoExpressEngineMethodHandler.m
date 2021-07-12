@@ -108,7 +108,7 @@
         configObject = [[ZegoEngineConfig alloc] init];
         configObject.advancedConfig = configMap[@"advancedConfig"];
 
-        NSDictionary *logConfigMap = call.arguments[@"logConfig"];
+        NSDictionary *logConfigMap = configMap[@"logConfig"];
         ZegoLogConfig *logConfigObject = nil;
         if (logConfigMap && logConfigMap.count > 0) {
             logConfigObject = [[ZegoLogConfig alloc] init];
@@ -1416,7 +1416,7 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
-    
+
     if (configMap && configMap.count > 0) {
         ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
         config.bufferType = bufferType;
@@ -1424,10 +1424,10 @@
         // If `config` is empty, set the default configuration (pixel buffer for iOS)
         config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
     }
-    
+
     [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:(id<ZegoCustomVideoCaptureHandler>)[ZegoCustomVideoCaptureManager sharedInstance]];
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
-    
+
     // When using custom video capture, turn off preview mirroring
     if (enable) {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeNoMirror channel:(ZegoPublishChannel)channel];
