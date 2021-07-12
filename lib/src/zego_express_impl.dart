@@ -556,7 +556,7 @@ class ZegoExpressImpl {
 
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await _channel
-        .invokeMethod('enableHeadphoneMonitor', {'volume': volume});
+        .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
   /* PreProcess */
