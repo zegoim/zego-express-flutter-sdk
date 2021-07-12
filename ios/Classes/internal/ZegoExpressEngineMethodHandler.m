@@ -637,7 +637,7 @@
 
 - (void)sendSEI:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    FlutterStandardTypedData *data = call.arguments[@"byteData"];
+    FlutterStandardTypedData *data = call.arguments[@"data"];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] sendSEI:data.data channel:(ZegoPublishChannel)channel];
