@@ -1254,8 +1254,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void enableCamera(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().enableCamera(enable);
+        ZegoExpressEngine.getEngine().enableCamera(enable, channel);
 
         result.success(null);
     }
