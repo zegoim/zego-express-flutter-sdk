@@ -171,7 +171,7 @@ public class ZegoExpressEngineMethodHandler {
             configObject = new ZegoEngineConfig();
             configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
 
-            HashMap<String, String> logConfigMap = (HashMap<String, String>) configMap.get("logConfig");
+            HashMap<String, Object> logConfigMap = (HashMap<String, Object>) configMap.get("logConfig");
             ZegoLogConfig logConfigObject;
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
