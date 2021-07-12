@@ -239,7 +239,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void loginMultiRoom(MethodCall call, Result result) {
 
         String roomID = call.argument("roomID");
