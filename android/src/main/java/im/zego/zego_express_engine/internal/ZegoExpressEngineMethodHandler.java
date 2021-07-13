@@ -172,12 +172,12 @@ public class ZegoExpressEngineMethodHandler {
             configObject = new ZegoEngineConfig();
             configObject.advancedConfig = (HashMap<String, String>) configMap.get("advancedConfig");
 
-            HashMap<String, Object> logConfigMap = call.argument("logConfig");
+            HashMap<String, Object> logConfigMap = (HashMap<String, Object>) configMap.get("logConfig");
             ZegoLogConfig logConfigObject;
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
                 logConfigObject.logPath = (String) logConfigMap.get("logPath");
-                logConfigObject.logSize = ZegoUtils.intValue((Number) configMap.get("logSize"));
+                logConfigObject.logSize = ZegoUtils.intValue((Number) logConfigMap.get("logSize"));
 
                 configObject.logConfig = logConfigObject;
             }
@@ -240,7 +240,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void loginMultiRoom(MethodCall call, Result result) {
 
         String roomID = call.argument("roomID");
@@ -1255,8 +1255,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void enableCamera(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().enableCamera(enable);
+        ZegoExpressEngine.getEngine().enableCamera(enable, channel);
 
         result.success(null);
     }

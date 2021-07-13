@@ -1,9 +1,29 @@
 # Change Log
 
+## 2.5.3
+
+1. Fix some bugs of mismatched parameters
+
+## 2.5.2
+
+1. Fix the bug that the dart impl file gets zego-user error
+
+## 2.5.1
+
+1. Fix a bug that List not convert to Iterable
+
 ## 2.5.0
 
 1. BREAKING CHANGES: Add null-safety feature. This requires developers to upgrade Flutter to 2.x.
 2. Update Native SDK to 2.8.0
+
+## 2.2.5
+
+1. Fix a crash that may occur when multiple accesses to copyPixelBuffer at the same time
+
+## 2.2.4
+
+1. Fix The adjust texture render size need to rebuild pixel buffer
 
 ## 2.2.3
 

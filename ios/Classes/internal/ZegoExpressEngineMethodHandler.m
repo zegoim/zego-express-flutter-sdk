@@ -109,7 +109,7 @@
         configObject = [[ZegoEngineConfig alloc] init];
         configObject.advancedConfig = configMap[@"advancedConfig"];
 
-        NSDictionary *logConfigMap = call.arguments[@"logConfig"];
+        NSDictionary *logConfigMap = configMap[@"logConfig"];
         ZegoLogConfig *logConfigObject = nil;
         if (logConfigMap && logConfigMap.count > 0) {
             logConfigObject = [[ZegoLogConfig alloc] init];
@@ -638,7 +638,7 @@
 
 - (void)sendSEI:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    FlutterStandardTypedData *data = call.arguments[@"byteData"];
+    FlutterStandardTypedData *data = call.arguments[@"data"];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] sendSEI:data.data channel:(ZegoPublishChannel)channel];

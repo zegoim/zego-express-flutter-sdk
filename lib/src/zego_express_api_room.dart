@@ -40,6 +40,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
   /// - [config] Advanced room configuration
+  @Deprecated('Use [loginRoom] instead')
   Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
     return await ZegoExpressImpl.instance.loginMultiRoom(roomID, config: config);
   }
