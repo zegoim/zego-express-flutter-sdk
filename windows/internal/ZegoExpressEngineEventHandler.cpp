@@ -204,7 +204,7 @@ void ZegoExpressEngineEventHandler::onPublisherQualityUpdate(const std::string& 
 		qualityMap[FTValue("totalSendBytes")] = FTValue(quality.totalSendBytes);
 		qualityMap[FTValue("audioSendBytes")] = FTValue(quality.audioSendBytes);
 		qualityMap[FTValue("videoSendBytes")] = FTValue(quality.videoSendBytes);
-		
+
 		retMap[FTValue("quality")] = FTValue(qualityMap);
 
 		eventSink_->Success(retMap);
@@ -346,11 +346,11 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string& streamID,
 }
 
 void ZegoExpressEngineEventHandler::onMixerSoundLevelUpdate(const std::unordered_map<unsigned int, float>& soundLevels) {
-	
+
 }*/
 
 void ZegoExpressEngineEventHandler::onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) {
-	
+
 	if (eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onAudioDeviceStateChanged");
@@ -389,7 +389,7 @@ void ZegoExpressEngineEventHandler::onRemoteSoundLevelUpdate(const std::unordere
 	if (eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onRemoteSoundLevelUpdate");
-		
+
 		FTMap soundLevelsMap;
 		for (auto& soundlevel : soundLevels) {
 			soundLevelsMap[FTValue(soundlevel.first)] = FTValue(soundlevel.second);
@@ -584,30 +584,22 @@ int ZegoExpressEngineEventHandler::getAudioSampleRateIndex(EXPRESS::ZegoAudioSam
 {
 	switch (sampleRate)
 	{
-	case ZEGO_AUDIO_SAMPLE_RATE_8K:
-		return 0;
-		break;
-	case ZEGO_AUDIO_SAMPLE_RATE_16K:
-		return 1;
-		break;
-	case ZEGO_AUDIO_SAMPLE_RATE_22K:
-		return 2;
-		break;
-	case ZEGO_AUDIO_SAMPLE_RATE_24K:
-		return 3;
-		break;
-	case ZEGO_AUDIO_SAMPLE_RATE_32K:
-		return 4;
-		break;
-	case ZEGO_AUDIO_SAMPLE_RATE_44K:
-		return 5;
-		break;
-	case ZEGO_AUDIO_SAMPLE_RATE_48K:
-		return 6;
-		break;
 	case ZEGO_AUDIO_SAMPLE_RATE_UNKNOWN:
-	default:
-		return -1;
-		break;
+		return 0;
+	case ZEGO_AUDIO_SAMPLE_RATE_8K:
+		return 1;
+	case ZEGO_AUDIO_SAMPLE_RATE_16K:
+		return 2;
+	case ZEGO_AUDIO_SAMPLE_RATE_22K:
+		return 3;
+	case ZEGO_AUDIO_SAMPLE_RATE_24K:
+		return 4;
+	case ZEGO_AUDIO_SAMPLE_RATE_32K:
+		return 5;
+	case ZEGO_AUDIO_SAMPLE_RATE_44K:
+		return 6;
+	case ZEGO_AUDIO_SAMPLE_RATE_48K:
+		return 7;
 	}
+	return 0;
 }

@@ -1362,32 +1362,22 @@
     switch (sampleRateIndex) {
         case 0:
             return ZegoAudioSampleRateUnknown;
-            break;
         case 1:
             return ZegoAudioSampleRate8K;
-            break;
         case 2:
             return ZegoAudioSampleRate16K;
-            break;
         case 3:
             return ZegoAudioSampleRate22K;
-            break;
         case 4:
             return ZegoAudioSampleRate24K;
-            break;
         case 5:
             return ZegoAudioSampleRate32K;
-            break;
         case 6:
             return ZegoAudioSampleRate44K;
-            break;
         case 7:
             return ZegoAudioSampleRate48K;
-            break;
-        default:
-            return ZegoAudioSampleRateUnknown;
-            break;
     }
+    return ZegoAudioSampleRateUnknown;
 }
 
 - (void)startAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {

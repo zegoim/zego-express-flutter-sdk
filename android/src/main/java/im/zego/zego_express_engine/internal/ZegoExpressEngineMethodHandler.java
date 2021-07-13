@@ -49,6 +49,7 @@ import im.zego.zegoexpress.constants.ZegoANSMode;
 import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
+import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
@@ -70,6 +71,7 @@ import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.constants.ZegoVoiceChangerPreset;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
+import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
@@ -1653,33 +1655,26 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    public ZegoAudioSampleRate convertAudioSampleRate(int index) {
+    public static ZegoAudioSampleRate convertAudioSampleRate(int index) {
         switch (index) {
             case 0:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K;
-                break;
-            case 1:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K;
-                break;
-            case 2:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K;
-                break;
-            case 3:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K;
-                break;
-            case 4:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K;
-                break;
-            case 5:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K;
-                break;
-            case 6:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K;
-                break;
-            default:
                 return ZegoAudioSampleRate.UNKNOWN;
-                break;
+            case 1:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K;
+            case 2:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K;
+            case 3:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K;
+            case 4:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K;
+            case 5:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K;
+            case 6:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K;
+            case 7:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K;
         }
+        return ZegoAudioSampleRate.UNKNOWN;
     }
 
     /* Audio Data Observer */
@@ -1687,11 +1682,11 @@ public class ZegoExpressEngineMethodHandler {
     public static void startAudioDataObserver(MethodCall call, Result result) {
 
         int bitmask = ZegoUtils.intValue((Number) call.argument("observerBitMask"));
-        HashMap<String, int> paramMap = call.argument("param");
+        HashMap<String, Object> paramMap = call.argument("param");
 
         ZegoAudioFrameParam param = new ZegoAudioFrameParam();
-        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue(paramMap.get("sampleRate")));
-        param.channel = convertAudioSampleRate(ZegoUtils.intValue(paramMap.get("channel")));
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
         ZegoExpressEngine.getEngine().startAudioDataObserver(bitmask, param);
 

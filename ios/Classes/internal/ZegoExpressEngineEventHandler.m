@@ -894,32 +894,24 @@
 
 - (int)getIndexWithZegoAudioSampleRate:(ZegoAudioSampleRate)sampleRate {
     switch (sampleRate) {
-        case ZegoAudioSampleRate8K:
-            return 0;
-            break;
-        case ZegoAudioSampleRate16K:
-            return 1;
-            break;
-        case ZegoAudioSampleRate22K:
-            return 2;
-            break;
-        case ZegoAudioSampleRate24K:
-            return 3;
-            break;
-        case ZegoAudioSampleRate32K:
-            return 4;
-            break;
-        case ZegoAudioSampleRate44K:
-            return 5;
-            break;
-        case ZegoAudioSampleRate48K:
-            return 6;
-            break;
         case ZegoAudioSampleRateUnknown:
-        default:
-            return -1;
-            break;
+            return 0;
+        case ZegoAudioSampleRate8K:
+            return 1;
+        case ZegoAudioSampleRate16K:
+            return 2;
+        case ZegoAudioSampleRate22K:
+            return 3;
+        case ZegoAudioSampleRate24K:
+            return 4;
+        case ZegoAudioSampleRate32K:
+            return 5;
+        case ZegoAudioSampleRate44K:
+            return 6;
+        case ZegoAudioSampleRate48K:
+            return 7;
     }
+    return 0;
 }
 
 - (void)onCapturedAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param {
@@ -927,9 +919,9 @@
     // High frequency callbacks do not log
 
     GUARD_SINK
-    
+
     NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
-    
+
     if (sink) {
         sink(@{
             @"method": @"onCapturedAudioData",
@@ -947,11 +939,11 @@
 - (void)onPlaybackAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param {
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log
-    
+
     GUARD_SINK
-    
+
     NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
-    
+
     if (sink) {
         sink(@{
             @"method": @"onPlaybackAudioData",
@@ -971,9 +963,9 @@
     // High frequency callbacks do not log
 
     GUARD_SINK
-    
+
     NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
-    
+
     if (sink) {
         sink(@{
             @"method": @"onMixedAudioData",
@@ -993,9 +985,9 @@
     // High frequency callbacks do not log
 
     GUARD_SINK
-    
+
     NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
-    
+
     if (sink) {
         sink(@{
             @"method": @"onPlayerAudioData",

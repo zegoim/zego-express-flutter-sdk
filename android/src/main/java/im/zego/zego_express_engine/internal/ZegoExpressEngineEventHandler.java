@@ -10,11 +10,13 @@ package im.zego.zego_express_engine.internal;
 
 import org.json.JSONObject;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoAudioDataHandler;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerEventHandler;
 import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
@@ -35,6 +37,7 @@ import im.zego.zegoexpress.constants.ZegoRemoteDeviceState;
 import im.zego.zegoexpress.constants.ZegoRoomState;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
+import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
@@ -66,31 +69,24 @@ public class ZegoExpressEngineEventHandler {
 
     public int getAudioSampleRateIndex(ZegoAudioSampleRate sampleRate) {
         switch (sampleRate) {
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K:
+            case UNKNOWN:
                 return 0;
-                break;
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K:
+            case ZEGO_AUDIO_SAMPLE_RATE_8K:
                 return 1;
-                break;
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K:
+            case ZEGO_AUDIO_SAMPLE_RATE_16K:
                 return 2;
-                break;
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K:
+            case ZEGO_AUDIO_SAMPLE_RATE_22K:
                 return 3;
-                break;
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K:
+            case ZEGO_AUDIO_SAMPLE_RATE_24K:
                 return 4;
-                break;
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K:
+            case ZEGO_AUDIO_SAMPLE_RATE_32K:
                 return 5;
-                break;
-            case ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K:
+            case ZEGO_AUDIO_SAMPLE_RATE_44K:
                 return 6;
-                break;
-            case ZegoAudioSampleRate.UNKNOWN:
-            default:
-                break;
+            case ZEGO_AUDIO_SAMPLE_RATE_48K:
+                return 7;
         }
+        return 0;
     }
 
     EventChannel.EventSink sink;
@@ -1072,7 +1068,7 @@ public class ZegoExpressEngineEventHandler {
 
             HashMap<String, Object> paramMap = new HashMap<>();
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
-            paramMap.put("channel", param.audioChannel.vaule());
+            paramMap.put("channel", param.channel.value());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -1083,7 +1079,7 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
-    
+
         @Override
         public void onPlaybackAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
             super.onPlaybackAudioData(data, dataLength, param);
@@ -1096,7 +1092,7 @@ public class ZegoExpressEngineEventHandler {
 
             HashMap<String, Object> paramMap = new HashMap<>();
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
-            paramMap.put("channel", param.audioChannel.vaule());
+            paramMap.put("channel", param.channel.value());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -1107,7 +1103,7 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
-    
+
         @Override
         public void onMixedAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
             super.onMixedAudioData(data, dataLength, param);
@@ -1120,7 +1116,7 @@ public class ZegoExpressEngineEventHandler {
 
             HashMap<String, Object> paramMap = new HashMap<>();
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
-            paramMap.put("channel", param.audioChannel.vaule());
+            paramMap.put("channel", param.channel.value());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -1131,7 +1127,7 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
-    
+
         @Override
         public void onPlayerAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param, String streamID){
             super.onPlayerAudioData(data, dataLength, param, streamID);
@@ -1144,7 +1140,7 @@ public class ZegoExpressEngineEventHandler {
 
             HashMap<String, Object> paramMap = new HashMap<>();
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
-            paramMap.put("channel", param.audioChannel.vaule());
+            paramMap.put("channel", param.channel.value());
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -1156,5 +1152,5 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
-    }
+    };
 }
