@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.6.0
+
+1. Add support for Windows platform (Only support audio temporarily)
+2. Fix some bugs of mismatched parameters
+
 ## 2.5.3
 
 1. Fix some bugs of mismatched parameters
