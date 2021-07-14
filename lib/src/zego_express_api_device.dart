@@ -44,6 +44,50 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
+  /// Gets a list of audio devices. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - Returns Audo device List
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getAudioDeviceList(deviceType);
+  }
+
+  /// Get the device ID of the default audio device. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - Returns Default Audio device ID
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getDefaultAudioDeviceID(deviceType);
+  }
+
+  /// Chooses to use the specified audio device. (Only for desktop)
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  Future<void> useAudioDevice(ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance.useAudioDevice(deviceType, deviceID);
+  }
+
+  /// Get volume for the specified audio device.
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  /// - Returns Device volume
+  Future<int> getAudioDeviceVolume(ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance.getAudioDeviceVolume(deviceType, deviceID);
+  }
+
+  /// Set volume for the specified audio device.
+  ///
+  /// The direct operating system device may fail due to system restrictions. Please use [setCaptureVolume] and [setPlayVolume] first to adjust the volume of publish and play streams.
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  /// - [volume] Device volume
+  Future<void> setAudioDeviceVolume(ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
+    return await ZegoExpressImpl.instance.setAudioDeviceVolume(deviceType, deviceID, volume);
+  }
+
   /// Enables or disables the audio capture device.
   ///
   /// This function is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
@@ -66,7 +110,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Turns on/off the camera (for the specified channel).
   ///
   /// This function is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
-  /// In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, this function is no longer valid.
+  /// In the case of using the custom video capture function, since the developer has taken over the capture of video data, the SDK is no longer responsible for the capture of video data, but this API will still affect the behavior of whether to encode or not. Therefore, when developers use custom video capture, please ensure that the value of this API is true
   ///
   /// - [enable] Whether to turn on the camera, true: turn on camera, false: turn off camera
   /// - [channel] Publishing stream channel
@@ -157,5 +201,4 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
-
 }

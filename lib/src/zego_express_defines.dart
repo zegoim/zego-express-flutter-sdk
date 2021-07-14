@@ -119,8 +119,8 @@ enum ZegoReverbPreset {
   SoftRoom,
   /// Large room reverb effect
   LargeRoom,
-  /// Concer hall reverb effect
-  ConcerHall,
+  /// Concert hall reverb effect
+  ConcertHall,
   /// Valley reverb effect
   Valley,
   /// Recording studio reverb effect
@@ -890,10 +890,10 @@ class ZegoReverbEchoParam {
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
 
-  /// User ID, a string with a maximum length of 64 bytes or less. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// User ID, a string with a maximum length of 64 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String userID;
 
-  /// User Name, a string with a maximum length of 256 bytes or less
+  /// User Name, a string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   String userName;
 
   ZegoUser(this.userID, this.userName);
@@ -912,7 +912,7 @@ class ZegoUser {
 /// Identify an stream object
 class ZegoStream {
 
-  /// User object instance
+  /// User object instance.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser user;
 
   /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
@@ -934,7 +934,7 @@ class ZegoRoomExtraInfo {
   /// The value of the room extra information.
   String value;
 
-  /// The user who update the room extra information.
+  /// The user who update the room extra information.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser updateUser;
 
   /// Update time of the room extra information, UNIX timestamp, in milliseconds.
@@ -1478,7 +1478,7 @@ class ZegoBroadcastMessageInfo {
   /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
-  /// Message sender
+  /// Message sender.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser fromUser;
 
   ZegoBroadcastMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);
@@ -1499,7 +1499,7 @@ class ZegoBarrageMessageInfo {
   /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
-  /// Message sender
+  /// Message sender.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser fromUser;
 
   ZegoBarrageMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);

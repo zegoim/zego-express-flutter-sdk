@@ -493,6 +493,21 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('isSpeakerMuted');
   }
 
+  Future<int> getAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('getAudioDeviceVolume',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> setAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
+    return await _channel.invokeMethod('setAudioDeviceVolume', {
+      'deviceType': deviceType.index,
+      'deviceID': deviceID,
+      'volume': volume
+    });
+  }
+
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await _channel
         .invokeMethod('enableAudioCaptureDevice', {'enable': enable});
@@ -516,6 +531,23 @@ class ZegoExpressImpl {
       'enable': enable,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
+  }
+
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(
+      ZegoAudioDeviceType deviceType) async {
+    return await _channel
+        .invokeMethod('getAudioDeviceList', {'type': deviceType});
+  }
+
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
+    return await _channel
+        .invokeMethod('getDefaultAudioDeviceID', {'type': deviceType.index});
+  }
+
+  Future<void> useAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod(
+        'useAudioDevice', {'type': deviceType, 'deviceID': deviceID});
   }
 
   Future<void> setCameraZoomFactor(double factor,
@@ -1055,8 +1087,11 @@ class ZegoExpressImpl {
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
         for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
-              infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
+          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
+              infoMap['url'],
+              ZegoStreamRelayCDNState.values[infoMap['state']],
+              ZegoStreamRelayCDNUpdateReason.values[infoMap['updateReason']],
+              infoMap['stateTime']);
           infoList.add(info);
         }
 
@@ -1077,33 +1112,23 @@ class ZegoExpressImpl {
       case 'onAudioDeviceStateChanged':
         if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoDeviceInfo info =
-              ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
-          infoList.add(info);
-        }
+        ZegoDeviceInfo info = ZegoDeviceInfo(
+            map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
 
         ZegoExpressEngine.onAudioDeviceStateChanged!(
             ZegoUpdateType.values[map['updateType']],
             ZegoAudioDeviceType.values[map['deviceType']],
-            infoList);
+            info);
         break;
 
       case 'onVideoDeviceStateChanged':
         if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoDeviceInfo info =
-              ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
-          infoList.add(info);
-        }
+        ZegoDeviceInfo info = ZegoDeviceInfo(
+            map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
 
         ZegoExpressEngine.onVideoDeviceStateChanged!(
-            ZegoUpdateType.values[map['updateType']], infoList);
+            ZegoUpdateType.values[map['updateType']], info);
         break;
 
       case 'onCapturedSoundLevelUpdate':
@@ -1306,6 +1331,7 @@ class ZegoExpressImpl {
         } else {
           // TODO: Can't find media player
         }
+
         break;
 
       /* AudioEffectPlayer */

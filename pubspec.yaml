@@ -31,3 +31,5 @@ flutter:
         pluginClass: ZegoExpressEnginePlugin
       ios:
         pluginClass: ZegoExpressEnginePlugin
+      windows:
+        pluginClass: ZegoExpressEnginePlugin

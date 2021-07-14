@@ -185,12 +185,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableTrafficControl(enable, property);
   }
 
-  /// Sets the minimum video bitrate for traffic control.
+  /// Set the minimum video bitrate threshold for traffic control.
   ///
-  /// Set how should SDK send video data when the network conditions are poor and the minimum video bitrate cannot be met.
+  /// Set how should SDK send video data when the network conditions are poor and the minimum video bitrate threshold cannot be met.
   /// When this function is not called, the SDK will automatically adjust the sent video data frames according to the current network uplink conditions by default.
   ///
-  /// - [bitrate] Minimum video bitrate (kbps)
+  /// - [bitrate] Minimum video bitrate threshold for traffic control(kbps)
   /// - [mode] Video sending mode below the minimum bitrate.
   Future<void> setMinVideoBitrateForTrafficControl(int bitrate, ZegoTrafficControlMinVideoBitrateMode mode) async {
     return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode);
@@ -243,7 +243,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
   }
 
-  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server.
+  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server (for the specified channel).
   ///
   /// This function needs to be set before [startPublishingStream].
   /// After calling this function to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically relay to the CDN no longer takes effect,

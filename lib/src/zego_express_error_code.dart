@@ -76,7 +76,13 @@ class ZegoErrorCode {
   /// The log file path is too long.
   static const int EngineLogPathTooLong                                                   = 1001015;
 
-  /// The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room and one multi room at the same time.
+  /// Setting failed, please set the room mode before initializing the SDK.
+  static const int EngineSetRoomModeErrorTime                                             = 1001020;
+
+  /// The experimental API json parameter parsing failed. Please check the correctness of the json content. Such as the correctness of the json format, whether the method name or parameters are passed correctly, etc.
+  static const int EngineExperimentalJsonStrInvalid                                       = 1001091;
+
+  /// The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room.
   static const int RoomCountExceed                                                        = 1002001;
 
   /// The input room ID is incorrect, please check if this room ID is currently logged in.
@@ -121,6 +127,12 @@ class ZegoErrorCode {
   /// The set key of the room extra info exceeds the maximum number supported. If you need to modify the number of setting keys, please contact ZEGO technical support.
   static const int RoomRoomExtraInfoExceedKeys                                            = 1002017;
 
+  /// The user ID or user name for logging in to the room in multi-room mode is not the same.
+  static const int RoomMultiRoomLoginUserNotSame                                          = 1002018;
+
+  /// The [switchRoom] function cannot be used in multi-room mode.
+  static const int RoomMultiRoomSwtichRoomInvalid                                         = 1002019;
+
   /// Login failed, possibly due to network problems.
   static const int RoomErrorConnectFailed                                                 = 1002030;
 
@@ -135,6 +147,12 @@ class ZegoErrorCode {
 
   /// The total number of rooms logged in at the same time exceeds the limit. (In the test environment, the maximum number of concurrent rooms is 10)
   static const int RoomErrorExceedMaximumRoomCount                                        = 1002035;
+
+  /// Login failed, multi-room mode is not activated, please contact ZEGO technical support.
+  static const int RoomErrorLoginMultiRoomNotOpen                                         = 1002036;
+
+  /// The total number of rooms logged in at the same time exceeds the limit, Please contact ZEGO technical support.
+  static const int RoomErrorMultiRoomExceedMaximumRoomCount                               = 1002037;
 
   /// The user is kicked out of the room, possibly because the same user ID is logged in on another device.
   static const int RoomKickedOut                                                          = 1002050;
@@ -162,6 +180,9 @@ class ZegoErrorCode {
 
   /// Room ID has been used by other login room interface
   static const int RoomRoomIdHasBeenUsed                                                  = 1002064;
+
+  /// This method has been deprecated after version 2.9.0. Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room.
+  static const int RoomMultiRoomDeprecated                                                = 1002065;
 
   /// Room login failed due to internal system exceptions.
   static const int RoomInnerError                                                         = 1002099;
@@ -229,6 +250,12 @@ class ZegoErrorCode {
   /// The publish stream encryption key is invalid, the key length only supports 16/24/32 bytes.
   static const int PublisherEncryptionKeyInvalid                                          = 1003060;
 
+  /// In multi-room mode, calling this API to publish the stream fails, please use the method of the same name with ZegoPublisherConfig to publish the stream
+  static const int PublisherErrorPublishWhenUsingMultiRoom                                = 1003070;
+
+  /// In the multi-room mode, the roomID parameter of the publish stream cannot be empty
+  static const int PublisherErrorPublishWithRoomIdIsNullWhenUsingMultiRoom                = 1003071;
+
   /// Stream publishing failed due to system internal exceptions.
   static const int PublisherInnerError                                                    = 1003099;
 
@@ -244,6 +271,9 @@ class ZegoErrorCode {
   /// Stream playing is temporarily interrupted. Retrying...
   static const int PlayerErrorNetworkInterrupt                                            = 1004020;
 
+  /// Failed to play the stream. Publishing of this stream is prohibited by backend configuration.
+  static const int PlayerErrorServerForbid                                                = 1004025;
+
   /// Failed to take play stream snapshot, please check whether the state of the stream to be snapshot is normal.
   static const int PlayerTakePlayStreamSnapshotFailed                                     = 1004030;
 
@@ -252,6 +282,12 @@ class ZegoErrorCode {
 
   /// Decrypt the play stream failed, please check whether the decryption key is correct
   static const int PlayerDecryptionFailed                                                 = 1004061;
+
+  /// In multi-room mode, calling this API to play the stream fails, please use the method of the same name with ZegoPlayerConfig to play the stream
+  static const int PlayerErrorPlayStreamWhenUsingMultiRoom                                = 1004070;
+
+  /// In the multi-room mode, the roomID parameter of the play stream cannot be empty
+  static const int PlayerErrorPlayStreamWithRoomIdIsNullWhenUsingMultiRoom                = 1004071;
 
   /// Stream playing failed due to system internal exceptions.
   static const int PlayerInnerError                                                       = 1004099;
@@ -312,6 +348,9 @@ class ZegoErrorCode {
 
   /// The number of output streams exceeds the maximum number allowed. Up to 3 output streams can be specified.
   static const int MixerExceedMaxOutputCount                                              = 1005030;
+
+  /// Exceed the maximum number of focus voice input streams, and support up to 4 input streams to set focus voice
+  static const int MixerExceedMaxAudioFocusStreamCount                                    = 1005031;
 
   /// Stream mixing authentication failed.
   static const int MixerAuthenticationFailed                                              = 1005050;
@@ -445,6 +484,12 @@ class ZegoErrorCode {
   /// Invalid voice changing parameters set by media player
   static const int MediaPlayerSetVoiceChangerParamInvalid                                 = 1008041;
 
+  /// To make `takeSnapshot` effective, you need to ensure that the video is playing and `setPlayerCanvas` has been called to display the video on the control
+  static const int MediaPlayerTakeSnapshotTimingError                                     = 1008042;
+
+  /// The input parameter is not within the legal value range. Please check the interface notes and input a value within the legal value range.
+  static const int MediaPlayerParamValueRangeIllegal                                      = 1008043;
+
   /// MediaPlayer internal error.
   static const int MediaPlayerInnerError                                                  = 1008099;
 
@@ -463,7 +508,7 @@ class ZegoErrorCode {
   /// Failed to send broadcast message, QPS exceeds the limit, the maximum QPS is 2
   static const int IMBroadcastMessageQpsOverload                                          = 1009015;
 
-  /// The file name suffix is not supported. Only .mp4 and .flv are supported currently. Depending on file name suffix, SDK sets the specified recording format accordingly.
+  /// The file name suffix is not supported. Only .mp4/.aac/.flv are supported currently. Depending on file name suffix, SDK sets the specified recording format accordingly.
   static const int RecorderFileSuffixNameFormatNotSupport                                 = 1010002;
 
   /// Generic error of recording API, generally due to invalid input parameters.
