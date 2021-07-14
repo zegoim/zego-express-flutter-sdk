@@ -44,7 +44,9 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isSpeakerMuted();
   }
 
-  /// Gets a list of audio devices. (Only for desktop)
+  /// Gets a list of audio devices.
+  ///
+  /// Only supports desktop.
   ///
   /// - [deviceType] Audio device type
   /// - Returns Audo device List
@@ -52,7 +54,9 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getAudioDeviceList(deviceType);
   }
 
-  /// Get the device ID of the default audio device. (Only for desktop)
+  /// Get the device ID of the default audio device.
+  ///
+  /// Only supports desktop.
   ///
   /// - [deviceType] Audio device type
   /// - Returns Default Audio device ID
@@ -60,7 +64,9 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getDefaultAudioDeviceID(deviceType);
   }
 
-  /// Chooses to use the specified audio device. (Only for desktop)
+  /// Chooses to use the specified audio device.
+  ///
+  /// Only supports desktop.
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]

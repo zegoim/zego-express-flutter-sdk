@@ -63,8 +63,10 @@ class ZegoExpressEngine {
   ///
   /// The debug switch is set to on and the language is English by default.
   ///
+  /// @deprecated This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
   /// - [enable] Detailed debugging information switch
   /// - [language] Debugging information language
+  @Deprecated('This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.')
   Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
     return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
   }

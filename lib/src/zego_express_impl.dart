@@ -980,7 +980,25 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPublisherQualityUpdate == null) return;
 
         ZegoExpressEngine.onPublisherQualityUpdate!(
-            map['streamID'], ZegoPublishStreamQuality.fromMap(map['quality']));
+          map['streamID'],
+          ZegoPublishStreamQuality(
+            map['videoCaptureFPS'],
+            map['videoEncodeFPS'],
+            map['videoSendFPS'],
+            map['videoKBPS'],
+            map['audioCaptureFPS'],
+            map['audioSendFPS'],
+            map['audioKBPS'],
+            map['rtt'],
+            map['packetLostRate'],
+            ZegoStreamQualityLevel.values[map['level']],
+            map['isHardwareEncode'],
+            ZegoVideoCodecID.values[map['videoCodecID']],
+            map['totalSendBytes'],
+            map['audioSendBytes'],
+            map['videoSendBytes'],
+          )
+        );
         break;
 
       case 'onPublisherCapturedAudioFirstFrame':
@@ -1038,7 +1056,34 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
 
         ZegoExpressEngine.onPlayerQualityUpdate!(
-            map['streamID'], ZegoPlayStreamQuality.fromMap(map['quality']));
+          map['streamID'],
+          ZegoPlayStreamQuality(
+            map['videoRecvFPS'],
+            map['videoDejitterFPS'],
+            map['videoDecodeFPS'],
+            map['videoRenderFPS'],
+            map['videoKBPS'],
+            map['videoBreakRate'],
+            map['audioRecvFPS'],
+            map['audioDejitterFPS'],
+            map['audioDecodeFPS'],
+            map['audioRenderFPS'],
+            map['audioKBPS'],
+            map['audioBreakRate'],
+            map['rtt'],
+            map['packetLostRate'],
+            map['peerToPeerDelay'],
+            map['peerToPeerPacketLostRate'],
+            ZegoStreamQualityLevel.values[map['level']],
+            map['delay'],
+            map['avTimestampDiff'],
+            map['isHardwareDecode'],
+            ZegoVideoCodecID.values[map['videoCodecID']],
+            map['totalRecvBytes'],
+            map['audioRecvBytes'],
+            map['videoRecvBytes']
+          )
+        );
         break;
 
       case 'onPlayerMediaEvent':
