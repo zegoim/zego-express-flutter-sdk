@@ -493,6 +493,21 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('isSpeakerMuted');
   }
 
+  Future<int> getAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('getAudioDeviceVolume',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> setAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
+    return await _channel.invokeMethod('setAudioDeviceVolume', {
+      'deviceType': deviceType.index,
+      'deviceID': deviceID,
+      'volume': volume
+    });
+  }
+
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await _channel
         .invokeMethod('enableAudioCaptureDevice', {'enable': enable});
@@ -526,7 +541,7 @@ class ZegoExpressImpl {
 
   Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
     return await _channel
-        .invokeMethod('getDefaultAudioDeviceID', {'type': deviceType});
+        .invokeMethod('getDefaultAudioDeviceID', {'type': deviceType.index});
   }
 
   Future<void> useAudioDevice(
@@ -573,7 +588,7 @@ class ZegoExpressImpl {
 
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await _channel
-        .invokeMethod('enableHeadphoneMonitor', {'volume': volume});
+        .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
   /* PreProcess */
@@ -871,8 +886,7 @@ class ZegoExpressImpl {
 
         List<dynamic> userMapList = map['userList'];
         List<ZegoUser> userList = [];
-        for (Map<dynamic, dynamic> userMap
-            in userMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> userMap in userMapList) {
           ZegoUser user = ZegoUser(userMap['userID'], userMap['userName']);
           userList.add(user);
         }
@@ -893,8 +907,7 @@ class ZegoExpressImpl {
 
         List<dynamic> streamMapList = map['streamList'];
         List<ZegoStream> streamList = [];
-        for (Map<dynamic, dynamic> streamMap
-            in streamMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> streamMap in streamMapList) {
           ZegoStream stream = ZegoStream(
               ZegoUser(streamMap['userID'], streamMap['userName']),
               streamMap['streamID'],
@@ -916,8 +929,7 @@ class ZegoExpressImpl {
 
         List<dynamic> streamMapList = map['streamList'];
         List<ZegoStream> streamList = [];
-        for (Map<dynamic, dynamic> streamMap
-            in streamMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> streamMap in streamMapList) {
           ZegoStream stream = ZegoStream(
               ZegoUser(streamMap['userID'], streamMap['userName']),
               streamMap['streamID'],
@@ -934,8 +946,7 @@ class ZegoExpressImpl {
 
         List<dynamic> roomExtraInfoMapList = map['roomExtraInfoList'];
         List<ZegoRoomExtraInfo> roomExtraInfoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in roomExtraInfoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in roomExtraInfoMapList) {
           ZegoRoomExtraInfo info = ZegoRoomExtraInfo(
               infoMap['key'],
               infoMap['value'],
@@ -996,8 +1007,7 @@ class ZegoExpressImpl {
 
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in infoMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> infoMap in infoMapList) {
           ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
               infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
           infoList.add(info);
@@ -1073,10 +1083,12 @@ class ZegoExpressImpl {
 
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap
-            in infoMapList as Iterable<Map<dynamic, dynamic>>) {
-          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
-              infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
+        for (Map<dynamic, dynamic> infoMap in infoMapList) {
+          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
+              infoMap['url'],
+              ZegoStreamRelayCDNState.values[infoMap['state']],
+              ZegoStreamRelayCDNUpdateReason.values[infoMap['updateReason']],
+              infoMap['stateTime']);
           infoList.add(info);
         }
 
@@ -1142,7 +1154,7 @@ class ZegoExpressImpl {
 
         Map<dynamic, dynamic> originAudioSpectrums = map['audioSpectrums'];
         Map<String, List<double>> audioSpectrums = Map();
-        for (String streamID in originAudioSpectrums.keys as Iterable<String>) {
+        for (String streamID in originAudioSpectrums.keys) {
           audioSpectrums[streamID] =
               List<double>.from(originAudioSpectrums[streamID]);
         }
@@ -1184,8 +1196,7 @@ class ZegoExpressImpl {
 
         List<dynamic> messageMapList = map['messageList'];
         List<ZegoBroadcastMessageInfo> messageList = [];
-        for (Map<dynamic, dynamic> messageMap
-            in messageMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> messageMap in messageMapList) {
           ZegoBroadcastMessageInfo message = ZegoBroadcastMessageInfo(
               messageMap['message'],
               messageMap['messageID'],
@@ -1202,8 +1213,7 @@ class ZegoExpressImpl {
 
         List<dynamic> messageMapList = map['messageList'];
         List<ZegoBarrageMessageInfo> messageList = [];
-        for (Map<dynamic, dynamic> messageMap
-            in messageMapList as Iterable<Map<dynamic, dynamic>>) {
+        for (Map<dynamic, dynamic> messageMap in messageMapList) {
           ZegoBarrageMessageInfo message = ZegoBarrageMessageInfo(
               messageMap['message'],
               messageMap['messageID'],
@@ -1314,6 +1324,7 @@ class ZegoExpressImpl {
         } else {
           // TODO: Can't find media player
         }
+
         break;
 
       /* AudioEffectPlayer */

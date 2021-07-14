@@ -25,7 +25,8 @@ void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argumen
     bool isTestEnv = std::get<bool>(argument[FTValue("isTestEnv")]);
     int scenario = std::get<int32_t>(argument[FTValue("scenario")]);
 
-    EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
+    auto engine = EXPRESS::ZegoExpressSDK::createEngine(appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario, ZegoExpressEngineEventHandler::getInstance());
+    engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
 
     result->Success();
 }
@@ -216,8 +217,8 @@ void ZegoExpressEngineMethodHandler::startPreview(flutter::EncodableMap& argumen
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     //auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+    
     EXPRESS::ZegoExpressSDK::getEngine()->startPreview();
-
     result->Success();
 }
 
@@ -290,7 +291,7 @@ void ZegoExpressEngineMethodHandler::setAudioCaptureStereoMode(flutter::Encodabl
 void ZegoExpressEngineMethodHandler::sendSEI(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto byteData = std::get<std::vector<uint8_t>>(argument[FTValue("byteData")]);
+    auto byteData = std::get<std::vector<uint8_t>>(argument[FTValue("data")]);
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->sendSEI(byteData.data(), (unsigned int)byteData.size(), (EXPRESS::ZegoPublishChannel)channel);
@@ -1326,4 +1327,237 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentState(flutter::Encodab
     }
 }
         
+void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    
+    EXPRESS::ZegoMixerTask task;
+    auto taskAudioConfig = std::get<flutter::EncodableMap>(argument[FTValue("audioConfig")]);
+    auto taskVideoConfig = std::get<flutter::EncodableMap>(argument[FTValue("videoConfig")]);
+    FTMap advancedConfigMap = std::get<FTMap>(argument[FTValue("advancedConfig")]);
+    
+    for (auto& cfg : advancedConfigMap) {
+        std::string key = std::get<std::string>(cfg.first);
+        std::string value = std::get<std::string>(cfg.second);
+        task.advancedConfig[key] = value;
+    }
 
+    task.taskID = std::get<std::string>(argument[FTValue("taskID")]);
+
+    auto inputFlutterList = std::get<flutter::EncodableList>(argument[FTValue("inputList")]);
+    auto outputFlutterList = std::get<flutter::EncodableList>(argument[FTValue("outputList")]);
+
+    task.backgroundImageURL = std::get<std::string>(argument[FTValue("backgroundImageURL")]);
+    task.enableSoundLevel = std::get<bool>(argument[FTValue("enableSoundLevel")]);
+
+    task.audioConfig.bitrate = std::get<int32_t>(taskAudioConfig[FTValue("bitrate")]);
+    task.audioConfig.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(taskAudioConfig[FTValue("channel")]);
+    task.audioConfig.codecID = (EXPRESS::ZegoAudioCodecID)std::get<int32_t>(taskAudioConfig[FTValue("codecID")]);
+
+    task.videoConfig.bitrate = std::get<int32_t>(taskVideoConfig[FTValue("bitrate")]);
+    task.videoConfig.fps = std::get<int32_t>(taskVideoConfig[FTValue("fps")]);
+    task.videoConfig.height = std::get<int32_t>(taskVideoConfig[FTValue("height")]);
+    task.videoConfig.width = std::get<int32_t>(taskVideoConfig[FTValue("width")]);
+
+    for (auto &inputIter : inputFlutterList) {
+        EXPRESS::ZegoMixerInput input;
+
+        auto inputMap = std::get<FTMap>(inputIter);
+
+        input.streamID = std::get<std::string>(inputMap[FTValue("streamID")]);
+        input.contentType = (EXPRESS::ZegoMixerInputContentType)std::get<int32_t>(inputMap[FTValue("contentType")]);
+        input.layout.height = std::get<int32_t>(inputMap[FTValue("bottom")]) - std::get<int32_t>(inputMap[FTValue("top")]);
+        input.layout.width = std::get<int32_t>(inputMap[FTValue("right")]) - std::get<int32_t>(inputMap[FTValue("left")]);
+        input.layout.x = std::get<int32_t>(inputMap[FTValue("left")]);
+        input.layout.y = std::get<int32_t>(inputMap[FTValue("top")]);
+        input.soundLevelID = std::get<int32_t>(inputMap[FTValue("soundLevelID")]);
+
+        task.inputList.push_back(input);
+    }
+    for (auto &outputIter : outputFlutterList) {
+        EXPRESS::ZegoMixerOutput output;
+        FTMap outputMap = std::get<FTMap>(outputIter);
+        output.target = std::get<std::string>(outputMap[FTValue("target")]);
+
+        task.outputList.push_back(output);
+    }
+
+    task.watermark = nullptr;
+
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    EXPRESS::ZegoExpressSDK::getEngine()->startMixerTask(task, [=](int errorCode, std::string extendedData) {
+        FTMap retMap;
+
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("extendedData")] = FTValue(extendedData);
+        
+        sharedPtrResult->Success(retMap);
+    });
+    
+}
+
+void ZegoExpressEngineMethodHandler::stopMixerTask(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    EXPRESS::ZegoMixerTask task;
+    auto taskAudioConfig = std::get<flutter::EncodableMap>(argument[FTValue("audioConfig")]);
+    auto taskVideoConfig = std::get<flutter::EncodableMap>(argument[FTValue("videoConfig")]);
+    auto taskWatermark = std::get<flutter::EncodableMap>(argument[FTValue("watermark")]);
+
+    task.taskID = std::get<std::string>(argument[FTValue("taskID")]);
+
+    task.audioConfig.bitrate = std::get<int32_t>(taskAudioConfig[FTValue("bitrate")]);
+    task.audioConfig.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(taskAudioConfig[FTValue("channel")]);
+    task.audioConfig.codecID = (EXPRESS::ZegoAudioCodecID)std::get<int32_t>(taskAudioConfig[FTValue("codecID")]);
+
+    task.videoConfig.bitrate = std::get<int32_t>(taskVideoConfig[FTValue("bitrate")]);
+    task.videoConfig.fps = std::get<int32_t>(taskVideoConfig[FTValue("fps")]);
+    task.videoConfig.height = std::get<int32_t>(taskVideoConfig[FTValue("height")]);
+    task.videoConfig.width = std::get<int32_t>(taskVideoConfig[FTValue("width")]);
+
+    auto inputFlutterList = std::get<flutter::EncodableList>(argument[FTValue("inputList")]);
+    auto outputFlutterList = std::get<flutter::EncodableList>(argument[FTValue("outputList")]);
+
+
+    for (auto &inputIter : inputFlutterList) {
+        EXPRESS::ZegoMixerInput input;
+
+        auto inputMap = std::get<FTMap>(inputIter);
+
+        input.streamID = std::get<std::string>(inputMap[FTValue("streamID")]);
+        input.contentType = (EXPRESS::ZegoMixerInputContentType)std::get<int32_t>(inputMap[FTValue("contentType")]);
+        input.layout.height = std::get<int32_t>(inputMap[FTValue("bottom")]) - std::get<int32_t>(inputMap[FTValue("top")]);
+        input.layout.width = std::get<int32_t>(inputMap[FTValue("right")]) - std::get<int32_t>(inputMap[FTValue("left")]);
+        input.layout.x = std::get<int32_t>(inputMap[FTValue("left")]);
+        input.layout.y = std::get<int32_t>(inputMap[FTValue("top")]);
+        input.soundLevelID = std::get<int32_t>(inputMap[FTValue("soundLevelID")]);
+
+        task.inputList.push_back(input);
+    }
+    for (auto &outputIter : outputFlutterList) {
+        EXPRESS::ZegoMixerOutput output;
+        FTMap outputMap = std::get<FTMap>(outputIter);
+        output.target = std::get<std::string>(outputMap[FTValue("target")]);
+
+        task.outputList.push_back(output);
+    }
+
+    task.watermark = nullptr;
+    task.backgroundImageURL = std::get<std::string>(argument[FTValue("backgroundImageURL")]);
+    task.enableSoundLevel = std::get<bool>(argument[FTValue("enableSoundLevel")]);
+
+    FTMap advancedConfigMap = std::get<FTMap>(argument[FTValue("advancedConfig")]);
+    for (auto& cfg : advancedConfigMap) {
+        std::string key = std::get<std::string>(cfg.first);
+        std::string value = std::get<std::string>(cfg.second);
+        task.advancedConfig[key] = value;
+    }
+
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    EXPRESS::ZegoExpressSDK::getEngine()->stopMixerTask(task, [=](int errorCode) {
+        FTMap retMap;
+
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        
+        sharedPtrResult->Success(retMap);
+    });
+    
+}
+
+void ZegoExpressEngineMethodHandler::setSEIConfig(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    EXPRESS::ZegoSEIConfig config;
+    FTMap configMap = std::get<FTMap>(argument[FTValue("config")]);
+
+    config.type = (EXPRESS::ZegoSEIType)std::get<int32_t>(configMap[FTValue("type")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setSEIConfig(config);
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setAudioDeviceVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+    auto volume = std::get<int32_t>(argument[FTValue("volume")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setAudioDeviceVolume((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID.c_str(), volume);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::getAudioDeviceVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+
+    auto volume = EXPRESS::ZegoExpressSDK::getEngine()->getAudioDeviceVolume((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID.c_str());
+
+    result->Success(FTValue(volume));
+}
+
+void ZegoExpressEngineMethodHandler::enableAudioCaptureDevice(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAudioCaptureDevice(enable);
+    result->Success();
+}
+
+/*
+void ZegoExpressEngineMethodHandler::mutePublishStreamAudio(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto mute = std::get<bool>(argument[FTValue("mute")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->mutePublishStreamAudio(mute, (EXPRESS::ZegoPublishChannel)channel);
+    result->Success();
+}
+void ZegoExpressEngineMethodHandler::mutePlayStreamAudio(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+    auto mute = std::get<bool>(argument[FTValue("mute")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->mutePlayStreamAudio(streamID, mute);
+    result->Success();
+}
+*/
+
+void ZegoExpressEngineMethodHandler::enableTrafficControl(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    auto property = std::get<int32_t>(argument[FTValue("property")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableTrafficControl(enable, property);
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::startRecordingCapturedData(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    EXPRESS::ZegoDataRecordConfig config;
+
+    FTMap configMap = std::get<FTMap>(argument[FTValue("config")]);
+
+    config.filePath = std::get<std::string>(configMap[FTValue("filePath")]);
+    config.recordType = (EXPRESS::ZegoDataRecordType)std::get<int32_t>(configMap[FTValue("recordType")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->startRecordingCapturedData(config, (EXPRESS::ZegoPublishChannel)channel);
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::stopRecordingCapturedData(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->stopRecordingCapturedData((EXPRESS::ZegoPublishChannel)channel);
+    result->Success();
+}
