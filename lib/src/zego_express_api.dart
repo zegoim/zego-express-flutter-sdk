@@ -88,7 +88,9 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the room connection state changes.
   ///
-  /// This callback is triggered when the connection status of the room changes, and the reason for the change is notified. Developers can use this callback to determine the status of the current user in the room. If the connection is being requested for a long time, the general probability is that the user's network is unstable.
+  /// This callback is triggered when the connection status of the room changes, and the reason for the change is notified. Developers can use this callback to determine the status of the current user in the room.
+  /// When the user starts to log in to the room, the room is successfully logged in, or the room fails to log in, the [onRoomStateUpdate] callback will be triggered to notify the developer of the status of the current user connected to the room.
+  /// If the connection is being requested for a long time, the general probability is that the user's network is unstable.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   /// - [state] Changed room state
@@ -98,10 +100,11 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the number of other users in the room increases or decreases.
   ///
-  /// Note that the callback is only triggered when the isUserStatusNotify parameter in the ZegoRoomConfig passed loginRoom function is true. Developers can use this callback to determine the situation of users in the room.
-  /// If developers need to use ZEGO room users notifications, please make sure that each login user sets isUserStatusNotify to true
-  /// When a user logs in to a room for the first time, other users already exist in this room, and a user list of the type of addition is received.
-  /// When the user is already in the room, other users in this room will trigger this callback to notify the changed users when they enter or exit the room.
+  /// This callback is used to monitor the increase or decrease of other users in the room, and the developer can judge the situation of the users in the room based on this callback.
+  /// If developers need to use ZEGO room users notifications, please ensure that the [ZegoRoomConfig] sent by each user when logging in to the room has the [isUserStatusNotify] property set to true, otherwise the callback notification will not be received.
+  /// The user logs in to the room, and there is no other user in the room at this time, the callback will not be triggered.
+  /// The user logs in to the room. If multiple other users already exist in the room, the callback will be triggered. At this time, the callback belongs to the ADD type and contains the full list of users in the room. At the same time, other users in the room will also receive this callback of the ADD type, but there are only new current users in the received user list.
+  /// When the user is already in the room, this callback will be triggered when other users in the room log in or log out of the room.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
@@ -119,9 +122,10 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the number of streams published by the other users in the same room increases or decreases.
   ///
-  /// When a user logs in to a room for the first time, there are other users in the room who are publishing streams, and will receive a stream list of the added type.
-  /// When the user is already in the room, other users in this room will trigger this callback to notify the changed stream list when adding or deleting streams.
-  /// Developers can use this callback to determine if there are other users in the same room who have added or stopped streaming, in order to implement active play stream [startPlayingStream] or active stop playing stream [stopPlayingStream], and use simultaneous Changes to Streaming render UI widget;
+  /// This callback is used to monitor stream addition or stream deletion notifications of other users in the room. Developers can use this callback to determine whether other users in the same room start or stop publishing stream, so as to achieve active playing stream [startPlayingStream] or take the initiative to stop the playing stream [stopPlayingStream], and use it to change the UI controls at the same time.
+  /// The user logs in to the room, and there is no other stream in the room at this time, the callback will not be triggered.
+  /// The user logs in to the room. If there are multiple streams of other users in the room, the callback will be triggered. At this time, the callback belongs to the ADD type and contains the full list of streams in the room.
+  /// When the user is already in the room, when other users in the room start or stop publishing stream (that is, when a stream is added or deleted), this callback will be triggered to notify the changed stream list.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
@@ -294,8 +298,9 @@ class ZegoExpressEngine {
   /// - [soundLevels] Sound level hash map, key is the soundLevelID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0
   static void Function(Map<int, double> soundLevels)? onMixerSoundLevelUpdate;
 
-  /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted). (Only for desktop)
+  /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
   ///
+  /// Only supports desktop.
   /// This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
   ///
   /// - [updateType] Update type (add/delete)
@@ -310,7 +315,7 @@ class ZegoExpressEngine {
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
   static void Function(ZegoUpdateType updateType, ZegoDeviceInfo deviceInfo)? onVideoDeviceStateChanged;
-  
+
   /// The local captured audio sound level callback.
   ///
   /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
