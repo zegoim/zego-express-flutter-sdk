@@ -1070,14 +1070,20 @@ public class ZegoExpressEngineEventHandler {
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
             paramMap.put("channel", param.channel.value());
 
-            HashMap<String, Object> map = new HashMap<>();
+            final HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onCapturedAudioData");
             map.put("data", bytes);
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
 
-            sink.success(map);
+            mUIHandler = new Handler(Looper.getMainLooper());
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
 
         @Override
@@ -1094,14 +1100,20 @@ public class ZegoExpressEngineEventHandler {
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
             paramMap.put("channel", param.channel.value());
 
-            HashMap<String, Object> map = new HashMap<>();
+            final HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onPlaybackAudioData");
             map.put("data", bytes);
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
 
-            sink.success(map);
+            mUIHandler = new Handler(Looper.getMainLooper());
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
 
         @Override
@@ -1118,14 +1130,20 @@ public class ZegoExpressEngineEventHandler {
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
             paramMap.put("channel", param.channel.value());
 
-            HashMap<String, Object> map = new HashMap<>();
+            final HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onMixedAudioData");
             map.put("data", bytes);
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
 
-            sink.success(map);
+            mUIHandler = new Handler(Looper.getMainLooper());
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
 
         @Override
@@ -1142,7 +1160,7 @@ public class ZegoExpressEngineEventHandler {
             paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
             paramMap.put("channel", param.channel.value());
 
-            HashMap<String, Object> map = new HashMap<>();
+            final HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onPlayerAudioData");
             map.put("data", bytes);
@@ -1150,7 +1168,13 @@ public class ZegoExpressEngineEventHandler {
             map.put("param", paramMap);
             map.put("streamID", streamID);
 
-            sink.success(map);
+            mUIHandler = new Handler(Looper.getMainLooper());
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
     };
 }
