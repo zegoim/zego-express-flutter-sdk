@@ -1739,6 +1739,20 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
+  Future<void> setPlayerCanvas(ZegoCanvas canvas) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+      'mediaPlayerSetPlayerCanvas', {
+        'index': _index,
+        'canvas': {
+          'view': canvas.view, 
+          'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index, 
+          'backgroundColor': canvas.backgroundColor ?? 0x000000
+        }
+      }
+    );
+  }
+
+  @override
   Future<void> setVolume(int volume) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetVolume', {'index': _index, 'volume': volume});

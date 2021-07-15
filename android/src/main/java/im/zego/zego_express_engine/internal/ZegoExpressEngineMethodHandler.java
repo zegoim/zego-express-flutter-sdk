@@ -2089,6 +2089,51 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void mediaPlayerSetPlayerCanvas(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer == null) {
+            result.success(null);
+            return;
+        }
+
+        // Handle ZegoCanvas
+        HashMap<String, Object> canvasMap = call.argument("canvas");
+
+        if (canvasMap != null && !canvasMap.isEmpty()) {
+            // Media video
+
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int viewID = ZegoUtils.intValue((Number) canvasMap.get("view"));
+            ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
+            int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
+
+            // Render with PlatformView
+            ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+
+            if (platformView != null) {
+                ZegoCanvas canvas = new ZegoCanvas(platformView.getSurfaceView());
+                canvas.viewMode = viewMode;
+                canvas.backgroundColor = backgroundColor;
+
+                mediaPlayer.setPlayerCanvas(canvas);
+
+            } else {
+                // Media video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                ZegoLog.error("[mediaPlayerSetPlayerCanvas] %s", errorMessage);
+                result.error("setPlayerCanvas_No_PlatformView".toUpperCase(), errorMessage, null);
+                return;
+            }
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mediaPlayerSetVolume(MethodCall call, Result result) {
 
         Integer index = call.argument("index");

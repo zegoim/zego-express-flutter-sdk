@@ -1778,6 +1778,13 @@ abstract class ZegoMediaPlayer {
   /// - [mute] Mute local audio flag, The default is false.
   Future<void> muteLocal(bool mute);
 
+  /// Set the view of the player playing video.
+  ///
+  /// @note Only support platform view.
+  ///
+  /// - [canvas] Video rendered canvas object
+  Future<void> setPlayerCanvas(ZegoCanvas canvas);
+
   /// Set mediaplayer volume. Both the local play volume and the publish volume are set.
   ///
   /// - [volume] The range is 0 ~ 200. The default is 60.

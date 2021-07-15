@@ -1840,6 +1840,44 @@
     result(nil);
 }
 
+- (void)mediaPlayerSetPlayerCanvas:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    NSDictionary *canvasMap = call.arguments[@"canvas"];
+
+    if (canvasMap && canvasMap.count > 0) {
+        // media video
+
+        // This parameter is actually viewID when using PlatformView
+        int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+        int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+        int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+
+        // Render with PlatformView
+        ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+
+        if (platformView) {
+            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+            canvas.viewMode = (ZegoViewMode)viewMode;
+            canvas.backgroundColor = backgroundColor;
+
+            [mediaPlayer setPlayerCanvas:canvas];
+        } else {
+            // media video without creating the PlatformView in advance
+            // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+            NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+            ZGError(@"[mediaPlayerSetPlayerCanvas] %@", errorMessage);
+            result([FlutterError errorWithCode:[@"setPlayerCanvas_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+            return;
+        }
+
+    }
+
+    result(nil);
+}
+
 - (void)mediaPlayerSetVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
