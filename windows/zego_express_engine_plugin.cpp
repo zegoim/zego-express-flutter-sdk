@@ -435,6 +435,10 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     {
         ZegoExpressEngineMethodHandler::getInstance().stopRecordingCapturedData(argument, std::move(result));
     }
+    else if(method_call.method_name() == "startAudioDataObserver")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().startAudioDataObserver(argument, std::move(result));
+    }
     else {
       result->NotImplemented();
     }

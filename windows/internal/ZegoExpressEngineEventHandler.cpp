@@ -549,8 +549,8 @@ void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* dat
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
-		paramMap["sampleRate"] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap["channel"] = param.channel;
+		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
+		paramMap[FTValue("channel")] = (int32_t)param.channel;
 		retMap[FTValue("param")] = paramMap;
 
 		eventSink_->Success(retMap);
@@ -566,8 +566,8 @@ void ZegoExpressEngineEventHandler::onPlaybackAudioData(const unsigned char* dat
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
-		paramMap["sampleRate"] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap["channel"] = param.channel;
+		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
+		paramMap[FTValue("channel")] = param.channel;
 		retMap[FTValue("param")] = paramMap;
 
 		eventSink_->Success(retMap);
@@ -583,8 +583,8 @@ void ZegoExpressEngineEventHandler::onMixedAudioData(const unsigned char* data, 
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
-		paramMap["sampleRate"] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap["channel"] = param.channel;
+		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
+		paramMap[FTValue("channel")] = param.channel;
 		retMap[FTValue("param")] = paramMap;
 
 		eventSink_->Success(retMap);
@@ -600,8 +600,8 @@ void ZegoExpressEngineEventHandler::onPlayerAudioData(const unsigned char* data,
 		retMap[FTValue("data")] = dataVec;
 		retMap[FTValue("dataLength")] = (int)dataLength;
 		FTMap paramMap;
-		paramMap["sampleRate"] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap["channel"] = param.channel;
+		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
+		paramMap[FTValue("channel")] = param.channel;
 		retMap[FTValue("param")] = paramMap;
 		retMap[FTValue("streamID")] = streamID;
 
@@ -613,24 +613,25 @@ int ZegoExpressEngineEventHandler::getAudioSampleRateIndex(EXPRESS::ZegoAudioSam
 {
 	switch (sampleRate)
 	{
-	case ZEGO_AUDIO_SAMPLE_RATE_UNKNOWN:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_UNKNOWN:
 		return 0;
-	case ZEGO_AUDIO_SAMPLE_RATE_8K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_8K:
 		return 1;
-	case ZEGO_AUDIO_SAMPLE_RATE_16K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_16K:
 		return 2;
-	case ZEGO_AUDIO_SAMPLE_RATE_22K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_22K:
 		return 3;
-	case ZEGO_AUDIO_SAMPLE_RATE_24K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_24K:
 		return 4;
-	case ZEGO_AUDIO_SAMPLE_RATE_32K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_32K:
 		return 5;
-	case ZEGO_AUDIO_SAMPLE_RATE_44K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_44K:
 		return 6;
-	case ZEGO_AUDIO_SAMPLE_RATE_48K:
+	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_48K:
 		return 7;
 	}
 	return 0;
+}
 
 void ZegoExpressEngineEventHandler::onCapturedDataRecordStateUpdate(EXPRESS::ZegoDataRecordState state, int errorCode, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel)
 {

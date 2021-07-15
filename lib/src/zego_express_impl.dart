@@ -1445,8 +1445,12 @@ class ZegoExpressImpl {
         Uint8List data = map['data'];
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
-        ZegoExpressEngine.onCapturedAudioData!(data, dataLength,
-            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']));
+        ZegoExpressEngine.onCapturedAudioData!(
+            data,
+            dataLength,
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRate.values[paramMap['sampleRate']],
+                ZegoAudioChannel.values[paramMap['channel']]));
         break;
 
       case 'onPlaybackAudioData':
