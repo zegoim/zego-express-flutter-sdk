@@ -51,6 +51,8 @@ import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
 import io.flutter.plugin.common.EventChannel;
+import android.os.Handler;
+import android.os.Looper;
 
 public class ZegoExpressEngineEventHandler {
 
@@ -65,6 +67,14 @@ public class ZegoExpressEngineEventHandler {
             }
         }
         return instance;
+    }
+
+    private Handler mUIHandler = null;
+
+    public ZegoExpressEngineEventHandler() {
+        if(mUIHandler == null) {
+            mUIHandler = new Handler(Looper.getMainLooper());
+        }
     }
 
     public int getAudioSampleRateIndex(ZegoAudioSampleRate sampleRate) {
@@ -1077,7 +1087,6 @@ public class ZegoExpressEngineEventHandler {
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
 
-            mUIHandler = new Handler(Looper.getMainLooper());
             mUIHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -1107,7 +1116,6 @@ public class ZegoExpressEngineEventHandler {
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
 
-            mUIHandler = new Handler(Looper.getMainLooper());
             mUIHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -1137,7 +1145,6 @@ public class ZegoExpressEngineEventHandler {
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
 
-            mUIHandler = new Handler(Looper.getMainLooper());
             mUIHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -1168,7 +1175,6 @@ public class ZegoExpressEngineEventHandler {
             map.put("param", paramMap);
             map.put("streamID", streamID);
 
-            mUIHandler = new Handler(Looper.getMainLooper());
             mUIHandler.post(new Runnable() {
                 @Override
                 public void run() {
