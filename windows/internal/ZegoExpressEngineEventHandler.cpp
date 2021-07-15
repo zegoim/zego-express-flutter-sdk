@@ -40,7 +40,6 @@ void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState
 
 void ZegoExpressEngineEventHandler::onRoomStateUpdate(const std::string& roomID, EXPRESS::ZegoRoomState state, int errorCode, const std::string& extendedData) {
 
-	std::cout << "on room state update" << std::endl;
 	if (eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onRoomStateUpdate");
@@ -341,19 +340,49 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string& streamID,
 	}
 }
 
-/*void ZegoExpressEngineEventHandler::onMixerRelayCDNStateUpdate(const std::string& taskID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) {
+void ZegoExpressEngineEventHandler::onMixerRelayCDNStateUpdate(const std::string& taskID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) {
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMixerRelayCDNStateUpdate");
+        retMap[FTValue("taskID")] = FTValue(taskID);
 
+        FTArray infoListArray;
+        for (auto& info : infoList) {
+            FTMap infoMap;
+            infoMap[FTValue("url")] = FTValue(info.url);
+            infoMap[FTValue("state")] = FTValue((int32_t)info.state);
+            infoMap[FTValue("updateReason")] = FTValue((int32_t)info.updateReason);
+            infoMap[FTValue("stateTime")] = FTValue((int32_t)info.stateTime);
+            infoListArray.emplace_back(FTValue(infoMap));
+        }
+        retMap[FTValue("infoList")] = FTValue(infoListArray);
+        eventSink_->Success(retMap);
+    }
 }
 
 void ZegoExpressEngineEventHandler::onMixerSoundLevelUpdate(const std::unordered_map<unsigned int, float>& soundLevels) {
+	if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMixerSoundLevelUpdate");
 
-}*/
+        FTMap soundLevelsMap;
+        for (auto& soundlevel : soundLevels) {
+            soundLevelsMap[FTValue((int32_t)soundlevel.first)] = FTValue(soundlevel.second);
+        }
+        retMap[FTValue("soundLevels")] = FTValue(soundLevelsMap);
+
+        eventSink_->Success(retMap);
+    }
+}
 
 void ZegoExpressEngineEventHandler::onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) {
 
 	if (eventSink_) {
 		FTMap retMap;
 		retMap[FTValue("method")] = FTValue("onAudioDeviceStateChanged");
+
+		retMap[FTValue("updateType")] = FTValue((int32_t)updateType);
+		retMap[FTValue("deviceType")] = FTValue((int32_t)deviceType);
 
 		FTMap deviceInfoMap;
 		deviceInfoMap[FTValue("deviceID")] = FTValue(deviceInfo.deviceID);
@@ -602,4 +631,44 @@ int ZegoExpressEngineEventHandler::getAudioSampleRateIndex(EXPRESS::ZegoAudioSam
 		return 7;
 	}
 	return 0;
+
+void ZegoExpressEngineEventHandler::onCapturedDataRecordStateUpdate(EXPRESS::ZegoDataRecordState state, int errorCode, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel)
+{
+    if (eventSink_) {
+        FTMap retMap;
+        FTMap configMap;
+		retMap[FTValue("method")] = FTValue("onCapturedDataRecordStateUpdate");
+
+        configMap[FTValue("filePath")] = FTValue(config.filePath);
+        configMap[FTValue("recordType")] = FTValue(config.recordType);
+
+        retMap[FTValue("state")] = FTValue(state);
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("config")] = FTValue(configMap);
+        retMap[FTValue("channel")] = FTValue(channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onCapturedDataRecordProgressUpdate(EXPRESS::ZegoDataRecordProgress progress, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel)
+{
+    if (eventSink_) {
+        FTMap retMap;
+        FTMap progressMap;
+        FTMap configMap;
+		retMap[FTValue("method")] = FTValue("onCapturedDataRecordProgressUpdate");
+
+        progressMap[FTValue("currentFileSize")] = FTValue((int32_t)progress.currentFileSize);
+        progressMap[FTValue("duration")] = FTValue((int32_t)progress.duration);
+
+        configMap[FTValue("filePath")] = FTValue(config.filePath);
+        configMap[FTValue("recordType")] = FTValue(config.recordType);
+
+        retMap[FTValue("config")] = FTValue(configMap);
+        retMap[FTValue("progress")] = FTValue(progressMap);
+        retMap[FTValue("channel")] = FTValue(channel);
+
+        eventSink_->Success(retMap);
+    }
 }

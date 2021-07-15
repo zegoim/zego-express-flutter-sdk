@@ -399,6 +399,42 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     {
         ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetCurrentState(argument, std::move(result));
     }
+    else if(method_call.method_name() == "startMixerTask")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().startMixerTask(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "stopMixerTask")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().stopMixerTask(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "setSEIConfig")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().setSEIConfig(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "setAudioDeviceVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().setAudioDeviceVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "getAudioDeviceVolume")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().getAudioDeviceVolume(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "enableAudioCaptureDevice")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().enableAudioCaptureDevice(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "enableTrafficControl")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().enableTrafficControl(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "startRecordingCapturedData")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().startRecordingCapturedData(argument, std::move(result));
+    }
+    else if(method_call.method_name() == "stopRecordingCapturedData")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().stopRecordingCapturedData(argument, std::move(result));
+    }
     else {
       result->NotImplemented();
     }

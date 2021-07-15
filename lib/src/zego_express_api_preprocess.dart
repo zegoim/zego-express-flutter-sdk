@@ -153,7 +153,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setReverbEchoParam(param);
   }
 
-  /// Enables the virtual stereo feature.
+  /// Enables the virtual stereo feature with publishing stream.
   ///
   /// Note: You need to set up a dual channel setAudioConfig for the virtual stereo to take effect!
   ///

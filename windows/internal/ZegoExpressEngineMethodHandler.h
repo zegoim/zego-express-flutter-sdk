@@ -6,7 +6,7 @@
 #include <ZegoExpressSDK.h>
 using namespace ZEGO;
 
-class ZegoExpressEngineMethodHandler 
+class ZegoExpressEngineMethodHandler
 {
 public:
     ~ZegoExpressEngineMethodHandler(){}
@@ -98,7 +98,7 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopSoundLevelMonitor(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    
+
     void enableHeadphoneMonitor(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setHeadphoneMonitorVolume(flutter::EncodableMap& argument,
@@ -217,6 +217,25 @@ public:
     void mediaPlayerSetVoiceChangerParam(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerGetCurrentState(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+    void startMixerTask(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopMixerTask(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setSEIConfig(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setAudioDeviceVolume(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void getAudioDeviceVolume(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAudioCaptureDevice(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableTrafficControl(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void startRecordingCapturedData(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopRecordingCapturedData(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
 private:

@@ -5,7 +5,7 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
-  /// Starts playing a stream from ZEGO RTC server or from third-party CDN.
+  /// Starts playing a stream from ZEGO RTC server or from third-party CDN. Support multi-room mode.
   ///
   /// This function allows users to play audio and video streams both from the ZEGO RTC server or from third-party cdn.
   /// Before starting to play the stream, you need to join the room first, you can get the new streamID in the room by listening to the [onRoomStreamUpdate] event callback.
@@ -13,6 +13,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
   /// The developer can update the player canvas by calling this function again (the streamID must be the same).
   /// After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min.
+  /// To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
@@ -58,7 +59,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// This function is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.
   /// You need to reset after [stopPlayingStream] and [startPlayingStream].
   ///
-  /// - [streamID] Stream ID. Set volume for all streams playing by set streamID as null or empty.
+  /// - [streamID] Stream ID.
   /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.
   Future<void> setPlayVolume(String streamID, int volume) async {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);

@@ -493,6 +493,21 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('isSpeakerMuted');
   }
 
+  Future<int> getAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('getAudioDeviceVolume',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> setAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
+    return await _channel.invokeMethod('setAudioDeviceVolume', {
+      'deviceType': deviceType.index,
+      'deviceID': deviceID,
+      'volume': volume
+    });
+  }
+
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await _channel
         .invokeMethod('enableAudioCaptureDevice', {'enable': enable});
@@ -526,7 +541,7 @@ class ZegoExpressImpl {
 
   Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
     return await _channel
-        .invokeMethod('getDefaultAudioDeviceID', {'type': deviceType});
+        .invokeMethod('getDefaultAudioDeviceID', {'type': deviceType.index});
   }
 
   Future<void> useAudioDevice(
@@ -981,7 +996,25 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPublisherQualityUpdate == null) return;
 
         ZegoExpressEngine.onPublisherQualityUpdate!(
-            map['streamID'], ZegoPublishStreamQuality.fromMap(map['quality']));
+          map['streamID'],
+          ZegoPublishStreamQuality(
+            map['videoCaptureFPS'],
+            map['videoEncodeFPS'],
+            map['videoSendFPS'],
+            map['videoKBPS'],
+            map['audioCaptureFPS'],
+            map['audioSendFPS'],
+            map['audioKBPS'],
+            map['rtt'],
+            map['packetLostRate'],
+            ZegoStreamQualityLevel.values[map['level']],
+            map['isHardwareEncode'],
+            ZegoVideoCodecID.values[map['videoCodecID']],
+            map['totalSendBytes'],
+            map['audioSendBytes'],
+            map['videoSendBytes'],
+          )
+        );
         break;
 
       case 'onPublisherCapturedAudioFirstFrame':
@@ -1039,7 +1072,34 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
 
         ZegoExpressEngine.onPlayerQualityUpdate!(
-            map['streamID'], ZegoPlayStreamQuality.fromMap(map['quality']));
+          map['streamID'],
+          ZegoPlayStreamQuality(
+            map['videoRecvFPS'],
+            map['videoDejitterFPS'],
+            map['videoDecodeFPS'],
+            map['videoRenderFPS'],
+            map['videoKBPS'],
+            map['videoBreakRate'],
+            map['audioRecvFPS'],
+            map['audioDejitterFPS'],
+            map['audioDecodeFPS'],
+            map['audioRenderFPS'],
+            map['audioKBPS'],
+            map['audioBreakRate'],
+            map['rtt'],
+            map['packetLostRate'],
+            map['peerToPeerDelay'],
+            map['peerToPeerPacketLostRate'],
+            ZegoStreamQualityLevel.values[map['level']],
+            map['delay'],
+            map['avTimestampDiff'],
+            map['isHardwareDecode'],
+            ZegoVideoCodecID.values[map['videoCodecID']],
+            map['totalRecvBytes'],
+            map['audioRecvBytes'],
+            map['videoRecvBytes']
+          )
+        );
         break;
 
       case 'onPlayerMediaEvent':
@@ -1088,8 +1148,11 @@ class ZegoExpressImpl {
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
         for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
-              infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
+          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
+              infoMap['url'],
+              ZegoStreamRelayCDNState.values[infoMap['state']],
+              ZegoStreamRelayCDNUpdateReason.values[infoMap['updateReason']],
+              infoMap['stateTime']);
           infoList.add(info);
         }
 
@@ -1329,6 +1392,7 @@ class ZegoExpressImpl {
         } else {
           // TODO: Can't find media player
         }
+
         break;
 
       /* AudioEffectPlayer */

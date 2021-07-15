@@ -10,11 +10,12 @@ using namespace ZEGO;
 #define FTMap flutter::EncodableMap
 #define FTArray flutter::EncodableList
 
-class ZegoExpressEngineEventHandler 
+class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
     , public EXPRESS::IZegoAudioEffectPlayerEventHandler
     , public EXPRESS::IZegoMediaPlayerEventHandler
     , public EXPRESS::IZegoAudioDataHandler
+    , public EXPRESS::IZegoDataRecordEventHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -82,9 +83,9 @@ protected:
 
     void onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
-    //void onMixerRelayCDNStateUpdate(const std::string& /*taskID*/, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) override;
+    void onMixerRelayCDNStateUpdate(const std::string& taskID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) override;
 
-    //void onMixerSoundLevelUpdate(const std::unordered_map<unsigned int, float>& soundLevels) override;
+    void onMixerSoundLevelUpdate(const std::unordered_map<unsigned int, float>& soundLevels) override;
 
     void onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) override;
 
@@ -126,6 +127,10 @@ protected:
     void onMixedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 
     void onPlayerAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param, const std::string& streamID) override;
+
+    void onCapturedDataRecordStateUpdate(EXPRESS::ZegoDataRecordState state, int errorCode, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
+
+    void onCapturedDataRecordProgressUpdate(EXPRESS::ZegoDataRecordProgress progress, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
