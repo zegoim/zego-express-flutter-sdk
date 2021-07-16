@@ -1422,8 +1422,10 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onCapturedDataRecordStateUpdate!(
             ZegoDataRecordState.values[map['state']],
             map['errorCode'],
-            ZegoDataRecordConfig(map['config']['filePath'],
-                ZegoDataRecordType.values[map['config']['recordType']]),
+            ZegoDataRecordConfig(
+              map['config']['filePath'],
+              ZegoDataRecordType.values[map['config']['recordType']]
+            ),
             ZegoPublishChannel.values[map['channel']]);
         break;
 
@@ -1432,10 +1434,14 @@ class ZegoExpressImpl {
           return;
 
         ZegoExpressEngine.onCapturedDataRecordProgressUpdate!(
-            ZegoDataRecordProgress(map['progress']['duration'],
-                map['progress']['currentFileSize']),
-            ZegoDataRecordConfig(map['config']['filePath'],
-                ZegoDataRecordType.values[map['config']['recordType']]),
+            ZegoDataRecordProgress(
+              map['progress']['duration'],
+              map['progress']['currentFileSize']
+            ),
+            ZegoDataRecordConfig(
+              map['config']['filePath'],
+              ZegoDataRecordType.values[map['config']['recordType']]
+            ),
             ZegoPublishChannel.values[map['channel']]);
         break;
 
@@ -1446,11 +1452,13 @@ class ZegoExpressImpl {
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
         ZegoExpressEngine.onCapturedAudioData!(
-            data,
-            dataLength,
-            ZegoAudioFrameParam(
-                ZegoAudioSampleRate.values[paramMap['sampleRate']],
-                ZegoAudioChannel.values[paramMap['channel']]));
+          data,
+          dataLength,
+          ZegoAudioFrameParam(
+            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioChannel.values[paramMap['channel']]
+          )
+        );
         break;
 
       case 'onPlaybackAudioData':
@@ -1459,8 +1467,14 @@ class ZegoExpressImpl {
         Uint8List data = map['data'];
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
-        ZegoExpressEngine.onPlaybackAudioData!(data, dataLength,
-            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']));
+        ZegoExpressEngine.onPlaybackAudioData!(
+          data,
+          dataLength,
+          ZegoAudioFrameParam(
+            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioChannel.values[paramMap['channel']]
+          )
+        );
         break;
 
       case 'onMixedAudioData':
@@ -1469,8 +1483,14 @@ class ZegoExpressImpl {
         Uint8List data = map['data'];
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
-        ZegoExpressEngine.onMixedAudioData!(data, dataLength,
-            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']));
+        ZegoExpressEngine.onMixedAudioData!(
+          data,
+          dataLength,
+          ZegoAudioFrameParam(
+            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioChannel.values[paramMap['channel']]
+          )
+        );
         break;
 
       case 'onPlayerAudioData':
@@ -1484,7 +1504,10 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onPlayerAudioData!(
             data,
             dataLength,
-            ZegoAudioFrameParam(paramMap['sampleRate'], paramMap['channel']),
+            ZegoAudioFrameParam(
+              ZegoAudioSampleRate.values[paramMap['sampleRate']],
+              ZegoAudioChannel.values[paramMap['channel']]
+            ),
             streamID);
         break;
 
