@@ -6,7 +6,7 @@
 #include <ZegoExpressSDK.h>
 using namespace ZEGO;
 
-class ZegoExpressEngineMethodHandler 
+class ZegoExpressEngineMethodHandler
 {
 public:
     ~ZegoExpressEngineMethodHandler(){}
@@ -98,7 +98,7 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopSoundLevelMonitor(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    
+
     void enableHeadphoneMonitor(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setHeadphoneMonitorVolume(flutter::EncodableMap& argument,
@@ -132,6 +132,11 @@ public:
     void enableVirtualStereo(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    /* Custom Audio IO */
+    void startAudioDataObserver(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopAudioDataObserver(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     /* Audio Effects Player */
     void createAudioEffectPlayer(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -232,7 +237,7 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopRecordingCapturedData(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-        
+
 private:
     ZegoExpressEngineMethodHandler() = default;
 

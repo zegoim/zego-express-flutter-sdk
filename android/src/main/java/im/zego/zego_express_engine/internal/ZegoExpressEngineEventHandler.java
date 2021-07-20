@@ -10,11 +10,13 @@ package im.zego.zego_express_engine.internal;
 
 import org.json.JSONObject;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoAudioDataHandler;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerEventHandler;
 import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
@@ -34,6 +36,8 @@ import im.zego.zegoexpress.constants.ZegoPublisherState;
 import im.zego.zegoexpress.constants.ZegoRemoteDeviceState;
 import im.zego.zegoexpress.constants.ZegoRoomState;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
+import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
+import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
@@ -47,6 +51,8 @@ import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
 import io.flutter.plugin.common.EventChannel;
+import android.os.Handler;
+import android.os.Looper;
 
 public class ZegoExpressEngineEventHandler {
 
@@ -61,6 +67,36 @@ public class ZegoExpressEngineEventHandler {
             }
         }
         return instance;
+    }
+
+    private Handler mUIHandler = null;
+
+    public ZegoExpressEngineEventHandler() {
+        if(mUIHandler == null) {
+            mUIHandler = new Handler(Looper.getMainLooper());
+        }
+    }
+
+    public int getAudioSampleRateIndex(ZegoAudioSampleRate sampleRate) {
+        switch (sampleRate) {
+            case UNKNOWN:
+                return 0;
+            case ZEGO_AUDIO_SAMPLE_RATE_8K:
+                return 1;
+            case ZEGO_AUDIO_SAMPLE_RATE_16K:
+                return 2;
+            case ZEGO_AUDIO_SAMPLE_RATE_22K:
+                return 3;
+            case ZEGO_AUDIO_SAMPLE_RATE_24K:
+                return 4;
+            case ZEGO_AUDIO_SAMPLE_RATE_32K:
+                return 5;
+            case ZEGO_AUDIO_SAMPLE_RATE_44K:
+                return 6;
+            case ZEGO_AUDIO_SAMPLE_RATE_48K:
+                return 7;
+        }
+        return 0;
     }
 
     EventChannel.EventSink sink;
@@ -1026,6 +1062,125 @@ public class ZegoExpressEngineEventHandler {
             map.put("channel", channel.value());
 
             sink.success(map);
+        }
+    };
+
+    IZegoAudioDataHandler audioDataHandler = new IZegoAudioDataHandler() {
+        @Override
+        public void onCapturedAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
+            super.onCapturedAudioData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.channel.value());
+
+            final HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onCapturedAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
+        }
+
+        @Override
+        public void onPlaybackAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
+            super.onPlaybackAudioData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.channel.value());
+
+            final HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlaybackAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
+        }
+
+        @Override
+        public void onMixedAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param){
+            super.onMixedAudioData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.channel.value());
+
+            final HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMixedAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
+        }
+
+        @Override
+        public void onPlayerAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param, String streamID){
+            super.onPlayerAudioData(data, dataLength, param, streamID);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("channel", param.channel.value());
+
+            final HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerAudioData");
+            map.put("data", bytes);
+            map.put("dataLength", dataLength);
+            map.put("param", paramMap);
+            map.put("streamID", streamID);
+
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
     };
 }

@@ -257,13 +257,13 @@ enum ZegoANSMode {
 
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
-  /// Basic
+  /// Basic (Adaptive (reduce) video bitrate)
   static const int Basic = 0;
-  /// Adaptive FPS
+  /// Adaptive (reduce) video FPS
   static const int AdaptiveFPS = 1;
-  /// Adaptive resolution
+  /// Adaptive (reduce) video resolution
   static const int AdaptiveResolution = 1 << 1;
-  /// Adaptive Audio bitrate
+  /// Adaptive (reduce) audio bitrate
   static const int AdaptiveAudioBitrate = 1 << 2;
 }
 
@@ -614,7 +614,7 @@ enum ZegoNetworkSpeedTestType {
 /// Configure the log file save path and the maximum log file size.
 class ZegoLogConfig {
 
-  /// Log file save path
+  /// The storage path of the log file. Refer to the official website document for the default path. https://doc-zh.zego.im/article/6467
   String logPath;
 
   /// The maximum log file size (Bytes). The default maximum size is 5MB (5 * 1024 * 1024 Bytes)
@@ -1583,7 +1583,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// Yon can pass the absolute path of the local resource or the URL of the network resource
   ///
-  /// - [path] the absolute path of the local resource or the URL of the network resource
+  /// - [path] The absolute resource path or the URL of the network resource cannot be passed [null], otherwise an error will be reported.
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
@@ -1614,7 +1614,7 @@ abstract class ZegoMediaPlayer {
   /// - [enable] repeat playback flag. The default is false.
   Future<void> enableRepeat(bool enable);
 
-  /// Whether to mix the player's sound into the stream being published.
+  /// Whether to mix the player's sound into the main stream channel being published.
   ///
   /// - [enable] Aux audio flag. The default is false.
   Future<void> enableAux(bool enable);

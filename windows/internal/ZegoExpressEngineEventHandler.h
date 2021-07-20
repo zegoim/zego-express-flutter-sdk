@@ -10,10 +10,11 @@ using namespace ZEGO;
 #define FTMap flutter::EncodableMap
 #define FTArray flutter::EncodableList
 
-class ZegoExpressEngineEventHandler 
+class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
     , public EXPRESS::IZegoAudioEffectPlayerEventHandler
     , public EXPRESS::IZegoMediaPlayerEventHandler
+    , public EXPRESS::IZegoAudioDataHandler
     , public EXPRESS::IZegoDataRecordEventHandler
 {
 public:
@@ -118,13 +119,22 @@ protected:
 
     void onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlayer* mediaPlayer, const unsigned char* data, unsigned int dataLength) override;
 
+protected:
+    void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
+
+    void onPlaybackAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
+
+    void onMixedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
+
+    void onPlayerAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param, const std::string& streamID) override;
+
     void onCapturedDataRecordStateUpdate(EXPRESS::ZegoDataRecordState state, int errorCode, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
-    
+
     void onCapturedDataRecordProgressUpdate(EXPRESS::ZegoDataRecordProgress progress, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 
 private:
-    //ZegoExpressEngineEventHandler() = default;
+    int getAudioSampleRateIndex(EXPRESS::ZegoAudioSampleRate sampleRate);
 };

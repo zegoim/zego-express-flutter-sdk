@@ -90,22 +90,30 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
   }
 
-  /// Stops or resumes playing the audio part of a stream.
+  /// Whether the pull stream can receive the specified audio data.
   ///
-  /// This function can be used to stop playing/retrieving the audio data of the stream. It can be called before and after playing the stream.
+  /// Available since: 1.0.0 and above.
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from designated remote users when pulling streams as needed.
+  /// When to call: This function can be called before and after calling [startPlayingStream] to pull the stream.
+  /// Caution: This function is valid only when the [muteAllPlayStreamAudio] function is set to `false`.
+  /// Related APIs: You can call the [muteAllPlayStreamAudio] function to control whether to receive all audio data. When the two functions [muteAllPlayStreamAudio] and [mutePlayStreamAudio] are set to `false` at the same time, the local user can receive the audio data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamAudio(true)] function is called, it is globally effective, that is, local users will be prohibited from receiving all remote users' audio data. At this time, the [mutePlayStreamAudio] function will not take effect whether it is called before or after [muteAllPlayStreamAudio].2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [mutePlayStreamAudio] function can be used to control whether to receive a single audio data. Calling the [mutePlayStreamAudio(true, streamID)] function allows the local user to receive audio data other than the `streamID`; calling the [mutePlayStreamAudio(false, streamID)] function allows the local user to receive all audio data.
   ///
   /// - [streamID] Stream ID
-  /// - [mute] Mute flag, true: mute play stream audio, false: resume play stream audio
+  /// - [mute] Whether it can receive the audio data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
   }
 
-  /// Stops or resumes playing the video part of a stream.
+  /// Whether the pull stream can receive the specified video data.
   ///
-  /// This function can be used to stop playing/retrieving the video data of the stream. It can be called before and after playing the stream.
+  /// Available since: 1.0.0 and above.
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed.
+  /// When to call: This function can be called before and after calling [startPlayingStream] to pull the stream.
+  /// Caution: This function is valid only when the [muteAllPlayStreamVideo] function is set to `false`.
+  /// Related APIs: You can call the [muteAllPlayStreamVideo] function to control whether to receive all video data. When the two functions [muteAllPlayStreamVideo] and [mutePlayStreamVideo] are set to `false` at the same time, the local user can receive the video data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamVideo(true)] function is called, it will take effect globally, that is, local users will be prohibited from receiving all remote users' video data. At this time, the [mutePlayStreamVideo] function will not take effect whether it is called before or after [muteAllPlayStreamVideo]. 2. When the [muteAllPlayStreamVideo(false)] function is called, the local user can receive the video data of all remote users. At this time, the [mutePlayStreamVideo] function can be used to control whether to receive a single video data. Call the [mutePlayStreamVideo(true, streamID)] function, the local user can receive other video data other than the `streamID`; call the [mutePlayStreamVideo(false, streamID)] function, the local user can receive all the video data.
   ///
   /// - [streamID] Stream ID
-  /// - [mute] mute flag, true: mute play stream video, false: resume play stream video
+  /// - [mute] Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
   Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
   }
