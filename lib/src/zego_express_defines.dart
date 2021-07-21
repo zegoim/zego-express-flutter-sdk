@@ -559,6 +559,26 @@ enum ZegoAudioEffectPlayState {
   PlayEnded
 }
 
+/// audio sample rate.
+enum ZegoAudioSampleRate {
+  /// Unknown
+  Unknown,
+  /// 8K
+  SampleRate8K,
+  /// 16K
+  SampleRate16K,
+  /// 22.05K
+  SampleRate22K,
+  /// 24K
+  SampleRate24K,
+  /// 32K
+  SampleRate32K,
+  /// 44.1K
+  SampleRate44K,
+  /// 48K
+  SampleRate48K
+}
+
 /// Record type.
 enum ZegoDataRecordType {
   /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
@@ -1455,6 +1475,21 @@ class ZegoBarrageMessageInfo {
 
 }
 
+/// Parameter object for audio frame.
+///
+/// Including the sampling rate and channel of the audio frame
+class ZegoAudioFrameParam {
+
+  /// Sampling Rate
+  ZegoAudioSampleRate sampleRate;
+
+  /// Audio channel, default is Mono
+  ZegoAudioChannel channel;
+
+  ZegoAudioFrameParam(this.sampleRate, this.channel);
+
+}
+
 /// Audio configuration.
 ///
 /// Configure audio bitrate, audio channel, audio encoding for publishing stream
@@ -1583,7 +1618,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// Yon can pass the absolute path of the local resource or the URL of the network resource
   ///
-  /// - [path] The absolute resource path or the URL of the network resource cannot be passed [null], otherwise an error will be reported.
+  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "".
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
@@ -1765,7 +1800,7 @@ abstract class ZegoAudioEffectPlayer {
   /// In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file. Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading
   ///
   /// - [audioEffectID] ID for the audio effect
-  /// - [path] the absolute path of the audio effect resource.
+  /// - [path] the absolute path of the audio effect resource and cannot be null or "".
   /// - Returns Result for audio effect player loads resources
   Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path);
 
