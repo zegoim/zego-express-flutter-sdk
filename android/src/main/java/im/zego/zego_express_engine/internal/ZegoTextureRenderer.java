@@ -45,7 +45,7 @@ public class ZegoTextureRenderer {
 
             this.surfaceTexture.setDefaultBufferSize(viewWidth, viewHeight);
             this.surface.release();
-            this.surface = new Surface(surfaceTexture);
+            this.surface = new Surface(this.surfaceTexture);
         }
     }
 
