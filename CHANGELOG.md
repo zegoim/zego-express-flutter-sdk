@@ -1,5 +1,4 @@
 # Change Log
-
 ## 2.6.0
 
 1. Add support for Windows platform (Only support audio temporarily)
@@ -8,6 +7,7 @@
 ## 2.5.3
 
 1. Fix some bugs of mismatched parameters
+2. Update Native SDK to 2.9.3
 
 ## 2.5.2
 
