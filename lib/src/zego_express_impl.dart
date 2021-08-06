@@ -65,6 +65,10 @@ class ZegoExpressImpl {
     });
   }
 
+  static Future<void> setRoomMode(ZegoRoomMode mode) async {
+    return await _channel.invokeMethod('setRoomMode', {'mode': mode.index});
+  }
+
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
   }
@@ -118,9 +122,12 @@ class ZegoExpressImpl {
   /* Publisher */
 
   Future<void> startPublishingStream(String streamID,
-      {ZegoPublishChannel? channel}) async {
+      {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('startPublishingStream', {
       'streamID': streamID,
+      'config': config != null ? {
+        'roomID': config.roomID ?? ''
+      } : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -364,7 +371,8 @@ class ZegoExpressImpl {
                       'url': config.cdnConfig?.url,
                       'authParam': config.cdnConfig?.authParam
                     }
-                  : {}
+                  : {},
+              'roomID': config.roomID ?? ''
             }
           : {}
     });

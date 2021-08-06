@@ -116,7 +116,10 @@
             logConfigObject.logPath = logConfigMap[@"logPath"];
             logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:logConfigMap[@"logSize"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             configObject.logConfig = logConfigObject;
+#pragma clang diagnostic pop
         }
 
         [ZegoExpressEngine setEngineConfig:configObject];
@@ -125,6 +128,15 @@
     } else {
         result([FlutterError errorWithCode:[@"setEngineConfig_null_config" uppercaseString] message:@"Invoke `setEngineConfig` with null config" details:nil]);
     }
+}
+
+- (void)setRoomMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+    
+    [ZegoExpressEngine setRoomMode:(ZegoRoomMode)mode];
+
+    result(nil);
 }
 
 
@@ -140,7 +152,10 @@
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     int language = [ZegoUtils intValue:call.arguments[@"language"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setDebugVerbose:enable language:(ZegoLanguage)language];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -190,7 +205,10 @@
         configObject.token = token;
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] loginMultiRoom:roomID config:configObject];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -246,6 +264,14 @@
 
     NSString *streamID = call.arguments[@"streamID"];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    
+    ZegoPublisherConfig *config = nil;
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    if (configMap && configMap.count > 0) {
+        config = [[ZegoPublisherConfig alloc] init];
+        config.roomID = configMap[@"roomID"];
+    }
 
     [[ZegoExpressEngine sharedEngine] startPublishingStream:streamID channel:(ZegoPublishChannel)channel];
 
@@ -825,7 +851,10 @@
     int videoLayer = [ZegoUtils intValue:call.arguments[@"videoLayer"]];
     NSString *streamID = call.arguments[@"streamID"];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setPlayStreamVideoLayer:(ZegoPlayerVideoLayer)videoLayer streamID:streamID];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -1097,7 +1126,10 @@
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setBuiltInSpeakerOn:enable];
+#pragma clang diagnostic pop
 
     result(nil);
 }

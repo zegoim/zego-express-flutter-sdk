@@ -40,6 +40,16 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.setEngineConfig(config);
   }
 
+  /// Set room mode
+  ///
+  /// It must be called before the SDK is initialized, otherwise it will fail.
+  /// If you need to use the multi-room feature, please contact the instant technical support to configure the server support.
+  ///
+  /// - [mode] Room mode, the default is single room mode
+  static Future<void> setRoomMode(ZegoRoomMode mode) async {
+    return await ZegoExpressImpl.setRoomMode(mode);
+  }
+
   /// Gets the SDK's version number.
   ///
   /// When the SDK is running, the developer finds that it does not match the expected situation and submits the problem and related logs to the ZEGO technical staff for locating. The ZEGO technical staff may need the information of the engine version to assist in locating the problem.

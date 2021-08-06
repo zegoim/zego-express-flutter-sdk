@@ -974,6 +974,18 @@ class ZegoCanvas {
 
 }
 
+/// Advanced publisher configuration.
+///
+/// Configure room id
+class ZegoPublisherConfig {
+
+  /// The Room ID
+  String? roomID;
+
+  ZegoPublisherConfig(this.roomID);
+
+}
+
 /// Published stream quality information.
 ///
 /// Audio and video parameters and network quality, etc.
@@ -1075,12 +1087,16 @@ class ZegoPlayerConfig {
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
   ZegoCDNConfig? cdnConfig;
 
-  ZegoPlayerConfig(this.resourceMode, this.cdnConfig);
+  /// The Room ID
+  String? roomID;
+
+  ZegoPlayerConfig(this.resourceMode, this.cdnConfig, this.roomID);
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default {
     resourceMode = ZegoStreamResourceMode.Default;
     cdnConfig = null;
+    roomID = null;
   }
 
 }

@@ -7,17 +7,19 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
-  /// Starts publishing a stream (for the specified channel). You can call this function to publish a second stream.
+  /// Starts publishing a stream. Support multi-room mode.
   ///
   /// This function allows users to publish their local audio and video streams to the ZEGO RTC server. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
   /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
   /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
   /// After the first publish stream failure due to network reasons or the publish stream is interrupted, the default time for SDK reconnection is 20min.
+  /// To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [config] Advanced publish configuration
   /// - [channel] Publish stream channel
-  Future<void> startPublishingStream(String streamID, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.startPublishingStream(streamID, channel: channel);
+  Future<void> startPublishingStream(String streamID, {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.startPublishingStream(streamID, config: config, channel: channel);
   }
 
   /// Stops publishing a stream (for the specified channel).

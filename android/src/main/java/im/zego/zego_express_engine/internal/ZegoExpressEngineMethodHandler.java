@@ -60,6 +60,7 @@ import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoReverbPreset;
+import im.zego.zegoexpress.constants.ZegoRoomMode;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
@@ -86,6 +87,7 @@ import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
+import im.zego.zegoexpress.entity.ZegoPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
@@ -193,6 +195,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setRoomMode(MethodCall call, Result result) {
+
+        ZegoRoomMode mode = ZegoRoomMode.getZegoRoomMode(ZegoUtils.intValue((Number)call.argument("mode")));
+
+        ZegoExpressEngine.setRoomMode(mode);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void getVersion(MethodCall call, Result result) {
 
         result.success(ZegoExpressEngine.getVersion());
@@ -206,7 +218,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public static void setDebugVerbose(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
@@ -317,7 +329,20 @@ public class ZegoExpressEngineMethodHandler {
         String streamID = call.argument("streamID");
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().startPublishingStream(streamID, channel);
+        ZegoPublisherConfig config = null;
+
+        HashMap<String, Object> configMap = call.argument("config");
+
+        if (configMap != null && !configMap.isEmpty()) {
+            config = new ZegoPublisherConfig();
+            config.roomID = (String) configMap.get("roomID");
+        }
+
+        if (config != null) {
+            ZegoExpressEngine.getEngine().startPublishingStream(streamID, config, channel);
+        } else {
+            ZegoExpressEngine.getEngine().startPublishingStream(streamID, channel);
+        }
 
         result.success(null);
     }
@@ -805,6 +830,7 @@ public class ZegoExpressEngineMethodHandler {
             playerConfig = new ZegoPlayerConfig();
             playerConfig.resourceMode = ZegoStreamResourceMode.getZegoStreamResourceMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceMode")));
             playerConfig.videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(ZegoUtils.intValue((Number) playerConfigMap.get("videoLayer")));
+            playerConfig.roomID = (String) playerConfigMap.get("roomID");
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
             if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {
