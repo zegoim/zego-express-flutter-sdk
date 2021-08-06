@@ -247,11 +247,11 @@ enum ZegoAECMode {
 
 /// Active Noise Suppression mode.
 enum ZegoANSMode {
-  /// Soft ANS. It may significantly impair the sound quality, but it has a good noise reduction effect.
+  /// Soft ANS. In most instances, the sound quality will not be damaged, but some noise will remain.
   Soft,
   /// Medium ANS. It may damage some sound quality, but it has a good noise reduction effect.
   Medium,
-  /// Aggressive ANS. In most instances, the sound quality will not be damaged, but some noise will remain.
+  /// Aggressive ANS. It may significantly impair the sound quality, but it has a good noise reduction effect.
   Aggressive
 }
 

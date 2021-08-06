@@ -31,7 +31,7 @@ class ZegoErrorCode {
   /// The input stream ID is empty.
   static const int CommonStreamIdNull                                                     = 1000015;
 
-  /// The input stream ID contains invalid characters.
+  /// The input stream ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int CommonStreamIdInvalidCharacter                                         = 1000016;
 
   /// This AppID has been removed from production.
@@ -91,7 +91,7 @@ class ZegoErrorCode {
   /// The input user ID is empty.
   static const int RoomUserIdNull                                                         = 1002005;
 
-  /// The input user ID contains invalid characters.
+  /// The input user ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int RoomUserIdInvalidCharacter                                             = 1002006;
 
   /// The input user ID is too long. The maximum length should be less than 64 bytes.
@@ -109,7 +109,7 @@ class ZegoErrorCode {
   /// The input room ID is empty.
   static const int RoomRoomidNull                                                         = 1002011;
 
-  /// The input room ID contains invalid characters.
+  /// The input room ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int RoomRoomidInvalidCharacter                                             = 1002012;
 
   /// The input room ID is too long. The maximum length should be less than 128 bytes.
@@ -301,7 +301,7 @@ class ZegoErrorCode {
   /// The stream mixing task ID is too long. The maximum length should be less than 256 bytes.
   static const int MixerTaskIdTooLong                                                     = 1005002;
 
-  /// The stream mixing task ID contains invalid characters.
+  /// The stream mixing task ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int MixerTaskIdInvalidCharacter                                            = 1005003;
 
   /// No output is specified in the configuration of the stream mixing task.
