@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.5.3
+
+1. Update Native SDK to 2.9.3
+
 ## 2.5.2
 
 1. Fix the bug that the dart impl file gets zego-user error

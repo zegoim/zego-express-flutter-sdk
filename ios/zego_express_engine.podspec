@@ -17,7 +17,7 @@ ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZegoExpressEn
   s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'ZegoExpressEngine', '2.8.0'
+  s.dependency 'ZegoExpressEngine', '2.9.3'
   s.platform = :ios, '9.0'
   s.ios.deployment_target = '9.0'
 
