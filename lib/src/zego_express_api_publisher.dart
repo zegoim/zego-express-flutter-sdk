@@ -7,17 +7,19 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
-  /// Starts publishing a stream (for the specified channel). You can call this function to publish a second stream.
+  /// Starts publishing a stream. Support multi-room mode.
   ///
   /// This function allows users to publish their local audio and video streams to the ZEGO RTC server. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
   /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
   /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
   /// After the first publish stream failure due to network reasons or the publish stream is interrupted, the default time for SDK reconnection is 20min.
+  /// To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [config] Advanced publish configuration
   /// - [channel] Publish stream channel
-  Future<void> startPublishingStream(String streamID, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.startPublishingStream(streamID, channel: channel);
+  Future<void> startPublishingStream(String streamID, {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.startPublishingStream(streamID, config: config, channel: channel);
   }
 
   /// Stops publishing a stream (for the specified channel).
@@ -185,12 +187,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableTrafficControl(enable, property);
   }
 
-  /// Sets the minimum video bitrate for traffic control.
+  /// Set the minimum video bitrate threshold for traffic control.
   ///
-  /// Set how should SDK send video data when the network conditions are poor and the minimum video bitrate cannot be met.
+  /// Set how should SDK send video data when the network conditions are poor and the minimum video bitrate threshold cannot be met.
   /// When this function is not called, the SDK will automatically adjust the sent video data frames according to the current network uplink conditions by default.
   ///
-  /// - [bitrate] Minimum video bitrate (kbps)
+  /// - [bitrate] Minimum video bitrate threshold for traffic control(kbps)
   /// - [mode] Video sending mode below the minimum bitrate.
   Future<void> setMinVideoBitrateForTrafficControl(int bitrate, ZegoTrafficControlMinVideoBitrateMode mode) async {
     return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode);
@@ -243,7 +245,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
   }
 
-  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server.
+  /// Whether to publish streams directly from the client to CDN without passing through Zego RTC server (for the specified channel).
   ///
   /// This function needs to be set before [startPublishingStream].
   /// After calling this function to publish the audio and video stream directly to the CDN, calling [addPublishCdnUrl] and [removePublishCdnUrl] to dynamically relay to the CDN no longer takes effect,

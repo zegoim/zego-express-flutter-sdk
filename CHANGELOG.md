@@ -1,8 +1,15 @@
 # Change Log
 
+## 2.6.0
+
+1. Add support for Windows platform. (Only support audio temporarily)
+2. Add support for new multi-room feature.
+3. Fix some bugs of mismatched parameters.
+
 ## 2.5.3
 
-1. Update Native SDK to 2.9.3
+1. Fix some bugs of mismatched parameters
+2. Update Native SDK to 2.9.3
 
 ## 2.5.2
 
@@ -18,9 +25,11 @@
 2. Update Native SDK to 2.8.0
 
 ## 2.2.5
+
 1. Fix a crash that may occur when multiple accesses to copyPixelBuffer at the same time
 
 ## 2.2.4
+
 1. Fix The adjust texture render size need to rebuild pixel buffer
 
 ## 2.2.3

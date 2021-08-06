@@ -65,6 +65,10 @@ class ZegoExpressImpl {
     });
   }
 
+  static Future<void> setRoomMode(ZegoRoomMode mode) async {
+    return await _channel.invokeMethod('setRoomMode', {'mode': mode.index});
+  }
+
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
   }
@@ -118,9 +122,12 @@ class ZegoExpressImpl {
   /* Publisher */
 
   Future<void> startPublishingStream(String streamID,
-      {ZegoPublishChannel? channel}) async {
+      {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('startPublishingStream', {
       'streamID': streamID,
+      'config': config != null ? {
+        'roomID': config.roomID ?? ''
+      } : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -364,7 +371,8 @@ class ZegoExpressImpl {
                       'url': config.cdnConfig?.url,
                       'authParam': config.cdnConfig?.authParam
                     }
-                  : {}
+                  : {},
+              'roomID': config.roomID ?? ''
             }
           : {}
     });
@@ -493,6 +501,21 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('isSpeakerMuted');
   }
 
+  Future<int> getAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('getAudioDeviceVolume',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> setAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
+    return await _channel.invokeMethod('setAudioDeviceVolume', {
+      'deviceType': deviceType.index,
+      'deviceID': deviceID,
+      'volume': volume
+    });
+  }
+
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await _channel
         .invokeMethod('enableAudioCaptureDevice', {'enable': enable});
@@ -516,6 +539,23 @@ class ZegoExpressImpl {
       'enable': enable,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
+  }
+
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(
+      ZegoAudioDeviceType deviceType) async {
+    return await _channel
+        .invokeMethod('getAudioDeviceList', {'type': deviceType});
+  }
+
+  Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
+    return await _channel
+        .invokeMethod('getDefaultAudioDeviceID', {'type': deviceType.index});
+  }
+
+  Future<void> useAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod(
+        'useAudioDevice', {'type': deviceType, 'deviceID': deviceID});
   }
 
   Future<void> setCameraZoomFactor(double factor,
@@ -556,7 +596,7 @@ class ZegoExpressImpl {
 
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await _channel
-        .invokeMethod('enableHeadphoneMonitor', {'volume': volume});
+        .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
   /* PreProcess */
@@ -780,6 +820,22 @@ class ZegoExpressImpl {
     });
   }
 
+  /* Custom Audio IO */
+  Future<void> startAudioDataObserver(
+      int observerBitMask, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('startAudioDataObserver', {
+      'observerBitMask': observerBitMask,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      }
+    });
+  }
+
+  Future<void> stopAudioDataObserver() async {
+    return await _channel.invokeMethod('stopAudioDataObserver', {});
+  }
+
   /* Utilities */
 
   Future<void> startPerformanceMonitor({int? millisecond}) async {
@@ -948,7 +1004,25 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPublisherQualityUpdate == null) return;
 
         ZegoExpressEngine.onPublisherQualityUpdate!(
-            map['streamID'], ZegoPublishStreamQuality.fromMap(map['quality']));
+          map['streamID'],
+          ZegoPublishStreamQuality(
+            map['quality']['videoCaptureFPS'],
+            map['quality']['videoEncodeFPS'],
+            map['quality']['videoSendFPS'],
+            map['quality']['videoKBPS'],
+            map['quality']['audioCaptureFPS'],
+            map['quality']['audioSendFPS'],
+            map['quality']['audioKBPS'],
+            map['quality']['rtt'],
+            map['quality']['packetLostRate'],
+            ZegoStreamQualityLevel.values[map['quality']['level']],
+            map['quality']['isHardwareEncode'],
+            ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+            map['quality']['totalSendBytes'],
+            map['quality']['audioSendBytes'],
+            map['quality']['videoSendBytes'],
+          )
+        );
         break;
 
       case 'onPublisherCapturedAudioFirstFrame':
@@ -1006,7 +1080,34 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
 
         ZegoExpressEngine.onPlayerQualityUpdate!(
-            map['streamID'], ZegoPlayStreamQuality.fromMap(map['quality']));
+          map['streamID'],
+          ZegoPlayStreamQuality(
+            map['quality']['videoRecvFPS'],
+            map['quality']['videoDejitterFPS'],
+            map['quality']['videoDecodeFPS'],
+            map['quality']['videoRenderFPS'],
+            map['quality']['videoKBPS'],
+            map['quality']['videoBreakRate'],
+            map['quality']['audioRecvFPS'],
+            map['quality']['audioDejitterFPS'],
+            map['quality']['audioDecodeFPS'],
+            map['quality']['audioRenderFPS'],
+            map['quality']['audioKBPS'],
+            map['quality']['audioBreakRate'],
+            map['quality']['rtt'],
+            map['quality']['packetLostRate'],
+            map['quality']['peerToPeerDelay'],
+            map['quality']['peerToPeerPacketLostRate'],
+            ZegoStreamQualityLevel.values[map['quality']['level']],
+            map['quality']['delay'],
+            map['quality']['avTimestampDiff'],
+            map['quality']['isHardwareDecode'],
+            ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+            map['quality']['totalRecvBytes'],
+            map['quality']['audioRecvBytes'],
+            map['quality']['videoRecvBytes']
+          )
+        );
         break;
 
       case 'onPlayerMediaEvent':
@@ -1055,8 +1156,11 @@ class ZegoExpressImpl {
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
         for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
-              infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
+          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
+              infoMap['url'],
+              ZegoStreamRelayCDNState.values[infoMap['state']],
+              ZegoStreamRelayCDNUpdateReason.values[infoMap['updateReason']],
+              infoMap['stateTime']);
           infoList.add(info);
         }
 
@@ -1077,33 +1181,23 @@ class ZegoExpressImpl {
       case 'onAudioDeviceStateChanged':
         if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoDeviceInfo info =
-              ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
-          infoList.add(info);
-        }
+        ZegoDeviceInfo info = ZegoDeviceInfo(
+            map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
 
         ZegoExpressEngine.onAudioDeviceStateChanged!(
             ZegoUpdateType.values[map['updateType']],
             ZegoAudioDeviceType.values[map['deviceType']],
-            infoList);
+            info);
         break;
 
       case 'onVideoDeviceStateChanged':
         if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
-        List<dynamic> infoMapList = map['deviceInfo'];
-        List<ZegoDeviceInfo> infoList = [];
-        for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoDeviceInfo info =
-              ZegoDeviceInfo(infoMap['deviceID'], infoMap['deviceName']);
-          infoList.add(info);
-        }
+        ZegoDeviceInfo info = ZegoDeviceInfo(
+            map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
 
         ZegoExpressEngine.onVideoDeviceStateChanged!(
-            ZegoUpdateType.values[map['updateType']], infoList);
+            ZegoUpdateType.values[map['updateType']], info);
         break;
 
       case 'onCapturedSoundLevelUpdate':
@@ -1306,6 +1400,7 @@ class ZegoExpressImpl {
         } else {
           // TODO: Can't find media player
         }
+
         break;
 
       /* AudioEffectPlayer */
@@ -1335,8 +1430,10 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onCapturedDataRecordStateUpdate!(
             ZegoDataRecordState.values[map['state']],
             map['errorCode'],
-            ZegoDataRecordConfig(map['config']['filePath'],
-                ZegoDataRecordType.values[map['config']['recordType']]),
+            ZegoDataRecordConfig(
+              map['config']['filePath'],
+              ZegoDataRecordType.values[map['config']['recordType']]
+            ),
             ZegoPublishChannel.values[map['channel']]);
         break;
 
@@ -1345,11 +1442,81 @@ class ZegoExpressImpl {
           return;
 
         ZegoExpressEngine.onCapturedDataRecordProgressUpdate!(
-            ZegoDataRecordProgress(map['progress']['duration'],
-                map['progress']['currentFileSize']),
-            ZegoDataRecordConfig(map['config']['filePath'],
-                ZegoDataRecordType.values[map['config']['recordType']]),
+            ZegoDataRecordProgress(
+              map['progress']['duration'],
+              map['progress']['currentFileSize']
+            ),
+            ZegoDataRecordConfig(
+              map['config']['filePath'],
+              ZegoDataRecordType.values[map['config']['recordType']]
+            ),
             ZegoPublishChannel.values[map['channel']]);
+        break;
+
+      case 'onCapturedAudioData':
+        if (ZegoExpressEngine.onCapturedAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        ZegoExpressEngine.onCapturedAudioData!(
+          data,
+          dataLength,
+          ZegoAudioFrameParam(
+            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioChannel.values[paramMap['channel']]
+          )
+        );
+        break;
+
+      case 'onPlaybackAudioData':
+        if (ZegoExpressEngine.onPlaybackAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        ZegoExpressEngine.onPlaybackAudioData!(
+          data,
+          dataLength,
+          ZegoAudioFrameParam(
+            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioChannel.values[paramMap['channel']]
+          )
+        );
+        break;
+
+      case 'onMixedAudioData':
+        if (ZegoExpressEngine.onMixedAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        ZegoExpressEngine.onMixedAudioData!(
+          data,
+          dataLength,
+          ZegoAudioFrameParam(
+            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioChannel.values[paramMap['channel']]
+          )
+        );
+        break;
+
+      case 'onPlayerAudioData':
+        if (ZegoExpressEngine.onPlayerAudioData == null) return;
+
+        Uint8List data = map['data'];
+        int dataLength = map['dataLength'];
+        Map<dynamic, dynamic> paramMap = map['param'];
+        String streamID = map['streamID'];
+
+        ZegoExpressEngine.onPlayerAudioData!(
+            data,
+            dataLength,
+            ZegoAudioFrameParam(
+              ZegoAudioSampleRate.values[paramMap['sampleRate']],
+              ZegoAudioChannel.values[paramMap['channel']]
+            ),
+            streamID);
         break;
 
       default:

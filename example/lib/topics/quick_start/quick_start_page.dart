@@ -13,6 +13,8 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 
+import 'dart:io';
+
 class QuickStartPage extends StatefulWidget {
   @override
   _QuickStartPageState createState() => _QuickStartPageState();
@@ -55,7 +57,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
     // Can destroy the engine when you don't need audio and video calls
     //
     // Destroy engine will automatically logout room and stop publishing/playing stream.
-    ZegoExpressEngine.destroyEngine();
+    ZegoExpressEngine.destroyEngine()
+        .then((value) => print('async destroy success'));
 
     print('🏳️ Destroy ZegoExpressEngine');
 
@@ -124,26 +127,31 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📤 Start publishing stream, streamID: $streamID');
     }
 
-    if (ZegoConfig.instance.enablePlatformView) {
-      // Render with PlatformView
-      setState(() {
-        _previewViewWidget =
-            ZegoExpressEngine.instance.createPlatformView((viewID) {
+    if (Platform.isIOS || Platform.isAndroid) {
+      if (ZegoConfig.instance.enablePlatformView) {
+        // Render with PlatformView
+        setState(() {
+          _previewViewWidget =
+              ZegoExpressEngine.instance.createPlatformView((viewID) {
+            _previewViewID = viewID;
+            _startPreview(_previewViewID);
+            _startPublishingStream(streamID);
+          });
+        });
+      } else {
+        // Render with TextureRenderer
+        ZegoExpressEngine.instance
+            .createTextureRenderer(width.toInt(), height.toInt())
+            .then((viewID) {
           _previewViewID = viewID;
-          _startPreview(_previewViewID);
+          setState(() => _previewViewWidget = Texture(textureId: viewID));
+          _startPreview(viewID);
           _startPublishingStream(streamID);
         });
-      });
+      }
     } else {
-      // Render with TextureRenderer
-      ZegoExpressEngine.instance
-          .createTextureRenderer(width.toInt(), height.toInt())
-          .then((viewID) {
-        _previewViewID = viewID;
-        setState(() => _previewViewWidget = Texture(textureId: viewID));
-        _startPreview(viewID);
-        _startPublishingStream(streamID);
-      });
+      ZegoExpressEngine.instance.startPreview();
+      ZegoExpressEngine.instance.startPublishingStream(streamID);
     }
   }
 
@@ -162,29 +170,34 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (ZegoConfig.instance.enablePlatformView) {
-      // Render with PlatformView
-      setState(() {
-        _playViewWidget =
-            ZegoExpressEngine.instance.createPlatformView((viewID) {
+    if (Platform.isIOS || Platform.isAndroid) {
+      if (ZegoConfig.instance.enablePlatformView) {
+        // Render with PlatformView
+        setState(() {
+          _playViewWidget =
+              ZegoExpressEngine.instance.createPlatformView((viewID) {
+            _playViewID = viewID;
+            _startPlayingStream(viewID, streamID);
+          });
+        });
+      } else {
+        // Render with TextureRenderer
+        ZegoExpressEngine.instance
+            .createTextureRenderer(width.toInt(), height.toInt())
+            .then((viewID) {
           _playViewID = viewID;
+          setState(() => _playViewWidget = Texture(textureId: viewID));
           _startPlayingStream(viewID, streamID);
         });
-      });
+      }
     } else {
-      // Render with TextureRenderer
-      ZegoExpressEngine.instance
-          .createTextureRenderer(width.toInt(), height.toInt())
-          .then((viewID) {
-        _playViewID = viewID;
-        setState(() => _playViewWidget = Texture(textureId: viewID));
-        _startPlayingStream(viewID, streamID);
-      });
+      ZegoExpressEngine.instance.startPlayingStream(streamID);
     }
   }
 
   void stopPlayingStream(String streamID) {
     ZegoExpressEngine.instance.stopPlayingStream(streamID);
+
     clearPlayView();
   }
 
@@ -197,7 +210,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
     // Can destroy the engine when you don't need audio and video calls
     //
     // Destroy engine will automatically logout room and stop publishing/playing stream.
-    ZegoExpressEngine.destroyEngine();
+    ZegoExpressEngine.destroyEngine()
+        .then((ret) => print('already destroy engine'));
 
     print('🏳️ Destroy ZegoExpressEngine');
 
@@ -256,6 +270,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPreviewView() {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+
     if (_previewViewWidget == null) {
       return;
     }
@@ -271,6 +287,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPlayView() {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+
     if (_playViewWidget == null) {
       return;
     }
@@ -378,6 +396,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
           stepTwoLoginRoomWidget(),
           stepThreeStartPublishingStreamWidget(),
           stepFourStartPlayingStreamWidget(),
+          stepFiveTemp(),
           Padding(padding: const EdgeInsets.only(bottom: 20.0)),
           CupertinoButton.filled(
             child: Text(
@@ -591,7 +610,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
             onPressed: _playerState == ZegoPlayerState.NoPlay
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size? widgetSize = _playViewContainerKey.currentContext?.size;
+                    Size? widgetSize =
+                        _playViewContainerKey.currentContext?.size;
                     startPlayingStream(_playingStreamIDController.text.trim(),
                         width: widgetSize!.width * pixelRatio,
                         height: widgetSize.height * pixelRatio);
@@ -602,6 +622,127 @@ class _QuickStartPageState extends State<QuickStartPage> {
             padding: EdgeInsets.all(10.0),
           ),
         )
+      ]),
+      Divider(),
+    ]);
+  }
+
+  Widget stepFiveTemp() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'Step4:',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 10),
+      Row(children: [
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          child: TextField(
+            controller: _playingStreamIDController,
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(10.0),
+                isDense: true,
+                labelText: 'Play StreamID:',
+                labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
+                hintText: 'Please enter streamID',
+                hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff0e88eb)))),
+          ),
+        ),
+        Spacer(),
+        Container(
+            width: MediaQuery.of(context).size.width / 2.5,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    CupertinoButton.filled(
+                      child: Text(
+                        "create",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onCreateMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "load",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onLoadMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "start",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onStartMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    CupertinoButton.filled(
+                      child: Text(
+                        "stop",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onStopMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "pause",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onPauseMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "resume",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onResumeMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    CupertinoButton.filled(
+                      child: Text(
+                        "seekto",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onSeekToMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "destroy",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onDestroyMP,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    CupertinoButton.filled(
+                      child: Text(
+                        "get",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      onPressed: _onGetMPInfo,
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                  ],
+                ),
+              ],
+            ))
       ]),
       Divider(),
     ]);

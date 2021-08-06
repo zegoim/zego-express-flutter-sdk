@@ -15,6 +15,8 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 import 'package:zego_express_engine_example/utils/zego_utils.dart';
 
+import 'dart:io';
+
 class GlobalSettingPage extends StatefulWidget {
   @override
   _GlobalSettingPageState createState() => new _GlobalSettingPageState();
@@ -54,10 +56,15 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     _scenario = ZegoConfig.instance.scenario;
     _enablePlatformView = ZegoConfig.instance.enablePlatformView;
 
-    Permission.camera.status.then((value) => setState(
-        () => _isCameraPermissionGranted = value == PermissionStatus.granted));
-    Permission.microphone.status.then((value) => setState(() =>
-        _isMicrophonePermissionGranted = value == PermissionStatus.granted));
+    if (Platform.isAndroid || Platform.isIOS) {
+      Permission.camera.status.then((value) => setState(() =>
+          _isCameraPermissionGranted = value == PermissionStatus.granted));
+      Permission.microphone.status.then((value) => setState(() =>
+          _isMicrophonePermissionGranted = value == PermissionStatus.granted));
+    } else {
+      _isCameraPermissionGranted = true;
+      _isMicrophonePermissionGranted = true;
+    }
   }
 
   Future<void> requestCameraPermission() async {

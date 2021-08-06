@@ -890,5 +890,117 @@
     }
 }
 
+#pragma mark - Audio Data Callback
+
+- (int)getIndexWithZegoAudioSampleRate:(ZegoAudioSampleRate)sampleRate {
+    switch (sampleRate) {
+        case ZegoAudioSampleRateUnknown:
+            return 0;
+        case ZegoAudioSampleRate8K:
+            return 1;
+        case ZegoAudioSampleRate16K:
+            return 2;
+        case ZegoAudioSampleRate22K:
+            return 3;
+        case ZegoAudioSampleRate24K:
+            return 4;
+        case ZegoAudioSampleRate32K:
+            return 5;
+        case ZegoAudioSampleRate44K:
+            return 6;
+        case ZegoAudioSampleRate48K:
+            return 7;
+    }
+    return 0;
+}
+
+- (void)onCapturedAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onCapturedAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"channel": @(param.channel)
+            }
+        });
+    }
+}
+
+
+- (void)onPlaybackAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onPlaybackAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"channel": @(param.channel)
+            }
+        });
+    }
+}
+
+
+- (void)onMixedAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onMixedAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"channel": @(param.channel)
+            }
+        });
+    }
+}
+
+
+- (void)onPlayerAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"channel": @(param.channel)
+            },
+            @"streamID": streamID
+        });
+    }
+}
+
 
 @end

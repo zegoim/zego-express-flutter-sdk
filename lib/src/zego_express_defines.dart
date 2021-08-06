@@ -19,6 +19,14 @@ enum ZegoLanguage {
   Chinese
 }
 
+/// Room mode
+enum ZegoRoomMode {
+  /// Single room mode
+  SingleRoom,
+  /// Multiple room mode
+  MultiRoom
+}
+
 /// engine state.
 enum ZegoEngineState {
   /// The engine has started
@@ -119,8 +127,8 @@ enum ZegoReverbPreset {
   SoftRoom,
   /// Large room reverb effect
   LargeRoom,
-  /// Concer hall reverb effect
-  ConcerHall,
+  /// Concert hall reverb effect
+  ConcertHall,
   /// Valley reverb effect
   Valley,
   /// Recording studio reverb effect
@@ -239,23 +247,23 @@ enum ZegoAECMode {
 
 /// Active Noise Suppression mode.
 enum ZegoANSMode {
-  /// Soft ANS
+  /// Soft ANS. In most instances, the sound quality will not be damaged, but some noise will remain.
   Soft,
-  /// Medium ANS
+  /// Medium ANS. It may damage some sound quality, but it has a good noise reduction effect.
   Medium,
-  /// Aggressive ANS
+  /// Aggressive ANS. It may significantly impair the sound quality, but it has a good noise reduction effect.
   Aggressive
 }
 
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
-  /// Basic
+  /// Basic (Adaptive (reduce) video bitrate)
   static const int Basic = 0;
-  /// Adaptive FPS
+  /// Adaptive (reduce) video FPS
   static const int AdaptiveFPS = 1;
-  /// Adaptive resolution
+  /// Adaptive (reduce) video resolution
   static const int AdaptiveResolution = 1 << 1;
-  /// Adaptive Audio bitrate
+  /// Adaptive (reduce) audio bitrate
   static const int AdaptiveAudioBitrate = 1 << 2;
 }
 
@@ -422,7 +430,9 @@ enum ZegoMixerInputContentType {
   /// Mix stream for audio only
   Audio,
   /// Mix stream for both audio and video
-  Video
+  Video,
+  /// Mix stream for video only
+  VideoOnly
 }
 
 /// Capture pipeline scale mode.
@@ -549,6 +559,26 @@ enum ZegoAudioEffectPlayState {
   PlayEnded
 }
 
+/// audio sample rate.
+enum ZegoAudioSampleRate {
+  /// Unknown
+  Unknown,
+  /// 8K
+  SampleRate8K,
+  /// 16K
+  SampleRate16K,
+  /// 22.05K
+  SampleRate22K,
+  /// 24K
+  SampleRate24K,
+  /// 32K
+  SampleRate32K,
+  /// 44.1K
+  SampleRate44K,
+  /// 48K
+  SampleRate48K
+}
+
 /// Record type.
 enum ZegoDataRecordType {
   /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
@@ -604,7 +634,7 @@ enum ZegoNetworkSpeedTestType {
 /// Configure the log file save path and the maximum log file size.
 class ZegoLogConfig {
 
-  /// Log file save path
+  /// The storage path of the log file. Refer to the official website document for the default path. https://doc-zh.zego.im/article/6467
   String logPath;
 
   /// The maximum log file size (Bytes). The default maximum size is 5MB (5 * 1024 * 1024 Bytes)
@@ -652,16 +682,17 @@ class ZegoRoomConfig {
   /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
   bool isUserStatusNotify;
 
-  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description https://doc-en.zego.im/en/3881.html Default is empty string, that is, no authentication
+  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description https://doc-en.zego.im/article/3881 Default is empty string, that is, no authentication
   String token;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token);
 
   /// Create a default room configuration
-  ZegoRoomConfig.defaultConfig()
-    : maxMemberCount = 0,
-      isUserStatusNotify = false,
-      token = "";
+  ZegoRoomConfig.defaultConfig() : maxMemberCount = 0, isUserStatusNotify = false, token = "" {
+    maxMemberCount = 0;
+    isUserStatusNotify = false;
+    token = "";
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -703,14 +734,8 @@ class ZegoVideoConfig {
   ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID);
 
   /// Create video configuration with preset enumeration values
-  ZegoVideoConfig.preset(ZegoVideoConfigPreset preset)
-    : captureWidth = 720,
-      captureHeight = 1280,
-      encodeWidth = 720,
-      encodeHeight = 1280,
-      fps = 15,
-      bitrate = 1200,
-      codecID = ZegoVideoCodecID.Default {
+  ZegoVideoConfig.preset(ZegoVideoConfigPreset preset) : captureWidth = 720, captureHeight = 1280, encodeWidth = 720, encodeHeight = 1280, fps = 15, bitrate = 1200, codecID = ZegoVideoCodecID.Default {
+    codecID = ZegoVideoCodecID.Default;
     switch (preset) {
       case ZegoVideoConfigPreset.Preset180P:
         captureWidth = 180;
@@ -801,27 +826,6 @@ class ZegoVoiceChangerParam {
 
 }
 
-/// Audio reverberation parameters.
-///
-/// Developers can use the SDK's built-in presets to change the parameters of the reverb.
-class ZegoReverbParam {
-
-  /// Room size, in the range [0.0, 1.0], to control the size of the "room" in which the reverb is generated, the larger the room, the stronger the reverb.
-  double roomSize;
-
-  /// Echo, in the range [0.0, 0.5], to control the trailing length of the reverb.
-  double reverberance;
-
-  /// Reverb Damping, range [0.0, 2.0], controls the attenuation of the reverb, the higher the damping, the higher the attenuation.
-  double damping;
-
-  /// Dry/wet ratio, the range is greater than or equal to 0.0, to control the ratio between reverberation, direct sound and early reflections; dry part is set to 1 by default; the smaller the dry/wet ratio, the larger the wet ratio, the stronger the reverberation effect.
-  double dryWetRatio;
-
-  ZegoReverbParam(this.roomSize, this.reverberance, this.damping, this.dryWetRatio);
-
-}
-
 /// Audio reverberation advanced parameters.
 ///
 /// Developers can use the SDK's built-in presets to change the parameters of the reverb.
@@ -890,10 +894,10 @@ class ZegoReverbEchoParam {
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
 
-  /// User ID, a string with a maximum length of 64 bytes or less. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// User ID, a string with a maximum length of 64 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String userID;
 
-  /// User Name, a string with a maximum length of 256 bytes or less
+  /// User Name, a string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   String userName;
 
   ZegoUser(this.userID, this.userName);
@@ -901,9 +905,10 @@ class ZegoUser {
   /// Create a ZegoUser object
   ///
   /// userName and userID are set to match
-  ZegoUser.id(String userID)
-    : this.userID = userID,
-      this.userName = userID;
+  ZegoUser.id(String userID): this.userID = userID, this.userName = userID {
+    this.userID = userID;
+    this.userName = userID;
+  }
 
 }
 
@@ -912,7 +917,7 @@ class ZegoUser {
 /// Identify an stream object
 class ZegoStream {
 
-  /// User object instance
+  /// User object instance.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser user;
 
   /// Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
@@ -934,7 +939,7 @@ class ZegoRoomExtraInfo {
   /// The value of the room extra information.
   String value;
 
-  /// The user who update the room extra information.
+  /// The user who update the room extra information.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser updateUser;
 
   /// Update time of the room extra information, UNIX timestamp, in milliseconds.
@@ -961,10 +966,23 @@ class ZegoCanvas {
   ZegoCanvas(this.view, this.viewMode, this.backgroundColor);
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
-  ZegoCanvas.view(int view)
-    : this.view = view,
-      this.viewMode = ZegoViewMode.AspectFit,
-      this.backgroundColor = 0x000000;
+  ZegoCanvas.view(int view): this.view = view, this.viewMode = ZegoViewMode.AspectFit, this.backgroundColor = 0x000000 {
+    this.view = view;
+    this.viewMode = ZegoViewMode.AspectFit;
+    this.backgroundColor = 0x000000;
+  }
+
+}
+
+/// Advanced publisher configuration.
+///
+/// Configure room id
+class ZegoPublisherConfig {
+
+  /// The Room ID
+  String? roomID;
+
+  ZegoPublisherConfig(this.roomID);
 
 }
 
@@ -1020,23 +1038,6 @@ class ZegoPublishStreamQuality {
 
   ZegoPublishStreamQuality(this.videoCaptureFPS, this.videoEncodeFPS, this.videoSendFPS, this.videoKBPS, this.audioCaptureFPS, this.audioSendFPS, this.audioKBPS, this.rtt, this.packetLostRate, this.level, this.isHardwareEncode, this.videoCodecID, this.totalSendBytes, this.audioSendBytes, this.videoSendBytes);
 
-  ZegoPublishStreamQuality.fromMap(Map<dynamic, dynamic> map)
-    : videoCaptureFPS = map['videoCaptureFPS'],
-      videoEncodeFPS = map['videoEncodeFPS'],
-      videoSendFPS = map['videoSendFPS'],
-      videoKBPS = map['videoKBPS'],
-      audioCaptureFPS = map['audioCaptureFPS'],
-      audioSendFPS = map['audioSendFPS'],
-      audioKBPS = map['audioKBPS'],
-      rtt = map['rtt'],
-      packetLostRate = map['packetLostRate'],
-      level = ZegoStreamQualityLevel.values[map['level']],
-      isHardwareEncode = map['isHardwareEncode'],
-      videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']],
-      totalSendBytes = map['totalSendBytes'],
-      audioSendBytes = map['audioSendBytes'],
-      videoSendBytes = map['videoSendBytes'];
-
 }
 
 /// CDN config object.
@@ -1077,7 +1078,7 @@ class ZegoStreamRelayCDNInfo {
 
 /// Advanced player configuration.
 ///
-/// Configure playing stream CDN configuration, video layer
+/// Configure playing stream CDN configuration, video layer, room id
 class ZegoPlayerConfig {
 
   /// Stream resource mode
@@ -1086,12 +1087,16 @@ class ZegoPlayerConfig {
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
   ZegoCDNConfig? cdnConfig;
 
-  ZegoPlayerConfig(this.resourceMode, this.cdnConfig);
+  /// The Room ID
+  String? roomID;
+
+  ZegoPlayerConfig(this.resourceMode, this.cdnConfig, this.roomID);
 
   /// Create a default advanced player config object
-  ZegoPlayerConfig.defaultConfig()
-   : resourceMode = ZegoStreamResourceMode.Default {
+  ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default {
+    resourceMode = ZegoStreamResourceMode.Default;
     cdnConfig = null;
+    roomID = null;
   }
 
 }
@@ -1175,32 +1180,6 @@ class ZegoPlayStreamQuality {
 
   ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes);
 
-  ZegoPlayStreamQuality.fromMap(Map<dynamic, dynamic> map)
-    : videoRecvFPS = map['videoRecvFPS'],
-      videoDejitterFPS = map['videoDejitterFPS'],
-      videoDecodeFPS = map['videoDecodeFPS'],
-      videoRenderFPS = map['videoRenderFPS'],
-      videoKBPS = map['videoKBPS'],
-      videoBreakRate = map['videoBreakRate'],
-      audioRecvFPS = map['audioRecvFPS'],
-      audioDejitterFPS = map['audioDejitterFPS'],
-      audioDecodeFPS = map['audioDecodeFPS'],
-      audioRenderFPS = map['audioRenderFPS'],
-      audioKBPS = map['audioKBPS'],
-      audioBreakRate = map['audioBreakRate'],
-      rtt = map['rtt'],
-      packetLostRate = map['packetLostRate'],
-      peerToPeerDelay = map['peerToPeerDelay'],
-      peerToPeerPacketLostRate = map['peerToPeerPacketLostRate'],
-      level = ZegoStreamQualityLevel.values[map['level']],
-      delay = map['delay'],
-      avTimestampDiff = map['avTimestampDiff'],
-      isHardwareDecode = map['isHardwareDecode'],
-      videoCodecID = ZegoVideoCodecID.values[map['videoCodecID']],
-      totalRecvBytes = map['totalRecvBytes'],
-      audioRecvBytes = map['audioRecvBytes'],
-      videoRecvBytes = map['videoRecvBytes'];
-
 }
 
 /// Device Info.
@@ -1257,10 +1236,11 @@ class ZegoBeautifyOption {
   ZegoBeautifyOption(this.polishStep, this.whitenFactor, this.sharpenFactor);
 
   /// Create a default beauty parameter object
-  ZegoBeautifyOption.defaultConfig()
-    : polishStep = 0.2,
-      whitenFactor = 0.5,
-      sharpenFactor = 0.1;
+  ZegoBeautifyOption.defaultConfig() : polishStep = 0.2, whitenFactor = 0.5, sharpenFactor = 0.1 {
+    polishStep = 0.2;
+    whitenFactor = 0.5;
+    sharpenFactor = 0.1;
+  }
 
 }
 
@@ -1281,10 +1261,11 @@ class ZegoMixerAudioConfig {
   ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID);
 
   /// Create a default mix stream audio configuration
-  ZegoMixerAudioConfig.defaultConfig()
-    : bitrate = 48,
-      channel = ZegoAudioChannel.Mono,
-      codecID = ZegoAudioCodecID.Normal;
+  ZegoMixerAudioConfig.defaultConfig() : bitrate = 48, channel = ZegoAudioChannel.Mono, codecID = ZegoAudioCodecID.Normal {
+    bitrate = 48;
+    channel = ZegoAudioChannel.Mono;
+    codecID = ZegoAudioCodecID.Normal;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -1316,11 +1297,12 @@ class ZegoMixerVideoConfig {
   ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate);
 
   /// Create a default mixer video configuration
-  ZegoMixerVideoConfig.defaultConfig()
-    : width = 360,
-      height = 640,
-      fps = 15,
-      bitrate = 600;
+  ZegoMixerVideoConfig.defaultConfig() : width = 360, height = 640, fps = 15, bitrate = 600 {
+    width = 360;
+    height = 640;
+    fps = 15;
+    bitrate = 600;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -1350,7 +1332,10 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
-  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID);
+  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled
+  bool isAudioFocus;
+
+  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.isAudioFocus);
 
   Map<String, dynamic> toMap() {
     return {
@@ -1383,7 +1368,7 @@ class ZegoMixerOutput {
 /// Configure a watermark image URL and the layout of the watermark in the screen.
 class ZegoWatermark {
 
-  /// Watermark image URL, only png or jpg format surpport.
+  /// The path of the watermark image. Support local file absolute path (file://xxx). The format supports png, jpg.
   String imageURL;
 
   /// Watermark image layout
@@ -1437,16 +1422,16 @@ class ZegoMixerTask {
   Map<String, String> advancedConfig;
 
   /// Create a mix stream task object with TaskID
-  ZegoMixerTask(String taskID)
-    : this.taskID = taskID,
-      inputList = [],
-      outputList = [],
-      audioConfig = ZegoMixerAudioConfig.defaultConfig(),
-      videoConfig = ZegoMixerVideoConfig.defaultConfig(),
-      watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0)),
-      backgroundImageURL = "",
-      enableSoundLevel = false,
-      advancedConfig = {};
+  ZegoMixerTask(String taskID) : this.taskID = taskID, inputList = [], outputList = [], audioConfig = ZegoMixerAudioConfig.defaultConfig(), videoConfig = ZegoMixerVideoConfig.defaultConfig(), watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0)), backgroundImageURL = "", enableSoundLevel = false, advancedConfig = {} {
+    this.taskID = taskID;
+    inputList = [];
+    outputList = [];
+    audioConfig = ZegoMixerAudioConfig.defaultConfig();
+    videoConfig = ZegoMixerVideoConfig.defaultConfig();
+    watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0));
+    backgroundImageURL = "";
+    enableSoundLevel = false;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -1478,7 +1463,7 @@ class ZegoBroadcastMessageInfo {
   /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
-  /// Message sender
+  /// Message sender.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser fromUser;
 
   ZegoBroadcastMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);
@@ -1499,10 +1484,25 @@ class ZegoBarrageMessageInfo {
   /// Message send time, UNIX timestamp, in milliseconds.
   int sendTime;
 
-  /// Message sender
+  /// Message sender.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser fromUser;
 
   ZegoBarrageMessageInfo(this.message, this.messageID, this.sendTime, this.fromUser);
+
+}
+
+/// Parameter object for audio frame.
+///
+/// Including the sampling rate and channel of the audio frame
+class ZegoAudioFrameParam {
+
+  /// Sampling Rate
+  ZegoAudioSampleRate sampleRate;
+
+  /// Audio channel, default is Mono
+  ZegoAudioChannel channel;
+
+  ZegoAudioFrameParam(this.sampleRate, this.channel);
 
 }
 
@@ -1523,10 +1523,8 @@ class ZegoAudioConfig {
   ZegoAudioConfig(this.bitrate, this.channel, this.codecID);
 
   /// Create a audio configuration with preset enumeration values
-  ZegoAudioConfig.preset(ZegoAudioConfigPreset preset)
-    : bitrate = 48,
-      channel = ZegoAudioChannel.Mono,
-      codecID = ZegoAudioCodecID.Default {
+  ZegoAudioConfig.preset(ZegoAudioConfigPreset preset) : bitrate = 48, channel = ZegoAudioChannel.Mono, codecID = ZegoAudioCodecID.Default  {
+    codecID = ZegoAudioCodecID.Default;
     switch (preset) {
       case ZegoAudioConfigPreset.BasicQuality:
         bitrate = 16;
@@ -1636,7 +1634,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// Yon can pass the absolute path of the local resource or the URL of the network resource
   ///
-  /// - [path] the absolute path of the local resource or the URL of the network resource
+  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "".
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
@@ -1667,7 +1665,7 @@ abstract class ZegoMediaPlayer {
   /// - [enable] repeat playback flag. The default is false.
   Future<void> enableRepeat(bool enable);
 
-  /// Whether to mix the player's sound into the stream being published.
+  /// Whether to mix the player's sound into the main stream channel being published.
   ///
   /// - [enable] Aux audio flag. The default is false.
   Future<void> enableAux(bool enable);
@@ -1818,7 +1816,7 @@ abstract class ZegoAudioEffectPlayer {
   /// In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file. Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading
   ///
   /// - [audioEffectID] ID for the audio effect
-  /// - [path] the absolute path of the audio effect resource.
+  /// - [path] the absolute path of the audio effect resource and cannot be null or "".
   /// - Returns Result for audio effect player loads resources
   Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path);
 

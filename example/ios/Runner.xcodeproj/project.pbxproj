@@ -265,7 +265,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${PODS_ROOT}/ZegoExpressEngine/Video/iOS/ZegoExpressEngine.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZegoExpressEngine/ZegoExpressEngine.framework/ZegoExpressEngine",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (

@@ -75,6 +75,7 @@
     }
 
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -108,14 +109,17 @@
         configObject = [[ZegoEngineConfig alloc] init];
         configObject.advancedConfig = configMap[@"advancedConfig"];
 
-        NSDictionary *logConfigMap = call.arguments[@"logConfig"];
+        NSDictionary *logConfigMap = configMap[@"logConfig"];
         ZegoLogConfig *logConfigObject = nil;
         if (logConfigMap && logConfigMap.count > 0) {
             logConfigObject = [[ZegoLogConfig alloc] init];
             logConfigObject.logPath = logConfigMap[@"logPath"];
             logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:logConfigMap[@"logSize"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             configObject.logConfig = logConfigObject;
+#pragma clang diagnostic pop
         }
 
         [ZegoExpressEngine setEngineConfig:configObject];
@@ -124,6 +128,15 @@
     } else {
         result([FlutterError errorWithCode:[@"setEngineConfig_null_config" uppercaseString] message:@"Invoke `setEngineConfig` with null config" details:nil]);
     }
+}
+
+- (void)setRoomMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+    
+    [ZegoExpressEngine setRoomMode:(ZegoRoomMode)mode];
+
+    result(nil);
 }
 
 
@@ -139,7 +152,10 @@
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     int language = [ZegoUtils intValue:call.arguments[@"language"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setDebugVerbose:enable language:(ZegoLanguage)language];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -189,7 +205,10 @@
         configObject.token = token;
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] loginMultiRoom:roomID config:configObject];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -245,6 +264,14 @@
 
     NSString *streamID = call.arguments[@"streamID"];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    
+    ZegoPublisherConfig *config = nil;
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    if (configMap && configMap.count > 0) {
+        config = [[ZegoPublisherConfig alloc] init];
+        config.roomID = configMap[@"roomID"];
+    }
 
     [[ZegoExpressEngine sharedEngine] startPublishingStream:streamID channel:(ZegoPublishChannel)channel];
 
@@ -637,7 +664,7 @@
 
 - (void)sendSEI:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    FlutterStandardTypedData *data = call.arguments[@"byteData"];
+    FlutterStandardTypedData *data = call.arguments[@"data"];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] sendSEI:data.data channel:(ZegoPublishChannel)channel];
@@ -824,7 +851,10 @@
     int videoLayer = [ZegoUtils intValue:call.arguments[@"videoLayer"]];
     NSString *streamID = call.arguments[@"streamID"];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setPlayStreamVideoLayer:(ZegoPlayerVideoLayer)videoLayer streamID:streamID];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -1096,7 +1126,10 @@
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setBuiltInSpeakerOn:enable];
+#pragma clang diagnostic pop
 
     result(nil);
 }
@@ -1355,6 +1388,50 @@
     result(nil);
 }
 
+#pragma mark - Audio Data Observer
+
+- (ZegoAudioSampleRate)convertAudioSampleRate:(int)sampleRateIndex {
+    switch (sampleRateIndex) {
+        case 0:
+            return ZegoAudioSampleRateUnknown;
+        case 1:
+            return ZegoAudioSampleRate8K;
+        case 2:
+            return ZegoAudioSampleRate16K;
+        case 3:
+            return ZegoAudioSampleRate22K;
+        case 4:
+            return ZegoAudioSampleRate24K;
+        case 5:
+            return ZegoAudioSampleRate32K;
+        case 6:
+            return ZegoAudioSampleRate44K;
+        case 7:
+            return ZegoAudioSampleRate48K;
+    }
+    return ZegoAudioSampleRateUnknown;
+}
+
+- (void)startAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {
+    int bitmask = [ZegoUtils intValue:call.arguments[@"observerBitMask"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] startAudioDataObserver:bitmask param:param];
+
+    result(nil);
+}
+
+- (void)stopAudioDataObserver:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] stopAudioDataObserver];
+
+    result(nil);
+}
+
 
 #pragma mark - IM
 
@@ -1416,7 +1493,7 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     ZegoCustomVideoCaptureConfig *config = [[ZegoCustomVideoCaptureConfig alloc] init];
-    
+
     if (configMap && configMap.count > 0) {
         ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
         config.bufferType = bufferType;
@@ -1424,10 +1501,10 @@
         // If `config` is empty, set the default configuration (pixel buffer for iOS)
         config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
     }
-    
+
     [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:(id<ZegoCustomVideoCaptureHandler>)[ZegoCustomVideoCaptureManager sharedInstance]];
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
-    
+
     // When using custom video capture, turn off preview mirroring
     if (enable) {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeNoMirror channel:(ZegoPublishChannel)channel];

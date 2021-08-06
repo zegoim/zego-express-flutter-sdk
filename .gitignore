@@ -1,3 +1,6 @@
+# common
+.vscode
+
 # pub
 .dart_tool/
 .packages
@@ -13,5 +16,12 @@ doc/api/
 *.iws
 .idea/
 
-# mac
+# macOS
 .DS_Store
+
+# Windows
+windows/deps/include/*
+windows/deps/lib/*
+example/windows/flutter/generated_plugins.cmake
+example/windows/flutter/generated_plugin_registrant.cc
+example/windows/flutter/generated_plugin_registrant.h

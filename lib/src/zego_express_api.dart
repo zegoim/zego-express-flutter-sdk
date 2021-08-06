@@ -40,6 +40,16 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.setEngineConfig(config);
   }
 
+  /// Set room mode
+  ///
+  /// It must be called before the SDK is initialized, otherwise it will fail.
+  /// If you need to use the multi-room feature, please contact the instant technical support to configure the server support.
+  ///
+  /// - [mode] Room mode, the default is single room mode
+  static Future<void> setRoomMode(ZegoRoomMode mode) async {
+    return await ZegoExpressImpl.setRoomMode(mode);
+  }
+
   /// Gets the SDK's version number.
   ///
   /// When the SDK is running, the developer finds that it does not match the expected situation and submits the problem and related logs to the ZEGO technical staff for locating. The ZEGO technical staff may need the information of the engine version to assist in locating the problem.
@@ -63,8 +73,10 @@ class ZegoExpressEngine {
   ///
   /// The debug switch is set to on and the language is English by default.
   ///
+  /// @deprecated This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
   /// - [enable] Detailed debugging information switch
   /// - [language] Debugging information language
+  @Deprecated('This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.')
   Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
     return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
   }
@@ -88,7 +100,9 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the room connection state changes.
   ///
-  /// This callback is triggered when the connection status of the room changes, and the reason for the change is notified. Developers can use this callback to determine the status of the current user in the room. If the connection is being requested for a long time, the general probability is that the user's network is unstable.
+  /// This callback is triggered when the connection status of the room changes, and the reason for the change is notified. Developers can use this callback to determine the status of the current user in the room.
+  /// When the user starts to log in to the room, the room is successfully logged in, or the room fails to log in, the [onRoomStateUpdate] callback will be triggered to notify the developer of the status of the current user connected to the room.
+  /// If the connection is being requested for a long time, the general probability is that the user's network is unstable.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   /// - [state] Changed room state
@@ -98,10 +112,11 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the number of other users in the room increases or decreases.
   ///
-  /// Note that the callback is only triggered when the isUserStatusNotify parameter in the ZegoRoomConfig passed loginRoom function is true. Developers can use this callback to determine the situation of users in the room.
-  /// If developers need to use ZEGO room users notifications, please make sure that each login user sets isUserStatusNotify to true
-  /// When a user logs in to a room for the first time, other users already exist in this room, and a user list of the type of addition is received.
-  /// When the user is already in the room, other users in this room will trigger this callback to notify the changed users when they enter or exit the room.
+  /// This callback is used to monitor the increase or decrease of other users in the room, and the developer can judge the situation of the users in the room based on this callback.
+  /// If developers need to use ZEGO room users notifications, please ensure that the [ZegoRoomConfig] sent by each user when logging in to the room has the [isUserStatusNotify] property set to true, otherwise the callback notification will not be received.
+  /// The user logs in to the room, and there is no other user in the room at this time, the callback will not be triggered.
+  /// The user logs in to the room. If multiple other users already exist in the room, the callback will be triggered. At this time, the callback belongs to the ADD type and contains the full list of users in the room. At the same time, other users in the room will also receive this callback of the ADD type, but there are only new current users in the received user list.
+  /// When the user is already in the room, this callback will be triggered when other users in the room log in or log out of the room.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
@@ -119,9 +134,10 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the number of streams published by the other users in the same room increases or decreases.
   ///
-  /// When a user logs in to a room for the first time, there are other users in the room who are publishing streams, and will receive a stream list of the added type.
-  /// When the user is already in the room, other users in this room will trigger this callback to notify the changed stream list when adding or deleting streams.
-  /// Developers can use this callback to determine if there are other users in the same room who have added or stopped streaming, in order to implement active play stream [startPlayingStream] or active stop playing stream [stopPlayingStream], and use simultaneous Changes to Streaming render UI widget;
+  /// This callback is used to monitor stream addition or stream deletion notifications of other users in the room. Developers can use this callback to determine whether other users in the same room start or stop publishing stream, so as to achieve active playing stream [startPlayingStream] or take the initiative to stop the playing stream [stopPlayingStream], and use it to change the UI controls at the same time.
+  /// The user logs in to the room, and there is no other stream in the room at this time, the callback will not be triggered.
+  /// The user logs in to the room. If there are multiple streams of other users in the room, the callback will be triggered. At this time, the callback belongs to the ADD type and contains the full list of streams in the room.
+  /// When the user is already in the room, when other users in the room start or stop publishing stream (that is, when a stream is added or deleted), this callback will be triggered to notify the changed stream list.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
   /// - [updateType] Update type (add/delete)
@@ -296,12 +312,13 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
   ///
+  /// Only supports desktop.
   /// This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceType] Audio device type
   /// - [deviceInfo] Audio device information
-  static void Function(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType, List<ZegoDeviceInfo> deviceInfo)? onAudioDeviceStateChanged;
+  static void Function(ZegoUpdateType updateType, ZegoAudioDeviceType deviceType, ZegoDeviceInfo deviceInfo)? onAudioDeviceStateChanged;
 
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
@@ -309,7 +326,7 @@ class ZegoExpressEngine {
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
-  static void Function(ZegoUpdateType updateType, List<ZegoDeviceInfo> deviceInfo)? onVideoDeviceStateChanged;
+  static void Function(ZegoUpdateType updateType, ZegoDeviceInfo deviceInfo)? onVideoDeviceStateChanged;
 
   /// The local captured audio sound level callback.
   ///
@@ -481,5 +498,47 @@ class ZegoExpressEngine {
   /// - [quality] Network speed quality
   /// - [type] Uplink or downlink
   static void Function(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type)? onNetworkSpeedTestQualityUpdate;
+
+  /// The callback for obtaining the audio data captured by the local microphone.
+  ///
+  /// In non-custom audio capture mode, the SDK capture the microphone's sound, but the developer may also need to get a copy of the audio data captured by the SDK is available through this callback.
+  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0b01 that means 1 << 0, this callback will be triggered only when it is in the publishing stream state.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param)? onCapturedAudioData;
+
+  /// The callback for obtaining the audio data of all the streams playback by SDK.
+  ///
+  /// This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
+  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0b100 that means 1 << 2, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+  /// When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param)? onPlaybackAudioData;
+
+  /// The callback for obtaining the mixed audio data. Such mixed auido data are generated by the SDK by mixing the audio data of all the remote playing streams and the auido data captured locally.
+  ///
+  /// The audio data of all playing data is mixed with the data captured by the local microphone before it is sent to the loudspeaker, and calleback out in this way.
+  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0x04, this callback will be triggered only when it is in the publishing stream state or playing stream state.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param)? onMixedAudioData;
+
+  /// The callback for obtaining the audio data of each stream.
+  ///
+  /// This function will call back the data corresponding to each playing stream. Different from [onPlaybackAudioData], the latter is the mixed data of all playing streams. If developers need to process a piece of data separately, they can use this callback.
+  /// On the premise of calling [setAudioDataHandler] to set up listening for this callback, calling [enableAudioDataCallback] to set the mask 0x08 that is 1 << 3, and this callback will be triggered when the SDK audio and video engine starts to play the stream.
+  ///
+  /// - [data] Audio data in PCM format
+  /// - [dataLength] Length of the data
+  /// - [param] Parameters of the audio frame
+  /// - [streamID] Corresponding stream ID
+  static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param, String streamID)? onPlayerAudioData;
 
 }
