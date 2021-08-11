@@ -65,16 +65,16 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
   }
 
-  /// Set the selected video layer of playing stream.
+  /// Set play video stream type
   ///
-  /// When the publisher has set the codecID to SVC through [setVideoConfig], the player can dynamically set whether to use the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer)
-  /// Under normal circumstances, when the network is weak or the rendered UI form is small, you can choose to use the video that plays the base layer to save bandwidth.
-  /// It can be set before and after playing stream.
+  /// When the publish stream sets the codecID to SVC through [setVideoConfig], the puller can dynamically set and select different stream types (small resolution is one-half of the standard layer).
+  /// In general, when the network is weak or the rendered UI window is small, you can choose to pull videos with small resolutions to save bandwidth.
+  /// It can be set before and after pulling the stream.
   ///
   /// - [streamID] Stream ID.
-  /// - [videoLayer] Video layer of playing stream. AUTO by default.
-  Future<void> setPlayStreamVideoLayer(String streamID, ZegoPlayerVideoLayer videoLayer) async {
-    return await ZegoExpressImpl.instance.setPlayStreamVideoLayer(streamID, videoLayer);
+  /// - [streamType] Video stream type
+  Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
+    return await ZegoExpressImpl.instance.setPlayStreamVideoType(streamID, streamType);
   }
 
   /// Set the adaptive adjustment interval range of the buffer for playing stream.
@@ -122,6 +122,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// Turn on hardware decoding and use hardware to improve decoding efficiency. Need to be called before calling startPlayingStream.
   /// Because hard-decoded support is not particularly good for a few models, SDK uses software decoding by default. If the developer finds that the device is hot when playing a high-resolution audio and video stream during testing of some models, you can consider calling this function to enable hard decoding.
+  /// This function needs to be called after [createEngine] creates an instance.
   ///
   /// - [enable] Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding. The default is false
   Future<void> enableHardwareDecoder(bool enable) async {
@@ -129,6 +130,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   }
 
   /// Enables or disables frame order detection.
+  ///
+  /// This function needs to be called after [createEngine] creates an instance.
   ///
   /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames but the screen may temporary splash. The default is true
   Future<void> enableCheckPoc(bool enable) async {

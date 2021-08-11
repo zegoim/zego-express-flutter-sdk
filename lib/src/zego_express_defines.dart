@@ -172,7 +172,9 @@ enum ZegoStreamQualityLevel {
   /// Bad
   Bad,
   /// Failed
-  Die
+  Die,
+  /// Unknown
+  Unknown
 }
 
 /// Audio channel type.
@@ -233,6 +235,16 @@ enum ZegoPlayerVideoLayer {
   Base,
   /// Play the extend layer (big resolution)
   BaseExtend
+}
+
+/// Video stream type
+enum ZegoVideoStreamType {
+  /// The type to be played depends on the network status
+  Default,
+  /// small resolution type
+  Small,
+  /// big resolution type
+  Big
 }
 
 /// Audio echo cancellation mode.

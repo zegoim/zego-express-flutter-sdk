@@ -106,11 +106,11 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Whether to use the built-in speaker to play audio.
   ///
-  /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
+  /// When you choose not to use the built-in speaker to play sound, that is, set to [false], the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
   ///
-  /// - [enable] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
-  Future<void> setBuiltInSpeakerOn(bool enable) async {
-    return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
+  /// - [defaultToSpeaker] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
+  Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
+    return await ZegoExpressImpl.instance.setAudioRouteToSpeaker(defaultToSpeaker);
   }
 
   /// Turns on/off the camera (for the specified channel).
