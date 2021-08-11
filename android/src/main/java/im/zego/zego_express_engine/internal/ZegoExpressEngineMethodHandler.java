@@ -69,6 +69,7 @@ import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
+import im.zego.zegoexpress.constants.ZegoVideoStreamType;
 import im.zego.zegoexpress.constants.ZegoVoiceChangerPreset;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -1003,6 +1004,17 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setPlayStreamVideoType(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        ZegoVideoStreamType streamType = ZegoVideoStreamType.getZegoVideoStreamType(ZegoUtils.intValue((Number) call.argument("streamType")));
+
+        ZegoExpressEngine.getEngine().setPlayStreamVideoType(streamID, streamType);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setPlayStreamBufferIntervalRange(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -1275,6 +1287,16 @@ public class ZegoExpressEngineMethodHandler {
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
 
         ZegoExpressEngine.getEngine().setBuiltInSpeakerOn(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setAudioRouteToSpeaker(MethodCall call, Result result) {
+
+        boolean defaultToSpeaker = ZegoUtils.boolValue((Boolean) call.argument("defaultToSpeaker"));
+
+        ZegoExpressEngine.getEngine().setAudioRouteToSpeaker(defaultToSpeaker);
 
         result.success(null);
     }
