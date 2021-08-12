@@ -160,6 +160,15 @@
     result(nil);
 }
 
+- (void)callExperimentalAPI:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *params = call.arguments[@"params"];
+
+    NSString *callResult = [[ZegoExpressEngine sharedEngine] callExperimentalAPI:params];
+
+    result(callResult);
+}
+
 
 #pragma mark - Room
 
@@ -859,6 +868,16 @@
     result(nil);
 }
 
+- (void)setPlayStreamVideoType:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int streamType = [ZegoUtils intValue:call.arguments[@"streamType"]];
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamVideoType:(ZegoVideoStreamType)streamType streamID:streamID];
+
+    result(nil);
+}
+
 - (void)setPlayStreamBufferIntervalRange:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int minBufferInterval = [ZegoUtils intValue:call.arguments[@"minBufferInterval"]];
@@ -1130,6 +1149,15 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setBuiltInSpeakerOn:enable];
 #pragma clang diagnostic pop
+
+    result(nil);
+}
+
+- (void)setAudioRouteToSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL defaultToSpeaker = [ZegoUtils boolValue:call.arguments[@"defaultToSpeaker"]];
+
+    [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:defaultToSpeaker];
 
     result(nil);
 }

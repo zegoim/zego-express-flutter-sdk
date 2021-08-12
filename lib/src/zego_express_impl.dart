@@ -82,6 +82,10 @@ class ZegoExpressImpl {
         'setDebugVerbose', {'enable': enable, 'language': language.index});
   }
 
+  Future<String> callExperimentalAPI(String params) async {
+    return await _channel.invokeMethod('callExperimentalAPI', {'params': params});
+  }
+
   /* Room */
 
   Future<void> loginRoom(String roomID, ZegoUser user,
@@ -408,6 +412,10 @@ class ZegoExpressImpl {
         {'streamID': streamID, 'videoLayer': videoLayer.index});
   }
 
+Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
+    return await _channel.invokeMethod('setPlayStreamVideoType', {'streamID': streamID, 'streamType': streamType.index});
+}
+
   Future<void> setPlayStreamBufferIntervalRange(
       String streamID, int minBufferInterval, int maxBufferInterval) async {
     return await _channel.invokeMethod('setPlayStreamBufferIntervalRange', {
@@ -524,6 +532,10 @@ class ZegoExpressImpl {
   Future<void> setBuiltInSpeakerOn(bool enable) async {
     return await _channel
         .invokeMethod('setBuiltInSpeakerOn', {'enable': enable});
+  }
+
+  Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
+    return await _channel.invokeMethod('setAudioRouteToSpeaker', {'defaultToSpeaker': defaultToSpeaker});
   }
 
   Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {

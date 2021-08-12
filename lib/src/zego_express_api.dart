@@ -69,16 +69,14 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.uploadLog();
   }
 
-  /// Turns on/off verbose debugging and sets up the log language.
+  /// Call the RTC experimental API
   ///
-  /// The debug switch is set to on and the language is English by default.
+  /// ZEGO provides some technical previews or special customization functions in RTC business through this API. If you need to get the use of the function or the details, please consult ZEGO technical support
   ///
-  /// @deprecated This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
-  /// - [enable] Detailed debugging information switch
-  /// - [language] Debugging information language
-  @Deprecated('This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.')
-  Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
-    return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
+  /// - [params] You need to pass in a parameter in the form of a JSON string
+  /// - Returns Returns an argument in the format of a JSON string
+  Future<String> callExperimentalAPI(String params) async {
+    return await ZegoExpressImpl.instance.callExperimentalAPI(params);
   }
 
   /// The callback for obtaining debugging error information.
@@ -397,7 +395,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when Broadcast Messages are received.
   ///
-  /// This callback is used to receive broadcast messages sent by other users, and barrage messages sent by users themselves will not be notified through this callback.
+  /// This callback is used to receive broadcast messages sent by other users, and broadcast messages sent by users themselves will not be notified through this callback.
   ///
   /// - [roomID] Room ID
   /// - [messageList] list of received messages.
@@ -540,5 +538,68 @@ class ZegoExpressEngine {
   /// - [param] Parameters of the audio frame
   /// - [streamID] Corresponding stream ID
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param, String streamID)? onPlayerAudioData;
+
+}
+
+extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
+
+  /// Set the selected video layer of playing stream.
+  ///
+  /// When the publisher has set the codecID to SVC through [setVideoConfig], the player can dynamically set whether to use the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer)
+  /// Under normal circumstances, when the network is weak or the rendered UI form is small, you can choose to use the video that plays the base layer to save bandwidth.
+  /// It can be set before and after playing stream.
+  ///
+  /// @deprecated This function has been deprecated since version 2.3.0. Please use [setPlayStreamVideoType] instead.
+  /// - [streamID] Stream ID.
+  /// - [videoLayer] Video layer of playing stream. AUTO by default.
+  @Deprecated('This function has been deprecated since version 2.3.0. Please use [setPlayStreamVideoType] instead.')
+  Future<void> setPlayStreamVideoLayer(String streamID, ZegoPlayerVideoLayer videoLayer) async {
+    return await ZegoExpressImpl.instance.setPlayStreamVideoLayer(streamID, videoLayer);
+  }
+
+  /// Logs in multi room.
+  ///
+  /// You must log in the main room with [loginRoom] before invoke this function to logging in to multi room.
+  /// Currently supports logging into 1 main room and 1 multi room at the same time.
+  /// When logging out, you must log out of the multi room before logging out of the main room.
+  /// User can only publish the stream in the main room, but can play the stream in the main room and multi room at the same time, and can receive the signaling and callback in each room.
+  /// The advantage of multi room is that you can login another room without leaving the current room, receive signaling and callback from another room, and play streams from another room.
+  /// To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
+  /// Different users who log in to the same room can get room related notifications in the same room (eg [onRoomUserUpdate], [onRoomStreamUpdate], etc.), and users in one room cannot receive room signaling notifications in another room.
+  /// Messages sent in one room (e.g. [setStreamExtraInfo], [sendBroadcastMessage], [sendBarrageMessage], [sendCustomCommand], etc.) cannot be received callback ((eg [onRoomStreamExtraInfoUpdate], [onIMRecvBroadcastMessage], [onIMRecvBarrageMessage], [onIMRecvCustomCommand], etc) in other rooms. Currently, SDK does not provide the ability to send messages across rooms. Developers can integrate the SDK of third-party IM to achieve.
+  /// SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
+  /// If the network is temporarily interrupted due to network quality reasons, the SDK will automatically reconnect internally. You can get the current connection status of the local room by listening to the [onRoomStateUpdate] callback method, and other users in the same room will receive [onRoomUserUpdate] callback notification.
+  /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
+  ///
+  /// @deprecated This method has been deprecated after version 2.9.0. If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.
+  /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'
+  /// - [config] Advanced room configuration
+  @Deprecated('This method has been deprecated after version 2.9.0. If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.')
+  Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
+    return await ZegoExpressImpl.instance.loginMultiRoom(roomID, config: config);
+  }
+
+  /// Turns on/off verbose debugging and sets up the log language.
+  ///
+  /// The debug switch is set to on and the language is English by default.
+  ///
+  /// @deprecated This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
+  /// - [enable] Detailed debugging information switch
+  /// - [language] Debugging information language
+  @Deprecated('This method has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.')
+  Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
+    return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
+  }
+
+  /// Whether to use the built-in speaker to play audio.This function has been deprecated since version 2.3.0. Please use [setAudioRouteToSpeaker] instead.
+  ///
+  /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
+  ///
+  /// @deprecated This function has been deprecated since version 2.3.0. Please use [setAudioRouteToSpeaker] instead.
+  /// - [enable] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
+  @Deprecated('This function has been deprecated since version 2.3.0. Please use [setAudioRouteToSpeaker] instead.')
+  Future<void> setBuiltInSpeakerOn(bool enable) async {
+    return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
+  }
 
 }
