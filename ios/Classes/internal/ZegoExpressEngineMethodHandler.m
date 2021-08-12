@@ -160,6 +160,15 @@
     result(nil);
 }
 
+- (void)callExperimentalAPI:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *params = call.arguments[@"params"];
+
+    NSString *callResult = [[ZegoExpressEngine sharedEngine] callExperimentalAPI:params];
+
+    result(callResult);
+}
+
 
 #pragma mark - Room
 

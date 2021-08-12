@@ -69,6 +69,16 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.uploadLog();
   }
 
+  /// Call the RTC experimental API
+  ///
+  /// ZEGO provides some technical previews or special customization functions in RTC business through this API. If you need to get the use of the function or the details, please consult ZEGO technical support
+  ///
+  /// - [params] You need to pass in a parameter in the form of a JSON string
+  /// - Returns Returns an argument in the format of a JSON string
+  Future<String> callExperimentalAPI(String params) async {
+    return await ZegoExpressImpl.instance.callExperimentalAPI(params);
+  }
+
   /// The callback for obtaining debugging error information.
   ///
   /// When the SDK functions are not used correctly, the callback prompts for detailed error information, which is controlled by the [setDebugVerbose] function

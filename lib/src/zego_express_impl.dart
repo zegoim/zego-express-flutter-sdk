@@ -82,6 +82,10 @@ class ZegoExpressImpl {
         'setDebugVerbose', {'enable': enable, 'language': language.index});
   }
 
+  Future<String> callExperimentalAPI(String params) async {
+    return await _channel.invokeMethod('callExperimentalAPI', {'params': params});
+  }
+
   /* Room */
 
   Future<void> loginRoom(String roomID, ZegoUser user,

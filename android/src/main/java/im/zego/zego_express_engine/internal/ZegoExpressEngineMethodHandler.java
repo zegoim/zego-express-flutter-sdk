@@ -230,6 +230,15 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void callExperimentalAPI(MethodCall call, Result result) {
+
+        String params = call.argument("params");
+
+        String callResult = ZegoExpressEngine.getEngine().callExperimentalAPI(params);
+
+        result.success(callResult);
+    }
 
     /* Room */
 
