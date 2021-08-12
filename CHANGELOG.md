@@ -4,7 +4,9 @@
 
 1. Add support for Windows platform. (Only support audio temporarily)
 2. Add support for new multi-room feature.
-3. Fix some bugs of mismatched parameters.
+3. Add experimental api.
+4. Update deprecated api.
+5. Fix some bugs of mismatched parameters.
 
 ## 2.5.3
 
