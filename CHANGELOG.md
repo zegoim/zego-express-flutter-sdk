@@ -1,5 +1,12 @@
 # Change Log
 
+
+## 2.7.0
+
+1. Add experimental api.
+2. Update deprecated api.
+3. Upgrade native sdk 2.10.0
+
 ## 2.6.0
 
 1. Add support for Windows platform. (Only support audio temporarily)
