@@ -282,7 +282,11 @@
         config.roomID = configMap[@"roomID"];
     }
 
-    [[ZegoExpressEngine sharedEngine] startPublishingStream:streamID channel:(ZegoPublishChannel)channel];
+    if (config) {
+        [[ZegoExpressEngine sharedEngine] startPublishingStream:streamID config:config channel:(ZegoPublishChannel)channel];
+    } else {
+        [[ZegoExpressEngine sharedEngine] startPublishingStream:streamID channel:(ZegoPublishChannel)channel];
+    }
 
     result(nil);
 }
@@ -721,6 +725,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
 #pragma clang diagnostic pop
+        playerConfig.roomID = playerConfigMap[@"roomID"];
         NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
 
         if (cdnConfigMap && cdnConfigMap.count > 0) {
