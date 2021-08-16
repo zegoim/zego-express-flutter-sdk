@@ -1,5 +1,8 @@
 # Change Log
 
+## 2.7.1
+
+1. Fix the bug for iOS that "startPublishingStream" not work after room mode is set to "MultiRoom"
 
 ## 2.7.0
 
