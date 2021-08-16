@@ -251,16 +251,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
           '🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _playerState = state);
     };
-
-    ZegoExpressEngine.onMediaPlayerStateUpdate =
-        (ZegoMediaPlayer player, ZegoMediaPlayerState state, int error) {
-      print("current mediaplayer state: $state, error: $error");
-    };
-
-    ZegoExpressEngine.onMediaPlayerPlayingProgress =
-        (ZegoMediaPlayer player, int millsecond) {
-      print("current mediaplayer progress: $millsecond");
-    };
   }
 
   void clearZegoEventCallback() {
@@ -303,72 +293,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
     setState(() => _playViewWidget = null);
   }
 
-  void _onCreateMP() {
-    print('create mediaplayer');
-    ZegoExpressEngine.instance
-        .createMediaPlayer()
-        .then((value) => mediaPlayer = value);
-  }
-
-  void _onLoadMP() {
-    print('mp load');
-    mediaPlayer
-        ?.loadResource("https://storage.zego.im/demo/sample_astrix.mp3")
-        .then((value) => print('$value'));
-  }
-
-  void _onStartMP() {
-    print('mp start');
-    mediaPlayer?.enableRepeat(true);
-    //mediaPlayer?.enableAux(true);
-    mediaPlayer?.start();
-  }
-
-  void _onStopMP() {
-    print('mp stop');
-    mediaPlayer?.stop();
-  }
-
-  void _onDestroyMP() {
-    print('destroy mediaplayer');
-    ZegoExpressEngine.instance.destroyMediaPlayer(mediaPlayer!);
-  }
-
-  void _onPauseMP() {
-    print('pause mediaplayer');
-    mediaPlayer?.pause();
-  }
-
-  void _onResumeMP() {
-    print('resume mediaplayer');
-    mediaPlayer?.resume();
-  }
-
-  void _onSeekToMP() {
-    print('seek mediaplayer');
-    mediaPlayer?.seekTo(8000).then((value) => print("seek errorCode: $value"));
-  }
-
-  void _onGetMPInfo() {
-    print('get mp');
-    print("current index: ${mediaPlayer?.getIndex()}");
-    mediaPlayer
-        ?.getTotalDuration()
-        .then((value) => print("mp total duration: ${value}"));
-
-    mediaPlayer
-        ?.getCurrentProgress()
-        .then((value) => print("current progress: ${value}"));
-
-    mediaPlayer
-        ?.getPlayVolume()
-        .then((value) => print("current play volume: ${value}"));
-
-    mediaPlayer
-        ?.getPublishVolume()
-        .then((value) => print("current publish volume: ${value}"));
-  }
-
   // MARK: Widget
 
   @override
@@ -396,7 +320,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
           stepTwoLoginRoomWidget(),
           stepThreeStartPublishingStreamWidget(),
           stepFourStartPlayingStreamWidget(),
-          stepFiveTemp(),
           Padding(padding: const EdgeInsets.only(bottom: 20.0)),
           CupertinoButton.filled(
             child: Text(
@@ -627,124 +550,4 @@ class _QuickStartPageState extends State<QuickStartPage> {
     ]);
   }
 
-  Widget stepFiveTemp() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        'Step4:',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      SizedBox(height: 10),
-      Row(children: [
-        Container(
-          width: MediaQuery.of(context).size.width / 2.5,
-          child: TextField(
-            controller: _playingStreamIDController,
-            decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(10.0),
-                isDense: true,
-                labelText: 'Play StreamID:',
-                labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
-                hintText: 'Please enter streamID',
-                hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xff0e88eb)))),
-          ),
-        ),
-        Spacer(),
-        Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    CupertinoButton.filled(
-                      child: Text(
-                        "create",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onCreateMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                    CupertinoButton.filled(
-                      child: Text(
-                        "load",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onLoadMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                    CupertinoButton.filled(
-                      child: Text(
-                        "start",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onStartMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    CupertinoButton.filled(
-                      child: Text(
-                        "stop",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onStopMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                    CupertinoButton.filled(
-                      child: Text(
-                        "pause",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onPauseMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                    CupertinoButton.filled(
-                      child: Text(
-                        "resume",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onResumeMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    CupertinoButton.filled(
-                      child: Text(
-                        "seekto",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onSeekToMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                    CupertinoButton.filled(
-                      child: Text(
-                        "destroy",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onDestroyMP,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                    CupertinoButton.filled(
-                      child: Text(
-                        "get",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      onPressed: _onGetMPInfo,
-                      padding: EdgeInsets.all(10.0),
-                    ),
-                  ],
-                ),
-              ],
-            ))
-      ]),
-      Divider(),
-    ]);
-  }
 }
