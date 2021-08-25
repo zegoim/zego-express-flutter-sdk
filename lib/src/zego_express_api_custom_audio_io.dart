@@ -1,4 +1,5 @@
 
+import 'dart:typed_data';
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
