@@ -20,4 +20,15 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopAudioDataObserver();
   }
 
+  /// Enables the custom audio I/O function (for the specified channel).
+  ///
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  ///
+  /// - [enable] Whether to enable custom audio IO, default is false
+  /// - [config] Custom audio IO config
+  /// - [channel] Specify the publish channel to enable custom audio IO
+  Future<void> enableCustomAudioIO(bool enable, ZegoCustomAudioConfig config, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.enableCustomAudioIO(enable, config, channel: channel);
+  }
+
 }

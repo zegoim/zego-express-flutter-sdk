@@ -848,6 +848,15 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     return await _channel.invokeMethod('stopAudioDataObserver', {});
   }
 
+  Future<void> enableCustomAudioIO(bool enable, ZegoCustomAudioConfig config, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableCustomAudioIO', {
+      'enable': enable,
+      'config': {
+        'sourceType': config.sourceType.index
+      }
+    });
+  }
+
   /* Utilities */
 
   Future<void> startPerformanceMonitor({int? millisecond}) async {

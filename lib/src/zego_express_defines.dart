@@ -591,6 +591,16 @@ enum ZegoAudioSampleRate {
   SampleRate48K
 }
 
+/// Audio capture source type.
+enum ZegoAudioSourceType {
+  /// Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default)
+  Default,
+  /// Use custom audio capture, refer to [enableCustomAudioIO]
+  Custom,
+  /// Use media player as audio source, only support aux channel
+  MediaPlayer
+}
+
 /// Record type.
 enum ZegoDataRecordType {
   /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
@@ -667,6 +677,16 @@ class ZegoCustomVideoCaptureConfig {
   ZegoVideoBufferType bufferType;
 
   ZegoCustomVideoCaptureConfig(this.bufferType);
+
+}
+
+/// Custom audio configuration.
+class ZegoCustomAudioConfig {
+
+  /// Audio capture source type
+  ZegoAudioSourceType sourceType;
+
+  ZegoCustomAudioConfig(this.sourceType);
 
 }
 

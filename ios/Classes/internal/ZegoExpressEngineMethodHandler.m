@@ -1465,6 +1465,19 @@
     result(nil);
 }
 
+- (void)enableCustomAudioIO:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    ZegoCustomAudioConfig *config = [[ZegoCustomAudioConfig alloc] init];
+    config.sourceType = [ZegoUtils intValue:paramMap[@"sourceType"]];
+    int channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableCustomAudioIO:enable config:config channel:channel];
+
+    result(nil);
+}
 
 #pragma mark - IM
 

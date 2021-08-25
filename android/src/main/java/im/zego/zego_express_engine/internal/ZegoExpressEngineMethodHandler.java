@@ -77,6 +77,7 @@ import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
@@ -1755,6 +1756,21 @@ public class ZegoExpressEngineMethodHandler {
     public static void stopAudioDataObserver(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().stopAudioDataObserver();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableCustomAudioIO(MethodCall call, Result result) {
+        
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, String> configMap = call.argument("config");
+
+        ZegoCustomAudioConfig config = new ZegoCustomAudioConfig();
+        config.sourceType = ZegoAudioSourceType.getZegoAudioSourceType(ZegoUtils.intValue((Number) configMap.get("sourceType")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableCustomAudioIO(enable, config, channel);
 
         result.success(null);
     }
