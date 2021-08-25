@@ -2183,6 +2183,16 @@
     result(nil);
 }
 
+- (void)getNetworkTimeInfo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    ZegoNetworkTimeInfo *info = [[ZegoExpressEngine sharedEngine] getNetworkTimeInfo];
+    
+    result(@{
+        @"timestamp": @(info.timestamp),
+        @"maxDeviation": @(info.maxDeviation)
+    });
+}
+
 
 #pragma mark - PlatformView Utils
 

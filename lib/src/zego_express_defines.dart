@@ -1624,6 +1624,30 @@ class ZegoNetworkSpeedTestQuality {
 
 }
 
+/// The NTP info
+class ZegoNetworkTimeInfo {
+
+  /// Network timestamp after synchronization, 0 indicates not yet synchronized
+  int timestamp;
+
+  /// The max deviation
+  int maxDeviation;
+
+  ZegoNetworkTimeInfo(this.timestamp, this.maxDeviation);
+
+  ZegoNetworkTimeInfo.fromMap(Map<dynamic, dynamic> map):
+    timestamp = map['timestamp'],
+    maxDeviation = map['maxDeviation'];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'timestamp': this.timestamp,
+      'maxDeviation': this.maxDeviation
+    };
+  }
+
+}
+
 /// AudioEffectPlayer play configuration.
 class ZegoAudioEffectPlayConfig {
 

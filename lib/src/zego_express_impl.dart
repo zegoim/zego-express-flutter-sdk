@@ -874,6 +874,11 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     return await _channel.invokeMethod('stopNetworkSpeedTest');
   }
 
+  Future<ZegoNetworkTimeInfo> getNetworkTimeInfo() async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('getNetworkTimeInfo');
+    return ZegoNetworkTimeInfo(map['timestamp'], map['maxDeviation']);
+  }
+
   /* EventHandler */
 
   static void _registerEventHandler() async {

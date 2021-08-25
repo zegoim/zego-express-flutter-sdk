@@ -87,6 +87,7 @@ import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestConfig;
+import im.zego.zegoexpress.entity.ZegoNetworkTimeInfo;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
@@ -2476,6 +2477,17 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().stopNetworkSpeedTest();
 
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void getNetworkTimeInfo(MethodCall call, Result result) {
+
+        ZegoNetworkTimeInfo info = ZegoExpressEngine.getEngine().getNetworkTimeInfo();
+        
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("timestamp", info.timestamp);
+        resultMap.put("maxDeviation", info.maxDeviation);
+        result.success(resultMap);
     }
 
 
