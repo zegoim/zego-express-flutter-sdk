@@ -1493,7 +1493,38 @@
 
     CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
 
-    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:data dataLength:dataLength configLength:configLength timestamp:timestamp param:param;];
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:data dataLength:dataLength configLength:configLength timestamp:timestamp param:param];
+
+    result(nil);
+}
+
+- (void)sendCustomAudioCapturePCMData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+    int channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCapturePCMData:data dataLength:dataLength param:param channel:channel];
+
+    result(nil);
+}
+
+- (void)fetchCustomAudioRenderPCMData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] fetchCustomAudioRenderPCMData:data dataLength:dataLength param:param];
 
     result(nil);
 }

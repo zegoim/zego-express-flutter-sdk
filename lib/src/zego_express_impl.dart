@@ -853,7 +853,8 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
       'enable': enable,
       'config': {
         'sourceType': config.sourceType.index
-      }
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 
@@ -863,6 +864,29 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
       'dataLength': dataLength,
       'configLength': configLength,
       'referenceTimeMillisecond': referenceTimeMillisecond,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      }
+    });
+  }
+
+  Future<void> sendCustomAudioCapturePCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('sendCustomAudioCapturePCMData', {
+      'data': data,
+      'dataLength': dataLength,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> fetchCustomAudioRenderPCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('fetchCustomAudioRenderPCMData', {
+      'data': data,
+      'dataLength': dataLength,
       'param': {
         'sampleRate': param.sampleRate.index,
         'channel': param.channel.index

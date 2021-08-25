@@ -1793,6 +1793,39 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void sendCustomAudioCapturePCMData(MethodCall call, Result result) {
+        
+        byte[] data = call.argument("data");
+        int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().sendCustomAudioCapturePCMData(data, dataLength, param, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void fetchCustomAudioRenderPCMData(MethodCall call, Result result) {
+        
+        byte[] data = call.argument("data");
+        int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+
+        ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(data, dataLength, param);
+
+        result.success(null);
+    }
+
     /* MediaPlayer */
 
     @SuppressWarnings("unused")
