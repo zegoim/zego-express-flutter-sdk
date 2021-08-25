@@ -1775,6 +1775,24 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void sendCustomAudioCaptureAACData(MethodCall call, Result result) {
+        
+        byte[] data = call.argument("data");
+        int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
+        int configLength = ZegoUtils.intValue((Number) call.argument("configLength"));
+        int referenceTimeMillisecond = ZegoUtils.intValue((Number) call.argument("referenceTimeMillisecond"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+
+        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(data, dataLength, configLength, referenceTimeMillisecond, param);
+
+        result.success(null);
+    }
+
     /* MediaPlayer */
 
     @SuppressWarnings("unused")

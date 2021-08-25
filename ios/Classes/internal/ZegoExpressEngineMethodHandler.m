@@ -1479,6 +1479,26 @@
     result(nil);
 }
 
+- (void)sendCustomAudioCaptureAACData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
+    int configLength = [ZegoUtils intValue:call.arguments[@"configLength"]];
+    int referenceTimeMillisecond = [ZegoUtils intValue:call.arguments[@"referenceTimeMillisecond"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
+
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:data dataLength:dataLength configLength:configLength timestamp:timestamp param:param;];
+
+    result(nil);
+}
+
+
 #pragma mark - IM
 
 - (void)sendBroadcastMessage:(FlutterMethodCall *)call result:(FlutterResult)result {

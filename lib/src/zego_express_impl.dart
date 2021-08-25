@@ -857,6 +857,19 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     });
   }
 
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('sendCustomAudioCaptureAACData', {
+      'data': data,
+      'dataLength': dataLength,
+      'configLength': configLength,
+      'referenceTimeMillisecond': referenceTimeMillisecond,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      }
+    });
+  }
+
   /* Utilities */
 
   Future<void> startPerformanceMonitor({int? millisecond}) async {

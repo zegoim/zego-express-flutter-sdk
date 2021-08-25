@@ -31,4 +31,15 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableCustomAudioIO(enable, config, channel: channel);
   }
 
+  /// Sends AAC audio data produced by custom audio capture to the SDK.
+  ///
+  /// - [data] AAC buffer data
+  /// - [dataLength] The total length of the buffer data
+  /// - [configLength] The length of AAC specific config (Note: The AAC encoded data length is 'encodedLength = dataLength - configLength')
+  /// - [referenceTimeMillisecond] The UNIX timestamp of this AAC audio frame in millisecond.
+  /// - [param] The param of this AAC audio frame
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param) async {
+    return await ZegoExpressImpl.instance.sendCustomAudioCaptureAACData(data, dataLength, configLength, referenceTimeMillisecond, param);
+  }
+
 }
