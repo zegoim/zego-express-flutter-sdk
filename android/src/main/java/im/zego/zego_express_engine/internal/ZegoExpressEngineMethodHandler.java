@@ -64,6 +64,7 @@ import im.zego.zegoexpress.constants.ZegoRoomMode;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
+import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
@@ -669,6 +670,16 @@ public class ZegoExpressEngineMethodHandler {
         ZegoTrafficControlMinVideoBitrateMode mode = ZegoTrafficControlMinVideoBitrateMode.getZegoTrafficControlMinVideoBitrateMode(ZegoUtils.intValue((Number) call.argument("mode")));
 
         ZegoExpressEngine.getEngine().setMinVideoBitrateForTrafficControl(bitrate, mode);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setTrafficControlFocusOn(MethodCall call, Result result) {
+
+        ZegoTrafficControlFocusOnMode mode = ZegoTrafficControlFocusOnMode.getZegoTrafficControlFocusOnMode(ZegoUtils.intValue((Number) call.argument("mode")));
+
+        ZegoExpressEngine.getEngine().setTrafficControlFocusOn(mode);
 
         result.success(null);
     }

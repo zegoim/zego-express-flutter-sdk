@@ -564,6 +564,15 @@
     result(nil);
 }
 
+- (void)setTrafficControlFocusOn:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setTrafficControlFocusOn:(ZegoTrafficControlFocusOnMode)mode];
+
+    result(nil);
+}
+
 - (void)setCaptureVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];

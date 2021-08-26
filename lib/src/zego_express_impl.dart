@@ -279,6 +279,10 @@ class ZegoExpressImpl {
         {'bitrate': bitrate, 'mode': mode.index});
   }
 
+  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode) async {
+    return await _channel.invokeMethod('setTrafficControlFocusOn', {'mode': mode.index});
+  }
+
   Future<void> setCaptureVolume(int volume) async {
     return await _channel.invokeMethod('setCaptureVolume', {'volume': volume});
   }
