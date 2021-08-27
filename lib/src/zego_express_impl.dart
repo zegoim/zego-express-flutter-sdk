@@ -875,7 +875,7 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     });
   }
 
-  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param) async {
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, ZegoPublishChannel channel) async {
     return await _channel.invokeMethod('sendCustomAudioCaptureAACData', {
       'data': data,
       'dataLength': dataLength,
