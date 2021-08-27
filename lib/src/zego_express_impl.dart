@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
+import 'package:yaml/yaml.dart';
+import 'dart:io';
 
 class ZegoExpressImpl {
   /// Method Channel
@@ -38,6 +40,17 @@ class ZegoExpressImpl {
       'isTestEnv': isTestEnv,
       'scenario': scenario.index,
       'enablePlatformView': enablePlatformView ?? false
+    });
+
+    /// Get zego express engine plugin version from yaml.
+    File f = new File("../../pubspec.yaml");
+    f.readAsString().then((String text) {
+      Map yaml = loadYaml(text);
+      String version = yaml['version'];
+      /// Write the version number to the SDK log
+      _channel.invokeMethod('setPlatformVersion', {
+        'version': version
+      });
     });
 
     return null;

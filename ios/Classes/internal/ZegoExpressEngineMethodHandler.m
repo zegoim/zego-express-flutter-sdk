@@ -2330,4 +2330,12 @@
     result(realPath);
 }
 
+#pragma mark - Private
+
+- (void)setPlatformVersion:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *version = call.arguments[@"version"];
+
+    ZGLog(@"[setPlatformVersion] version: %@", version);
+}
+
 @end

@@ -2669,4 +2669,10 @@ public class ZegoExpressEngineMethodHandler {
             Log.e("ZEGO", "[Flutter] Set platform language failed, invocation failed.");
         }
     }
+
+    @SuppressWarnings("unused")
+    public static void setPlatformVersion(MethodCall call, Result result) {
+        String version = call.argument("version");
+        ZegoLog.log("[setPlatformVersion] version: %s", version);
+    }
 }

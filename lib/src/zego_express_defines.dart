@@ -287,6 +287,14 @@ enum ZegoTrafficControlMinVideoBitrateMode {
   UltraLowFPS
 }
 
+/// Factors that trigger traffic control
+enum ZegoTrafficControlFocusOnMode {
+  /// Focus only on the local network
+  ZegoTrafficControlFounsOnLocalOnly,
+  /// Pay attention to the local network, but also take into account the remote network, currently only effective in the 1v1 scenario
+  ZegoTrafficControlFounsOnRemote
+}
+
 /// Playing stream status.
 enum ZegoPlayerState {
   /// The state of the flow is not played, and it is in this state before the stream is played. If the steady flow anomaly occurs during the playing process, such as AppID and AppSign are incorrect, it will enter this state.
