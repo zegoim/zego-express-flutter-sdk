@@ -22,6 +22,7 @@ import java.io.File;
 import java.lang.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,6 +51,7 @@ import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
+import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
@@ -1799,7 +1801,7 @@ public class ZegoExpressEngineMethodHandler {
         param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
-        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(data, dataLength, configLength, referenceTimeMillisecond, param);
+        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, param);
 
         result.success(null);
     }
@@ -1816,7 +1818,7 @@ public class ZegoExpressEngineMethodHandler {
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().sendCustomAudioCapturePCMData(data, dataLength, param, channel);
+        ZegoExpressEngine.getEngine().sendCustomAudioCapturePCMData(ByteBuffer.wrap(data), dataLength, param, channel);
 
         result.success(null);
     }
@@ -1832,7 +1834,7 @@ public class ZegoExpressEngineMethodHandler {
         param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
-        ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(data, dataLength, param);
+        ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(ByteBuffer.wrap(data), dataLength, param);
 
         result.success(null);
     }
