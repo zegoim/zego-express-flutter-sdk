@@ -40,8 +40,8 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// - [referenceTimeMillisecond] The UNIX timestamp of this AAC audio frame in millisecond.
   /// - [param] The param of this AAC audio frame
   /// - [channel] Publish channel for capturing audio frames
-  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, ZegoPublishChannel channel) async {
-    return await ZegoExpressImpl.instance.sendCustomAudioCaptureAACData(data, dataLength, configLength, referenceTimeMillisecond, param, channel);
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.sendCustomAudioCaptureAACData(data, dataLength, configLength, referenceTimeMillisecond, param, channel: channel);
   }
 
   /// Sends PCM audio data produced by custom audio capture to the SDK (for the specified channel).

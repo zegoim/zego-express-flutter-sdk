@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
-import 'package:yaml/yaml.dart';
-import 'dart:io';
 
 class ZegoExpressImpl {
   /// Method Channel
@@ -40,17 +38,6 @@ class ZegoExpressImpl {
       'isTestEnv': isTestEnv,
       'scenario': scenario.index,
       'enablePlatformView': enablePlatformView ?? false
-    });
-
-    /// Get zego express engine plugin version from yaml.
-    File f = new File("../../pubspec.yaml");
-    f.readAsString().then((String text) {
-      Map yaml = loadYaml(text);
-      String version = yaml['version'];
-      /// Write the version number to the SDK log
-      _channel.invokeMethod('setPlatformVersion', {
-        'version': version
-      });
     });
 
     return null;
@@ -875,7 +862,7 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     });
   }
 
-  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, ZegoPublishChannel channel) async {
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('sendCustomAudioCaptureAACData', {
       'data': data,
       'dataLength': dataLength,
@@ -884,7 +871,8 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
       'param': {
         'sampleRate': param.sampleRate.index,
         'channel': param.channel.index
-      }
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 

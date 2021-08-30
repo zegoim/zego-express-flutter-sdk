@@ -1481,7 +1481,8 @@
 
     ZegoCustomAudioConfig *config = [[ZegoCustomAudioConfig alloc] init];
     config.sourceType = [ZegoUtils intValue:paramMap[@"sourceType"]];
-    int channel = [ZegoUtils intValue:paramMap[@"channel"]];
+    
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] enableCustomAudioIO:enable config:config channel:channel];
 
@@ -1501,6 +1502,7 @@
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
 
     CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:data dataLength:dataLength configLength:configLength timestamp:timestamp param:param];
 
@@ -1516,7 +1518,8 @@
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
     param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
-    int channel = [ZegoUtils intValue:paramMap[@"channel"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
 
     [[ZegoExpressEngine sharedEngine] sendCustomAudioCapturePCMData:data dataLength:dataLength param:param channel:channel];
 

@@ -1801,7 +1801,9 @@ public class ZegoExpressEngineMethodHandler {
         param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
-        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, param);
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, param, channel);
 
         result.success(null);
     }
