@@ -1298,7 +1298,9 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
       case 'onCapturedAudioSpectrumUpdate':
         if (ZegoExpressEngine.onCapturedAudioSpectrumUpdate == null) return;
 
-        ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(map['audioSpectrum']);
+        List<double> originAudioSpectrum = List<double>.from(map['audioSpectrum']);
+
+        ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(originAudioSpectrum);
         break;
 
       case 'onRemoteAudioSpectrumUpdate':
