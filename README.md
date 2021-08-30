@@ -1,6 +1,6 @@
 # zego_express_engine [![pub package](https://img.shields.io/pub/v/zego_express_engine.svg)](https://pub.dartlang.org/packages/zego_express_engine)
 
-[English](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README_zh.md)
+[English](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README_zh.md)
 
 ZegoExpressEngine Audio/Video Flutter SDK is a flutter plugin wrapper based on [ZegoExpressEngine](https://doc-en.zego.im/en/693.html) native Android/iOS SDK, providing live video and real-time audio/video services. 🚀 It only needs 4 lines of code and can be easily accessed in 30 minutes.
 
@@ -12,7 +12,7 @@ Learn more about the solution: [https://www.zego.im](https://www.zego.im)
 
     🧬 An example topic demo (including the `Quick Start` demo) showing the SDK publish & play stream functions and other various features. This demo is continuously updated.
 
-2. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example)**
+2. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/main/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/main/example)**
 
     🧪 A simple publish & play stream example demo, in the `example` directory of this repository, shows the basic function of the SDK.
 
@@ -60,7 +60,7 @@ dependencies:
   zego_express_engine:
     git:
       url: git://github.com/zegoim/zego-express-flutter-sdk.git
-      ref: master
+      ref: main
 ```
 
 After saving the file, execute `flutter pub get`
