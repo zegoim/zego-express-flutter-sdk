@@ -584,15 +584,11 @@ public class ZegoExpressEngineEventHandler {
             super.onCapturedAudioSpectrumUpdate(audioSpectrum);
             // Super high frequency callbacks do not log, do not guard sink
 
-            ZegoLog.log("onCapturedAudioSpectrumUpdate_java start");
-
             ArrayList<Float> audioSpectrumList = new ArrayList<>();
 
             for (float spectrumValue: audioSpectrum) {
                 audioSpectrumList.add(spectrumValue);
             }
-
-            ZegoLog.log("onCapturedAudioSpectrumUpdate_java end");
 
             HashMap<String, Object> map = new HashMap<>();
 
