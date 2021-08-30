@@ -1777,7 +1777,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void enableCustomAudioIO(MethodCall call, Result result) {
         
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
-        HashMap<String, String> configMap = call.argument("config");
+        HashMap<String, Object> configMap = call.argument("config");
 
         ZegoCustomAudioConfig config = new ZegoCustomAudioConfig();
         config.sourceType = ZegoAudioSourceType.getZegoAudioSourceType(ZegoUtils.intValue((Number) configMap.get("sourceType")));
