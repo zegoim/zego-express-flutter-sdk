@@ -287,6 +287,14 @@ enum ZegoTrafficControlMinVideoBitrateMode {
   UltraLowFPS
 }
 
+/// Factors that trigger traffic control
+enum ZegoTrafficControlFocusOnMode {
+  /// Focus only on the local network
+  ZegoTrafficControlFounsOnLocalOnly,
+  /// Pay attention to the local network, but also take into account the remote network, currently only effective in the 1v1 scenario
+  ZegoTrafficControlFounsOnRemote
+}
+
 /// Playing stream status.
 enum ZegoPlayerState {
   /// The state of the flow is not played, and it is in this state before the stream is played. If the steady flow anomaly occurs during the playing process, such as AppID and AppSign are incorrect, it will enter this state.
@@ -591,6 +599,16 @@ enum ZegoAudioSampleRate {
   SampleRate48K
 }
 
+/// Audio capture source type.
+enum ZegoAudioSourceType {
+  /// Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default)
+  Default,
+  /// Use custom audio capture, refer to [enableCustomAudioIO]
+  Custom,
+  /// Use media player as audio source, only support aux channel
+  MediaPlayer
+}
+
 /// Record type.
 enum ZegoDataRecordType {
   /// This field indicates that the Express-Audio SDK records audio by default, and the Express-Video SDK records audio and video by default. When recording files in .aac format, audio is also recorded by default.
@@ -667,6 +685,16 @@ class ZegoCustomVideoCaptureConfig {
   ZegoVideoBufferType bufferType;
 
   ZegoCustomVideoCaptureConfig(this.bufferType);
+
+}
+
+/// Custom audio configuration.
+class ZegoCustomAudioConfig {
+
+  /// Audio capture source type
+  ZegoAudioSourceType sourceType;
+
+  ZegoCustomAudioConfig(this.sourceType);
 
 }
 
@@ -1621,6 +1649,19 @@ class ZegoNetworkSpeedTestQuality {
   double packetLostRate;
 
   ZegoNetworkSpeedTestQuality(this.connectCost, this.rtt, this.packetLostRate);
+
+}
+
+/// The NTP info
+class ZegoNetworkTimeInfo {
+
+  /// Network timestamp after synchronization, 0 indicates not yet synchronized
+  int timestamp;
+
+  /// The max deviation
+  int maxDeviation;
+
+  ZegoNetworkTimeInfo(this.timestamp, this.maxDeviation);
 
 }
 

@@ -41,4 +41,9 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopNetworkSpeedTest();
   }
 
+  /// Obtain synchronization network time information, including timestamp and maximum deviation
+  Future<ZegoNetworkTimeInfo> getNetworkTimeInfo() async {
+    return await ZegoExpressImpl.instance.getNetworkTimeInfo();
+  }
+
 }

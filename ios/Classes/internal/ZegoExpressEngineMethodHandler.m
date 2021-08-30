@@ -564,6 +564,15 @@
     result(nil);
 }
 
+- (void)setTrafficControlFocusOn:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setTrafficControlFocusOn:(ZegoTrafficControlFocusOnMode)mode];
+
+    result(nil);
+}
+
 - (void)setCaptureVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
@@ -1465,6 +1474,73 @@
     result(nil);
 }
 
+- (void)enableCustomAudioIO:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    ZegoCustomAudioConfig *config = [[ZegoCustomAudioConfig alloc] init];
+    config.sourceType = [ZegoUtils intValue:paramMap[@"sourceType"]];
+    
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableCustomAudioIO:enable config:config channel:channel];
+
+    result(nil);
+}
+
+- (void)sendCustomAudioCaptureAACData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
+    int configLength = [ZegoUtils intValue:call.arguments[@"configLength"]];
+    int referenceTimeMillisecond = [ZegoUtils intValue:call.arguments[@"referenceTimeMillisecond"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:data dataLength:dataLength configLength:configLength timestamp:timestamp param:param];
+
+    result(nil);
+}
+
+- (void)sendCustomAudioCapturePCMData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCapturePCMData:data dataLength:dataLength param:param channel:channel];
+
+    result(nil);
+}
+
+- (void)fetchCustomAudioRenderPCMData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] fetchCustomAudioRenderPCMData:data dataLength:dataLength param:param];
+
+    result(nil);
+}
+
 
 #pragma mark - IM
 
@@ -2183,6 +2259,16 @@
     result(nil);
 }
 
+- (void)getNetworkTimeInfo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    ZegoNetworkTimeInfo *info = [[ZegoExpressEngine sharedEngine] getNetworkTimeInfo];
+    
+    result(@{
+        @"timestamp": @(info.timestamp),
+        @"maxDeviation": @(info.maxDeviation)
+    });
+}
+
 
 #pragma mark - PlatformView Utils
 
@@ -2245,6 +2331,14 @@
     ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
 
     result(realPath);
+}
+
+#pragma mark - Private
+
+- (void)setPlatformVersion:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *version = call.arguments[@"version"];
+
+    ZGLog(@"[setPlatformVersion] version: %@", version);
 }
 
 @end

@@ -22,6 +22,7 @@ import java.io.File;
 import java.lang.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,6 +51,7 @@ import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
+import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
@@ -64,6 +66,7 @@ import im.zego.zegoexpress.constants.ZegoRoomMode;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
+import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
@@ -77,6 +80,7 @@ import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
+import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
@@ -87,6 +91,7 @@ import im.zego.zegoexpress.entity.ZegoMixerOutput;
 import im.zego.zegoexpress.entity.ZegoMixerTask;
 import im.zego.zegoexpress.entity.ZegoMixerVideoConfig;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestConfig;
+import im.zego.zegoexpress.entity.ZegoNetworkTimeInfo;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
@@ -667,6 +672,16 @@ public class ZegoExpressEngineMethodHandler {
         ZegoTrafficControlMinVideoBitrateMode mode = ZegoTrafficControlMinVideoBitrateMode.getZegoTrafficControlMinVideoBitrateMode(ZegoUtils.intValue((Number) call.argument("mode")));
 
         ZegoExpressEngine.getEngine().setMinVideoBitrateForTrafficControl(bitrate, mode);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setTrafficControlFocusOn(MethodCall call, Result result) {
+
+        ZegoTrafficControlFocusOnMode mode = ZegoTrafficControlFocusOnMode.getZegoTrafficControlFocusOnMode(ZegoUtils.intValue((Number) call.argument("mode")));
+
+        ZegoExpressEngine.getEngine().setTrafficControlFocusOn(mode);
 
         result.success(null);
     }
@@ -1758,6 +1773,74 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void enableCustomAudioIO(MethodCall call, Result result) {
+        
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Object> configMap = call.argument("config");
+
+        ZegoCustomAudioConfig config = new ZegoCustomAudioConfig();
+        config.sourceType = ZegoAudioSourceType.getZegoAudioSourceType(ZegoUtils.intValue((Number) configMap.get("sourceType")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableCustomAudioIO(enable, config, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void sendCustomAudioCaptureAACData(MethodCall call, Result result) {
+        
+        byte[] data = call.argument("data");
+        int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
+        int configLength = ZegoUtils.intValue((Number) call.argument("configLength"));
+        int referenceTimeMillisecond = ZegoUtils.intValue((Number) call.argument("referenceTimeMillisecond"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, param, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void sendCustomAudioCapturePCMData(MethodCall call, Result result) {
+        
+        byte[] data = call.argument("data");
+        int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().sendCustomAudioCapturePCMData(ByteBuffer.wrap(data), dataLength, param, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void fetchCustomAudioRenderPCMData(MethodCall call, Result result) {
+        
+        byte[] data = call.argument("data");
+        int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+
+        ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(ByteBuffer.wrap(data), dataLength, param);
+
+        result.success(null);
+    }
+
     /* MediaPlayer */
 
     @SuppressWarnings("unused")
@@ -2478,6 +2561,17 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void getNetworkTimeInfo(MethodCall call, Result result) {
+
+        ZegoNetworkTimeInfo info = ZegoExpressEngine.getEngine().getNetworkTimeInfo();
+        
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("timestamp", info.timestamp);
+        resultMap.put("maxDeviation", info.maxDeviation);
+        result.success(resultMap);
+    }
+
 
     /* PlatformView Utils */
 
@@ -2578,5 +2672,11 @@ public class ZegoExpressEngineMethodHandler {
         } catch (InvocationTargetException e) {
             Log.e("ZEGO", "[Flutter] Set platform language failed, invocation failed.");
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlatformVersion(MethodCall call, Result result) {
+        String version = call.argument("version");
+        ZegoLog.log("[setPlatformVersion] version: %s", version);
     }
 }
