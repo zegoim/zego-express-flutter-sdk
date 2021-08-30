@@ -1285,9 +1285,9 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
 
       case 'onCapturedAudioSpectrumUpdate':
         if (ZegoExpressEngine.onCapturedAudioSpectrumUpdate == null) return;
-        print("onCapturedAudioSpectrumUpdate_dart start");
+        
         List<double> originAudioSpectrum = List<double>.from(map['audioSpectrum']);
-        print("onCapturedAudioSpectrumUpdate_dart end");
+        
         ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(originAudioSpectrum);
         break;
 
