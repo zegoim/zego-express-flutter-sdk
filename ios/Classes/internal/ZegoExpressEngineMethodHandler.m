@@ -1480,7 +1480,7 @@
     NSDictionary *configMap = call.arguments[@"config"];
 
     ZegoCustomAudioConfig *config = [[ZegoCustomAudioConfig alloc] init];
-    config.sourceType = [ZegoUtils intValue:paramMap[@"sourceType"]];
+    config.sourceType = [ZegoUtils intValue:configMap[@"sourceType"]];
     
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
@@ -1504,7 +1504,7 @@
     CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:data dataLength:dataLength configLength:configLength timestamp:timestamp param:param];
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:(unsigned char*)[data.data bytes] dataLength:dataLength configLength:configLength timestamp:timestamp param:param channel:channel];
 
     result(nil);
 }
@@ -1521,7 +1521,7 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
 
-    [[ZegoExpressEngine sharedEngine] sendCustomAudioCapturePCMData:data dataLength:dataLength param:param channel:channel];
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCapturePCMData:(unsigned char*)[data.data bytes] dataLength:dataLength param:param channel:channel];
 
     result(nil);
 }
@@ -1536,7 +1536,7 @@
     param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] fetchCustomAudioRenderPCMData:data dataLength:dataLength param:param];
+    [[ZegoExpressEngine sharedEngine] fetchCustomAudioRenderPCMData:(unsigned char*)[data.data bytes] dataLength:dataLength param:param];
 
     result(nil);
 }
