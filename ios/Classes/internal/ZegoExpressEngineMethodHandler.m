@@ -1800,7 +1800,7 @@
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
 
-    [mediaPlayer setPlayVolume:volume];
+    [mediaPlayer setPublishVolume:volume];
 
     result(nil);
 }
