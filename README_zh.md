@@ -1,6 +1,6 @@
 # zego_express_engine [![pub package](https://img.shields.io/pub/v/zego_express_engine.svg)](https://pub.dartlang.org/packages/zego_express_engine)
 
-[English](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/master/README_zh.md)
+[English](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README_zh.md)
 
 即构科技 (ZEGO) 极速音视频 Flutter SDK 是一个基于 [ZegoExpressEngine](https://doc-zh.zego.im/zh/693.html) 原生 Android/iOS SDK 的 Flutter Plugin Wrapper，提供视频直播以及实时音视频服务。🚀 仅需 4 行代码，30 分钟即可轻松接入。
 
@@ -12,7 +12,7 @@
 
     🧬 一个展示 SDK 推拉流以及各种丰富功能的示例专题 Demo（包括 `快速开始` Demo 在内），持续更新中。
 
-2. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/master/example)**
+2. **[https://github.com/zegoim/zego-express-flutter-sdk/tree/main/example](https://github.com/zegoim/zego-express-flutter-sdk/tree/main/example)**
 
     🧪 一个简易的推拉流示例 Demo，内置于此仓库的 `example` 目录下，展示了 SDK 最基础的推拉流功能。
 
@@ -60,7 +60,7 @@ dependencies:
   zego_express_engine:
     git:
       url: git://github.com/zegoim/zego-express-flutter-sdk.git
-      ref: master
+      ref: main
 ```
 
 保存文件后，执行 `flutter pub get`

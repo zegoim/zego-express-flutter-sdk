@@ -279,6 +279,10 @@ class ZegoExpressImpl {
         {'bitrate': bitrate, 'mode': mode.index});
   }
 
+  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode) async {
+    return await _channel.invokeMethod('setTrafficControlFocusOn', {'mode': mode.index});
+  }
+
   Future<void> setCaptureVolume(int volume) async {
     return await _channel.invokeMethod('setCaptureVolume', {'volume': volume});
   }
@@ -848,6 +852,53 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     return await _channel.invokeMethod('stopAudioDataObserver', {});
   }
 
+  Future<void> enableCustomAudioIO(bool enable, ZegoCustomAudioConfig config, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableCustomAudioIO', {
+      'enable': enable,
+      'config': {
+        'sourceType': config.sourceType.index
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('sendCustomAudioCaptureAACData', {
+      'data': data,
+      'dataLength': dataLength,
+      'configLength': configLength,
+      'referenceTimeMillisecond': referenceTimeMillisecond,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> sendCustomAudioCapturePCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('sendCustomAudioCapturePCMData', {
+      'data': data,
+      'dataLength': dataLength,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> fetchCustomAudioRenderPCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('fetchCustomAudioRenderPCMData', {
+      'data': data,
+      'dataLength': dataLength,
+      'param': {
+        'sampleRate': param.sampleRate.index,
+        'channel': param.channel.index
+      }
+    });
+  }
+
   /* Utilities */
 
   Future<void> startPerformanceMonitor({int? millisecond}) async {
@@ -872,6 +923,11 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
 
   Future<void> stopNetworkSpeedTest() async {
     return await _channel.invokeMethod('stopNetworkSpeedTest');
+  }
+
+  Future<ZegoNetworkTimeInfo> getNetworkTimeInfo() async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('getNetworkTimeInfo');
+    return ZegoNetworkTimeInfo(map['timestamp'], map['maxDeviation']);
   }
 
   /* EventHandler */
@@ -1229,8 +1285,10 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
 
       case 'onCapturedAudioSpectrumUpdate':
         if (ZegoExpressEngine.onCapturedAudioSpectrumUpdate == null) return;
-
-        ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(map['audioSpectrum']);
+        
+        List<double> originAudioSpectrum = List<double>.from(map['audioSpectrum']);
+        
+        ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(originAudioSpectrum);
         break;
 
       case 'onRemoteAudioSpectrumUpdate':

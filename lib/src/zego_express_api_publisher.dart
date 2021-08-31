@@ -198,6 +198,16 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode);
   }
 
+  /// Set the factors of concern that trigger traffic control
+  ///
+  /// When the traffic control of the specified push channel is enabled through the enableTrafficControl interface, the interface can be used to control whether the traffic control is started due to poor remote network conditions
+  /// The function is valid before the stream is pushed. If you do not reset the settings before each push, you will continue to use the last configuration.
+  ///
+  /// - [mode] When LOCAL_ONLY is selected, only the local network status is concerned. When choosing REMOTE, also take into account the remote network.
+  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode) async {
+    return await ZegoExpressImpl.instance.setTrafficControlFocusOn(mode);
+  }
+
   /// Sets the audio recording volume for stream publishing.
   ///
   /// This function is used to set the audio collection volume. The local user can control the volume of the audio stream sent to the far end. It can be set before publishing.

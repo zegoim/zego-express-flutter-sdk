@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.8.0
+
+1. Add custom audio pre-processing related function.
+2. Fix the problem that onCapturedAudioSpectrumUpdate has no callback.
+
 ## 2.7.1
 
 1. Fix the bug for iOS that "startPublishingStream" not work after room mode is set to "MultiRoom"
