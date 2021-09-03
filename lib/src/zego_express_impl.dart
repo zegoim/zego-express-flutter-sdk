@@ -115,6 +115,13 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> renewToken(String roomID, String token) async {
+    return await _channel.invokeMethod('renewToken', {
+      'roomID': roomID,
+      'token': token
+    });
+  }
+
   Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(
       String roomID, String key, String value) async {
     final Map<dynamic, dynamic> map = await _channel.invokeMethod(
@@ -279,8 +286,11 @@ class ZegoExpressImpl {
         {'bitrate': bitrate, 'mode': mode.index});
   }
 
-  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode) async {
-    return await _channel.invokeMethod('setTrafficControlFocusOn', {'mode': mode.index});
+  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setTrafficControlFocusOn', {
+      'mode': mode.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   Future<void> setCaptureVolume(int volume) async {
@@ -410,15 +420,20 @@ class ZegoExpressImpl {
         'setPlayVolume', {'streamID': streamID, 'volume': volume});
   }
 
+  Future<void> setAllPlayStreamVolume(int volume) async {
+    return await _channel.invokeMethod(
+        'setAllPlayStreamVolume', {'volume': volume});
+  }
+
   Future<void> setPlayStreamVideoLayer(
       String streamID, ZegoPlayerVideoLayer videoLayer) async {
     return await _channel.invokeMethod('setPlayStreamVideoLayer',
         {'streamID': streamID, 'videoLayer': videoLayer.index});
   }
 
-Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
-    return await _channel.invokeMethod('setPlayStreamVideoType', {'streamID': streamID, 'streamType': streamType.index});
-}
+  Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
+      return await _channel.invokeMethod('setPlayStreamVideoType', {'streamID': streamID, 'streamType': streamType.index});
+  }
 
   Future<void> setPlayStreamBufferIntervalRange(
       String streamID, int minBufferInterval, int maxBufferInterval) async {
@@ -426,6 +441,12 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
       'streamID': streamID,
       'minBufferInterval': minBufferInterval,
       'maxBufferInterval': maxBufferInterval
+    });
+  }
+
+  Future<void> setPlayStreamFocusOn(String streamID) async {
+    return await _channel.invokeMethod('setPlayStreamFocusOn', {
+      'streamID': streamID
     });
   }
 
@@ -557,6 +578,13 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     });
   }
 
+  Future<void> setCameraExposureCompensation(double value, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setCameraExposureCompensation', {
+      'value': value,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<List<ZegoDeviceInfo>> getAudioDeviceList(
       ZegoAudioDeviceType deviceType) async {
     return await _channel
@@ -587,9 +615,11 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
         {'channel': channel?.index ?? ZegoPublishChannel.Main.index});
   }
 
-  Future<void> startSoundLevelMonitor({int? millisecond}) async {
-    return await _channel.invokeMethod(
-        'startSoundLevelMonitor', {'millisecond': millisecond ?? 100});
+  Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {
+    return await _channel.invokeMethod('startSoundLevelMonitor', {
+      'millisecond': config?.millisecond ?? 100,
+      'enableVAD': config?.enableVAD ?? false
+    });
   }
 
   Future<void> stopSoundLevelMonitor() async {
@@ -621,6 +651,10 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
     return await _channel.invokeMethod('enableAEC', {'enable': enable});
   }
 
+  Future<void> enableHeadphoneAEC(bool enable) async {
+    return await _channel.invokeMethod('enableHeadphoneAEC', {'enable': enable});
+  }
+
   Future<void> setAECMode(ZegoAECMode mode) async {
     return await _channel.invokeMethod('setAECMode', {'mode': mode.index});
   }
@@ -640,6 +674,19 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
 
   Future<void> setANSMode(ZegoANSMode mode) async {
     return await _channel.invokeMethod('setANSMode', {'mode': mode.index});
+  }
+
+  Future<void> enableAudioMixing(bool enable) async {
+    return await _channel
+        .invokeMethod('enableAudioMixing', {'enable': enable});
+  }
+
+  Future<void> muteLocalAudioMixing(bool mute) async {
+    return await _channel.invokeMethod('muteLocalAudioMixing', {'mute': mute});
+  }
+
+  Future<void> setAudioMixingVolume(int volume, ZegoVolumeType type) async {
+    return await _channel.invokeMethod('setAudioMixingVolume', {'volume': volume, 'type': type.index});
   }
 
   Future<void> enableBeautify(int featureBitmask,
@@ -952,6 +999,20 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
             map['errorCode'], map['funcName'], map['info']);
         break;
 
+      case 'onApiCalledResult':
+        if (ZegoExpressEngine.onApiCalledResult == null) return;
+
+        ZegoExpressEngine.onApiCalledResult!(
+            map['errorCode'], map['funcName'], map['info']);
+        break;
+
+      case 'onEngineStateUpdate':
+        if (ZegoExpressEngine.onEngineStateUpdate == null) return;
+
+        ZegoExpressEngine
+            .onEngineStateUpdate!(ZegoEngineState.values[map['state']]);
+        break;
+
       case 'onEngineStateUpdate':
         if (ZegoExpressEngine.onEngineStateUpdate == null) return;
 
@@ -1052,6 +1113,15 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
 
         ZegoExpressEngine.onRoomExtraInfoUpdate!(
             map['roomID'], roomExtraInfoList);
+        break;
+
+      case 'onRoomTokenWillExpire':
+        if (ZegoExpressEngine.onRoomTokenWillExpire == null) return;
+
+        ZegoExpressEngine.onRoomTokenWillExpire!(
+          map['roomID'], 
+          map['remainTimeInSecond']
+        );
         break;
 
       /* Publisher */
@@ -1413,6 +1483,13 @@ Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamT
             ZegoNetworkSpeedTestQuality(map['quality']['connectCost'],
                 map['quality']['rtt'], map['quality']['packetLostRate']),
             ZegoNetworkSpeedTestType.values[map['type']]);
+        break;
+
+      /* Audio Mixing */
+      case 'onAudioMixingCopyData':
+        if (ZegoExpressEngine.onAudioMixingCopyData == null) return;
+
+        ZegoExpressEngine.onAudioMixingCopyData!(map['expectedDataLength']);
         break;
 
       /* MediaPlayer */

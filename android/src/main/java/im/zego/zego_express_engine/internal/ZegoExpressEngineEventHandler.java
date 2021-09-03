@@ -16,11 +16,14 @@ import java.util.HashMap;
 
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoApiCalledEventHandler;
 import im.zego.zegoexpress.callback.IZegoAudioDataHandler;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerEventHandler;
+import im.zego.zegoexpress.callback.IZegoAudioMixingHandler;
 import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
+import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioEffectPlayState;
 import im.zego.zegoexpress.constants.ZegoAudioRoute;
 import im.zego.zegoexpress.constants.ZegoDataRecordState;
@@ -38,6 +41,7 @@ import im.zego.zegoexpress.constants.ZegoRoomState;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
+import im.zego.zegoexpress.entity.ZegoAudioMixingData;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
@@ -108,6 +112,25 @@ public class ZegoExpressEngineEventHandler {
         }
         return false;
     }
+
+    IZegoApiCalledEventHandler apiCalledEventHandler = new IZegoApiCalledEventHandler() {
+        @Override
+        public void onApiCalledResult(int errorCode, String funcName, String info) {
+            super.onApiCalledResult(errorCode, funcName, info);
+            ZegoLog.log("[onApiCalledResult] errorCode: %d, funcName: %s, info: %s", errorCode, funcName, info);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onApiCalledResult");
+            map.put("errorCode", errorCode);
+            map.put("funcName", funcName);
+            map.put("info", info);
+
+            sink.success(map);
+        }
+    };
 
     IZegoEventHandler eventHandler = new IZegoEventHandler() {
 
@@ -242,6 +265,22 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onRoomExtraInfoUpdate");
             map.put("roomID", roomID);
             map.put("roomExtraInfoList", this.mapListFromRoomExtraInfoList(roomExtraInfoList));
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRoomTokenWillExpire(String roomID, int remainTimeInSecond) {
+            super.onRoomTokenWillExpire(roomID, remainTimeInSecond);
+            ZegoLog.log("[onRoomTokenWillExpire] roomID: %s, remainTimeInSecond: %d", roomID, remainTimeInSecond);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRoomTokenWillExpire");
+            map.put("roomID", roomID);
+            map.put("remainTimeInSecond", remainTimeInSecond);
 
             sink.success(map);
         }
@@ -1183,4 +1222,56 @@ public class ZegoExpressEngineEventHandler {
             });
         }
     };
+
+    IZegoAudioMixingHandler audioMixingHandler = new IZegoAudioMixingHandler() {
+        @Override
+        public ZegoAudioMixingData onAudioMixingCopyData(int expectedDataLength) {
+            if (guardSink()) {
+                return super.onAudioMixingCopyData(expectedDataLength);
+            }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAudioMixingCopyData");
+            map.put("expectedDataLength", expectedDataLength);
+
+            HashMap<String, Object> audioMixingMap = sink.success(map);
+            byte[] audioData = (byte[]) audioMixingMap.get("audioData");
+            byte[] SEIData = (byte[]) audioMixingMap.get("SEIData");
+            HashMap<String, Object> paramMap = (HashMap<String, Object>) audioMixingMap.get("param");
+
+            ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+            param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+            param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+
+            ZegoAudioMixingData audioMixingData = new ZegoAudioMixingData();
+            audioMixingData.audioData = ByteBuffer.wrap(audioData);
+            audioMixingData.SEIData = ByteBuffer.wrap(SEIData);
+            audioMixingData.param = param;
+
+            return audioMixingData;
+        }
+    };
+
+    private static ZegoAudioSampleRate convertAudioSampleRate(int index) {
+        switch (index) {
+            case 0:
+                return ZegoAudioSampleRate.UNKNOWN;
+            case 1:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K;
+            case 2:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K;
+            case 3:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K;
+            case 4:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K;
+            case 5:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K;
+            case 6:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K;
+            case 7:
+                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K;
+        }
+        return ZegoAudioSampleRate.UNKNOWN;
+    }
 }

@@ -41,6 +41,21 @@
     }
 }
 
+- (void)onApiCalledResult:(int)errorCode funcName:(NSString *)funcName info:(NSString *)info {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onApiCalledResult] errorCode: %d, funcName: %@, info: %@", errorCode, funcName, info);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onApiCalledResult",
+            @"errorCode": @(errorCode),
+            @"funcName": funcName,
+            @"info": info
+        });
+    }
+}
+
 - (void)onEngineStateUpdate:(ZegoEngineState)state {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onEngineStateUpdate] state: %d", (int)state);
@@ -207,6 +222,20 @@
         sink(@{
             @"method": @"onRoomExtraInfoUpdate",
             @"roomExtraInfoList": roomExtraInfoListArray,
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onRoomTokenWillExpire:(int)remainTimeInSecond roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRoomTokenWillExpire] remainTimeInSecond: %d, roomID: %@", remainTimeInSecond, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRoomTokenWillExpire",
+            @"remainTimeInSecond": @(remainTimeInSecond),
             @"roomID": roomID
         });
     }
@@ -1000,6 +1029,36 @@
             @"streamID": streamID
         });
     }
+}
+
+#pragma mark - Audio Mixing Handler
+- (ZegoAudioMixingData *)onAudioMixingCopyData:(unsigned int)expectedDataLength {
+    FlutterEventSink sink = _eventSink;
+
+    GUARD_SINK
+    if (sink) {
+        NSDictionary *result = sink(@{
+            @"method": @"onAudioMixingCopyData",
+            @"expectedDataLength": @(expectedDataLength)
+        });
+        
+        FlutterStandardTypedData *audioData = result[@"audioData"];
+        FlutterStandardTypedData *SEIData = result[@"SEIData"];
+        NSDictionary *paramMap = result[@"param"];
+
+        ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+        param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
+        param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+
+        ZegoAudioMixingData *audioMixingData = [[ZegoAudioMixingData alloc] init];
+        audioMixingData.audioData = audioData.data;
+        audioMixingData.SEIData = SEIData.data;
+        audioMixingData.param = param;
+
+        return audioMixingData;
+    }
+
+    return nil;
 }
 
 

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 
 /// Application scenario.
 enum ZegoScenario {
@@ -19,11 +20,11 @@ enum ZegoLanguage {
   Chinese
 }
 
-/// Room mode
+/// Room mode.
 enum ZegoRoomMode {
-  /// Single room mode
+  /// Single room mode.
   SingleRoom,
-  /// Multiple room mode
+  /// Multiple room mode.
   MultiRoom
 }
 
@@ -47,7 +48,7 @@ enum ZegoRoomState {
 
 /// Publish channel.
 enum ZegoPublishChannel {
-  /// Main publish channel
+  /// Main publish channel, default publish channel.
   Main,
   /// Auxiliary publish channel
   Aux
@@ -249,9 +250,9 @@ enum ZegoVideoStreamType {
 
 /// Audio echo cancellation mode.
 enum ZegoAECMode {
-  /// Aggressive echo cancellation may affect the sound quality slightly, but the echo will be very clean
+  /// Aggressive echo cancellation may affect the sound quality slightly, but the echo will be very clean.
   Aggressive,
-  /// Moderate echo cancellation, which may slightly affect a little bit of sound, but the residual echo will be less
+  /// Moderate echo cancellation, which may slightly affect a little bit of sound, but the residual echo will be less.
   Medium,
   /// Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening.
   Soft
@@ -418,7 +419,9 @@ enum ZegoRemoteDeviceState {
   /// CDN server actively disconnected
   MultiForegroundApp,
   /// The system is under high load pressure and may cause abnormal equipment.
-  BySystemPressure
+  BySystemPressure,
+  /// The remote device is not supported to publish the device state.
+  NotSupport
 }
 
 /// Audio device type.
@@ -579,6 +582,14 @@ enum ZegoAudioEffectPlayState {
   PlayEnded
 }
 
+/// volume type.
+enum ZegoVolumeType {
+  /// volume local
+  Local,
+  /// volume remote
+  Remote
+}
+
 /// audio sample rate.
 enum ZegoAudioSampleRate {
   /// Unknown
@@ -661,13 +672,15 @@ enum ZegoNetworkSpeedTestType {
 
 /// Log config.
 ///
-/// Configure the log file save path and the maximum log file size.
+/// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
+/// Use cases: This configuration is required when you need to customize the log storage path or the maximum log file size.
+/// Caution: None.
 class ZegoLogConfig {
 
-  /// The storage path of the log file. Refer to the official website document for the default path. https://doc-zh.zego.im/article/6467
+  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document: https://doc-zh.zego.im/article/646. Caution: Developers need to ensure read and write permissions for files under this path.
   String logPath;
 
-  /// The maximum log file size (Bytes). The default maximum size is 5MB (5 * 1024 * 1024 Bytes)
+  /// Maximum log file size(Bytes). Description: Used to customize the maximum log file size. Use cases: This configuration is required when you need to customize the upper limit of the log file size. Required: False. Default value: 5MB (5 * 1024 * 1024 Bytes). Value range: Minimum 1MB (1 * 1024 * 1024 Bytes), maximum 100M (100 * 1024 * 1024 Bytes), 0 means no need to write logs. Caution: The larger the upper limit of the log file size, the more log information it carries, but the log upload time will be longer.
   int logSize;
 
   ZegoLogConfig(this.logPath, this.logSize);
@@ -1489,6 +1502,19 @@ class ZegoMixerTask {
 
 }
 
+/// Configuration for start sound level monitor.
+class ZegoSoundLevelConfig {
+
+  /// Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
+  int millisecond;
+
+  /// Set whether the sound level callback includes the VAD detection result.
+  bool enableVAD;
+
+  ZegoSoundLevelConfig(this.millisecond, this.enableVAD);
+
+}
+
 /// Broadcast message info.
 ///
 /// The received object of the room broadcast message, including the message content, message ID, sender, sending time
@@ -1588,6 +1614,28 @@ class ZegoAudioConfig {
         break;
     }
   }
+
+}
+
+/// audio mixing data.
+class ZegoAudioMixingData {
+
+  /// Audio PCM data that needs to be mixed into the stream
+  Uint8List audioData;
+
+  /// the length of the audio PCM data that needs to be mixed into the stream. If the data length is sufficient, it must be the same as expectedDataLength
+  int audioDataLength;
+
+  /// Audio data attributes, including sample rate and number of channels. Currently supports 16k 32k 44.1k 48k sampling rate, mono or stereo channel, 16-bit deep PCM data. Developers need to explicitly specify audio data attributes, otherwise mixing will not take effect.
+  ZegoAudioFrameParam param;
+
+  /// SEI data, used to transfer custom data. When audioData is null, SEIData will not be sent
+  Uint8List SEIData;
+
+  /// SEI data length
+  int SEIDataLength;
+
+  ZegoAudioMixingData(this.audioData, this.audioDataLength, this.param, this.SEIData, this.SEIDataLength);
 
 }
 

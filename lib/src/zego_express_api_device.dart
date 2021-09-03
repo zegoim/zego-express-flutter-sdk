@@ -104,15 +104,6 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableAudioCaptureDevice(enable);
   }
 
-  /// Whether to use the built-in speaker to play audio.
-  ///
-  /// When you choose not to use the built-in speaker to play sound, that is, set to [false], the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
-  ///
-  /// - [defaultToSpeaker] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
-  Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
-    return await ZegoExpressImpl.instance.setAudioRouteToSpeaker(defaultToSpeaker);
-  }
-
   /// Turns on/off the camera (for the specified channel).
   ///
   /// This function is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
@@ -135,6 +126,16 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }
 
+  /// Available since: 2.10.0
+  /// Description: Set the camera exposure compensation value.
+  /// Trigger: Called after turn on preview [startPreivew].
+  ///
+  /// - [value] Camera exposure, the value range is [-1,1], -1 tends to darken, 1 tends to brighten
+  /// - [channel] Publishing stream channel
+  Future<void> setCameraExposureCompensation(double value, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setCameraExposureCompensation(value, channel: channel);
+  }
+
   /// Set the camera zoom factor.
   ///
   /// Every time the camera is restarted, the camera zoom factor will be restored to its initial value.
@@ -155,15 +156,16 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getCameraMaxZoomFactor(channel: channel);
   }
 
-  /// Starts sound level monitoring. Support setting the listening interval.
+  /// Starts sound level monitoring. Support enable some advanced feature.
   ///
+  /// Available: since 2.10.0
   /// After starting monitoring, you can receive local audio sound level via [onCapturedSoundLevelUpdate] callback, and receive remote audio sound level via [onRemoteSoundLevelUpdate] callback.
   /// Before entering the room, you can call [startPreview] with this function and combine it with [onCapturedSoundLevelUpdate] callback to determine whether the audio device is working properly.
   /// [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is the value set by the parameter.
   ///
-  /// - [millisecond] Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
-  Future<void> startSoundLevelMonitor({int? millisecond}) async {
-    return await ZegoExpressImpl.instance.startSoundLevelMonitor(millisecond: millisecond);
+  /// - [config] Configuration for starts the sound level monitor.
+  Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {
+    return await ZegoExpressImpl.instance.startSoundLevelMonitor(config: config);
   }
 
   /// Stops sound level monitoring.
@@ -207,4 +209,21 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
+
+}
+
+extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
+
+  /// [Deprecated] Whether to use the built-in speaker to play audio.This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
+  ///
+  /// This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
+  /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
+  ///
+  /// @deprecated This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
+  /// - [enable] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
+  @Deprecated('This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.')
+  Future<void> setBuiltInSpeakerOn(bool enable) async {
+    return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
+  }
+
 }

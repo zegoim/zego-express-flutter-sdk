@@ -24,7 +24,7 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
 
   /// Start network speed test.
   ///
-  /// This function cannot be called together with [startPublishingStream], otherwise the network probe will automatically stop.
+  /// This function should be called before [startPublishingStream], if you call [startPublishingStream] while speed testing, the speed test will automatically stop.
   /// Developers can listen to the [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be called back every 3 seconds.
   /// If an error occurs during the speed measurement process, [onNetworkSpeedTestError] callback will be triggered.
   /// If this function is repeatedly called multiple times, the last invoke's configuration will be used.

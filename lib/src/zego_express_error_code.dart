@@ -4,52 +4,52 @@ class ZegoErrorCode {
   /// Execution successful.
   static const int CommonSuccess                                                          = 0;
 
-  /// Engine not yet created. Please create the engine first before calling non-static functions.
+  /// Description: The engine is not initialized and cannot call non-static functions. <br>Cause: Engine not created.<br>Solutions: Please call the [createEngine] function to create the engine first, and then call the current function.
   static const int CommonEngineNotCreate                                                  = 1000001;
 
-  /// Not yet logged in to any room. Please log in to a room before publishing or playing streams.
+  /// Description: Not logged in to the room, unable to support function implementation. <br>Cause: Not logged in to the room.<br>Solutions: Please call [loginRoom] to log in to the room first, and use related functions during the online period after entering the room.
   static const int CommonNotLoginRoom                                                     = 1000002;
 
-  /// Engine not yet started. Please call `startPreviewView`, `startPublishing`, or `startPlayingStream` to get the engine started first.
+  /// Description: The audio and video module of the engine is not started and cannot support function realization. <br>Cause: Audio and video modules with no engine started.<br>Solutions: Please call [startPreviewView] [startPublishingStream] [startPlayingStream] to start the audio and video module first.
   static const int CommonEngineNotStarted                                                 = 1000003;
 
-  /// An API not supported by the current platform is called; for example, an API that sets the Android context is called on a non-Android platform.
+  /// Description: Call functions that are not supported on the current system/platform. <br>Cause: For example, calling the function of setting the Android context environment on a non-Android system.<br>Solutions: Check if the system environment matches.
   static const int CommonUnsupportedPlatform                                              = 1000006;
 
-  /// Invalid Android context.
+  /// Description: Invalid Android context. <br>Cause: Not set or set the wrong Android context environment.<br>Solutions: Set the correct Android context.
   static const int CommonInvalidAndroidEnvironment                                        = 1000007;
 
-  /// The event handler has already been set by calling `setEventHandler`. Please do not repeat the setting. If you do need to set up the event handler again, please call `setEventHandler` to set it to null first before applying the new setting.
+  /// Description: `setEventHandler` has been called to set the handler, please do not set it repeatedly. <br>Cause: Call `setEventHandler` repeatedly to set the handler.<br>Solutions: If you need to repeat the settings, please call `setEventHandler` first to empty the previous handler.
   static const int CommonEventHandlerExists                                               = 1000008;
 
-  /// This feature is not included in the SDK. Please contact ZEGO technical support.
+  /// Description: The current SDK does not support this feature. <br>Cause: The SDK version used does not include this feature.<br>Solutions: Please contact ZEGO technical support.
   static const int CommonSdkNoModule                                                      = 1000010;
 
-  /// The input stream ID is too long. The maximum length should be less than 256 bytes.
+  /// Description: The input streamID is too long. <br>Cause: The length of the streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] exceeds the limit. <br>Solutions: The streamID should be less than 256 bytes.
   static const int CommonStreamIdTooLong                                                  = 1000014;
 
-  /// The input stream ID is empty.
+  /// Description: The input StreamID is null. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] is null or empty string. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal.
   static const int CommonStreamIdNull                                                     = 1000015;
 
-  /// The input stream ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Description: The input streamID contains invalid characters. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] contains invalid characters. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal, only support numbers, english characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int CommonStreamIdInvalidCharacter                                         = 1000016;
 
-  /// This AppID has been removed from production.
+  /// Description: This AppID has been removed from production. <br>Solutions: Please check the status of the AppID on the ZEGO official website console or contact ZEGO technical support.
   static const int CommonAppOfflineError                                                  = 1000037;
 
-  /// There is an error in the backend configurations. Please check the configuration items of the app.
+  /// Description: Incorrect server configuration. <br>Solutions: Please contact ZEGO technical support.
   static const int CommonAppFlexiableConfigError                                          = 1000038;
 
-  /// Incorrect CDN address. Please check the supported protocol and format.
+  /// Description: Incorrect CDN address. <br>Cause: The set CDN URL is not a standard RTMP or FLV protocol. <br>Solutions: Please check the supported protocol and format.
   static const int CommonCdnUrlInvalid                                                    = 1000055;
 
-  /// DNS resolution failed. Please check network configurations.
+  /// DNS resolution failed. Please check network configurations. This error code is deprecated.
   static const int CommonDnsResolveError                                                  = 1000060;
 
-  /// Server dispatching exception. Please contact ZEGO technical support to solve the problem.
+  /// Server dispatching exception. Please contact ZEGO technical support to solve the problem. This error code is deprecated.
   static const int CommonDispatchError                                                    = 1000065;
 
-  /// Internal null pointer error. Please contact ZEGO technical support to solve the problem.
+  /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Please check whether the Android JVM environment is normal or contact ZEGO technical support.
   static const int CommonInnerNullptr                                                     = 1000090;
 
   /// AppID cannot be 0. Please check if the AppID is correct.
@@ -64,166 +64,169 @@ class ZegoErrorCode {
   /// The input AppSign is empty.
   static const int EngineAppsignNull                                                      = 1001003;
 
-  /// Authentication failed. Please check if the AppID is correct, or whether the production environment was selected for SDK initialization without prior go-live process.
+  /// Description: Authentication failed. <br>Cause: Incorrect AppID; using AppID in wrong environment. <br>Solutions: Please check AppID is correct or not on ZEGO manage console; check the production environment was selected for SDK initialization without prior go-live process.
   static const int EngineAppidIncorrectOrNotOnline                                        = 1001004;
 
-  /// AppSign authentication failed. Please check if the AppSign is correct.
+  /// Description: Authentication failed. <br>Cause: Incorrect AppSign. <br>Solutions: Please check AppSign is correct or not on ZEGO manage console.
   static const int EngineAppsignIncorrect                                                 = 1001005;
 
-  /// No write permission to the log file.
+  /// Description: No write permission to the log file. <br>Cause: App has no write permission to log file folder. <br>Solutions: Please check has grant write permission to App or not; check log folder is protected or not.
   static const int EngineLogNoWritePermission                                             = 1001014;
 
-  /// The log file path is too long.
+  /// Description: The log file path is too long. <br>Cause: The length of log file path exceeds limit. <br>Solutions: Please check the length of log file path.
   static const int EngineLogPathTooLong                                                   = 1001015;
 
-  /// Setting failed, please set the room mode before initializing the SDK.
+  /// Description: Set room mode failed. <br>Cause: Set room mode before initialize the SDK. <br>Solutions: Please set room mode after initialize the SDK.
   static const int EngineSetRoomModeErrorTime                                             = 1001020;
 
-  /// The experimental API json parameter parsing failed. Please check the correctness of the json content. Such as the correctness of the json format, whether the method name or parameters are passed correctly, etc.
+  /// Description: The experimental API json parameter parsing failed. <br>Cause: Invalid json format; wrong function name or parameter. <br>Solutions: Please check json format is valid or not; check function name or parameter is correct or not, contact ZEGO technical support for specific function name and parameters.
   static const int EngineExperimentalJsonStrInvalid                                       = 1001091;
 
-  /// The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room.
+  /// Description: The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room.<br>Cause: Login multiple rooms simultaneously under single room mode. <br>Solutions: Please check is login multiple rooms simultaneously or not under single room mode.
   static const int RoomCountExceed                                                        = 1002001;
 
-  /// The input room ID is incorrect, please check if this room ID is currently logged in.
+  /// Description: Haven't login with the input room ID.<br>Cause: Haven't login with the input room ID before call [logoutRoom] or [switchRoom] or [renewToken] or [setRoomExtraInfo]. <br>Solutions: Please check has login with the room ID or not.
   static const int RoomRoomidIncorrect                                                    = 1002002;
 
-  /// The input user ID is empty.
+  /// Description: The input user ID is empty.<br>Cause: The input user ID is empty. <br>Solutions: Please check the input user ID is empty or not.
   static const int RoomUserIdNull                                                         = 1002005;
 
-  /// The input user ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Description: The input user ID contains invalid characters.<br>Cause: The input user ID contains invalid characters. <br>Solutions: User ID can only contains numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int RoomUserIdInvalidCharacter                                             = 1002006;
 
-  /// The input user ID is too long. The maximum length should be less than 64 bytes.
+  /// The input user ID is too long. <br>The length of the user ID input by the [loginRoom] function is greater than or equal to 64 bytes. <br>Please check the user ID entered when calling the [loginRoom] function to ensure that its length is less than 64 bytes.
   static const int RoomUserIdTooLong                                                      = 1002007;
 
-  /// The input user name is empty.
+  /// The input user name is empty. <br>The user name entered by the [loginRoom] function is empty. <br>Please check the user name entered when calling the [loginRoom] function to make sure it is not empty.
   static const int RoomUserNameNull                                                       = 1002008;
 
-  /// The input user name contains invalid characters.
+  /// The input user name contains invalid characters. <br>The user name entered by the [loginRoom] function contains illegal characters.<br>Please check the user name entered when calling the [loginRoom] function to ensure that it is only contain numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int RoomUserNameInvalidCharacter                                           = 1002009;
 
-  /// The input user name is too long. The maximum length should be less than 256 bytes.
+  /// The input user name is too long. <br>The length of the user name input by the [loginRoom] function is greater than or equal to 256 bytes. <br>Please check the user name entered when calling the [loginRoom] function to ensure that its length is less than 256 bytes.
   static const int RoomUserNameTooLong                                                    = 1002010;
 
-  /// The input room ID is empty.
+  /// The input room ID is empty. <br>The room ID entered by the [loginRoom] function is empty. <br>Please check the room ID entered when calling the [loginRoom] function to make sure it is not empty.
   static const int RoomRoomidNull                                                         = 1002011;
 
-  /// The input room ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// The input room ID contains invalid characters. <br>The room ID entered by the [loginRoom] function contains illegal characters.<br>Please check the room ID entered when calling the [loginRoom] function to ensure that it is only contain numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   static const int RoomRoomidInvalidCharacter                                             = 1002012;
 
-  /// The input room ID is too long. The maximum length should be less than 128 bytes.
+  /// The input room ID is too long. <br>The length of the room ID input by the [loginRoom] function is greater than or equal to 128 bytes. <br>Please check the room ID entered when calling the [loginRoom] function to ensure that its length is less than 128 bytes.
   static const int RoomRoomidTooLong                                                      = 1002013;
 
-  /// The key for room extra info is empty.
+  /// The key for room extra info is empty. <br>The key for room extra info entered by the [setRoomExtraInfo] function is empty. <br>Please check the key for room extra info entered when calling the [setRoomExtraInfo] function to make sure it is not empty.
   static const int RoomRoomExtraInfoKeyEmpty                                              = 1002014;
 
-  /// The key for room extra info is too long. The maximum length should be less than 128 bytes.
+  /// The key for room extra info is too long. <br>The length of the key for room extra info input by the [setRoomExtraInfo] function is greater than or equal to 128 bytes. <br>Please check the key for room extra info entered when calling the [setRoomExtraInfo] function to ensure that its length is less than 128 bytes.
   static const int RoomRoomExtraInfoKeyTooLong                                            = 1002015;
 
-  /// The value for room extra info is too long. The maximum length should be less than 4096 bytes.
+  /// The value for room extra info is too long. <br>The length of the value for room extra info input by the [setRoomExtraInfo] function is greater than or equal to 4096 bytes. <br>Please check the value for room extra info entered when calling the [setRoomExtraInfo] function to ensure that its length is less than 4096 bytes.
   static const int RoomRoomExtraInfoValueTooLong                                          = 1002016;
 
-  /// The set key of the room extra info exceeds the maximum number supported. If you need to modify the number of setting keys, please contact ZEGO technical support.
+  /// Description: The number of keys set in the room additional message exceeds the maximum number of supported limits. <br>Cause: called setRoomExtraInfo Different keys have been passed in multiple times. <br> Solutions: please contact ZEGO technical support.
   static const int RoomRoomExtraInfoExceedKeys                                            = 1002017;
 
-  /// The user ID or user name for logging in to the room in multi-room mode is not the same.
+  /// Description: set multi room mode, userID or user name is different. <br>Cause: set multi room mode, login multi room use different user id or user name. <br> Solutions: Currently supports at most one key, if you need to support multiple, contact ZEGO technical support.
   static const int RoomMultiRoomLoginUserNotSame                                          = 1002018;
 
-  /// The [switchRoom] function cannot be used in multi-room mode.
+  /// Description: The [switchRoom] function cannot be used in multi-room mode. <br>Cause: multi room mode SDK not support. <br> Solutions: first call [logoutRoom] then call [loginRoom].
   static const int RoomMultiRoomSwtichRoomInvalid                                         = 1002019;
 
-  /// Login failed, possibly due to network problems.
+  /// Description: Login failed, possibly due to network problems. <br>Cause: The current network is abnormal. <br> Solutions: It is recommended to switch the network to try.
   static const int RoomErrorConnectFailed                                                 = 1002030;
 
-  /// Login timed out, possibly due to network problems.
+  /// Description: Login timed out, possibly due to network problems. <br>Cause: The current network delay is large. <br> Solutions: It is recommended to switch the network to try.
   static const int RoomErrorLoginTimeout                                                  = 1002031;
 
-  /// Room login authentication failed.
+  /// Description: Room login authentication failed. <br>Cause: login set token error or token expired. <br> Solutions: set new token.
   static const int RoomErrorAuthenticationFailed                                          = 1002033;
 
-  /// The number of users logging into the room exceeds the maximum number of concurrent users configured for the room. (In the test environment, the default maximum number of users in the room is 50)
+  /// Description: The number of users logging into the room exceeds the maximum number of concurrent users configured for the room. (In the test environment, the default maximum number of users in the room is 50). <br>Cause: too much user in room. <br> Solutions: contact ZEGO technical support.
   static const int RoomErrorExceedMaximumMember                                           = 1002034;
 
-  /// The total number of rooms logged in at the same time exceeds the limit. (In the test environment, the maximum number of concurrent rooms is 10)
+  /// Description: in test environment The total number of rooms logged in at the same time exceeds the limit. (In the test environment, the maximum number of concurrent rooms is 10). <br>Cause: Too many rooms logged in at the same time. <br> Solutions: logout some room, login room.
   static const int RoomErrorExceedMaximumRoomCount                                        = 1002035;
 
-  /// Login failed, multi-room mode is not activated, please contact ZEGO technical support.
+  /// Description: login failed, multi-room mode is not activate. <br>Cause: multi-room mode is not activate. <br> Solutions: please contact ZEGO technical support.
   static const int RoomErrorLoginMultiRoomNotOpen                                         = 1002036;
 
   /// The total number of rooms logged in at the same time exceeds the limit, Please contact ZEGO technical support.
   static const int RoomErrorMultiRoomExceedMaximumRoomCount                               = 1002037;
 
-  /// The user is kicked out of the room, possibly because the same user ID is logged in on another device.
+  /// Description: The user was kicked out of the room. <br>Cause: Possibly because the same user ID is logged in on another device. <br>Solutions: Use a unique user ID.
   static const int RoomKickedOut                                                          = 1002050;
 
-  /// Room connection is temporarily interrupted, possibly due to network problems. Retrying...
+  /// Description: Room connection is temporarily interrupted and is retrying. <br>Cause: Possibly due to network problems. <br>Solutions: Please wait or check whether the network is normal.
   static const int RoomConnectTemporaryBroken                                             = 1002051;
 
-  /// Room disconnected, possibly due to network problems.
+  /// Description: Room connection disconnected. <br>Cause: Possibly due to network problems. <br>Solutions: Please check whether the network is working or switch the network environment.
   static const int RoomDisconnect                                                         = 1002052;
 
-  /// Room login retry has exceeded the maximum retry time.
+  /// Description: Room login retry has exceeded the maximum retry time. <br>Cause: Possibly due to network problems. <br>Solutions: Please check whether the network is working or switch the network environment.
   static const int RoomRetryTimeout                                                       = 1002053;
 
-  /// The business server has sent a signal to kick the user out of the room. Please check the reason for the kick-out.
+  /// Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room. <br>Solutions: Contact the business server for processing.
   static const int RoomManualKickedOut                                                    = 1002055;
 
-  /// You must log in to the main room with `loginRoom` before logging in to multi room
+  /// Description: Wrong order of login rooms. <br>Cause: Log in multi room without log in the main room. <br>Solutions: Please log in to the main room with `loginRoom` before logging in to multi room.
   static const int RoomWrongLoginSequence                                                 = 1002061;
 
-  /// You must log out of the multi room before logging out of the main room
+  /// Description: Wrong order of logout rooms. <br>Cause: Log out the main room without log out multi room. <br>Solutions: Please log out of the multi room before logging out of the main room.
   static const int RoomWrongLogoutSequence                                                = 1002062;
 
-  /// No multi-room permission, please contact ZEGO technical support to enable it.
+  /// Description: No multi-room permission. <br>Cause: No multi-room permission. <br>Solutions: Please contact ZEGO technical support to enable it.
   static const int RoomNoMultiRoomPermission                                              = 1002063;
 
-  /// Room ID has been used by other login room interface
+  /// Description: The room ID has been used by other login room interface. Current user can not login room with the room ID before release the room ID. <br>Cause: The room ID has been used by other login room interface. <br>Solutions: Logout the room with the same room ID first.
   static const int RoomRoomIdHasBeenUsed                                                  = 1002064;
 
-  /// This method has been deprecated after version 2.9.0. Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room.
+  /// Description: This method has been deprecated after version 2.9.0. <br>Cause: This method has been deprecated after version 2.9.0. <br>Solutions: Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room.
   static const int RoomMultiRoomDeprecated                                                = 1002065;
 
-  /// Room login failed due to internal system exceptions.
+  /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError                                                         = 1002099;
 
-  /// Stream publishing failed, possibly due to no data in the stream.
+  /// Description: Publishing failed due to no data in the stream.<br>Cause: No data in the stream.<br>Solutions: Check whether the video, audio capture module is working properly.
   static const int PublisherPublishStreamFailed                                           = 1003001;
 
-  /// Incorrect bitrate setting. Please check if the bitrate value is in the correct unit (kbps).
+  /// Description: Publishing failed due to wrong bitrate setting.<br>Cause: The set video bitrate, audio bitrate, or minimum video bitrate threshold for traffic control exceeds the upper limit.<br>Solutions: Please check if the bitrate value is in the correct unit (kbps).Adjust the bitrate setting.
   static const int PublisherBitrateInvalid                                                = 1003002;
 
-  /// Incorrect setting of stream publishing traffic control parameters.
+  /// Description: The property param of the traffic control is set incorrectly.<br>Cause: The property param of the traffic control is less than 0 or exceeds all combinations.<br>Solutions: Check the settings of the property param of the traffic control.
   static const int PublisherTrafficModeInvalid                                            = 1003005;
 
-  /// Stream publishing is temporarily interrupted. Retrying...
+  /// Failed to publish the stream. Not support H.265 encoder.
+  static const int PublisherErrorH265EncoderNotSupported                                  = 1003010;
+
+  /// Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal.
   static const int PublisherErrorNetworkInterrupt                                         = 1003020;
 
-  /// Stream publish retry has exceeds the maximum retry time.
+  /// Description: Stream publish retry has exceeds the maximum retry time.<br>Cause: The the network signal is bad, and the maximum retry time is exceeded.<br>Solutions: Check the network status or switch to another network.
   static const int PublisherErrorRetryTimeout                                             = 1003021;
 
-  /// Failed to publish the stream. The user is already publishing streams.
+  /// Description: Failed to publish the stream. The publish channel is already publishing streams.<br>Cause:  The publish channel is already publishing streams.<br>Solutions: Please check the business logic to avoid repeating the publish for publish channel which is publishing.
   static const int PublisherErrorAlreadyDoPublish                                         = 1003023;
 
-  /// Failed to publish the stream. Publishing of this stream is prohibited by backend configuration.
+  /// Description: Failed to publish the stream. Publishing of this stream is prohibited by backend configuration.<br>Cause: Publishing of this stream is prohibited by backend configuration.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int PublisherErrorServerForbid                                             = 1003025;
 
-  /// Failed to publish the stream. The same stream already exists in the room.
+  /// Description: Failed to publish the stream. The same stream already exists in the room.<br>Cause: The same stream already exists in the room.<br>Solutions: Replace with a new stream ID. Adjust the stream ID generation strategy to ensure uniqueness.
   static const int PublisherErrorRepetitivePublishStream                                  = 1003028;
 
-  /// The connection to the RTMP server is interrupted. Please check whether there is any problem with the network connection or the stream publishing URL.
+  /// Description: Failed to publish the stream. The connection to the RTMP server is interrupted.<br>Cause: The publish address is wrong, or the network signal is bad.<br>Solutions: Please check whether there is any problem with the network connection or the stream publishing URL.
   static const int PublisherRtmpServerDisconnect                                          = 1003029;
 
-  /// Failed to take publish stream snapshot, please check whether the state of the publish channel to be snapshot is normal.
+  /// Description: Failed to take a screenshot of the publis stream screen. <br>Cause: The preview is stopped and the push is abnormal. <br>Solutions: Turn on preview or re-publish.
   static const int PublisherTakePublishStreamSnapshotFailed                               = 1003030;
 
-  /// Failed to get status updates of relayed streaming to CDN. Please check whether the URL is valid.
+  /// Description: Failed to update the relay CDN status. <br>Cause: The URL of the relay address is incorrect. <br>Solutions: Check whether the input URL is valid.
   static const int PublisherUpdateCdnTargetError                                          = 1003040;
 
-  /// Failed to send SEI. The SEI data is null.
+  /// Description: Failed to send SEI. <br>Cause: data is empty. <br>Solutions: Incoming non-empty data.
   static const int PublisherSeiDataNull                                                   = 1003043;
 
-  /// Failed to send SEI because the SEI data is too long. The maximum length should be less than 4096 bytes.
+  /// Description: Failed to send SEI. <br>Cause: The input data exceeds the length limit. <br>Solutions: The length of the sent SEI data should be less than 4096 bytes.
   static const int PublisherSeiDataTooLong                                                = 1003044;
 
   /// The extra info of the stream is null.
@@ -235,73 +238,73 @@ class ZegoErrorCode {
   /// Failed to update the extra info of the stream. Please check the network connection.
   static const int PublisherUpdateExtraInfoFailed                                         = 1003053;
 
-  /// The watermark URL is null.
+  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path is empty. <br>Solutions: Incoming non-empty path.
   static const int PublisherWatermarkUrlNull                                              = 1003055;
 
-  /// The watermark URL is too long. The maximum length should be less than 1024 bytes.
+  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path exceeds the byte size limit. <br>Solutions: The incoming watermark path should be less than 1024 bytes.
   static const int PublisherWatermarkUrlTooLong                                           = 1003056;
 
-  /// Invalid watermark format. The supported formats are `jpg` and `png`.
+  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path was entered incorrectly or the image format is not supported. <br>Solutions: Incoming the correct watermark path, only `jpg` and `png` image formats are supported.
   static const int PublisherWatermarkUrlInvalid                                           = 1003057;
 
-  /// Incorrect watermark layout. The layout area cannot exceed the encoding resolution.
+  /// Description: Incorrect watermark layout.<br>Caution: The layout area exceed the encoding resolution.<br>Solutions: Make sure the layout area cannot exceed the encoding resolution and call current interface.
   static const int PublisherWatermarkLayoutInvalid                                        = 1003058;
 
-  /// The publish stream encryption key is invalid, the key length only supports 16/24/32 bytes.
+  /// Description: The publish stream encryption key is invalid.<br>Caution: The set encryption key length is not supported.<br>Solutions: The Publish-stream encryption key length to be 16/24/32 bytes.
   static const int PublisherEncryptionKeyInvalid                                          = 1003060;
 
-  /// In multi-room mode, calling this API to publish the stream fails, please use the method of the same name with ZegoPublisherConfig to publish the stream
+  /// Description: StartPlayingStream failed.<br>Caution: In multi-room mode, the publish-stream function is called incorrectly.<br>Solutions: In multi-room mode, A publish-stream function with the parameter 'ZegoPublisherConfig' needs to be called.
   static const int PublisherErrorPublishWhenUsingMultiRoom                                = 1003070;
 
-  /// In the multi-room mode, the roomID parameter of the publish stream cannot be empty
+  /// Description: StartPlayingStream failed.<br>Caution: In multi-room mode, the publish-stream function is called incorrectly.<br>Solutions: In multi-room mode, A publish-stream function parameter 'roomID' cannot be empty.
   static const int PublisherErrorPublishWithRoomIdIsNullWhenUsingMultiRoom                = 1003071;
 
-  /// Stream publishing failed due to system internal exceptions.
+  /// Description: Stream publishing failed due to system internal exceptions.<br>Caution: Stream publishing failed due to system internal exceptions.<br>Solutions: Please contact ZEGO technical support to solve the problem.
   static const int PublisherInnerError                                                    = 1003099;
 
-  /// Stream playing failed, possibly due to no data in the stream.
+  /// Description: Stream playing failed.<br>Caution: Possibly due to no data in the stream.<br>Solutions: Check to see if the publish-stream is working or try to play stream again, and if the problem is still not resolved, please contact ZEGO technical support to solve the problem.
   static const int PlayerPlayStreamFailed                                                 = 1004001;
 
-  /// Stream playing failed because the stream does not exist. Please check whether the remote end publish is indeed successful, or whether the publish and play environment are inconsistent
+  /// Description: Stream playing failed.<br>Caution: The stream does not exist.<br>Solutions: Please check whether the remote end publish is indeed successful, or whether the publish and play environment are inconsistent.
   static const int PlayerPlayStreamNotExist                                               = 1004002;
 
-  /// The number of streams the user attempted to play simultaneously exceeds the maximum number allowed. Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
+  /// Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
   static const int PlayerCountExceed                                                      = 1004010;
 
-  /// Stream playing is temporarily interrupted. Retrying...
+  /// Description: Stream playing is temporarily interrupted.<br>Caution: Network exception.<br>Solutions: Please wait or check whether the network is normal.
   static const int PlayerErrorNetworkInterrupt                                            = 1004020;
 
-  /// Failed to play the stream. Publishing of this stream is prohibited by backend configuration.
+  /// Description: Failed to play the stream.<br>Caution: Publishing of this stream is prohibited by backend configuration.<br>Solutions: Please contact ZEGO technical support to solve the problem.
   static const int PlayerErrorServerForbid                                                = 1004025;
 
-  /// Failed to take play stream snapshot, please check whether the state of the stream to be snapshot is normal.
+  /// Description: Failed to capture the screenshot of the streaming screen, please check whether the stream to be captured is normal. <br>Cause: The stream is not pulled. <br>Solutions: Check whether it starts to play the stream, and whether there is an abnormality in the process of playing the stream.
   static const int PlayerTakePlayStreamSnapshotFailed                                     = 1004030;
 
-  /// The play stream decryption key is invalid, the key length only supports 16/24/32 bytes.
+  /// Description: The play stream decryption key is invalid, the key length only supports 16/24/32 bytes. <br>Cause: The input key length is not 16/24/32 bytes. <br>Solutions: Adjust the input key length to 16/24/32 bytes.
   static const int PlayerDecryptionKeyInvalid                                             = 1004060;
 
-  /// Decrypt the play stream failed, please check whether the decryption key is correct
+  /// Description: Pull stream decryption failed, please check whether the decryption key is correct. <br>Cause: Incorrect decryption key entered. <br>Solutions: Enter the correct decryption key.
   static const int PlayerDecryptionFailed                                                 = 1004061;
 
-  /// In multi-room mode, calling this API to play the stream fails, please use the method of the same name with ZegoPlayerConfig to play the stream
+  /// Description: Calling the wrong function after enabling the multi-room function causes playing stream fail. <br>Cause: Called the playing stream function that only works for joining a single room mode. <br>Solutions: Please use the function of the same name with ZegoPlayerConfig and specify the room ID to play the stream.
   static const int PlayerErrorPlayStreamWhenUsingMultiRoom                                = 1004070;
 
-  /// In the multi-room mode, the roomID parameter of the play stream cannot be empty
+  /// Description: In the multi-room mode, the roomID parameter of the play stream cannot be empty. <br>Cause: The roomID parameter of the pull stream is empty. <br>Solutions: Please enter the correct roomID.
   static const int PlayerErrorPlayStreamWithRoomIdIsNullWhenUsingMultiRoom                = 1004071;
 
-  /// Stream playing failed due to system internal exceptions.
+  /// Description: An internal system exception causes a failure to pull the stream. <br>Cause: SDK internal error. <br>Solutions: Please contact ZEGO technical support.
   static const int PlayerInnerError                                                       = 1004099;
 
-  /// Stream mixing service not yet enabled. Please contact ZEGO technical support to enable the service.
+  /// Description: Does not support the use of stream mixing service. <br>Cause: No stream mixing service configured. <br>Solutions: Please open the service on the console or contact ZEGO business staff.
   static const int MixerNoServices                                                        = 1005000;
 
-  /// The stream mixing task ID is null.
+  /// Description: The mixing task ID is null. <br>Cause: The mixing task ID input when starting mixing task is empty. <br>Solutions: Please enter the correct mixing task ID.
   static const int MixerTaskIdNull                                                        = 1005001;
 
-  /// The stream mixing task ID is too long. The maximum length should be less than 256 bytes.
+  /// Description: The stream mixing task ID is too long. <br>Cause: The stream mixing task ID is greater than 256 bytes. <br>Solutions: Please enter a mixing task ID less than 256 bytes.
   static const int MixerTaskIdTooLong                                                     = 1005002;
 
-  /// The stream mixing task ID contains invalid characters. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// Description: Invalid mixed flow task ID. <br>Cause: Illegal characters in the stream mixing task ID. <br>Solutions: Stream mixing task ID only supports numbers, English characters and'~','!','@','$','%','^','&','*','(',')', '_','+','=','-','`',';',''',',','.','<','>','/','\', please enter the stream mixing task ID in the correct format.
   static const int MixerTaskIdInvalidCharacter                                            = 1005003;
 
   /// No output is specified in the configuration of the stream mixing task.
@@ -367,6 +370,9 @@ class ZegoErrorCode {
   /// Invalid background image URL. The URL must start with `preset-id://`, and must end with `.jpg` or `.png`.
   static const int MixerBackgroundImageUrlInvalid                                         = 1005067;
 
+  /// User data too long, the maximum length of user data should not be more than 1000 bytes.
+  static const int MixerUserDataTooLong                                                   = 1005068;
+
   /// The server for auto stream mixing is not found. Please contact ZEGO technical support to enable it.
   static const int MixerAutoMixStreamServerNotFound                                       = 1005070;
 
@@ -408,6 +414,9 @@ class ZegoErrorCode {
 
   /// The set camera zoom factor is out of range.
   static const int DeviceZoomFactorInvalid                                                = 1006040;
+
+  /// The set camera exposure compensation is out of range.
+  static const int DeviceExposureCompensationValueInvalid                                 = 1006041;
 
   /// Device internal error.
   static const int DeviceInnerError                                                       = 1006099;
@@ -624,5 +633,20 @@ class ZegoErrorCode {
 
   /// The set system performance monitoring interval is out of range.
   static const int UtilitiesPerformanceMonitorIntervalInvalid                             = 1015031;
+
+  /// Description: The function call failed. <br>Cause: No range auido instance has been created. <br>Solutions: Create a range audio instance.
+  static const int RangeAudioNoInstance                                                   = 1016000;
+
+  /// Description: Failed to create range audio. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use the used range audio example.
+  static const int RangeAudioExceedMaxCount                                               = 1016001;
+
+  /// Description: Failed to create range voice. <br>Cause: Range voice cannot be used in multi-room mode. <br>Solutions: Set the single-party mode.
+  static const int RangeAudioNotSupportMultiRoom                                          = 1016002;
+
+  /// Description: Failed to set the team ID. <br>Cause: The input team ID exceeds the maximum limit. <br>Solutions: The input string is less than 64 bytes.
+  static const int RangeAudioTeamIdTooLong                                                = 1016003;
+
+  /// Description: Failed to set the team ID.<br>Cause: The input user ID contains invalid characters. <br>Solutions: User ID can only contains numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  static const int RangeAudioTeamIdInvalidCharacter                                       = 1016004;
 
 }

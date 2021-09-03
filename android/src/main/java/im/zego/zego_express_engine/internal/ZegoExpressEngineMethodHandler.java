@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.ObjectInputFilter.Config;
 import java.lang.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -98,6 +99,7 @@ import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
 import im.zego.zegoexpress.entity.ZegoSEIConfig;
+import im.zego.zegoexpress.entity.ZegoSoundLevelConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
@@ -157,8 +159,10 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, ZegoExpressEngineEventHandler.getInstance().eventHandler);
         setPlatformLanguage();
 
+        ZegoExpressEngine.getEngine().setApiCalledCallback(ZegoExpressEngineEventHandler.getInstance().apiCalledEventHandler);
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
+        ZegoExpressEngine.getEngine().setAudioMixingHandler(ZegoExpressEngineEventHandler.getInstance().audioMixingHandler);
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
 
@@ -314,6 +318,17 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
         }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void renewToken(MethodCall call, Result result) {
+
+        String roomID = call.argument("roomID");
+        String token = call.argument("token");
+
+        ZegoExpressEngine.getEngine().renewToken(roomID, token);
 
         result.success(null);
     }
@@ -1017,6 +1032,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setAllPlayStreamVolume(MethodCall call, Result result) {
+
+        int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+
+        ZegoExpressEngine.getEngine().setAllPlayStreamVolume(volume);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setPlayStreamVideoLayer(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -1046,6 +1071,16 @@ public class ZegoExpressEngineMethodHandler {
         int maxBufferInterval = ZegoUtils.intValue((Number) call.argument("maxBufferInterval"));
 
         ZegoExpressEngine.getEngine().setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamFocusOn(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+
+        ZegoExpressEngine.getEngine().setPlayStreamFocusOn(streamID);
 
         result.success(null);
     }
@@ -1348,6 +1383,17 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setCameraExposureCompensation(MethodCall call, Result result) {
+
+        float value = ZegoUtils.floatValue((Number) call.argument("value"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraExposureCompensation(value, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setCameraZoomFactor(MethodCall call, Result result) {
 
         float factor = ZegoUtils.floatValue((Number) call.argument("factor"));
@@ -1371,9 +1417,13 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void startSoundLevelMonitor(MethodCall call, Result result) {
 
-        int millisecond = ZegoUtils.intValue((Number) call.argument("millisecond"));
+        ZegoSoundLevelConfig config = new ZegoSoundLevelConfig();
 
-        ZegoExpressEngine.getEngine().startSoundLevelMonitor(millisecond);
+        HashMap<String, Object> configMap = call.argument("config");
+        config.millisecond = ZegoUtils.intValue((Number) configMap.get("millisecond"));
+        config.enableVAD = ZegoUtils.boolValue((Boolean) configMap.get("enableVAD"));
+
+        ZegoExpressEngine.getEngine().startSoundLevelMonitor(config);
 
         result.success(null);
     }
@@ -1438,6 +1488,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void enableHeadphoneAEC(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableHeadphoneAEC(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setAECMode(MethodCall call, Result result) {
 
         ZegoAECMode mode = ZegoAECMode.getZegoAECMode(ZegoUtils.intValue((Number) call.argument("mode")));
@@ -1483,6 +1543,26 @@ public class ZegoExpressEngineMethodHandler {
         ZegoANSMode mode = ZegoANSMode.getZegoANSMode(ZegoUtils.intValue((Number) call.argument("mode")));
 
         ZegoExpressEngine.getEngine().setANSMode(mode);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableAudioMixing(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableAudioMixing(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void muteLocalAudioMixing(MethodCall call, Result result) {
+
+        boolean mute = ZegoUtils.boolValue((Boolean) call.argument("mute"));
+
+        ZegoExpressEngine.getEngine().muteLocalAudioMixing(mute);
 
         result.success(null);
     }
@@ -1727,7 +1807,7 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    public static ZegoAudioSampleRate convertAudioSampleRate(int index) {
+    private static ZegoAudioSampleRate convertAudioSampleRate(int index) {
         switch (index) {
             case 0:
                 return ZegoAudioSampleRate.UNKNOWN;

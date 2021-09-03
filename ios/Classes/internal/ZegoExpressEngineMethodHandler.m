@@ -74,8 +74,10 @@
         ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
     }
 
+    [[ZegoExpressEngine sharedEngine] setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:[ZegoExpressEngineEventHandler sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -251,6 +253,16 @@
     } else {
         [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID];
     }
+
+    result(nil);
+}
+
+- (void)renewToken:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *roomID = call.arguments[@"roomID"];
+    NSString *token = call.arguments[@"token"];
+
+    [[ZegoExpressEngine sharedEngine] renewToken:token roomID:roomID];
 
     result(nil);
 }
@@ -869,6 +881,15 @@
     result(nil);
 }
 
+- (void)setAllPlayStreamVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+    [[ZegoExpressEngine sharedEngine] setAllPlayStreamVolume:volume];
+
+    result(nil);
+}
+
 - (void)setPlayStreamVideoLayer:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int videoLayer = [ZegoUtils intValue:call.arguments[@"videoLayer"]];
@@ -900,6 +921,15 @@
     NSRange range = NSMakeRange(minBufferInterval, maxBufferInterval - minBufferInterval);
 
     [[ZegoExpressEngine sharedEngine] setPlayStreamBufferIntervalRange:range streamID:streamID];
+
+    result(nil);
+}
+
+- (void)setPlayStreamFocusOn:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamFocusOn:streamID];
 
     result(nil);
 }
@@ -1196,6 +1226,16 @@
     result(nil);
 }
 
+- (void)setCameraExposureCompensation:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    float value = [ZegoUtils floatValue:call.arguments[@"value"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraExposureCompensation:value channel:channel];
+
+    result(nil);
+}
+
 - (void)setCameraZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     float factor = [ZegoUtils floatValue:call.arguments[@"factor"]];
@@ -1217,8 +1257,12 @@
 
 - (void)startSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
-    [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor:millisecond];
+    ZegoSoundLevelConfig *config = [[ZegoSoundLevelConfig alloc] init];
+
+    NSDictionary *configMap = call.arguments[@"config"];
+    config.millisecond = [ZegoUtils intValue:configMap[@"millisecond"]];
+    config.enableVAD = [ZegoUtils boolValue:configMap[@"enableVAD"]];
+    [[ZegoExpressEngine sharedEngine] startSoundLevelMonitorWithConfig:config];
 
     result(nil);
 }
@@ -1275,6 +1319,15 @@
     result(nil);
 }
 
+- (void)enableHeadphoneAEC:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableHeadphoneAEC:enable];
+
+    result(nil);
+}
+
 - (void)setAECMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
@@ -1316,6 +1369,24 @@
     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
 
     [[ZegoExpressEngine sharedEngine] setANSMode:(ZegoANSMode)mode];
+
+    result(nil);
+}
+
+- (void)enableAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableAudioMixing:enable];
+
+    result(nil);
+}
+
+- (void)muteLocalAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+
+    [[ZegoExpressEngine sharedEngine] muteLocalAudioMixing:mute];
 
     result(nil);
 }
