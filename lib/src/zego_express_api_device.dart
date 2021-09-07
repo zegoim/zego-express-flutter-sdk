@@ -104,6 +104,23 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableAudioCaptureDevice(enable);
   }
 
+  /// get current audio route type
+  ///
+  /// Audio routing refers to the audio output device that an app uses to play audio, and common audio routes are: speakers, handsets, headphones, Bluetooth devices, and so on.
+  Future<ZegoAudioRoute> getAudioRouteType() async {
+    return await ZegoExpressImpl.instance.getAudioRouteType();
+  }
+
+  /// Whether to use the built-in speaker to play audio.
+  ///
+  /// Audio routing refers to the audio output device that an app uses to play audio, and common audio routes are: speakers, handsets, headphones, Bluetooth devices, and so on.
+  /// When you choose not to use the built-in speaker to play sound, that is, set to [false], the SDK will select the currently highest priority audio output device to play the sound according to the system schedule.
+  ///
+  /// - [defaultToSpeaker] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
+  Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
+    return await ZegoExpressImpl.instance.setAudioRouteToSpeaker(defaultToSpeaker);
+  }
+
   /// Turns on/off the camera (for the specified channel).
   ///
   /// This function is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
@@ -208,22 +225,6 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [volume] headphone monitor volume, range from 0 to 200, 100 as default
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
-  }
-
-}
-
-extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
-
-  /// [Deprecated] Whether to use the built-in speaker to play audio.This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
-  ///
-  /// This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
-  /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
-  ///
-  /// @deprecated This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
-  /// - [enable] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
-  @Deprecated('This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.')
-  Future<void> setBuiltInSpeakerOn(bool enable) async {
-    return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
   }
 
 }

@@ -6,6 +6,54 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
 
+  /// Enable local capture custom audio processing.
+  ///
+  /// Available: Since 1.13.0
+  /// When enabled, developers can receive local captured audio frames through [onProcessCapturedAudioData], and can modify the audio data.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  ///
+  /// - [enable] Whether to enable local capture custom audio processing.
+  /// - [config] Custom audio processing configuration.
+  Future<void> enableCustomAudioCaptureProcessing(bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await ZegoExpressImpl.instance.enableCustomAudioCaptureProcessing(enable, config);
+  }
+
+  /// Enable local capture custom audio processing.
+  ///
+  /// Available: Since 2.13.0
+  /// When enabled, developers can receive local captured audio frames through [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor], and can modify the audio data.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  ///
+  /// - [enable] Whether to enable local capture custom audio processing.
+  /// - [config] Custom audio processing configuration.
+  Future<void> enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await ZegoExpressImpl.instance.enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(enable, config);
+  }
+
+  /// Enable custom audio processing for remote playing stream.
+  ///
+  /// Available: Since 1.13.0
+  /// When enabled, developers can receive audio frame from remote playing stream through [onProcessRemoteAudioData], and can modify the audio data.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  ///
+  /// - [enable] Whether to enable custom audio processing for remote playing stream.
+  /// - [config] Custom audio processing configuration.
+  Future<void> enableCustomAudioRemoteProcessing(bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await ZegoExpressImpl.instance.enableCustomAudioRemoteProcessing(enable, config);
+  }
+
+  /// Enable custom audio processing for SDK playback audio data.
+  ///
+  /// Available: Since 2.12.0
+  /// When enabled, developers can receive audio frame from remote playing stream through [onProcessPlaybackAudioData], and can modify the audio data.
+  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  ///
+  /// - [enable] Whether to enable custom audio processing for SDK playback audio data.
+  /// - [config] Custom audio processing configuration.
+  Future<void> enableCustomAudioPlaybackProcessing(bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await ZegoExpressImpl.instance.enableCustomAudioPlaybackProcessing(enable, config);
+  }
+
   /// Enable audio data observering
   ///
   /// It will only be triggered after this function is called and the callback has been set by calling [setAudioDataHandler]. If you want to enable the [onPlayerAudioData] callback, you must also be playing stream, and the sampling rate passed in by calling the [startAudioDataObserver] function does not support 8000Hz, 22050Hz, and 24000Hz.

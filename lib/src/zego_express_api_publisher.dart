@@ -113,19 +113,19 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setAppOrientation(orientation, channel: channel);
   }
 
-  /// Sets up the audio configurations.
+  /// Sets up the audio configurations for the specified publish channel.
   ///
   /// Available since: 1.3.4
   /// Description: You can set the combined value of the audio codec, bit rate, and audio channel through this function. If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
   /// Default value: The default audio config refers to the default value of [ZegoAudioConfig]. 
   /// When to call: After the engine is created [createEngine], and before publishing [startPublishingStream].
   /// Restrictions: None.
-  /// Caution: Act on the main publish channel ZegoPublishChannel.Main.
   /// Related APIs: [getAudioConfig].
   ///
   /// - [config] Audio config.
-  Future<void> setAudioConfig(ZegoAudioConfig config) async {
-    return await ZegoExpressImpl.instance.setAudioConfig(config);
+  /// - [channel] Publish stream channel.
+  Future<void> setAudioConfig(ZegoAudioConfig config, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setAudioConfig(config, channel: channel);
   }
 
   /// Gets the current audio configurations.
@@ -203,6 +203,21 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.mutePublishStreamVideo(mute, channel: channel);
   }
 
+  /// Enable or disable the stream mixing precision alignment function.
+  ///
+  /// Available since: 2.11.0.
+  /// Description: Use this interface to enable stream alignment, the SDK will attach network time information to the stream when publishing it for accurate stream alignment.
+  /// Use case: Generally used in scenarios such as KTV where stream mixing alignment is required.
+  /// When to call: After the engine is created [createEngine].
+  /// Caution: If mixed flow need time for alignment, the flow through the network push flow need to call startPublishingStream and ZegoPublisherConfig.forceSynchronousNetworkTime = 1, for open network time synchronization.
+  /// Related APIs: [startMixerTask], [startAutoMixerTask]
+  ///
+  /// - [alignment] Whether to enable the stream mixing precision alignment function.
+  /// - [channel] Publish stream channel
+  Future<void> setStreamAlignmentProperty(int alignment, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance.setStreamAlignmentProperty(alignment, channel);
+  }
+
   /// Enables or disables traffic control.
   ///
   /// Available since: 1.5.0
@@ -218,20 +233,20 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableTrafficControl(enable, property);
   }
 
-  /// Set the minimum video bitrate threshold for traffic control.
+  /// Sets the minimum video bitrate for traffic control for the specified publish channel.
   ///
   /// Available since: 1.1.0
   /// Description: Set the control strategy when the video bitrate reaches the lowest threshold during flow control. When the bitrate is lower than the minimum threshold, you can choose not to send video data or send it at a very low frame bitrate.
   /// Default value: There is no control effect of the lowest threshold of video bitrate.
   /// When to call: After the engine is created [createEngine], Called before [startPublishingStream] can take effect.
   /// Restrictions: The traffic control must be turned on [enableTrafficControl].
-  /// Caution: Act on the main publish channel ZegoPublishChannel.Main.
   /// Related APIs: [enableTrafficControl].
   ///
-  /// - [bitrate] Minimum video bitrate threshold for traffic control(kbps).
+  /// - [bitrate] Minimum video bitrate (kbps).
   /// - [mode] Video sending mode below the minimum bitrate.
-  Future<void> setMinVideoBitrateForTrafficControl(int bitrate, ZegoTrafficControlMinVideoBitrateMode mode) async {
-    return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode);
+  /// - [channel] Publish stream channel.
+  Future<void> setMinVideoBitrateForTrafficControl(int bitrate, ZegoTrafficControlMinVideoBitrateMode mode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode, channel: channel);
   }
 
   /// Set the factors of concern that trigger traffic control for the specified publish channel.
@@ -252,13 +267,13 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the audio recording volume for stream publishing.
   ///
   /// Available since: 1.13.0
-  /// Description: This function is used to set the audio collection volume. The local user can control the volume of the audio stream sent to the far end.
+  /// Description: This function is used to perform gain processing based on the device's collected volume. The local user can control the sound level of the audio stream sent to the remote end.
   /// Default value: Default is 100.
   /// When to call: After creating the engine [createEngine], before starting to push the stream [startPublishingStream].
   /// Restrictions: None.
   /// Related APIs: Set the playing stream volume [setPlayVolume].
   ///
-  /// - [volume] Volume percentage. The range is 0 to 200. Default value is 100.
+  /// - [volume] The volume gain percentage, the range is 0 ~ 200, and the default value is 100, which means 100% of the original collection volume of the device.
   Future<void> setCaptureVolume(int volume) async {
     return await ZegoExpressImpl.instance.setCaptureVolume(volume);
   }
@@ -283,7 +298,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Forward audio and video streams from ZEGO RTC servers to custom CDN content distribution networks with high latency but support for high concurrent pull streams.
   /// Use cases: 1. It is often used in large-scale live broadcast scenes that do not have particularly high requirements for delay. 2. Since ZEGO RTC server itself can be configured to support CDN(content distribution networks), this function is mainly used by developers who have CDN content distribution services themselves. 3. This function supports dynamic relay to the CDN content distribution network, so developers can use this function as a disaster recovery solution for CDN content distribution services.
-  /// When to call: After calling the [createEngine] function to create the engine .
+  /// When to call: After calling the [createEngine] function to create the engine.
   /// Restrictions: When the [enablePublishDirectToCDN] function is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
   /// Related APIs: Remove URLs that are re-pushed to the CDN [removePublishCdnUrl].
   ///
@@ -297,8 +312,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Deletes the specified CDN URL, which is used for relaying streams from ZEGO RTC server to CDN.
   ///
   /// Available since: 1.1.0
-  /// Description: This function is called when a CDN re-push address has been added and the stream needs to be stopped from being re-pushed.
-  /// When to call: After calling the [createEngine] function to create the engine .
+  /// Description: When a CDN forwarding address has been added via [addPublishCdnUrl], this function is called when the stream needs to be stopped.
+  /// When to call: After calling the [createEngine] function to create the engine.
   /// Restrictions: When the [enablePublishDirectToCDN] function is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
   /// Caution: This function does not stop publishing audio and video stream to the ZEGO ZEGO RTC server.
   /// Related APIs: Add URLs that are re-pushed to the CDN [addPublishCdnUrl].
@@ -360,7 +375,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: While pushing the stream to transmit the audio and video stream data, the stream media enhancement supplementary information is sent to synchronize some other additional information.
   /// Use cases: Generally used in scenes such as synchronizing music lyrics or precise video layout, you can choose to send SEI.
-  /// When to call: After creating the engine [createEngine], before starting to push the stream [startPublishingStream].
+  /// When to call: After starting to push the stream [startPublishingStream].
   /// Restrictions: Do not exceed 30 times per second, and the SEI data length is limited to 4096 bytes.
   /// Caution: Since the SEI information follows the video frame, there may be frame loss due to network problems, so the SEI information may also be lost. In order to solve this situation, it should be sent several times within the restricted frequency.
   /// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
@@ -393,6 +408,34 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [mode] The capture scale timing mode.
   Future<void> setCapturePipelineScaleMode(ZegoCapturePipelineScaleMode mode) async {
     return await ZegoExpressImpl.instance.setCapturePipelineScaleMode(mode);
+  }
+
+  /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
+  ///
+  /// Available since: 2.12.0
+  /// Description: When using H.265 encoding to push the stream, whether to enable the strategy of automatically degrading H.265 encoding to H.264 encoding under abnormal circumstances.After enabling automatic downgrade, when H.265 encoding is not supported or H.265 encoding fails, the SDK will try to downgrade and use H.264 encoding to push the stream.After turning off automatic downgrade, when H.265 encoding is not supported or H.265 encoding fails, the direct streaming fails.
+  /// Use cases: In the Co-hosting and Showroom Live Streaming scenarios, use H265 encoding to push the stream to save CDN traffic without degrading the picture quality.
+  /// Default Value: When this interface is not called, the default is yes, which means that H.265 encoding is turned on and automatically downgraded to H.264 encoding.
+  /// When to call: After creating the engine, call the [startPublishingStream] function before pushing the stream.
+  /// Related callbacks: When the H.265 encoding is automatically downgraded to the H.264 encoding strategy, the [onPublisherVideoEncoderChanged] callback will be triggered when the encoding method changes.
+  /// Caution: When downgrading from H.265 to H.264 encoding occurs during the streaming process, if you are recording local video or cloud recording, multiple recording files will be generated, which needs to be dealt with.
+  ///
+  /// - [enable] Whether to enable H.265 coding automatically fallback to H.264 coding, true: enable, false: disable, and the default value is true
+  Future<void> enableH265EncodeFallback(bool enable) async {
+    return await ZegoExpressImpl.instance.enableH265EncodeFallback(enable);
+  }
+
+  /// Whether the specified video encoding type is supported.
+  ///
+  /// Available since: 2.12.0 and above
+  /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
+  /// When to call: After creating the engine.
+  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.
+  ///
+  /// - [codecID] Video codec id. Required: Yes.
+  /// - Returns Whether the specified video encoding is supported.Value range: true means support, you can use this encoding format for publish; false means the is not supported, and the encoding format cannot be used for publish.
+  Future<bool> isVideoEncoderSupported(ZegoVideoCodecID codecID) async {
+    return await ZegoExpressImpl.instance.isVideoEncoderSupported(codecID);
   }
 
 }

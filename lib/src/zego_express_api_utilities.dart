@@ -22,6 +22,23 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopPerformanceMonitor();
   }
 
+  /// start network probe.
+  ///
+  /// Some local network problems may cause audio and video calls to fail. Using this function to probe the network protocols, assist in locating and solving related network problems.
+  /// The SDK internally detects http, tcp, and udp in sequence. If the probe fails in the middle, the subsequent detection will not continue. Therefore, when reading the values ​​in the probe result, please pay attention to check if the value is null.
+  /// The SDK will not perform multiple network probe at the same time, that is, if the network probe is in progress, the SDK will not work if you call this method repeatedly.
+  /// Network probe may take a long time. Developers can call [stopNetworkProbe] to stop network probe as needed.
+  ///
+  /// - [config] network probe config
+  Future<ZegoNetworkProbeResult> startNetworkProbe(ZegoNetworkProbeConfig config) async {
+    return await ZegoExpressImpl.instance.startNetworkProbe(config);
+  }
+
+  /// stop network probe.
+  Future<void> stopNetworkProbe() async {
+    return await ZegoExpressImpl.instance.stopNetworkProbe();
+  }
+
   /// Start network speed test.
   ///
   /// This function should be called before [startPublishingStream], if you call [startPublishingStream] while speed testing, the speed test will automatically stop.

@@ -11,7 +11,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Description: Send a broadcast message to the room, users who have entered the same room can receive the message, and the message is reliable.
   /// Use cases: Generally used when the number of people in the live room does not exceed 500.
   /// When to call: After calling [loginRoom] to log in to the room.
-  /// Restrictions: It is not supported when the number of people online in the room exceeds 500. If you need to increase the limit, please contact ZEGO technical support to apply for evaluation. The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. For restrictions on the use of this function, please refer to https://doc-zh.zego.im/article/7581 or contact ZEGO technical support.
+  /// Restrictions: It is not supported when the number of people online in the room exceeds 500. If you need to increase the limit, please contact ZEGO technical support to apply for evaluation. The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user calling this interface from the client side is 2. For restrictions on the use of this function, please refer to https://doc-zh.zego.im/article/7581 or contact ZEGO technical support.
   /// Related callbacks: The room broadcast message can be received through [onIMRecvBroadcastMessage].
   /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
   ///

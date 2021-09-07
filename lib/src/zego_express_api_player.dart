@@ -36,7 +36,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Available since: 1.19.0
   /// Description: When streaming, the audio and video data will be decrypted according to the set key.
   /// Use cases: Usually used in scenarios that require high security for audio and video calls.
-  /// When to call: after [createEngine], before called [startPlayingStream] or after called [startPlayingStream].
+  /// When to call: after [createEngine], after the play stream can be changed at any time.
   /// Restrictions: This function is only valid when calling from Zego RTC or L3 server.
   /// Related APIs: [setPublishStreamEncryptionKey]Set the publish stream encryption key.
   /// Caution: This interface can only be called if encryption is set on the publish. Calling [stopPlayingStream] or [logoutRoom] will clear the decryption key.
@@ -164,6 +164,19 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
   }
 
+  /// Can the pull stream receive all audio data.
+  ///
+  /// Available since: 2.4.0
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from all remote users when pulling streams (including the audio streams pushed by users who have newly joined the room after calling this function). By default, users can receive audio data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Use cases: Call this function when developers need to quickly close and restore remote audio. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
+  /// When to call: This function can be called after calling [createEngine].
+  /// Related APIs: You can call the [mutePlayStreamAudio] function to control whether to receive a single piece of audio data. When the two functions [muteAllPlayStreamAudio] and [mutePlayStreamAudio] are set to `false` at the same time, the local user can receive the audio data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamAudio(true)] function is called, it takes effect globally, that is, local users will be prohibited from receiving audio data from all remote users. At this time, the [mutePlayStreamAudio] function will not take effect no matter if the [mutePlayStreamAudio] function is called before or after [muteAllPlayStreamAudio]. 2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [mutePlayStreamAudio] function can be used to control whether to receive a single audio data. Calling the [mutePlayStreamAudio(true, streamID)] function allows the local user to receive audio data other than the `streamID`; calling the [mutePlayStreamAudio(false, streamID)] function allows the local user to receive all audio data.
+  ///
+  /// - [mute] Whether it is possible to receive audio data from all remote users when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
+  Future<void> muteAllPlayStreamAudio(bool mute) async {
+    return await ZegoExpressImpl.instance.muteAllPlayStreamAudio(mute);
+  }
+
   /// Enables or disables hardware decoding.
   ///
   /// Available since: 1.1.0
@@ -172,7 +185,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Default value: Hardware decoding is disabled by default when this interface is not called.
   /// When to call: This function needs to be called after [createEngine] creates an instance.
   /// Restrictions: None.
-  /// Caution: Need to be called before calling [startPlayingStream], if called after playing the stream, it will only take effect after stopping the stream and re-playing it.
+  /// Caution: Need to be called before calling [startPlayingStream], if called after playing the stream, it will only take effect after stopping the stream and re-playing it. Once this configuration has taken effect, it will remain in force until the next call takes effect.
   ///
   /// - [enable] Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding.
   Future<void> enableHardwareDecoder(bool enable) async {
@@ -183,35 +196,28 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: Control whether to turn on frame order detection, on to not support B frames, off to support B frames.
-  /// Use cases: Prevent splash screen when playing cdn's stream.
+  /// Use cases: Turning on frame order detection when pulling cdn's stream will prevent splash screens.
   /// Default value: Turn on frame order detection by default when this interface is not called.
   /// When to call: This function needs to be called after [createEngine] creates an instance.
   /// Restrictions: None.
-  /// Caution: Turn on frame order detection may result in a brief splash screen.
+  /// Caution: Turn off frame order detection during playing stream may result in a brief splash screen.
   ///
   /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames.
   Future<void> enableCheckPoc(bool enable) async {
     return await ZegoExpressImpl.instance.enableCheckPoc(enable);
   }
 
-}
-
-extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
-
-  /// [Deprecated] Set the selected video layer of playing stream.
+  /// Whether the specified video decoding format is supported.
   ///
-  /// Available: 1.19.0 to 2.3.0, deprecated.
-  /// This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
-  /// When the publisher has set the codecID to SVC through [setVideoConfig], the player can dynamically set whether to use the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer)
-  /// Under normal circumstances, when the network is weak or the rendered UI form is small, you can choose to use the video that plays the base layer to save bandwidth.
-  /// It can be set before and after playing stream.
+  /// Available since: 2.12.0
+  /// Description: Whether the specified video decoding is supported depends on the following aspects: whether the hardware model supports hard decoding, whether the performance of the hardware model supports soft decoding, and whether the SDK includes the decoding module.
+  /// When to call: After creating the engine.
+  /// Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
   ///
-  /// @deprecated This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
-  /// - [streamID] Stream ID.
-  /// - [videoLayer] Video layer of playing stream. AUTO by default.
-  @Deprecated('This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.')
-  Future<void> setPlayStreamVideoLayer(String streamID, ZegoPlayerVideoLayer videoLayer) async {
-    return await ZegoExpressImpl.instance.setPlayStreamVideoLayer(streamID, videoLayer);
+  /// - [codecID] Video codec id.Required: Yes.
+  /// - Returns Whether the specified video decoding format is supported; true means support, you can use this decoding format for playing stream; false means the is not supported, and the decoding format cannot be used for play stream.
+  Future<bool> isVideoDecoderSupported(ZegoVideoCodecID codecID) async {
+    return await ZegoExpressImpl.instance.isVideoDecoderSupported(codecID);
   }
 
 }
