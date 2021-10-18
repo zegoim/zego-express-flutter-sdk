@@ -33,12 +33,15 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Set decryption key for the playing stream.
   ///
-  /// Called before and after [startPlayingStream] can both take effect.
-  /// Calling [stopPlayingStream] or [logoutRoom] will clear the decryption key.
-  /// Support calling this function to update the decryption key while playing stream. Note that developers need to update the player's decryption key before updating the publisher's encryption key.
-  /// This function is only valid when playing stream from Zego RTC or L3 server.
+  /// Available since: 1.19.0
+  /// Description: When streaming, the audio and video data will be decrypted according to the set key.
+  /// Use cases: Usually used in scenarios that require high security for audio and video calls.
+  /// When to call: after [createEngine], after the play stream can be changed at any time.
+  /// Restrictions: This function is only valid when calling from Zego RTC or L3 server.
+  /// Related APIs: [setPublishStreamEncryptionKey]Set the publish stream encryption key.
+  /// Caution: This interface can only be called if encryption is set on the publish. Calling [stopPlayingStream] or [logoutRoom] will clear the decryption key.
   ///
-  /// - [streamID] Stream ID
+  /// - [streamID] Stream ID.
   /// - [key] The decryption key, note that the key length only supports 16/24/32 bytes.
   Future<void> setPlayStreamDecryptionKey(String streamID, String key) async {
     return await ZegoExpressImpl.instance.setPlayStreamDecryptionKey(streamID, key);
@@ -46,18 +49,26 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Take a snapshot of the playing stream.
   ///
-  /// Please call this function after calling [startPlayingStream]
+  /// Available since: 1.17.0
+  /// Description: Take a screenshot of the specified stream ID.
+  /// When to call: after called [startPlayingStream].
+  /// Restrictions: None.
+  /// Related callbacks: [onPlayerTakeSnapshotResult] Screenshot data callback.
   ///
-  /// - [streamID] Stream ID to be snapshot
-  /// - Returns Results of take play stream snapshot
+  /// - [streamID] Stream ID to be snapshot.
+  /// - Returns Results of take play stream snapshot.
   Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(String streamID) async {
     return await ZegoExpressImpl.instance.takePlayStreamSnapshot(streamID);
   }
 
   /// Sets the stream playback volume.
   ///
-  /// This function is used to set the playback volume of the stream. Need to be called after calling startPlayingStream.
-  /// You need to reset after [stopPlayingStream] and [startPlayingStream].
+  /// Available since: 1.16.0
+  /// Description: Set the sound size of the stream, the local user can control the playback volume of the audio stream.
+  /// When to call: after called [startPlayingStream].
+  /// Restrictions: None.
+  /// Related APIs: [setAllPlayStreamVolume]Set all stream volume.
+  /// Caution: You need to reset after [stopPlayingStream] and [startPlayingStream].
   ///
   /// - [streamID] Stream ID.
   /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.
@@ -65,40 +76,74 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setPlayVolume(streamID, volume);
   }
 
-  /// Set play video stream type
+  /// Sets the all stream playback volume.
   ///
-  /// When the publish stream sets the codecID to SVC through [setVideoConfig], the puller can dynamically set and select different stream types (small resolution is one-half of the standard layer).
-  /// In general, when the network is weak or the rendered UI window is small, you can choose to pull videos with small resolutions to save bandwidth.
-  /// It can be set before and after pulling the stream.
+  /// Available since: 2.3.0
+  /// Description: Set the sound size of the stream, the local user can control the playback volume of the audio stream.
+  /// When to call: after called [startPlayingStream].
+  /// Restrictions: None.
+  /// Related APIs: [setPlayVolume] Set the specified streaming volume.
+  /// Caution: You need to reset after [stopPlayingStream] and [startPlayingStream]. Set the specified streaming volume and [setAllPlayStreamVolume] interface to override each other, and the last call takes effect.
+  ///
+  /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.
+  Future<void> setAllPlayStreamVolume(int volume) async {
+    return await ZegoExpressImpl.instance.setAllPlayStreamVolume(volume);
+  }
+
+  /// Set play video stream type.
+  ///
+  /// Available since: 2.3.0
+  /// Description: When the publish stream sets the codecID to SVC through [setVideoConfig], the puller can dynamically set and select different stream types (small resolution is one-half of the standard layer).
+  /// Use cases: In general, when the network is weak or the rendered UI window is small, you can choose to pull videos with small resolutions to save bandwidth.
+  /// When to call: before or after called [startPlayingStream].
+  /// Restrictions: None.
   ///
   /// - [streamID] Stream ID.
-  /// - [streamType] Video stream type
+  /// - [streamType] Video stream type.
   Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
     return await ZegoExpressImpl.instance.setPlayStreamVideoType(streamID, streamType);
   }
 
   /// Set the adaptive adjustment interval range of the buffer for playing stream.
   ///
-  /// When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms.
-  /// When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
-  /// It can be set before and after playing stream.
+  /// Available since: 2.1.0
+  /// Description: Set the range of adaptive adjustment of the internal buffer of the sdk when streaming is 0-4000ms.
+  /// Use cases: Generally, in the case of a poor network environment, adjusting and increasing the playback buffer of the pull stream will significantly reduce the audio and video freezes, but will increase the delay.
+  /// When to call: after called [createEngine].
+  /// Restrictions: None.
+  /// Caution: When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms. When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
   ///
   /// - [streamID] Stream ID.
-  /// - [minBufferInterval] The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms
-  /// - [maxBufferInterval] The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms
+  /// - [minBufferInterval] The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms.
+  /// - [maxBufferInterval] The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms.
   Future<void> setPlayStreamBufferIntervalRange(String streamID, int minBufferInterval, int maxBufferInterval) async {
     return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
   }
 
+  /// Set the weight of the pull stream priority.
+  ///
+  /// Available since: 1.1.0
+  /// Description: Set the weight of the streaming priority.
+  /// Use cases: This interface can be used when developers need to prioritize the quality of a stream in business. For example: in class scene, if students pull multiple streams, you can set high priority for teacher stream.
+  /// When to call: after called [startPlayingStream].
+  /// Restrictions: None.
+  /// Caution: By default, all streams have the same weight. Only one stream can be set with high priority, whichever is set last. After the flow is stopped, the initial state is automatically restored, and all flows have the same weight.When the local network is not good, while ensuring the focus flow, other stalls may be caused more.
+  ///
+  /// - [streamID] Stream ID.
+  Future<void> setPlayStreamFocusOn(String streamID) async {
+    return await ZegoExpressImpl.instance.setPlayStreamFocusOn(streamID);
+  }
+
   /// Whether the pull stream can receive the specified audio data.
   ///
-  /// Available since: 1.0.0 and above.
-  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from designated remote users when pulling streams as needed.
-  /// When to call: This function can be called before and after calling [startPlayingStream] to pull the stream.
+  /// Available since: 1.1.0
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from designated remote users when pulling streams as needed. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Use cases: Call this function when developers need to quickly close and restore remote audio. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
+  /// When to call: This function can be called after calling [createEngine].
   /// Caution: This function is valid only when the [muteAllPlayStreamAudio] function is set to `false`.
   /// Related APIs: You can call the [muteAllPlayStreamAudio] function to control whether to receive all audio data. When the two functions [muteAllPlayStreamAudio] and [mutePlayStreamAudio] are set to `false` at the same time, the local user can receive the audio data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamAudio(true)] function is called, it is globally effective, that is, local users will be prohibited from receiving all remote users' audio data. At this time, the [mutePlayStreamAudio] function will not take effect whether it is called before or after [muteAllPlayStreamAudio].2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [mutePlayStreamAudio] function can be used to control whether to receive a single audio data. Calling the [mutePlayStreamAudio(true, streamID)] function allows the local user to receive audio data other than the `streamID`; calling the [mutePlayStreamAudio(false, streamID)] function allows the local user to receive all audio data.
   ///
-  /// - [streamID] Stream ID
+  /// - [streamID] Stream ID.
   /// - [mute] Whether it can receive the audio data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamAudio(streamID, mute);
@@ -106,36 +151,73 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Whether the pull stream can receive the specified video data.
   ///
-  /// Available since: 1.0.0 and above.
-  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed.
-  /// When to call: This function can be called before and after calling [startPlayingStream] to pull the stream.
+  /// Available since: 1.1.0
+  /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
+  /// When to call: This function can be called after calling [createEngine].
   /// Caution: This function is valid only when the [muteAllPlayStreamVideo] function is set to `false`.
   /// Related APIs: You can call the [muteAllPlayStreamVideo] function to control whether to receive all video data. When the two functions [muteAllPlayStreamVideo] and [mutePlayStreamVideo] are set to `false` at the same time, the local user can receive the video data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamVideo(true)] function is called, it will take effect globally, that is, local users will be prohibited from receiving all remote users' video data. At this time, the [mutePlayStreamVideo] function will not take effect whether it is called before or after [muteAllPlayStreamVideo]. 2. When the [muteAllPlayStreamVideo(false)] function is called, the local user can receive the video data of all remote users. At this time, the [mutePlayStreamVideo] function can be used to control whether to receive a single video data. Call the [mutePlayStreamVideo(true, streamID)] function, the local user can receive other video data other than the `streamID`; call the [mutePlayStreamVideo(false, streamID)] function, the local user can receive all the video data.
   ///
-  /// - [streamID] Stream ID
+  /// - [streamID] Stream ID.
   /// - [mute] Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
   Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
   }
 
+  /// Can the pull stream receive all audio data.
+  ///
+  /// Available since: 2.4.0
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from all remote users when pulling streams (including the audio streams pushed by users who have newly joined the room after calling this function). By default, users can receive audio data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Use cases: Call this function when developers need to quickly close and restore remote audio. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
+  /// When to call: This function can be called after calling [createEngine].
+  /// Related APIs: You can call the [mutePlayStreamAudio] function to control whether to receive a single piece of audio data. When the two functions [muteAllPlayStreamAudio] and [mutePlayStreamAudio] are set to `false` at the same time, the local user can receive the audio data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamAudio(true)] function is called, it takes effect globally, that is, local users will be prohibited from receiving audio data from all remote users. At this time, the [mutePlayStreamAudio] function will not take effect no matter if the [mutePlayStreamAudio] function is called before or after [muteAllPlayStreamAudio]. 2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [mutePlayStreamAudio] function can be used to control whether to receive a single audio data. Calling the [mutePlayStreamAudio(true, streamID)] function allows the local user to receive audio data other than the `streamID`; calling the [mutePlayStreamAudio(false, streamID)] function allows the local user to receive all audio data.
+  ///
+  /// - [mute] Whether it is possible to receive audio data from all remote users when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
+  Future<void> muteAllPlayStreamAudio(bool mute) async {
+    return await ZegoExpressImpl.instance.muteAllPlayStreamAudio(mute);
+  }
+
   /// Enables or disables hardware decoding.
   ///
-  /// Turn on hardware decoding and use hardware to improve decoding efficiency. Need to be called before calling startPlayingStream.
-  /// Because hard-decoded support is not particularly good for a few models, SDK uses software decoding by default. If the developer finds that the device is hot when playing a high-resolution audio and video stream during testing of some models, you can consider calling this function to enable hard decoding.
-  /// This function needs to be called after [createEngine] creates an instance.
+  /// Available since: 1.1.0
+  /// Description: Control whether hardware decoding is used when playing streams, with hardware decoding enabled the SDK will use the GPU for decoding, reducing CPU usage.
+  /// Use cases: If developers find that the device heats up badly when playing large resolution audio and video streams during testing on some models, consider calling this function to enable hardware decoding.
+  /// Default value: Hardware decoding is disabled by default when this interface is not called.
+  /// When to call: This function needs to be called after [createEngine] creates an instance.
+  /// Restrictions: None.
+  /// Caution: Need to be called before calling [startPlayingStream], if called after playing the stream, it will only take effect after stopping the stream and re-playing it. Once this configuration has taken effect, it will remain in force until the next call takes effect.
   ///
-  /// - [enable] Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding. The default is false
+  /// - [enable] Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding.
   Future<void> enableHardwareDecoder(bool enable) async {
     return await ZegoExpressImpl.instance.enableHardwareDecoder(enable);
   }
 
   /// Enables or disables frame order detection.
   ///
-  /// This function needs to be called after [createEngine] creates an instance.
+  /// Available since: 1.1.0
+  /// Description: Control whether to turn on frame order detection, on to not support B frames, off to support B frames.
+  /// Use cases: Turning on frame order detection when pulling cdn's stream will prevent splash screens.
+  /// Default value: Turn on frame order detection by default when this interface is not called.
+  /// When to call: This function needs to be called after [createEngine] creates an instance.
+  /// Restrictions: None.
+  /// Caution: Turn off frame order detection during playing stream may result in a brief splash screen.
   ///
-  /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames but the screen may temporary splash. The default is true
+  /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames.
   Future<void> enableCheckPoc(bool enable) async {
     return await ZegoExpressImpl.instance.enableCheckPoc(enable);
+  }
+
+  /// Whether the specified video decoding format is supported.
+  ///
+  /// Available since: 2.12.0
+  /// Description: Whether the specified video decoding is supported depends on the following aspects: whether the hardware model supports hard decoding, whether the performance of the hardware model supports soft decoding, and whether the SDK includes the decoding module.
+  /// When to call: After creating the engine.
+  /// Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
+  ///
+  /// - [codecID] Video codec id.Required: Yes.
+  /// - Returns Whether the specified video decoding format is supported; true means support, you can use this decoding format for playing stream; false means the is not supported, and the decoding format cannot be used for play stream.
+  Future<bool> isVideoDecoderSupported(ZegoVideoCodecID codecID) async {
+    return await ZegoExpressImpl.instance.isVideoDecoderSupported(codecID);
   }
 
 }

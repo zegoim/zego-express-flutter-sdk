@@ -41,6 +41,21 @@
     }
 }
 
+- (void)onApiCalledResult:(int)errorCode funcName:(NSString *)funcName info:(NSString *)info {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onApiCalledResult] errorCode: %d, funcName: %@, info: %@", errorCode, funcName, info);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onApiCalledResult",
+            @"errorCode": @(errorCode),
+            @"funcName": funcName,
+            @"info": info
+        });
+    }
+}
+
 - (void)onEngineStateUpdate:(ZegoEngineState)state {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onEngineStateUpdate] state: %d", (int)state);
@@ -212,6 +227,20 @@
     }
 }
 
+- (void)onRoomTokenWillExpire:(int)remainTimeInSecond roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRoomTokenWillExpire] remainTimeInSecond: %d, roomID: %@", remainTimeInSecond, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRoomTokenWillExpire",
+            @"remainTimeInSecond": @(remainTimeInSecond),
+            @"roomID": roomID
+        });
+    }
+}
+
 #pragma mark Publisher Callback
 
 - (void)onPublisherStateUpdate:(ZegoPublisherState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -296,6 +325,19 @@
     }
 }
 
+- (void)onPublisherRenderVideoFirstFrame:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherRenderVideoFirstFrame] channel: %d", (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherRenderVideoFirstFrame",
+            @"channel": @(channel)
+        });
+    }
+}
+
 - (void)onPublisherVideoSizeChanged:(CGSize)size channel:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPublisherVideoSizeChanged] width: %d, height: %d, channel: %d", (int)size.width, (int)size.height, (int)channel);
@@ -331,6 +373,21 @@
             @"method": @"onPublisherRelayCDNStateUpdate",
             @"streamInfoList": streamInfoListArray,
             @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPublisherVideoEncoderChanged:(ZegoVideoCodecID)fromCodecID toCodecID:(ZegoVideoCodecID)toCodecID channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherVideoEncoderChanged] fromCodecID: %d, toCodecID: %d, channel: %d", (int)fromCodecID, (int)toCodecID, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherVideoEncoderChanged",
+            @"fromCodecID": @(fromCodecID),
+            @"toCodecID": @(toCodecID),
+            @"channel": @(channel)
         });
     }
 }
@@ -537,6 +594,21 @@
     }
 }
 
+- (void)onCapturedSoundLevelInfoUpdate:(ZegoSoundLevelInfo *)soundLevelInfo {
+    FlutterEventSink sink = _eventSink;
+    // Super high frequency callbacks do not log, do not guard sink
+
+    if (sink) {
+        sink(@{
+            @"method": @"onCapturedSoundLevelInfoUpdate",
+            @"soundLevelInfo": @{
+                @"soundLevel": @(soundLevelInfo.soundLevel),
+                @"vad": @(soundLevelInfo.vad)
+            }
+        });
+    }
+}
+
 - (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     FlutterEventSink sink = _eventSink;
     // Super high frequency callbacks do not log, do not guard sink
@@ -545,6 +617,27 @@
         sink(@{
             @"method": @"onRemoteSoundLevelUpdate",
             @"soundLevels": soundLevels
+        });
+    }
+}
+
+- (void)onRemoteSoundLevelInfoUpdate:(NSDictionary<NSString *, ZegoSoundLevelInfo *> *)soundLevelInfos {
+    FlutterEventSink sink = _eventSink;
+    // Super high frequency callbacks do not log, do not guard sink
+
+    NSMutableDictionary *resultDic = @{}.mutableCopy;
+
+    [soundLevelInfos enumerateKeysAndObjectsUsingBlock:^(NSString *key, ZegoSoundLevelInfo *obj, BOOL * _Nonnull stop) {
+        resultDic[key] = @{
+            @"soundLevel": @(obj.soundLevel),
+            @"vad": @(obj.vad)
+        };
+    }]; 
+
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteSoundLevelUpdate",
+            @"soundLevelInfos": resultDic
         });
     }
 }
@@ -768,6 +861,33 @@
     }
 }
 
+- (void)onRecvExperimentalAPI:(NSString *)content {
+    FlutterEventSink sink = _eventSink;
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRecvExperimentalAPI",
+            @"content": content
+        });
+    }
+}
+
+- (void)onNetworkQuality:(NSString *)userID upstreamQuality:(ZegoStreamQualityLevel)upstreamQuality downstreamQuality:(ZegoStreamQualityLevel)downstreamQuality {
+    FlutterEventSink sink = _eventSink;
+    // ZGLog(@"[onNetworkQuality] userID: %@, upstreamQuality: %d, downstreamQuality: %d", userID, (int)upstreamQuality, (int)downstreamQuality);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onNetworkQuality",
+            @"userID": userID,
+            @"upstreamQuality": @(upstreamQuality),
+            @"downstreamQuality": @(downstreamQuality)
+        });
+    }
+}
+
 
 #pragma mark - ZegoMediaPlayerEventHandler
 
@@ -845,6 +965,23 @@
             @"errorCode": @(errorCode)
         });
     }
+}
+
+#pragma mark - Range Audio
+- (void)rangeAudio:(ZegoRangeAudio *)rangeAudio microphoneStateUpdate:(ZegoRangeAudioMicrophoneState)state errorCode:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRangeAudioMicrophoneStateUpdate] idx: %d, state: %d, errorCode: %d", 0, (int)state, errorCode);
+    
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRangeAudioMicrophoneStateUpdate",
+            @"rangeAudioIndex": @(0),
+            @"state": @(state),
+            @"errorCode": @(errorCode)
+        });
+    }
+
 }
 
 
@@ -998,6 +1135,100 @@
                     @"channel": @(param.channel)
             },
             @"streamID": streamID
+        });
+    }
+}
+
+#pragma mark - Audio Process Handler
+- (void)onProcessCapturedAudioData:(unsigned char *)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param timestamp:(double)timestamp {
+    FlutterEventSink sink = _eventSink;
+    
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onProcessCapturedAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"channel": @(param.channel)
+            },
+            @"timestamp": @(timestamp)
+        });
+    }
+}
+
+- (void)onProcessCapturedAudioDataAfterUsedHeadphoneMonitor:(unsigned char *)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param timestamp:(double)timestamp {
+    FlutterEventSink sink = _eventSink;
+    
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onProcessCapturedAudioDataAfterUsedHeadphoneMonitor",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"channel": @(param.channel)
+            },
+            @"timestamp": @(timestamp)
+        });
+    }
+}
+
+- (void)onProcessRemoteAudioData:(unsigned char *)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param streamID:(NSString *)streamID timestamp:(double)timestamp {
+    FlutterEventSink sink = _eventSink;
+    
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onProcessRemoteAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"channel": @(param.channel)
+            },
+            @"streamID": streamID,
+            @"timestamp": @(timestamp)
+        });
+    }
+}
+
+- (void)onProcessPlaybackAudioData:(unsigned char *)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param timestamp:(double)timestamp {
+    FlutterEventSink sink = _eventSink;
+    
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onProcessPlaybackAudioData",
+            @"data": objData,
+            @"dataLength": @(dataLength),
+            @"param": @{
+                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"channel": @(param.channel)
+            },
+            @"timestamp": @(timestamp)
         });
     }
 }
