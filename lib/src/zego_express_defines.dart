@@ -837,7 +837,7 @@ class ZegoVideoConfig {
   ZegoVideoCodecID codecID;
 
   /// Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
-  int keyFrameInterval;
+  int? keyFrameInterval;
 
   ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID, this.keyFrameInterval);
 
@@ -1525,10 +1525,10 @@ class ZegoMixerInput {
   int audioDirection;
 
   /// Text watermark.
-  ZegoLabelInfo label;
+  ZegoLabelInfo? label;
 
   /// Video view render mode.
-  ZegoMixRenderMode renderMode;
+  ZegoMixRenderMode? renderMode;
 
   ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.isAudioFocus, this.audioDirection, this.label, this.renderMode);
 
