@@ -1185,6 +1185,12 @@ class ZegoExpressImpl {
         ZegoExpressEngine
             .onEngineStateUpdate!(ZegoEngineState.values[map['state']]);
         break;
+      
+      case 'onNetworkTimeSynchronized':
+        if (ZegoExpressEngine.onNetworkTimeSynchronized == null) return;
+
+        ZegoExpressEngine.onNetworkTimeSynchronized!();
+        break;
 
       /* Room */
 

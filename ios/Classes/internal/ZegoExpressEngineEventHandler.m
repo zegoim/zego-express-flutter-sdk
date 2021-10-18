@@ -69,6 +69,18 @@
     }
 }
 
+- (void)onNetworkTimeSynchronized {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onNetworkTimeSynchronized]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onNetworkTimeSynchronized"
+        });
+    }
+}
+
 #pragma mark Room Callback
 
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {

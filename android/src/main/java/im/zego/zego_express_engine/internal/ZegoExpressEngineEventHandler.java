@@ -171,6 +171,19 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onNetworkTimeSynchronized() {
+            super.onNetworkTimeSynchronized();
+            ZegoLog.log("[onNetworkTimeSynchronized]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onNetworkTimeSynchronized");
+
+            sink.success(map);
+        }
+
         /* Room */
 
         @Override
