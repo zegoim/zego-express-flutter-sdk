@@ -59,9 +59,11 @@ import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
+import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
+import im.zego.zegoexpress.constants.ZegoMixRenderMode;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
 import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
@@ -93,6 +95,8 @@ import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
+import im.zego.zegoexpress.entity.ZegoFontStyle;
+import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
@@ -538,6 +542,10 @@ public class ZegoExpressEngineMethodHandler {
         config.setVideoFPS(fps);
         config.setVideoBitrate(bitrate);
         config.setCodecID(ZegoVideoCodecID.getZegoVideoCodecID(codecID));
+
+        if (configMap.containsKey("keyFrameInterval")) {
+            config.keyFrameInterval = ZegoUtils.intValue((Number) configMap.get("keyFrameInterval"));
+        }
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
@@ -1227,6 +1235,30 @@ public class ZegoExpressEngineMethodHandler {
                 Rect rect = new Rect(left, top, right, bottom);
                 int soundLevelID = ZegoUtils.intValue((Number) inputMap.get("soundLevelID"));
                 ZegoMixerInput inputObject = new ZegoMixerInput(streamID, ZegoMixerInputContentType.getZegoMixerInputContentType(contentType), rect, soundLevelID);
+
+                if (inputMap.containsKey("label")) {
+                    HashMap<String, Object> labelMap = (HashMap<String, Object>) inputMap.get("label");
+                    String text = (String) labelMap.get("text");
+
+                    ZegoLabelInfo labelInfo = new ZegoLabelInfo(text);
+                    labelInfo.left = ZegoUtils.intValue((Number) labelMap.get("left"));
+                    labelInfo.top = ZegoUtils.intValue((Number) labelMap.get("top"));
+
+                    HashMap<String, Object> fontMap = (HashMap<String, Object>) labelMap.get("font");
+                    ZegoFontStyle fontStyle = new ZegoFontStyle();
+                    fontStyle.type = ZegoFontType.getZegoFontType(ZegoUtils.intValue((Number) fontMap.get("type")));
+                    fontStyle.size = ZegoUtils.intValue((Number) fontMap.get("size"));
+                    fontStyle.color = ZegoUtils.intValue((Number) fontMap.get("color"));
+                    fontStyle.transparency = ZegoUtils.intValue((Number) fontMap.get("transparency"));
+
+                    labelInfo.font = fontStyle;
+                    inputObject.label = labelInfo;
+                }
+
+                if (inputMap.containsKey("renderMode")) {
+                    inputObject.renderMode = ZegoMixRenderMode.getZegoMixRenderMode(ZegoUtils.intValue((Number) inputMap.get("renderMode")));
+                }
+                
                 inputListObject.add(inputObject);
             }
             taskObject.setInputList(inputListObject);

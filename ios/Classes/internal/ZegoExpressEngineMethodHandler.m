@@ -426,6 +426,10 @@
     configObject.bitrate = bitrate;
     configObject.fps = fps;
     configObject.codecID = (ZegoVideoCodecID)codecID;
+    
+    if (configMap[@"keyFrameInterval"]) {
+        configObject.keyFrameInterval = [ZegoUtils intValue:configMap[@"keyFrameInterval"]];
+    }
 
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
@@ -1056,6 +1060,30 @@
             unsigned int soundLevelID = [ZegoUtils unsignedIntValue:inputMap[@"soundLevelID"]];
             ZegoMixerInput *inputObject = [[ZegoMixerInput alloc] initWithStreamID:streamID contentType:(ZegoMixerInputContentType)contentType layout:rect soundLevelID:soundLevelID];
             [inputListObject addObject:inputObject];
+            
+            if (inputMap[@"label"]) {
+                NSDictionary *labelMap = inputMap[@"label"];
+                NSString *text = labelMap[@"text"];
+                
+                ZegoLabelInfo *labelInfo = [[ZegoLabelInfo alloc] initWithText:text];
+                labelInfo.left = [ZegoUtils intValue:labelMap[@"left"]];
+                labelInfo.top = [ZegoUtils intValue:labelMap[@"top"]];
+                
+                NSDictionary *fontMap = labelMap[@"font"];
+                ZegoFontStyle *fontStyle = [[ZegoFontStyle alloc] init];
+                fontStyle.type = (ZegoFontType)[ZegoUtils intValue:fontMap[@"type"]];
+                fontStyle.size = [ZegoUtils intValue:fontMap[@"size"]];
+                fontStyle.color = [ZegoUtils intValue:fontMap[@"color"]];
+                fontStyle.transparency = [ZegoUtils intValue:fontMap[@"transparency"]];
+                
+                labelInfo.font = fontStyle;
+                inputObject.label = labelInfo;
+            }
+            
+            if (inputMap[@"renderMode"]) {
+                inputObject.renderMode = (ZegoMixRenderMode)[ZegoUtils intValue:inputMap[@"renderMode"]];
+            }
+            
         }
         [taskObject setInputList:inputListObject];
     }
