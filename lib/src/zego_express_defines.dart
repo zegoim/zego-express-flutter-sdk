@@ -1084,7 +1084,10 @@ class ZegoPublisherConfig {
   /// The Room ID
   String? roomID;
 
-  ZegoPublisherConfig(this.roomID);
+  /// Whether to synchronize the network time when pushing streams. 1 is synchronized with 0 is not synchronized. And must be used with setStreamAlignmentProperty.
+  int? forceSynchronousNetworkTime;
+
+  ZegoPublisherConfig(this.roomID, this.forceSynchronousNetworkTime);
 
 }
 
