@@ -991,6 +991,15 @@
     result(nil);
 }
 
+- (void)muteAllPlayStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+
+    [[ZegoExpressEngine sharedEngine] muteAllPlayStreamAudio:mute];
+
+    result(nil);
+}
+
 - (void)mutePlayStreamVideo:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];

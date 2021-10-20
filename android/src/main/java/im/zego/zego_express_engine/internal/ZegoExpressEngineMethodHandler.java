@@ -1162,6 +1162,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void muteAllPlayStreamAudio(MethodCall call, Result result) {
+
+        boolean mute = ZegoUtils.boolValue((Boolean) call.argument("mute"));
+
+        ZegoExpressEngine.getEngine().muteAllPlayStreamAudio(mute);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mutePlayStreamVideo(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
