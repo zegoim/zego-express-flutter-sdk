@@ -467,24 +467,28 @@
 
 - (void)setAudioConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
 
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
     NSDictionary *configMap = call.arguments[@"config"];
     int bitrate = [ZegoUtils intValue:configMap[@"bitrate"]];
-    int channel = [ZegoUtils intValue:configMap[@"channel"]];
+    int audioChannel = [ZegoUtils intValue:configMap[@"channel"]];
     int codecID = [ZegoUtils intValue:configMap[@"codecID"]];
 
     ZegoAudioConfig *configObject = [[ZegoAudioConfig alloc] init];
     configObject.bitrate = bitrate;
-    configObject.channel = channel;
+    configObject.channel = audioChannel;
     configObject.codecID = (ZegoAudioCodecID)codecID;
 
-    [[ZegoExpressEngine sharedEngine] setAudioConfig:configObject];
+    [[ZegoExpressEngine sharedEngine] setAudioConfig:configObject channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
 
 - (void)getAudioConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    ZegoAudioConfig *configObject = [[ZegoExpressEngine sharedEngine] getAudioConfig];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    ZegoAudioConfig *configObject = [[ZegoExpressEngine sharedEngine] getAudioConfig:channel];
 
     result(@{
         @"bitrate": @(configObject.bitrate),

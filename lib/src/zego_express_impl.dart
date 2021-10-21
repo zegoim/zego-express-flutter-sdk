@@ -214,19 +214,23 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> setAudioConfig(ZegoAudioConfig config) async {
+  Future<void> setAudioConfig(ZegoAudioConfig config,
+    {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setAudioConfig', {
       'config': {
         'bitrate': config.bitrate,
         'channel': config.channel.index,
         'codecID': config.codecID.index
-      }
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 
-  Future<ZegoAudioConfig> getAudioConfig() async {
+  Future<ZegoAudioConfig> getAudioConfig({ZegoPublishChannel? channel}) async {
     final Map<dynamic, dynamic> map =
-        await _channel.invokeMethod('getAudioConfig');
+        await _channel.invokeMethod('getAudioConfig', {
+          'channel': channel?.index ?? ZegoPublishChannel.Main.index
+        });
 
     return ZegoAudioConfig(
         map['bitrate'],
