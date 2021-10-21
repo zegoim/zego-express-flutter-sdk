@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.8.1
+
+1. Add the parameter channel in audio config interface.
+
 ## 2.8.0
 
 1. Add custom audio pre-processing related function.
