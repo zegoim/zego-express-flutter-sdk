@@ -111,23 +111,25 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setAppOrientation(orientation, channel: channel);
   }
 
-  /// Sets up the audio configurations.
+  /// Sets up the audio configurations (for the specified channel). 
   ///
   /// You can set the combined value of the audio codec, bit rate, and audio channel through this function. If this function is not called, the default is standard quality mode. Should be used before publishing.
   /// If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
   ///
   /// - [config] Audio config
-  Future<void> setAudioConfig(ZegoAudioConfig config) async {
-    return await ZegoExpressImpl.instance.setAudioConfig(config);
+  /// - [channel] Publish stream channel
+  Future<void> setAudioConfig(ZegoAudioConfig config, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setAudioConfig(config, channel: channel);
   }
 
-  /// Gets the current audio configurations.
+  /// Gets the current audio configurations (for the specified channel). 
   ///
   /// You can get the current audio codec, bit rate, and audio channel through this function.
   ///
+  /// - [channel] Publish stream channel
   /// - Returns Audio config
-  Future<ZegoAudioConfig> getAudioConfig() async {
-    return await ZegoExpressImpl.instance.getAudioConfig();
+  Future<ZegoAudioConfig> getAudioConfig({ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.getAudioConfig(channel: channel);
   }
 
   /// Set encryption key for the publishing stream.
