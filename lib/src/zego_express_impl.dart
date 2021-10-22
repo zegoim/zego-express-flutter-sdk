@@ -97,7 +97,7 @@ class ZegoExpressImpl {
   Future<void> setDummyCaptureImagePath(String filePath, ZegoPublishChannel channel) async {
     return await _channel.invokeMethod('setDummyCaptureImagePath', {
       'filePath': filePath, 
-      'channel': channel
+      'channel': channel.index
     });
   }
 
