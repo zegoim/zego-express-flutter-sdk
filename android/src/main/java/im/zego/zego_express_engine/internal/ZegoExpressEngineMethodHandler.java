@@ -1576,7 +1576,7 @@ public class ZegoExpressEngineMethodHandler {
         ZegoAudioRoute route = ZegoExpressEngine.getEngine().getAudioRouteType();
 
         // TODO: Fix the issue of native returning to null
-        if (route) {
+        if (route != null) {
             result.success(route.value());
         } else {
             result.success(0);
