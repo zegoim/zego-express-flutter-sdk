@@ -1,5 +1,8 @@
 # Change Log
 
+# 2.8.2
+1. Fix bugs on the window platform.
+
 ## 2.8.1
 
 1. Add the parameter channel in audio config interface.
