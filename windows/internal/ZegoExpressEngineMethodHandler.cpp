@@ -325,11 +325,11 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
     if (configMap.size() > 0) {
 
         EXPRESS::ZegoPlayerConfig config;
-        config.resourceMode = (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(argument[FTValue("resourceMode")]);
+        config.resourceMode = (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(configMap[FTValue("resourceMode")]);
 
         std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
         if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("cdnConfig")])) {
-            auto cdnConfigMap = std::get<flutter::EncodableMap>(argument[FTValue("cdnConfig")]);
+            auto cdnConfigMap = std::get<flutter::EncodableMap>(configMap[FTValue("cdnConfig")]);
             if (cdnConfigMap.size() > 0) {
                 cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
                 cdnConfigPtr->url = std::get<std::string>(cdnConfigMap[FTValue("url")]);
