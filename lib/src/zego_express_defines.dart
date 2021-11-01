@@ -698,6 +698,36 @@ class ZegoCustomAudioConfig {
 
 }
 
+/// Profile for create engine
+///
+/// Profile for create engine
+class ZegoEngineProfile {
+
+  /// Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
+  int appID;
+
+  /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
+  String appSign;
+
+  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
+  ZegoScenario scenario;
+
+  /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
+  bool? enablePlatformView;
+
+  ZegoEngineProfile(this.appID, this.appSign, this.scenario, this.enablePlatformView);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'appID': this.appID,
+      'appSign': this.appSign,
+      'scenario': this.scenario.index,
+      'enablePlatformView': this.enablePlatformView
+    };
+  }
+
+}
+
 /// Advanced engine configuration.
 class ZegoEngineConfig {
 
