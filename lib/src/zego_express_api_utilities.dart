@@ -39,7 +39,7 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.stopNetworkProbe();
   }
 
-  /// Start network speed test.
+  /// Start network speed test. (Support to set the speed test interval)
   ///
   /// This function should be called before [startPublishingStream], if you call [startPublishingStream] while speed testing, the speed test will automatically stop.
   /// Developers can listen to the [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be called back every 3 seconds.
@@ -47,8 +47,9 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// If this function is repeatedly called multiple times, the last invoke's configuration will be used.
   ///
   /// - [config] Network speed test configuration.
-  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config) async {
-    return await ZegoExpressImpl.instance.startNetworkSpeedTest(config);
+  /// - [interval] Interval of network speed test. in milliseconds. Default is 3000 ms."
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config, {int? interval}) async {
+    return await ZegoExpressImpl.instance.startNetworkSpeedTest(config, interval: interval);
   }
 
   /// Stop network speed test.

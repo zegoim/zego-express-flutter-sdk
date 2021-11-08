@@ -2907,8 +2907,6 @@
         result(resultMap);
         
     }];
-
-    result(nil);
 }
 
 - (void)stopNetworkProbe:(FlutterMethodCall *)call result:(FlutterResult)result {

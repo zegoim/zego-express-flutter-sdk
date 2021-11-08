@@ -3262,8 +3262,6 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(resultMap);
             }
         });
-
-        result.success(null);
     }
 
     @SuppressWarnings("unused")

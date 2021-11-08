@@ -703,8 +703,10 @@ class ZegoExpressImpl {
 
   Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {
     return await _channel.invokeMethod('startSoundLevelMonitor', {
-      'millisecond': config?.millisecond ?? 100,
-      'enableVAD': config?.enableVAD ?? false
+      'config': {
+        'millisecond': config?.millisecond ?? 100,
+        'enableVAD': config?.enableVAD ?? false
+      }
     });
   }
 
@@ -1130,14 +1132,15 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('stopNetworkProbe');
   }
 
-  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config) async {
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config, {int? interval}) async {
     return await _channel.invokeMethod('startNetworkSpeedTest', {
       'config': {
         'testUplink': config.testUplink,
         'expectedUplinkBitrate': config.expectedUplinkBitrate,
         'testDownlink': config.testDownlink,
         'expectedDownlinkBitrate': config.expectedDownlinkBitrate
-      }
+      },
+      'interval': interval ?? 3000
     });
   }
 
