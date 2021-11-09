@@ -1484,7 +1484,7 @@
 
 - (void)stopAudioSpectrumMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    [[ZegoExpressEngine sharedEngine] stopSoundLevelMonitor];
+    [[ZegoExpressEngine sharedEngine] stopAudioSpectrumMonitor];
 
     result(nil);
 }
