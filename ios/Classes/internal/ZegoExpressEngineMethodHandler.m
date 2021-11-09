@@ -2719,7 +2719,7 @@
     if (rangeAudio) {
         self.rangeAudioInstance = rangeAudio;
         [self.rangeAudioInstance setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-        result(0);
+        result(@(0));
     } else {
         result(@(-1));
     }
