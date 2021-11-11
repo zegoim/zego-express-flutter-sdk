@@ -3239,7 +3239,7 @@ public class ZegoExpressEngineMethodHandler {
                 HashMap<String, Object> httpProbeResultMap = new HashMap<>();
                 HashMap<String, Object> tcpProbeResultMap = new HashMap<>();
                 HashMap<String, Object> udpProbeResultMap = new HashMap<>();
-                HashMap<String, Object> tracerouteResult = new HashMap<>();
+                HashMap<String, Object> tracerouteResultMap = new HashMap<>();
 
                 httpProbeResultMap.put("errorCode", zegoNetworkProbeResult.httpProbeResult.errorCode);
                 httpProbeResultMap.put("requestCostTime", zegoNetworkProbeResult.httpProbeResult.requestCostTime);
@@ -3251,13 +3251,13 @@ public class ZegoExpressEngineMethodHandler {
                 udpProbeResultMap.put("errorCode", zegoNetworkProbeResult.udpProbeResult.errorCode);
                 udpProbeResultMap.put("rtt", zegoNetworkProbeResult.udpProbeResult.rtt);
 
-                udpProbeResultMap.put("errorCode", zegoNetworkProbeResult.tracerouteResult.errorCode);
-                udpProbeResultMap.put("tracerouteCostTime", zegoNetworkProbeResult.tracerouteResult.tracerouteCostTime);
+                tracerouteResultMap.put("errorCode", zegoNetworkProbeResult.tracerouteResult.errorCode);
+                tracerouteResultMap.put("tracerouteCostTime", zegoNetworkProbeResult.tracerouteResult.tracerouteCostTime);
 
                 resultMap.put("httpProbeResult", httpProbeResultMap);
-                resultMap.put("tcpProbeResultMap", httpProbeResultMap);
-                resultMap.put("udpProbeResultMap", httpProbeResultMap);
-                resultMap.put("tracerouteResult", httpProbeResultMap);
+                resultMap.put("tcpProbeResult", tcpProbeResultMap);
+                resultMap.put("udpProbeResult", udpProbeResultMap);
+                resultMap.put("tracerouteResult", tracerouteResultMap);
 
                 result.success(resultMap);
             }

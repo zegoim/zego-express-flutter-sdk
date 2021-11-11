@@ -35,8 +35,8 @@ class ZegoConfig {
   Future<void> init() async {
     SharedPreferences config = await SharedPreferences.getInstance();
 
-    this.appID = config.getInt('appID') ?? 0;
-    this.appSign = config.getString('appSign') ?? '';
+    this.appID = config.getInt('appID') ?? 1536436739;
+    this.appSign = config.getString('appSign') ?? '7bcdeb5ec284e40eaa271a848e7f8c23b37c998b48d895f12f395495dba32f5d';
     this.isTestEnv = config.getBool('isTestEnv') ?? true;
     this.scenario = config.getInt('scenario') != null
         ? ZegoScenario.values[config.getInt('scenario') ?? 0]
