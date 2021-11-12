@@ -236,13 +236,15 @@ void ZegoExpressEngineMethodHandler::stopPreview(flutter::EncodableMap& argument
 void ZegoExpressEngineMethodHandler::setAudioConfig(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
     auto configMap = std::get<flutter::EncodableMap>(argument[FTValue("config")]);
     EXPRESS::ZegoAudioConfig config;
     config.bitrate = std::get<int32_t>(configMap[FTValue("bitrate")]);
     config.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(configMap[FTValue("channel")]);
     config.codecID = (EXPRESS::ZegoAudioCodecID)std::get<int32_t>(configMap[FTValue("codecID")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->setAudioConfig(config);
+    EXPRESS::ZegoExpressSDK::getEngine()->setAudioConfig(config, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success();
 }
@@ -250,7 +252,9 @@ void ZegoExpressEngineMethodHandler::setAudioConfig(flutter::EncodableMap& argum
 void ZegoExpressEngineMethodHandler::getAudioConfig(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto config = EXPRESS::ZegoExpressSDK::getEngine()->getAudioConfig();
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    auto config = EXPRESS::ZegoExpressSDK::getEngine()->getAudioConfig((EXPRESS::ZegoPublishChannel)channel);
     flutter::EncodableMap retMap;
     retMap[FTValue("bitrate")] = FTValue(config.bitrate);
     retMap[FTValue("channel")] = FTValue(config.channel);
