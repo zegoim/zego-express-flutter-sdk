@@ -2141,7 +2141,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   @override
   Future<ZegoNetWorkResourceCache> getNetWorkResourceCache() async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod(
-      'mediaPlayerGetNetWorkResourceCache');
+      'mediaPlayerGetNetWorkResourceCache', {'index': _index});
     
     return ZegoNetWorkResourceCache(map['time'], map['size']);
   }
@@ -2157,6 +2157,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   @override
   Future<void> setNetWorkResourceMaxCache(int time, int size) async {
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetNetWorkResourceMaxCache', {
+      'index': _index,
       'time': time,
       'size': size
     });
@@ -2165,6 +2166,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   @override
   Future<void> setPlaySpeed(double speed) async {
     return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetPlaySpeed', {
+      'index': _index,
       'speed': speed
     });
   }
@@ -2172,7 +2174,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   @override
   Future<ZegoMediaPlayerTakeSnapshotResult> takeSnapshot() async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod(
-        'mediaPlayerTakeSnapshot'
+        'mediaPlayerTakeSnapshot', {'index': _index}
     );
 
     return ZegoMediaPlayerTakeSnapshotResult(map['errorCode'],
