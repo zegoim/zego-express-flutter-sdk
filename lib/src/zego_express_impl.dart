@@ -1125,7 +1125,26 @@ class ZegoExpressImpl {
         'enableTraceroute': config.enableTraceroute
       }
     });
-    return ZegoNetworkProbeResult.fromMap(map);
+
+    ZegoNetworkProbeHttpResult? httpProbeResult;
+    ZegoNetworkProbeTcpResult? tcpProbeResult;
+    ZegoNetworkProbeUdpResult? udpProbeResult;
+    ZegoNetworkProbeTracerouteResult? tracerouteResult;
+
+    if (map['httpProbeResult'] != null) {
+      httpProbeResult = ZegoNetworkProbeHttpResult.fromMap(map['httpProbeResult']);
+    }
+    if (map['tcpProbeResult'] != null) {
+      tcpProbeResult = ZegoNetworkProbeTcpResult.fromMap(map['tcpProbeResult']);
+    }
+    if (map['udpProbeResult'] != null) {
+      udpProbeResult = ZegoNetworkProbeUdpResult.fromMap(map['udpProbeResult']);
+    }
+    if (map['tracerouteResult'] != null) {
+      tracerouteResult = ZegoNetworkProbeTracerouteResult.fromMap(map['tracerouteResult']);
+    }
+
+    return ZegoNetworkProbeResult(httpProbeResult, tcpProbeResult, udpProbeResult, tracerouteResult);
   }
 
   Future<void> stopNetworkProbe() async {

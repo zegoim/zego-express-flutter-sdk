@@ -3241,23 +3241,30 @@ public class ZegoExpressEngineMethodHandler {
                 HashMap<String, Object> udpProbeResultMap = new HashMap<>();
                 HashMap<String, Object> tracerouteResultMap = new HashMap<>();
 
-                httpProbeResultMap.put("errorCode", zegoNetworkProbeResult.httpProbeResult.errorCode);
-                httpProbeResultMap.put("requestCostTime", zegoNetworkProbeResult.httpProbeResult.requestCostTime);
+                if (zegoNetworkProbeResult.httpProbeResult != null) {
+                    httpProbeResultMap.put("errorCode", zegoNetworkProbeResult.httpProbeResult.errorCode);
+                    httpProbeResultMap.put("requestCostTime", zegoNetworkProbeResult.httpProbeResult.requestCostTime);
+                    resultMap.put("httpProbeResult", httpProbeResultMap);
+                }
 
-                tcpProbeResultMap.put("errorCode", zegoNetworkProbeResult.tcpProbeResult.errorCode);
-                tcpProbeResultMap.put("connectCostTime", zegoNetworkProbeResult.tcpProbeResult.connectCostTime);
-                tcpProbeResultMap.put("rtt", zegoNetworkProbeResult.tcpProbeResult.rtt);
+                if (zegoNetworkProbeResult.tcpProbeResult != null) {
+                    tcpProbeResultMap.put("errorCode", zegoNetworkProbeResult.tcpProbeResult.errorCode);
+                    tcpProbeResultMap.put("connectCostTime", zegoNetworkProbeResult.tcpProbeResult.connectCostTime);
+                    tcpProbeResultMap.put("rtt", zegoNetworkProbeResult.tcpProbeResult.rtt);
+                    resultMap.put("tcpProbeResult", tcpProbeResultMap);
+                }
 
-                udpProbeResultMap.put("errorCode", zegoNetworkProbeResult.udpProbeResult.errorCode);
-                udpProbeResultMap.put("rtt", zegoNetworkProbeResult.udpProbeResult.rtt);
+                if (zegoNetworkProbeResult.udpProbeResult != null) {
+                    udpProbeResultMap.put("errorCode", zegoNetworkProbeResult.udpProbeResult.errorCode);
+                    udpProbeResultMap.put("rtt", zegoNetworkProbeResult.udpProbeResult.rtt);
+                    resultMap.put("udpProbeResult", udpProbeResultMap);
+                }
 
-                tracerouteResultMap.put("errorCode", zegoNetworkProbeResult.tracerouteResult.errorCode);
-                tracerouteResultMap.put("tracerouteCostTime", zegoNetworkProbeResult.tracerouteResult.tracerouteCostTime);
-
-                resultMap.put("httpProbeResult", httpProbeResultMap);
-                resultMap.put("tcpProbeResult", tcpProbeResultMap);
-                resultMap.put("udpProbeResult", udpProbeResultMap);
-                resultMap.put("tracerouteResult", tracerouteResultMap);
+                if (zegoNetworkProbeResult.tracerouteResult != null) {
+                    tracerouteResultMap.put("errorCode", zegoNetworkProbeResult.tracerouteResult.errorCode);
+                    tracerouteResultMap.put("tracerouteCostTime", zegoNetworkProbeResult.tracerouteResult.tracerouteCostTime);
+                    resultMap.put("tracerouteResult", tracerouteResultMap);
+                }
 
                 result.success(resultMap);
             }

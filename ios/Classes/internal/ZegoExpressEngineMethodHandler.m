@@ -2875,34 +2875,41 @@
     config.enableTraceroute = [ZegoUtils boolValue:configMap[@"enableTraceroute"]];
 
     [[ZegoExpressEngine sharedEngine] startNetworkProbe:config callback:^(int errorCode, ZegoNetworkProbeResult * _Nonnull probeResult) {
+
+        NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+
+        if (probeResult.httpProbeResult) {
+            NSDictionary *httpProbeResultMap = @{
+                @"errorCode": @(probeResult.httpProbeResult.errorCode),
+                @"requestCostTime": @(probeResult.httpProbeResult.requestCostTime)
+            };
+            resultMap[@"httpProbeResult"] = httpProbeResultMap;
+        }
         
-        NSDictionary *httpProbeResultMap = @{
-            @"errorCode": @(probeResult.httpProbeResult.errorCode),
-            @"requestCostTime": @(probeResult.httpProbeResult.requestCostTime)
-        };
-        
-        NSDictionary *tcpProbeResultMap = @{
-            @"errorCode": @(probeResult.tcpProbeResult.errorCode),
-            @"rtt": @(probeResult.tcpProbeResult.rtt),
-            @"connectCostTime": @(probeResult.tcpProbeResult.connectCostTime),
-        };
-        
-        NSDictionary *udpProbeResultMap = @{
-            @"errorCode": @(probeResult.udpProbeResult.errorCode),
-            @"rtt": @(probeResult.udpProbeResult.rtt)
-        };
-        
-        NSDictionary *tracerouteResultMap = @{
-            @"errorCode": @(probeResult.tracerouteResult.errorCode),
-            @"tracerouteCostTime": @(probeResult.tracerouteResult.tracerouteCostTime)
-        };
-        
-        NSDictionary *resultMap = @{
-            @"httpProbeResult": httpProbeResultMap,
-            @"tcpProbeResult": tcpProbeResultMap,
-            @"udpProbeResult": udpProbeResultMap,
-            @"tracerouteResult": tracerouteResultMap
-        };
+        if (probeResult.tcpProbeResult) {
+            NSDictionary *tcpProbeResultMap = @{
+                @"errorCode": @(probeResult.tcpProbeResult.errorCode),
+                @"rtt": @(probeResult.tcpProbeResult.rtt),
+                @"connectCostTime": @(probeResult.tcpProbeResult.connectCostTime),
+            };
+            resultMap[@"tcpProbeResult"] = tcpProbeResultMap;
+        }
+
+        if (probeResult.udpProbeResult) {
+            NSDictionary *udpProbeResultMap = @{
+                @"errorCode": @(probeResult.udpProbeResult.errorCode),
+                @"rtt": @(probeResult.udpProbeResult.rtt)
+            };
+            resultMap[@"udpProbeResult"] = udpProbeResultMap;
+        }
+
+        if (probeResult.tracerouteResult) {
+            NSDictionary *tracerouteResultMap = @{
+                @"errorCode": @(probeResult.tracerouteResult.errorCode),
+                @"tracerouteCostTime": @(probeResult.tracerouteResult.tracerouteCostTime)
+            };
+            resultMap[@"tracerouteResult"] = tracerouteResultMap;
+        }
         
         result(resultMap);
         

@@ -1978,24 +1978,18 @@ class ZegoNetworkProbeTracerouteResult {
 class ZegoNetworkProbeResult {
 
   /// http probe result
-  ZegoNetworkProbeHttpResult httpProbeResult;
+  ZegoNetworkProbeHttpResult? httpProbeResult;
 
   /// tcp probe result
-  ZegoNetworkProbeTcpResult tcpProbeResult;
+  ZegoNetworkProbeTcpResult? tcpProbeResult;
 
   /// udp probe result
-  ZegoNetworkProbeUdpResult udpProbeResult;
+  ZegoNetworkProbeUdpResult? udpProbeResult;
 
   /// traceroute result
-  ZegoNetworkProbeTracerouteResult tracerouteResult;
+  ZegoNetworkProbeTracerouteResult? tracerouteResult;
 
   ZegoNetworkProbeResult(this.httpProbeResult, this.tcpProbeResult, this.udpProbeResult, this.tracerouteResult);
-
-  ZegoNetworkProbeResult.fromMap(Map<dynamic, dynamic> map):
-    httpProbeResult = ZegoNetworkProbeHttpResult.fromMap(map['httpProbeResult']),
-    tcpProbeResult = ZegoNetworkProbeTcpResult.fromMap(map['tcpProbeResult']),
-    udpProbeResult = ZegoNetworkProbeUdpResult.fromMap(map['udpProbeResult']),
-    tracerouteResult = ZegoNetworkProbeTracerouteResult.fromMap(map['tracerouteResult']);
 
 }
 

@@ -433,22 +433,22 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
-        // @Override
-        // public void onPublisherVideoEncoderChanged(ZegoVideoCodecID fromCodecID, ZegoVideoCodecID toCodecID, ZegoPublishChannel channel) {
-        //     super.onPublisherVideoEncoderChanged(fromCodecID, toCodecID, channel);
-        //     ZegoLog.log("[onPublisherVideoEncoderChanged] fromCodecID: %s, toCodecID: %s, channel: %s", fromCodecID.name(), toCodecID.name(), channel.name());
+        @Override
+        public void onPublisherVideoEncoderChanged(ZegoVideoCodecID fromCodecID, ZegoVideoCodecID toCodecID, ZegoPublishChannel channel) {
+            super.onPublisherVideoEncoderChanged(fromCodecID, toCodecID, channel);
+            ZegoLog.log("[onPublisherVideoEncoderChanged] fromCodecID: %s, toCodecID: %s, channel: %s", fromCodecID.name(), toCodecID.name(), channel.name());
 
-        //     if (guardSink()) { return; }
+            if (guardSink()) { return; }
 
-        //     HashMap<String, Object> map = new HashMap<>();
+            HashMap<String, Object> map = new HashMap<>();
 
-        //     map.put("method", "onPublisherVideoEncoderChanged");
-        //     map.put("fromCodecID", fromCodecID.value());
-        //     map.put("toCodecID", toCodecID.value());
-        //     map.put("channel", channel.value());
+            map.put("method", "onPublisherVideoEncoderChanged");
+            map.put("fromCodecID", fromCodecID.value());
+            map.put("toCodecID", toCodecID.value());
+            map.put("channel", channel.value());
 
-        //     sink.success(map);
-        // }
+            sink.success(map);
+        }
 
 
         /* Player */
