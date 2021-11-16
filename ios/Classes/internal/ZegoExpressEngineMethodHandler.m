@@ -2814,9 +2814,9 @@
 
     if (self.rangeAudioInstance) {
         NSString *userID = call.arguments[@"userID"];
-        FlutterStandardTypedData *positionData = call.arguments[@"position"];
+        NSArray<NSNumber *> *positionArray = call.arguments[@"position"];
         float position[3];
-        [positionData.data getBytes:position length:sizeof(position)];
+        convertFloatArray(position, positionArray);
         [self.rangeAudioInstance updateAudioSource:userID position:position];
         result(nil);
 
@@ -2829,18 +2829,18 @@
 
     if (self.rangeAudioInstance) {
 
-        FlutterStandardTypedData *positionData = call.arguments[@"position"];
-        FlutterStandardTypedData *axisForwardData = call.arguments[@"axisForward"];
-        FlutterStandardTypedData *axisRightData = call.arguments[@"axisRight"];
-        FlutterStandardTypedData *axisUpData = call.arguments[@"axisUp"];
+        NSArray<NSNumber *> *positionArray = call.arguments[@"position"];
+        NSArray<NSNumber *> *axisForwardArray = call.arguments[@"axisForward"];
+        NSArray<NSNumber *> *axisRightArray = call.arguments[@"axisRight"];
+        NSArray<NSNumber *> *axisUpArray = call.arguments[@"axisUp"];
         float position[3];
         float axisForward[3];
         float axisRight[3];
         float axisUp[3];
-        [positionData.data getBytes:position length:sizeof(position)];
-        [axisForwardData.data getBytes:axisForward length:sizeof(axisForward)];
-        [axisRightData.data getBytes:axisRight length:sizeof(axisRight)];
-        [axisUpData.data getBytes:axisUp length:sizeof(axisUp)];
+        convertFloatArray(position, positionArray);
+        convertFloatArray(axisForward, axisForwardArray);
+        convertFloatArray(axisRight, axisRightArray);
+        convertFloatArray(axisUp, axisUpArray);
         [self.rangeAudioInstance updateSelfPosition:position axisForward:axisForward axisRight:axisRight axisUp:axisUp];
         result(nil);
 
@@ -3020,6 +3020,12 @@
     ZGLog(@"*** Plugin Version: %@", version);
     
     result(nil);
+}
+
+void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
+    for (int i = 0; i < list.count; i++) {
+        position[i] = list[i].floatValue;
+    }
 }
 
 @end

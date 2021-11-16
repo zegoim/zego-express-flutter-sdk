@@ -3174,8 +3174,8 @@ public class ZegoExpressEngineMethodHandler {
 
         if (rangeAudioInstance != null) {
             String userID = call.argument("userID");
-            float[] position = call.argument("position");
-            rangeAudioInstance.updateAudioSource(userID, position);
+            ArrayList<Double> positionList = call.argument("position");
+            rangeAudioInstance.updateAudioSource(userID, converFloatArray(positionList));
             result.success(null);
 
         } else {
@@ -3187,11 +3187,11 @@ public class ZegoExpressEngineMethodHandler {
     public static void rangeAudioUpdateSelfPosition(MethodCall call, Result result) {
 
         if (rangeAudioInstance != null) {
-            float[] position = call.argument("position");
-            float[] axisForward = call.argument("axisForward");
-            float[] axisRight = call.argument("axisRight");
-            float[] axisUp = call.argument("axisUp");
-            rangeAudioInstance.updateSelfPosition(position, axisForward, axisRight, axisUp);
+            ArrayList<Double> position = call.argument("position");
+            ArrayList<Double> axisForward = call.argument("axisForward");
+            ArrayList<Double> axisRight = call.argument("axisRight");
+            ArrayList<Double> axisUp = call.argument("axisUp");
+            rangeAudioInstance.updateSelfPosition(converFloatArray(position), converFloatArray(axisForward), converFloatArray(axisRight), converFloatArray(axisUp));
             result.success(null);
 
         } else {
@@ -3411,6 +3411,15 @@ public class ZegoExpressEngineMethodHandler {
         } catch (InvocationTargetException e) {
             Log.e("ZEGO", "[Flutter] Set platform language failed, invocation failed.");
         }
+    }
+
+    private static float[] converFloatArray(ArrayList<Double> list) {
+        float[] position = new float[list.size()];
+        int i = 0;
+        for (Double f : list) {
+            position[i++] = (float) (f != null ? f : Double.NaN); // Or whatever default you want.
+        }
+        return position;
     }
 
     @SuppressWarnings("unused")
