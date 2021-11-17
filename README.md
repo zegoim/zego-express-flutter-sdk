@@ -145,7 +145,8 @@ class _MyAppState extends State<MyApp> {
         });
 
         // Create ZegoExpressEngine (Init SDK)
-        ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario);
+        ZegoEngineProfile profile = ZegoEngineProfile(appID, appSign, scenario, enablePlatformView);
+        ZegoExpressEngine.createEngineWithProfile(profile);
     }
 
     @override

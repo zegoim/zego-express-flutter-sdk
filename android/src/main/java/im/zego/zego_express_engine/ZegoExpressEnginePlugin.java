@@ -140,6 +140,8 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             if (method == null) {
                 if (call.method.equals("createEngine")) {
                     method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
+                } else if (call.method.equals("createEngineWithProfile")) {
+                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
                 } else {
                     method = this.manager.getMethod(call.method, MethodCall.class, Result.class);
                 }
@@ -147,6 +149,8 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             }
 
             if (call.method.equals("createEngine")) {
+                method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
+            } else if (call.method.equals("createEngineWithProfile")) {
                 method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
             } else {
                 method.invoke(null, call, result);

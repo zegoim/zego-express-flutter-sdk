@@ -31,6 +31,18 @@ class ZegoExpressImpl {
 
   /* Main */
 
+  static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
+    _registerEventHandler();
+
+    await _channel.invokeMethod('createEngineWithProfile', {'profile': profile.toMap()});
+
+    await _channel.invokeMethod('setPluginVersion', {
+      'version': Global.pluginVersion
+    });
+    
+    return null;
+  }
+
   static Future<void> createEngine(
       int appID, String appSign, bool isTestEnv, ZegoScenario scenario,
       {bool? enablePlatformView}) async {

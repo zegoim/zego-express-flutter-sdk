@@ -15,11 +15,23 @@ class ZegoExpressEngine {
   ///
   /// The engine needs to be created and initialized before calling other functions. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
   ///
+  /// - [profile] The basic configuration information is used to create the engine.
+  static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
+    return await ZegoExpressImpl.createEngineWithProfile(profile);
+  }
+
+  /// [Deprecated] Creates a singleton instance of ZegoExpressEngine.
+  ///
+  /// Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
+  /// The engine needs to be created and initialized before calling other functions. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  ///
+  /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
   /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
   /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
   /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
+  @Deprecated('Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.')
   static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
     return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
   }

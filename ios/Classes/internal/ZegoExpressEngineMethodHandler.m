@@ -50,6 +50,50 @@
     result([ZegoExpressEngine getVersion]);
 }
 
+- (void)createEngineWithProfile:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *profileMap = call.arguments[@"profile"];
+    unsigned int appID = [ZegoUtils unsignedIntValue:profileMap[@"appID"]];
+    NSString *appSign = profileMap[@"appSign"];
+    // BOOL isTestEnv = [ZegoUtils boolValue:call.arguments[@"isTestEnv"]];
+    int scenario = [ZegoUtils intValue:profileMap[@"scenario"]];
+
+    _enablePlatformView = [ZegoUtils boolValue:profileMap[@"enablePlatformView"]];
+    _registrar = call.arguments[@"registrar"];
+
+    // Set eventSink for ZegoExpressEngineEventHandler
+    FlutterEventSink sink = call.arguments[@"eventSink"];
+    if (!sink) {
+        ZGError(@"[createEngineWithProfile] FlutterEventSink is nil");
+    }
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
+
+    // Create engine
+    ZegoEngineProfile *profile = [ZegoEngineProfile new];
+    profile.appID = appID;
+    profile.appSign = appSign;
+    profile.scenario = (ZegoScenario)scenario;
+    [ZegoExpressEngine createEngineWithProfile:profile eventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+
+    // Set platform language to dart
+    SEL selector = NSSelectorFromString(@"setPlatformLanguage:");
+    if ([ZegoExpressEngine respondsToSelector:selector]) {
+        ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
+    }
+
+    [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+
+    // Init texture renderer
+    if (!self.enablePlatformView) {
+        [[ZegoTextureRendererController sharedInstance] initController];
+    }
+
+    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, scenario);
+
+    result(nil);
+}
+
 - (void)createEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     unsigned int appID = [ZegoUtils unsignedIntValue:call.arguments[@"appID"]];

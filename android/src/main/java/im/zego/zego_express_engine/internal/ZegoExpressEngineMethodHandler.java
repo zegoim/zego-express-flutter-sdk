@@ -145,6 +145,48 @@ public class ZegoExpressEngineMethodHandler {
 
     private static ZegoRangeAudio rangeAudioInstance = null;
 
+    @SuppressWarnings("unused")
+    public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+        HashMap<String, Object> profileMap = call.argument("profile");
+        long appID = ZegoUtils.longValue((Number)profileMap.argument("appID"));
+        String appSign = profileMap.argument("appSign");
+        ZegoScenario scenario = ZegoScenario.getZegoScenario(ZegoUtils.intValue((Number)profileMap.argument("scenario")));
+
+        enablePlatformView = ZegoUtils.boolValue((Boolean) profileMap.argument("enablePlatformView"));
+
+        if (binding != null) {
+            application = (Application) binding.getApplicationContext();
+            textureRegistry = binding.getTextureRegistry();
+        } else {
+            application = (Application) reg.context();
+            textureRegistry = reg.textures();
+        }
+
+        registrar = reg;
+        pluginBinding = binding;
+
+        // Set eventSink for ZegoExpressEngineEventHandler
+        if (sink == null) {
+            ZegoLog.error("[createEngine] FlutterEventSink is null");
+        }
+        ZegoExpressEngineEventHandler.getInstance().sink = sink;
+
+        ZegoEngineProfile profile = new ZegoEngineProfile();
+        profile.appID = appID;
+        profile.appSign = appSign;
+        profile.scenario = scenario;
+        profile.application = application;
+        ZegoExpressEngine.createEngine(profile, ZegoExpressEngineEventHandler.getInstance().eventHandler);
+        setPlatformLanguage();
+
+        ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
+        ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
+
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, scenario.name());
+
+        result.success(null);
+    }
+
     /* Main */
     @SuppressWarnings("unused")
     public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
