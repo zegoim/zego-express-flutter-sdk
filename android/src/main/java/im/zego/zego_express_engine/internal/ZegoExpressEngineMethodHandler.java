@@ -95,6 +95,7 @@ import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
+import im.zego.zegoexpress.entity.ZegoEngineProfile;
 import im.zego.zegoexpress.entity.ZegoFontStyle;
 import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
@@ -148,11 +149,11 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
         HashMap<String, Object> profileMap = call.argument("profile");
-        long appID = ZegoUtils.longValue((Number)profileMap.argument("appID"));
-        String appSign = profileMap.argument("appSign");
-        ZegoScenario scenario = ZegoScenario.getZegoScenario(ZegoUtils.intValue((Number)profileMap.argument("scenario")));
+        long appID = ZegoUtils.longValue((Number)profileMap.get("appID"));
+        String appSign = (String) profileMap.get("appSign");
+        ZegoScenario scenario = ZegoScenario.getZegoScenario(ZegoUtils.intValue((Number)profileMap.get("scenario")));
 
-        enablePlatformView = ZegoUtils.boolValue((Boolean) profileMap.argument("enablePlatformView"));
+        enablePlatformView = ZegoUtils.boolValue((Boolean) profileMap.get("enablePlatformView"));
 
         if (binding != null) {
             application = (Application) binding.getApplicationContext();
@@ -645,8 +646,6 @@ public class ZegoExpressEngineMethodHandler {
             result.error("setAudioConfig_Null_Config".toUpperCase(), "[setAudioConfig] Null config", null);
             return;
         }
-
-        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         int bitrate = ZegoUtils.intValue((Number) configMap.get("bitrate"));
         int audioChannel = ZegoUtils.intValue((Number) configMap.get("channel"));
