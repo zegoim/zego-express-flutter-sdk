@@ -1,5 +1,21 @@
 # Change Log
 
+
+## 2.13.0
+
+### **New Features**
+1. Features are aligned with Native SDK 2.13.0 version.
+
+    Support basic push and pull streaming, log in to multiple rooms, room real-time messaging, audio and video live broadcast, 3A processing, CDN direct push retweet, mixed streaming, media player, audio player, game voice, flow control, user control authority and other functions.
+
+    It does not currently support defined video capture, custom video rendering, custom video pre-processing, and audio mixing functions.
+
+### **Deleted**
+
+1. Deprecated the [createEngine] function, please use [createEngineWithProfile] instead.
+
+    In order to reduce the developer's understanding of the environment, the test environment was abandoned and the environment was used uniformly. The original [createEngine] interface has been abandoned in 2.13.0 and above. Please use the same interface without the `isTestEnv` parameter instead.
+
 ## 2.8.3
 
 1. Add audio config parameter adaptation window.
