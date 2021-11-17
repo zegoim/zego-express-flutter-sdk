@@ -604,6 +604,8 @@ public class ZegoExpressEngineMethodHandler {
             return;
         }
 
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
         int bitrate = ZegoUtils.intValue((Number) configMap.get("bitrate"));
         int audioChannel = ZegoUtils.intValue((Number) configMap.get("channel"));
         int codecID = ZegoUtils.intValue((Number) configMap.get("codecID"));
@@ -621,7 +623,9 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void getAudioConfig(MethodCall call, Result result) {
 
-        ZegoAudioConfig config = ZegoExpressEngine.getEngine().getAudioConfig();
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoAudioConfig config = ZegoExpressEngine.getEngine().getAudioConfig(channel);
 
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("bitrate", config.bitrate);

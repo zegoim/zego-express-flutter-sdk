@@ -249,9 +249,11 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<ZegoAudioConfig> getAudioConfig() async {
+  Future<ZegoAudioConfig> getAudioConfig({ZegoPublishChannel? channel}) async {
     final Map<dynamic, dynamic> map =
-        await _channel.invokeMethod('getAudioConfig');
+        await _channel.invokeMethod('getAudioConfig', {
+          'channel': channel?.index ?? ZegoPublishChannel.Main.index
+        });
 
     return ZegoAudioConfig(
         map['bitrate'],

@@ -514,7 +514,9 @@
 
 - (void)getAudioConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    ZegoAudioConfig *configObject = [[ZegoExpressEngine sharedEngine] getAudioConfig];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    ZegoAudioConfig *configObject = [[ZegoExpressEngine sharedEngine] getAudioConfig:channel];
 
     result(@{
         @"bitrate": @(configObject.bitrate),
