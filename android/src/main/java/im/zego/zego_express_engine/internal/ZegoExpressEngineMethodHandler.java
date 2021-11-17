@@ -148,6 +148,7 @@ public class ZegoExpressEngineMethodHandler {
 
     @SuppressWarnings("unused")
     public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+        
         HashMap<String, Object> profileMap = call.argument("profile");
         long appID = ZegoUtils.longValue((Number)profileMap.get("appID"));
         String appSign = (String) profileMap.get("appSign");
@@ -180,8 +181,10 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.createEngine(profile, ZegoExpressEngineEventHandler.getInstance().eventHandler);
         setPlatformLanguage();
 
+        ZegoExpressEngine.setApiCalledCallback(ZegoExpressEngineEventHandler.getInstance().apiCalledEventHandler);
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
+        ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, scenario.name());
 

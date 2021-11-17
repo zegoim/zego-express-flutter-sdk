@@ -81,8 +81,10 @@
         ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
     }
 
+    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
