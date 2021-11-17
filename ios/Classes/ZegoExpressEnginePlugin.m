@@ -99,10 +99,13 @@
 
         call = [FlutterMethodCall methodCallWithMethodName:@"createEngine" arguments:argumentsMap];
     } else if ([@"createEngineWithProfile" isEqualToString:call.method]) {
+
         NSMutableDictionary *argumentsMap = [NSMutableDictionary dictionaryWithDictionary:call.arguments];
 
         argumentsMap[@"eventSink"] = _eventSink;
         argumentsMap[@"registrar"] = _registrar;
+
+        call = [FlutterMethodCall methodCallWithMethodName:@"createEngineWithProfile" arguments:argumentsMap];
     }
 
     SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
