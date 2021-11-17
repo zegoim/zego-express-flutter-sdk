@@ -94,11 +94,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
     ZegoUser user =
         ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName);
 
-    ZegoRoomConfig config = ZegoRoomConfig.defaultConfig();
-    config.isUserStatusNotify = true;
-
     // Login Room
-    ZegoExpressEngine.instance.loginRoom(_roomID, user, config: config);
+    ZegoExpressEngine.instance.loginRoom(_roomID, user);
 
     print('🚪 Start login room, roomID: $_roomID');
   }
@@ -237,20 +234,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
       setState(() => _roomState = state);
     };
 
-    ZegoExpressEngine.onRoomUserUpdate = (String roomID, ZegoUpdateType updateType, List<ZegoUser> userList) {
-      print(
-          '🚩 🚪 Room user update, updateType: $updateType, userList: $userList, roomID: $roomID');
-    };
-
-    ZegoExpressEngine.onNetworkTimeSynchronized = () {
-      print('🚩 🚪 Network time synchronized');
-    };
-
-    ZegoExpressEngine.onPublisherVideoSizeChanged = (int width, int height, ZegoPublishChannel channel) {
-      print(
-          '🚩 🚪 Publisher video size changed, width: $width, height: $height, channel: $channel');
-    };
-
     ZegoExpressEngine.onPublisherStateUpdate = (String streamID,
         ZegoPublisherState state,
         int errorCode,
@@ -267,10 +250,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print(
           '🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _playerState = state);
-    };
-
-    ZegoExpressEngine.onPublisherRenderVideoFirstFrame = (ZegoPublishChannel channel) {
-      print('🚩 📥 Publisher render video first frame. channel: $channel');
     };
   }
 
