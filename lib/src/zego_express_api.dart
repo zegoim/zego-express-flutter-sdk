@@ -11,34 +11,26 @@ class ZegoExpressEngine {
   /// Engine singleton instance
   static final ZegoExpressEngine instance = ZegoExpressEngine._internal();
 
-  /// Creates a singleton instance of ZegoExpressEngine.
+  /// Create ZegoExpressEngine singleton object and initialize SDK.
   ///
-  /// The engine needs to be created and initialized before calling other functions. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  /// Available since: 2.14.0
+  /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
+  /// When to call: The engine needs to be created before calling other functions.
+  /// Restrictions: None.
+  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
   ///
   /// - [profile] The basic configuration information is used to create the engine.
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
     return await ZegoExpressImpl.createEngineWithProfile(profile);
   }
 
-  /// [Deprecated] Creates a singleton instance of ZegoExpressEngine.
+  /// Destroy the ZegoExpressEngine singleton object and deinitialize the SDK.
   ///
-  /// Deprecated since 2.13.0, please use the method with the same name without [isTestEnv] parameter instead.
-  /// The engine needs to be created and initialized before calling other functions. The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
-  ///
-  /// @deprecated Deprecated since 2.13.0, please use the method with the same name without [isTestEnv] parameter instead.
-  /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
-  /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
-  /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
-  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
-  /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
-  @Deprecated('Deprecated since 2.13.0, please use the method with the same name without [isTestEnv] parameter instead.')
-  static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
-    return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
-  }
-
-  /// Destroys the singleton instance of ZegoExpressEngine asynchronously.
-  ///
-  /// Used to release resources used by ZegoExpressEngine.
+  /// Available since: 1.1.0
+  /// Description: Destroy the ZegoExpressEngine singleton object and deinitialize the SDK.
+  /// When to call: When the SDK is no longer used, the resources used by the SDK can be released through this interface
+  /// Restrictions: None.
+  /// Caution: After using [createEngine] to create a singleton, if the singleton object has not been created or has been destroyed, you will not receive related callbacks when calling this function.
   static Future<void> destroyEngine() async {
     return await ZegoExpressImpl.destroyEngine();
   }
@@ -149,10 +141,13 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the audio/video engine state changes.
   ///
-  /// When the developer calls the function that enables audio and video related functions, such as calling [startPreview], [startPublishingStream], [startPlayingStream] and MediaPlayer related function, the audio/video engine will start; when all audio and video functions are stopped, the engine state will become stopped.
-  /// When the developer has been [loginRoom], once [logoutRoom] is called, the audio/video engine will stop (preview, publishing/playing stream, MediaPlayer and other audio and video related functions will also stop).
+  /// Available since: 1.1.0
+  /// Description: Callback notification of audio/video engine status update. When audio/video functions are enabled, such as preview, push streaming, local media player, audio data observering, etc., the audio/video engine will enter the start state. When you exit the room or disable all audio/video functions , The audio/video engine will enter the stop state.
+  /// Trigger: The developer called the relevant function to change the state of the audio and video engine. For example: 1. Called ZegoExpressEngine's [startPreview], [stopPreview], [startPublishingStream], [stopPublishingStream], [startPlayingStream], [stopPlayingStream], [startAudioDataObserver], [stopAudioDataObserver] and other functions. 2. The related functions of MediaPlayer are called. 3. The [LogoutRoom] function was called.
+  /// Restrictions: None.
+  /// Caution: 1. When the developer calls [destroyEngine], this notification will not be triggered because the resources of the SDK are completely released. 2. If there is no special need, the developer does not need to pay attention to this callback.
   ///
-  /// - [state] The audio/video engine state
+  /// - [state] The audio/video engine state.
   static void Function(ZegoEngineState state)? onEngineStateUpdate;
 
   /// Successful callback of network time synchronization..
@@ -166,7 +161,7 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.
   /// Use cases: Developers can use this callback to determine the status of the current user in the room.
-  /// When to call /Trigger: Users will receive this notification when they call [loginRoom], [logoutRoom], [switchRoom] functions. 2. This notification may also be received when the user device's network conditions change (SDK will automatically log in to the room again when the connection is disconnected, refer to https://doc-zh.zego.im/faq/reconnect ).
+  /// When to trigger: Users will receive this notification when they call [loginRoom], [logoutRoom], [switchRoom] functions. 2. This notification may also be received when the user device's network conditions change (SDK will automatically log in to the room again when the connection is disconnected, refer to https://doc-zh.zego.im/faq/reconnect ).
   /// Restrictions: None.
   /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
   /// Related APIs: [loginRoom]、[logoutRoom]、[switchRoom]
@@ -179,15 +174,16 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the number of other users in the room increases or decreases.
   ///
-  /// This callback is used to monitor the increase or decrease of other users in the room, and the developer can judge the situation of the users in the room based on this callback.
-  /// If developers need to use ZEGO room users notifications, please ensure that the [ZegoRoomConfig] sent by each user when logging in to the room has the [isUserStatusNotify] property set to true, otherwise the callback notification will not be received.
-  /// The user logs in to the room, and there is no other user in the room at this time, the callback will not be triggered.
-  /// The user logs in to the room. If multiple other users already exist in the room, the callback will be triggered. At this time, the callback belongs to the ADD type and contains the full list of users in the room. At the same time, other users in the room will also receive this callback of the ADD type, but there are only new current users in the received user list.
-  /// When the user is already in the room, this callback will be triggered when other users in the room log in or log out of the room.
+  /// Available since: 1.1.0
+  /// Description: When other users in the room are online or offline, which causes the user list in the room to change, the developer will be notified through this callback.
+  /// Use cases: Developers can use this callback to update the user list display in the room in real time.
+  /// When to trigger: 1. When the user logs in to the room for the first time, if there are other users in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `userList` is the other users in the room at this time. 2. The user is already in the room. If another user logs in to the room through the [loginRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd]. 3. If other users log out of this room through the [logoutRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete]. 4. The user is already in the room. If another user is kicked out of the room from the server, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+  /// Restrictions: If developers need to use ZEGO room users notifications, please ensure that the [ZegoRoomConfig] sent by each user when logging in to the room has the [isUserStatusNotify] property set to true, otherwise the callback notification will not be received.
+  /// Related APIs: [loginRoom]、[logoutRoom]、[switchRoom]
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
-  /// - [updateType] Update type (add/delete)
-  /// - [userList] List of users changed in the current room
+  /// - [updateType] Update type (add/delete).
+  /// - [userList] List of users changed in the current room.
   static void Function(String roomID, ZegoUpdateType updateType, List<ZegoUser> userList)? onRoomUserUpdate;
 
   /// The callback triggered every 30 seconds to report the current number of online users.
@@ -206,14 +202,14 @@ class ZegoExpressEngine {
   /// The callback triggered when the number of streams published by the other users in the same room increases or decreases.
   ///
   /// Available since: 1.1.0
-  /// This callback is used to monitor stream addition or stream deletion notifications of other users in the room. Developers can use this callback to determine whether other users in the same room start or stop publishing stream, so as to achieve active playing stream [startPlayingStream] or take the initiative to stop the playing stream [stopPlayingStream], and use it to change the UI controls at the same time.
-  /// The user logs in to the room, and there is no other stream in the room at this time, the callback will not be triggered.
-  /// The user logs in to the room. If there are multiple streams of other users in the room, the callback will be triggered. At this time, the callback belongs to the ADD type and contains the full list of streams in the room.
-  /// When the user is already in the room, when other users in the room start or stop publishing stream (that is, when a stream is added or deleted), this callback will be triggered to notify the changed stream list.
+  /// Description: When other users in the room start streaming or stop streaming, the streaming list in the room changes, and the developer will be notified through this callback.
+  /// Use cases: This callback is used to monitor stream addition or stream deletion notifications of other users in the room. Developers can use this callback to determine whether other users in the same room start or stop publishing stream, so as to achieve active playing stream [startPlayingStream] or take the initiative to stop the playing stream [stopPlayingStream], and use it to change the UI controls at the same time.
+  /// When to trigger: 1. When the user logs in to the room for the first time, if there are other users publishing streams in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `streamList` is an existing stream list. 2. The user is already in the room. if another user adds a new push, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd]. 3. The user is already in the room. If other users stop streaming, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete]. 4. The user is already in the room. If other users leave the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+  /// Restrictions: None.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
-  /// - [updateType] Update type (add/delete)
-  /// - [streamList] Updated stream list
+  /// - [updateType] Update type (add/delete).
+  /// - [streamList] Updated stream list.
   /// - [extendedData] Extended information with stream updates.
   static void Function(String roomID, ZegoUpdateType updateType, List<ZegoStream> streamList, Map<String, dynamic> extendedData)? onRoomStreamUpdate;
 
@@ -488,7 +484,11 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
-  /// This callback is triggered when a video device is added or removed from the system. By listening to this callback, users can update the video capture using a specific device when necessary.
+  /// Available since: 1.0.0
+  /// Description: By listening to this callback, users can update the video capture using a specific device when necessary.
+  /// When to trigger: This callback is triggered when a video device is added or removed from the system.
+  /// Restrictions: None
+  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
@@ -496,57 +496,75 @@ class ZegoExpressEngine {
 
   /// The local captured audio sound level callback.
   ///
-  /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
-  /// The callback notification period is the setting parameter of [startSoundLevelMonitor].
+  /// Available since: 1.1.0
+  /// Description: The local captured audio sound level callback.
+  /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
+  /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview].
+  /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate]
   ///
-  /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0
+  /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0.
   static void Function(double soundLevel)? onCapturedSoundLevelUpdate;
 
   /// The local captured audio sound level callback.
   ///
-  /// Available: since 2.10.0
-  /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
-  /// The callback notification period is the setting parameter of [startSoundLevelMonitor].
+  /// Available since: 2.10.0
+  /// Description: The local captured audio sound level callback.
+  /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
+  /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+  /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelInfoUpdate]
   ///
-  /// - [soundLevelInfo] Locally captured sound level value, ranging from 0.0 to 100.0
+  /// - [soundLevelInfo] Locally captured sound level value, ranging from 0.0 to 100.0.
   static void Function(ZegoSoundLevelInfo soundLevelInfo)? onCapturedSoundLevelInfoUpdate;
 
   /// The remote playing streams audio sound level callback.
   ///
-  /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is playing the audio and video stream.
-  /// The callback notification period is the setting parameter of [startSoundLevelMonitor].
+  /// Available since: 1.1.0
+  /// Description: The remote playing streams audio sound level callback.
+  /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor], you are in the state of playing the stream [startPlayingStream].
+  /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+  /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring local captured audio sound by callback [onCapturedSoundLevelUpdate] or [onCapturedSoundLevelInfoUpdate].
   ///
-  /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
+  /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0.
   static void Function(Map<String, double> soundLevels)? onRemoteSoundLevelUpdate;
 
   /// The remote playing streams audio sound level callback.
   ///
-  /// Available: since 2.10.0
-  /// To trigger this callback function, the [startSoundLevelMonitor] function must be called to start the sound level monitor and you must be in a state where it is playing the audio and video stream.
-  /// The callback notification period is the setting parameter of [startSoundLevelMonitor].
+  /// Available since: 2.10.0
+  /// Description: The remote playing streams audio sound level callback.
+  /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor], you are in the state of playing the stream [startPlayingStream].
+  /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+  /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring local captured audio sound by callback [onCapturedSoundLevelUpdate] or [onCapturedSoundLevelInfoUpdate].
   ///
-  /// - [soundLevelInfos] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0
+  /// - [soundLevelInfos] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0.
   static void Function(Map<String, ZegoSoundLevelInfo> soundLevelInfos)? onRemoteSoundLevelInfoUpdate;
 
   /// The local captured audio spectrum callback.
   ///
-  /// To trigger this callback function, the [startAudioSpectrumMonitor] function must be called to start the audio spectrum monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
-  /// The callback notification period is the setting parameter of [startAudioSpectrumMonitor].
+  /// Available since: 1.1.0
+  /// Description: The local captured audio spectrum callback.
+  /// Trigger: After you start the audio spectrum monitor by calling [startAudioSpectrumMonitor].
+  /// Caution: The callback notification period is the parameter value set when the [startAudioSpectrumMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview].
+  /// Related APIs: Start audio spectrum monitoring via [startAudioSpectrumMonitor]. Monitoring remote played audio spectrum by callback [onRemoteAudioSpectrumUpdate]
   ///
-  /// - [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30]
+  /// - [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30].
   static void Function(List<double> audioSpectrum)? onCapturedAudioSpectrumUpdate;
 
   /// The remote playing streams audio spectrum callback.
   ///
-  /// To trigger this callback function, the [startAudioSpectrumMonitor] function must be called to start the audio spectrum monitor and you must be in a state where it is playing the audio and video stream.
-  /// The callback notification period is the setting parameter of [startAudioSpectrumMonitor].
+  /// Available since: 1.1.0
+  /// Description: The remote playing streams audio spectrum callback.
+  /// Trigger: After you start the audio spectrum monitor by calling [startAudioSpectrumMonitor], you are in the state of playing the stream [startPlayingStream].
+  /// Caution: The callback notification period is the parameter value set when the [startAudioSpectrumMonitor] is called.
+  /// Related APIs: Start audio spectrum monitoring via [startAudioSpectrumMonitor]. Monitoring local played audio spectrum by callback [onCapturedAudioSpectrumUpdate].
   ///
   /// - [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
   static void Function(Map<String, List<double>> audioSpectrums)? onRemoteAudioSpectrumUpdate;
 
   /// The callback triggered when a device exception occurs.
   ///
-  /// This callback is triggered when an exception occurs when reading or writing the audio and video device.
+  /// Available since: 1.1.0
+  /// Description: The callback triggered when a device exception occurs.
+  /// Trigger: This callback is triggered when an exception occurs when reading or writing the audio and video device.
   ///
   /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   /// - [deviceName] device name
@@ -554,39 +572,47 @@ class ZegoExpressEngine {
 
   /// The callback triggered when the state of the remote camera changes.
   ///
-  /// When the state of the remote camera device changes, such as switching the camera, by monitoring this callback, it is possible to obtain an event related to the far-end camera, which can be used to prompt the user that the video may be abnormal.
-  /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the camera device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
-  /// This callback will not be called back when the remote stream is play from the CDN, and will not be called back if the remote stream end user has enabled custom video capture function.
+  /// Available since: 1.1.0
+  /// Description: The callback triggered when the state of the remote camera changes.
+  /// Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the camera device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+  /// Trigger: When the state of the remote camera device changes, such as switching the camera, by monitoring this callback, it is possible to obtain an event related to the far-end camera, which can be used to prompt the user that the video may be abnormal.
+  /// Caution: This callback will not be called back when the remote stream is play from the CDN, or when custom video acquisition is used at the peer.
   ///
-  /// - [streamID] Stream ID
-  /// - [state] Remote camera status
+  /// - [streamID] Stream ID.
+  /// - [state] Remote camera status.
   static void Function(String streamID, ZegoRemoteDeviceState state)? onRemoteCameraStateUpdate;
 
   /// The callback triggered when the state of the remote microphone changes.
   ///
-  /// When the state of the remote microphone device is changed, such as switching a microphone, etc., by listening to the callback, it is possible to obtain an event related to the remote microphone, which can be used to prompt the user that the audio may be abnormal.
-  /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the microphone device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
-  /// This callback will not be called back when the remote stream is play from the CDN, and will not be called back if the remote stream end user has enabled custom audio capture function.
+  /// Available since: 1.1.0
+  /// Description: The callback triggered when the state of the remote microphone changes.
+  /// Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the microphone device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+  /// Trigger: When the state of the remote microphone device is changed, such as switching a microphone, etc., by listening to the callback, it is possible to obtain an event related to the remote microphone, which can be used to prompt the user that the audio may be abnormal.
+  /// Caution: This callback will not be called back when the remote stream is play from the CDN, or when custom audio acquisition is used at the peer (But the stream is not published to the ZEGO RTC server.).
   ///
-  /// - [streamID] Stream ID
-  /// - [state] Remote microphone status
+  /// - [streamID] Stream ID.
+  /// - [state] Remote microphone status.
   static void Function(String streamID, ZegoRemoteDeviceState state)? onRemoteMicStateUpdate;
 
   /// The callback triggered when the state of the remote speaker changes.
   ///
-  /// When the state of the remote speaker device changes, such as switching the speaker, by monitoring this callback, you can get events related to the remote speaker.
-  /// Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the speaker device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
-  /// This callback will not be called back when the remote stream is play from the CDN.
+  /// Available since: 1.1.0
+  /// Description: The callback triggered when the state of the remote microphone changes.
+  /// Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the speaker device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
+  /// Trigger: When the state of the remote speaker device changes, such as switching the speaker, by monitoring this callback, you can get events related to the remote speaker.
+  /// Caution: This callback will not be called back when the remote stream is play from the CDN.
   ///
-  /// - [streamID] Stream ID
-  /// - [state] Remote speaker status
+  /// - [streamID] Stream ID.
+  /// - [state] Remote speaker status.
   static void Function(String streamID, ZegoRemoteDeviceState state)? onRemoteSpeakerStateUpdate;
 
   /// Callback for device's audio route changed.
   ///
-  /// This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+  /// Available since: 1.20.0
+  /// Description: Callback for device's audio route changed.
+  /// Trigger: This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
   ///
-  /// - [audioRoute] Current audio route
+  /// - [audioRoute] Current audio route.
   static void Function(ZegoAudioRoute audioRoute)? onAudioRouteChange;
 
   /// The callback triggered when Broadcast Messages are received.
@@ -632,96 +658,155 @@ class ZegoExpressEngine {
   /// - [command] Command content received.Value range: The maximum length is 1024 bytes.
   static void Function(String roomID, ZegoUser fromUser, String command)? onIMRecvCustomCommand;
 
-  /// The callback triggered when the state of the media player changes.
+  /// MediaPlayer playback status callback.
   ///
-  /// - [mediaPlayer] Callback player object
-  /// - [state] Media player status
+  /// Available since: 1.3.4
+  /// Description: MediaPlayer playback status callback.
+  /// Trigger: The callback triggered when the state of the media player changes.
+  /// Restrictions: None.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [state] Media player status.
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state, int errorCode)? onMediaPlayerStateUpdate;
 
   /// The callback triggered when the network status of the media player changes.
   ///
-  /// - [mediaPlayer] Callback player object
-  /// - [networkEvent] Network status event
+  /// Available since: 1.3.4
+  /// Description: The callback triggered when the network status of the media player changes.
+  /// Trigger: When the media player is playing network resources, this callback will be triggered when the status change of the cached data.
+  /// Restrictions: The callback will only be triggered when the network resource is played.
+  /// Related APIs: [setNetWorkBufferThreshold].
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [networkEvent] Network status event.
   static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerNetworkEvent networkEvent)? onMediaPlayerNetworkEvent;
 
   /// The callback to report the current playback progress of the media player.
   ///
-  /// - [mediaPlayer] Callback player object
-  /// - [millisecond] Progress in milliseconds
+  /// Available since: 1.3.4
+  /// Description: The callback triggered when the network status of the media player changes. Set the callback interval by calling [setProgressInterval]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1 second.
+  /// Trigger: When the media player is playing network resources, this callback will be triggered when the status change of the cached data.
+  /// Restrictions: None.
+  /// Related APIs: [setProgressInterval].
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [millisecond] Progress in milliseconds.
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)? onMediaPlayerPlayingProgress;
 
   /// The callback triggered when the media player got media side info.
   ///
-  /// - [mediaPlayer] Callback player object
-  /// - [data] SEI content
+  /// Available since: 2.2.0
+  /// Description: The callback triggered when the media player got media side info.
+  /// Trigger: When the media player starts playing media files, the callback is triggered if the SEI is resolved to the media file.
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [data] SEI content.
   static void Function(ZegoMediaPlayer mediaPlayer, Uint8List data)? onMediaPlayerRecvSEI;
 
   /// Audio effect playback state callback.
   ///
-  /// This callback is triggered when the playback state of a audio effect of the audio effect player changes.
+  /// Available since: 1.16.0
+  /// Description: This callback is triggered when the playback state of a audio effect of the audio effect player changes.
+  /// Trigger: This callback is triggered when the playback status of the audio effect changes.
+  /// Restrictions: None.
   ///
-  /// - [audioEffectPlayer] Audio effect player instance that triggers this callback
-  /// - [audioEffectID] The ID of the audio effect resource that triggered this callback
-  /// - [state] The playback state of the audio effect
+  /// - [audioEffectPlayer] Audio effect player instance that triggers this callback.
+  /// - [audioEffectID] The ID of the audio effect resource that triggered this callback.
+  /// - [state] The playback state of the audio effect.
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   static void Function(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode)? onAudioEffectPlayStateUpdate;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
-  /// - [state] File recording status, according to which you should determine the state of the file recording or the prompt of the UI.
+  /// Available since: 1.10.0
+  /// Description: The callback triggered when the state of data recording (to a file) changes.
+  /// Use cases: The developer should use this callback to determine the status of the file recording or for UI prompting.
+  /// When to trigger: After [startRecordingCapturedData] is called, if the state of the recording process changes, this callback will be triggered.
+  /// Restrictions: None.
+  ///
+  /// - [state] File recording status.
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
-  /// - [config] Record config
-  /// - [channel] Publishing stream channel
+  /// - [config] Record config.
+  /// - [channel] Publishing stream channel.
   static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel)? onCapturedDataRecordStateUpdate;
 
   /// The callback to report the current recording progress.
   ///
+  /// Available since: 1.10.0
+  /// Description: Recording progress update callback, triggered at regular intervals during recording.
+  /// Use cases: Developers can do UI hints for the user interface.
+  /// When to trigger: After [startRecordingCapturedData] is called, If configured to require a callback, timed trigger during recording.
+  /// Restrictions: None.
+  ///
   /// - [progress] File recording progress, which allows developers to hint at the UI, etc.
-  /// - [config] Record config
-  /// - [channel] Publishing stream channel
+  /// - [config] Record config.
+  /// - [channel] Publishing stream channel.
   static void Function(ZegoDataRecordProgress progress, ZegoDataRecordConfig config, ZegoPublishChannel channel)? onCapturedDataRecordProgressUpdate;
 
-  /// The system performance status callback.
+  /// System performance monitoring callback.
   ///
-  /// To trigger this callback function, the [startPerformanceMonitor] function must be called to start the system performance monitor.
-  /// The callback notification period is the setting parameter of [startPerformanceMonitor].
+  /// Available since: 1.19.0
+  /// Description: System performance monitoring callback. The callback notification period is the value of millisecond parameter set by call [startPerformanceMonitor].
+  /// Use cases: Monitor system performance can help user quickly locate and solve performance problems and improve user experience.
+  /// When to trigger: It will triggered after [createEngine], and call [startPerformanceMonitor] to start system performance monitoring.
+  /// Restrictions: None.
   ///
-  /// - [status] The system performance status.
+  /// - [status] System performance monitoring status.
   static void Function(ZegoPerformanceStatus status)? onPerformanceStatusUpdate;
 
-  /// Callback for network mode changed.
+  /// Network mode changed callback.
   ///
-  /// This callback will be called when the device's network mode changes, such as switching from WiFi to 5G, or when the network is disconnected.
+  /// Available since: 1.20.0
+  /// Description: Network mode changed callback.
+  /// When to trigger: This callback will be triggered when the device's network mode changed, such as switched from WiFi to 5G, or when network is disconnected.
+  /// Restrictions: None.
   ///
   /// - [mode] Current network mode.
   static void Function(ZegoNetworkMode mode)? onNetworkModeChanged;
 
-  /// The callback triggered when error occurred when testing network speed.
+  /// Network speed test error callback.
   ///
-  /// - [errorCode] The error code corresponding to the network speed test, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
-  /// - [type] Uplink or downlink
+  /// Available since: 1.20.0
+  /// Description: Network speed test error callback.
+  /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
+  /// When to Trigger: If an error occurs during the speed test, such as: can not connect to speed test server, this callback will be triggered.
+  /// Restrictions: None.
+  ///
+  /// - [errorCode] Network speed test error code. Please refer to error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [type] Uplink or downlink.
   static void Function(int errorCode, ZegoNetworkSpeedTestType type)? onNetworkSpeedTestError;
 
-  /// The callback triggered when quality updated when testing network speed.
+  /// Network speed test quality callback.
   ///
-  /// When error occurs or called stopNetworkSpeedTest, this callback will be stopped.
+  /// Available since: 1.20.0
+  /// Description: Network speed test quality callback.
+  /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
+  /// When to Trigger: After call [startNetworkSpeedTest] start network speed test, this callback will be triggered. The trigger period is determined by the parameter value specified by call [startNetworkSpeedTest], default value is 3 seconds 
+  /// Restrictions: None.
+  /// Caution: When error occurred during network speed test or [stopNetworkSpeedTest] called, this callback will not be triggered.
   ///
-  /// - [quality] Network speed quality
-  /// - [type] Uplink or downlink
+  /// - [quality] Network speed test quality.
+  /// - [type] Uplink or downlink.
   static void Function(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type)? onNetworkSpeedTestQualityUpdate;
 
-  /// Receive custom JSON content
+  /// Receive experiment API JSON content.
   ///
-  /// - [content] JSON string content
+  /// Available since: 2.7.0
+  /// Description: Receive experiment API JSON content.
+  /// When to trigger: This callback will triggered after call LiveRoom experiment API.
+  /// Restrictions: None.
+  ///
+  /// - [content] Experiment API JSON content.
   static void Function(String content)? onRecvExperimentalAPI;
 
-  /// The network quality callback of users who are pushing and playing in the room.
+  /// The network quality callback of users who are publishing in the room.
   ///
-  /// Available: Since 2.10.0
-  /// Description: The uplink and downlink network callbacks of the local and remote users, that would be called by default every two seconds for the local and each playing remote user's network quality.
+  /// Available since: 2.10.0
+  /// Description: The uplink and downlink network callbacks of the local and remote users, that would be called by default every two seconds for the local and each playing remote user's network quality. Versions 2.10.0 to 2.13.1: 1. Developer must both publish and play streams before you receive your own network quality callback. 2. When playing a stream, the publish end has a play stream and the publish end is in the room where it is located, then the user's network quality will be received. Version 2.14.0 and above: 1. As long as you publish or play a stream, you will receive your own network quality callback. 2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
   /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
-  /// When to Trigger: After playing a stream by called [startPublishingStream] and [startPlayingStream].
+  /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
   ///
   /// - [userID] User ID, empty means local user
   /// - [upstreamQuality] Upstream network quality
@@ -733,11 +818,12 @@ class ZegoExpressEngine {
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
   /// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+  /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
   /// - [timestamp] The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds.
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param, double timestamp)? onProcessCapturedAudioData;
 
@@ -759,12 +845,13 @@ class ZegoExpressEngine {
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive the PCM audio frames of remote playing stream. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
   /// When to trigger: You need to call [enableCustomAudioRemoteProcessing] to enable the function first, and call [startPlayingStream] to trigger this callback function.
+  /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
-  /// - [streamID] Corresponding stream ID
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
+  /// - [streamID] Corresponding stream ID.
   /// - [timestamp] The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds.
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param, String streamID, double timestamp)? onProcessRemoteAudioData;
 
@@ -773,54 +860,66 @@ class ZegoExpressEngine {
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive the SDK playback PCM audio frame. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
   /// When to trigger: You need to call [enableCustomAudioPlaybackProcessing] to enable the function first, and call [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] or [createAudioEffectPlayer] to trigger this callback function.
+  /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
-  /// - [timestamp] The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds. (It is effective when there is one and only one stream)
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
+  /// - [timestamp] The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds (It is effective when there is one and only one stream).
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param, double timestamp)? onProcessPlaybackAudioData;
 
   /// The callback for obtaining the audio data captured by the local microphone.
   ///
-  /// In non-custom audio capture mode, the SDK capture the microphone's sound, but the developer may also need to get a copy of the audio data captured by the SDK is available through this callback.
-  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0b01 that means 1 << 0, this callback will be triggered only when it is in the publishing stream state.
+  /// Available: Since 1.1.0
+  /// Description: In non-custom audio capture mode, the SDK capture the microphone's sound, but the developer may also need to get a copy of the audio data captured by the SDK is available through this callback.
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b01 that means 1 << 0, this callback will be triggered only when it is in the publishing stream state.
+  /// Restrictions: None.
+  /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param)? onCapturedAudioData;
 
   /// The callback for obtaining the audio data of all the streams playback by SDK.
   ///
-  /// This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
-  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0b100 that means 1 << 2, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
-  /// When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
+  /// Available: Since 1.1.0
+  /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b100 that means 1 << 2, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+  /// Restrictions: None.
+  /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback. When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param)? onPlaybackAudioData;
 
   /// The callback for obtaining the mixed audio data. Such mixed auido data are generated by the SDK by mixing the audio data of all the remote playing streams and the auido data captured locally.
   ///
-  /// The audio data of all playing data is mixed with the data captured by the local microphone before it is sent to the loudspeaker, and calleback out in this way.
-  /// On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [enableAudioDataCallback] to set the mask 0x04, this callback will be triggered only when it is in the publishing stream state or playing stream state.
+  /// Available: Since 1.1.0
+  /// Description: The audio data of all playing data is mixed with the data captured by the local microphone before it is sent to the loudspeaker, and calleback out in this way.
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0x04, this callback will be triggered only when it is in the publishing stream state or playing stream state.
+  /// Restrictions: None.
+  /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param)? onMixedAudioData;
 
   /// The callback for obtaining the audio data of each stream.
   ///
-  /// This function will call back the data corresponding to each playing stream. Different from [onPlaybackAudioData], the latter is the mixed data of all playing streams. If developers need to process a piece of data separately, they can use this callback.
-  /// On the premise of calling [setAudioDataHandler] to set up listening for this callback, calling [enableAudioDataCallback] to set the mask 0x08 that is 1 << 3, and this callback will be triggered when the SDK audio and video engine starts to play the stream.
+  /// Available: Since 1.1.0
+  /// Description: This function will call back the data corresponding to each playing stream. Different from [onPlaybackAudioData], the latter is the mixed data of all playing streams. If developers need to process a piece of data separately, they can use this callback.
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set up listening for this callback, calling [startAudioDataObserver] to set the mask 0x08 that is 1 << 3, and this callback will be triggered when the SDK audio and video engine starts to play the stream.
+  /// Restrictions: None.
+  /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
-  /// - [data] Audio data in PCM format
-  /// - [dataLength] Length of the data
-  /// - [param] Parameters of the audio frame
-  /// - [streamID] Corresponding stream ID
+  /// - [data] Audio data in PCM format.
+  /// - [dataLength] Length of the data.
+  /// - [param] Parameters of the audio frame.
+  /// - [streamID] Corresponding stream ID.
   static void Function(Uint8List data, int dataLength, ZegoAudioFrameParam param, String streamID)? onPlayerAudioData;
 
   /// Range audio microphone state callback.
@@ -838,6 +937,25 @@ class ZegoExpressEngine {
 }
 
 extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
+
+  /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK.
+  ///
+  /// Available: 1.1.0 ~ 2.13.1, deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead
+  /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
+  /// When to call: The engine needs to be created before calling other functions.
+  /// Restrictions: None.
+  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  ///
+  /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
+  /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
+  /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
+  /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
+  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to: https://doc-zh.zego.im/faq/profile_difference.
+  /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
+  @Deprecated('Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.')
+  static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
+    return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
+  }
 
   /// [Deprecated] Turns on/off verbose debugging and sets up the log language.
   ///

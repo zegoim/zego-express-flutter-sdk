@@ -7,26 +7,30 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Starts playing a stream from ZEGO RTC server or from third-party CDN. Support multi-room mode.
   ///
-  /// This function allows users to play audio and video streams both from the ZEGO RTC server or from third-party cdn.
-  /// Before starting to play the stream, you need to join the room first, you can get the new streamID in the room by listening to the [onRoomStreamUpdate] event callback.
-  /// In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event.
-  /// Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
-  /// The developer can update the player canvas by calling this function again (the streamID must be the same).
-  /// After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min.
-  /// To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
+  /// Available since: 1.1.0
+  /// Description: Play audio and video streams from the ZEGO RTC server or CDN.
+  /// Use cases: In real-time or live broadcast scenarios, developers can listen to the [onRoomStreamUpdate] event callback to obtain the new stream information in the room where they are located, and call this interface to pass in streamID for play streams.
+  /// When to call: After [loginRoom].
+  /// Restrictions: None.
+  /// Caution: 1. The developer can update the player canvas by calling this function again (the streamID must be the same). 2. After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min. 3. In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event. please refer to: https://doc-en.zego.im/faq/reconnect. 4. Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
-  /// - [config] Advanced player configuration
+  /// - [config] Advanced player configuration.
   Future<void> startPlayingStream(String streamID, {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
     return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas: canvas, config: config);
   }
 
   /// Stops playing a stream.
   ///
-  /// This function allows the user to stop playing the stream. When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
+  /// Available since: 1.1.0
+  /// Description: Play audio and video streams from the ZEGO RTC server.
+  /// Use cases: In the real-time scenario, developers can listen to the [onRoomStreamUpdate] event callback to obtain the delete stream information in the room where they are located, and call this interface to pass in streamID for stop play streams.
+  /// When to call: After [loginRoom].
+  /// Restrictions: None.
+  /// Caution: When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
   ///
-  /// - [streamID] Stream ID
+  /// - [streamID] Stream ID.
   Future<void> stopPlayingStream(String streamID) async {
     return await ZegoExpressImpl.instance.stopPlayingStream(streamID);
   }
@@ -67,8 +71,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: Set the sound size of the stream, the local user can control the playback volume of the audio stream.
   /// When to call: after called [startPlayingStream].
   /// Restrictions: None.
-  /// Related APIs: [setAllPlayStreamVolume]Set all stream volume.
-  /// Caution: You need to reset after [stopPlayingStream] and [startPlayingStream].
+  /// Related APIs: [setAllPlayStreamVolume] Set all stream volume.
+  /// Caution: You need to reset after [stopPlayingStream] and [startPlayingStream]. This function and the [setAllPlayStreamVolume] function overwrite each other, and the last call takes effect.
   ///
   /// - [streamID] Stream ID.
   /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.

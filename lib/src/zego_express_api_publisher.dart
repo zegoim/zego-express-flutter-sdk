@@ -9,27 +9,30 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Starts publishing a stream. Support multi-room mode.
   ///
-  /// This function allows users to publish their local audio and video streams to the ZEGO RTC server. Other users in the same room can use the streamID to play the audio and video streams for intercommunication.
-  /// Before you start to publish the stream, you need to join the room first by calling [loginRoom]. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
-  /// In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
-  /// After the first publish stream failure due to network reasons or the publish stream is interrupted, the default time for SDK reconnection is 20min.
-  /// To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
+  /// Available since: 1.1.0
+  /// Description: Users push their local audio and video streams to the ZEGO RTC server or CDN, and other users in the same room can pull the audio and video streams to watch through the `streamID` or CDN pull stream address.
+  /// Use cases: It can be used to publish streams in real-time connecting wheat, live broadcast and other scenarios.
+  /// When to call: After [loginRoom].
+  /// Restrictions: None.
+  /// Caution: 1. Before start to publish the stream, the user can choose to call [setVideoConfig] to set the relevant video parameters, and call [startPreview] to preview the video. 2. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully. 3. In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event. 4. To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  /// - [config] Advanced publish configuration
-  /// - [channel] Publish stream channel
+  /// - [config] Advanced publish configuration.
+  /// - [channel] Publish stream channel.
   Future<void> startPublishingStream(String streamID, {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.startPublishingStream(streamID, config: config, channel: channel);
   }
 
   /// Stops publishing a stream (for the specified channel).
   ///
-  /// This function allows the user to stop sending local audio and video streams and end the call.
-  /// If the user has initiated publish flow, this function must be called to stop the publish of the current stream before publishing the new stream (new streamID), otherwise the new stream publish will return a failure.
-  /// After stopping streaming, the developer should stop the local preview based on whether the business situation requires it.
-  /// Use this function to stop publishing stream of aux channel.
+  /// Available since: 1.1.0
+  /// Description: The user stops sending local audio and video streams, and other users in the room will receive a stream deletion notification.
+  /// Use cases: It can be used to stop publish streams in real-time connecting wheat, live broadcast and other scenarios.
+  /// When to call: After [startPublishingStream].
+  /// Restrictions: None.
+  /// Caution: 1. After stopping the streaming, other users in the same room can receive the delete notification of the stream by listening to the [onRoomStreamUpdate] callback. 2. If the user has initiated publish flow, this function must be called to stop the publish of the current stream before publishing the new stream (new streamID), otherwise the new stream publish will return a failure. 3. After stopping streaming, the developer should stop the local preview based on whether the business situation requires it.
   ///
-  /// - [channel] Publish stream channel
+  /// - [channel] Publish stream channel.
   Future<void> stopPublishingStream({ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.stopPublishingStream(channel: channel);
   }
@@ -51,10 +54,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Starts/Updates the local video preview (for the specified channel).
   ///
-  /// The user can see his own local image by calling this function. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default.
-  /// Local view and preview modes can be updated by calling this function again.
-  /// You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored.
-  /// When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video. In addition to calling this function normally to preview the local screen, developers can also pass [null] to the canvas parameter, in conjunction with ZegoExpressEngine's sound wave function, in order to achieve the purpose of detecting whether the audio equipment is working properly before logging in to the room.
+  /// Available since: 1.1.0
+  /// Description: The user can see his own local image by calling this function.
+  /// Use cases: It can be used for local preview in real-time connecting wheat, live broadcast and other scenarios.
+  /// When to call: After [createEngine].
+  /// Restrictions: None.
+  /// Caution: 1. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default. 2. Local view and preview modes can be updated by calling this function again. The user can only preview on one view. If you call [startPreview] again to pass in a new view, the preview screen will only be displayed in the new view. 3. You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored. 4. When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video..
   ///
   /// - [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
   /// - [channel] Publish stream channel
@@ -73,12 +78,16 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets up the video configurations (for the specified channel).
   ///
-  /// This function can be used to set the video frame rate, bit rate, video capture resolution, and video encoding output resolution. If you do not call this function, the default resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
-  /// It is necessary to set the relevant video configuration before publishing the stream, and only support the modification of the encoding resolution and the bit rate after publishing the stream.
-  /// Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
+  /// Available since: 1.1.0
+  /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
+  /// Use cases: Recommended configuration in different business scenarios: https://doc-zh.zego.im/article/10365.
+  /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
+  /// When to call: After [createEngine].
+  /// Restrictions: It is necessary to set the relevant video configuration before publishing the stream or startPreview, and only support the modification of the encoding resolution and the bit rate after publishing the stream.
+  /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
   ///
   /// - [config] Video configuration, the SDK provides a common setting combination of resolution, frame rate and bit rate, they also can be customized.
-  /// - [channel] Publish stream channel
+  /// - [channel] Publish stream channel.
   Future<void> setVideoConfig(ZegoVideoConfig config, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.setVideoConfig(config, channel: channel);
   }
@@ -95,20 +104,27 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Sets the video mirroring mode (for the specified channel).
   ///
-  /// This function can be called to set whether the local preview video and the published video have mirror mode enabled.
+  /// Available since: 1.1.0
+  /// Description: Set whether the local preview video and the published video have mirror mode enabled. For specific mirroring mode, please refer to: https://doc-zh.zego.im/article/10365.
+  /// When to call: After [createEngine].
+  /// Restrictions: None.
   ///
-  /// - [mirrorMode] Mirror mode for previewing or publishing the stream
-  /// - [channel] Publish stream channel
+  /// - [mirrorMode] Mirror mode for previewing or publishing the stream.
+  /// - [channel] Publish stream channel.
   Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.setVideoMirrorMode(mirrorMode, channel: channel);
   }
 
   /// Sets the video orientation (for the specified channel).
   ///
-  /// This function sets the orientation of the video. The captured image is rotated according to the value of the parameter [DeviceOrientation] compared to the forward direction of the phone. After rotation, it will be automatically adjusted to adapt the encoded image resolution.
+  /// Available since: 1.1.0
+  /// Description: Set the video orientation, please refer to: https://doc-zh.zego.im/article/10365.
+  /// Use cases: When users use mobile devices to conduct live broadcasts or video calls, they can set different video directions according to the scene
+  /// When to call: After [createEngine].
+  /// Restrictions: None.
   ///
-  /// - [orientation] Video orientation
-  /// - [channel] Publish stream channel
+  /// - [orientation] Video orientation.
+  /// - [channel] Publish stream channel.
   Future<void> setAppOrientation(DeviceOrientation orientation, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.setAppOrientation(orientation, channel: channel);
   }
@@ -269,8 +285,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 1.13.0
   /// Description: This function is used to perform gain processing based on the device's collected volume. The local user can control the sound level of the audio stream sent to the remote end.
   /// Default value: Default is 100.
-  /// When to call: After creating the engine [createEngine], before starting to push the stream [startPublishingStream].
-  /// Restrictions: None.
+  /// When to call: After creating the engine [createEngine].
+  /// Restrictions: The capture volume can be dynamically set during publishing.
   /// Related APIs: Set the playing stream volume [setPlayVolume].
   ///
   /// - [volume] The volume gain percentage, the range is 0 ~ 200, and the default value is 100, which means 100% of the original collection volume of the device.
@@ -430,7 +446,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 2.12.0 and above
   /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
   /// When to call: After creating the engine.
-  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.
+  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities. You need to call the [enableHardwareEncoder] function to enable hardware encoding, and then use this function to determine whether H.265 hardware encoding is supported.
   ///
   /// - [codecID] Video codec id. Required: Yes.
   /// - Returns Whether the specified video encoding is supported.Value range: true means support, you can use this encoding format for publish; false means the is not supported, and the encoding format cannot be used for publish.

@@ -57,7 +57,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: After turning on this function, the SDK can automatically adjust the microphone volume to adapt to near and far sound pickups and keep the volume stable.
   /// Use case: When you need to ensure volume stability to improve call quality and user experience, you can turn on this feature.
   /// Default value: When this function is not called, AGC is enabled by default.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine] and before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer]. Note that the Mac needs to be called after [startPreview] and before [startPublishingStream].
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable automatic gain control, true: enable, false: disable

@@ -6,11 +6,13 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
 
-  /// Enable local capture custom audio processing.
+  /// Enable local collection and custom audio processing(before ear return).
   ///
-  /// Available: Since 1.13.0
-  /// When enabled, developers can receive local captured audio frames through [onProcessCapturedAudioData], and can modify the audio data.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  /// Available since: 1.13.0
+  /// Description: Enable custom audio processing(before ear return), developers can receive locally collected audio frames through [onProcessCapturedAudioData], and can modify the audio data.
+  /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// Restrictions: None.
   ///
   /// - [enable] Whether to enable local capture custom audio processing.
   /// - [config] Custom audio processing configuration.
@@ -18,11 +20,13 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableCustomAudioCaptureProcessing(enable, config);
   }
 
-  /// Enable local capture custom audio processing.
+  /// Turn on local collection and custom audio processing (after ear return).
   ///
-  /// Available: Since 2.13.0
-  /// When enabled, developers can receive local captured audio frames through [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor], and can modify the audio data.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  /// Available since: 1.13.0
+  /// Description: Enable custom audio processing(after ear return), developers can receive locally collected audio frames through [onProcessCapturedAudioData], and can modify the audio data.
+  /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// Restrictions: None.
   ///
   /// - [enable] Whether to enable local capture custom audio processing.
   /// - [config] Custom audio processing configuration.
@@ -32,9 +36,11 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
 
   /// Enable custom audio processing for remote playing stream.
   ///
-  /// Available: Since 1.13.0
-  /// When enabled, developers can receive audio frame from remote playing stream through [onProcessRemoteAudioData], and can modify the audio data.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  /// Available since: 1.13.0
+  /// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
+  /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing before pulling the remote audio data for rendering.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// Restrictions: None.
   ///
   /// - [enable] Whether to enable custom audio processing for remote playing stream.
   /// - [config] Custom audio processing configuration.
@@ -44,9 +50,11 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
 
   /// Enable custom audio processing for SDK playback audio data.
   ///
-  /// Available: Since 2.12.0
-  /// When enabled, developers can receive audio frame from remote playing stream through [onProcessPlaybackAudioData], and can modify the audio data.
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  /// Available since: 1.13.0
+  /// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
+  /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after collecting audio data.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// Restrictions: None.
   ///
   /// - [enable] Whether to enable custom audio processing for SDK playback audio data.
   /// - [config] Custom audio processing configuration.
@@ -54,61 +62,93 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableCustomAudioPlaybackProcessing(enable, config);
   }
 
-  /// Enable audio data observering
+  /// Enable audio data observering.
   ///
-  /// It will only be triggered after this function is called and the callback has been set by calling [setAudioDataHandler]. If you want to enable the [onPlayerAudioData] callback, you must also be playing stream, and the sampling rate passed in by calling the [startAudioDataObserver] function does not support 8000Hz, 22050Hz, and 24000Hz.
+  /// Available since: 1.1.0 
+  /// Description: When custom audio processing is turned on, use this function to turn on audio data callback monitoring.
+  /// Use cases: When develop need to monitor the original audio.
+  /// When to call: After creating the engine.
+  /// Restrictions: None.
   ///
   /// - [observerBitMask] The callback function bitmask marker for receive audio data, refer to enum [ZegoAudioDataCallbackBitMask], when this param converted to binary, 0b01 that means 1 << 0 for triggering [onCapturedAudioData], 0x10 that means 1 << 1 for triggering [onPlaybackAudioData], 0x100 that means 1 << 2 for triggering [onMixedAudioData], 0x1000 that means 1 << 3 for triggering [onPlayerAudioData]. The masks can be combined to allow different callbacks to be triggered simultaneously.
-  /// - [param] param of audio frame
+  /// - [param] param of audio frame.
   Future<void> startAudioDataObserver(int observerBitMask, ZegoAudioFrameParam param) async {
     return await ZegoExpressImpl.instance.startAudioDataObserver(observerBitMask, param);
   }
 
-  /// Disable audio data observering
+  /// Disable audio data observering.
+  ///
+  /// Available since: 1.1.0 
+  /// Description: Disable audio data observering.
+  /// Use cases: When develop need to monitor the original audio.
+  /// When to call: After calling [startAudioDataObserver] to start audio data monitoring.
   Future<void> stopAudioDataObserver() async {
     return await ZegoExpressImpl.instance.stopAudioDataObserver();
   }
 
-  /// Enables the custom audio I/O function (for the specified channel).
+  /// Enables the custom audio I/O function (for the specified channel), support PCM, AAC format data.
   ///
-  /// It needs to be invoked before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to take effect.
+  /// Available since: 1.10.0
+  /// Description: Enable custom audio IO function, support PCM, AAC format data.
+  /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// Restrictions: None.
   ///
-  /// - [enable] Whether to enable custom audio IO, default is false
-  /// - [config] Custom audio IO config
-  /// - [channel] Specify the publish channel to enable custom audio IO
+  /// - [enable] Whether to enable custom audio IO, default is false.
+  /// - [config] Custom audio IO config.
+  /// - [channel] Specify the publish channel to enable custom audio IO.
   Future<void> enableCustomAudioIO(bool enable, ZegoCustomAudioConfig config, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.enableCustomAudioIO(enable, config, channel: channel);
   }
 
   /// Sends AAC audio data produced by custom audio capture to the SDK (for the specified channel).
   ///
-  /// - [data] AAC buffer data
-  /// - [dataLength] The total length of the buffer data
-  /// - [configLength] The length of AAC specific config (Note: The AAC encoded data length is 'encodedLength = dataLength - configLength')
+  /// Available since: 1.10.0
+  /// Description: Sends the captured audio AAC data to the SDK.
+  /// Use cases: The customer needs to obtain input after acquisition from the existing audio stream, audio file, or customized acquisition system, and hand it over to the SDK for transmission.
+  /// When to call: After [enableCustomAudioIO] and publishing stream successfully.
+  /// Restrictions: None.
+  /// Related APIs: Enable the custom audio IO function [enableCustomAudioIO], and start the push stream [startPublishingStream].
+  ///
+  /// - [data] AAC buffer data.
+  /// - [dataLength] The total length of the buffer data.
+  /// - [configLength] The length of AAC specific config (Note: The AAC encoded data length is 'encodedLength = dataLength - configLength').
   /// - [referenceTimeMillisecond] The UNIX timestamp of this AAC audio frame in millisecond.
-  /// - [param] The param of this AAC audio frame
-  /// - [channel] Publish channel for capturing audio frames
+  /// - [param] The param of this AAC audio frame.
+  /// - [channel] Publish channel for capturing audio frames.
   Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.sendCustomAudioCaptureAACData(data, dataLength, configLength, referenceTimeMillisecond, param, channel: channel);
   }
 
   /// Sends PCM audio data produced by custom audio capture to the SDK (for the specified channel).
   ///
-  /// - [data] PCM buffer data
-  /// - [dataLength] The total length of the buffer data
-  /// - [param] The param of this PCM audio frame
-  /// - [channel] Publish channel for capturing audio frames
+  /// Available since: 1.10.0
+  /// Description: Sends the captured audio PCM data to the SDK.
+  /// Use cases: 1.The customer needs to obtain input after acquisition from the existing audio stream, audio file, or customized acquisition system, and hand it over to the SDK for transmission. 2.Customers have their own requirements for special sound processing for PCM input sources. After the sound processing, the input will be sent to the SDK for transmission.
+  /// When to call: After [enableCustomAudioIO] and publishing stream successfully.
+  /// Restrictions: None.
+  /// Related APIs: Enable the custom audio IO function [enableCustomAudioIO], and start the push stream [startPublishingStream].
+  ///
+  /// - [data] PCM buffer data.
+  /// - [dataLength] The total length of the buffer data.
+  /// - [param] The param of this PCM audio frame.
+  /// - [channel] Publish channel for capturing audio frames.
   Future<void> sendCustomAudioCapturePCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance.sendCustomAudioCapturePCMData(data, dataLength, param, channel: channel);
   }
 
-  /// Fetches PCM audio data of the remote stream for custom audio rendering.
+  /// Fetches PCM audio data of the remote stream from the SDK for custom audio rendering.
   ///
-  /// It is recommended to use the system framework to periodically invoke this function to drive audio data rendering
+  /// Available since: 1.10.0
+  /// Description: Fetches PCM audio data of the remote stream from the SDK for custom audio rendering, it is recommended to use the system framework to periodically invoke this function to drive audio data rendering.
+  /// Use cases: When developers have their own rendering requirements, such as special applications or processing and rendering of the original PCM data that are pulled, it is recommended to use the custom audio rendering function of the SDK.
+  /// When to call: After [enableCustomAudioIO] and playing stream successfully.
+  /// Restrictions: None.
+  /// Related APIs: Enable the custom audio IO function [enableCustomAudioIO], and start the play stream [startPlayingStream].
   ///
-  /// - [data] A block of memory for storing audio PCM data that requires user to manage the memory block's lifecycle, the SDK will copy the audio frame rendering data to this memory block
-  /// - [dataLength] The length of the audio data to be fetch this time (dataLength = duration * sampleRate * channels * 2(16 bit depth i.e. 2 Btye))
-  /// - [param] Specify the parameters of the fetched audio frame
+  /// - [data] A block of memory for storing audio PCM data that requires user to manage the memory block's lifecycle, the SDK will copy the audio frame rendering data to this memory block.
+  /// - [dataLength] The length of the audio data to be fetch this time (dataLength = duration * sampleRate * channels * 2(16 bit depth i.e. 2 Btye)).
+  /// - [param] Specify the parameters of the fetched audio frame.
   Future<void> fetchCustomAudioRenderPCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param) async {
     return await ZegoExpressImpl.instance.fetchCustomAudioRenderPCMData(data, dataLength, param);
   }

@@ -7,8 +7,13 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
 
   /// Enables or disables custom video capture (for the specified channel).
   ///
-  /// It must be set before the engine starts, that is, before calling [startPreview], [startPublishingStream]; and the configuration can be modified after the engine is stopped, that is, after calling [logoutRoom].
-  /// When the developer starts the custom capture, it can be set to receive notification of the start and stop of the custom capture by calling [setCustomVideoCaptureHandler].
+  /// Available since: 1.9.0
+  /// Description: If the value of enable is true, the video collection function is enabled. If the value of enable is false, the video collection function is disabled.
+  /// Use case: The App developed by the developer uses the beauty SDK of a third-party beauty manufacturer to broadcast non-camera collected data.
+  /// Default value: When this function is not called, custom video collection is disabled by default.
+  /// When to call: After [createEngine], call [startPreview], [startPublishingStream], and call [logoutRoom] to modify the configuration.
+  /// Caution: Custom video rendering can be used in conjunction with custom video capture, but when both are enabled, the local capture frame callback for custom video rendering will no longer be triggered, and the developer should directly capture the captured video frame from the custom video capture source.
+  /// Related callbacks: When developers to open a custom collection, by calling [setCustomVideoCaptureHandler] can be set up to receive a custom collection start-stop event notification.
   ///
   /// - [enable] enable or disable
   /// - [config] custom video capture config

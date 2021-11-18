@@ -48,10 +48,14 @@ enum ZegoRoomState {
 
 /// Publish channel.
 enum ZegoPublishChannel {
-  /// Main publish channel, default publish channel.
+  /// The main (default/first) publish channel.
   Main,
-  /// Auxiliary publish channel
-  Aux
+  /// The auxiliary (second) publish channel
+  Aux,
+  /// The third publish channel
+  Third,
+  /// The fourth publish channel
+  Fourth
 }
 
 /// Video rendering fill mode.
@@ -286,6 +290,14 @@ enum ZegoANSMode {
   Aggressive
 }
 
+/// Stream alignment mode.
+enum ZegoStreamAlignmentMode {
+  /// Disable stream alignment.
+  None,
+  /// Streams should be aligned as much as possible, call the [setStreamAlignmentProperty] function to enable the stream alignment of the push stream network time alignment of the specified channel.
+  Try
+}
+
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
   /// Basic (Adaptive (reduce) video bitrate)
@@ -378,7 +390,7 @@ enum ZegoStreamRelayCDNUpdateReason {
   AccessPointError,
   /// Stream create failure
   CreateStreamFailed,
-  /// Bad name
+  /// Bad stream ID
   BadName,
   /// CDN server actively disconnected
   CDNServerDisconnected,
@@ -726,6 +738,38 @@ enum ZegoMixRenderMode {
   Fit
 }
 
+/// Camera focus mode.
+enum ZegoCameraFocusMode {
+  /// Auto focus.
+  AutoFocus,
+  /// Continuous auto focus.
+  ContinuousAutoFocus
+}
+
+/// Camera exposure mode.
+enum ZegoCameraExposureMode {
+  /// Auto exposure.
+  AutoExposure,
+  /// Continuous auto exposure.
+  ContinuousAutoExposure
+}
+
+/// voice activity detection type
+enum ZegoAudioVADType {
+  /// noise
+  Noise,
+  /// speech
+  Speech
+}
+
+/// stable voice activity detection type
+enum ZegoAudioVADStableStateMonitorType {
+  /// captured
+  Captured,
+  /// custom processed
+  CustomProcessed
+}
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -778,7 +822,7 @@ class ZegoEngineProfile {
   /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
   String appSign;
 
-  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
+  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to: https://doc-zh.zego.im/faq/profile_difference.
   ZegoScenario scenario;
 
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
@@ -1114,7 +1158,7 @@ class ZegoPublisherConfig {
   /// The Room ID
   String? roomID;
 
-  /// Whether to synchronize the network time when pushing streams. 1 is synchronized with 0 is not synchronized. And must be used with setStreamAlignmentProperty.
+  /// Whether to synchronize the network time when pushing streams. 1 is synchronized with 0 is not synchronized. And must be used with setStreamAlignmentProperty. It is used to align multiple streams at the mixed stream service or streaming end, such as the chorus scene of KTV.
   int? forceSynchronousNetworkTime;
 
   ZegoPublisherConfig(this.roomID, this.forceSynchronousNetworkTime);
@@ -1213,16 +1257,16 @@ class ZegoStreamRelayCDNInfo {
 
 /// Advanced player configuration.
 ///
-/// Configure playing stream CDN configuration, video layer, room id
+/// Configure playing stream CDN configuration, video layer, room id.
 class ZegoPlayerConfig {
 
-  /// Stream resource mode
+  /// Stream resource mode.
   ZegoStreamResourceMode resourceMode;
 
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
   ZegoCDNConfig? cdnConfig;
 
-  /// The Room ID
+  /// The Room ID.
   String? roomID;
 
   ZegoPlayerConfig(this.resourceMode, this.cdnConfig, this.roomID);
@@ -2094,7 +2138,11 @@ abstract class ZegoMediaPlayer {
 
   /// Load media resource.
   ///
-  /// Yon can pass the absolute path of the local resource or the URL of the network resource
+  /// Available: since 1.3.4
+  /// Description: Load media resources.
+  /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Related APIs: Resources can be loaded through the [loadResourceWithPosition] or [loadResourceFromMediaData] function.
   ///
   /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "".
   /// - Returns Notification of resource loading results
@@ -2106,6 +2154,7 @@ abstract class ZegoMediaPlayer {
   /// Description: Load binary audio data.
   /// Use case: Developers do not want to cache the audio data locally, and directly transfer the audio binary data to the media player, directly load and play the audio.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Related APIs: Resources can be loaded through the [loadResource] or [loadResourceWithPosition] function.
   /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
   ///
   /// - [mediaData] Binary audio data.
@@ -2295,91 +2344,159 @@ abstract class ZegoAudioEffectPlayer {
 
   /// Start playing audio effect.
   ///
-  /// The default is only played once and is not mixed into the publishing stream, if you want to change this please modify [config].
+  /// Available since: 1.16.0
+  /// Description: Start playing audio effect. The default is only played once and is not mixed into the publishing stream, if you want to change this please modify [config] param.
+  /// Use cases: When you need to play short sound effects, such as applause, cheers, etc., you can use this interface to achieve, and further configure the number of plays through the [config] parameter, and mix the sound effects into the push stream.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
   ///
-  /// - [audioEffectID] ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique id. The recommended methods are static self-incrementing id or the hash of the incoming sound effect file path.
-  /// - [path] The absolute path of the local resource. "assets://"、"ipod-library://" and network url are not supported. Set path as null or "" if resource is loaded already using [loadResource]
-  /// - [config] Audio effect playback configuration. Set null will only be played once, and will not be mixed into the publishing stream.
+  /// - [audioEffectID] Description: ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique ID. The recommended methods are static self-incrementing ID or the hash of the incoming sound effect file path.
+  /// - [path] The absolute path of the local resource. <br>Value range: "assets://"、"ipod-library://" and network url are not supported. Set path as null or "" if resource is loaded already using [loadResource].
+  /// - [config] Audio effect playback configuration. <br>Default value: Set null will only be played once, and will not be mixed into the publishing stream.
   Future<void> start(int audioEffectID, {String? path, ZegoAudioEffectPlayConfig? config});
 
   /// Stop playing audio effect.
   ///
-  /// - [audioEffectID] ID for the audio effect
+  /// Available since: 1.16.0
+  /// Description: Stop playing the specified audio effect [audioEffectID].
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
   Future<void> stop(int audioEffectID);
 
   /// Pause playing audio effect.
   ///
-  /// - [audioEffectID] ID for the audio effect
+  /// Available since: 1.16.0
+  /// Description: Pause playing the specified audio effect [audioEffectID].
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
   Future<void> pause(int audioEffectID);
 
   /// Resume playing audio effect.
   ///
-  /// - [audioEffectID] ID for the audio effect
+  /// Available since: 1.16.0
+  /// Description: Resume playing the specified audio effect [audioEffectID].
+  /// When to call: The specified [audioEffectID] is [pause].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
   Future<void> resume(int audioEffectID);
 
   /// Stop playing all audio effect.
+  ///
+  /// Available since: 1.16.0
+  /// Description: Stop playing all audio effect.
+  /// When to call: Some audio effects are Playing.
+  /// Restrictions: None.
   Future<void> stopAll();
 
   /// Pause playing all audio effect.
+  ///
+  /// Available since: 1.16.0
+  /// Description: Pause playing all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
   Future<void> pauseAll();
 
   /// Resume playing all audio effect.
+  ///
+  /// Available since: 1.16.0
+  /// Description: Resume playing all audio effect.
+  /// When to call: It can be called after [pauseAll].
+  /// Restrictions: None.
   Future<void> resumeAll();
 
   /// Set the specified playback progress.
   ///
-  /// Unit is millisecond
+  /// Available since: 1.16.0
+  /// Description: Set the specified audio effect playback progress. Unit is millisecond.
+  /// When to call: The specified [audioEffectID] is[start], and not finished.
+  /// Restrictions: None.
   ///
-  /// - [audioEffectID] ID for the audio effect
-  /// - [millisecond] Point in time of specified playback progress
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [millisecond] Point in time of specified playback progress.
   /// - Returns Result for audio effect player seek to playback progress
   Future<ZegoAudioEffectPlayerSeekToResult> seekTo(int audioEffectID, int millisecond);
 
   /// Set volume for a single audio effect. Both the local play volume and the publish volume are set.
   ///
-  /// - [audioEffectID] ID for the audio effect
-  /// - [volume] The range is 0 ~ 200. The default is 100.
+  /// Available since: 1.16.0
+  /// Description: Set volume for a single audio effect. Both the local play volume and the publish volume are set.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolume(int audioEffectID, int volume);
 
   /// Set volume for all audio effect. Both the local play volume and the publish volume are set.
   ///
-  /// - [volume] The range is 0 ~ 200. The default is 100.
+  /// Available since: 1.16.0
+  /// Description: Set volume for all audio effect. Both the local play volume and the publish volume are set.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolumeAll(int volume);
 
-  /// Get the total progress of your media resources.
+  /// Get the total duration of the specified audio effect resource.
   ///
-  /// You should load resource before invoking this function, otherwise the return value is 0
+  /// Available since: 1.16.0
+  /// Description: Get the total duration of the specified audio effect resource. Unit is millisecond.
+  /// When to call: You should invoke this function after the audio effect resource already loaded, otherwise the return value is 0.
+  /// Restrictions: It can be called after [createAudioEffectPlayer].
+  /// Related APIs: [start], [loadResource].
   ///
-  /// - [audioEffectID] ID for the audio effect
-  /// - Returns Unit is millisecond
+  /// - [audioEffectID] ID for the audio effect.
+  /// - Returns Unit is millisecond.
   Future<int> getTotalDuration(int audioEffectID);
 
-  /// Get current playing progress.
+  /// Get current playback progress.
   ///
-  /// You should load resource before invoking this function, otherwise the return value is 0
+  /// Available since: 1.16.0
+  /// Description: Get current playback progress of the specified audio effect. Unit is millisecond.
+  /// When to call: You should invoke this function after the audio effect resource already loaded, otherwise the return value is 0.
+  /// Restrictions: None.
+  /// Related APIs: [start], [loadResource].
   ///
-  /// - [audioEffectID] ID for the audio effect
+  /// - [audioEffectID] ID for the audio effect.
   Future<int> getCurrentProgress(int audioEffectID);
 
   /// Load audio effect resource.
   ///
-  /// In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file. Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading
+  /// Available since: 1.16.0
+  /// Description: Load audio effect resource.
+  /// Use cases: In a scene where the same sound effect is played frequently, the SDK provides the function of preloading the sound effect file into the memory in order to optimize the performance of repeatedly reading and decoding the file.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading.
   ///
-  /// - [audioEffectID] ID for the audio effect
-  /// - [path] the absolute path of the audio effect resource and cannot be null or "".
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [path] the absolute path of the audio effect resource and cannot be null or "". <br>Value range: "assets://"、"ipod-library://" and network url are not supported.
   /// - Returns Result for audio effect player loads resources
   Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(int audioEffectID, String path);
 
   /// Unload audio effect resource.
   ///
-  /// After the sound effects are used up, related resources can be released through this function; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
+  /// Available since: 1.16.0
+  /// Description: Unload the specified audio effect resource.
+  /// When to call: After the sound effects are used up, related resources can be released through this function; otherwise, the SDK will release the loaded resources when the AudioEffectPlayer instance is destroyed.
+  /// Restrictions: None.
+  /// Related APIs: [loadResource].
   ///
-  /// - [audioEffectID] ID for the audio effect loaded
+  /// - [audioEffectID] ID for the audio effect loaded.
   Future<void> unloadResource(int audioEffectID);
 
   /// Get audio effect player index.
   ///
-  /// - Returns Audio effect player index
+  /// Available since: 1.16.0
+  /// Description: Get audio effect player index.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - Returns Audio effect player index.
   int getIndex();
 
 }
