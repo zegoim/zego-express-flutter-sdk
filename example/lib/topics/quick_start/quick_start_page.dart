@@ -74,7 +74,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
       ZegoConfig.instance.appID, 
       ZegoConfig.instance.appSign, 
       ZegoConfig.instance.scenario,
-      ZegoConfig.instance.enablePlatformView);
+      enablePlatformView: ZegoConfig.instance.enablePlatformView);
     ZegoExpressEngine.createEngineWithProfile(profile);
 
     // Notify View that engine state changed
