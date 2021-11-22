@@ -828,16 +828,7 @@ class ZegoEngineProfile {
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
   bool? enablePlatformView;
 
-  ZegoEngineProfile(this.appID, this.appSign, this.scenario, this.enablePlatformView);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'appID': this.appID,
-      'appSign': this.appSign,
-      'scenario': this.scenario.index,
-      'enablePlatformView': this.enablePlatformView
-    };
-  }
+  ZegoEngineProfile(this.appID, this.appSign, this.scenario, {this.enablePlatformView});
 
 }
 
@@ -850,7 +841,7 @@ class ZegoEngineConfig {
   /// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
   Map<String, String>? advancedConfig;
 
-  ZegoEngineConfig(this.logConfig, this.advancedConfig);
+  ZegoEngineConfig({this.logConfig, this.advancedConfig});
 
 }
 
@@ -913,7 +904,7 @@ class ZegoVideoConfig {
   /// Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
   int? keyFrameInterval;
 
-  ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID, this.keyFrameInterval);
+  ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth, this.encodeHeight, this.fps, this.bitrate, this.codecID, {this.keyFrameInterval});
 
   /// Create video configuration with preset enumeration values
   ZegoVideoConfig.preset(ZegoVideoConfigPreset preset) : captureWidth = 720, captureHeight = 1280, encodeWidth = 720, encodeHeight = 1280, fps = 15, bitrate = 1200, codecID = ZegoVideoCodecID.Default, keyFrameInterval = 2 {
@@ -968,19 +959,6 @@ class ZegoVideoConfig {
         fps = 15;
         break;
     }
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'captureWidth': this.captureWidth,
-      'captureHeight': this.captureHeight,
-      'encodeWidth': this.encodeWidth,
-      'encodeHeight': this.encodeHeight,
-      'fps': this.fps,
-      'bitrate': this.bitrate,
-      'codecID': this.codecID.index,
-      'keyFrameInterval': this.keyFrameInterval
-    };
   }
 
 }
@@ -1143,7 +1121,7 @@ class ZegoCanvas {
   /// Background color, the format is 0xRRGGBB, default is black, which is 0x000000
   int? backgroundColor;
 
-  ZegoCanvas(this.view, this.viewMode, this.backgroundColor);
+  ZegoCanvas(this.view, {this.viewMode, this.backgroundColor});
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
   ZegoCanvas.view(int view): this.view = view, this.viewMode = ZegoViewMode.AspectFit, this.backgroundColor = 0x000000;
@@ -1161,7 +1139,7 @@ class ZegoPublisherConfig {
   /// Whether to synchronize the network time when pushing streams. 1 is synchronized with 0 is not synchronized. And must be used with setStreamAlignmentProperty. It is used to align multiple streams at the mixed stream service or streaming end, such as the chorus scene of KTV.
   int? forceSynchronousNetworkTime;
 
-  ZegoPublisherConfig(this.roomID, this.forceSynchronousNetworkTime);
+  ZegoPublisherConfig({this.roomID, this.forceSynchronousNetworkTime});
 
 }
 
@@ -1269,7 +1247,7 @@ class ZegoPlayerConfig {
   /// The Room ID.
   String? roomID;
 
-  ZegoPlayerConfig(this.resourceMode, this.cdnConfig, this.roomID);
+  ZegoPlayerConfig(this.resourceMode, {this.cdnConfig, this.roomID});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default;
@@ -1434,11 +1412,6 @@ class ZegoMixerAudioConfig {
   /// Create a default mix stream audio configuration
   ZegoMixerAudioConfig.defaultConfig() : bitrate = 48, channel = ZegoAudioChannel.Mono, codecID = ZegoAudioCodecID.Normal;
 
-  ZegoMixerAudioConfig.fromMap(Map<dynamic, dynamic> map):
-    bitrate = map['bitrate'],
-    channel = map['channel'],
-    codecID = map['codecID'];
-
   Map<String, dynamic> toMap() {
     return {
       'bitrate': this.bitrate,
@@ -1521,21 +1494,6 @@ class ZegoFontStyle {
   /// Create a default font style object.
   ZegoFontStyle.defaultStyle() : type = ZegoFontType.SourceHanSans, size = 24, color = 16777215, transparency = 0;
 
-  ZegoFontStyle.fromMap(Map<dynamic, dynamic> map):
-    type = map['type'],
-    size = map['size'],
-    color = map['color'],
-    transparency = map['transparency'];
-
-  Map<String, dynamic> toMap() {
-    return {
-      'type': this.type.index,
-      'size': this.size,
-      'color': this.color,
-      'transparency': this.transparency
-    };
-  }
-
 }
 
 /// Label info.
@@ -1560,21 +1518,6 @@ class ZegoLabelInfo {
 
   /// Build a label info object with text.
   ZegoLabelInfo.text(String text) : this.text = text, left = 0, top = 0, font = ZegoFontStyle.defaultStyle();
-
-  ZegoLabelInfo.fromMap(Map<dynamic, dynamic> map):
-    text = map['text'],
-    left = map['left'],
-    top = map['top'],
-    font = ZegoFontStyle.fromMap(map['font']);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'text': this.text,
-      'left': this.left,
-      'top': this.top,
-      'font': this.font.toMap()
-    };
-  }
 
 }
 
@@ -1607,7 +1550,7 @@ class ZegoMixerInput {
   /// Video view render mode.
   ZegoMixRenderMode? renderMode;
 
-  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.isAudioFocus, this.audioDirection, this.label, this.renderMode);
+  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode});
 
   Map<String, dynamic> toMap() {
     return {
@@ -1845,10 +1788,6 @@ class ZegoAudioFrameParam {
 
   ZegoAudioFrameParam(this.sampleRate, this.channel);
 
-  ZegoAudioFrameParam.fromMap(Map<dynamic, dynamic> map):
-    sampleRate = map['sampleRate'],
-    channel = map['channel'];
-
 }
 
 /// Audio configuration.
@@ -1985,10 +1924,6 @@ class ZegoNetworkProbeHttpResult {
 
   ZegoNetworkProbeHttpResult(this.errorCode, this.requestCostTime);
 
-  ZegoNetworkProbeHttpResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    requestCostTime = map['requestCostTime'];
-
 }
 
 /// tcp probe result
@@ -2005,11 +1940,6 @@ class ZegoNetworkProbeTcpResult {
 
   ZegoNetworkProbeTcpResult(this.errorCode, this.rtt, this.connectCostTime);
 
-  ZegoNetworkProbeTcpResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    rtt = map['rtt'],
-    connectCostTime = map['connectCostTime'];
-
 }
 
 /// udp probe result
@@ -2022,10 +1952,6 @@ class ZegoNetworkProbeUdpResult {
   int rtt;
 
   ZegoNetworkProbeUdpResult(this.errorCode, this.rtt);
-
-  ZegoNetworkProbeUdpResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    rtt = map['rtt'];
 
 }
 
@@ -2041,10 +1967,6 @@ class ZegoNetworkProbeTracerouteResult {
   int tracerouteCostTime;
 
   ZegoNetworkProbeTracerouteResult(this.errorCode, this.tracerouteCostTime);
-
-  ZegoNetworkProbeTracerouteResult.fromMap(Map<dynamic, dynamic> map):
-    errorCode = map['errorCode'],
-    tracerouteCostTime = map['tracerouteCostTime'];
 
 }
 
@@ -2063,7 +1985,7 @@ class ZegoNetworkProbeResult {
   /// traceroute result
   ZegoNetworkProbeTracerouteResult? tracerouteResult;
 
-  ZegoNetworkProbeResult(this.httpProbeResult, this.tcpProbeResult, this.udpProbeResult, this.tracerouteResult);
+  ZegoNetworkProbeResult({this.httpProbeResult, this.tcpProbeResult, this.udpProbeResult, this.tracerouteResult});
 
 }
 
@@ -2654,7 +2576,7 @@ class ZegoPublisherTakeSnapshotResult {
   /// Snapshot image
   MemoryImage? image;
 
-  ZegoPublisherTakeSnapshotResult(this.errorCode, this.image);
+  ZegoPublisherTakeSnapshotResult(this.errorCode, {this.image});
 
 }
 
@@ -2670,7 +2592,7 @@ class ZegoPlayerTakeSnapshotResult {
   /// Snapshot image
   MemoryImage? image;
 
-  ZegoPlayerTakeSnapshotResult(this.errorCode, this.image);
+  ZegoPlayerTakeSnapshotResult(this.errorCode, {this.image});
 
 }
 
@@ -2782,7 +2704,7 @@ class ZegoMediaPlayerTakeSnapshotResult {
   /// Snapshot image
   MemoryImage? image;
 
-  ZegoMediaPlayerTakeSnapshotResult(this.errorCode, this.image);
+  ZegoMediaPlayerTakeSnapshotResult(this.errorCode, {this.image});
 
 }
 

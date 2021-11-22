@@ -114,7 +114,10 @@
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [ZegoExpressEngine createEngineWithAppID:appID appSign:appSign isTestEnv:isTestEnv scenario:(ZegoScenario)scenario eventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+#pragma clang diagnostic pop
 
     // Set platform language to dart
     SEL selector = NSSelectorFromString(@"setPlatformLanguage:");

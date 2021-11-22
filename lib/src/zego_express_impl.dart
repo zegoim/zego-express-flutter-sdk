@@ -34,7 +34,14 @@ class ZegoExpressImpl {
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
     _registerEventHandler();
 
-    await _channel.invokeMethod('createEngineWithProfile', {'profile': profile.toMap()});
+    await _channel.invokeMethod('createEngineWithProfile', {
+      'profile': {
+        'appID': profile.appID,
+        'appSign': profile.appSign,
+        'scenario': profile.scenario.index,
+        'enablePlatformView': profile.enablePlatformView ?? false
+      }
+    });
 
     await _channel.invokeMethod('setPluginVersion', {
       'version': Global.pluginVersion
@@ -210,7 +217,16 @@ class ZegoExpressImpl {
   Future<void> setVideoConfig(ZegoVideoConfig config,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoConfig', {
-      'config': config.toMap(),
+      'config': {
+        'captureWidth': config.captureWidth,
+        'captureHeight': config.captureHeight,
+        'encodeWidth': config.encodeWidth,
+        'encodeHeight': config.encodeHeight,
+        'fps': config.fps,
+        'bitrate': config.bitrate,
+        'codecID': config.codecID.index,
+        'keyFrameInterval': config.keyFrameInterval ?? 2
+      },
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -228,7 +244,7 @@ class ZegoExpressImpl {
         map['fps'],
         map['bitrate'],
         ZegoVideoCodecID.values[map['codecID']],
-        map['keyFrameInterval']);
+        keyFrameInterval: map['keyFrameInterval'] ?? 2);
 
     return config;
   }
@@ -288,7 +304,7 @@ class ZegoExpressImpl {
         {'channel': channel?.index ?? ZegoPublishChannel.Main.index});
 
     return ZegoPublisherTakeSnapshotResult(map['errorCode'],
-        map['image'] != null ? MemoryImage(map['image']) : null);
+        image: map['image'] != null ? MemoryImage(map['image']) : null);
   }
 
   Future<void> mutePublishStreamAudio(bool mute,
@@ -463,7 +479,7 @@ class ZegoExpressImpl {
         .invokeMethod('takePlayStreamSnapshot', {'streamID': streamID});
 
     return ZegoPlayerTakeSnapshotResult(map['errorCode'],
-        map['image'] != null ? MemoryImage(map['image']) : null);
+        image: map['image'] != null ? MemoryImage(map['image']) : null);
   }
 
   Future<void> setPlayVolume(String streamID, int volume) async {
@@ -1146,19 +1162,19 @@ class ZegoExpressImpl {
     ZegoNetworkProbeTracerouteResult? tracerouteResult;
 
     if (map['httpProbeResult'] != null) {
-      httpProbeResult = ZegoNetworkProbeHttpResult.fromMap(map['httpProbeResult']);
+      httpProbeResult = ZegoNetworkProbeHttpResult(map['httpProbeResult']['errorCode'], map['httpProbeResult']['requestCostTime']);
     }
     if (map['tcpProbeResult'] != null) {
-      tcpProbeResult = ZegoNetworkProbeTcpResult.fromMap(map['tcpProbeResult']);
+      tcpProbeResult = ZegoNetworkProbeTcpResult(map['tcpProbeResult']['errorCode'], map['tcpProbeResult']['rtt'], map['tcpProbeResult']['connectCostTime']);
     }
     if (map['udpProbeResult'] != null) {
-      udpProbeResult = ZegoNetworkProbeUdpResult.fromMap(map['udpProbeResult']);
+      udpProbeResult = ZegoNetworkProbeUdpResult(map['udpProbeResult']['errorCode'], map['udpProbeResult']['rtt']);
     }
     if (map['tracerouteResult'] != null) {
-      tracerouteResult = ZegoNetworkProbeTracerouteResult.fromMap(map['tracerouteResult']);
+      tracerouteResult = ZegoNetworkProbeTracerouteResult(map['tracerouteResult']['errorCode'], map['tracerouteResult']['tracerouteCostTime']);
     }
 
-    return ZegoNetworkProbeResult(httpProbeResult, tcpProbeResult, udpProbeResult, tracerouteResult);
+    return ZegoNetworkProbeResult(httpProbeResult: httpProbeResult, tcpProbeResult: tcpProbeResult, udpProbeResult: udpProbeResult, tracerouteResult: tracerouteResult);
   }
 
   Future<void> stopNetworkProbe() async {
@@ -2211,7 +2227,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     );
 
     return ZegoMediaPlayerTakeSnapshotResult(map['errorCode'],
-        map['image'] != null ? MemoryImage(map['image']) : null);
+        image: map['image'] != null ? MemoryImage(map['image']) : null);
   }
 }
 
