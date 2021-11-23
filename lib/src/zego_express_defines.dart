@@ -836,6 +836,7 @@ class ZegoEngineProfile {
 class ZegoEngineConfig {
 
   /// Log configuration, if not set, use the default configuration. It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].
+  @Deprecated('This property has been deprecated since version 2.3.0, please use the [setLogConfig] function instead.')
   ZegoLogConfig? logConfig;
 
   /// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
