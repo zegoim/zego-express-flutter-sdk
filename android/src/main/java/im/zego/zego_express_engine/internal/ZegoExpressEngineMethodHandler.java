@@ -32,6 +32,7 @@ import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.ZegoRangeAudio;
+import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerLoadResourceCallback;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerSeekToCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
@@ -48,6 +49,7 @@ import im.zego.zegoexpress.callback.IZegoPublisherSetStreamExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherTakeSnapshotCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
+import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataSentCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
 import im.zego.zegoexpress.constants.ZegoANSMode;
 import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
@@ -82,6 +84,10 @@ import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.constants.ZegoVideoStreamType;
 import im.zego.zegoexpress.constants.ZegoVoiceChangerPreset;
+import im.zego.zegoexpress.constants.ZegoStreamAlignmentMode;
+import im.zego.zegoexpress.constants.ZegoCameraFocusMode;
+import im.zego.zegoexpress.constants.ZegoCameraExposureMode;
+import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -143,6 +149,8 @@ public class ZegoExpressEngineMethodHandler {
     private static final HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
+
+    private static final HashMap<Integer, ZegoRealTimeSequentialDataManager> realTimeSequentialDataManagerHashMap = new HashMap<>();
 
     private static ZegoRangeAudio rangeAudioInstance = null;
 
@@ -1267,9 +1275,18 @@ public class ZegoExpressEngineMethodHandler {
 
         boolean isSupport = ZegoExpressEngine.getEngine().isVideoDecoderSupported(codecID);
 
-        result.success(true);
+        result.success(isSupport);
     }
+    
+    @SuppressWarnings("unused")
+    public static void setPlayStreamsAlignmentProperty(MethodCall call, Result result) {
 
+        ZegoStreamAlignmentMode mode = ZegoStreamAlignmentMode .getZegoStreamAlignmentMode (ZegoUtils.intValue((Number) call.argument("mode")));
+
+        ZegoExpressEngine.getEngine().setPlayStreamsAlignmentProperty(mode);
+
+        result.success(null);
+    }
 
     /* Mixer */
 
@@ -1654,6 +1671,62 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void isCameraFocusSupported(MethodCall call, Result result) {
+        
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        boolean supported = ZegoExpressEngine.getEngine().isCameraFocusSupported(channel);
+
+        result.success(supported);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCameraFocusMode(MethodCall call, Result result) {
+
+        ZegoCameraFocusMode mode = ZegoCameraFocusMode.getZegoCameraFocusMode(ZegoUtils.intValue((Number) call.argument("mode")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraFocusMode(mode, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCameraFocusPointInPreview(MethodCall call, Result result) {
+
+        float x = ZegoUtils.floatValue((Number) call.argument("x"));
+        float y = ZegoUtils.floatValue((Number) call.argument("y"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraFocusPointInPreview(x, y, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCameraExposureMode(MethodCall call, Result result) {
+
+        ZegoCameraExposureMode mode = ZegoCameraExposureMode.getZegoCameraExposureMode(ZegoUtils.intValue((Number) call.argument("mode")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraExposureMode(mode, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCameraExposurePointInPreview(MethodCall call, Result result) {
+
+        float x = ZegoUtils.floatValue((Number) call.argument("x"));
+        float y = ZegoUtils.floatValue((Number) call.argument("y"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraExposurePointInPreview(x, y, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setCameraExposureCompensation(MethodCall call, Result result) {
 
         float value = ZegoUtils.floatValue((Number) call.argument("value"));
@@ -1745,6 +1818,25 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void startAudioVADStableStateMonitor(MethodCall call, Result result) {
+
+        ZegoAudioVADStableStateMonitorType type = ZegoAudioVADStableStateMonitorType.getZegoAudioVADStableStateMonitorType(ZegoUtils.intValue((Number) call.argument("type")));
+        
+        ZegoExpressEngine.getEngine().startAudioVADStableStateMonitor(type);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopAudioVADStableStateMonitor(MethodCall call, Result result) {
+
+        ZegoAudioVADStableStateMonitorType type = ZegoAudioVADStableStateMonitorType.getZegoAudioVADStableStateMonitorType(ZegoUtils.intValue((Number) call.argument("type")));
+        
+        ZegoExpressEngine.getEngine().stopAudioVADStableStateMonitor(type);
+
+        result.success(null);
+    }
 
     /* PreProcess */
 
@@ -2317,6 +2409,27 @@ public class ZegoExpressEngineMethodHandler {
             byte[] mediaData = call.argument("mediaData");
 
             mediaPlayer.loadResourceFromMediaData(mediaData, startPosition, new IZegoMediaPlayerLoadResourceCallback() {
+                @Override
+                public void onLoadResourceCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerLoadResourceWithPosition(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int startPosition = ZegoUtils.intValue((Number) call.argument("startPosition"));
+            String path = call.argument("path");
+
+            mediaPlayer.loadResourceWithPosition(path, startPosition, new IZegoMediaPlayerLoadResourceCallback() {
                 @Override
                 public void onLoadResourceCallback(int errorCode) {
                     HashMap<String, Object> resultMap = new HashMap<>();
@@ -3244,6 +3357,129 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioUpdateSelfPosition` but can't find specific instance", null);
+        }
+    }
+
+    /*  real time sequential data manager */
+
+    @SuppressWarnings("unused")
+    public static void createRealTimeSequentialDataManager(MethodCall call, Result result) {
+
+        String roomID = call.argument("roomID");
+
+        ZegoRealTimeSequentialDataManager manager = ZegoExpressEngine.getEngine().createRealTimeSequentialDataManager(roomID);
+
+        if (manager != null)
+        {
+            int index = manager.getIndex();
+
+            manager.setEventHandler(ZegoExpressEngineEventHandler.getInstance().realTimeSequentialDataEventHandler);
+            realTimeSequentialDataManagerHashMap.put(index, manager);
+
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyRealTimeSequentialDataManager(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap.get(index);
+
+        if (manager != null) {
+            manager.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyRealTimeSequentialDataManager(manager);
+        } 
+
+        realTimeSequentialDataManagerHashMap.remove(index);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void dataManagerSendRealTimeSequentialData(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+
+        if (manager != null) {
+            byte[] data = call.argument("data");
+            String streamID = call.argument("streamID");
+
+            manager.sendRealTimeSequentialData(data, streamID, new IZegoRealTimeSequentialDataSentCallback() {
+                @Override
+                public void onRealTimeSequentialDataSent(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }
+            });
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void dataManagerStartBroadcasting(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+
+        if (manager != null) {
+            String streamID = call.argument("streamID");
+            manager.startBroadcasting(streamID);
+            result.success(null);
+
+        } else {
+            result.error("realTimeSequentialDataManager_Can_not_find_instance".toUpperCase(), "Invoke `dataManagerStartBroadcasting` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void dataManagerStartSubscribing(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+
+        if (manager != null) {
+            String streamID = call.argument("streamID");
+            manager.startSubscribing(streamID);
+            result.success(null);
+
+        } else {
+            result.error("realTimeSequentialDataManager_Can_not_find_instance".toUpperCase(), "Invoke `dataManagerStartSubscribing` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void dataManagerStopBroadcasting(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+
+        if (manager != null) {
+            String streamID = call.argument("streamID");
+            manager.stopBroadcasting(streamID);
+            result.success(null);
+
+        } else {
+            result.error("realTimeSequentialDataManager_Can_not_find_instance".toUpperCase(), "Invoke `dataManagerStopBroadcasting` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void dataManagerStopSubscribing(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+
+        if (manager != null) {
+            String streamID = call.argument("streamID");
+            manager.stopSubscribing(streamID);
+            result.success(null);
+
+        } else {
+            result.error("realTimeSequentialDataManager_Can_not_find_instance".toUpperCase(), "Invoke `dataManagerStopSubscribing` but can't find specific instance", null);
         }
     }
 

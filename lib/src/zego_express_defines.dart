@@ -290,6 +290,18 @@ enum ZegoANSMode {
   Aggressive
 }
 
+/// video encode profile.
+enum ZegoEncodeProfile {
+  /// The default video encode specifications, The default value is the video encoding specification at the Main level.
+  Default,
+  /// Baseline-level video encode specifications have low decoding consumption and poor picture effects. They are generally used for low-level applications or applications that require additional fault tolerance.
+  Baseline,
+  /// Main-level video encode specifications, decoding consumption is slightly higher than Baseline, the picture effect is also better, generally used in mainstream consumer electronic products.
+  Main,
+  /// High-level video encode specifications, decoding consumption is higher than Main, the picture effect is better, generally used for broadcasting and video disc storage, high-definition TV.
+  High
+}
+
 /// Stream alignment mode.
 enum ZegoStreamAlignmentMode {
   /// Disable stream alignment.
@@ -1468,7 +1480,13 @@ class ZegoMixerOutputVideoConfig {
   /// Mix stream output video bitrate in kbps.
   int bitrate;
 
-  ZegoMixerOutputVideoConfig(this.videoCodecID, this.bitrate);
+  /// Mix stream video encode profile. Default value is [ZegoEncodeProfileDefault].
+  ZegoEncodeProfile encodeProfile;
+
+  /// The video encoding delay of mixed stream output, Valid value range [0, 2000], in milliseconds. The default value is 0.
+  int encodeLatency;
+
+  ZegoMixerOutputVideoConfig(this.videoCodecID, this.bitrate, this.encodeProfile, this.encodeLatency);
 
 }
 
@@ -2073,6 +2091,20 @@ abstract class ZegoMediaPlayer {
 
   /// Load media resource.
   ///
+  /// Available: since 2.14.0
+  /// Description: Load media resources, and specify the progress, in milliseconds, at which playback begins.
+  /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Related APIs: Resources can be loaded through the [loadResource] or [loadResourceFromMediaData] function.
+  /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  ///
+  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "".
+  /// - [startPosition] The progress at which the playback started.
+  /// - Returns Notification of resource loading results
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithPosition(String path, int startPosition);
+
+  /// Load media resource.
+  ///
   /// Available: since 2.10.0
   /// Description: Load binary audio data.
   /// Use case: Developers do not want to cache the audio data locally, and directly transfer the audio binary data to the media player, directly load and play the audio.
@@ -2529,6 +2561,78 @@ abstract class ZegoRangeAudio {
 
 }
 
+/// Zego RealTimeSequentialDataManager.
+abstract class ZegoRealTimeSequentialDataManager {
+
+  /// Start broadcasting real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function allows users to broadcast their local real-time sequential data stream to the ZEGO RTC server, and other users in the same room can subscribe to the real-time sequential data stream for intercommunication through "streamID".
+  /// Use cases: Before sending real-time sequential data, you need to call this function to start broadcasting.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPublisherStateUpdate] callback to tell you the broadcast state (publish state) of this stream. After the broadcast is successful, other users in the same room will receive the [onRoomStreamUpdate] callback to tell them this stream has been added to the room.
+  ///
+  /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID (Note that it cannot be the same as the stream ID passed in [startPublishingStream]). If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  Future<void> startBroadcasting(String streamID);
+
+  /// Stop broadcasting real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function allows users to stop broadcasting their local real-time sequential data stream.
+  /// Use cases: When you no longer need to send real-time sequential data, you need to call this function to stop broadcasting.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPublisherStateUpdate] callback to tell you the broadcast state (publish state) of this stream. After stopping the broadcast, other users in the same room will receive the [onRoomStreamUpdate] callback to tell them this stream has been deleted from the room.
+  ///
+  /// - [streamID] The ID of the stream that needs to stop broadcasting.
+  Future<void> stopBroadcasting(String streamID);
+
+  /// Send real-time sequential data to the broadcasting stream ID.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function can be used to send real-time sequential data on the stream currently being broadcast.
+  /// Use cases: You need to call this function when you need to send real-time sequential data.
+  /// When to call: After calling [startBroadcasting].
+  /// Restrictions: None.
+  /// Caution: None.
+  ///
+  /// - [data] The real-time sequential data to be sent.
+  /// - [streamID] The stream ID to which the real-time sequential data is sent.
+  /// - Returns Send real-time sequential data result notification.
+  Future<ZegoRealTimeSequentialDataSentResult> sendRealTimeSequentialData(Uint8List data, String streamID);
+
+  /// Start subscribing real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function allows users to subscribe to the real-time sequential data stream of remote users from the ZEGO RTC server.
+  /// Use cases: When you need to receive real-time sequential data sent from other remote users, you need to call this function to start subscribing to the stream broadcasted by other remote users.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPlayerStateUpdate] callback to tell you the subscribe state (play state) of this stream.
+  ///
+  /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  Future<void> startSubscribing(String streamID);
+
+  /// Stop subscribing real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function can be used to stop subscribing to the real-time sequential data stream.
+  /// Use cases: When you no longer need to receive real-time sequential data sent by other users, you need to call this function to stop subscribing to the other user's stream.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPlayerStateUpdate] callback to tell you the subscribe state (play state) of this stream.
+  ///
+  /// - [streamID] The ID of the stream that needs to stop subscribing.
+  Future<void> stopSubscribing(String streamID);
+
+  /// Get real-time sequential data manager index.
+  ///
+  /// - Returns Index of the real-time sequential data manager.
+  int getIndex();
+
+}
+
 /// Callback for setting room extra information.
 ///
 /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
@@ -2622,6 +2726,18 @@ class ZegoMixerStopResult {
   int errorCode;
 
   ZegoMixerStopResult(this.errorCode);
+
+}
+
+/// Callback for sending real-time sequential data.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+class ZegoRealTimeSequentialDataSentResult {
+
+  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  int errorCode;
+
+  ZegoRealTimeSequentialDataSentResult(this.errorCode);
 
 }
 

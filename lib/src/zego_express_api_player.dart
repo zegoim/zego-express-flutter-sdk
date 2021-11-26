@@ -224,4 +224,18 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isVideoDecoderSupported(codecID);
   }
 
+  /// Set the play stream alignment properties.
+  ///
+  /// Available since: 2.14.0
+  /// Description: When playing at the streaming end, control whether the playing RTC stream needs to be accurately aligned. If necessary, all the streams that contain precise alignment parameters will be aligned; if not, all streams are not aligned.
+  /// Use case: It is often used in scenes that require mixed stream alignment such as KTV to ensure that users can switch between singing anchors, ordinary Maishangyu chat anchors, and Maixia audiences at any time during use.
+  /// Default value: If this interface is not called, the default is not aligned.
+  /// When to call: Called after [createEngine]. Call the interface repeatedly, and the latest setting is valid.
+  /// Related APIs: Set the precise alignment parameter of the stream channel [setStreamAlignmentProperty].
+  ///
+  /// - [mode] Setting the stream alignment mode.
+  Future<void> setPlayStreamsAlignmentProperty(ZegoStreamAlignmentMode mode) async {
+    return await ZegoExpressImpl.instance.setPlayStreamsAlignmentProperty(mode);
+  }
+
 }

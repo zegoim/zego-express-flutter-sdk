@@ -5,6 +5,35 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineIM on ZegoExpressEngine {
 
+  /// Create the real time sequential data manager instance
+  ///
+  /// Available: since 2.14.0
+  /// Description: Create a manager object for sending/receiving real-time signaling.
+  /// Use cases: You can use this function when you need to use real-time signaling to implement services such as cloud games and remote desktops.
+  /// When to call: After logging in to a room.
+  /// Restrictions: Only one corresponding manager object can be created for each room ID of [loginRoom], that is, only one object can be created in single room mode, and multiple objects can be created in multi-room mode.
+  /// Caution: If you create this object before using the audio and video function (push/pull streaming), the camera and microphone will be automatically closed. If the user has not called [enableCamera] / [enableAudioCaptureDevice] before the object is destroyed, it will be destroyed After this object, the SDK will automatically restore the camera and microphone.
+  ///
+  /// - [roomID] Fill in the room ID that has been logged in, and all related stuff will be do in this room.
+  /// - Returns The real-time sequential data manager instance, null will be returned when the maximum number is exceeded.
+  Future<ZegoRealTimeSequentialDataManager?> createRealTimeSequentialDataManager(String roomID) async {
+    return await ZegoExpressImpl.instance.createRealTimeSequentialDataManager(roomID);
+  }
+
+  /// Destroy the real time sequential data manager instance
+  ///
+  /// Available: since 2.14.0
+  /// Description: Destroy the [ZegoRealTimeSequentialDataManager] instance object.
+  /// Use cases: When you no longer need to use the real-time signaling function, you can use this function to destroy the instance object created by the [createRealTimeSequentialDataManager] function
+  /// When to call: When you need to the real-time signaling manager object needs to be destroyed
+  /// Restrictions: After destroy the instance, you need to release the [ZegoRealTimeSequentialDataManager] instance object you hold by yourself, and don’t call the function of this instance object after the destruction.
+  /// Caution: If you have not called [enableCamera] / [enableAudioCaptureDevice] before this object is destroyed, the SDK will automatically restore (enable) the camera and microphone after the object is destroyed.
+  ///
+  /// - [manager] The real time sequential data manager instance to be destroyed.
+  Future<void> destroyRealTimeSequentialDataManager(ZegoRealTimeSequentialDataManager manager) async {
+    return await ZegoExpressImpl.instance.destroyRealTimeSequentialDataManager(manager);
+  }
+
   /// Sends a Broadcast Message.
   ///
   /// Available since: 1.2.1

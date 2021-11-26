@@ -434,6 +434,17 @@ class ZegoExpressEngine {
   /// - [data] SEI content.
   static void Function(String streamID, Uint8List data)? onPlayerRecvSEI;
 
+  /// Playing stream low frame rate warning.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This callback triggered by low frame rate when playing stream.
+  /// When to trigger: This callback triggered by low frame rate when playing stream.
+  /// Caution: If the callback is triggered when the user playing the h.265 stream, you can stop playing the h.265 stream and switch to play the H.264 stream.
+  ///
+  /// - [codecID] Video codec ID.
+  /// - [streamID] Stream ID.
+  static void Function(ZegoVideoCodecID codecID, String streamID)? onPlayerLowFpsWarning;
+
   /// The callback triggered when the state of relayed streaming of the mixed stream to CDN changes.
   ///
   /// Available since: 1.2.1
@@ -614,6 +625,32 @@ class ZegoExpressEngine {
   ///
   /// - [audioRoute] Current audio route.
   static void Function(ZegoAudioRoute audioRoute)? onAudioRouteChange;
+
+  /// Callback for audio VAD  stable state update.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Callback for audio VAD  stable state update.
+  /// When to trigger: the [startAudioVADStableStateMonitor] function must be called to start the audio VAD monitor and you must be in a state where it is publishing the audio and video stream or be in [startPreview] state.
+  /// Restrictions: The callback notification period is 3 seconds.
+  /// Related APIs: [startAudioVADStableStateMonitor], [stopAudioVADStableStateMonitor].
+  ///
+  /// - [type] audio VAD monitor type
+  /// - [state] VAD result
+  static void Function(ZegoAudioVADStableStateMonitorType type, ZegoAudioVADType state)? onAudioVADStateUpdate;
+
+  /// Callback for receiving real-time sequential data.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Through this callback, you can receive real-time sequential data from the current subscribing stream.
+  /// Use cases: You need to listen to this callback when you need to receive real-time sequential data.
+  /// When to trigger: After calling [startSubscribing] to successfully start the subscription, and when data is sent on the stream, this callback will be triggered.
+  /// Restrictions: None.
+  /// Caution: None.
+  ///
+  /// - [manager] The real-time sequential data manager instance that triggers this callback.
+  /// - [data] The received real-time sequential data.
+  /// - [streamID] Subscribed stream ID
+  static void Function(ZegoRealTimeSequentialDataManager manager, Uint8List data, String streamID)? onReceiveRealTimeSequentialData;
 
   /// The callback triggered when Broadcast Messages are received.
   ///

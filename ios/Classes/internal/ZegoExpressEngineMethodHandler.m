@@ -27,6 +27,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoRealTimeSequentialDataManager *> *realTimeSequentialDataManagerMap;
+
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
 
 @end
@@ -1097,6 +1099,14 @@
     result(@(isSupport));
 }
 
+- (void)setPlayStreamsAlignmentProperty:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setPlayStreamsAlignmentProperty:(ZegoStreamAlignmentMode)mode];
+
+    result(nil);
+}
 
 #pragma mark - Mixer
 
@@ -1477,6 +1487,57 @@
     result(nil);
 }
 
+- (void)isCameraFocusSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    BOOL supported = [[ZegoExpressEngine sharedEngine] isCameraFocusSupported:(ZegoPublishChannel)channel];
+
+    result(@(supported));
+}
+
+- (void)setCameraFocusMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int model = [ZegoUtils intValue:call.arguments[@"mode"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraFocusMode:(ZegoCameraFocusMode)model channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setCameraFocusPointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    float x = [ZegoUtils floatValue:call.arguments[@"x"]];
+    float y = [ZegoUtils floatValue:call.arguments[@"y"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraFocusPointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setCameraExposureMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int model = [ZegoUtils intValue:call.arguments[@"mode"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraExposureMode:(ZegoCameraExposureMode)model channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setCameraExposurePointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    float x = [ZegoUtils floatValue:call.arguments[@"x"]];
+    float y = [ZegoUtils floatValue:call.arguments[@"y"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraExposurePointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)setCameraExposureCompensation:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     float value = [ZegoUtils floatValue:call.arguments[@"value"]];
@@ -1554,6 +1615,24 @@
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
 
     [[ZegoExpressEngine sharedEngine] setHeadphoneMonitorVolume:volume];
+
+    result(nil);
+}
+
+- (void)startAudioVADStableStateMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+
+    [[ZegoExpressEngine sharedEngine] startAudioVADStableStateMonitor:(ZegoAudioVADStableStateMonitorType)type];
+
+    result(nil);
+}
+
+- (void)stopAudioVADStableStateMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+
+    [[ZegoExpressEngine sharedEngine] stopAudioVADStableStateMonitor:(ZegoAudioVADStableStateMonitorType)type];
 
     result(nil);
 }
@@ -2084,6 +2163,24 @@
         int startPosition = [ZegoUtils intValue:call.arguments[@"startPosition"]];
 
         [mediaPlayer loadResourceFromMediaData:mediaData.data startPosition:startPosition callback:^(int errorCode) {
+            result(@{
+                @"errorCode": @(errorCode)
+            });
+        }];
+    }
+}
+
+- (void)mediaPlayerLoadResourceWithPosition:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+
+        NSString *path = call.arguments[@"path"];
+        int startPosition = [ZegoUtils intValue:call.arguments[@"startPosition"]];
+
+        [mediaPlayer loadResourceWithPosition:path startPosition:startPosition callback:^(int errorCode) {
             result(@{
                 @"errorCode": @(errorCode)
             });
@@ -2879,7 +2976,6 @@
 - (void)rangeAudioUpdateSelfPosition:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.rangeAudioInstance) {
-
         NSArray<NSNumber *> *positionArray = call.arguments[@"position"];
         NSArray<NSNumber *> *axisForwardArray = call.arguments[@"axisForward"];
         NSArray<NSNumber *> *axisRightArray = call.arguments[@"axisRight"];
@@ -2897,6 +2993,131 @@
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioUpdateSelfPosition` but can't find specific instance" details:nil]);
+    }
+}
+
+#pragma mark - real time sequential data manager
+
+- (void)createRealTimeSequentialDataManager:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.realTimeSequentialDataManagerMap) {
+        self.realTimeSequentialDataManagerMap = [NSMutableDictionary dictionary];
+    }
+
+    NSString *roomID = call.arguments[@"roomID"];
+
+    ZegoRealTimeSequentialDataManager *manager = [[ZegoExpressEngine sharedEngine] createRealTimeSequentialDataManager:roomID];
+
+    if (manager) {
+        NSNumber *index = [manager getIndex];
+
+        [manager setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        self.realTimeSequentialDataManagerMap[index] = manager;
+
+        result(index);
+    } else {
+        result(@(-1));
+    }
+    
+}
+
+- (void)destroyRealTimeSequentialDataManager:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+
+    ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
+
+    if (manager) {
+        [[ZegoExpressEngine sharedEngine] destroyRealTimeSequentialDataManager:manager];       
+    }
+
+    [self.realTimeSequentialDataManagerMap removeObjectForKey:index];
+    result(nil);
+}
+
+- (void)dataManagerSendRealTimeSequentialData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+
+    ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
+
+    if (manager) {
+        NSString *streamID = call.arguments[@"streamID"];
+        FlutterStandardTypedData *data = call.arguments[@"data"];
+
+        [manager sendRealTimeSequentialData:data.data streamID: streamID callback:^(int errorCode) {
+            result(@{
+                @"errorCode": @(errorCode)
+            });
+        }];     
+
+    } else {
+        result([FlutterError errorWithCode:[@"dataManagerSendRealTimeSequentialData_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerSendRealTimeSequentialData` but can't find data manager" details:nil]);
+    }
+    
+}
+
+- (void)dataManagerStartBroadcasting:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+
+    ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
+
+    if (manager) {
+        NSString *streamID = call.arguments[@"streamID"];
+        [manager startBroadcasting:streamID];
+        result(nil);    
+
+    } else {
+        result([FlutterError errorWithCode:[@"dataManagerStartBroadcasting_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStartBroadcasting` but can't find data manager" details:nil]);
+    }
+}
+
+- (void)dataManagerStartSubscribing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+
+    ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
+
+    if (manager) {
+        NSString *streamID = call.arguments[@"streamID"];
+        [manager startSubscribing:streamID];
+        result(nil);    
+
+    } else {
+        result([FlutterError errorWithCode:[@"dataManagerStartSubscribing_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStartSubscribing` but can't find data manager" details:nil]);
+    }
+}
+
+- (void)dataManagerStopBroadcasting:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+
+    ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
+
+    if (manager) {
+        NSString *streamID = call.arguments[@"streamID"];
+        [manager stopBroadcasting:streamID];
+        result(nil);    
+
+    } else {
+        result([FlutterError errorWithCode:[@"dataManagerStopBroadcasting_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStopBroadcasting` but can't find data manager" details:nil]);
+    }
+}
+
+- (void)dataManagerStopSubscribing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+
+    ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
+
+    if (manager) {
+        NSString *streamID = call.arguments[@"streamID"];
+        [manager stopSubscribing:streamID];
+        result(nil);    
+
+    } else {
+        result([FlutterError errorWithCode:[@"dataManagerStopSubscribing_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStopSubscribing` but can't find data manager" details:nil]);
     }
 }
 
@@ -2977,12 +3198,12 @@
 - (void)startNetworkSpeedTest:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSDictionary *configMap = call.arguments[@"config"];
-
+    
     ZegoNetworkSpeedTestConfig *config = [[ZegoNetworkSpeedTestConfig alloc] init];
-    config.testUplink = configMap[@"testUplink"];
-    config.expectedUplinkBitrate = [ZegoUtils boolValue:configMap[@"expectedUplinkBitrate"]];
-    config.testDownlink = configMap[@"testDownlink"];
-    config.expectedDownlinkBitrate = [ZegoUtils boolValue:configMap[@"expectedDownlinkBitrate"]];
+    config.testUplink = [ZegoUtils boolValue:configMap[@"testUplink"]];
+    config.expectedUplinkBitrate = [ZegoUtils intValue:configMap[@"expectedUplinkBitrate"]];
+    config.testDownlink = [ZegoUtils boolValue:configMap[@"testDownlink"]];
+    config.expectedDownlinkBitrate = [ZegoUtils intValue:configMap[@"expectedDownlinkBitrate"]];
 
     [[ZegoExpressEngine sharedEngine] startNetworkSpeedTest:config];
 

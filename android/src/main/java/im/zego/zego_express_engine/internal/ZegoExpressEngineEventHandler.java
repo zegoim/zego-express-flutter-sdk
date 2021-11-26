@@ -18,6 +18,7 @@ import java.util.Map;
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.ZegoRangeAudio;
+import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
 import im.zego.zegoexpress.callback.IZegoApiCalledEventHandler;
 import im.zego.zegoexpress.callback.IZegoAudioDataHandler;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerEventHandler;
@@ -26,6 +27,7 @@ import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
 import im.zego.zegoexpress.callback.IZegoRangeAudioEventHandler;
+import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataEventHandler;
 import im.zego.zegoexpress.constants.ZegoAudioEffectPlayState;
 import im.zego.zegoexpress.constants.ZegoAudioRoute;
 import im.zego.zegoexpress.constants.ZegoDataRecordState;
@@ -45,6 +47,8 @@ import im.zego.zegoexpress.constants.ZegoStreamQualityLevel;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
+import im.zego.zegoexpress.constants.ZegoAudioVADType;
+import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
@@ -607,6 +611,22 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPlayerLowFpsWarning(ZegoVideoCodecID codecID, String streamID) {
+            super.onPlayerLowFpsWarning(codecID, streamID);
+            ZegoLog.log("[onPlayerLowFpsWarning] ZegoVideoCodecID: %s, streamID: %s", codecID.name(), streamID);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerLowFpsWarning");
+            map.put("codecID", codecID.value());
+            map.put("streamID", streamID);
+
+            sink.success(map);
+        }
+
 
         /* Mixer */
 
@@ -811,6 +831,22 @@ public class ZegoExpressEngineEventHandler {
 
             map.put("method", "onAudioRouteChange");
             map.put("audioRoute", audioRoute.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onAudioVADStateUpdate(ZegoAudioVADStableStateMonitorType type, ZegoAudioVADType state) {
+            super.onAudioVADStateUpdate(type, state);
+            ZegoLog.log("[onAudioVADStateUpdate] type: %s, state: ", type.name(), state.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAudioVADStateUpdate");
+            map.put("type", type.value());
+            map.put("state", state.value());
 
             sink.success(map);
         }
@@ -1187,6 +1223,26 @@ public class ZegoExpressEngineEventHandler {
             map.put("rangeAudioIndex", rangeAudioIndex);
             map.put("state", state.value());
             map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+    };
+
+    IZegoRealTimeSequentialDataEventHandler realTimeSequentialDataEventHandler = new IZegoRealTimeSequentialDataEventHandler() {
+        @Override
+        public void onReceiveRealTimeSequentialData(ZegoRealTimeSequentialDataManager manager, byte[] data, String streamID) {
+            super.onReceiveRealTimeSequentialData(manager, data, streamID);
+
+            int realTimeSequentialDataManagerIndex = manager.getIndex();
+            ZegoLog.log("[onReceiveRealTimeSequentialData] realTimeSequentialDataManagerIndex: %d, streamID: %s", realTimeSequentialDataManagerIndex, streamID);
+
+            if (guardSink()) { return; }
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onReceiveRealTimeSequentialData");
+            map.put("realTimeSequentialDataManagerIndex", realTimeSequentialDataManagerIndex);
+            map.put("data", data);
+            map.put("streamID", streamID);
 
             sink.success(map);
         }

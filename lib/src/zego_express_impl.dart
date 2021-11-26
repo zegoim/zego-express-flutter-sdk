@@ -546,6 +546,11 @@ class ZegoExpressImpl {
       'isVideoDecoderSupported', {'codecID': codecID.index});
   }
 
+  Future<void> setPlayStreamsAlignmentProperty(ZegoStreamAlignmentMode mode) async {
+    return await _channel.invokeMethod(
+      'setPlayStreamsAlignmentProperty', {'mode': mode.index});
+  }
+
   /* Mixer */
 
   Future<ZegoMixerStartResult> startMixerTask(ZegoMixerTask task) async {
@@ -694,7 +699,47 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> setCameraExposureCompensation(double value, {ZegoPublishChannel? channel}) async {
+  Future<bool> isCameraFocusSupported({ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('isCameraFocusSupported',
+        {'channel': channel?.index ?? ZegoPublishChannel.Main.index});
+  }
+
+  Future<void> setCameraFocusMode(ZegoCameraFocusMode mode,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setCameraFocusMode', {
+      'mode': mode.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setCameraFocusPointInPreview(double x, double y,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setCameraFocusPointInPreview', {
+      'x': x,
+      'y': y,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setCameraExposureMode(ZegoCameraExposureMode mode,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setCameraExposureMode', {
+      'mode': mode.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setCameraExposurePointInPreview(double x, double y,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setCameraExposurePointInPreview', {
+      'x': x,
+      'y': y,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setCameraExposureCompensation(double value,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setCameraExposureCompensation', {
       'value': value,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -761,6 +806,18 @@ class ZegoExpressImpl {
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await _channel
         .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
+  }
+
+  Future<void> startAudioVADStableStateMonitor(
+      ZegoAudioVADStableStateMonitorType type) async {
+    return await _channel
+        .invokeMethod('startAudioVADStableStateMonitor', {'type': type.index});
+  }
+
+  Future<void> stopAudioVADStableStateMonitor(
+      ZegoAudioVADStableStateMonitorType type) async {
+    return await _channel
+        .invokeMethod('stopAudioVADStableStateMonitor', {'type': type.index});
   }
 
   /* PreProcess */
@@ -887,6 +944,34 @@ class ZegoExpressImpl {
 
 
   /* IM */
+
+  static final Map<int, ZegoRealTimeSequentialDataManager>
+      realTimeSequentialDataManagerMap = Map();
+
+  Future<ZegoRealTimeSequentialDataManager?>
+      createRealTimeSequentialDataManager(String roomID) async {
+    int index = await _channel.invokeMethod(
+        'createRealTimeSequentialDataManager', {'roomID': roomID});
+    if (index >= 0) {
+      var realTimeSequentialDataManagerImpl =
+          ZegoRealTimeSequentialDataManagerImpl(index);
+      realTimeSequentialDataManagerMap[index] =
+          realTimeSequentialDataManagerImpl;
+      return realTimeSequentialDataManagerImpl;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyRealTimeSequentialDataManager(
+      ZegoRealTimeSequentialDataManager manager) async {
+    int index = manager.getIndex();
+
+    await _channel
+        .invokeMethod('destroyRealTimeSequentialDataManager', {'index': index});
+
+    realTimeSequentialDataManagerMap.remove(index);
+  }
 
   Future<ZegoIMSendBroadcastMessageResult> sendBroadcastMessage(
       String roomID, String message) async {
@@ -1518,6 +1603,13 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onPlayerRecvSEI!(map['streamID'], map['data']);
         break;
 
+      case 'onPlayerLowFpsWarning':
+        if (ZegoExpressEngine.onPlayerLowFpsWarning == null) return;
+
+        ZegoExpressEngine.onPlayerLowFpsWarning!(
+            ZegoVideoCodecID.values[map['codecID']], map['streamID']);
+        break;
+
       /* Mixer*/
 
       case 'onMixerRelayCDNStateUpdate':
@@ -1651,6 +1743,14 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine
             .onAudioRouteChange!(ZegoAudioRoute.values[map['audioRoute']]);
+        break;
+
+      case 'onAudioVADStateUpdate':
+        if (ZegoExpressEngine.onAudioVADStateUpdate == null) return;
+
+        ZegoExpressEngine.onAudioVADStateUpdate!(
+            ZegoAudioVADStableStateMonitorType.values[map['type']],
+            ZegoAudioVADType.values[map['state']]);
         break;
 
       /* IM */
@@ -1991,6 +2091,22 @@ class ZegoExpressImpl {
           map['errorCode']
         );
         break;
+      /* Real Time Sequential Data Manager */
+
+      case 'onReceiveRealTimeSequentialData':
+        if (ZegoExpressEngine.onReceiveRealTimeSequentialData == null) return;
+
+        int? realTimeSequentialDataManagerIndex =
+            map['realTimeSequentialDataManagerIndex'];
+        var manager = ZegoExpressImpl.realTimeSequentialDataManagerMap[
+            realTimeSequentialDataManagerIndex!];
+        if (manager != null) {
+          ZegoExpressEngine.onReceiveRealTimeSequentialData!(
+              manager, map['data'], map['streamID']);
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
 
       default:
         // TODO: Unknown callback
@@ -2021,6 +2137,16 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
           'mediaData': mediaData,
           'startPosition': startPosition
         });
+
+    return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
+  }
+
+  @override
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithPosition(
+      String path, int startPosition) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerLoadResourceWithPosition',
+            {'index': _index, 'path': path, 'startPosition': startPosition});
 
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
@@ -2417,5 +2543,50 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
       'axisUp': axisUp
     });
   }
+}
 
+class ZegoRealTimeSequentialDataManagerImpl
+    extends ZegoRealTimeSequentialDataManager {
+  int _index;
+
+  ZegoRealTimeSequentialDataManagerImpl(int index) : _index = index;
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+  @override
+  Future<ZegoRealTimeSequentialDataSentResult> sendRealTimeSequentialData(
+      Uint8List data, String streamID) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('dataManagerSendRealTimeSequentialData',
+            {'index': _index, 'data': data, 'streamID': streamID});
+
+    return ZegoRealTimeSequentialDataSentResult(map['errorCode']);
+  }
+
+  @override
+  Future<void> startBroadcasting(String streamID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('dataManagerStartBroadcasting', {'streamID': streamID});
+  }
+
+  @override
+  Future<void> startSubscribing(String streamID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('dataManagerStartSubscribing', {'streamID': streamID});
+  }
+
+  @override
+  Future<void> stopBroadcasting(String streamID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('dataManagerStopBroadcasting', {'streamID': streamID});
+  }
+
+  @override
+  Future<void> stopSubscribing(String streamID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('dataManagerStopSubscribing', {'streamID': streamID});
+  }
 }

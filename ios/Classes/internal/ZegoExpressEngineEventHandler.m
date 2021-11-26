@@ -554,6 +554,20 @@
     }
 }
 
+- (void)onPlayerLowFpsWarning:(ZegoVideoCodecID) codecID streamID:(NSString *) streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerLowFpsWarning] codecID: %d,streamID: %@", (int)codecID, streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerLowFpsWarning",
+            @"codecID": @(codecID),
+            @"streamID": streamID
+        });
+    }
+}
+
 #pragma mark Mixer Callback
 
 - (void)onMixerRelayCDNStateUpdate:(NSArray<ZegoStreamRelayCDNInfo *> *)infoList taskID:(NSString *)taskID {
@@ -729,6 +743,20 @@
         sink(@{
             @"method": @"onAudioRouteChange",
             @"audioRoute": @(audioRoute),
+        });
+    }
+}
+
+- (void)onAudioVADStateUpdate:(ZegoAudioVADType) state monitorType:(ZegoAudioVADStableStateMonitorType) type {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAudioVADStateUpdate] state: %d, type: %d", (int)state, (int)type);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onAudioVADStateUpdate",
+            @"state": @(state),
+            @"type": @(type),
         });
     }
 }
@@ -991,6 +1019,23 @@
             @"rangeAudioIndex": @(0),
             @"state": @(state),
             @"errorCode": @(errorCode)
+        });
+    }
+
+}
+
+#pragma mark - Real Time Sequential Data callback
+- (void)manager:(ZegoRealTimeSequentialDataManager *) manager receiveRealTimeSequentialData:(NSData *) data streamID:(NSString *) streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onReceiveRealTimeSequentialData] idx: %d, streamID: %@", [manager getIndex].intValue, streamID);
+    
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onReceiveRealTimeSequentialData",
+            @"realTimeSequentialDataManagerIndex": [manager getIndex],
+            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
+            @"streamID": streamID
         });
     }
 

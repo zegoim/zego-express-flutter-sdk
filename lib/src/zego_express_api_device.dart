@@ -177,6 +177,75 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
   }
 
+  /// Whether the camera supports focusing.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Whether the camera supports focusing.
+  /// Trigger: Called after turn on preview [startPreivew].
+  /// Caution: Need to start the camera successfully.
+  ///
+  /// - [channel] Publishing stream channel
+  /// - Returns Whether to support focus, support is true, not support is false.
+  Future<bool> isCameraFocusSupported({ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.isCameraFocusSupported(channel: channel);
+  }
+
+  /// Set the camera focus mode.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Set the camera focus mode.
+  /// Trigger: Called after turn on preview [startPreivew].
+  /// Restrictions: Currently only supports iOS and Android platforms.
+  ///
+  /// - [mode] focus mode.
+  /// - [channel] Publishing stream channel
+  Future<void> setCameraFocusMode(ZegoCameraFocusMode mode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setCameraFocusMode(mode, channel: channel);
+  }
+
+  /// Set the focus point in the preview view.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Set the focus point in the preview view. (x, y) are the normalized coordinates in the preview view, that is, the ratio of the position of the focus point relative to the preview view and the width and height of the preview view. The upper left corner is (0, 0).
+  /// Trigger: Called after turn on preview [startPreivew].
+  /// Restrictions: Currently only supports iOS and Android platforms.
+  /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
+  ///
+  /// - [x] Normalized X axis coordinate value, effective value [0,1].
+  /// - [y] Normalized Y axis coordinate value, effective value [0,1].
+  /// - [channel] Publishing stream channel
+  Future<void> setCameraFocusPointInPreview(double x, double y, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setCameraFocusPointInPreview(x, y, channel: channel);
+  }
+
+  /// Set the camera exposure mode.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Set the camera exposure mode.
+  /// Trigger: Called after turn on preview [startPreivew].
+  /// Restrictions: Currently only supports iOS and Android platforms.
+  ///
+  /// - [mode] Exposure mode.
+  /// - [channel] Publishing stream channel
+  Future<void> setCameraExposureMode(ZegoCameraExposureMode mode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setCameraExposureMode(mode, channel: channel);
+  }
+
+  /// Set the exposure point in the preview view.
+  ///
+  /// Available since: 2.14.0
+  /// Description: Set the exposure point in the preview view. (x, y) are the normalized coordinates in the preview view, that is, the ratio of the position of the exposure point relative to the preview view and the width and height of the preview view. The upper left corner is (0, 0).
+  /// Trigger: Called after turn on preview [startPreivew].
+  /// Restrictions: Currently only supports iOS and Android platforms.
+  /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
+  ///
+  /// - [x] Normalized X axis coordinate value, effective value [0,1].
+  /// - [y] Normalized Y axis coordinate value, effective value [0,1].
+  /// - [channel] Publishing stream channel
+  Future<void> setCameraExposurePointInPreview(double x, double y, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setCameraExposurePointInPreview(x, y, channel: channel);
+  }
+
   /// Set the camera exposure compensation value.
   ///
   /// Available since: 2.10.0
@@ -289,6 +358,33 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [volume] headphone monitor volume, range from 0 to 200, 100 as default.
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
+  }
+
+  /// Start audio VAD stable state monitoring.
+  ///
+  /// Available: since 2.14.0
+  /// Description: After monitoring is started, you can use the [onAudioVADStateUpdate] callback to receive the specified type of audio VAD callback.
+  /// Use cases: For example, when you specify the type of collection and use the microphone to collect, you can check whether the host has continuous and stable voice input through this interface.
+  /// When to call: Before publish stream, you can call [startPreview] with this function and combine it with [onAudioVADStateUpdate] callback to determine whether the audio device is working properly.
+  /// Restrictions: [onAudioVADStateUpdate] callback notification period is 3 seconds.
+  /// Related APIs: [stopAudioVADStableStateMonitor].
+  ///
+  /// - [type] audio VAD monitor type.
+  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type) async {
+    return await ZegoExpressImpl.instance.startAudioVADStableStateMonitor(type);
+  }
+
+  /// Stop audio VAD stable state monitoring.
+  ///
+  /// Available: since 2.14.0
+  /// Description: After calling this interface, the specified type of [onAudioVADStateUpdate] callback can no longer be received.
+  /// When to call: None.
+  /// Restrictions: [onAudioVADStateUpdate] callback notification period is 3 seconds.
+  /// Related APIs: [startAudioVADStableStateMonitor].
+  ///
+  /// - [type] audio VAD monitor type.
+  Future<void> stopAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type) async {
+    return await ZegoExpressImpl.instance.stopAudioVADStableStateMonitor(type);
   }
 
 }
