@@ -694,15 +694,17 @@ public class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onRemoteSoundLevelInfoUpdate");
 
+            HashMap<String, Object> soundLevelMaps = new HashMap<>();
             for (Map.Entry<String, ZegoSoundLevelInfo> entry : soundLevelInfos.entrySet()) {
                 ZegoSoundLevelInfo soundLevelInfo = entry.getValue();
 
                 HashMap<String, Object> soundLevelMap = new HashMap<>();
                 soundLevelMap.put("soundLevel", soundLevelInfo.soundLevel);
                 soundLevelMap.put("vad", soundLevelInfo.vad);
-                map.put(entry.getKey(), soundLevelMap);
+                soundLevelMaps.put(entry.getKey(), soundLevelMap);
             }
 
+            map.put("soundLevelInfos", soundLevelMaps);
             sink.success(map);
         }
 
