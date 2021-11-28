@@ -3402,7 +3402,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void dataManagerSendRealTimeSequentialData(MethodCall call, final Result result) {
 
         Integer index = call.argument("index");
-        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap.get(index);
 
         if (manager != null) {
             byte[] data = call.argument("data");
@@ -3423,7 +3423,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void dataManagerStartBroadcasting(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
-        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap.get(index);
 
         if (manager != null) {
             String streamID = call.argument("streamID");
@@ -3439,7 +3439,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void dataManagerStartSubscribing(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
-        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap.get(index);
 
         if (manager != null) {
             String streamID = call.argument("streamID");
@@ -3455,7 +3455,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void dataManagerStopBroadcasting(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
-        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap.get(index);
 
         if (manager != null) {
             String streamID = call.argument("streamID");
@@ -3471,7 +3471,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void dataManagerStopSubscribing(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
-        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap .get(index);
+        ZegoRealTimeSequentialDataManager manager = realTimeSequentialDataManagerHashMap.get(index);
 
         if (manager != null) {
             String streamID = call.argument("streamID");

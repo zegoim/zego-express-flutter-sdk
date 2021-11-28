@@ -952,8 +952,9 @@ class ZegoExpressImpl {
       createRealTimeSequentialDataManager(String roomID) async {
     int index = await _channel.invokeMethod(
         'createRealTimeSequentialDataManager', {'roomID': roomID});
+
     if (index >= 0) {
-      var realTimeSequentialDataManagerImpl =
+      ZegoRealTimeSequentialDataManagerImpl realTimeSequentialDataManagerImpl =
           ZegoRealTimeSequentialDataManagerImpl(index);
       realTimeSequentialDataManagerMap[index] =
           realTimeSequentialDataManagerImpl;
@@ -2569,24 +2570,24 @@ class ZegoRealTimeSequentialDataManagerImpl
   @override
   Future<void> startBroadcasting(String streamID) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStartBroadcasting', {'streamID': streamID});
+        .invokeMethod('dataManagerStartBroadcasting', {'index': _index, 'streamID': streamID});
   }
 
   @override
   Future<void> startSubscribing(String streamID) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStartSubscribing', {'streamID': streamID});
+        .invokeMethod('dataManagerStartSubscribing', {'index': _index, 'streamID': streamID});
   }
 
   @override
   Future<void> stopBroadcasting(String streamID) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStopBroadcasting', {'streamID': streamID});
+        .invokeMethod('dataManagerStopBroadcasting', {'index': _index, 'streamID': streamID});
   }
 
   @override
   Future<void> stopSubscribing(String streamID) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStopSubscribing', {'streamID': streamID});
+        .invokeMethod('dataManagerStopSubscribing', {'index': _index, 'streamID': streamID});
   }
 }
