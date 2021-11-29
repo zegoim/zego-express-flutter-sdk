@@ -1281,7 +1281,7 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void setPlayStreamsAlignmentProperty(MethodCall call, Result result) {
 
-        ZegoStreamAlignmentMode mode = ZegoStreamAlignmentMode .getZegoStreamAlignmentMode (ZegoUtils.intValue((Number) call.argument("mode")));
+        ZegoStreamAlignmentMode mode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("mode")));
 
         ZegoExpressEngine.getEngine().setPlayStreamsAlignmentProperty(mode);
 
