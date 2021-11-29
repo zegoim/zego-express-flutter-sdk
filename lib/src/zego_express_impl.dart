@@ -564,7 +564,13 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      outputList.add({'target': output.target});
+      outputList.add({
+        'target': output.target,
+        'videoConfig': {
+          'videoCodecID': output.videoConfig.videoCodecID.index,
+          'bitrate': output.videoConfig.bitrate
+          }
+        });
     }
     map['outputList'] = outputList;
 
@@ -586,7 +592,13 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      outputList.add({'target': output.target});
+      outputList.add({
+        'target': output.target,
+        'videoConfig': {
+          'videoCodecID': output.videoConfig.videoCodecID.index,
+          'bitrate': output.videoConfig.bitrate
+          }
+        });  
     }
     map['outputList'] = outputList;
 
@@ -603,7 +615,13 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      outputList.add({'target': output.target});
+      outputList.add({
+        'target': output.target,
+        'videoConfig': {
+          'videoCodecID': output.videoConfig.videoCodecID.index,
+          'bitrate': output.videoConfig.bitrate
+          }
+        });
     }
     map['outputList'] = outputList;
 
@@ -619,7 +637,13 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      outputList.add({'target': output.target});
+      outputList.add({
+        'target': output.target,
+        'videoConfig': {
+          'videoCodecID': output.videoConfig.videoCodecID.index,
+          'bitrate': output.videoConfig.bitrate
+          }
+        });
     }
     map['outputList'] = outputList;
 

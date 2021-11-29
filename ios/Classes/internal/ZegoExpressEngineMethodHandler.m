@@ -1165,6 +1165,13 @@
         for (NSDictionary *outputMap in outputListMap) {
             NSString *target = outputMap[@"target"];
             ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
+            
+            NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
+            int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+            int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+            ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+            [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+            [outputObject setVideoConfig: videoConfig];
             [outputListObject addObject:outputObject];
         }
         [taskObject setOutputList:outputListObject];
@@ -1280,6 +1287,13 @@
         for (NSDictionary *outputMap in outputListMap) {
             NSString *target = outputMap[@"target"];
             ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
+            
+            NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
+            int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+            int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+            ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+            [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+            [outputObject setVideoConfig: videoConfig];
             [outputListObject addObject:outputObject];
         }
         [taskObject setOutputList:outputListObject];
@@ -1316,6 +1330,13 @@
         for (NSDictionary *outputMap in outputListMap) {
             NSString *target = outputMap[@"target"];
             ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
+            
+            NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
+            int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+            int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+            ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+            [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+            [outputObject setVideoConfig: videoConfig];
             [outputListObject addObject:outputObject];
         }
         taskObject.outputList = outputListObject;
@@ -1375,6 +1396,13 @@
         for (NSDictionary *outputMap in outputListMap) {
             NSString *target = outputMap[@"target"];
             ZegoMixerOutput *outputObject = [[ZegoMixerOutput alloc] initWithTarget:target];
+            
+            NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
+            int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+            int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+            ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+            [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+            [outputObject setVideoConfig: videoConfig];
             [outputListObject addObject:outputObject];
         }
         [taskObject setOutputList:outputListObject];
