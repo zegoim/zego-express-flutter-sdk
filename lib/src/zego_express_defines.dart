@@ -1594,9 +1594,9 @@ class ZegoMixerOutput {
   String target;
 
   /// Mix stream output video config
-  ZegoMixerOutputVideoConfig videoConfig;
+  ZegoMixerOutputVideoConfig? videoConfig;
 
-  ZegoMixerOutput(this.target, this.videoConfig);
+  ZegoMixerOutput(this.target, {this.videoConfig});
 
 }
 
