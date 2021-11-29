@@ -840,7 +840,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onAudioVADStateUpdate(ZegoAudioVADStableStateMonitorType type, ZegoAudioVADType state) {
             super.onAudioVADStateUpdate(type, state);
-            ZegoLog.log("[onAudioVADStateUpdate] type: %s, state: ", type.name(), state.name());
+            ZegoLog.log("[onAudioVADStateUpdate] type: %s, state: %s", type.name(), state.name());
 
             if (guardSink()) { return; }
 
