@@ -1350,7 +1350,7 @@ public class ZegoExpressEngineMethodHandler {
 
                 HashMap<String, Object> videoConfigMap = (HashMap<String, Object>)outputMap.get("videoConfig");
                 ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
-                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
+                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                 outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
                 outputListObject.add(outputObject);
             }
@@ -1459,7 +1459,7 @@ public class ZegoExpressEngineMethodHandler {
 
                 HashMap<String, Object> videoConfigMap = (HashMap<String, Object>)outputMap.get("videoConfig");
                 ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
-                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
+                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                 outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
                 outputListObject.add(outputObject);
             }
@@ -1505,7 +1505,7 @@ public class ZegoExpressEngineMethodHandler {
 
                 HashMap<String, Object> videoConfigMap = (HashMap<String, Object>)outputMap.get("videoConfig");
                 ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
-                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
+                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                 outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
                 outputListObject.add(outputObject);
             }
@@ -1560,7 +1560,7 @@ public class ZegoExpressEngineMethodHandler {
 
                 HashMap<String, Object> videoConfigMap = (HashMap<String, Object>)outputMap.get("videoConfig");
                 ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
-                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
+                int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                 outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
                 outputListObject.add(outputObject);
             }
