@@ -971,10 +971,6 @@ class ZegoExpressEngine {
   /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
   static void Function(ZegoRangeAudio rangeAudio, ZegoRangeAudioMicrophoneState state, int errorCode)? onRangeAudioMicrophoneStateUpdate;
 
-}
-
-extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
-
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK.
   ///
   /// Available: 1.1.0 ~ 2.13.1, deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead
@@ -993,6 +989,10 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
   static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
     return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
   }
+
+}
+
+extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
 
   /// [Deprecated] Turns on/off verbose debugging and sets up the log language.
   ///
