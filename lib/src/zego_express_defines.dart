@@ -430,6 +430,48 @@ class ZegoBeautifyFeature {
   static const int Sharpen = 1 << 3;
 }
 
+/// Device type.
+enum ZegoDeviceType {
+  /// Unknown device type.
+  Unknown,
+  /// Camera device.
+  Camera,
+  /// Microphone device.
+  Microphone,
+  /// Speaker device.
+  Speaker,
+  /// Audio device. (Other audio device that cannot be accurately classified into microphones or speakers.)
+  AudioDevice
+}
+
+/// The exception type for the device.
+enum ZegoDeviceExceptionType {
+  /// Unknown device exception.
+  Unknown,
+  /// Generic device exception.
+  Generic,
+  /// Invalid device ID exception.
+  InvalidId,
+  /// Device permission is not granted.
+  PermissionNotGranted,
+  /// The capture frame rate of the device is 0.
+  ZeroCaptureFps,
+  /// The device is being occupied.
+  DeviceOccupied,
+  /// The device is unplugged (not plugged in).
+  DeviceUnplugged,
+  /// The device requires the system to restart before it can work (Windows platform only).
+  RebootRequired,
+  /// The system media service is unavailable, e.g. when the iOS system detects that the current pressure is huge (such as playing a lot of animation), it is possible to disable all media related services (Apple platform only).
+  MediaServicesWereLost,
+  /// The device is being occupied by Siri (Apple platform only).
+  SiriIsRecording,
+  /// The device captured sound level is too low (Windows platform only).
+  SoundLevelTooLow,
+  /// The device is being occupied, and maybe cause by iPad magnetic case (Apple platform only).
+  MagneticCase
+}
+
 /// Remote device status.
 enum ZegoRemoteDeviceState {
   /// Device on
@@ -905,7 +947,7 @@ class ZegoVideoConfig {
   /// Encode resolution height, control the image height of the encoder when publishing stream. SDK requires this member to be set to an even number. The settings before and after publishing stream can be effective
   int encodeHeight;
 
-  /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective
+  /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
   int fps;
 
   /// Bit rate in kbps. The settings before and after publishing stream can be effective
@@ -1696,7 +1738,7 @@ class ZegoSoundLevelInfo {
   /// Sound level value.
   double soundLevel;
 
-  /// Whether the stream corresponding to StreamID contains human voice, 0 means noise, 1 means human voice. This value is valid only when the [enableVAD] parameter in the [ZegoSoundLevelConfig] configuration is set to true when calling [startSoundLevelMonitor].
+  /// Whether the stream corresponding to StreamID contains voice, 0 means noise, 1 means normal voice. This value is valid only when the [enableVAD] parameter in the [ZegoSoundLevelConfig] configuration is set to true when calling [startSoundLevelMonitor].
   int vad;
 
   ZegoSoundLevelInfo(this.soundLevel, this.vad);
@@ -2260,6 +2302,30 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [threshold] Threshold that needs to be reached to resume playback, unit ms.
   Future<void> setNetWorkBufferThreshold(int threshold);
+
+  /// Whether to enable sound level monitoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Whether to enable sound level monitoring.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: None.
+  /// Related callbacks: After it is turned on, user can use the [onMediaPlayerSoundLevelUpdate] callback to monitor sound level updates.
+  ///
+  /// - [enable] Whether to enable monitoring, true is enabled, false is disabled.
+  /// - [millisecond] Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000].
+  Future<void> enableSoundLevelMonitor(bool enable, int millisecond);
+
+  /// Whether to enable frequency spectrum monitoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Whether to enable frequency spectrum monitoring.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: None.
+  /// Related APIs: After it is turned on, user can use the [onMediaPlayerFrequencySpectrumUpdate] callback to monitor frequency spectrum updates.
+  ///
+  /// - [enable] Whether to enable monitoring, true is enabled, false is disabled.
+  /// - [millisecond] Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [100, 3000].
+  Future<void> enableFrequencySpectrumMonitor(bool enable, int millisecond);
 
 }
 

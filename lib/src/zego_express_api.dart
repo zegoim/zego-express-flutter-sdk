@@ -571,15 +571,16 @@ class ZegoExpressEngine {
   /// - [audioSpectrums] Remote audio spectrum hash map, key is the streamID, value is the audio spectrum list of the corresponding streamID. Spectrum value range is [0-2^30]
   static void Function(Map<String, List<double>> audioSpectrums)? onRemoteAudioSpectrumUpdate;
 
-  /// The callback triggered when a device exception occurs.
+  /// The callback triggered when a local device exception occurred.
   ///
-  /// Available since: 1.1.0
-  /// Description: The callback triggered when a device exception occurs.
-  /// Trigger: This callback is triggered when an exception occurs when reading or writing the audio and video device.
+  /// Available since: 2.15.0
+  /// Description: The callback triggered when a local device exception occurs.
+  /// Trigger: This callback is triggered when the function of the local audio or video device is abnormal.
   ///
-  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
-  /// - [deviceName] device name
-  static void Function(int errorCode, String deviceName)? onDeviceError;
+  /// - [exceptionType] The type of the device exception.
+  /// - [deviceType] The type of device where the exception occurred.
+  /// - [deviceID] Device ID. Currently, only desktop devices are supported to distinguish different devices; for mobile devices, this parameter will return an empty string.
+  static void Function(ZegoDeviceExceptionType exceptionType, ZegoDeviceType deviceType, String deviceID)? onLocalDeviceExceptionOccurred;
 
   /// The callback triggered when the state of the remote camera changes.
   ///
@@ -741,6 +742,30 @@ class ZegoExpressEngine {
   /// - [mediaPlayer] Callback player object.
   /// - [data] SEI content.
   static void Function(ZegoMediaPlayer mediaPlayer, Uint8List data)? onMediaPlayerRecvSEI;
+
+  /// The callback of sound level update.
+  ///
+  /// Available since: 2.15.0
+  /// Description: The callback of sound level update.
+  /// Trigger: The callback frequency is specified by [EnableSoundLevelMonitor].
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Related APIs: To monitor this callback, you need to enable it through [EnableSoundLevelMonitor].
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [soundLevel] Sound level value, value range: [0.0, 100.0].
+  static void Function(ZegoMediaPlayer mediaPlayer, double soundLevel)? onMediaPlayerSoundLevelUpdate;
+
+  /// The callback of frequency spectrum update.
+  ///
+  /// Available since: 2.15.0
+  /// Description: The callback of frequency spectrum update.
+  /// Trigger: The callback frequency is specified by [EnableFrequencySpectrumMonitor].
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Related APIs: To monitor this callback, you need to enable it through [EnableFrequencySpectrumMonitor].
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [spectrumList] Locally captured frequency spectrum value list. Spectrum value range is [0-2^30].
+  static void Function(ZegoMediaPlayer mediaPlayer, List<double> spectrumList)? onMediaPlayerFrequencySpectrumUpdate;
 
   /// Audio effect playback state callback.
   ///
@@ -989,6 +1014,18 @@ class ZegoExpressEngine {
   static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
     return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
   }
+
+  /// [Deprecated] The callback triggered when a device exception occurs.
+  ///
+  /// Available: 1.1.0 ~ 2.14.0, deprecated since 2.15.0
+  /// Description: The callback triggered when a device exception occurs.
+  /// Trigger: This callback is triggered when an exception occurs when reading or writing the audio and video device.
+  ///
+  /// @deprecated Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.
+  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [deviceName] device name
+  @Deprecated('Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.')
+  static void Function(int errorCode, String deviceName)? onDeviceError;
 
 }
 

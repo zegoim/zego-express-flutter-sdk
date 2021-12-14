@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 
 class Global {
-  static String pluginVersion = "2.14.0";
+  static String pluginVersion = "2.15.0";
 }
 
 class ZegoExpressImpl {
@@ -1767,6 +1767,15 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onRemoteAudioSpectrumUpdate!(audioSpectrums);
         break;
 
+      case 'onLocalDeviceExceptionOccurred':
+        if (ZegoExpressEngine.onLocalDeviceExceptionOccurred == null) return;
+
+        ZegoExpressEngine.onLocalDeviceExceptionOccurred!(
+          ZegoDeviceExceptionType.values[map['exceptionType']], 
+          ZegoDeviceType.values[map['deviceType']],
+          map['deviceID']);
+        break;
+
       case 'onDeviceError':
         if (ZegoExpressEngine.onDeviceError == null) return;
 
@@ -2015,6 +2024,32 @@ class ZegoExpressImpl {
 
         break;
 
+      case 'onMediaPlayerSoundLevelUpdate':
+        if (ZegoExpressEngine.onMediaPlayerSoundLevelUpdate == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerSoundLevelUpdate!(mediaPlayer, map['soundLevel']);
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
+
+      case 'onMediaPlayerFrequencySpectrumUpdate':
+        if (ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          List<double> spectrumList = List<double>.from(map['spectrumList']);
+          ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate!(mediaPlayer, spectrumList);
+        } else {
+          // TODO: Can't find media player
+        }
+        break;
       /* AudioEffectPlayer */
 
       case 'onAudioEffectPlayStateUpdate':
@@ -2403,6 +2438,24 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
     return ZegoMediaPlayerTakeSnapshotResult(map['errorCode'],
         image: map['image'] != null ? MemoryImage(map['image']) : null);
+  }
+
+  @override
+  Future<void> enableFrequencySpectrumMonitor(bool enable, int millisecond) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableFrequencySpectrumMonitor', {
+      'index': _index,
+      'enable': enable,
+      'millisecond': millisecond
+    });
+  }
+
+  @override
+  Future<void> enableSoundLevelMonitor(bool enable, int millisecond) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableSoundLevelMonitor', {
+      'index': _index,
+      'enable': enable,
+      'millisecond': millisecond
+    });
   }
 }
 

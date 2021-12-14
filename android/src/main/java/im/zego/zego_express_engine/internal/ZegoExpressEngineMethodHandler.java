@@ -2928,6 +2928,38 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableFrequencySpectrumMonitor(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            int millisecond = ZegoUtils.intValue((Number) call.argument("millisecond"));
+
+            mediaPlayer.enableFrequencySpectrumMonitor(enable, millisecond);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableSoundLevelMonitor(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            int millisecond = ZegoUtils.intValue((Number) call.argument("millisecond"));
+
+            mediaPlayer.enableSoundLevelMonitor(enable, millisecond);
+        }
+
+        result.success(null);
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")

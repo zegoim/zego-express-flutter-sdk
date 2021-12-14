@@ -2600,6 +2600,34 @@
     }
 }
 
+- (void)mediaPlayerEnableFrequencySpectrumMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+        [mediaPlayer enableFrequencySpectrumMonitor: enable millisecond: millisecond];
+    }
+
+    result(nil);
+}
+
+- (void)mediaPlayerEnableSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+        [mediaPlayer enableSoundLevelMonitor: enable millisecond: millisecond];
+    }
+
+    result(nil);
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {

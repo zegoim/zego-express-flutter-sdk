@@ -236,31 +236,31 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setReverbEchoParam(param);
   }
 
-  /// Enables the virtual stereo feature with publishing stream.
+  /// Enable or disable the virtual stereo effect when publishing stream..
   ///
-  /// Available since: 1.10.0
-  /// Description: Call this function to enable/disable virtual stereo effect with publishing stream.
+  /// Available since: 1.10.0; Note: Starting from 2.15.0, the angle parameter supports setting -1 to present a all round virtual stereo effect.
+  /// Description: Call this function to enable / disable the virtual stereo effect when publishing stream.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
   /// Restrictions: Virtual stereo effect is only effective for SDK captured sound.
   /// Caution: You need to set up a dual channel with [setAudioConfig] for the virtual stereo to take effect.
   ///
   /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo.
-  /// - [angle] angle of the sound source in the virtual stereo, ranging from 0 to 180, with 90 being the front, and 0 and 180 being respectively Corresponds to rightmost and leftmost, usually use 90.
+  /// - [angle] The angle of the sound source in virtual stereo in the range of -1 ~ 360, with 90 being directly in front, 0 / 180 / 270 corresponding to the rightmost and leftmost respectively. In particular, when set to -1, it is all round virtual stereo effects.
   Future<void> enableVirtualStereo(bool enable, int angle) async {
     return await ZegoExpressImpl.instance.enableVirtualStereo(enable, angle);
   }
 
-  /// Enables the virtual stereo feature with playing stream.
+  /// Enable or disable the virtual stereo effect when playing stream.
   ///
   /// Available since: 2.8.0
-  /// Description: Call this function to enable/disable virtual stereo effect with playing stream.
+  /// Description: Call this function to enable/disable the virtual stereo effect when playing stream.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
   /// Caution: It can dynamically switch and set angle parameters before and after playing stream. After stopping playing stream, it will automatically reset and disable.
   ///
   /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo.
-  /// - [angle] angle of the sound source in the virtual stereo, ranging from 0 to 360, with 90 being the front, and 0/180/270 being respectively Corresponds to rightmost/leftmost/back, usually use 90.
+  /// - [angle] The angle of the sound source in virtual stereo in the range of 0 ~ 360, with 90 being directly in front, 0 / 180 / 270 corresponding to the rightmost and leftmost respectively.
   /// - [streamID] Stream ID.
   Future<void> enablePlayStreamVirtualStereo(bool enable, int angle, String streamID) async {
     return await ZegoExpressImpl.instance.enablePlayStreamVirtualStereo(enable, angle, streamID);

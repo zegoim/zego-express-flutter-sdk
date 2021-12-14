@@ -49,6 +49,8 @@ import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoAudioVADType;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
+import im.zego.zegoexpress.constants.ZegoDeviceExceptionType;
+import im.zego.zegoexpress.constants.ZegoDeviceType;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
@@ -775,6 +777,23 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onLocalDeviceExceptionOccurred (ZegoDeviceExceptionType exceptionType, ZegoDeviceType deviceType, String deviceID) {
+            super.onLocalDeviceExceptionOccurred(exceptionType, deviceType, deviceID);
+            ZegoLog.log("[onLocalDeviceExceptionOccurred] deviceID: %s, exceptionType: %s, deviceType: %s", deviceID, exceptionType.name(), deviceType.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onLocalDeviceExceptionOccurred");
+            map.put("deviceID", deviceID);
+            map.put("exceptionType", exceptionType.value());
+            map.put("deviceType", deviceType.value());
+
+            sink.success(map);
+        }
+
+        @Override
         public void onDeviceError(int errorCode, String deviceName) {
             super.onDeviceError(errorCode, deviceName);
             ZegoLog.log("[onDeviceError] errorCode: %d, deviceName: %s", errorCode, deviceName);
@@ -1184,6 +1203,44 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerRecvSEI");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("data", data);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaPlayerSoundLevelUpdate(ZegoMediaPlayer mediaPlayer, float soundLevel){
+            super.onMediaPlayerSoundLevelUpdate(mediaPlayer, soundLevel);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerSoundLevelUpdate");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("soundLevel", soundLevel);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaPlayerFrequencySpectrumUpdate (ZegoMediaPlayer mediaPlayer, float[] spectrumList){
+            super.onMediaPlayerFrequencySpectrumUpdate(mediaPlayer, spectrumList);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            ArrayList<Float> spectrumArray = new ArrayList<>();
+
+            for (float spectrum: spectrumList) {
+                spectrumArray.add(spectrum);
+            }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerFrequencySpectrumUpdate");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("spectrumList", spectrumArray);
 
             sink.success(map);
         }

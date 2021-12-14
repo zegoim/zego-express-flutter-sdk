@@ -692,6 +692,21 @@
     }
 }
 
+- (void)onLocalDeviceExceptionOccurred:(ZegoDeviceExceptionType) exceptionType deviceType:(ZegoDeviceType) deviceType deviceID:(NSString *) deviceID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onLocalDeviceExceptionOccurred] exceptionType: %d, deviceType: %d, deviceID: %@", (int)exceptionType, (int)deviceType, deviceID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onLocalDeviceExceptionOccurred",
+            @"exceptionType": @(exceptionType),
+            @"deviceType": @(deviceType),
+            @"deviceID": deviceID
+        });
+    }
+}
+
 - (void)onDeviceError:(int)errorCode deviceName:(NSString *)deviceName {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onDeviceError] errorCode: %d, deviceName: %@", errorCode, deviceName);
@@ -988,6 +1003,33 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *) mediaPlayer soundLevelUpdate:(float) soundLevel {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerSoundLevelUpdate",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"soundLevel": @(soundLevel),
+        });
+    }
+}
+
+- (void)mediaPlayer:(ZegoMediaPlayer *) mediaPlayer frequencySpectrumUpdate:(NSArray<NSNumber *> *) spectrumList {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerFrequencySpectrumUpdate",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"spectrumList": spectrumList,
+        });
+    }
+}
 
 # pragma mark - ZegoAudioEffectPlayerEventHandler
 
