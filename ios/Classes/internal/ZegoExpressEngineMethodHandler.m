@@ -1131,27 +1131,28 @@
             ZegoMixerInput *inputObject = [[ZegoMixerInput alloc] initWithStreamID:streamID contentType:(ZegoMixerInputContentType)contentType layout:rect soundLevelID:soundLevelID];
             [inputListObject addObject:inputObject];
             
-            if (inputMap[@"label"] && inputMap[@"label"] == nil) {
-                NSDictionary *labelMap = inputMap[@"label"];
+            NSDictionary *labelMap = inputMap[@"label"];
+            if (labelMap && ![ZegoUtils isNullObject:labelMap]) {
                 NSString *text = labelMap[@"text"];
-                
+            
                 ZegoLabelInfo *labelInfo = [[ZegoLabelInfo alloc] initWithText:text];
                 labelInfo.left = [ZegoUtils intValue:labelMap[@"left"]];
                 labelInfo.top = [ZegoUtils intValue:labelMap[@"top"]];
-                
+            
                 NSDictionary *fontMap = labelMap[@"font"];
                 ZegoFontStyle *fontStyle = [[ZegoFontStyle alloc] init];
                 fontStyle.type = (ZegoFontType)[ZegoUtils intValue:fontMap[@"type"]];
                 fontStyle.size = [ZegoUtils intValue:fontMap[@"size"]];
                 fontStyle.color = [ZegoUtils intValue:fontMap[@"color"]];
                 fontStyle.transparency = [ZegoUtils intValue:fontMap[@"transparency"]];
-                
+            
                 labelInfo.font = fontStyle;
                 inputObject.label = labelInfo;
             }
             
-            if (inputMap[@"renderMode"] && inputMap[@"renderMode"] != nil) {
-                inputObject.renderMode = (ZegoMixRenderMode)[ZegoUtils intValue:inputMap[@"renderMode"]];
+            NSNumber *renderMode = inputMap[@"renderMode"];
+            if (renderMode && ![ZegoUtils isNullObject:renderMode]) {
+                inputObject.renderMode = (ZegoMixRenderMode)[ZegoUtils intValue:renderMode];
             }
             
         }

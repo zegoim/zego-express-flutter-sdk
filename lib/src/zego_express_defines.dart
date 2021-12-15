@@ -1552,6 +1552,15 @@ class ZegoFontStyle {
 
   ZegoFontStyle(this.type, this.size, this.color, this.transparency);
 
+  Map<String, dynamic> toMap() {
+    return {
+      'type': this.type.index,
+      'size': this.size,
+      'color': this.color,
+      'transparency': this.transparency
+    };
+  }
+
   /// Create a default font style object.
   ZegoFontStyle.defaultStyle() : type = ZegoFontType.SourceHanSans, size = 24, color = 16777215, transparency = 0;
 
@@ -1576,6 +1585,15 @@ class ZegoLabelInfo {
   ZegoFontStyle font;
 
   ZegoLabelInfo(this.text, this.left, this.top, this.font);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'text': this.text,
+      'left': this.left,
+      'top': this.top,
+      'font': this.font.toMap()
+    };
+  }
 
   /// Build a label info object with text.
   ZegoLabelInfo.text(String text) : this.text = text, left = 0, top = 0, font = ZegoFontStyle.defaultStyle();
@@ -1624,8 +1642,8 @@ class ZegoMixerInput {
       'soundLevelID': this.soundLevelID,
       'isAudioFocus': this.isAudioFocus,
       'audioDirection': this.audioDirection,
-      'label': this.label,
-      'renderMode': this.renderMode
+      'label': this.label?.toMap(),
+      'renderMode': this.renderMode?.index
     };
   }
 
