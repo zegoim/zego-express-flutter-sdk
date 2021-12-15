@@ -157,6 +157,9 @@ public class ZegoExpressEngineMethodHandler {
 
     @SuppressWarnings("unused")
     public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+
+        // Report framework info
+        reportPluginInfo();
         
         HashMap<String, Object> profileMap = call.argument("profile");
         long appID = ZegoUtils.longValue((Number)profileMap.get("appID"));
@@ -204,6 +207,9 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
+        // Report framework info
+        reportPluginInfo();
+        
         long appID = ZegoUtils.longValue((Number)call.argument("appID"));
         String appSign = call.argument("appSign");
         boolean isTestEnv = ZegoUtils.boolValue((Boolean) call.argument("isTestEnv"));
@@ -3748,5 +3754,15 @@ public class ZegoExpressEngineMethodHandler {
         ZegoLog.log("*** Plugin Version: %s", version);
         
         result.success(null);
+    }
+
+    private static void reportPluginInfo() {
+        HashMap<String, String> advancedConfigMap = new HashMap<>();
+        advancedConfigMap.put("thirdparty_framework_info", "flutter");
+        
+        ZegoEngineConfig configObject = new ZegoEngineConfig();
+        configObject.advancedConfig = advancedConfigMap;
+
+        ZegoExpressEngine.setEngineConfig(configObject);
     }
 }
