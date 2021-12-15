@@ -1131,7 +1131,7 @@
             ZegoMixerInput *inputObject = [[ZegoMixerInput alloc] initWithStreamID:streamID contentType:(ZegoMixerInputContentType)contentType layout:rect soundLevelID:soundLevelID];
             [inputListObject addObject:inputObject];
             
-            if (inputMap[@"label"]) {
+            if (inputMap[@"label"] && inputMap[@"label"] == nil) {
                 NSDictionary *labelMap = inputMap[@"label"];
                 NSString *text = labelMap[@"text"];
                 
@@ -1150,7 +1150,7 @@
                 inputObject.label = labelInfo;
             }
             
-            if (inputMap[@"renderMode"]) {
+            if (inputMap[@"renderMode"] && inputMap[@"renderMode"] != nil) {
                 inputObject.renderMode = (ZegoMixRenderMode)[ZegoUtils intValue:inputMap[@"renderMode"]];
             }
             
