@@ -1,6 +1,62 @@
 # Change Log
 
 
+## 2.15.0
+
+### **New Features**
+1. The media player supports obtaining sound waves and spectrum when playing music
+
+    The media player has added a new sound wave spectrum callback and switch interface, which can control whether to turn on the callback and the frequency of the callback, so as to obtain the current sound wave and spectrum of the media player. When playing resources through the media player, such as watching a movie together or chatting in a room with a game, this function can be used to perform the function of spectrum animation to increase the interest.
+
+    After creating the media player, call the [enableSoundLevelMonitor] interface to enable sound monitoring. After enabling it, you can use the [onMediaPlayerSoundLevelUpdate] callback to monitor the sound changes.
+
+    After creating the media player, call the [enableFrequencySpectrumMonitor] interface to enable spectrum monitoring. After enabling it, you can use the [onMediaPlayerSoundLevelUpdate] callback to monitor the spectrum changes.
+
+    For related API, please refer to [enableSoundLevelMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableSoundLevelMonitor.html), [onMediaPlayerSoundLevelUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onMediaPlayerSoundLevelUpdate.html), [enableFrequencySpectrumMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableFrequencySpectrumMonitor.html), [onMediaPlayerFrequencySpectrumUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onMediaPlayerFrequencySpectrumUpdate.html)
+
+2. Support all-round virtual stereo.
+
+    Added support for omni-directional virtual stereo sound. The monophonic sound is processed by algorithms to simulate a somatosensory sound. This function is often used in KTV scenes to make the singing sound more three-dimensional.
+
+    When the [enableVirtualStereo] interface is called and the angle parameter is set to -1, it means that the stereo effect is omnidirectional stereo.
+
+    For related API, please refer to [enableVirtualStereo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableVirtualStereo.html)
+
+3. Added local device exception callback [onLocalDeviceExceptionOccurred].
+
+    Through the [onLocalDeviceExceptionOccurred] callback, you can set the device type to be detected, such as camera, speaker, microphone, etc. Developers can handle the error callbacks of different device types accordingly.
+
+    For related API, please refer to [onLocalDeviceExceptionOccurred](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onLocalDeviceExceptionOccurred.html)
+
+### **Enhancements**
+1. Mixed stream output supports advanced encoding parameter configuration.
+
+    Mixed-stream output video configuration [ZegoMixerOutputVideoConfig] Added encodeProfile and encodeLatency parameters, which are used to set the mixed-stream output video encoding specifications and the mixed-stream output video encoding delay respectively.
+
+    For related API, please refer to [ZegoMixerOutputVideoConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMixerOutputVideoConfig-class.html)
+
+2. Added 1015032 error code.
+
+    Logging in to the room causes the network test to stop. As the network test consumes bandwidth, please do it before logging in to the room.
+
+3. Added 1002066 error code.
+
+    If the user is in the server blacklist when logging in to the room, this error code will be returned, indicating that the room is forbidden to log in.
+
+4. Added 1004072 error code.
+
+    When using the SDK to lower the latency of live streaming, this error code will be returned if you have not subscribed to the low latency live streaming service.
+
+### **Bug Fixes**
+1. Fixed the problem that the call to [startMixerTask] may crash
+
+### **Deleted**
+1. Deprecated [onDeviceError] callback.
+
+    In order to allow developers to intuitively understand the type of abnormal device and the specific abnormal situation, the [onDeviceError] callback is abolished in 2.15.0 and above. Please use the [onLocalDeviceExceptionOccurred] callback instead.
+
+    For related API, please refer to [onDeviceError](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onDeviceError.html), [onLocalDeviceExceptionOccurred](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onLocalDeviceExceptionOccurred.html)
+
 ## 2.14.0
 
 ### **New Features**
