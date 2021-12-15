@@ -1522,7 +1522,13 @@ class ZegoMixerOutputVideoConfig {
   /// Mix stream output video bitrate in kbps.
   int bitrate;
 
-  ZegoMixerOutputVideoConfig(this.videoCodecID, this.bitrate);
+  /// Mix stream video encode profile. Default value is [ZegoEncodeProfileDefault].
+  ZegoEncodeProfile encodeProfile;
+
+  /// The video encoding delay of mixed stream output, Valid value range [0, 2000], in milliseconds. The default value is 0.
+  int encodeLatency;
+
+  ZegoMixerOutputVideoConfig(this.videoCodecID, this.bitrate, {this.encodeProfile = ZegoEncodeProfile.Default, this.encodeLatency = 0});
 
 }
 

@@ -1170,8 +1170,10 @@
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1294,8 +1296,10 @@
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1339,8 +1343,10 @@
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1407,8 +1413,10 @@
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];

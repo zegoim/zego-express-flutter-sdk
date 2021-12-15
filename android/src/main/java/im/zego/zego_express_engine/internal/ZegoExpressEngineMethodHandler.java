@@ -88,6 +88,7 @@ import im.zego.zegoexpress.constants.ZegoStreamAlignmentMode;
 import im.zego.zegoexpress.constants.ZegoCameraFocusMode;
 import im.zego.zegoexpress.constants.ZegoCameraExposureMode;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
+import im.zego.zegoexpress.constants.ZegoEncodeProfile;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -1352,7 +1353,9 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
+                    ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
+                    int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
                 }
                 outputListObject.add(outputObject);
             }
@@ -1463,7 +1466,9 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
+                    ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
+                    int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
                 }
                 outputListObject.add(outputObject);
             }
@@ -1511,7 +1516,9 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
+                    ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
+                    int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
                 }
                 outputListObject.add(outputObject);
             }
@@ -1568,7 +1575,9 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID")));
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate));
+                    ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
+                    int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
                 }
                 outputListObject.add(outputObject);
             }

@@ -570,7 +570,9 @@ class ZegoExpressImpl {
           'target': output.target,
           'videoConfig': {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate
+            'bitrate': output.videoConfig!.bitrate,
+            'encodeLatency': output.videoConfig?.encodeLatency,
+            'encodeProfile': output.videoConfig?.encodeProfile.index 
           }
         });
       }
@@ -604,7 +606,9 @@ class ZegoExpressImpl {
           'target': output.target,
           'videoConfig': {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate
+            'bitrate': output.videoConfig!.bitrate,
+            'encodeLatency': output.videoConfig?.encodeLatency,
+            'encodeProfile': output.videoConfig?.encodeProfile.index 
           }
         });
       }
@@ -633,7 +637,9 @@ class ZegoExpressImpl {
           'target': output.target,
           'videoConfig': {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate
+            'bitrate': output.videoConfig!.bitrate,
+            'encodeLatency': output.videoConfig?.encodeLatency,
+            'encodeProfile': output.videoConfig?.encodeProfile.index 
           }
         });
       }
@@ -661,7 +667,9 @@ class ZegoExpressImpl {
           'target': output.target,
           'videoConfig': {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate
+            'bitrate': output.videoConfig!.bitrate,
+            'encodeLatency': output.videoConfig?.encodeLatency,
+            'encodeProfile': output.videoConfig?.encodeProfile.index 
           }
         });
       }
