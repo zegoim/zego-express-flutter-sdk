@@ -3355,7 +3355,7 @@ void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
     ZegoEngineConfig *configObject = [[ZegoEngineConfig alloc] init];
     configObject.advancedConfig = advancedConfigMap;
 
-    ZegoExpressEngine.setEngineConfig(configObject);
+    [ZegoExpressEngine setEngineConfig:configObject];
 }
 
 @end
