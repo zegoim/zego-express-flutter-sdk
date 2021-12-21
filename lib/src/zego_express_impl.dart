@@ -1736,7 +1736,10 @@ class ZegoExpressImpl {
       case 'onRemoteSoundLevelUpdate':
         if (ZegoExpressEngine.onRemoteSoundLevelUpdate == null) return;
 
-        Map<dynamic, dynamic> soundLevels = map['soundLevels'];
+        var soundLevels = <dynamic, dynamic>{};
+        if (map['soundLevels'] != null) {
+          soundLevels = map['soundLevels'];
+        }
 
         ZegoExpressEngine
             .onRemoteSoundLevelUpdate!(Map<String, double>.from(soundLevels));
