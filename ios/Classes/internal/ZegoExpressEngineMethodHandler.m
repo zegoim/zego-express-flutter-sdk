@@ -54,6 +54,9 @@
 
 - (void)createEngineWithProfile:(FlutterMethodCall *)call result:(FlutterResult)result {
 
+    // Report framework info
+    [self reportPluginInfo];
+
     NSDictionary *profileMap = call.arguments[@"profile"];
     unsigned int appID = [ZegoUtils unsignedIntValue:profileMap[@"appID"]];
     NSString *appSign = profileMap[@"appSign"];
@@ -99,6 +102,9 @@
 }
 
 - (void)createEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // Report framework info
+    [self reportPluginInfo];
 
     unsigned int appID = [ZegoUtils unsignedIntValue:call.arguments[@"appID"]];
     NSString *appSign = call.arguments[@"appSign"];
@@ -3378,6 +3384,15 @@ void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
     for (int i = 0; i < list.count; i++) {
         position[i] = list[i].floatValue;
     }
+}
+
+- (void)reportPluginInfo {
+    NSDictionary *advancedConfigMap = @{@"thirdparty_framework_info": @"flutter"};
+
+    ZegoEngineConfig *configObject = [[ZegoEngineConfig alloc] init];
+    configObject.advancedConfig = advancedConfigMap;
+
+    [ZegoExpressEngine setEngineConfig:configObject];
 }
 
 @end
