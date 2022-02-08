@@ -662,7 +662,7 @@
 
     if (sink) {
         sink(@{
-            @"method": @"onRemoteSoundLevelUpdate",
+            @"method": @"onRemoteSoundLevelInfoUpdate",
             @"soundLevelInfos": resultDic
         });
     }
