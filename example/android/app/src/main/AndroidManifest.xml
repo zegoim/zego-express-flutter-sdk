@@ -28,7 +28,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name="${applicationName}"
         android:label="ZegoExpressExample"
         android:icon="@mipmap/ic_launcher">
         <activity
