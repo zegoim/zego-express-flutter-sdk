@@ -80,7 +80,9 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Chooses to use the specified audio device.
   ///
-  /// Only supports desktop.
+  /// Available since: 1.0.0
+  /// Description: Chooses to use the specified audio device.
+  /// When to call: After creating the engine [createEngine] and before call [startPublishingStream] or [startPlayingStream].
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -355,7 +357,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Caution: This setting does not actually take effect until both the headset and microphone are connected.
   /// Related APIs: Enables or disables headphone monitoring via [enableHeadphoneMonitor].
   ///
-  /// - [volume] headphone monitor volume, range from 0 to 200, 100 as default.
+  /// - [volume] headphone monitor volume, range from 0 to 200, 60 as default.
   Future<void> setHeadphoneMonitorVolume(int volume) async {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
@@ -379,7 +381,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Available: since 2.14.0
   /// Description: After calling this interface, the specified type of [onAudioVADStateUpdate] callback can no longer be received.
   /// When to call: None.
-  /// Restrictions: [onAudioVADStateUpdate] callback notification period is 3 seconds.
+  /// Restrictions: None.
   /// Related APIs: [startAudioVADStableStateMonitor].
   ///
   /// - [type] audio VAD monitor type.

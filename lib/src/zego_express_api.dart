@@ -465,7 +465,7 @@ class ZegoExpressEngine {
   /// Description: Developers can use this callback to display the effect of which stream’s anchor is talking on the UI interface of the mixed stream of the audience.
   /// Use cases: It is often used when multiple video images are required to synthesize a video using mixed streaming, such as education, live teacher and student images.
   /// When to trigger: After the developer calls the [startPlayingStream] function to start playing the mixed stream.
-  /// Restrictions: Due to the high frequency of this callback, please do not perform time-consuming tasks or UI operations in this callback to avoid stalling.
+  /// Restrictions: The callback is triggered every 100 ms, and the trigger frequency cannot be set.Due to the high frequency of this callback, please do not perform time-consuming tasks or UI operations in this callback to avoid stalling.
   /// Related callbacks: [OnMixerRelayCDNStateUpdate] can be used to get update notification of mixing stream repost CDN status.
   /// Related APIs: Develop can start a mixed flow task through [startMixerTask].
   ///
@@ -988,7 +988,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 2.11.0
   /// Description: The status change notification of the microphone, starting to send audio is an asynchronous process, and the state switching in the middle is called back through this function.
-  /// Trigger: After the [enableMicrophone] function.
+  /// When to Trigger: After the [enableMicrophone] function.
   /// Caution: It must be monitored before the [enableMicrophone] function is called.
   ///
   /// - [rangeAudio] Range audio instance that triggers this callback.
@@ -1008,14 +1008,14 @@ class ZegoExpressEngine {
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
   /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
   /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
-  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to: https://doc-zh.zego.im/faq/profile_difference.
+  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to https://doc-zh.zego.im/faq/profile_difference.
   /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
   @Deprecated('Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.')
   static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
     return await ZegoExpressImpl.createEngine(appID, appSign, isTestEnv, scenario, enablePlatformView: enablePlatformView);
   }
 
-  /// [Deprecated] The callback triggered when a device exception occurs.
+  /// [Deprecated] The callback triggered when a device exception occurs. Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.
   ///
   /// Available: 1.1.0 ~ 2.14.0, deprecated since 2.15.0
   /// Description: The callback triggered when a device exception occurs.
@@ -1031,7 +1031,42 @@ class ZegoExpressEngine {
 
 extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
 
-  /// [Deprecated] Turns on/off verbose debugging and sets up the log language.
+  /// Enables or disables the beauty features for the specified publish channel.
+  ///
+  /// Available since: 1.1.0
+  /// Description: When developers do not have much need for beauty features, they can use this function to set some very simple beauty effects.
+  /// When to call: It needs to be called after [createEngine].
+  /// Default value: When this function is not called, the beauty feature is not enabled by default.
+  /// Related APIs: After turning on the beauty features, you can call the [setBeautifyOption] function to adjust the beauty parameters.
+  /// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the [ZegoEffects] AI SDK https://doc-en.zego.im/article/9896 for best results.
+  /// Restrictions: In the case of using the custom video capture function, since the developer has handle the video data capturing, the SDK is no longer responsible for the video data capturing, so this function is no longer valid. It is also invalid when using the custom video processing function.
+  ///
+  /// @deprecated Deprecated since 2.16.0, please use the [enableEffectsBeauty] function instead.
+  /// - [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
+  /// - [channel] Publishing stream channel
+  @Deprecated('Deprecated since 2.16.0, please use the [enableEffectsBeauty] function instead.')
+  Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
+  }
+
+  /// Set beautify option.
+  ///
+  /// Available since: 1.1.0
+  /// Description: set beautify option for specified stream publish channel.
+  /// Use cases: Often used in video call, live broadcasting.
+  /// When to call: It needs to be called after [createEngine].
+  /// Restrictions: None.
+  /// Caution: In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, call this function will not take effect. When using custom video processing, the video data collected by the SDK will be handed over to the business for further processing, call this function will not take effect either.
+  ///
+  /// @deprecated Deprecated since 2.16.0, please use the [setEffectsBeautyParam] function instead.
+  /// - [option] Beautify option.
+  /// - [channel] stream publish channel.
+  @Deprecated('Deprecated since 2.16.0, please use the [setEffectsBeautyParam] function instead.')
+  Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
+  }
+
+  /// [Deprecated] Turns on/off verbose debugging and sets up the log language. This function has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
   ///
   /// This function has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
   /// The debug switch is set to on and the language is English by default.
@@ -1044,7 +1079,7 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
   }
 
-  /// [Deprecated] Logs in multi room.
+  /// [Deprecated] Logs in multi room. This method has been deprecated after version 2.9.0 If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.
   ///
   /// This method has been deprecated after version 2.9.0 If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.
   /// You must log in the main room with [loginRoom] before invoke this function to logging in to multi room.
@@ -1067,7 +1102,7 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.loginMultiRoom(roomID, config: config);
   }
 
-  /// [Deprecated] Set the selected video layer of playing stream.
+  /// [Deprecated] Set the selected video layer of playing stream. This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
   ///
   /// Available: 1.19.0 to 2.3.0, deprecated.
   /// This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.

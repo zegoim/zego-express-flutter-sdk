@@ -109,35 +109,61 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setANSMode(mode);
   }
 
-  /// Enables or disables the beauty features for the specified publish channel.
+  /// Enable the Effects beauty environment.
   ///
-  /// Available since: 1.1.0
-  /// Description: When developers do not have much need for beauty features, they can use this function to set some very simple beauty effects.
-  /// When to call: It needs to be called after [createEngine].
-  /// Default value: When this function is not called, the beauty feature is not enabled by default.
-  /// Related APIs: After turning on the beauty features, you can call the [setBeautifyOption] function to adjust the beauty parameters.
-  /// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the [ZegoEffects] AI SDK https://doc-en.zego.im/article/9896 for best results.
-  /// Restrictions: In the case of using the custom video capture function, since the developer has handle the video data capturing, the SDK is no longer responsible for the video data capturing, so this function is no longer valid. It is also invalid when using the custom video processing function.
-  ///
-  /// - [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
-  /// - [channel] Publishing stream channel
-  Future<void> enableBeautify(int featureBitmask, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.enableBeautify(featureBitmask, channel: channel);
+  /// Available since: 2.16.0
+  /// Description: Enable the Effects beauty environment. The SDK uses the specified video frame data type for transmission. The Windows platform only supports video frame raw data, the Apple platform only supports CVPixelBuffer, and the Android platform only supports texture2d.
+  /// Use cases: It is often used in scenes such as video calls and live broadcasts.
+  /// Default value: When this function is not called, the beauty environment is not activated by default.
+  /// When to call: Must be called before calling [startPreview], [startPublishingStream]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
+  /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+  /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
+  Future<void> startEffectsEnv() async {
+    return await ZegoExpressImpl.instance.startEffectsEnv();
   }
 
-  /// Set beautify option.
+  /// Disable the Effects beauty environment.
   ///
-  /// Available since: 1.1.0
-  /// Description: set beautify option for specified stream publish channel.
-  /// Use cases: Often used in video call, live broadcasting.
-  /// When to call: It needs to be called after [createEngine].
-  /// Restrictions: None.
-  /// Caution: In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, call this function will not take effect. When using custom video processing, the video data collected by the SDK will be handed over to the business for further processing, call this function will not take effect either.
+  /// Available since: 2.16.0
+  /// Description: Disable the Effects beauty environment.
+  /// Use cases: It is often used in scenes such as video calls and live broadcasts.
+  /// When to call: Must be called before calling [startPreview], [startPublishingStream]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
+  /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+  /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
+  Future<void> stopEffectsEnv() async {
+    return await ZegoExpressImpl.instance.stopEffectsEnv();
+  }
+
+  /// Enables or disables the beauty effect.
   ///
-  /// - [option] Beautify option.
-  /// - [channel] stream publish channel.
-  Future<void> setBeautifyOption(ZegoBeautifyOption option, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
+  /// Available since: 2.16.0
+  /// Description: Support basic beauty functions, including whiten, rosy, smooth, and sharpen.
+  /// Use cases: It is often used in scenes such as video calls and live broadcasts.
+  /// When to call: You must call [startEffectsEnv] to enable the beauty environment before calling this function.
+  /// Default value: When this function is not called, the beauty effect is not enabled by default.
+  /// Related APIs: You can call the [setBeautifyOption] function to adjust the beauty parameters.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+  /// Restrictions: If this function is used on the Android platform, it only supports 5.0 and above, SDK version 21 and above.
+  ///
+  /// - [enable] Whether to enable the beauty effect, true is enabled; false is disabled, and the default is false.
+  Future<void> enableEffectsBeauty(bool enable) async {
+    return await ZegoExpressImpl.instance.enableEffectsBeauty(enable);
+  }
+
+  /// Set beautify param.
+  ///
+  /// Available since: 2.16.0
+  /// Description: Set the beauty parameters, including whiten, rosy, smooth, and sharpen.
+  /// Use cases: It is often used in scenes such as video calls and live broadcasts.
+  /// When to call: You must call [startEffectsEnv] to enable the beauty environment before calling this function.
+  /// Related APIs: You can call [enableEffectsBeauty] to turn on or off the beauty function.
+  /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
+  ///
+  /// - [param] Beauty option param.
+  Future<void> setEffectsBeautyParam(ZegoEffectsBeautyParam param) async {
+    return await ZegoExpressImpl.instance.setEffectsBeautyParam(param);
   }
 
   /// Set the sound equalizer (EQ).

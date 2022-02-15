@@ -212,11 +212,11 @@ enum ZegoAudioChannel {
 
 /// Audio capture stereo mode.
 enum ZegoAudioCaptureStereoMode {
-  /// Disable capture stereo, i.e. capture mono
+  /// Disable stereo capture, that is, mono.
   None,
-  /// Always enable capture stereo
+  /// Always enable stereo capture.
   Always,
-  /// Adaptive mode, capture stereo when publishing stream only, capture mono when publishing and playing stream (e.g. talk/intercom scenes)
+  /// [This mode is deprecated] Same as 'Always', that is, always enable stereo capture.
   Adaptive
 }
 
@@ -247,7 +247,9 @@ enum ZegoVideoCodecID {
   /// VP8
   Vp8,
   /// H.265
-  H265
+  H265,
+  /// Unknown Video Coding
+  Unknown
 }
 
 /// Player video layer.
@@ -831,7 +833,7 @@ enum ZegoAudioVADStableStateMonitorType {
 /// Caution: None.
 class ZegoLogConfig {
 
-  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document: https://doc-zh.zego.im/article/646. Caution: Developers need to ensure read and write permissions for files under this path.
+  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document https://doc-en.zego.im/faq/express_sdkLog. Caution: Developers need to ensure read and write permissions for files under this path.
   String logPath;
 
   /// Maximum log file size(Bytes). Description: Used to customize the maximum log file size. Use cases: This configuration is required when you need to customize the upper limit of the log file size. Required: False. Default value: 5MB (5 * 1024 * 1024 Bytes). Value range: Minimum 1MB (1 * 1024 * 1024 Bytes), maximum 100M (100 * 1024 * 1024 Bytes), 0 means no need to write logs. Caution: The larger the upper limit of the log file size, the more log information it carries, but the log upload time will be longer.
@@ -876,7 +878,7 @@ class ZegoEngineProfile {
   /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
   String appSign;
 
-  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to: https://doc-zh.zego.im/faq/profile_difference.
+  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to https://doc-zh.zego.im/faq/profile_difference.
   ZegoScenario scenario;
 
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
@@ -1035,7 +1037,7 @@ class ZegoSEIConfig {
 /// Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
 class ZegoVoiceChangerParam {
 
-  /// Pitch parameter, value range [-8.0, 8.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note that the voice changer effect is only valid for the captured sound.
+  /// Pitch parameter, value range [-8.0, 8.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note the tone-shifting sound effect is only effective for the sound played by the media player, and does not change the tone collected by the microphone.
   double pitch;
 
   ZegoVoiceChangerParam(this.pitch);
@@ -1188,7 +1190,7 @@ class ZegoCanvas {
 /// Configure room id
 class ZegoPublisherConfig {
 
-  /// The Room ID
+  /// The Room ID, It is not necessary to pass in single room mode, but the ID of the corresponding room must be passed in multi-room mode
   String? roomID;
 
   /// Whether to synchronize the network time when pushing streams. 1 is synchronized with 0 is not synchronized. And must be used with setStreamAlignmentProperty. It is used to align multiple streams at the mixed stream service or streaming end, such as the chorus scene of KTV.
@@ -1236,7 +1238,7 @@ class ZegoPublishStreamQuality {
   /// Whether to enable hardware encoding
   bool isHardwareEncode;
 
-  /// Video codec ID
+  /// Video codec ID (Available since 1.17.0)
   ZegoVideoCodecID videoCodecID;
 
   /// Total number of bytes sent, including audio, video, SEI
@@ -1302,10 +1304,13 @@ class ZegoPlayerConfig {
   /// The Room ID.
   String? roomID;
 
-  ZegoPlayerConfig(this.resourceMode, {this.cdnConfig, this.roomID});
+  /// The video encoding type of the stream.
+  ZegoVideoCodecID videoCodecID;
+
+  ZegoPlayerConfig(this.resourceMode, this.videoCodecID, {this.cdnConfig, this.roomID});
 
   /// Create a default advanced player config object
-  ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default;
+  ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default, videoCodecID = ZegoVideoCodecID.Unknown;
 
 }
 
@@ -1317,7 +1322,7 @@ class ZegoPlayStreamQuality {
   /// Video receiving frame rate. The unit of frame rate is f/s
   double videoRecvFPS;
 
-  /// Video dejitter frame rate. The unit of frame rate is f/s
+  /// Video dejitter frame rate. The unit of frame rate is f/s (Available since 1.17.0)
   double videoDejitterFPS;
 
   /// Video decoding frame rate. The unit of frame rate is f/s
@@ -1329,13 +1334,13 @@ class ZegoPlayStreamQuality {
   /// Video bit rate in kbps
   double videoKBPS;
 
-  /// Video break rate, the unit is (number of breaks / every 10 seconds)
+  /// Video break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0)
   double videoBreakRate;
 
   /// Audio receiving frame rate. The unit of frame rate is f/s
   double audioRecvFPS;
 
-  /// Audio dejitter frame rate. The unit of frame rate is f/s
+  /// Audio dejitter frame rate. The unit of frame rate is f/s (Available since 1.17.0)
   double audioDejitterFPS;
 
   /// Audio decoding frame rate. The unit of frame rate is f/s
@@ -1347,8 +1352,11 @@ class ZegoPlayStreamQuality {
   /// Audio bit rate in kbps
   double audioKBPS;
 
-  /// Audio break rate, the unit is (number of breaks / every 10 seconds)
+  /// Audio break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0)
   double audioBreakRate;
+
+  /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://doc-en.zego.im/article/3720#4_4 (Available since 2.16.0)
+  double mos;
 
   /// Server to local delay, in milliseconds
   int rtt;
@@ -1368,13 +1376,13 @@ class ZegoPlayStreamQuality {
   /// Delay after the data is received by the local end, in milliseconds
   int delay;
 
-  /// The difference between the video timestamp and the audio timestamp, used to reflect the synchronization of audio and video, in milliseconds. This value is less than 0 means the number of milliseconds that the video leads the audio, greater than 0 means the number of milliseconds that the video lags the audio, and 0 means no difference. When the absolute value is less than 200, it can basically be regarded as synchronized audio and video, when the absolute value is greater than 200 for 10 consecutive seconds, it can be regarded as abnormal
+  /// The difference between the video timestamp and the audio timestamp, used to reflect the synchronization of audio and video, in milliseconds. This value is less than 0 means the number of milliseconds that the video leads the audio, greater than 0 means the number of milliseconds that the video lags the audio, and 0 means no difference. When the absolute value is less than 200, it can basically be regarded as synchronized audio and video, when the absolute value is greater than 200 for 10 consecutive seconds, it can be regarded as abnormal (Available since 1.19.0)
   int avTimestampDiff;
 
   /// Whether to enable hardware decoding
   bool isHardwareDecode;
 
-  /// Video codec ID
+  /// Video codec ID (Available since 1.17.0)
   ZegoVideoCodecID videoCodecID;
 
   /// Total number of bytes received, including audio, video, SEI
@@ -1386,7 +1394,7 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
-  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes);
+  ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.mos, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes);
 
 }
 
@@ -1445,6 +1453,30 @@ class ZegoBeautifyOption {
 
   /// Create a default beauty parameter object
   ZegoBeautifyOption.defaultConfig() : polishStep = 0.2, whitenFactor = 0.5, sharpenFactor = 0.1;
+
+}
+
+/// Beauty configuration param.
+///
+/// Configure the whiten, rosy, smooth, and sharpen parameters for beauty.
+class ZegoEffectsBeautyParam {
+
+  /// The whiten intensity parameter, the value range is [0,100], and the default is 50.
+  int whitenIntensity;
+
+  /// the rosy intensity parameter, value range [0,100], and the default is 50.
+  int rosyIntensity;
+
+  /// the smooth intensity parameter, value range [0,100], and the default is 50.
+  int smoothIntensity;
+
+  /// the sharpen intensity parameter, value range [0,100], and the default is 50.
+  int sharpenIntensity;
+
+  ZegoEffectsBeautyParam(this.whitenIntensity, this.rosyIntensity, this.smoothIntensity, this.sharpenIntensity);
+
+  /// Create a default beauty parameter object
+  ZegoEffectsBeautyParam.defaultParam() : whitenIntensity = 50, rosyIntensity = 50, smoothIntensity = 50, sharpenIntensity = 50;
 
 }
 
@@ -1519,7 +1551,7 @@ class ZegoMixerOutputVideoConfig {
   /// Mix stream output video coding format, supporting H.264 and h.265 coding.
   ZegoVideoCodecID videoCodecID;
 
-  /// Mix stream output video bitrate in kbps.
+  /// Mix stream output video bitrate in kbps. The default value is the bitrate configured in [ZegoMixerVideoConfig].
   int bitrate;
 
   /// Mix stream video encode profile. Default value is [ZegoEncodeProfileDefault].
@@ -2642,6 +2674,20 @@ abstract class ZegoRangeAudio {
   ///
   /// - [teamID] Team ID, a string of up to 64 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   Future<void> setTeamID(String teamID);
+
+  /// Whether can receive the audio data of the specified user.
+  ///
+  /// Available since: 2.16.0
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from designated remote users when pulling streams as needed. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Use cases: When developers need to quickly close and restore remote audio, they can call this function to enhance the interactive experience.
+  /// Default value: The default is `false`, which means to receive audio data from all users.
+  /// When to call: After initializing the range audio [createRangeAudio].
+  /// Caution: This function is valid only when the [muteAllPlayStreamAudio] function is set to `false`.
+  /// Related APIs: You can call the [muteAllPlayStreamAudio] function to control whether to receive all audio data. 1. When the [muteAllPlayStreamAudio(true)] function is called, it takes effect globally, that is, local users will be prohibited from receiving audio data from all remote users. At this time, the [muteUser] function will not take effect regardless of whether the [muteUser] function is called before or after [muteAllPlayStreamAudio]. 2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [muteUser] function can be used to control whether to receive the audio data of the specified user. Calling the [muteUser(userID, true)] function allows the local user to receive audio data other than the `userID`; calling the [muteUser(userID, false)] function allows the local user to receive the audio data of the `userID`.
+  ///
+  /// - [userID] User ID.
+  /// - [mute] Whether it can receive the audio data of the specified remote user, "true" means prohibition, "false" means receiving, the default value is "false".
+  Future<void> muteUser(String userID, bool mute);
 
 }
 
