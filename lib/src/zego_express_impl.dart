@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 
 class Global {
-  static String pluginVersion = "2.15.0";
+  static String pluginVersion = "2.16.3";
 }
 
 class ZegoExpressImpl {
@@ -864,8 +864,7 @@ class ZegoExpressImpl {
         .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
-  Future<void> startAudioVADStableStateMonitor(
-      ZegoAudioVADStableStateMonitorType type) async {
+  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type) async {
     return await _channel
         .invokeMethod('startAudioVADStableStateMonitor', {'type': type.index});
   }
@@ -905,6 +904,30 @@ class ZegoExpressImpl {
 
   Future<void> setANSMode(ZegoANSMode mode) async {
     return await _channel.invokeMethod('setANSMode', {'mode': mode.index});
+  }
+
+  Future<void> startEffectsEnv() async {
+    return await _channel.invokeMethod('startEffectsEnv');
+  }
+
+  Future<void> stopEffectsEnv() async {
+    return await _channel.invokeMethod('stopEffectsEnv');
+  }
+
+  Future<void> enableEffectsBeauty(bool enable) async {
+    return await _channel.invokeMethod('enableEffectsBeauty',
+        {'enable': enable});
+  }
+
+  Future<void> setEffectsBeautyParam(ZegoEffectsBeautyParam param) async {
+    return await _channel.invokeMethod('setEffectsBeautyParam', {
+      'param': {
+        'rosyIntensity': param.rosyIntensity,
+        'sharpenIntensity': param.sharpenIntensity,
+        'smoothIntensity': param.smoothIntensity,
+        'whitenIntensity': param.whitenIntensity
+      }
+    });
   }
 
   Future<void> enableBeautify(int featureBitmask,
@@ -1606,6 +1629,7 @@ class ZegoExpressImpl {
             map['quality']['audioRenderFPS'],
             map['quality']['audioKBPS'],
             map['quality']['audioBreakRate'],
+            map['quality']['mos'],
             map['quality']['rtt'],
             map['quality']['packetLostRate'],
             map['quality']['peerToPeerDelay'],
@@ -2654,6 +2678,14 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
       'axisForward': axisForward,
       'axisRight': axisRight,
       'axisUp': axisUp
+    });
+  }
+
+  @override
+  Future<void> muteUser(String userID, bool mute) async {
+    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioMuteUser', {
+      'userID': userID,
+      'mute': mute
     });
   }
 }

@@ -128,6 +128,7 @@ import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
+import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -1955,6 +1956,57 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void startEffectsEnv(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().startEffectsEnv();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopEffectsEnv(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopEffectsEnv();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableEffectsBeauty(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableEffectsBeauty(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setEffectsBeautyParam(MethodCall call, Result result) {
+
+        HashMap<String, Integer> paramMap = call.argument("param");
+        if (paramMap == null || paramMap.isEmpty()) {
+            result.error("setEffectsBeautyParam_Null_Param".toUpperCase(), "[setEffectsBeautyParam] Null param", null);
+            return;
+        }
+
+        Integer rosyIntensity = ZegoUtils.intValue(paramMap.get("rosyIntensity"));
+        Integer sharpenIntensity = ZegoUtils.intValue(paramMap.get("sharpenIntensity"));
+        Integer smoothIntensity = ZegoUtils.intValue(paramMap.get("smoothIntensity"));
+        Integer whitenIntensity = ZegoUtils.intValue(paramMap.get("whitenIntensity"));
+
+        ZegoEffectsBeautyParam param = new ZegoEffectsBeautyParam();
+        param.rosyIntensity = rosyIntensity;
+        param.sharpenIntensity = sharpenIntensity;
+        param.smoothIntensity = smoothIntensity;
+        param.whitenIntensity = whitenIntensity;
+
+        ZegoExpressEngine.getEngine().setEffectsBeautyParam(param);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void enableBeautify(MethodCall call, Result result) {
 
         int featureBitmask = ZegoUtils.intValue((Number) call.argument("featureBitmask"));
@@ -3433,6 +3485,21 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioUpdateSelfPosition` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void rangeAudioMuteUser(MethodCall call, Result result) {
+
+        if (rangeAudioInstance != null) {
+            String userID = call.argument("userID");
+            boolean mute = ZegoUtils.boolValue((Boolean) call.argument("mute"));
+            rangeAudioInstance.muteUser(userID, mute);
+            
+            result.success(null);
+
+        } else {
+            result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioMuteUser` but can't find specific instance", null);
         }
     }
 
