@@ -65,7 +65,10 @@ if __name__ == '__main__':
     for folder in os.listdir(tmp_dst_unzip_folder):
         product_folder = os.path.join(tmp_dst_unzip_folder, folder)
         for f in os.listdir(product_folder):
-            shutil.copytree(os.path.join(product_folder, f), os.path.join(deps_path, f))
+            if os.path.isdir(os.path.join(product_folder, f)):
+                shutil.copytree(os.path.join(product_folder, f), os.path.join(deps_path, f))
+            else:
+                shutil.copy(os.path.join(product_folder, f), os.path.join(deps_path, f))
     print("Download SDK success")
 
     shutil.rmtree(tmp_dst_unzip_folder, ignore_errors=True)
