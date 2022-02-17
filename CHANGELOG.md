@@ -1,6 +1,76 @@
 # Change Log
 
 
+## 2.16.3
+
+### **New Features**
+1. Game voice support setting whether to receive audio data from the specified user.
+
+    The [muteUser] interface has been added to the game voice module. Local users can set whether to receive audio data from the specified remote user through the [MuteUser] interface after initializing the game voice [CreateRangeAudio] according to their needs.
+
+    This function is often used in game scenarios, such as the speaker is blocked by a wall, the listener does not need to receive the sound.
+
+    For related API, please refer to [muteUser](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/muteUser.html)
+
+2. Pull stream quality callback [onPlayerQualityUpdate] added MOS sound quality score.
+    
+    The [onPlayerQualityUpdate] callback adds a "mos" parameter, which indicates the rating of the streaming quality. When developers are more concerned about audio quality, they can use this parameter to know the current audio quality.
+
+    For related API, please refer to [ZegoPlayStreamQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPlayStreamQuality-class.html)
+
+3. Supports streaming based on rtmp over quic protocol.
+
+    NOTE: To use this feature, please contact ZEGO Technical Support.
+
+    In order to allow the streaming end to push higher-quality video streams in a weak network environment, the SDK supports streaming based on the rtmp over quic protocol.
+
+    This function is often used in single-host live CDN and live PK scenarios.
+
+4. H.265 pull stream supports automatic downgrade.
+
+    NOTE: To use this feature, please contact ZEGO Technical Support.
+
+    Version 2.15.0 and earlier: When the SDK uses [startPlayingStream] to pull the H.265 encoded stream, if the decoding frame rate is insufficient due to poor hardware performance on the streaming end, the SDK cannot actively downgrade, and the user needs to first Stop pulling the H.265 encoded stream and re-pull the H.264 encoded stream.
+
+    Version 2.16.0 and above: Added the H.265 streaming automatic downgrade policy. When using [startPlayingStream] to pull H.265 encoded streams, the SDK can compare the hardware performance of the streaming end according to the streaming quality. If the decoding frame rate is insufficient due to the difference, the H.264 encoded stream will be automatically downgraded.
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+### **Enhancements**
+1. Android SDK minimum supported OS version changed from Android 4.1 to Android 4.4.
+
+    Starting from this version, the API level required by the Android SDK is not lower than 19, and the minimum supported OS version has changed from Android 4.1 to Android 4.4. If you need to support Android 4.1, please contact ZEGO technical support.
+
+2. Optimized the basic beauty function.
+
+    ZEGO provides a new basic beauty function, showing users a good skin condition and creating a natural beauty effect. Developers need to call the [startEffectsEnv] interface to initialize the beauty environment before pushing the stream, and then call the [enableEffectsBeauty] interface to enable the beauty function. Through the [setEffectsBeautyParam] interface, you can adjust the degree of whitening, smoothing, sharpening, and ruddy as needed to achieve basic beauty capabilities.
+
+    This function is often used in video calls, live broadcasts and other scenarios.
+
+    For related API, please refer to [startEffectsEnv](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/startEffectsEnv.html), [stopEffectsEnv](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/stopEffectsEnv.html), [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html), [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html)
+
+3. Android system of version 8.0 and above supports getting CPU usage.
+
+4. Optimize NTP time error.
+
+    When calling the [getNetworkTimeInfo] interface to obtain synchronized network time information, the SDK will regularly update the NTP time to reduce the error of the obtained NTP time.
+
+    For related API, please refer to [getNetworkTimeInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/getNetworkTimeInfo.html)
+
+### **Deleted**
+1. Abandoned the old version of the basic beauty related interface.
+
+    The old beauty function is relatively simple and does not meet the developer's expectations. Therefore, the [enableBeautify] interface is deprecated in version 2.16.0 and above, please use the [enableEffectsBeauty] interface instead; the [setBeautifyOption] interface is deprecated, please use [setEffectsBeautyParam] ] replace.
+
+    For related API, please refer to [enableBeautify](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDeprecatedApi/enableBeautify.html), [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html), [setBeautifyOption](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDeprecatedApi/setBeautifyOption.html), [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html)
+
+### **Bug Fixes**
+1.  Fixed the issue that when the [loginRoom] and [startPublishingStream] interfaces are called at the same time, the peer end may not receive a new stream notification.
+
+2. Fixed an issue where users could not receive room additional messages sent by other users in the room before logging into the room.
+
+3. Fix known issues.
+
 ## 2.15.0
 
 ### **New Features**
