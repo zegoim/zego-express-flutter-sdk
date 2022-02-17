@@ -454,6 +454,7 @@
                 @"audioRenderFPS": @(quality.audioRenderFPS),
                 @"audioKBPS": @(quality.audioKBPS),
                 @"audioBreakRate": @(quality.audioBreakRate),
+                @"mos": @(quality.mos),
                 @"rtt": @(quality.rtt),
                 @"packetLostRate": @(quality.packetLostRate),
                 @"peerToPeerDelay": @(quality.peerToPeerDelay),
@@ -662,7 +663,7 @@
 
     if (sink) {
         sink(@{
-            @"method": @"onRemoteSoundLevelUpdate",
+            @"method": @"onRemoteSoundLevelInfoUpdate",
             @"soundLevelInfos": resultDic
         });
     }

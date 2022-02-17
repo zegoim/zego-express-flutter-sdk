@@ -54,6 +54,9 @@
 
 - (void)createEngineWithProfile:(FlutterMethodCall *)call result:(FlutterResult)result {
 
+    // Report framework info
+    [self reportPluginInfo];
+
     NSDictionary *profileMap = call.arguments[@"profile"];
     unsigned int appID = [ZegoUtils unsignedIntValue:profileMap[@"appID"]];
     NSString *appSign = profileMap[@"appSign"];
@@ -99,6 +102,9 @@
 }
 
 - (void)createEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // Report framework info
+    [self reportPluginInfo];
 
     unsigned int appID = [ZegoUtils unsignedIntValue:call.arguments[@"appID"]];
     NSString *appSign = call.arguments[@"appSign"];
@@ -1748,6 +1754,43 @@
     result(nil);
 }
 
+- (void)startEffectsEnv:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] startEffectsEnv];
+
+    result(nil);
+}
+
+- (void)stopEffectsEnv:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] stopEffectsEnv];
+
+    result(nil);
+}
+
+- (void)enableEffectsBeauty:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableEffectsBeauty: enable];
+    
+    result(nil);
+}
+
+- (void)setEffectsBeautyParam:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *param = call.arguments[@"param"];
+    ZegoEffectsBeautyParam *paramObject = [[ZegoEffectsBeautyParam alloc] init];
+    paramObject.rosyIntensity = [ZegoUtils intValue:param[@"rosyIntensity"]];
+    paramObject.sharpenIntensity = [ZegoUtils intValue:param[@"sharpenIntensity"]];
+    paramObject.smoothIntensity = [ZegoUtils intValue:param[@"smoothIntensity"]];
+    paramObject.whitenIntensity = [ZegoUtils intValue:param[@"whitenIntensity"]];
+
+    [[ZegoExpressEngine sharedEngine] setEffectsBeautyParam: paramObject];
+
+    result(nil);
+}
+
 - (void)enableBeautify:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int feature = [ZegoUtils intValue:call.arguments[@"featureBitmask"]];
@@ -3069,6 +3112,20 @@
     }
 }
 
+- (void)rangeAudioMuteUser:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        NSString *userID = call.arguments[@"userID"];
+        BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+
+        [self.rangeAudioInstance muteUser:userID mute:mute];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioMuteUser` but can't find specific instance" details:nil]);
+    }
+}
+
 #pragma mark - real time sequential data manager
 
 - (void)createRealTimeSequentialDataManager:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -3378,6 +3435,15 @@ void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
     for (int i = 0; i < list.count; i++) {
         position[i] = list[i].floatValue;
     }
+}
+
+- (void)reportPluginInfo {
+    NSDictionary *advancedConfigMap = @{@"thirdparty_framework_info": @"flutter"};
+
+    ZegoEngineConfig *configObject = [[ZegoEngineConfig alloc] init];
+    configObject.advancedConfig = advancedConfigMap;
+
+    [ZegoExpressEngine setEngineConfig:configObject];
 }
 
 @end

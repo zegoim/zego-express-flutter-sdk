@@ -65,7 +65,7 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// Description: This function supports uplink/downlink network speed test.
   /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
   /// When to call: It needs to be called after [createEngine], and before [startPublishingStream]. If you call [startPublishingStream] while speed testing, the speed test will automatically stop.
-  /// Restrictions: None.
+  /// Restrictions: The maximum allowable test time for a single network speed test is 3 minutes.
   /// Caution: Developers can register [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be triggered every 3 seconds. If an error occurs during the speed test process, [onNetworkSpeedTestError] callback will be triggered. If this function is repeatedly called multiple times, the last functioh call's configuration will be used.
   /// Related APIs: Call [stopNetworkSpeedTest] to stop network speed test.
   ///

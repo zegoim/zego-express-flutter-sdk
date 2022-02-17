@@ -497,6 +497,7 @@ public class ZegoExpressEngineEventHandler {
             qualityMap.put("audioRenderFPS", quality.audioRenderFPS);
             qualityMap.put("audioKBPS", quality.audioKBPS);
             qualityMap.put("audioBreakRate", quality.audioBreakRate);
+            qualityMap.put("mos", quality.mos);
             qualityMap.put("rtt", quality.rtt);
             qualityMap.put("packetLostRate", quality.packetLostRate);
             qualityMap.put("peerToPeerDelay", quality.peerToPeerDelay);
