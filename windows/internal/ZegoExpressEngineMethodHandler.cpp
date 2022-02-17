@@ -220,7 +220,7 @@ void ZegoExpressEngineMethodHandler::startPreview(flutter::EncodableMap& argumen
 {
     //auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->startPreview();
+    EXPRESS::ZegoExpressSDK::getEngine()->startPreview(nullptr);
     result->Success();
 }
 
@@ -344,10 +344,10 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
 
         config.cdnConfig = cdnConfigPtr.get();
 
-        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, config);
+        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr, config);
     }
     else {
-        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID);
+        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr);
     }
 
     result->Success();

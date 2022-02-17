@@ -43,7 +43,7 @@ if __name__ == '__main__':
     except Exception as e:
         raise Exception("No deps json, throw error")
 
-    oss_url = 'https://storage.zego.im/express/audio/windows/zego-express-audio-windows-{}.zip'.format(sdk_version)
+    oss_url = 'https://storage.zego.im/express/video/windows/zego-express-video-windows-{}.zip'.format(sdk_version)
     artifact_name = oss_url.split('/')[-1]
 
     request = urllib.request.Request(oss_url)
@@ -65,7 +65,10 @@ if __name__ == '__main__':
     for folder in os.listdir(tmp_dst_unzip_folder):
         product_folder = os.path.join(tmp_dst_unzip_folder, folder)
         for f in os.listdir(product_folder):
-            shutil.copytree(os.path.join(product_folder, f), os.path.join(deps_path, f))
+            if os.path.isdir(os.path.join(product_folder, f)):
+                shutil.copytree(os.path.join(product_folder, f), os.path.join(deps_path, f))
+            if os.path.isfile(os.path.join(product_folder, f)):
+                shutil.copyfile(os.path.join(product_folder, f), os.path.join(deps_path, f))
     print("Download SDK success")
 
     shutil.rmtree(tmp_dst_unzip_folder, ignore_errors=True)
