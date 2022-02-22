@@ -1,32 +1,17 @@
+from __future__ import print_function
 import os
 import json
 import sys
 import shutil
-print(sys.version_info)
+import zipfile
+
 if (sys.version_info.major == 3):
     import urllib.request
 else:
     import urllib
 
-import zipfile
-import tarfile
-import subprocess
-import ssl
 
 THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
-
-
-def unzip_file(src_zip_file, dst_folder):
-    if src_zip_file.endswith('.tar') or src_zip_file.endswith('.gz'):
-        with tarfile.open(src_zip_file, 'r:gz') as f:
-            f.extractall(dst_folder)
-    elif src_zip_file.endswith('.zip'):
-        if sys.platform == 'win32':
-            with zipfile.ZipFile(src_zip_file, 'r') as f:
-                f.extractall(dst_folder)
-        else:
-            subprocess.check_call(['unzip', '-o', '-q', src_zip_file, '-d', dst_folder])
-
 
 if __name__ == '__main__':
 
@@ -52,6 +37,7 @@ if __name__ == '__main__':
     artifact_name = oss_url.split('/')[-1]
     artifact_path = os.path.join(deps_path, artifact_name)
 
+    print('Download sdk from {}'.format(oss_url))
     if (sys.version_info.major == 3):
         urllib.request.urlretrieve(oss_url, artifact_path)
     else:
@@ -61,7 +47,9 @@ if __name__ == '__main__':
     if os.path.exists(tmp_dst_unzip_folder):
         shutil.rmtree(tmp_dst_unzip_folder, ignore_errors=True)
 
-    unzip_file(artifact_path, tmp_dst_unzip_folder)
+    with zipfile.ZipFile(artifact_path, 'r') as f:
+        print('unzip sdk')
+        f.extractall(tmp_dst_unzip_folder)
 
     for folder in os.listdir(tmp_dst_unzip_folder):
         product_folder = os.path.join(tmp_dst_unzip_folder, folder)
