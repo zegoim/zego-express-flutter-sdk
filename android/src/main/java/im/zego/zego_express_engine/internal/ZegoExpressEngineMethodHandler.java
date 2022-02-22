@@ -285,6 +285,22 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setLogConfig(MethodCall call, Result result) { 
+        HashMap<String, Object> configMap = call.argument("config");
+        ZegoLogConfig logConfigObject;
+        if (configMap != null && !configMap.isEmpty()) {
+            logConfigObject = new ZegoLogConfig();
+            logConfigObject.logPath = (String) configMap.get("logPath");
+            logConfigObject.logSize = ZegoUtils.intValue((Number) configMap.get("logSize"));
+
+            ZegoExpressEngine.setLogConfig(logConfigObject);
+            result.success(null);
+        } else {
+            result.error("setLogConfig_null_config".toUpperCase(), "Invoke `setLogConfig` with null config", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void setRoomMode(MethodCall call, Result result) {
 
         ZegoRoomMode mode = ZegoRoomMode.getZegoRoomMode(ZegoUtils.intValue((Number)call.argument("mode")));

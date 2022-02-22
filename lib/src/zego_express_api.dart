@@ -47,6 +47,19 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.setEngineConfig(config);
   }
 
+  /// Set log configuration.
+  ///
+  /// Available since: 2.3.0
+  /// Description: If you need to customize the log file size and path, please call this function to complete the configuration.
+  /// When to call: It must be set before calling [createEngine] to take effect. If it is set after [createEngine], it will take effect at the next [createEngine] after [destroyEngine].
+  /// Restrictions: None.
+  /// Caution: Once this interface is called, the method of setting log size and path via [setEngineConfig] will be invalid.Therefore, it is not recommended to use [setEngineConfig] to set the log size and path.
+  ///
+  /// - [config] log configuration.
+  static Future<void> setLogConfig(ZegoLogConfig config) async {
+    return await ZegoExpressImpl.setLogConfig(config);
+  }
+
   /// Set room mode.
   ///
   /// Available since: 2.9.0

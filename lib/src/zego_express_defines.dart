@@ -631,7 +631,9 @@ enum ZegoRangeAudioMode {
   /// World mode, you can communicate with everyone in the room.
   World,
   /// Team mode, only communicate with members of the team.
-  Team
+  Team,
+  /// Secret team mode, communicate with members of the team, can hear the voices of members who are in the world mode and are within the audio receive range.
+  SecretTeam
 }
 
 /// Range audio microphone state.

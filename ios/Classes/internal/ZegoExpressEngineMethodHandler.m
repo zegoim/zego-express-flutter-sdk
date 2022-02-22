@@ -191,6 +191,25 @@
     }
 }
 
+- (void)setLogConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoLogConfig *logConfigObject = nil;
+
+    if (configMap && configMap.count > 0) {
+        logConfigObject = [[ZegoLogConfig alloc] init];
+
+        logConfigObject.logPath = configMap[@"logPath"];
+        logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:configMap[@"logSize"]];
+
+        [ZegoExpressEngine setLogConfig:logConfigObject];
+
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"setLogConfig_null_config" uppercaseString] message:@"Invoke `setLogConfig` with null config" details:nil]);
+    }
+}
+
 - (void)setRoomMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];

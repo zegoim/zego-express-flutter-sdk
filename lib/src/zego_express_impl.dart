@@ -92,6 +92,15 @@ class ZegoExpressImpl {
     });
   }
 
+  static Future<void> setLogConfig(ZegoLogConfig config) async {
+    return await _channel.invokeMethod('setLogConfig', {
+      'config': {
+        'logPath': config.logPath,
+        'logSize': config.logSize
+      }
+    });
+  }
+
   static Future<void> setRoomMode(ZegoRoomMode mode) async {
     return await _channel.invokeMethod('setRoomMode', {'mode': mode.index});
   }
@@ -804,8 +813,15 @@ class ZegoExpressImpl {
 
   Future<List<ZegoDeviceInfo>> getAudioDeviceList(
       ZegoAudioDeviceType deviceType) async {
-    return await _channel
-        .invokeMethod('getAudioDeviceList', {'type': deviceType});
+    List deviceInfoMapList = await _channel
+        .invokeMethod('getAudioDeviceList', {'type': deviceType.index});
+    List<ZegoDeviceInfo> deviceInfoList = [];
+
+    for (var deviceInfoMap in deviceInfoMapList) {
+      deviceInfoList.add(ZegoDeviceInfo(deviceInfoMap["deviceID"], deviceInfoMap["deviceName"]));
+    }
+
+    return deviceInfoList;
   }
 
   Future<String> getDefaultAudioDeviceID(ZegoAudioDeviceType deviceType) async {
@@ -816,7 +832,7 @@ class ZegoExpressImpl {
   Future<void> useAudioDevice(
       ZegoAudioDeviceType deviceType, String deviceID) async {
     return await _channel.invokeMethod(
-        'useAudioDevice', {'type': deviceType, 'deviceID': deviceID});
+        'useAudioDevice', {'type': deviceType.index, 'deviceID': deviceID});
   }
 
   Future<void> setCameraZoomFactor(double factor,
