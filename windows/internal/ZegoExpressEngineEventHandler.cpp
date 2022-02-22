@@ -27,6 +27,19 @@ void ZegoExpressEngineEventHandler::onDebugError(int errorCode, const std::strin
 	}
 }
 
+void ZegoExpressEngineEventHandler::onApiCalledResult(int errorCode, const std::string& funcName, const std::string& info) {
+
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onApiCalledResult");
+		retMap[FTValue("errorCode")] = FTValue(errorCode);
+		retMap[FTValue("funcName")] = FTValue(funcName);
+		retMap[FTValue("info")] = FTValue(info);
+
+		eventSink_->Success(retMap);
+	}
+}
+
 void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState state) {
 
 	if (eventSink_) {
@@ -270,6 +283,7 @@ void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(const std::string& str
 		qualityMap[FTValue("audioRenderFPS")] = FTValue(quality.audioRenderFPS);
 		qualityMap[FTValue("audioKBPS")] = FTValue(quality.audioKBPS);
 		qualityMap[FTValue("audioBreakRate")] = FTValue(quality.audioBreakRate);
+		qualityMap[FTValue("mos")] = FTValue(quality.mos);
 		qualityMap[FTValue("rtt")] = FTValue(quality.rtt);
 		qualityMap[FTValue("packetLostRate")] = FTValue(quality.packetLostRate);
 		qualityMap[FTValue("peerToPeerDelay")] = FTValue(quality.peerToPeerDelay);

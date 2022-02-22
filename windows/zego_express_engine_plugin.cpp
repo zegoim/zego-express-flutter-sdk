@@ -108,14 +108,23 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     if(method_call.method_name() == "getVersion") {
       ZegoExpressEngineMethodHandler::getInstance().getVersion(argument, std::move(result));
     }
+    else if (method_call.method_name() == "setPluginVersion") {
+        ZegoExpressEngineMethodHandler::getInstance().setPluginVersion(argument, std::move(result));
+    }
     else if (method_call.method_name() == "createEngine") {
         ZegoExpressEngineMethodHandler::getInstance().createEngine(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "createEngineWithProfile") {
+        ZegoExpressEngineMethodHandler::getInstance().createEngineWithProfile(argument, std::move(result));
     }
     else if (method_call.method_name() == "destroyEngine") {
         ZegoExpressEngineMethodHandler::getInstance().destroyEngine(argument, std::move(result));
     }
     else if (method_call.method_name() == "setEngineConfig") {
         ZegoExpressEngineMethodHandler::getInstance().setEngineConfig(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "setLogConfig") {
+        ZegoExpressEngineMethodHandler::getInstance().setLogConfig(argument, std::move(result));
     }
     else if (method_call.method_name() == "uploadLog") {
         ZegoExpressEngineMethodHandler::getInstance().uploadLog(argument, std::move(result));
@@ -155,6 +164,9 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     }
     else if (method_call.method_name() == "mutePublishStreamAudio") {
         ZegoExpressEngineMethodHandler::getInstance().mutePublishStreamAudio(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "mutePublishStreamVideo") {
+        ZegoExpressEngineMethodHandler::getInstance().mutePublishStreamVideo(argument, std::move(result));
     }
     else if (method_call.method_name() == "setCaptureVolume") {
         ZegoExpressEngineMethodHandler::getInstance().setCaptureVolume(argument, std::move(result));
@@ -258,6 +270,13 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     else if (method_call.method_name() == "enableVirtualStereo") {
         ZegoExpressEngineMethodHandler::getInstance().enableVirtualStereo(argument, std::move(result));
     }
+    else if (method_call.method_name() == "enablePlayStreamVirtualStereo") {
+        ZegoExpressEngineMethodHandler::getInstance().enablePlayStreamVirtualStereo(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "setElectronicEffects") {
+        ZegoExpressEngineMethodHandler::getInstance().setElectronicEffects(argument, std::move(result));
+    }
+
     // Audio Effect Player
     else if (method_call.method_name() == "createAudioEffectPlayer") {
         ZegoExpressEngineMethodHandler::getInstance().createAudioEffectPlayer(argument, std::move(result));
@@ -318,6 +337,14 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     else if(method_call.method_name() == "mediaPlayerLoadResource")
     {
         ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResource(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "mediaPlayerLoadResourceFromMediaData")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResourceFromMediaData(argument, std::move(result));
+    }
+    else if (method_call.method_name() == "mediaPlayerLoadResourceWithPosition")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResourceWithPosition(argument, std::move(result));
     }
     else if(method_call.method_name() == "mediaPlayerStart")
     {
@@ -399,6 +426,10 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     {
         ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetCurrentState(argument, std::move(result));
     }
+    else if (method_call.method_name() == "mediaPlayerSetPlaySpeed")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetPlaySpeed(argument, std::move(result));
+    }
     else if(method_call.method_name() == "startMixerTask")
     {
         ZegoExpressEngineMethodHandler::getInstance().startMixerTask(argument, std::move(result));
@@ -439,6 +470,12 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     {
         ZegoExpressEngineMethodHandler::getInstance().startAudioDataObserver(argument, std::move(result));
     }
+
+    else if (method_call.method_name() == "enableCamera")
+    {
+        ZegoExpressEngineMethodHandler::getInstance().enableCamera(argument, std::move(result));
+    }
+
     else {
       result->NotImplemented();
     }

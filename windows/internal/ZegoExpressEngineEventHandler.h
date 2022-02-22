@@ -16,6 +16,7 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoMediaPlayerEventHandler
     , public EXPRESS::IZegoAudioDataHandler
     , public EXPRESS::IZegoDataRecordEventHandler
+    , public EXPRESS::IZegoApiCalledEventHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -38,6 +39,8 @@ private:
 
 protected:
     void onDebugError(int errorCode, const std::string& funcName, const std::string& info) override;
+
+    void onApiCalledResult(int errorCode, const std::string& funcName, const std::string& info) override;
 
     void onEngineStateUpdate(EXPRESS::ZegoEngineState state) override;
 
