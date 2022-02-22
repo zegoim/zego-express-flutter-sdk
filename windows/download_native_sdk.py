@@ -2,7 +2,12 @@ import os
 import json
 import sys
 import shutil
-import urllib.request
+print(sys.version_info)
+if (sys.version_info.major == 3):
+    import urllib.request
+else:
+    import urllib
+
 import zipfile
 import tarfile
 import subprocess
@@ -11,7 +16,7 @@ import ssl
 THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def unzip_file(src_zip_file: str, dst_folder: str):
+def unzip_file(src_zip_file, dst_folder):
     if src_zip_file.endswith('.tar') or src_zip_file.endswith('.gz'):
         with tarfile.open(src_zip_file, 'r:gz') as f:
             f.extractall(dst_folder)
@@ -45,16 +50,12 @@ if __name__ == '__main__':
 
     oss_url = 'https://storage.zego.im/express/video/windows/zego-express-video-windows-{}.zip'.format(sdk_version)
     artifact_name = oss_url.split('/')[-1]
-
-    request = urllib.request.Request(oss_url)
-    print('\n --> Request: "{}"'.format(oss_url))
-    context = ssl._create_unverified_context()
-    u = urllib.request.urlopen(request, context=context)
-    print(' <-- Response: "{}"'.format(u.status))
-
     artifact_path = os.path.join(deps_path, artifact_name)
-    with open(artifact_path, 'wb') as fw:
-        fw.write(u.read())
+
+    if (sys.version_info.major == 3):
+        urllib.request.urlretrieve(oss_url, artifact_path)
+    else:
+        urllib.urlretrieve(oss_url, artifact_path)
 
     tmp_dst_unzip_folder = os.path.join(deps_path, '__tmp__')
     if os.path.exists(tmp_dst_unzip_folder):
