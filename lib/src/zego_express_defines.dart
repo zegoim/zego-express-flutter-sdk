@@ -290,7 +290,7 @@ enum ZegoANSMode {
   Medium,
   /// Aggressive ANS. It may significantly impair the sound quality, but it has a good noise reduction effect.
   Aggressive,
-  /// AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound.
+  /// AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
   AI
 }
 
