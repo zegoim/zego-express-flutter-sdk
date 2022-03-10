@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 
 class Global {
-  static String pluginVersion = "2.16.3";
+  static String pluginVersion = "2.17.0";
 }
 
 class ZegoExpressImpl {
@@ -118,6 +118,11 @@ class ZegoExpressImpl {
         'setDebugVerbose', {'enable': enable, 'language': language.index});
   }
 
+  Future<void> enableDebugAssistant(bool enable) async {
+    return await _channel.invokeMethod(
+        'enableDebugAssistant', {'enable': enable});
+  }
+
   Future<String> callExperimentalAPI(String params) async {
     return await _channel.invokeMethod('callExperimentalAPI', {'params': params});
   }
@@ -145,7 +150,10 @@ class ZegoExpressImpl {
         'loginMultiRoom', {'roomID': roomID, 'config': config?.toMap() ?? {}});
   }
 
-  Future<void> logoutRoom(String roomID) async {
+  Future<void> logoutRoom([String? roomID]) async {
+    if (roomID == null) {
+      return await _channel.invokeMethod('logoutRoom');
+    }
     return await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
   }
 
