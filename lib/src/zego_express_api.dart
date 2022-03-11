@@ -98,6 +98,21 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.uploadLog();
   }
 
+  /// Enable the debugg assistant. Note, do not enable this feature in the online version! Use only during development phase!
+  ///
+  /// Available since: 2.17.0
+  /// Description: After enabled, the SDK will print logs to the console, and will pop-up an alert (toast) UI message when there is a problem with calling other SDK functions.
+  /// Default value: This function is disabled by default.
+  /// When to call: This function can be called right after [createEngine].
+  /// Platform differences: The pop-up alert function only supports Android / iOS / macOS / Windows, and the console log function supports all platforms.
+  /// Caution: Be sure to confirm that this feature is turned off before the app is released to avoid pop-up UI alert when an error occurs in your release version's app. It is recommended to associate the [enable] parameter of this function with the DEBUG variable of the app, that is, only enable the debugg assistant in the DEBUG environment.
+  /// Restrictions: None.
+  ///
+  /// - [enable] Whether to enable the debugg assistant.
+  Future<void> enableDebugAssistant(bool enable) async {
+    return await ZegoExpressImpl.instance.enableDebugAssistant(enable);
+  }
+
   /// Call the RTC experimental API.
   ///
   /// Available since: 2.7.0
@@ -116,9 +131,17 @@ class ZegoExpressEngine {
   /// Description: Set the path of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
   /// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
   /// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
-  /// Restrictions: 1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF. 2. The function is only for SDK video capture and does not take effect for custom video capture.
-  /// Caution: 1. The static picture cannot be seen in the local preview. 2. External filters, mirroring, watermarks, and snapshots are all invalid. 3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
-  /// Platform differences: 1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg". 2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark". 3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+  /// Restrictions: 
+  ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
+  ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+  /// Caution: 
+  ///   1. The static picture cannot be seen in the local preview.
+  ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
+  ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+  /// Platform differences: 
+  ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
+  ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
+  ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
   ///
   /// - [filePath] Picture file path
   /// - [channel] Publish channel.
@@ -158,7 +181,9 @@ class ZegoExpressEngine {
   /// Description: Callback notification of audio/video engine status update. When audio/video functions are enabled, such as preview, push streaming, local media player, audio data observering, etc., the audio/video engine will enter the start state. When you exit the room or disable all audio/video functions , The audio/video engine will enter the stop state.
   /// Trigger: The developer called the relevant function to change the state of the audio and video engine. For example: 1. Called ZegoExpressEngine's [startPreview], [stopPreview], [startPublishingStream], [stopPublishingStream], [startPlayingStream], [stopPlayingStream], [startAudioDataObserver], [stopAudioDataObserver] and other functions. 2. The related functions of MediaPlayer are called. 3. The [LogoutRoom] function was called.
   /// Restrictions: None.
-  /// Caution: 1. When the developer calls [destroyEngine], this notification will not be triggered because the resources of the SDK are completely released. 2. If there is no special need, the developer does not need to pay attention to this callback.
+  /// Caution:
+  ///   1. When the developer calls [destroyEngine], this notification will not be triggered because the resources of the SDK are completely released.
+  ///   2. If there is no special need, the developer does not need to pay attention to this callback.
   ///
   /// - [state] The audio/video engine state.
   static void Function(ZegoEngineState state)? onEngineStateUpdate;
@@ -190,7 +215,11 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: When other users in the room are online or offline, which causes the user list in the room to change, the developer will be notified through this callback.
   /// Use cases: Developers can use this callback to update the user list display in the room in real time.
-  /// When to trigger: 1. When the user logs in to the room for the first time, if there are other users in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `userList` is the other users in the room at this time. 2. The user is already in the room. If another user logs in to the room through the [loginRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd]. 3. If other users log out of this room through the [logoutRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete]. 4. The user is already in the room. If another user is kicked out of the room from the server, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+  /// When to trigger: 
+  ///   1. When the user logs in to the room for the first time, if there are other users in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `userList` is the other users in the room at this time.
+  ///   2. The user is already in the room. If another user logs in to the room through the [loginRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd].
+  ///   3. If other users log out of this room through the [logoutRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+  ///   4. The user is already in the room. If another user is kicked out of the room from the server, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
   /// Restrictions: If developers need to use ZEGO room users notifications, please ensure that the [ZegoRoomConfig] sent by each user when logging in to the room has the [isUserStatusNotify] property set to true, otherwise the callback notification will not be received.
   /// Related APIs: [loginRoom]、[logoutRoom]、[switchRoom]
   ///
@@ -217,7 +246,11 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: When other users in the room start streaming or stop streaming, the streaming list in the room changes, and the developer will be notified through this callback.
   /// Use cases: This callback is used to monitor stream addition or stream deletion notifications of other users in the room. Developers can use this callback to determine whether other users in the same room start or stop publishing stream, so as to achieve active playing stream [startPlayingStream] or take the initiative to stop the playing stream [stopPlayingStream], and use it to change the UI controls at the same time.
-  /// When to trigger: 1. When the user logs in to the room for the first time, if there are other users publishing streams in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `streamList` is an existing stream list. 2. The user is already in the room. if another user adds a new push, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd]. 3. The user is already in the room. If other users stop streaming, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete]. 4. The user is already in the room. If other users leave the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+  /// When to trigger:
+  ///   1. When the user logs in to the room for the first time, if there are other users publishing streams in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `streamList` is an existing stream list.
+  ///   2. The user is already in the room. if another user adds a new push, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd].
+  ///   3. The user is already in the room. If other users stop streaming, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+  ///   4. The user is already in the room. If other users leave the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
   /// Restrictions: None.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
@@ -441,7 +474,7 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
   /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
-  /// Caution: Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set.
+  /// Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
   ///
   /// - [streamID] Stream ID.
   /// - [data] SEI content.
@@ -477,7 +510,7 @@ class ZegoExpressEngine {
   /// Available since: 1.2.1
   /// Description: Developers can use this callback to display the effect of which stream’s anchor is talking on the UI interface of the mixed stream of the audience.
   /// Use cases: It is often used when multiple video images are required to synthesize a video using mixed streaming, such as education, live teacher and student images.
-  /// When to trigger: After the developer calls the [startPlayingStream] function to start playing the mixed stream.
+  /// When to trigger: After the developer calls the [startPlayingStream] function to start playing the mixed stream. Callback notification period is 100 ms.
   /// Restrictions: The callback is triggered every 100 ms, and the trigger frequency cannot be set.Due to the high frequency of this callback, please do not perform time-consuming tasks or UI operations in this callback to avoid stalling.
   /// Related callbacks: [OnMixerRelayCDNStateUpdate] can be used to get update notification of mixing stream repost CDN status.
   /// Related APIs: Develop can start a mixed flow task through [startMixerTask].
@@ -879,7 +912,13 @@ class ZegoExpressEngine {
   /// The network quality callback of users who are publishing in the room.
   ///
   /// Available since: 2.10.0
-  /// Description: The uplink and downlink network callbacks of the local and remote users, that would be called by default every two seconds for the local and each playing remote user's network quality. Versions 2.10.0 to 2.13.1: 1. Developer must both publish and play streams before you receive your own network quality callback. 2. When playing a stream, the publish end has a play stream and the publish end is in the room where it is located, then the user's network quality will be received. Version 2.14.0 and above: 1. As long as you publish or play a stream, you will receive your own network quality callback. 2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
+  /// Description: The uplink and downlink network callbacks of the local and remote users, that would be called by default every two seconds for the local and each playing remote user's network quality.
+  ///   Versions 2.10.0 to 2.13.1:
+  ///   1. Developer must both publish and play streams before you receive your own network quality callback.
+  ///   2. When playing a stream, the publish end has a play stream and the publish end is in the room where it is located, then the user's network quality will be received.
+  ///   Version 2.14.0 and above:
+  ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
+  ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
   /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
   /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
   ///

@@ -335,6 +335,15 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    public static void enableDebugAssistant(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableDebugAssistant(enable);
+
+        result.success(null);
+    }
+
     @SuppressWarnings("unused")
     public static void callExperimentalAPI(MethodCall call, Result result) {
 
@@ -402,9 +411,13 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void logoutRoom(MethodCall call, Result result) {
 
-        String roomID = call.argument("roomID");
+        if (call.hasArgument("roomID")) {
+            String roomID = call.argument("roomID");
 
-        ZegoExpressEngine.getEngine().logoutRoom(roomID);
+            ZegoExpressEngine.getEngine().logoutRoom(roomID);
+        } else {
+            ZegoExpressEngine.getEngine().logoutRoom();
+        }
 
         result.success(null);
     }

@@ -12,10 +12,22 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Use cases: In the same room, users can conduct live broadcast, audio and video calls, etc.
   /// When to call /Trigger: This interface is called after [createEngine] initializes the SDK.
   /// Restrictions: For restrictions on the use of this function, please refer to https://doc-en.zego.im/article/7611 or contact ZEGO technical support.
-  /// Caution: 1. Apps that use different appIDs cannot intercommunication with each other. 2. SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves. 3. It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems. 4. After the first login failure due to network reasons or the room is disconnected, the default time of SDK reconnection is 20min. 5. After the user has successfully logged in to the room, if the application exits abnormally, after restarting the application, the developer needs to call the logoutRoom interface to log out of the room, and then call the loginRoom interface to log in to the room again.
+  /// Caution:
+  ///   1. Apps that use different appIDs cannot intercommunication with each other.
+  ///   2. SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
+  ///   3. It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
+  ///   4. After the first login failure due to network reasons or the room is disconnected, the default time of SDK reconnection is 20min.
+  ///   5. After the user has successfully logged in to the room, if the application exits abnormally, after restarting the application, the developer needs to call the logoutRoom interface to log out of the room, and then call the loginRoom interface to log in to the room again.
   /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
-  /// Related callbacks: 1. When the user starts to log in to the room, the room is successfully logged in, or the room fails to log in, the [onRoomStateUpdate] callback will be triggered to notify the developer of the status of the current user connected to the room. 2. Different users who log in to the same room can get room related notifications in the same room (eg [onRoomUserUpdate], [onRoomStreamUpdate], etc.), and users in one room cannot receive room signaling notifications in another room. 3. If the network is temporarily interrupted due to network quality reasons, the SDK will automatically reconnect internally. You can get the current connection status of the local room by listening to the [onRoomStateUpdate] callback method, and other users in the same room will receive [onRoomUserUpdate] callback notification. 4. Messages sent in one room (e.g. [setStreamExtraInfo], [sendBroadcastMessage], [sendBarrageMessage], [sendCustomCommand], etc.) cannot be received callback ((eg [onRoomStreamExtraInfoUpdate], [onIMRecvBroadcastMessage], [onIMRecvBarrageMessage], [onIMRecvCustomCommand], etc) in other rooms. Currently, SDK does not provide the ability to send messages across rooms. Developers can integrate the SDK of third-party IM to achieve.
-  /// Related APIs: 1. Users can call [logoutRoom] to log out. In the case that a user has successfully logged in and has not logged out, if the login interface is called again, the console will report an error and print the error code 1002001. 2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room. 3. Calling [destroyEngine] will also automatically log out.
+  /// Related callbacks:
+  ///   1. When the user starts to log in to the room, the room is successfully logged in, or the room fails to log in, the [onRoomStateUpdate] callback will be triggered to notify the developer of the status of the current user connected to the room.
+  ///   2. Different users who log in to the same room can get room related notifications in the same room (eg [onRoomUserUpdate], [onRoomStreamUpdate], etc.), and users in one room cannot receive room signaling notifications in another room.
+  ///   3. If the network is temporarily interrupted due to network quality reasons, the SDK will automatically reconnect internally. You can get the current connection status of the local room by listening to the [onRoomStateUpdate] callback method, and other users in the same room will receive [onRoomUserUpdate] callback notification.
+  ///   4. Messages sent in one room (e.g. [setStreamExtraInfo], [sendBroadcastMessage], [sendBarrageMessage], [sendCustomCommand], etc.) cannot be received callback ((eg [onRoomStreamExtraInfoUpdate], [onIMRecvBroadcastMessage], [onIMRecvBarrageMessage], [onIMRecvCustomCommand], etc) in other rooms. Currently, SDK does not provide the ability to send messages across rooms. Developers can integrate the SDK of third-party IM to achieve.
+  /// Related APIs:
+  ///   1. Users can call [logoutRoom] to log out. In the case that a user has successfully logged in and has not logged out, if the login interface is called again, the console will report an error and print the error code 1002001.
+  ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
+  ///   3. Calling [destroyEngine] will also automatically log out.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
@@ -36,7 +48,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Related APIs: Users can use [loginRoom], [switchRoom] functions to log in or switch rooms.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  Future<void> logoutRoom(String roomID) async {
+  Future<void> logoutRoom([String? roomID]) async {
     return await ZegoExpressImpl.instance.logoutRoom(roomID);
   }
 
@@ -47,7 +59,9 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Use cases: if you need to quickly switch to the next room, you can call this function.
   /// When to call /Trigger: After successfully login room.
   /// Restrictions: None.
-  /// Caution: 1. When this function is called, all streams currently publishing or playing will stop (but the local preview will not stop). 2. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over. 3. When the function [setRoomMode] is used to set ZegoRoomMode to ZEGO_ROOM_MODE_MULTI_ROOM, this function is not available.
+  /// Caution:
+  ///   1. When this function is called, all streams currently publishing or playing will stop (but the local preview will not stop).
+  ///   2. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over. 3. When the function [setRoomMode] is used to set ZegoRoomMode to ZEGO_ROOM_MODE_MULTI_ROOM, this function is not available.
   /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   /// Related callbacks: When the user call the [switchRoom] function, the [onRoomStateUpdate] callback will be triggered to notify the developer of the status of the current user connected to the room.
   /// Related APIs: Users can use the [logoutRoom] function to log out of the room.
@@ -83,7 +97,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Use cases: You can set some room-related business attributes, such as whether someone is Co-hosting.
   /// When to call /Trigger: After logging in the room successful.
   /// Restrictions: For restrictions on the use of this function, please refer to https://doc-en.zego.im/article/7611 or contact ZEGO technical support.
-  /// Caution: 'key' and 'value' are non null. key.length < 128, value.length < 4096. The newly set key and value will overwrite the old setting.
+  /// Caution: 'key' is non null. The length of key and value is limited, please refer to Restrictions. The newly set key and value will overwrite the old setting.
   /// Related callbacks: Other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback function.
   /// Related APIs: None.
   ///

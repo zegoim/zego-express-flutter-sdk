@@ -240,6 +240,15 @@
     result(nil);
 }
 
+- (void)enableDebugAssistant:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableDebugAssistant:enable];
+
+    result(nil);
+}
+
 - (void)callExperimentalAPI:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *params = call.arguments[@"params"];
@@ -315,9 +324,12 @@
 - (void)logoutRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *roomID = call.arguments[@"roomID"];
-
-    [[ZegoExpressEngine sharedEngine] logoutRoom:roomID];
-
+    if (roomID == nil) {
+        [[ZegoExpressEngine sharedEngine] logoutRoom];
+    } else {
+        [[ZegoExpressEngine sharedEngine] logoutRoom:roomID];
+    }
+    
     result(nil);
 }
 
