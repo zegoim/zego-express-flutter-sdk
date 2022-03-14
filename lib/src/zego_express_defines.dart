@@ -880,7 +880,7 @@ class ZegoEngineProfile {
   int appID;
 
   /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'.
-  String appSign;
+  String? appSign;
 
   /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to https://doc-zh.zego.im/faq/profile_difference.
   ZegoScenario scenario;
@@ -888,7 +888,7 @@ class ZegoEngineProfile {
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
   bool? enablePlatformView;
 
-  ZegoEngineProfile(this.appID, this.appSign, this.scenario, {this.enablePlatformView});
+  ZegoEngineProfile(this.appID, this.scenario, {this.appSign, this.enablePlatformView});
 
 }
 

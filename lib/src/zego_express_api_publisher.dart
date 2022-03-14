@@ -14,7 +14,11 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: It can be used to publish streams in real-time connecting wheat, live broadcast and other scenarios.
   /// When to call: After [loginRoom].
   /// Restrictions: None.
-  /// Caution: 1. Before start to publish the stream, the user can choose to call [setVideoConfig] to set the relevant video parameters, and call [startPreview] to preview the video. 2. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully. 3. In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event. 4. To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
+  /// Caution:
+  ///   1. Before start to publish the stream, the user can choose to call [setVideoConfig] to set the relevant video parameters, and call [startPreview] to preview the video.
+  ///   2. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
+  ///   3. In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
+  ///   4. To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [config] Advanced publish configuration.
@@ -30,7 +34,10 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: It can be used to stop publish streams in real-time connecting wheat, live broadcast and other scenarios.
   /// When to call: After [startPublishingStream].
   /// Restrictions: None.
-  /// Caution: 1. After stopping the streaming, other users in the same room can receive the delete notification of the stream by listening to the [onRoomStreamUpdate] callback. 2. If the user has initiated publish flow, this function must be called to stop the publish of the current stream before publishing the new stream (new streamID), otherwise the new stream publish will return a failure. 3. After stopping streaming, the developer should stop the local preview based on whether the business situation requires it.
+  /// Caution:
+  ///   1. After stopping the streaming, other users in the same room can receive the delete notification of the stream by listening to the [onRoomStreamUpdate] callback.
+  ///   2. If the user has initiated publish flow, this function must be called to stop the publish of the current stream before publishing the new stream (new streamID), otherwise the new stream publish will return a failure.
+  ///   3. After stopping streaming, the developer should stop the local preview based on whether the business situation requires it.
   ///
   /// - [channel] Publish stream channel.
   Future<void> stopPublishingStream({ZegoPublishChannel? channel}) async {
@@ -69,7 +76,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Stops the local video preview (for the specified channel).
   ///
-  /// This function can be called to stop previewing when there is no need to see the preview locally.
+  /// Available since: 1.1.0
+  /// Description: This function can be called to stop previewing when there is no need to see the preview locally.
   ///
   /// - [channel] Publish stream channel
   Future<void> stopPreview({ZegoPublishChannel? channel}) async {
@@ -265,6 +273,39 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode, channel: channel);
   }
 
+  /// Sets the minimum video frame rate threshold for traffic control.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Set the control policy when the video frame rate reaches the lowest threshold when flow control.
+  /// Default value: There is no control effect of the lowest threshold of video frame rate.
+  /// When to call: The call takes effect after the engine [createEngine] is created.
+  /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveFPS, Please refer to [ZegoTrafficControlProperty] for details.
+  /// Related APIs: [enableTrafficControl].
+  /// Caution: If you need to cancel the limit of the setting value, you can set it to 0.
+  ///
+  /// - [fps] The minimum video frame rate threshold for traffic control(fps).
+  /// - [channel] Publish stream channel.
+  Future<void> setMinVideoFpsForTrafficControl(int fps, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setMinVideoFpsForTrafficControl(fps, channel: channel);
+  }
+
+  /// Sets the minimum video resolution threshold for traffic control.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Set the control policy when the video resolution reaches the lowest threshold when flow control.
+  /// Default value: There is no control effect of the lowest threshold of video resolution.
+  /// When to call: The call takes effect after the engine [createEngine] is created.
+  /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveResolution, Please refer to [ZegoTrafficControlProperty] for details.
+  /// Related APIs: [enableTrafficControl].
+  /// Caution: If you need to cancel the limit of the setting value, you can set width and height to 0.
+  ///
+  /// - [width] The flow controls the width of the lowest video resolution.
+  /// - [height] The flow controls the height of the lowest video resolution.
+  /// - [channel] Publish stream channel.
+  Future<void> setMinVideoResolutionForTrafficControl(int width, int height, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setMinVideoResolutionForTrafficControl(width, height, channel: channel);
+  }
+
   /// Set the factors of concern that trigger traffic control for the specified publish channel.
   ///
   /// Available since: 2.4.0
@@ -316,6 +357,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: 1. It is often used in large-scale live broadcast scenes that do not have particularly high requirements for delay. 2. Since ZEGO RTC server itself can be configured to support CDN(content distribution networks), this function is mainly used by developers who have CDN content distribution services themselves. 3. This function supports dynamic relay to the CDN content distribution network, so developers can use this function as a disaster recovery solution for CDN content distribution services.
   /// When to call: After calling the [createEngine] function to create the engine.
   /// Restrictions: When the [enablePublishDirectToCDN] function is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
+  /// Caution: Removing URLs retweeted to CDN requires calling [removePublishCdnUrl], calling [stopPublishingStream] will not remove URLs publish to CDN.
   /// Related APIs: Remove URLs that are re-pushed to the CDN [removePublishCdnUrl].
   ///
   /// - [streamID] Stream ID.
@@ -329,7 +371,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: When a CDN forwarding address has been added via [addPublishCdnUrl], this function is called when the stream needs to be stopped.
-  /// When to call: After calling the [createEngine] function to create the engine.
+  /// When to call: After calling the [createEngine] function to create the engine, When you don't need to continue publish to the CDN.
   /// Restrictions: When the [enablePublishDirectToCDN] function is set to true to publish the stream straight to the CDN, then calling this function will have no effect.
   /// Caution: This function does not stop publishing audio and video stream to the ZEGO ZEGO RTC server.
   /// Related APIs: Add URLs that are re-pushed to the CDN [addPublishCdnUrl].

@@ -189,7 +189,9 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoEngineProfile profile = new ZegoEngineProfile();
         profile.appID = appID;
-        profile.appSign = appSign;
+        if (appSign != null) {
+            profile.appSign = appSign;
+        }
         profile.scenario = scenario;
         profile.application = application;
         ZegoExpressEngine.createEngine(profile, ZegoExpressEngineEventHandler.getInstance().eventHandler);
@@ -826,6 +828,29 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setMinVideoBitrateForTrafficControl(bitrate, mode, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setMinVideoFpsForTrafficControl(MethodCall call, Result result) {
+
+        int fps = ZegoUtils.intValue((Number) call.argument("fps"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setMinVideoFpsForTrafficControl(fps, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setMinVideoResolutionForTrafficControl(MethodCall call, Result result) {
+
+        int width = ZegoUtils.intValue((Number) call.argument("width"));
+        int height = ZegoUtils.intValue((Number) call.argument("height"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setMinVideoResolutionForTrafficControl(width, height, channel);
 
         result.success(null);
     }
@@ -1896,8 +1921,13 @@ public class ZegoExpressEngineMethodHandler {
     public static void startAudioVADStableStateMonitor(MethodCall call, Result result) {
 
         ZegoAudioVADStableStateMonitorType type = ZegoAudioVADStableStateMonitorType.getZegoAudioVADStableStateMonitorType(ZegoUtils.intValue((Number) call.argument("type")));
-        
-        ZegoExpressEngine.getEngine().startAudioVADStableStateMonitor(type);
+            
+        if (call.argument("millisecond") == null) {
+            ZegoExpressEngine.getEngine().startAudioVADStableStateMonitor(type);
+        } else {
+            int millisecond = ZegoUtils.intValue((Number) call.argument("millisecond"));
+            ZegoExpressEngine.getEngine().startAudioVADStableStateMonitor(type, millisecond);
+        }  
 
         result.success(null);
     }
@@ -2517,7 +2547,10 @@ public class ZegoExpressEngineMethodHandler {
                 public void onLoadResourceCallback(int errorCode) {
                     HashMap<String, Object> resultMap = new HashMap<>();
                     resultMap.put("errorCode", errorCode);
-                    result.success(resultMap);
+                    try {
+                        result.success(resultMap);
+                    } catch (Exception e) {
+                    }
                 }
             });
         }
@@ -2538,7 +2571,10 @@ public class ZegoExpressEngineMethodHandler {
                 public void onLoadResourceCallback(int errorCode) {
                     HashMap<String, Object> resultMap = new HashMap<>();
                     resultMap.put("errorCode", errorCode);
-                    result.success(resultMap);
+                    try {
+                        result.success(resultMap);
+                    } catch (Exception e) {
+                    }
                 }
             });
         }
@@ -2559,7 +2595,10 @@ public class ZegoExpressEngineMethodHandler {
                 public void onLoadResourceCallback(int errorCode) {
                     HashMap<String, Object> resultMap = new HashMap<>();
                     resultMap.put("errorCode", errorCode);
-                    result.success(resultMap);
+                    try {
+                        result.success(resultMap);
+                    } catch (Exception e) {
+                    }
                 }
             });
         }

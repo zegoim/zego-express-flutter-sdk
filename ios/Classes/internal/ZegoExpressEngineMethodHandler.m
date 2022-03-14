@@ -76,7 +76,9 @@
     // Create engine
     ZegoEngineProfile *profile = [ZegoEngineProfile new];
     profile.appID = appID;
-    profile.appSign = appSign;
+    if (![ZegoUtils isNullObject:appSign]) {
+        profile.appSign = appSign;
+    }
     profile.scenario = (ZegoScenario)scenario;
     [ZegoExpressEngine createEngineWithProfile:profile eventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
 
@@ -691,6 +693,27 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setMinVideoBitrateForTrafficControl:bitrate mode:(ZegoTrafficControlMinVideoBitrateMode)mode channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setMinVideoFpsForTrafficControl:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int fps = [ZegoUtils intValue:call.arguments[@"fps"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setMinVideoFpsForTrafficControl:fps channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setMinVideoResolutionForTrafficControl:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int width = [ZegoUtils intValue:call.arguments[@"width"]];
+    int height = [ZegoUtils intValue:call.arguments[@"height"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setMinVideoResolutionForTrafficControl:width height:height channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
@@ -1705,7 +1728,12 @@
 
     int type = [ZegoUtils intValue:call.arguments[@"type"]];
 
-    [[ZegoExpressEngine sharedEngine] startAudioVADStableStateMonitor:(ZegoAudioVADStableStateMonitorType)type];
+    if ([ZegoUtils isNullObject:call.arguments[@"millisecond"]]) {
+        [[ZegoExpressEngine sharedEngine] startAudioVADStableStateMonitor:(ZegoAudioVADStableStateMonitorType)type];
+    } else {
+        int millisecond = [ZegoUtils intValue:call.arguments[@"millisecond"]];
+        [[ZegoExpressEngine sharedEngine] startAudioVADStableStateMonitor:(ZegoAudioVADStableStateMonitorType)type millisecond:millisecond];
+    }
 
     result(nil);
 }

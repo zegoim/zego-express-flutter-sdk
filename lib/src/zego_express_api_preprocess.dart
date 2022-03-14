@@ -10,7 +10,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio.
   /// Use case: When you need to reduce the echo to improve the call quality and user experience, you can turn on this feature.
-  /// Default value: When this function is not called, echo cancellation is enabled by default.
+  /// Default value: When this function is not called, iOS turns off echo cancellation by default and other platforms turn on echo cancellation by default
   /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
   /// Caution: The AEC function only supports the processing of sounds playbacked through the SDK, such as sounds played by the playing stream, media player, audio effect player, etc.
   /// Restrictions: None.
@@ -24,12 +24,13 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Whether to turn on acoustic echo cancellation (AEC) when using the headphone.
   ///
   /// Available since: 1.1.0
-  /// Description: When [enableAEC] is used to turn on echo cancellation, it is only turned on when using speakers for mobile devices, and not turned on by default when using headphones. If you need to enable echo cancellation when using headphones, please call this function.
-  /// Use case: It is common when the mobile device is connected to a bluetooth speaker as the audio output source. In order to eliminate the echo in this case, you need to call this function to turn on the echo cancellation.
-  /// Default value: When this function is not called, this is disabled by default.
+  /// Description: When [enableAEC] is used to turn on echo cancellation, it is only turned on when the speaker is used for mobile terminal equipment. Call this function if you need to turn echo cancellation on or off when using the headset.
+  /// Use case: It is common when the mobile device is connected to a external sound card as the audio output source. In order to eliminate the echo in this case, you need to call this function to turn on the echo cancellation.
+  /// Default value: Android is off by default and iOS is on by default.
   /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// Caution: Turning on echo cancellation will increase the ear return delay. On the iOS platform, the SDK cannot distinguish between the headset and the external sound card. If you use this function to turn off the system echo cancellation when using the headset, the sound played by the external sound card will be collected when the user accesses the external sound card.
   /// Restrictions: None.
-  /// Related APIs: Developers need to use [enableAEC] to set whether the SDK enables echo cancellation before using this function.
+  /// Related APIs: When the headset is not used, you can set whether the SDK turns on echo cancellation through [enableAEC].
   /// Platform differences: Only supports iOS and Android.
   ///
   /// - [enable] Whether to enable, true: enable, false: disable

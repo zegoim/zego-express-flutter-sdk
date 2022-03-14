@@ -33,7 +33,7 @@ class ZegoExpressImpl {
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
     _registerEventHandler();
-
+  
     await _channel.invokeMethod('createEngineWithProfile', {
       'profile': {
         'appID': profile.appID,
@@ -358,6 +358,21 @@ class ZegoExpressImpl {
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setMinVideoBitrateForTrafficControl',
         {'bitrate': bitrate, 'mode': mode.index, 'channel': channel?.index ?? ZegoPublishChannel.Main.index});
+  }
+
+  Future<void> setMinVideoFpsForTrafficControl(int fps, {ZegoPublishChannel? channel}) async{
+    return await _channel.invokeMethod('setMinVideoFpsForTrafficControl', {
+      'fps': fps,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> setMinVideoResolutionForTrafficControl(int width, int height, {ZegoPublishChannel? channel}) async{
+    return await _channel.invokeMethod('setMinVideoResolutionForTrafficControl', {
+      'width': width,
+      'height': height,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode, {ZegoPublishChannel? channel}) async {
@@ -888,9 +903,9 @@ class ZegoExpressImpl {
         .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
-  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type) async {
+  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type, {int? millisecond}) async {
     return await _channel
-        .invokeMethod('startAudioVADStableStateMonitor', {'type': type.index});
+        .invokeMethod('startAudioVADStableStateMonitor', {'type': type.index, 'millisecond': millisecond});
   }
 
   Future<void> stopAudioVADStableStateMonitor(

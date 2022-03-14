@@ -362,18 +362,19 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
 
-  /// Start audio VAD stable state monitoring.
+  /// Start audio VAD stable state monitoring, and the monitoring period can be set.
   ///
   /// Available: since 2.14.0
   /// Description: After monitoring is started, you can use the [onAudioVADStateUpdate] callback to receive the specified type of audio VAD callback.
   /// Use cases: For example, when you specify the type of collection and use the microphone to collect, you can check whether the host has continuous and stable voice input through this interface.
   /// When to call: Before publish stream, you can call [startPreview] with this function and combine it with [onAudioVADStateUpdate] callback to determine whether the audio device is working properly.
-  /// Restrictions: [onAudioVADStateUpdate] callback notification period is 3 seconds.
+  /// Restrictions: [onAudioVADStateUpdate] The default callback notification period is 3 seconds.
   /// Related APIs: [stopAudioVADStableStateMonitor].
   ///
   /// - [type] audio VAD monitor type.
-  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type) async {
-    return await ZegoExpressImpl.instance.startAudioVADStableStateMonitor(type);
+  /// - [millisecond] monitoring period
+  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type, {int? millisecond}) async {
+    return await ZegoExpressImpl.instance.startAudioVADStableStateMonitor(type, millisecond: millisecond);
   }
 
   /// Stop audio VAD stable state monitoring.
