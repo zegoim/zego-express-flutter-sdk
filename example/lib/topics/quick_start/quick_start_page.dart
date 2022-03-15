@@ -72,7 +72,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
   void createEngine() {
     ZegoEngineProfile profile = ZegoEngineProfile(
       ZegoConfig.instance.appID, 
-      ZegoConfig.instance.appSign, 
       ZegoConfig.instance.scenario,
       enablePlatformView: ZegoConfig.instance.enablePlatformView);
     ZegoExpressEngine.createEngineWithProfile(profile);
@@ -94,8 +93,10 @@ class _QuickStartPageState extends State<QuickStartPage> {
     ZegoUser user =
         ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName);
 
+    ZegoRoomConfig config = ZegoRoomConfig.defaultConfig();
+    config.token = ZegoConfig.instance.token;
     // Login Room
-    ZegoExpressEngine.instance.loginRoom(_roomID, user);
+    ZegoExpressEngine.instance.loginRoom(_roomID, user, config: config);
 
     print('🚪 Start login room, roomID: $_roomID');
   }
@@ -380,8 +381,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
             children: [
               Text('AppID: ${ZegoConfig.instance.appID}',
                   style: TextStyle(fontSize: 10)),
-              Text('isTestEnv: ${ZegoConfig.instance.isTestEnv}',
-                  style: TextStyle(fontSize: 10))
             ],
             crossAxisAlignment: CrossAxisAlignment.start,
           ),

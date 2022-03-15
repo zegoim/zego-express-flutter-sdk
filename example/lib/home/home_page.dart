@@ -24,13 +24,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Load config
-    ZegoConfig.instance.init();
   }
 
   void onPressQuickStartButton() {
     if (ZegoConfig.instance.appID > 0 &&
-        ZegoConfig.instance.appSign.isNotEmpty) {
+        ZegoConfig.instance.token.isNotEmpty) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (BuildContext context) {
         return QuickStartPage();

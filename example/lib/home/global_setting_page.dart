@@ -24,12 +24,13 @@ class GlobalSettingPage extends StatefulWidget {
 
 class _GlobalSettingPageState extends State<GlobalSettingPage> {
   final TextEditingController _appIDEdController = new TextEditingController();
-  final TextEditingController _appSignEdController =
+  final TextEditingController _userIDEdController = new TextEditingController();
+  final TextEditingController _userNameEdController = new TextEditingController();
+  final TextEditingController _tokenEdController =
       new TextEditingController();
 
   String _version = "";
 
-  bool _isTestEnv = true;
   ZegoScenario _scenario = ZegoScenario.General;
   bool _enablePlatformView = false;
 
@@ -48,11 +49,16 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
       _appIDEdController.text = ZegoConfig.instance.appID.toString();
     }
 
-    if (ZegoConfig.instance.appSign.isNotEmpty) {
-      _appSignEdController.text = ZegoConfig.instance.appSign;
+    if (ZegoConfig.instance.userID.isNotEmpty) {
+      _userIDEdController.text = ZegoConfig.instance.userID;
     }
 
-    _isTestEnv = ZegoConfig.instance.isTestEnv;
+    _userNameEdController.text = ZegoConfig.instance.userName;
+
+    if (ZegoConfig.instance.token.isNotEmpty) {
+      _tokenEdController.text = ZegoConfig.instance.token;
+    }
+
     _scenario = ZegoConfig.instance.scenario;
     _enablePlatformView = ZegoConfig.instance.enablePlatformView;
 
@@ -108,18 +114,12 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
 
   void _onSaveButtonClicked() {
     String strAppID = _appIDEdController.text.trim();
-    String appSign = _appSignEdController.text.trim();
+    String userID = _userIDEdController.text.trim();
+    String userName = _userNameEdController.text.trim();
+    String appSign = _tokenEdController.text.trim();
 
-    // if (strAppID.isEmpty || appSign.isEmpty) {
-    //   ZegoUtils.showAlert(context, 'AppID or AppSign cannot be empty');
-    //   return;
-    // }
-    //
     int? appID = int.tryParse(strAppID);
-    // if (appID == null) {
-    //   ZegoUtils.showAlert(context, 'AppID is invalid, should be int');
-    //   return;
-    // }
+
 
     if (!_isCameraPermissionGranted) {
       ZegoUtils.showAlert(context,
@@ -134,11 +134,11 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     }
 
     ZegoConfig.instance.appID = appID ?? 0;
-    ZegoConfig.instance.appSign = appSign;
-    ZegoConfig.instance.isTestEnv = this._isTestEnv;
+    ZegoConfig.instance.userName = userName;
+    ZegoConfig.instance.userID = userID;
+    ZegoConfig.instance.token = appSign;
     ZegoConfig.instance.scenario = this._scenario;
     ZegoConfig.instance.enablePlatformView = this._enablePlatformView;
-    ZegoConfig.instance.saveConfig();
   }
 
   // ----- Widgets -----
@@ -167,8 +167,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
                       userInfoWidget(),
                       checkPermissionWidget(),
                       appIDWidget(),
-                      appSignWidget(),
-                      selectEnvironmentWidget(),
+                      tokenWidget(),
                       selectScenarioWidget(),
                       selectRendererWidget(),
                     ],
@@ -230,7 +229,20 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User ID: '),
           Padding(padding: const EdgeInsets.only(left: 10.0)),
-          Text(ZegoConfig.instance.userID),
+          Expanded(child: 
+            TextField(
+              controller: _userIDEdController,
+              decoration: InputDecoration(
+                contentPadding:
+                    const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+                hintText: 'Please enter UserID',
+                enabledBorder:
+                    OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff0e88eb))),
+              ),
+            )
+          ),
         ],
       ),
       Padding(
@@ -240,7 +252,20 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User Name: '),
           Padding(padding: const EdgeInsets.only(top: 10.0)),
-          Text(ZegoConfig.instance.userName),
+          Expanded(child: 
+            TextField(
+              controller: _userNameEdController,
+              decoration: InputDecoration(
+                contentPadding:
+                    const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+                hintText: 'Please enter UserName',
+                enabledBorder:
+                    OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff0e88eb))),
+              ),
+            )
+          ),
         ],
       ),
     ]);
@@ -256,7 +281,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
               child: Icon(Icons.help_outline),
               onTap: () {
                 ZegoUtils.showAlert(context,
-                    'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
+                    'Developers can get appID from admin console, please apply on https://console.zego.im/dashboard');
               },
             ),
           ],
@@ -277,69 +302,33 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     );
   }
 
-  Widget appSignWidget() {
+  Widget tokenWidget() {
     return Column(
       children: [
         Padding(padding: const EdgeInsets.only(top: 10.0)),
         Row(
           children: <Widget>[
-            Text('AppSign:'),
+            Text('Token:'),
             GestureDetector(
               child: Icon(Icons.help_outline),
               onTap: () {
                 ZegoUtils.showAlert(context,
-                    'AppID and AppSign are the unique identifiers of each customer, please apply on https://zego.im');
+                    'The user ID used to generate the token needs to be the same as the userID filled in above! please apply on  https://console.zego.im/dashboard');
               },
             ),
           ],
         ),
         TextField(
-          controller: _appSignEdController,
+          controller: _tokenEdController,
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
-            hintText: 'Please enter AppSign',
+            hintText: 'Please enter Token',
             enabledBorder:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Color(0xff0e88eb))),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget selectEnvironmentWidget() {
-    void onEnvironmentChanged(int? value) {
-      if (value == null) return;
-      setState(() => this._isTestEnv = value > 0 ? true : false);
-    }
-
-    ;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: const EdgeInsets.only(top: 20.0)),
-        Text('SDK Environment'),
-        Text('(Please select the environment corresponding to AppID)',
-            style: TextStyle(fontSize: 10.0)),
-        Row(
-          children: <Widget>[
-            Radio(
-              value: 1,
-              groupValue: this._isTestEnv ? 1 : 0,
-              onChanged: onEnvironmentChanged,
-            ),
-            Text('Test'),
-            SizedBox(width: 50),
-            Radio(
-              value: 0,
-              groupValue: this._isTestEnv ? 1 : 0,
-              onChanged: onEnvironmentChanged,
-            ),
-            Text('Formal'),
-          ],
         ),
       ],
     );

@@ -10,16 +10,14 @@ class ZegoConfig {
   ZegoConfig._internal();
 
   // ----- Persistence params -----
-
   int appID = 0;
-  String appSign = "";
-  bool isTestEnv = true;
   ZegoScenario scenario = ZegoScenario.General;
 
   bool enablePlatformView = false;
 
   String userID = "";
   String userName = "";
+  String token = "";
 
   String roomID = "";
   String streamID = "";
@@ -31,46 +29,4 @@ class ZegoConfig {
 
   bool enableHardwareEncoder = false;
 
-  // Must invoke `init()` when app launched
-  Future<void> init() async {
-    SharedPreferences config = await SharedPreferences.getInstance();
-
-    this.appID = config.getInt('appID') ?? 0;
-    this.appSign = config.getString('appSign') ?? '';
-    this.isTestEnv = config.getBool('isTestEnv') ?? true;
-    this.scenario = config.getInt('scenario') != null
-        ? ZegoScenario.values[config.getInt('scenario') ?? 0]
-        : ZegoScenario.General;
-
-    this.enablePlatformView = config.getBool('enablePlatformView') ?? false;
-
-    this.userID = config.getString('userID') ??
-        '${Platform.operatingSystem}-${new Random().nextInt(9999999).toString()}';
-    this.userName = config.getString('userName') ?? 'user-$userID';
-
-    this.roomID = config.getString('roomID') ?? '';
-    this.streamID = config.getString('streamID') ?? '';
-
-    this.isPreviewMirror = true;
-    this.isPublishMirror = false;
-
-    this.enableHardwareEncoder = false;
-  }
-
-  Future<void> saveConfig() async {
-    SharedPreferences config = await SharedPreferences.getInstance();
-
-    config.setInt('appID', this.appID);
-    config.setString('appSign', this.appSign);
-    config.setBool('isTestEnv', this.isTestEnv);
-    config.setInt('scenario', this.scenario.index);
-
-    config.setBool('enablePlatformView', this.enablePlatformView);
-
-    config.setString('userID', this.userID);
-    config.setString('userName', this.userName);
-
-    config.setString('roomID', this.roomID);
-    config.setString('streamID', this.streamID);
-  }
 }
