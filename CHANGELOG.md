@@ -1,6 +1,53 @@
 # Change Log
 
 
+## 2.17.1
+
+### **New Features**
+1. Supports setting the minimum video frame rate and video resolution.
+
+    Added the [setMinVideoFpsForTrafficControl] and [setMinVideoResolutionForTrafficControl] interfaces, which can be used to set the minimum video frame rate and resolution by calling the interface when the user's network is poor and the flow control is turned on, helping the user to comprehensively control the video display effect.
+
+    For related API, please refer to [setMinVideoFpsForTrafficControl](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setMinVideoFpsForTrafficControl.html), [setMinVideoResolutionForTrafficControl](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setMinVideoResolutionForTrafficControl.html)
+
+2. Support steady-state voice setting detection period parameter.
+
+    The default detection period for steady-state voice is 3 seconds. If users need to modify the default detection period, they can customize the detection period parameters through the [startAudioVADStableStateMonitor] interface.
+
+    For related API, please refer to [startAudioVADStableStateMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/startAudioVADStableStateMonitor.html)
+
+3. A stealth squad mode has been added to the area voice.
+
+    Added enum ZegoRangeAudioModeSecretTeam secret team mode. In this mode, users and listeners in the same room can not only communicate with people in the same team, but also hear the voices of all voices within the audio reception range that are voices in the world mode, such as the space werewolf killing game scene.
+
+    For related API, please refer to [setRangeAudioMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setRangeAudioMode.html)
+
+4. Added debugging assistant function.
+
+    Note: This function is only used in the development stage, please do not enable this function in the online version.
+
+    Added the [enableDebugAssistant] interface. The developer calls this interface to enable the debugging assistant function. The SDK will print the log to the console, and the UI will pop up an error message when other functions of the SDK are called abnormally.
+
+    For related API, please refer to [enableDebugAssistant](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRangeAudioMode.html)
+
+### **Enhancements**
+1. The authentication method is optimized.
+
+    For versions 2.17.0 and above, pass the AppSign blank or not when creating the engine, and you must pass in the Token when logging in to the room. After the authentication is passed, you can use the real-time audio and video function.
+
+    Versions below 2.17.0, pass in AppSign when creating the engine, and use the real-time audio and video function after the authentication is passed.
+
+    For related API, please refer to [createEngineWithProfile](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/createEngineWithProfile.html), [ZegoEngineProfile](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoEngineProfile-class.html),  [loginRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/loginRoom.html), [ZegoRoomConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRoomConfig-class.html)
+
+### **Bug Fixes**
+1. Fixed an issue that could cause a crash when the parameter name length of the string type is too long.
+
+2. Fixed the issue that when the push-end App returned to the front-end from the background, the pull-end could not receive the BreakResume event.
+
+3. Fixed other known issues.
+
+4. Fixed an issue where pushing down real-time audio and video streams failed on 32-bit machines.
+
 ## 2.16.3
 
 ### **New Features**
