@@ -60,7 +60,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Gets a list of audio devices.
   ///
-  /// Only supports desktop.
+  /// Only supports Windows and Mac.
   ///
   /// - [deviceType] Audio device type
   /// - Returns Audo device List
@@ -70,7 +70,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Get the device ID of the default audio device.
   ///
-  /// Only supports desktop.
+  /// Only supports Windows and Mac.
   ///
   /// - [deviceType] Audio device type
   /// - Returns Default Audio device ID
@@ -83,6 +83,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Available since: 1.0.0
   /// Description: Chooses to use the specified audio device.
   /// When to call: After creating the engine [createEngine] and before call [startPublishingStream] or [startPlayingStream].
+  /// Restrictions: Only supports Windows/macOS.
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -91,6 +92,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   }
 
   /// Get volume for the specified audio device.
+  ///
+  /// Get volume for the specified audio device. Only for Windows/macOS.
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -101,7 +104,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Set volume for the specified audio device.
   ///
-  /// The direct operating system device may fail due to system restrictions. Please use [setCaptureVolume] and [setPlayVolume] first to adjust the volume of publish and play streams.
+  /// Only for Windows/macOS. The direct operating system device may fail due to system restrictions. Please use [setCaptureVolume] and [setPlayVolume] first to adjust the volume of publish and play streams.
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
