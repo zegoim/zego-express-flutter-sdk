@@ -59,7 +59,9 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
         } else {
             profilePtr.appID = (unsigned int)std::get<int64_t>(profileMap[FTValue("appID")]);
         }
-        profilePtr.appSign = std::get<std::string>(profileMap[FTValue("appSign")]);
+        if (!profileMap[FTValue("appSign")].IsNull()) {
+            profilePtr.appSign = std::get<std::string>(profileMap[FTValue("appSign")]);
+        }  
         profilePtr.scenario = (EXPRESS::ZegoScenario)std::get<int32_t>(profileMap[FTValue("scenario")]);
         auto engine = EXPRESS::ZegoExpressSDK::createEngine(profilePtr, ZegoExpressEngineEventHandler::getInstance());
 
@@ -175,9 +177,13 @@ void ZegoExpressEngineMethodHandler::loginRoom(flutter::EncodableMap& argument,
 void ZegoExpressEngineMethodHandler::logoutRoom(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
+    if (!argument[FTValue("roomID")].IsNull()) {
+        auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom(roomID);
+        EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom(roomID);
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom();
+    }
 
     result->Success();
 }

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     except Exception as e:
         raise Exception("No deps json, throw error")
 
-    oss_url = 'https://storage.zego.im/express/video/windows/zego-express-video-windows-{}.zip'.format(sdk_version)
+    oss_url = 'https://storage.zego.im/rtc/ZegoExpressVideo/win/{}/ZegoExpressVideo-win-shared-cpp.zip'.format(sdk_version)
     artifact_name = oss_url.split('/')[-1]
     artifact_path = os.path.join(deps_path, artifact_name)
 
