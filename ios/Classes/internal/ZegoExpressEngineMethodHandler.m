@@ -326,7 +326,7 @@
 - (void)logoutRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *roomID = call.arguments[@"roomID"];
-    if (roomID == nil) {
+    if ([ZegoUtils isNullObject:roomID]) {
         [[ZegoExpressEngine sharedEngine] logoutRoom];
     } else {
         [[ZegoExpressEngine sharedEngine] logoutRoom:roomID];

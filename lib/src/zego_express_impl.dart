@@ -151,9 +151,6 @@ class ZegoExpressImpl {
   }
 
   Future<void> logoutRoom([String? roomID]) async {
-    if (roomID == null) {
-      return await _channel.invokeMethod('logoutRoom');
-    }
     return await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
   }
 

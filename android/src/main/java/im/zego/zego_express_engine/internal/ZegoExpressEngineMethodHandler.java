@@ -413,9 +413,8 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void logoutRoom(MethodCall call, Result result) {
 
-        if (call.hasArgument("roomID")) {
-            String roomID = call.argument("roomID");
-
+        String roomID = call.argument("roomID");
+        if (roomID != null) {
             ZegoExpressEngine.getEngine().logoutRoom(roomID);
         } else {
             ZegoExpressEngine.getEngine().logoutRoom();
@@ -2550,6 +2549,7 @@ public class ZegoExpressEngineMethodHandler {
                     try {
                         result.success(resultMap);
                     } catch (Exception e) {
+                        ZegoLog.error("[onLoadResourceCallback] Receive multiple callbacks");
                     }
                 }
             });
@@ -2574,6 +2574,7 @@ public class ZegoExpressEngineMethodHandler {
                     try {
                         result.success(resultMap);
                     } catch (Exception e) {
+                        ZegoLog.error("[onLoadResourceCallback] Receive multiple callbacks");
                     }
                 }
             });
@@ -2598,6 +2599,7 @@ public class ZegoExpressEngineMethodHandler {
                     try {
                         result.success(resultMap);
                     } catch (Exception e) {
+                        ZegoLog.error("[onLoadResourceCallback] Receive multiple callbacks");
                     }
                 }
             });
