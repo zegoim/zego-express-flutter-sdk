@@ -4,6 +4,9 @@ import json
 import sys
 import shutil
 import zipfile
+import ssl
+# To fix the issue of "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)>"
+ssl._create_default_https_context = ssl._create_unverified_context
 
 if (sys.version_info.major == 3):
     import urllib.request
