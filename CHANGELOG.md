@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 2.17.2
+
+### **Bug Fixes**
+1. Fixed the problem of log file collection during log reporting.
+
+2. Fixed echo cancellation issues on some phones.
+
 ## 2.17.1
 
 ### **New Features**
