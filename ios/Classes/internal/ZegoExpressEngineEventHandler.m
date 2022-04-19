@@ -1333,5 +1333,36 @@
     }
 }
 
+#pragma mark - Copyrighted Music Handler
+- (void)onDownloadProgressUpdate:(ZegoCopyrightedMusic *)copyrightedMusic resourceID:(NSString *)resourceID progressRate:(float)progressRate {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onDownloadProgressUpdate",
+            @"resourceID": resourceID,
+            @"progressRate": @(progressRate)
+        });
+    }
+}
+
+- (void)onCurrentPitchValueUpdate:(ZegoCopyrightedMusic *)copyrightedMusic resourceID:(NSString *)resourceID currentDuration:(int)currentDuration pitchValue:(int)pitchValue {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onCurrentPitchValueUpdate",
+            @"resourceID": resourceID,
+            @"currentDuration": @(currentDuration),
+            @"pitchValue": @(pitchValue)
+        });
+    }
+}
 
 @end

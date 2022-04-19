@@ -11,7 +11,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Available since: 1.13.0
   /// Description: Enable custom audio processing(before ear return), developers can receive locally collected audio frames through [onProcessCapturedAudioData], and can modify the audio data.
   /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
-  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable local capture custom audio processing.
@@ -25,7 +25,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Available since: 1.13.0
   /// Description: Enable custom audio processing(after ear return), developers can receive locally collected audio frames through [onProcessCapturedAudioData], and can modify the audio data.
   /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
-  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable local capture custom audio processing.
@@ -39,7 +39,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Available since: 1.13.0
   /// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
   /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing before pulling the remote audio data for rendering.
-  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable custom audio processing for remote playing stream.
@@ -53,7 +53,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Available since: 1.13.0
   /// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
   /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after collecting audio data.
-  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable custom audio processing for SDK playback audio data.
@@ -91,7 +91,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Available since: 1.10.0
   /// Description: Enable custom audio IO function, support PCM, AAC format data.
   /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
-  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer] to be effective.
+  /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable custom audio IO, default is false.

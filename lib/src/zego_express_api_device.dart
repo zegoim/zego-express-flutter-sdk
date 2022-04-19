@@ -155,7 +155,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Turns on/off the camera (for the specified channel).
   ///
   /// Available since: 1.1.0
-  /// Description: This function is used to control whether to start the camera acquisition. After the camera is turned off, video capture will not be performed. At this time, the publish stream will also have no video data.
+  /// Description: This function is used to control whether to start the capture of the camera. After the camera is turned off, the video capture will not be performed. At this time, there will be no video data for local preview and push streaming.
   /// Default value: The default is `true` which means the camera is turned on.
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.

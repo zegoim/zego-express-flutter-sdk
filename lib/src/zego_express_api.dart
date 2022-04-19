@@ -157,7 +157,7 @@ class ZegoExpressEngine {
   /// Restrictions: None.
   /// Caution: None.
   ///
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [funcName] Function name.
   /// - [info] Detailed error information.
   static void Function(int errorCode, String funcName, String info)? onDebugError;
@@ -170,7 +170,7 @@ class ZegoExpressEngine {
   /// Restrictions: None.
   /// Caution: It is recommended to monitor and process this callback in the development and testing phases, and turn off the monitoring of this callback after going online.
   ///
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [funcName] Function name.
   /// - [info] Detailed error information.
   static void Function(int errorCode, String funcName, String info)? onApiCalledResult;
@@ -179,7 +179,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: Callback notification of audio/video engine status update. When audio/video functions are enabled, such as preview, push streaming, local media player, audio data observering, etc., the audio/video engine will enter the start state. When you exit the room or disable all audio/video functions , The audio/video engine will enter the stop state.
-  /// Trigger: The developer called the relevant function to change the state of the audio and video engine. For example: 1. Called ZegoExpressEngine's [startPreview], [stopPreview], [startPublishingStream], [stopPublishingStream], [startPlayingStream], [stopPlayingStream], [startAudioDataObserver], [stopAudioDataObserver] and other functions. 2. The related functions of MediaPlayer are called. 3. The [LogoutRoom] function was called.
+  /// Trigger: The developer called the relevant function to change the state of the audio and video engine. For example: 1. Called ZegoExpressEngine's [startPreview], [stopPreview], [startPublishingStream], [stopPublishingStream], [startPlayingStream], [stopPlayingStream], [startAudioDataObserver], [stopAudioDataObserver] and other functions. 2. The related functions of MediaPlayer are called. 3. The [LogoutRoom] function was called. 4. The related functions of RealTimeSequentialDataManager are called.
   /// Restrictions: None.
   /// Caution:
   ///   1. When the developer calls [destroyEngine], this notification will not be triggered because the resources of the SDK are completely released.
@@ -197,16 +197,18 @@ class ZegoExpressEngine {
   /// The callback triggered when the room connection state changes.
   ///
   /// Available since: 1.1.0
-  /// Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.
+  /// Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.For versions 2.18.0 and above, it is recommended to use the onRoomStateChanged callback instead of the onRoomStateUpdate callback to monitor room state changes.
   /// Use cases: Developers can use this callback to determine the status of the current user in the room.
-  /// When to trigger: Users will receive this notification when they call [loginRoom], [logoutRoom], [switchRoom] functions. 2. This notification may also be received when the user device's network conditions change (SDK will automatically log in to the room again when the connection is disconnected, refer to https://doc-zh.zego.im/faq/reconnect ).
+  /// When to trigger: 
+  ///  1. The developer will receive this notification when calling the [loginRoom], [logoutRoom], [switchRoom] functions. 
+  ///  2. This notification may also be received when the network condition of the user's device changes (SDK will automatically log in to the room when disconnected, please refer to [Does ZEGO SDK support a fast reconnection for temporary disconnection] for details](https://docs.zegocloud.com/faq/reconnect?product=ExpressVideo&platform=all).
   /// Restrictions: None.
   /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
   /// Related APIs: [loginRoom]、[logoutRoom]、[switchRoom]
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
-  /// - [state] Changed room state
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [state] Changed room state.
+  /// - [errorCode] Error code, For details, please refer to [Common Error Codes](https://docs.zegocloud.com/article/5548).
   /// - [extendedData] Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
   static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData)? onRoomStateUpdate;
 
@@ -293,7 +295,7 @@ class ZegoExpressEngine {
   /// Use cases: In order to prevent illegal entry into the room, it is necessary to perform authentication control on login room, push streaming, etc., to improve security.
   /// When to call /Trigger: 30 seconds before the Token expires, the SDK will call [onRoomTokenWillExpire] to notify developer.
   /// Restrictions: None.
-  /// Caution: The token contains important information such as the user's room permissions, publish stream permissions, and effective time, please refer to https://doc-en.zego.im/article/11649.
+  /// Caution: The token contains important information such as the user's room permissions, publish stream permissions, and effective time, please refer to https://docs.zegocloud.com/article/11649.
   /// Related APIs: When the developer receives this callback, he can use [renewToken] to update the token authentication information.
   ///
   /// - [roomID] Room ID where the user is logged in, a string of up to 128 bytes in length.
@@ -309,7 +311,7 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [state] State of publishing stream.
-  /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [extendedData] Extended information with state updates.
   static void Function(String streamID, ZegoPublisherState state, int errorCode, Map<String, dynamic> extendedData)? onPublisherStateUpdate;
 
@@ -396,7 +398,7 @@ class ZegoExpressEngine {
   ///
   /// - [streamID] stream ID.
   /// - [state] State of playing stream.
-  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [extendedData] Extended Information with state updates. As the standby, only an empty json table is currently returned.
   static void Function(String streamID, ZegoPlayerState state, int errorCode, Map<String, dynamic> extendedData)? onPlayerStateUpdate;
 
@@ -568,7 +570,7 @@ class ZegoExpressEngine {
   /// Description: The local captured audio sound level callback.
   /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
   /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
-  /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelInfoUpdate]
+  /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate] or [onRemoteSoundLevelInfoUpdate].
   ///
   /// - [soundLevelInfo] Locally captured sound level value, ranging from 0.0 to 100.0.
   static void Function(ZegoSoundLevelInfo soundLevelInfo)? onCapturedSoundLevelInfoUpdate;
@@ -751,7 +753,7 @@ class ZegoExpressEngine {
   ///
   /// - [mediaPlayer] Callback player object.
   /// - [state] Media player status.
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   static void Function(ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerState state, int errorCode)? onMediaPlayerStateUpdate;
 
   /// The callback triggered when the network status of the media player changes.
@@ -823,7 +825,7 @@ class ZegoExpressEngine {
   /// - [audioEffectPlayer] Audio effect player instance that triggers this callback.
   /// - [audioEffectID] The ID of the audio effect resource that triggered this callback.
   /// - [state] The playback state of the audio effect.
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   static void Function(ZegoAudioEffectPlayer audioEffectPlayer, int audioEffectID, ZegoAudioEffectPlayState state, int errorCode)? onAudioEffectPlayStateUpdate;
 
   /// The callback triggered when the state of data recording (to a file) changes.
@@ -835,7 +837,7 @@ class ZegoExpressEngine {
   /// Restrictions: None.
   ///
   /// - [state] File recording status.
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [config] Record config.
   /// - [channel] Publishing stream channel.
   static void Function(ZegoDataRecordState state, int errorCode, ZegoDataRecordConfig config, ZegoPublishChannel channel)? onCapturedDataRecordStateUpdate;
@@ -882,7 +884,7 @@ class ZegoExpressEngine {
   /// When to Trigger: If an error occurs during the speed test, such as: can not connect to speed test server, this callback will be triggered.
   /// Restrictions: None.
   ///
-  /// - [errorCode] Network speed test error code. Please refer to error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Network speed test error code. Please refer to error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [type] Uplink or downlink.
   static void Function(int errorCode, ZegoNetworkSpeedTestType type)? onNetworkSpeedTestError;
 
@@ -1045,8 +1047,23 @@ class ZegoExpressEngine {
   ///
   /// - [rangeAudio] Range audio instance that triggers this callback.
   /// - [state] The use state of the range audio.
-  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   static void Function(ZegoRangeAudio rangeAudio, ZegoRangeAudioMicrophoneState state, int errorCode)? onRangeAudioMicrophoneStateUpdate;
+
+  /// Callback for download song or accompaniment progress rate.
+  ///
+  /// - [copyrightedMusic] Copyrighted music instance that triggers this callback.
+  /// - [resourceID] The resource ID of the song or accompaniment that triggered this callback.
+  /// - [progressRate] download progress rate.
+  static void Function(ZegoCopyrightedMusic copyrightedMusic, String resourceID, double progressRate)? onDownloadProgressUpdate;
+
+  /// Real-time pitch line callback.
+  ///
+  /// - [copyrightedMusic] Copyrighted music instance that triggers this callback.
+  /// - [resourceID] The resource ID of the song or accompaniment that triggered this callback.
+  /// - [currentDuration] Current playback progress.
+  /// - [pitchValue] Real-time pitch accuracy or value.
+  static void Function(ZegoCopyrightedMusic copyrightedMusic, String resourceID, int currentDuration, int pitchValue)? onCurrentPitchValueUpdate;
 
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK.
   ///
@@ -1057,10 +1074,10 @@ class ZegoExpressEngine {
   /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
   ///
   /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
-  /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
-  /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room. Token generated way please refer to the [use token authentication] (https://doc-zh.zego.im/article/10360).
+  /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.
+  /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
   /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
-  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to https://doc-zh.zego.im/faq/profile_difference.
+  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false
   @Deprecated('Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.')
   static Future<void> createEngine(int appID, String appSign, bool isTestEnv, ZegoScenario scenario, {bool? enablePlatformView}) async {
@@ -1074,7 +1091,7 @@ class ZegoExpressEngine {
   /// Trigger: This callback is triggered when an exception occurs when reading or writing the audio and video device.
   ///
   /// @deprecated Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.
-  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   /// - [deviceName] device name
   @Deprecated('Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.')
   static void Function(int errorCode, String deviceName)? onDeviceError;
@@ -1090,7 +1107,7 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
   /// When to call: It needs to be called after [createEngine].
   /// Default value: When this function is not called, the beauty feature is not enabled by default.
   /// Related APIs: After turning on the beauty features, you can call the [setBeautifyOption] function to adjust the beauty parameters.
-  /// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the [ZegoEffects] AI SDK https://doc-en.zego.im/article/9896 for best results.
+  /// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the [ZegoEffects] AI SDK https://docs.zegocloud.com/article/9896 for best results.
   /// Restrictions: In the case of using the custom video capture function, since the developer has handle the video data capturing, the SDK is no longer responsible for the video data capturing, so this function is no longer valid. It is also invalid when using the custom video processing function.
   ///
   /// @deprecated Deprecated since 2.16.0, please use the [enableEffectsBeauty] function instead.
@@ -1118,15 +1135,14 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setBeautifyOption(option, channel: channel);
   }
 
-  /// [Deprecated] Turns on/off verbose debugging and sets up the log language. This function has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
+  /// [Deprecated] Turns on/off verbose debugging and sets up the log language. This function is deprecated in version 2.3.0, please use [enableDebugAssistant] to achieve the original function.
   ///
-  /// This function has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
-  /// The debug switch is set to on and the language is English by default.
+  /// This feature is disabled by default and the language of debug information is English.
   ///
-  /// @deprecated This function has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.
+  /// @deprecated This function is deprecated in version 2.3.0, please use [enableDebugAssistant] to achieve the original function.
   /// - [enable] Detailed debugging information switch
-  /// - [language] Debugging information language
-  @Deprecated('This function has been deprecated after version 2.3.0, please use the [setEngineConfig] function to set the advanced configuration property advancedConfig to achieve the original function.')
+  /// - [language] Debugging information language. Note that Chinese is deprecated, if you need Chinese info, please refer to the document https://docs.zegocloud.com/en/5548.html
+  @Deprecated('This function is deprecated in version 2.3.0, please use [enableDebugAssistant] to achieve the original function.')
   Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
     return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
   }

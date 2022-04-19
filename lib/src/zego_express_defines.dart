@@ -778,6 +778,30 @@ enum ZegoNetworkSpeedTestType {
   Downlink
 }
 
+/// VOD billing mode.
+enum ZegoCopyrightedMusicBillingMode {
+  /// Pay-per-use.Each time a user obtains a song resource, a charge is required, that is, the user will be charged for each time based on the actual call to obtain the song resource interface (such as [requestSong], [requestAccompaniment], etc.).
+  Count,
+  /// Monthly billing by user.Billing for a single user is based on the monthly dimension, that is, the statistics call to obtain song resources (such as [requestSong], [requestAccompaniment], etc.) and the parameters are the user ID of the monthly subscription, and the charging is based on the monthly dimension.
+  User,
+  /// Monthly billing by room.The room users are billed on a monthly basis, that is, statistical calls to obtain song resources (such as [requestSong], [requestAccompaniment], etc.) are passed as Roomid for a monthly subscription of the room, and fees are charged on a monthly basis.
+  Room
+}
+
+/// The music resource type.
+enum ZegoCopyrightedMusicType {
+  /// Song.
+  ZegoCopyrightedMusicSong,
+  /// Song with high quality.
+  ZegoCopyrightedMusicSongHQ,
+  /// Song with super quality.
+  ZegoCopyrightedMusicSongSQ,
+  /// Song accompaniment.
+  ZegoCopyrightedMusicAccompaniment,
+  /// Song accompaniment clip.
+  ZegoCopyrightedMusicAccompanimentClip
+}
+
 /// Font type.
 enum ZegoFontType {
   /// Source han sans.
@@ -837,7 +861,7 @@ enum ZegoAudioVADStableStateMonitorType {
 /// Caution: None.
 class ZegoLogConfig {
 
-  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document https://doc-en.zego.im/faq/express_sdkLog. Caution: Developers need to ensure read and write permissions for files under this path.
+  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document https://docs.zegocloud.com/faq/express_sdkLog. Caution: Developers need to ensure read and write permissions for files under this path.
   String logPath;
 
   /// Maximum log file size(Bytes). Description: Used to customize the maximum log file size. Use cases: This configuration is required when you need to customize the upper limit of the log file size. Required: False. Default value: 5MB (5 * 1024 * 1024 Bytes). Value range: Minimum 1MB (1 * 1024 * 1024 Bytes), maximum 100M (100 * 1024 * 1024 Bytes), 0 means no need to write logs. Caution: The larger the upper limit of the log file size, the more log information it carries, but the log upload time will be longer.
@@ -876,13 +900,13 @@ class ZegoCustomAudioConfig {
 /// Profile for create engine
 class ZegoEngineProfile {
 
-  /// Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
+  /// Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.
   int appID;
 
-  /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room. Token generated way please refer to the [use token authentication] (https://doc-zh.zego.im/article/10360).
+  /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
   String? appSign;
 
-  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to https://doc-zh.zego.im/faq/profile_difference.
+  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   ZegoScenario scenario;
 
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
@@ -917,7 +941,7 @@ class ZegoRoomConfig {
   /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
   bool isUserStatusNotify;
 
-  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description [use token authentication] (https://doc-en.zego.im/article/3881) Default is empty string, that is, no authentication. Version 2.17.0 or later If appSign is not passed when the [createEngine] interface is called to create an engine or appSign is empty, this parameter must be set for authentication when you log in to a room.
+  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description [use token authentication] (https://docs.zegocloud.com/article/3881) Default is empty string, that is, no authentication. Version 2.17.0 or later If appSign is not passed when the [createEngine] interface is called to create an engine or appSign is empty, this parameter must be set for authentication when you log in to a room.
   String token;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token);
@@ -1359,7 +1383,7 @@ class ZegoPlayStreamQuality {
   /// Audio break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0)
   double audioBreakRate;
 
-  /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://doc-en.zego.im/article/3720#4_4 (Available since 2.16.0)
+  /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://docs.zegocloud.com/article/3720#4_4 (Available since 2.16.0)
   double mos;
 
   /// Server to local delay, in milliseconds
@@ -1586,19 +1610,27 @@ class ZegoFontStyle {
   /// Font transparency. Required: False. Default value: 0. Value range: [0,100], 100 is completely opaque, 0 is completely transparent.
   int transparency;
 
-  ZegoFontStyle(this.type, this.size, this.color, this.transparency);
+  /// Whether the font has a border. Required: False. Default value: False. Value range: True/False.
+  bool border;
+
+  /// Font border color, the calculation formula is: R + G x 256 + B x 65536, the value range of R (red), G (green), and B (blue) [0,255]. Required: False. Default value: 0. Value range: [0,16777215].
+  int borderColor;
+
+  ZegoFontStyle(this.type, this.size, this.color, this.transparency, this.border, this.borderColor);
 
   Map<String, dynamic> toMap() {
     return {
       'type': this.type.index,
       'size': this.size,
       'color': this.color,
-      'transparency': this.transparency
+      'transparency': this.transparency,
+      'border': this.border,
+      'borderColor': this.borderColor
     };
   }
 
   /// Create a default font style object.
-  ZegoFontStyle.defaultStyle() : type = ZegoFontType.SourceHanSans, size = 24, color = 16777215, transparency = 0;
+  ZegoFontStyle.defaultStyle() : type = ZegoFontType.SourceHanSans, size = 24, color = 16777215, transparency = 0, border = false, borderColor = 0;
 
 }
 
@@ -1653,6 +1685,9 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
+  /// Input stream volume, valid range [0, 200], default is 100
+  int volume;
+
   /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled
   bool isAudioFocus;
 
@@ -1665,7 +1700,7 @@ class ZegoMixerInput {
   /// Video view render mode.
   ZegoMixRenderMode? renderMode;
 
-  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode});
+  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.volume, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode});
 
   Map<String, dynamic> toMap() {
     return {
@@ -1676,6 +1711,7 @@ class ZegoMixerInput {
       'right': this.layout.right.toInt(),
       'bottom': this.layout.bottom.toInt(),
       'soundLevelID': this.soundLevelID,
+      'volume': this.volume,
       'isAudioFocus': this.isAudioFocus,
       'audioDirection': this.audioDirection,
       'label': this.label?.toMap(),
@@ -1683,7 +1719,7 @@ class ZegoMixerInput {
     };
   }
 
-  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill;
+  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.volume = 100, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill;
 
 }
 
@@ -2500,7 +2536,7 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// Available since: 1.16.0
   /// Description: Set volume for a single audio effect. Both the local play volume and the publish volume are set.
-  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// When to call: The specified [audioEffectID] is [start].
   /// Restrictions: None.
   ///
   /// - [audioEffectID] ID for the audio effect.
@@ -2516,6 +2552,17 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolumeAll(int volume);
+
+  /// Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
+  ///
+  /// Available since: 2.18.0
+  /// Description: Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [speed] The speed of play. <br>Value range: The range is 0.5 ~ 2.0. <br>Default value: The default is 1.0.
+  Future<void> setPlaySpeed(int audioEffectID, double speed);
 
   /// Get the total duration of the specified audio effect resource.
   ///
@@ -2573,6 +2620,29 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - Returns Audio effect player index.
   int getIndex();
+
+}
+
+/// CopyrightedMusic play configuration.
+class ZegoCopyrightedMusicConfig {
+
+  /// User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
+  ZegoUser user;
+
+  ZegoCopyrightedMusicConfig(this.user);
+
+}
+
+/// Request configuration of song or accompaniment.
+class ZegoCopyrightedMusicRequestConfig {
+
+  /// the ID of the song.
+  String songID;
+
+  /// VOD billing mode.
+  ZegoCopyrightedMusicBillingMode mode;
+
+  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode);
 
 }
 
@@ -2767,12 +2837,252 @@ abstract class ZegoRealTimeSequentialDataManager {
 
 }
 
+
+abstract class ZegoCopyrightedMusic {
+
+  /// Initialize the copyrighted music module.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Initialize the copyrighted music so that you can use the function of the copyrighted music later.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// Restrictions: The real user information must be passed in, otherwise the song resources cannot be obtained for playback.
+  ///
+  /// - [config] the copyrighted music configuration.
+  Future<ZegoCopyrightedMusicInitResult> initCopyrightedMusic(ZegoCopyrightedMusicConfig config);
+
+  /// Get cache size.
+  ///
+  /// Available since: 2.13.0
+  /// Description: When using this module, some cache files may be generated, and the size of the cache file can be obtained through this interface.
+  /// Use case: Used to display the cache size of the App.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - Returns cache file size, in byte.
+  Future<int> getCacheSize();
+
+  /// Clear cache.
+  ///
+  /// Available since: 2.13.0
+  /// Description: When using this module, some cache files may be generated, which can be cleared through this interface.
+  /// Use case: Used to clear the cache of the App.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  Future<void> clearCache();
+
+  /// Send extended feature request.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Initialize the copyrighted music so that you can use the function of the copyrighted music later.
+  /// Use case: Used to get a list of songs.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - [command] request command, see details for specific supported commands.
+  /// - [params] request parameters, each request command has corresponding request parameters.
+  Future<ZegoCopyrightedMusicSendExtendedRequestResult> sendExtendedRequest(String command, String params);
+
+  /// Get lyrics in lrc format.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Get lyrics in lrc format, support parsing lyrics line by line.
+  /// Use case: Used to display lyrics line by line.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID);
+
+  /// Get lyrics in krc format.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Get lyrics in krc format, support parsing lyrics word by word.
+  /// Use case: Used to display lyrics word by word.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - [krcToken] The krcToken obtained by calling requestAccompaniment.
+  Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(String krcToken);
+
+  /// Request a song.
+  ///
+  /// Available since: 2.13.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, or share_token for sharing to others, there are also some related authentications. information. Support three ways to request a song, pay-per-use, monthly billing by user, and monthly billing by room.
+  /// Use case: Get copyrighted songs for local playback and sharing.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// Restrictions: This interface will trigger billing. A song may have three sound qualities: normal, high-definition, and lossless. Each sound quality has a different resource file, and each resource file has a unique resource ID.
+  ///
+  /// - [config] request configuration.
+  Future<ZegoCopyrightedMusicRequestSongResult> requestSong(ZegoCopyrightedMusicRequestConfig config);
+
+  /// Request accompaniment.
+  ///
+  /// Available since: 2.13.0
+  /// Description: You can get the accompaniment resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Support three ways to request accompaniment, pay-per-use, monthly billing by user, and monthly billing by room.
+  /// Use case: Get copyrighted accompaniment for local playback and sharing.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// Restrictions: This interface will trigger billing.
+  ///
+  /// - [config] request configuration.
+  Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(ZegoCopyrightedMusicRequestConfig config);
+
+  /// Request accompaniment clip.
+  ///
+  /// Available since: 2.13.0
+  /// Description: You can obtain the climax clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Support three ways to request accompaniment clip, pay-per-use, monthly billing by user, and monthly billing by room.
+  /// Use case: Get copyrighted accompaniment clip for local playback and sharing.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// Restrictions: This interface will trigger billing.
+  ///
+  /// - [config] request configuration.
+  Future<ZegoCopyrightedMusicRequestAccompanimentClipResult> requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config);
+
+  /// Get a song or accompaniment.
+  ///
+  /// Available since: 2.13.0
+  /// Description: After the user successfully obtains the song/accompaniment/climax clip resource, he can get the corresponding shareToken, share the shareToken with other users, and other users call this interface to obtain the shared music resources.
+  /// Use case: In the online KTV scene, after receiving the song or accompaniment token shared by the lead singer, the chorus obtains the corresponding song or accompaniment through this interface, and then plays it on the local end.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - [shareToken] access the corresponding authorization token for a song or accompaniment.
+  Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(String shareToken);
+
+  /// Download song or accompaniment.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Download a song or accompaniment. It can only be played after downloading successfully.
+  /// Use case: Get copyrighted accompaniment for local playback and sharing.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// Restrictions: Loading songs or accompaniment resources is affected by the network.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<ZegoCopyrightedMusicDownloadResult> download(String resourceID);
+
+  /// Query the resource's cache is existed or not.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Query the resource is existed or not.
+  /// Use case: Can be used to check the resource's cache is existed or not
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
+  /// - [type] the song resource type.
+  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type);
+
+  /// Get the playing time of a song or accompaniment file.
+  ///
+  /// Available since: 2.13.0
+  /// Description: Get the playing time of a song or accompaniment file.
+  /// Use case: Can be used to display the playing time information of the song or accompaniment on the view.
+  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> getDuration(String resourceID);
+
+  /// Start scoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Start the scoring function.After starting scoring, the scoring result OnCurrentPitchValueUpdate callback will be received according to the set callback time interval.
+  /// Use case: Can be used to display the singing score on the view.
+  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.
+  /// Restrictions: Only support use this api after [startPublishingStream].
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [pitchValueInterval] the time interval of real-time pitch line callback, in milliseconds, the default is 50 milliseconds.
+  Future<int> startScore(String resourceID, int pitchValueInterval);
+
+  /// Pause scoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Pause ongoing scoring,will stop the [OnCurrentPitchValueUpdate] callback.
+  /// Use case: You can call this interface to pause the scoring function while scoring.
+  /// When to call: It can be called while grading. 
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> pauseScore(String resourceID);
+
+  /// Resume scoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Resume currently paused scoring.
+  /// Use case: When there is currently paused scoring, this interface can be called to resume the scoring function.
+  /// When to call: It can be called when there is currently a paused scoring. 
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> resumeScore(String resourceID);
+
+  /// Stop scoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: End the current rating.The [OnCurrentPitchValueUpdate] callback will be stopped, but the average or total score can still be obtained normally.
+  /// Use case: You can call this interface to end the scoring while scoring.
+  /// When to call: It can be called while grading. 
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> stopScore(String resourceID);
+
+  /// Reset scoring.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Reset the scores that have already been performed,The [OnCurrentPitchValueUpdate] callback will be stopped and the average or total score will be 0.
+  /// Use case: Often used in scenes where the same song is re-sung.
+  /// When to call: It can be called after scoring has been performed. 
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> resetScore(String resourceID);
+
+  /// Get the score of the previous sentence.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Get the score of the previous sentence.
+  /// Use case: Can be used to display the score of each sentence on the view.
+  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.The user gets it once after singing each sentence.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> getPreviousScore(String resourceID);
+
+  /// Get average score.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Get the average score.
+  /// Use case: Can be used to display the average score on the view.
+  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> getAverageScore(String resourceID);
+
+  /// Get total score .
+  ///
+  /// Available since: 2.15.0
+  /// Description: Get the total score.
+  /// Use case: Can be used to display the total score on the view.
+  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music. 
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> getTotalScore(String resourceID);
+
+  /// Get standard pitch data.
+  ///
+  /// Available since: 2.15.0
+  /// Description: Get standard pitch data.
+  /// Use case: Can be used to display standard pitch lines on the view.
+  /// Restrictions: Only accompaniment or climactic clip assets have pitch lines.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(String resourceID);
+
+  /// Get total score .
+  ///
+  /// Available since: 2.15.0
+  /// Description: Get real-time pitch data.
+  /// Use case: Can be used to display real-time pitch lines on the view.
+  /// When to call: It can be called after playing the copyright accompaniment and starting to score.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<int> getCurrentPitch(String resourceID);
+
+}
 /// Callback for setting room extra information.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoRoomSetRoomExtraInfoResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoRoomSetRoomExtraInfoResult(this.errorCode);
@@ -2781,10 +3091,10 @@ class ZegoRoomSetRoomExtraInfoResult {
 
 /// Callback for setting stream extra information.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoPublisherSetStreamExtraInfoResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoPublisherSetStreamExtraInfoResult(this.errorCode);
@@ -2793,10 +3103,10 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 /// Callback for add/remove CDN URL.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoPublisherUpdateCdnUrlResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoPublisherUpdateCdnUrlResult(this.errorCode);
@@ -2805,11 +3115,11 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 /// Results of take publish stream snapshot.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [image] Snapshot image
 class ZegoPublisherTakeSnapshotResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Snapshot image
@@ -2821,11 +3131,11 @@ class ZegoPublisherTakeSnapshotResult {
 
 /// Results of take play stream snapshot.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [image] Snapshot image
 class ZegoPlayerTakeSnapshotResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Snapshot image
@@ -2837,11 +3147,11 @@ class ZegoPlayerTakeSnapshotResult {
 
 /// Results of starting a mixer task.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [extendedData] Extended Information
 class ZegoMixerStartResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Extended Information
@@ -2853,10 +3163,10 @@ class ZegoMixerStartResult {
 
 /// Results of stoping a mixer task.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoMixerStopResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoMixerStopResult(this.errorCode);
@@ -2865,10 +3175,10 @@ class ZegoMixerStopResult {
 
 /// Callback for sending real-time sequential data.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoRealTimeSequentialDataSentResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoRealTimeSequentialDataSentResult(this.errorCode);
@@ -2877,11 +3187,11 @@ class ZegoRealTimeSequentialDataSentResult {
 
 /// Callback for sending broadcast messages.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [messageID] ID of this message
 class ZegoIMSendBroadcastMessageResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// ID of this message
@@ -2893,11 +3203,11 @@ class ZegoIMSendBroadcastMessageResult {
 
 /// Callback for sending barrage message.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [messageID] ID of this message
 class ZegoIMSendBarrageMessageResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// ID of this message
@@ -2909,10 +3219,10 @@ class ZegoIMSendBarrageMessageResult {
 
 /// Callback for sending custom command.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoIMSendCustomCommandResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode);
@@ -2921,10 +3231,10 @@ class ZegoIMSendCustomCommandResult {
 
 /// Callback for media player loads resources.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoMediaPlayerLoadResourceResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoMediaPlayerLoadResourceResult(this.errorCode);
@@ -2933,10 +3243,10 @@ class ZegoMediaPlayerLoadResourceResult {
 
 /// Callback for media player seek to playback progress.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoMediaPlayerSeekToResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoMediaPlayerSeekToResult(this.errorCode);
@@ -2945,11 +3255,11 @@ class ZegoMediaPlayerSeekToResult {
 
 /// The callback of the screenshot of the media player playing screen
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [image] Snapshot image
 class ZegoMediaPlayerTakeSnapshotResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Snapshot image
@@ -2961,10 +3271,10 @@ class ZegoMediaPlayerTakeSnapshotResult {
 
 /// Callback for audio effect player loads resources.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoAudioEffectPlayerLoadResourceResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoAudioEffectPlayerLoadResourceResult(this.errorCode);
@@ -2973,13 +3283,169 @@ class ZegoAudioEffectPlayerLoadResourceResult {
 
 /// Callback for audio effect player seek to playback progress.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoAudioEffectPlayerSeekToResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoAudioEffectPlayerSeekToResult(this.errorCode);
+
+}
+
+/// Callback for copyrighted music init.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+class ZegoCopyrightedMusicInitResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  ZegoCopyrightedMusicInitResult(this.errorCode);
+
+}
+
+/// Callback for copyrighted music init.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [command] request command.
+/// - [result] request result, each request command has corresponding request result.
+class ZegoCopyrightedMusicSendExtendedRequestResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// request command.
+  String command;
+
+  /// request result, each request command has corresponding request result.
+  String result;
+
+  ZegoCopyrightedMusicSendExtendedRequestResult(this.errorCode, this.command, this.result);
+
+}
+
+/// Get lrc format lyrics complete callback.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [lyrics] lrc format lyrics.
+class ZegoCopyrightedMusicGetLrcLyricResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// lrc format lyrics.
+  String lyrics;
+
+  ZegoCopyrightedMusicGetLrcLyricResult(this.errorCode, this.lyrics);
+
+}
+
+/// Get krc format lyrics complete callback.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [lyrics] krc format lyrics.
+class ZegoCopyrightedMusicGetKrcLyricByTokenResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// krc format lyrics.
+  String lyrics;
+
+  ZegoCopyrightedMusicGetKrcLyricByTokenResult(this.errorCode, this.lyrics);
+
+}
+
+/// Callback for request song.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [resource] The JSON string returned by the song ordering service, including song resource information.
+class ZegoCopyrightedMusicRequestSongResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// The JSON string returned by the song ordering service, including song resource information.
+  String resource;
+
+  ZegoCopyrightedMusicRequestSongResult(this.errorCode, this.resource);
+
+}
+
+/// Callback for request accompaniment.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [resource] accompany resource information.
+class ZegoCopyrightedMusicRequestAccompanimentResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// accompany resource information.
+  String resource;
+
+  ZegoCopyrightedMusicRequestAccompanimentResult(this.errorCode, this.resource);
+
+}
+
+/// Callback for request accompaniment clip.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [resource] accompany clip resource information.
+class ZegoCopyrightedMusicRequestAccompanimentClipResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// accompany clip resource information.
+  String resource;
+
+  ZegoCopyrightedMusicRequestAccompanimentClipResult(this.errorCode, this.resource);
+
+}
+
+/// Callback for acquire songs or accompaniment through authorization token.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [resource] song or accompany resource information.
+class ZegoCopyrightedMusicGetMusicByTokenResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// song or accompany resource information.
+  String resource;
+
+  ZegoCopyrightedMusicGetMusicByTokenResult(this.errorCode, this.resource);
+
+}
+
+/// Callback for download song or accompaniment.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+class ZegoCopyrightedMusicDownloadResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  ZegoCopyrightedMusicDownloadResult(this.errorCode);
+
+}
+
+/// Get standard pitch data complete callback.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [pitch] Standard pitch data.
+class ZegoCopyrightedMusicGetStandardPitchResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// Standard pitch data.
+  String pitch;
+
+  ZegoCopyrightedMusicGetStandardPitchResult(this.errorCode, this.pitch);
 
 }
 

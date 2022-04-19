@@ -180,6 +180,8 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerUnloadResource(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlaySpeed(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     /* Media Player */
     void createMediaPlayer(flutter::EncodableMap& argument,

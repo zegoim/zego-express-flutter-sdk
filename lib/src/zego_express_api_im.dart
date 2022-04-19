@@ -40,7 +40,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Description: Send a broadcast message to the room, users who have entered the same room can receive the message, and the message is reliable.
   /// Use cases: Generally used when the number of people in the live room does not exceed 500.
   /// When to call: After calling [loginRoom] to log in to the room.
-  /// Restrictions: It is not supported when the number of people online in the room exceeds 500. If you need to increase the limit, please contact ZEGO technical support to apply for evaluation. The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user calling this interface from the client side is 2. For restrictions on the use of this function, please refer to https://doc-zh.zego.im/article/7581 or contact ZEGO technical support.
+  /// Restrictions: It is not supported when the number of people online in the room exceeds 500. If you need to increase the limit, please contact ZEGO technical support to apply for evaluation. The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user calling this interface from the client side is 2. For restrictions on the use of this function, please contact ZEGO technical support.
   /// Related callbacks: The room broadcast message can be received through [onIMRecvBroadcastMessage].
   /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
   ///
@@ -57,7 +57,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Description: Send a barrage message to the room, users who have logged in to the same room can receive the message, the message is unreliable.
   /// Use cases: Generally used in scenarios where there is a large number of messages sent and received in the room and the reliability of the messages is not required, such as live barrage.
   /// When to call: After calling [loginRoom] to log in to the room.
-  /// Restrictions: The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please refer to https://doc-zh.zego.im/article/7581 or contact ZEGO technical support.
+  /// Restrictions: The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
   /// Related callbacks: The room barrage message can be received through [onIMRecvBarrageMessage].
   /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and custom command can be sent through the [sendCustomCommand] function.
   ///
@@ -74,7 +74,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Description: After calling this function, users in the same room who have entered the room can receive the message, the message is unreliable.
   /// Use cases: Generally used in scenarios where there is a large number of messages sent and received in the room and the reliability of the messages is not required, such as live barrage.
   /// When to call: After calling [loginRoom] to log in to the room.
-  /// Restrictions: Generally used when the number of people in the live room does not exceed 500.The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please refer to https://doc-zh.zego.im/article/7581 or contact ZEGO technical support.
+  /// Restrictions: Generally used when the number of people in the live room does not exceed 500.The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
   /// Related callbacks: The room custom command can be received through [onIMRecvCustomCommand].
   /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and barrage messages can be sent through the [sendBarrageMessage] function.
   /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.

@@ -16,12 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
+import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.ZegoRangeAudio;
 import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
 import im.zego.zegoexpress.callback.IZegoApiCalledEventHandler;
 import im.zego.zegoexpress.callback.IZegoAudioDataHandler;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerEventHandler;
+import im.zego.zegoexpress.callback.IZegoCopyrightedMusicEventHandler;
 import im.zego.zegoexpress.callback.IZegoCustomAudioProcessHandler;
 import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
@@ -1598,6 +1600,37 @@ public class ZegoExpressEngineEventHandler {
                     sink.success(map);
                 }
             });
+        }
+    };
+
+    IZegoCopyrightedMusicEventHandler copyrightedMusicEventHandler = new IZegoCopyrightedMusicEventHandler() {
+        @Override
+        public void onDownloadProgressUpdate(ZegoCopyrightedMusic copyrightedMusic, String resourceID, float progressRate) {
+            super.onDownloadProgressUpdate(copyrightedMusic, resourceID, progressRate);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onDownloadProgressUpdate");
+            map.put("resourceID", resourceID);
+            map.put("progressRate", progressRate);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onCurrentPitchValueUpdate(ZegoCopyrightedMusic copyrightedMusic, String resourceID, int currentDuration, int pitchValue) {
+            super.onCurrentPitchValueUpdate(copyrightedMusic, resourceID, currentDuration, pitchValue);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onCurrentPitchValueUpdate");
+            map.put("resourceID", resourceID);
+            map.put("currentDuration", currentDuration);
+            map.put("pitchValue", pitchValue);
+
+            sink.success(map);
         }
     };
 

@@ -88,7 +88,6 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
-  /// Use cases: Recommended configuration in different business scenarios https://doc-zh.zego.im/article/10365.
   /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
   /// When to call: After [createEngine].
   /// Restrictions: It is necessary to set the relevant video configuration before publishing the stream or startPreview, and only support the modification of the encoding resolution and the bit rate after publishing the stream.
@@ -113,7 +112,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the video mirroring mode (for the specified channel).
   ///
   /// Available since: 1.1.0
-  /// Description: Set whether the local preview video and the published video have mirror mode enabled. For specific mirroring mode, please refer to https://doc-zh.zego.im/article/10365.
+  /// Description: Set whether the local preview video and the published video have mirror mode enabled. For specific mirroring mode.
   /// When to call: After [createEngine].
   /// Restrictions: None.
   ///
@@ -127,7 +126,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: Set the video orientation, please refer to https://doc-zh.zego.im/article/10365.
-  /// Use cases: When users use mobile devices to conduct live broadcasts or video calls, they can set different video directions according to the scene
+  /// Use cases: When users use mobile devices to conduct live broadcasts or video calls, they can set different video directions according to the scene.
   /// When to call: After [createEngine].
   /// Restrictions: None.
   ///
@@ -341,7 +340,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: This function is used to set the audio capture channel mode. When the developer turns on the stereo capture, using a special stereo capture device, the stereo audio data can be captured and streamed.
   /// Use cases: In some professional scenes, users are particularly sensitive to sound effects, such as voice radio and musical instrument performance. At this time, support for stereo and high-quality sound is required.
   /// Default value: The default is None, which means mono capture.
-  /// When to call: It needs to be called after [createEngine]， before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine]， before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Restrictions: If you need to enable stereo capture, you also need to meet the following conditions: For iOS/Android, you need to connect an external audio device that supports stereo capture and be at the media volume. For macOS, it needs to be at the media volume. For Windows, an external audio device that supports stereo capture is required.
   /// Related APIs: When streaming, you need to enable the stereo audio encoding function through the [setAudioConfig] interface at the same time.
   ///

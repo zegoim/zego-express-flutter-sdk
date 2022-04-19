@@ -326,6 +326,9 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
     else if (method_call.method_name() == "audioEffectPlayerUnloadResource") {
         ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerUnloadResource(argument, std::move(result));
     }
+    else if (method_call.method_name() == "audioEffectPlayerSetPlaySpeed") {
+        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSetPlaySpeed(argument, std::move(result));
+    }
     else if(method_call.method_name() == "createMediaPlayer")
     {
         ZegoExpressEngineMethodHandler::getInstance().createMediaPlayer(argument, std::move(result));

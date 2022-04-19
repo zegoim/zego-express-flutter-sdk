@@ -1136,6 +1136,24 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerUnloadResource(flutter::En
     }
 }
 
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetPlaySpeed(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        auto speed = std::get<double>(argument[FTValue("speed")]);
+        player->setPlaySpeed(audioEffectID, speed);
+
+        result->Success();
+    }
+    else {
+        result->Error("audioEffectPlayerSetPlaySpeed_Can_not_find_player", "Invoke `audioEffectPlayerSetPlaySpeed` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::createMediaPlayer(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {

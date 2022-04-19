@@ -1403,6 +1403,23 @@ class ZegoExpressImpl {
     return ZegoNetworkTimeInfo(map['timestamp'], map['maxDeviation']);
   }
 
+  static ZegoCopyrightedMusic? copyrightedMusicImpl;
+  Future<ZegoCopyrightedMusic?> createCopyrightedMusic() async {
+    int errorCode = await _channel.invokeMethod('createCopyrightedMusic');
+    if(errorCode == 0) {
+      copyrightedMusicImpl = ZegoCopyrightedMusicImpl();
+    } else {
+      copyrightedMusicImpl = null;
+    }   
+    return copyrightedMusicImpl;
+  }
+
+  Future<void> destroyCopyrightedMusic(ZegoCopyrightedMusic copyrightedMusic) async {
+    await _channel.invokeMethod('destroyCopyrightedMusic');
+    copyrightedMusicImpl = null;
+    return;
+  }
+
   /* EventHandler */
 
   static void _registerEventHandler() async {
@@ -2263,6 +2280,23 @@ class ZegoExpressImpl {
         }
         break;
 
+      /* Copyrighted Music */
+      case 'onDownloadProgressUpdate':
+        if (ZegoExpressEngine.onDownloadProgressUpdate == null) return;
+
+        if (ZegoExpressImpl.copyrightedMusicImpl != null) {
+          ZegoExpressEngine.onDownloadProgressUpdate!(ZegoExpressImpl.copyrightedMusicImpl!, map['resourceID'], map['progressRate']);
+        }       
+        break;
+      
+      case 'onCurrentPitchValueUpdate':
+        if (ZegoExpressEngine.onCurrentPitchValueUpdate == null) return;
+
+        if (ZegoExpressImpl.copyrightedMusicImpl != null) {
+          ZegoExpressEngine.onCurrentPitchValueUpdate!(ZegoExpressImpl.copyrightedMusicImpl!, map['resourceID'], map['currentDuration'], map['pitchValue']);
+        }       
+        break;
+
       default:
         // TODO: Unknown callback
         break;
@@ -2653,6 +2687,16 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   int getIndex() {
     return _index;
   }
+
+  @override
+  Future<void> setPlaySpeed(int audioEffectID, double speed) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('audioEffectPlayerSetPlaySpeed', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'speed': speed
+    });
+  }
 }
 
 class ZegoRangeAudioImpl extends ZegoRangeAudio {
@@ -2770,4 +2814,176 @@ class ZegoRealTimeSequentialDataManagerImpl
     return await ZegoExpressImpl._channel
         .invokeMethod('dataManagerStopSubscribing', {'index': _index, 'streamID': streamID});
   }
+}
+
+class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
+  @override
+  Future<void> clearCache() async {
+    return await ZegoExpressImpl._channel.invokeMethod('copyrightedMusicClearCache');
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicDownloadResult> download(String resourceID) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicDownload', {'resourceID': resourceID});
+    return ZegoCopyrightedMusicDownloadResult(map['errorCode']);
+  }
+
+  @override
+  Future<int> getAverageScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetAverageScore', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<int> getCacheSize() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetCacheSize');
+  }
+
+  @override
+  Future<int> getCurrentPitch(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetCurrentPitch', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<int> getDuration(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetDuration', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(String krcToken) async{
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetKrcLyricByToken', {'krcToken': krcToken});
+    return ZegoCopyrightedMusicGetKrcLyricByTokenResult(map['errorCode'], map['lyrics']);
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetLrcLyric', {'songID': songID});
+    return ZegoCopyrightedMusicGetLrcLyricResult(map['errorCode'], map['lyrics']);
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(String shareToken) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetMusicByToken', {'shareToken': shareToken});
+    return ZegoCopyrightedMusicGetMusicByTokenResult(map['errorCode'], map['resource']);
+  }
+
+  @override
+  Future<int> getPreviousScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetPreviousScore', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(String resourceID) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetStandardPitch', {'resourceID': resourceID});
+    return ZegoCopyrightedMusicGetStandardPitchResult(map['errorCode'], map['pitch']);
+  }
+
+  @override
+  Future<int> getTotalScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetTotalScore', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicInitResult> initCopyrightedMusic(ZegoCopyrightedMusicConfig config) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicInitCopyrightedMusic', {'config': {
+          'user': {
+            'userID': config.user.userID,
+            'userName': config.user.userName
+          }
+        }});
+    return ZegoCopyrightedMusicInitResult(map['errorCode']);
+  }
+
+  @override
+  Future<int> pauseScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicPauseScore', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicQueryCache', {'songID': songID, 'type': type.index});
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(ZegoCopyrightedMusicRequestConfig config) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicRequestAccompaniment', {'config': {
+          'songID': config.songID,
+          'mode': config.mode.index
+        }});
+    return ZegoCopyrightedMusicRequestAccompanimentResult(map['errorCode'], map['resource']);
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicRequestAccompanimentClipResult> requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicRequestAccompanimentClip', {'config': {
+          'songID': config.songID,
+          'mode': config.mode.index
+        }});
+    return ZegoCopyrightedMusicRequestAccompanimentClipResult(map['errorCode'], map['resource']);
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicRequestSongResult> requestSong(ZegoCopyrightedMusicRequestConfig config) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicRequestSong', {'config': {
+          'songID': config.songID,
+          'mode': config.mode.index
+        }});
+    return ZegoCopyrightedMusicRequestSongResult(map['errorCode'], map['resource']);
+  }
+
+  @override
+  Future<int> resetScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicResetScore', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<int> resumeScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicResumeScore', {'resourceID': resourceID});
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicSendExtendedRequestResult> sendExtendedRequest(String command, String params) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicSendExtendedRequest', {
+          'command': command,
+          'params': params
+        });
+    return ZegoCopyrightedMusicSendExtendedRequestResult(map['errorCode'], map['command'], map['result']);
+  }
+
+  @override
+  Future<int> startScore(String resourceID, int pitchValueInterval) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicStartScore', {
+          'resourceID': resourceID,
+          'pitchValueInterval': pitchValueInterval
+        });
+  }
+
+  @override
+  Future<int> stopScore(String resourceID) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicStopScore', {
+          'resourceID': resourceID
+        });
+  }
+  
 }
