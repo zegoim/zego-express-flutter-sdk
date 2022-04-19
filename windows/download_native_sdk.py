@@ -13,7 +13,7 @@ def main():
     if os.path.exists(os.path.join(deps_dir, 'release')):
         print('[*] Native SDK already exists, exit!')
         return 0
-    with open(os.path.join(deps_dir, 'VERSION'), 'r', encoding='utf8') as f:
+    with open(os.path.join(deps_dir, 'VERSION'), 'r') as f:
         url = f.read().strip()
 
     artifact = os.path.join(deps_dir, url.split('/')[-1].split('?')[0])
