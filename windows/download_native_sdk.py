@@ -1,81 +1,35 @@
 from __future__ import print_function
-import os
-import json
-import sys
-import shutil
-import zipfile
-import ssl
-# To fix the issue of "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)>"
-ssl._create_default_https_context = ssl._create_unverified_context
-
-if (sys.version_info.major == 3):
-    import urllib.request
-else:
-    import urllib
+import os, sys, ssl, zipfile
 
 
 THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
-if __name__ == '__main__':
+def main():
+    # To fix the issue of "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] \
+    # certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)>"
+    ssl._create_default_https_context = ssl._create_unverified_context
 
-    deps_path = os.path.join(THIS_SCRIPT_PATH, 'deps')
-    dst_include_path = os.path.join(deps_path, 'include')
-    dst_libs_path = os.path.join(deps_path, 'lib')
+    deps_dir = os.path.join(THIS_SCRIPT_PATH, 'deps')
+    if os.path.exists(os.path.join(deps_dir, 'release')):
+        print('[*] Native SDK already exists, exit!')
+        return 0
+    with open(os.path.join(deps_dir, 'VERSION'), 'r', encoding='utf8') as f:
+        url = f.read().strip()
 
-    if os.path.exists(dst_include_path) and os.path.exists(dst_libs_path):
-        print('SDK has exists, ignore download')
-        exit(0)
-
-    try:
-        with open(os.path.join(deps_path, 'deps.json')) as json_reader:
-            json_str = json_reader.read()
-            json_config = json.loads(json_str)
-
-            sdk_version = json_config['version']
-
-    except Exception as e:
-        raise Exception("No deps json, throw error")
-
-    oss_url = 'https://storage.zego.im/rtc/ZegoExpressVideo/win/{}/ZegoExpressVideo-win-shared-cpp.zip'.format(sdk_version)
-    artifact_name = oss_url.split('/')[-1]
-    artifact_path = os.path.join(deps_path, artifact_name)
-
-    print('Download sdk from {}'.format(oss_url))
-    if (sys.version_info.major == 3):
-        urllib.request.urlretrieve(oss_url, artifact_path)
+    artifact = os.path.join(deps_dir, url.split('/')[-1].split('?')[0])
+    print('[*] Downloading native SDK from "{}"'.format(url))
+    if sys.version_info.major == 2:
+        import urllib
+        urllib.urlretrieve(url, artifact)
     else:
-        urllib.urlretrieve(oss_url, artifact_path)
+        import urllib.request
+        urllib.request.urlretrieve(url, artifact)
 
-    tmp_dst_unzip_folder = os.path.join(deps_path, '__tmp__')
-    if os.path.exists(tmp_dst_unzip_folder):
-        shutil.rmtree(tmp_dst_unzip_folder, ignore_errors=True)
-
-    with zipfile.ZipFile(artifact_path, 'r') as f:
-        print('unzip sdk')
-        f.extractall(tmp_dst_unzip_folder)
-
-    for folder in os.listdir(tmp_dst_unzip_folder):
-        product_folder = os.path.join(tmp_dst_unzip_folder, folder)
-        for f in os.listdir(product_folder):
-            if os.path.isdir(os.path.join(product_folder, f)):
-                shutil.copytree(os.path.join(product_folder, f), os.path.join(deps_path, f))
-            if os.path.isfile(os.path.join(product_folder, f)):
-                shutil.copyfile(os.path.join(product_folder, f), os.path.join(deps_path, f))
-    print("Download SDK success")
-
-    shutil.rmtree(tmp_dst_unzip_folder, ignore_errors=True)
-    os.remove(artifact_path)
+    with zipfile.ZipFile(artifact, 'r') as f:
+        f.extractall(deps_dir)
+    print('[*] Download SDK success!')
+    os.remove(artifact)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == '__main__':
+    sys.exit(main())

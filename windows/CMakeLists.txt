@@ -11,10 +11,10 @@ set(PLUGIN_NAME "zego_express_engine_plugin")
 execute_process(COMMAND python ${CMAKE_CURRENT_LIST_DIR}/download_native_sdk.py)
 
 # Setup deps: native SDK header and link search path
-include_directories(${CMAKE_CURRENT_LIST_DIR}/deps/Library/x64/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/deps/release/Library/x64/include)
 
 # It seems that flutter doesn't support windows on x86
-link_directories(${CMAKE_CURRENT_LIST_DIR}/deps/Library/x64/)
+link_directories(${CMAKE_CURRENT_LIST_DIR}/deps/release/Library/x64/)
 
 add_library(${PLUGIN_NAME} SHARED
   ${CMAKE_CURRENT_LIST_DIR}/zego_express_engine_plugin.cpp
@@ -37,6 +37,6 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin Zego
 
 # List of absolute paths to libraries that should be bundled with the plugin
 set(zego_express_engine_bundled_libraries
-  ${CMAKE_CURRENT_LIST_DIR}/deps/Library/x64/ZegoExpressEngine.dll
+  ${CMAKE_CURRENT_LIST_DIR}/deps/release/Library/x64/ZegoExpressEngine.dll
   PARENT_SCOPE
 )
