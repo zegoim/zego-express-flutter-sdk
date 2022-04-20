@@ -18,64 +18,8 @@
 #include "internal/ZegoExpressEngineMethodHandler.h"
 #include "internal/ZegoExpressEngineEventHandler.h"
 
-//namespace {
-
-class ZegoExpressEnginePlugin : public flutter::Plugin, public flutter::StreamHandler<flutter::EncodableValue> {
- 
-public:
-    static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
-
-    ZegoExpressEnginePlugin();
-
-  
-    virtual ~ZegoExpressEnginePlugin();
-
-protected:
-    virtual std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> OnListenInternal(
-        const flutter::EncodableValue* arguments,
-        std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& events) override;
-
-    // Implementation of the public interface, to be provided by subclasses.
-    virtual std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> OnCancelInternal(
-        const flutter::EncodableValue* arguments) override;
-
-
-private:
-    // Called when a method is called on this plugin's channel from Dart.
-    void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-
-private:
-
-private:
-    std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
-    std::map<std::string, std::function<void(flutter::EncodableMap& argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)> > methodMap_;
-};
-
-// static
-void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
-    auto methodChannel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>
-      (registrar->messenger(), "plugins.zego.im/zego_express_engine", &flutter::StandardMethodCodec::GetInstance());
-
-    auto eventChannel = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>
-      (registrar->messenger(), "plugins.zego.im/zego_express_event_handler", &flutter::StandardMethodCodec::GetInstance());
-
-    auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
-
-    eventChannel->SetStreamHandler(std::move(plugin));
-
-    methodChannel->SetMethodCallHandler(
-        [plugin_pointer = plugin.get()](const auto &call, auto result) {
-            plugin_pointer->HandleMethodCall(call, std::move(result));
-        });
-
-
-    registrar->AddPlugin(std::move(plugin));
-}
-
-ZegoExpressEnginePlugin::ZegoExpressEnginePlugin():methodMap_(
-    {
+std::map<std::string, std::function<void(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)> > G_MethodMap = {
        {"getVersion", std::bind(&ZegoExpressEngineMethodHandler::getVersion, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"setPluginVersion", std::bind(&ZegoExpressEngineMethodHandler::setPluginVersion, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"createEngine", std::bind(&ZegoExpressEngineMethodHandler::createEngine, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -222,8 +166,61 @@ ZegoExpressEnginePlugin::ZegoExpressEnginePlugin():methodMap_(
        {"copyrightedMusicSendExtendedRequest", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"copyrightedMusicStartScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStartScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"copyrightedMusicStopScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStopScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)}
-    }
-    ) {}
+    };
+
+class ZegoExpressEnginePlugin : public flutter::Plugin, public flutter::StreamHandler<flutter::EncodableValue> {
+ 
+public:
+    static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
+
+    ZegoExpressEnginePlugin();
+
+  
+    virtual ~ZegoExpressEnginePlugin();
+
+protected:
+    virtual std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> OnListenInternal(
+        const flutter::EncodableValue* arguments,
+        std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& events) override;
+
+    // Implementation of the public interface, to be provided by subclasses.
+    virtual std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> OnCancelInternal(
+        const flutter::EncodableValue* arguments) override;
+
+
+private:
+    // Called when a method is called on this plugin's channel from Dart.
+    void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+private:
+
+private:
+    std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
+};
+
+// static
+void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
+    auto methodChannel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>
+      (registrar->messenger(), "plugins.zego.im/zego_express_engine", &flutter::StandardMethodCodec::GetInstance());
+
+    auto eventChannel = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>
+      (registrar->messenger(), "plugins.zego.im/zego_express_event_handler", &flutter::StandardMethodCodec::GetInstance());
+
+    auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
+
+    eventChannel->SetStreamHandler(std::move(plugin));
+
+    methodChannel->SetMethodCallHandler(
+        [plugin_pointer = plugin.get()](const auto &call, auto result) {
+            plugin_pointer->HandleMethodCall(call, std::move(result));
+        });
+
+
+    registrar->AddPlugin(std::move(plugin));
+}
+
+ZegoExpressEnginePlugin::ZegoExpressEnginePlugin() {}
 
 ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {}
 
@@ -255,8 +252,8 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
         argument = std::get<flutter::EncodableMap>(*method_call.arguments());
     }
 
-    auto pair = methodMap_.find(method_call.method_name());
-    if (pair != methodMap_.end()) {
+    auto pair = G_MethodMap.find(method_call.method_name());
+    if (pair != G_MethodMap.end()) {
         pair->second(argument, std::move(result));
     }
     else {
@@ -270,3 +267,4 @@ void ZegoExpressEnginePluginRegisterWithRegistrar(
       flutter::PluginRegistrarManager::GetInstance()
           ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }
+
