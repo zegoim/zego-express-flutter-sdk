@@ -554,6 +554,32 @@ void ZegoExpressEngineEventHandler::onMediaPlayerRecvSEI(EXPRESS::IZegoMediaPlay
 	}
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerSoundLevelUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, float soundLevel)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMediaPlayerSoundLevelUpdate");
+		retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+		retMap[FTValue("soundLevel")] = FTValue(soundLevel);
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList)
+{
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onMediaPlayerFrequencySpectrumUpdate");
+		retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+		retMap[FTValue("soundLevel")] = FTValue(spectrumList);
+
+		eventSink_->Success(retMap);
+	}
+}
+
 void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param)
 {
 	if(eventSink_) {

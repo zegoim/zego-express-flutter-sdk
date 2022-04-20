@@ -29,12 +29,7 @@ void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argumen
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     // TODO: need to write getValue utils
-    unsigned int appID = 0;
-    if(std::holds_alternative<int32_t>(argument[FTValue("appID")])) {
-        appID = (unsigned int)std::get<int32_t>(argument[FTValue("appID")]);
-    } else {
-        appID = (unsigned int)std::get<int64_t>(argument[FTValue("appID")]);
-    }
+    unsigned int appID = argument[FTValue("appID")].LongValue();
     std::string appSign = std::get<std::string>(argument[FTValue("appSign")]);
     bool isTestEnv = std::get<bool>(argument[FTValue("isTestEnv")]);
     int scenario = std::get<int32_t>(argument[FTValue("scenario")]);
@@ -54,11 +49,7 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
     FTMap profileMap = std::get<FTMap>(argument[FTValue("profile")]);
     if(profileMap.size() > 0) {
         EXPRESS::ZegoEngineProfile profilePtr;
-        if(std::holds_alternative<int32_t>(profileMap[FTValue("appID")])) {
-            profilePtr.appID = (unsigned int)std::get<int32_t>(profileMap[FTValue("appID")]);
-        } else {
-            profilePtr.appID = (unsigned int)std::get<int64_t>(profileMap[FTValue("appID")]);
-        }
+        profilePtr.appID = profileMap[FTValue("appID")].LongValue();
         if (!profileMap[FTValue("appSign")].IsNull()) {
             profilePtr.appSign = std::get<std::string>(profileMap[FTValue("appSign")]);
         }  
@@ -201,7 +192,7 @@ void ZegoExpressEngineMethodHandler::switchRoom(flutter::EncodableMap& argument,
         if (configMap.size() > 0) {
             configPtr = std::make_unique<EXPRESS::ZegoRoomConfig>();
 
-            configPtr->maxMemberCount = (unsigned int)std::get<int64_t>(configMap[FTValue("maxMemberCount")]);
+            configPtr->maxMemberCount = configMap[FTValue("maxMemberCount")].LongValue();
             configPtr->isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = std::get<std::string>(configMap[FTValue("token")]);
         }
@@ -1007,13 +998,7 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerSeekTo(flutter::EncodableM
     if (player) {
 
         unsigned int audioEffectID = (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
-        unsigned long long millisecond = 0;
-        if (std::holds_alternative<int32_t>(argument[FTValue("millisecond")])) {
-            millisecond = (unsigned long long)std::get<int32_t>(argument[FTValue("millisecond")]);
-        }
-        else {
-            millisecond = (unsigned long long)std::get<int64_t>(argument[FTValue("millisecond")]);
-        }
+        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
 
         auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
         player->seekTo(audioEffectID, millisecond, [=](int errorCode) {
@@ -1212,13 +1197,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceFromMediaData(flutte
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if(mediaPlayer) {
-        uint64_t startPosition = 0;
-        if (std::holds_alternative<int32_t>(argument[FTValue("startPosition")])) {
-            startPosition = (unsigned long long)std::get<int32_t>(argument[FTValue("startPosition")]);
-        }
-        else {
-            startPosition = (unsigned long long)std::get<int64_t>(argument[FTValue("startPosition")]);
-        }
+        uint64_t startPosition = argument[FTValue("startPosition")].LongValue();
 
         auto mediaData = std::get<std::vector<uint8_t>>(argument[FTValue("mediaData")]);
 
@@ -1241,13 +1220,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithPosition(flutter
 
     if(mediaPlayer) {
         std::string path = std::get<std::string>(argument[FTValue("path")]);
-        uint64_t startPosition = 0;
-        if (std::holds_alternative<int32_t>(argument[FTValue("startPosition")])) {
-            startPosition = (unsigned long long)std::get<int32_t>(argument[FTValue("startPosition")]);
-        }
-        else {
-            startPosition = (unsigned long long)std::get<int64_t>(argument[FTValue("startPosition")]);
-        }
+        uint64_t startPosition = argument[FTValue("startPosition")].LongValue();
 
         auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
 
@@ -1319,13 +1292,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSeekTo(flutter::EncodableMap& ar
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if(mediaPlayer) {
-        unsigned long long millisecond = 0;
-        if (std::holds_alternative<int32_t>(argument[FTValue("millisecond")])) {
-            millisecond = (unsigned long long)std::get<int32_t>(argument[FTValue("millisecond")]);
-        }
-        else {
-            millisecond = (unsigned long long)std::get<int64_t>(argument[FTValue("millisecond")]);
-        }
+        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
 
         auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
         mediaPlayer->seekTo(millisecond, [=](int errorCode){
@@ -1576,6 +1543,124 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetPlaySpeed(flutter::EncodableM
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableSoundLevelMonitor(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        auto millisecond = argument[FTValue("millisecond")].LongValue();
+        mediaPlayer->enableSoundLevelMonitor(enable, millisecond);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableFrequencySpectrumMonitor(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        auto millisecond = argument[FTValue("millisecond")].LongValue();
+        mediaPlayer->enableFrequencySpectrumMonitor(enable, millisecond);
+    }
+
+    result->Success();
+}
+
+//void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+//{
+//    auto index = std::get<int32_t>(argument[FTValue("index")]);
+//    auto mediaPlayer = mediaPlayerMap_[index];
+//
+//    if (mediaPlayer) {
+//        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+//        mediaPlayer->takeSnapshot([=](int errorCode, void* image) {
+//            FTMap retMap;
+//
+//            retMap[FTValue("errorCode")] = FTValue(errorCode);
+//            HBITMAP hBitMap = HBITMAP(image);
+//            BITMAP bitmap;
+//            GetObject(hBitMap, sizeof(BITMAP), &bitmap);
+//            GetDIBits()
+//            retMap[FTValue("extendedData")] = FTValue(extendedData);
+//
+//            sharedPtrResult->Success(retMap);
+//            });
+//    }
+//
+//    result->Success();
+//}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetNetWorkResourceMaxCache(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto time = argument[FTValue("time")].LongValue();
+        auto size = argument[FTValue("size")].LongValue();
+        mediaPlayer->setNetWorkResourceMaxCache(time, size);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetNetWorkBufferThreshold(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto threshold = argument[FTValue("threshold")].LongValue();
+        mediaPlayer->setNetWorkBufferThreshold(threshold);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetNetWorkResourceCache(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        FTMap resultMap;
+        auto netWorkResourceCache = mediaPlayer->getNetWorkResourceCache();
+
+        resultMap[FTValue("time")] = FTValue((int64_t)netWorkResourceCache->time);
+        resultMap[FTValue("size")] = FTValue((int64_t)netWorkResourceCache->size);
+        result->Success(resultMap);
+    }
+    else 
+    {
+        result->Error("mediaPlayerGetNetWorkResourceCache_Can_not_find_player", "Invoke `mediaPlayerGetNetWorkResourceCache` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableAccurateSeek(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        FTMap configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoAccurateSeekConfig config;
+        config.timeout = argument[FTValue("config")].LongValue();
+        mediaPlayer->enableAccurateSeek(enable, &config);
+
+        result->Success();
+    }
+    else
+    {
+        result->Error("mediaPlayerEnableAccurateSeek_Can_not_find_player", "Invoke `mediaPlayerEnableAccurateSeek` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -1822,3 +1907,391 @@ void ZegoExpressEngineMethodHandler::enableCamera(flutter::EncodableMap& argumen
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::createCopyrightedMusic(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto tmpCopyrightedMusic = EXPRESS::ZegoExpressSDK::getEngine()->createCopyrightedMusic();
+    if (tmpCopyrightedMusic != nullptr) {
+        copyrightedMusic_ = tmpCopyrightedMusic;
+        result->Success(FTValue(0));
+    }
+    else
+    {
+        result->Success(FTValue(-1));
+    }
+    
+}
+
+void ZegoExpressEngineMethodHandler::destroyCopyrightedMusic(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyCopyrightedMusic(copyrightedMusic_);
+        copyrightedMusic_ = nullptr;
+        result->Success();
+    }
+    else
+    {
+        result->Error("destroyCopyrightedMusic_Can_not_find_instance", "Invoke `destroyCopyrightedMusic` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicClearCache(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        copyrightedMusic_->clearCache();
+        result->Success();
+    }
+    else
+    {
+        result->Error("copyrightedMusicClearCache_Can_not_find_instance", "Invoke `copyrightedMusicClearCache` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicDownload(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->download(resourceID, [=](int errorCode) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            sharedPtrResult->Success(retMap);
+         });  
+    }
+    else
+    {
+        result->Error("copyrightedMusicDownload_Can_not_find_instance", "Invoke `copyrightedMusicDownload` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetAverageScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->getAverageScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetAverageScore_Can_not_find_instance", "Invoke `copyrightedMusicGetAverageScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetCacheSize(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto ret = copyrightedMusic_->getCacheSize();
+        result->Success(FTValue((int64_t)ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetCacheSize_Can_not_find_instance", "Invoke `copyrightedMusicGetCacheSize` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetCurrentPitch(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->getCurrentPitch(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetCurrentPitch_Can_not_find_instance", "Invoke `copyrightedMusicGetCurrentPitch` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetDuration(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->getDuration(resourceID);
+        result->Success(FTValue((int64_t)ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetDuration_Can_not_find_instance", "Invoke `copyrightedMusicGetDuration` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetKrcLyricByToken(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto krcToken = std::get<std::string>(argument[FTValue("krcToken")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getKrcLyricByToken(krcToken, [=](int errorCode, std::string lyrics) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("lyrics")] = FTValue(lyrics);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetKrcLyricByToken_Can_not_find_instance", "Invoke `copyrightedMusicGetKrcLyricByToken` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetLrcLyric(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto songID = std::get<std::string>(argument[FTValue("songID")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getLrcLyric(songID, [=](int errorCode, std::string lyrics) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("lyrics")] = FTValue(lyrics);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetLrcLyric_Can_not_find_instance", "Invoke `copyrightedMusicGetLrcLyric` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetMusicByToken(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto shareToken = std::get<std::string>(argument[FTValue("shareToken")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getMusicByToken(shareToken, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetMusicByToken_Can_not_find_instance", "Invoke `copyrightedMusicGetMusicByToken` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetPreviousScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->getPreviousScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetPreviousScore_Can_not_find_instance", "Invoke `copyrightedMusicGetPreviousScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetStandardPitch(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getStandardPitch(resourceID, [=](int errorCode, std::string pitch) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("pitch")] = FTValue(pitch);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetStandardPitch_Can_not_find_instance", "Invoke `copyrightedMusicGetStandardPitch` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetTotalScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->getTotalScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetTotalScore_Can_not_find_instance", "Invoke `copyrightedMusicGetTotalScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicInitCopyrightedMusic(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicConfig config;
+        auto userMap = std::get<FTMap>(configMap[FTValue("user")]);
+        config.user.userID = std::get<std::string>(userMap[FTValue("userID")]);
+        config.user.userName = std::get<std::string>(userMap[FTValue("userName")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->initCopyrightedMusic(config, [=](int errorCode) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicInitCopyrightedMusic_Can_not_find_instance", "Invoke `copyrightedMusicInitCopyrightedMusic` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicPauseScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->pauseScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicPauseScore_Can_not_find_instance", "Invoke `copyrightedMusicPauseScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCache(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto songID = std::get<std::string>(argument[FTValue("songID")]);
+        auto type = std::get<int32_t>(argument[FTValue("type")]);
+        auto ret = copyrightedMusic_->queryCache(songID, (EXPRESS::ZegoCopyrightedMusicType)type);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicQueryCache_Can_not_find_instance", "Invoke `copyrightedMusicQueryCache` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicRequestAccompaniment(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicRequestConfig config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.mode = (EXPRESS::ZegoCopyrightedMusicBillingMode)std::get<int32_t>(configMap[FTValue("mode")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->requestAccompaniment(config, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+         });
+    }
+    else
+    {
+        result->Error("copyrightedMusicRequestAccompaniment_Can_not_find_instance", "copyrightedMusicRequestAccompaniment `copyrightedMusicInitCopyrightedMusic` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicRequestAccompanimentClip(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicRequestConfig config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.mode = (EXPRESS::ZegoCopyrightedMusicBillingMode)std::get<int32_t>(configMap[FTValue("mode")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->requestAccompanimentClip(config, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicRequestAccompanimentClip_Can_not_find_instance", "copyrightedMusicRequestAccompanimentClip `copyrightedMusicInitCopyrightedMusic` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicRequestSong(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicRequestConfig config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.mode = (EXPRESS::ZegoCopyrightedMusicBillingMode)std::get<int32_t>(configMap[FTValue("mode")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->requestSong(config, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicRequestSong_Can_not_find_instance", "copyrightedMusicRequestSong `copyrightedMusicInitCopyrightedMusic` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicResetScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->resetScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicResetScore_Can_not_find_instance", "Invoke `copyrightedMusicResetScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicResumeScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->resumeScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicResumeScore_Can_not_find_instance", "Invoke `copyrightedMusicResumeScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto command = std::get<std::string>(argument[FTValue("command")]);
+        auto params = std::get<std::string>(argument[FTValue("params")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->sendExtendedRequest(command, params, [=](int errorCode, std::string command, std::string result) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("command")] = FTValue(command);
+            retMap[FTValue("result")] = FTValue(result);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicSendExtendedRequest_Can_not_find_instance", "copyrightedMusicSendExtendedRequest `copyrightedMusicInitCopyrightedMusic` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicStartScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto pitchValueInterval = std::get<int32_t>(argument[FTValue("pitchValueInterval")]);
+        auto ret = copyrightedMusic_->startScore(resourceID, pitchValueInterval);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicStartScore_Can_not_find_instance", "Invoke `copyrightedMusicStartScore` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicStopScore(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->stopScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicStopScore_Can_not_find_instance", "Invoke `copyrightedMusicStopScore` but can't find specific instance");
+    }
+}

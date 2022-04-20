@@ -49,7 +49,8 @@ private:
 
 private:
     std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
-
+    std::map<std::string, std::function<void(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)> > methodMap_;
 };
 
 // static
@@ -73,7 +74,156 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWind
     registrar->AddPlugin(std::move(plugin));
 }
 
-ZegoExpressEnginePlugin::ZegoExpressEnginePlugin() {}
+ZegoExpressEnginePlugin::ZegoExpressEnginePlugin():methodMap_(
+    {
+       {"getVersion", std::bind(&ZegoExpressEngineMethodHandler::getVersion, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setPluginVersion", std::bind(&ZegoExpressEngineMethodHandler::setPluginVersion, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"createEngine", std::bind(&ZegoExpressEngineMethodHandler::createEngine, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"createEngineWithProfile", std::bind(&ZegoExpressEngineMethodHandler::createEngineWithProfile, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"destroyEngine", std::bind(&ZegoExpressEngineMethodHandler::destroyEngine, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setEngineConfig", std::bind(&ZegoExpressEngineMethodHandler::setEngineConfig, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setLogConfig", std::bind(&ZegoExpressEngineMethodHandler::setLogConfig, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"uploadLog", std::bind(&ZegoExpressEngineMethodHandler::uploadLog, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"loginRoom", std::bind(&ZegoExpressEngineMethodHandler::loginRoom, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"logoutRoom", std::bind(&ZegoExpressEngineMethodHandler::logoutRoom, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"switchRoom", std::bind(&ZegoExpressEngineMethodHandler::switchRoom, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setRoomExtraInfo", std::bind(&ZegoExpressEngineMethodHandler::setRoomExtraInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startPublishingStream", std::bind(&ZegoExpressEngineMethodHandler::startPublishingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"stopPublishingStream", std::bind(&ZegoExpressEngineMethodHandler::stopPublishingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setStreamExtraInfo", std::bind(&ZegoExpressEngineMethodHandler::setStreamExtraInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startPreview", std::bind(&ZegoExpressEngineMethodHandler::startPreview, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"stopPreview", std::bind(&ZegoExpressEngineMethodHandler::stopPreview, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setAudioConfig", std::bind(&ZegoExpressEngineMethodHandler::setAudioConfig, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"getAudioConfig", std::bind(&ZegoExpressEngineMethodHandler::getAudioConfig, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mutePublishStreamAudio", std::bind(&ZegoExpressEngineMethodHandler::mutePublishStreamAudio, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mutePublishStreamVideo", std::bind(&ZegoExpressEngineMethodHandler::mutePublishStreamVideo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setCaptureVolume", std::bind(&ZegoExpressEngineMethodHandler::setCaptureVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setAudioCaptureStereoMode", std::bind(&ZegoExpressEngineMethodHandler::setAudioCaptureStereoMode, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"sendSEI", std::bind(&ZegoExpressEngineMethodHandler::sendSEI, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableHardwareEncoder", std::bind(&ZegoExpressEngineMethodHandler::enableHardwareEncoder, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::startPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"stopPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::stopPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setPlayVolume", std::bind(&ZegoExpressEngineMethodHandler::setPlayVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setAllPlayStreamVolume", std::bind(&ZegoExpressEngineMethodHandler::setAllPlayStreamVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mutePlayStreamAudio", std::bind(&ZegoExpressEngineMethodHandler::mutePlayStreamAudio, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"muteAllPlayStreamAudio", std::bind(&ZegoExpressEngineMethodHandler::muteAllPlayStreamAudio, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableHardwareDecoder", std::bind(&ZegoExpressEngineMethodHandler::enableHardwareDecoder, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"muteMicrophone", std::bind(&ZegoExpressEngineMethodHandler::muteMicrophone, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"isMicrophoneMuted", std::bind(&ZegoExpressEngineMethodHandler::isMicrophoneMuted, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"muteSpeaker", std::bind(&ZegoExpressEngineMethodHandler::muteSpeaker, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"isSpeakerMuted", std::bind(&ZegoExpressEngineMethodHandler::isSpeakerMuted, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"getAudioDeviceList", std::bind(&ZegoExpressEngineMethodHandler::getAudioDeviceList, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"getDefaultAudioDeviceID", std::bind(&ZegoExpressEngineMethodHandler::getDefaultAudioDeviceID, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"useAudioDevice", std::bind(&ZegoExpressEngineMethodHandler::useAudioDevice, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startSoundLevelMonitor", std::bind(&ZegoExpressEngineMethodHandler::startSoundLevelMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"stopSoundLevelMonitor", std::bind(&ZegoExpressEngineMethodHandler::stopSoundLevelMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableHeadphoneMonitor", std::bind(&ZegoExpressEngineMethodHandler::enableHeadphoneMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setHeadphoneMonitorVolume", std::bind(&ZegoExpressEngineMethodHandler::setHeadphoneMonitorVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableAEC", std::bind(&ZegoExpressEngineMethodHandler::enableAEC, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setAECMode", std::bind(&ZegoExpressEngineMethodHandler::setAECMode, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableANS", std::bind(&ZegoExpressEngineMethodHandler::enableANS, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableTransientANS", std::bind(&ZegoExpressEngineMethodHandler::enableTransientANS, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setANSMode", std::bind(&ZegoExpressEngineMethodHandler::setANSMode, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setAudioEqualizerGain", std::bind(&ZegoExpressEngineMethodHandler::setAudioEqualizerGain, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setVoiceChangerPreset", std::bind(&ZegoExpressEngineMethodHandler::setVoiceChangerPreset, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setVoiceChangerParam", std::bind(&ZegoExpressEngineMethodHandler::setVoiceChangerParam, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setReverbPreset", std::bind(&ZegoExpressEngineMethodHandler::setReverbPreset, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setReverbAdvancedParam", std::bind(&ZegoExpressEngineMethodHandler::setReverbAdvancedParam, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setReverbEchoParam", std::bind(&ZegoExpressEngineMethodHandler::setReverbEchoParam, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableVirtualStereo", std::bind(&ZegoExpressEngineMethodHandler::enableVirtualStereo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enablePlayStreamVirtualStereo", std::bind(&ZegoExpressEngineMethodHandler::enablePlayStreamVirtualStereo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setElectronicEffects", std::bind(&ZegoExpressEngineMethodHandler::setElectronicEffects, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startMixerTask", std::bind(&ZegoExpressEngineMethodHandler::startMixerTask, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"stopMixerTask", std::bind(&ZegoExpressEngineMethodHandler::stopMixerTask, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setSEIConfig", std::bind(&ZegoExpressEngineMethodHandler::setSEIConfig, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setAudioDeviceVolume", std::bind(&ZegoExpressEngineMethodHandler::setAudioDeviceVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"getAudioDeviceVolume", std::bind(&ZegoExpressEngineMethodHandler::getAudioDeviceVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableAudioCaptureDevice", std::bind(&ZegoExpressEngineMethodHandler::enableAudioCaptureDevice, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableTrafficControl", std::bind(&ZegoExpressEngineMethodHandler::enableTrafficControl, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startRecordingCapturedData", std::bind(&ZegoExpressEngineMethodHandler::startRecordingCapturedData, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"stopRecordingCapturedData", std::bind(&ZegoExpressEngineMethodHandler::stopRecordingCapturedData, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"startAudioDataObserver", std::bind(&ZegoExpressEngineMethodHandler::startAudioDataObserver, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"enableCamera", std::bind(&ZegoExpressEngineMethodHandler::enableCamera, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       // Audio Effect Player
+       {"createAudioEffectPlayer", std::bind(&ZegoExpressEngineMethodHandler::createAudioEffectPlayer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"destroyAudioEffectPlayer", std::bind(&ZegoExpressEngineMethodHandler::destroyAudioEffectPlayer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerStart", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerStart, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerStop", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerStop, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerPause", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerPause, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerResume", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerResume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerStopAll", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerStopAll, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerPauseAll", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerPauseAll, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerResumeAll", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerResumeAll, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerSeekTo", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerSeekTo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerSetVolume", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerSetVolumeAll", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolumeAll, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerGetTotalDuration", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerGetTotalDuration, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerGetCurrentProgress", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerGetCurrentProgress, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerLoadResource", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerLoadResource, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerUnloadResource", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerUnloadResource, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"audioEffectPlayerSetPlaySpeed", std::bind(&ZegoExpressEngineMethodHandler::audioEffectPlayerSetPlaySpeed, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       // Media Player
+       {"createMediaPlayer", std::bind(&ZegoExpressEngineMethodHandler::createMediaPlayer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"destroyMediaPlayer", std::bind(&ZegoExpressEngineMethodHandler::destroyMediaPlayer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerLoadResource", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerLoadResource, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerLoadResourceFromMediaData", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceFromMediaData, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerLoadResourceWithPosition", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithPosition, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerStart", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerStart, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerStop", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerStop, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerPause", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerPause, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerResume", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerResume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSeekTo", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSeekTo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerEnableRepeat", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableRepeat, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerEnableAux", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableAux, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerMuteLocal", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerMuteLocal, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetVolume", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetPlayVolume", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetPlayVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetPublishVolume", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetPublishVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetProgressInterval", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetProgressInterval, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetPlayVolume", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetPlayVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetPublishVolume", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetPublishVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetTotalDuration", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetTotalDuration, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetCurrentProgress", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentProgress, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetAudioTrackCount", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetAudioTrackCount, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetAudioTrackIndex", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackIndex, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetVoiceChangerParam", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetVoiceChangerParam, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetCurrentState", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentState, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerEnableAccurateSeek", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableAccurateSeek, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerGetNetWorkResourceCache", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerGetNetWorkResourceCache, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetNetWorkBufferThreshold", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetNetWorkBufferThreshold, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetNetWorkResourceMaxCache", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetNetWorkResourceMaxCache, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerSetPlaySpeed", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetPlaySpeed, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       /*{"mediaPlayerTakeSnapshot", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},*/
+       {"mediaPlayerEnableFrequencySpectrumMonitor", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableFrequencySpectrumMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerEnableSoundLevelMonitor", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableSoundLevelMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       // Copyrighted Music
+       {"createCopyrightedMusic", std::bind(&ZegoExpressEngineMethodHandler::createCopyrightedMusic, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"destroyCopyrightedMusic", std::bind(&ZegoExpressEngineMethodHandler::destroyCopyrightedMusic, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicClearCache", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicClearCache, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicDownload", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicDownload, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetAverageScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetAverageScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetCacheSize", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetCacheSize, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetCurrentPitch", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetCurrentPitch, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetDuration", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetDuration, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetKrcLyricByToken", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetKrcLyricByToken, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetLrcLyric", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetLrcLyric, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetMusicByToken", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetMusicByToken, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetPreviousScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetPreviousScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetStandardPitch", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetStandardPitch, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicGetTotalScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicGetTotalScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicInitCopyrightedMusic", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicInitCopyrightedMusic, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicPauseScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicPauseScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicQueryCache", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicQueryCache, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicRequestAccompaniment", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicRequestAccompaniment, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicRequestAccompanimentClip", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicRequestAccompanimentClip, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicRequestSong", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicRequestSong, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicResetScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicResetScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicResumeScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicResumeScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicSendExtendedRequest", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicStartScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStartScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"copyrightedMusicStopScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStopScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)}
+    }
+    ) {}
 
 ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {}
 
@@ -105,386 +255,14 @@ void ZegoExpressEnginePlugin::HandleMethodCall(
         argument = std::get<flutter::EncodableMap>(*method_call.arguments());
     }
 
-    if(method_call.method_name() == "getVersion") {
-      ZegoExpressEngineMethodHandler::getInstance().getVersion(argument, std::move(result));
+    auto pair = methodMap_.find(method_call.method_name());
+    if (pair != methodMap_.end()) {
+        pair->second(argument, std::move(result));
     }
-    else if (method_call.method_name() == "setPluginVersion") {
-        ZegoExpressEngineMethodHandler::getInstance().setPluginVersion(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "createEngine") {
-        ZegoExpressEngineMethodHandler::getInstance().createEngine(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "createEngineWithProfile") {
-        ZegoExpressEngineMethodHandler::getInstance().createEngineWithProfile(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "destroyEngine") {
-        ZegoExpressEngineMethodHandler::getInstance().destroyEngine(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setEngineConfig") {
-        ZegoExpressEngineMethodHandler::getInstance().setEngineConfig(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setLogConfig") {
-        ZegoExpressEngineMethodHandler::getInstance().setLogConfig(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "uploadLog") {
-        ZegoExpressEngineMethodHandler::getInstance().uploadLog(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "loginRoom") {
-        ZegoExpressEngineMethodHandler::getInstance().loginRoom(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "logoutRoom") {
-        ZegoExpressEngineMethodHandler::getInstance().logoutRoom(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "switchRoom") {
-        ZegoExpressEngineMethodHandler::getInstance().switchRoom(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setRoomExtraInfo") {
-        ZegoExpressEngineMethodHandler::getInstance().setRoomExtraInfo(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "startPublishingStream") {
-        ZegoExpressEngineMethodHandler::getInstance().startPublishingStream(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "stopPublishingStream") {
-        ZegoExpressEngineMethodHandler::getInstance().stopPublishingStream(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setStreamExtraInfo") {
-        ZegoExpressEngineMethodHandler::getInstance().setStreamExtraInfo(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "startPreview") {
-        ZegoExpressEngineMethodHandler::getInstance().startPreview(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "stopPreview") {
-        ZegoExpressEngineMethodHandler::getInstance().stopPreview(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setAudioConfig") {
-        ZegoExpressEngineMethodHandler::getInstance().setAudioConfig(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "getAudioConfig") {
-        ZegoExpressEngineMethodHandler::getInstance().getAudioConfig(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "mutePublishStreamAudio") {
-        ZegoExpressEngineMethodHandler::getInstance().mutePublishStreamAudio(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "mutePublishStreamVideo") {
-        ZegoExpressEngineMethodHandler::getInstance().mutePublishStreamVideo(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setCaptureVolume") {
-        ZegoExpressEngineMethodHandler::getInstance().setCaptureVolume(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setAudioCaptureStereoMode") {
-        ZegoExpressEngineMethodHandler::getInstance().setAudioCaptureStereoMode(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "sendSEI") {
-        ZegoExpressEngineMethodHandler::getInstance().sendSEI(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableHardwareEncoder") {
-        ZegoExpressEngineMethodHandler::getInstance().enableHardwareEncoder(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "startPlayingStream") {
-        ZegoExpressEngineMethodHandler::getInstance().startPlayingStream(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "stopPlayingStream") {
-        ZegoExpressEngineMethodHandler::getInstance().stopPlayingStream(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setPlayVolume") {
-        ZegoExpressEngineMethodHandler::getInstance().setPlayVolume(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setAllPlayStreamVolume") {
-        ZegoExpressEngineMethodHandler::getInstance().setAllPlayStreamVolume(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "mutePlayStreamAudio") {
-        ZegoExpressEngineMethodHandler::getInstance().mutePlayStreamAudio(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "muteAllPlayStreamAudio") {
-        ZegoExpressEngineMethodHandler::getInstance().muteAllPlayStreamAudio(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableHardwareDecoder") {
-        ZegoExpressEngineMethodHandler::getInstance().enableHardwareDecoder(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "muteMicrophone") {
-        ZegoExpressEngineMethodHandler::getInstance().muteMicrophone(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "isMicrophoneMuted") {
-        ZegoExpressEngineMethodHandler::getInstance().isMicrophoneMuted(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "muteSpeaker") {
-        ZegoExpressEngineMethodHandler::getInstance().muteSpeaker(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "isSpeakerMuted") {
-        ZegoExpressEngineMethodHandler::getInstance().isSpeakerMuted(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "getAudioDeviceList") {
-        ZegoExpressEngineMethodHandler::getInstance().getAudioDeviceList(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "getDefaultAudioDeviceID") {
-        ZegoExpressEngineMethodHandler::getInstance().getDefaultAudioDeviceID(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "useAudioDevice") {
-        ZegoExpressEngineMethodHandler::getInstance().useAudioDevice(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "startSoundLevelMonitor") {
-        ZegoExpressEngineMethodHandler::getInstance().startSoundLevelMonitor(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "stopSoundLevelMonitor") {
-        ZegoExpressEngineMethodHandler::getInstance().stopSoundLevelMonitor(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableHeadphoneMonitor") {
-        ZegoExpressEngineMethodHandler::getInstance().enableHeadphoneMonitor(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setHeadphoneMonitorVolume") {
-        ZegoExpressEngineMethodHandler::getInstance().setHeadphoneMonitorVolume(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableAEC") {
-        ZegoExpressEngineMethodHandler::getInstance().enableAEC(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setAECMode") {
-        ZegoExpressEngineMethodHandler::getInstance().setAECMode(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableANS") {
-        ZegoExpressEngineMethodHandler::getInstance().enableANS(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableTransientANS") {
-        ZegoExpressEngineMethodHandler::getInstance().enableTransientANS(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setANSMode") {
-        ZegoExpressEngineMethodHandler::getInstance().setANSMode(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setAudioEqualizerGain") {
-        ZegoExpressEngineMethodHandler::getInstance().setAudioEqualizerGain(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setVoiceChangerPreset") {
-        ZegoExpressEngineMethodHandler::getInstance().setVoiceChangerPreset(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setVoiceChangerParam") {
-        ZegoExpressEngineMethodHandler::getInstance().setVoiceChangerParam(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setReverbPreset") {
-        ZegoExpressEngineMethodHandler::getInstance().setReverbPreset(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setReverbAdvancedParam") {
-        ZegoExpressEngineMethodHandler::getInstance().setReverbAdvancedParam(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setReverbEchoParam") {
-        ZegoExpressEngineMethodHandler::getInstance().setReverbEchoParam(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enableVirtualStereo") {
-        ZegoExpressEngineMethodHandler::getInstance().enableVirtualStereo(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "enablePlayStreamVirtualStereo") {
-        ZegoExpressEngineMethodHandler::getInstance().enablePlayStreamVirtualStereo(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "setElectronicEffects") {
-        ZegoExpressEngineMethodHandler::getInstance().setElectronicEffects(argument, std::move(result));
-    }
-
-    // Audio Effect Player
-    else if (method_call.method_name() == "createAudioEffectPlayer") {
-        ZegoExpressEngineMethodHandler::getInstance().createAudioEffectPlayer(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "destroyAudioEffectPlayer") {
-        ZegoExpressEngineMethodHandler::getInstance().destroyAudioEffectPlayer(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerStart") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerStart(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerStop") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerStop(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerPause") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerPause(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerResume") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerResume(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerStopAll") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerStopAll(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerPauseAll") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerPauseAll(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerResumeAll") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerResumeAll(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerSeekTo") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSeekTo(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerSetVolume") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSetVolume(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerSetVolumeAll") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSetVolumeAll(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerGetTotalDuration") {
-    ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerGetTotalDuration(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerGetCurrentProgress") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerGetCurrentProgress(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerLoadResource") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerLoadResource(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerUnloadResource") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerUnloadResource(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "audioEffectPlayerSetPlaySpeed") {
-        ZegoExpressEngineMethodHandler::getInstance().audioEffectPlayerSetPlaySpeed(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "createMediaPlayer")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().createMediaPlayer(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "destroyMediaPlayer")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().destroyMediaPlayer(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerLoadResource")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResource(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "mediaPlayerLoadResourceFromMediaData")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResourceFromMediaData(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "mediaPlayerLoadResourceWithPosition")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerLoadResourceWithPosition(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerStart")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerStart(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerStop")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerStop(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerPause")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerPause(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerResume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerResume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSeekTo")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSeekTo(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerEnableRepeat")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerEnableRepeat(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerEnableAux")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerEnableAux(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerMuteLocal")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerMuteLocal(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSetVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSetPlayVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetPlayVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSetPublishVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetPublishVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSetProgressInterval")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetProgressInterval(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerGetPlayVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetPlayVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerGetPublishVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetPublishVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerGetTotalDuration")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetTotalDuration(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerGetCurrentProgress")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetCurrentProgress(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerGetAudioTrackCount")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetAudioTrackCount(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSetAudioTrackIndex")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetAudioTrackIndex(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerSetVoiceChangerParam")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetVoiceChangerParam(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "mediaPlayerGetCurrentState")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerGetCurrentState(argument, std::move(result));
-    }
-    else if (method_call.method_name() == "mediaPlayerSetPlaySpeed")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().mediaPlayerSetPlaySpeed(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "startMixerTask")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().startMixerTask(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "stopMixerTask")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().stopMixerTask(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "setSEIConfig")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().setSEIConfig(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "setAudioDeviceVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().setAudioDeviceVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "getAudioDeviceVolume")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().getAudioDeviceVolume(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "enableAudioCaptureDevice")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().enableAudioCaptureDevice(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "enableTrafficControl")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().enableTrafficControl(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "startRecordingCapturedData")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().startRecordingCapturedData(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "stopRecordingCapturedData")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().stopRecordingCapturedData(argument, std::move(result));
-    }
-    else if(method_call.method_name() == "startAudioDataObserver")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().startAudioDataObserver(argument, std::move(result));
-    }
-
-    else if (method_call.method_name() == "enableCamera")
-    {
-        ZegoExpressEngineMethodHandler::getInstance().enableCamera(argument, std::move(result));
-    }
-
     else {
-      result->NotImplemented();
+        result->NotImplemented();
     }
 }
-
-//}  // namespace
 
 void ZegoExpressEnginePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {

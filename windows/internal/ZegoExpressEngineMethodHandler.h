@@ -237,6 +237,21 @@ public:
     void mediaPlayerSetPlaySpeed(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    void mediaPlayerEnableSoundLevelMonitor(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableFrequencySpectrumMonitor(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    /*void mediaPlayerTakeSnapshot(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);*/
+    void mediaPlayerSetNetWorkResourceMaxCache(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerSetNetWorkBufferThreshold(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerGetNetWorkResourceCache(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableAccurateSeek(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void startMixerTask(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopMixerTask(flutter::EncodableMap& argument,
@@ -258,10 +273,63 @@ public:
 
     void enableCamera(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+    /* Copyrighted Music*/
+    void createCopyrightedMusic(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void destroyCopyrightedMusic(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicClearCache(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicDownload(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetAverageScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetCacheSize(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetCurrentPitch(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetDuration(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetKrcLyricByToken(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetLrcLyric(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetMusicByToken(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetPreviousScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetStandardPitch(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetTotalScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicInitCopyrightedMusic(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicPauseScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicQueryCache(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicRequestAccompaniment(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicRequestAccompanimentClip(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicRequestSong(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicResetScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicResumeScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicSendExtendedRequest(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicStartScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicStopScore(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 private:
     ZegoExpressEngineMethodHandler() = default;
 
 private:
     std::unordered_map<int, EXPRESS::IZegoAudioEffectPlayer *> audioEffectPlayerMap_;
     std::unordered_map<int, EXPRESS::IZegoMediaPlayer *> mediaPlayerMap_;
+    EXPRESS::IZegoCopyrightedMusic* copyrightedMusic_ = nullptr;
 };
