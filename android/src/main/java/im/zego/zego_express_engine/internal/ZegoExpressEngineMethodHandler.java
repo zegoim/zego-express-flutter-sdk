@@ -3114,6 +3114,31 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerLoadCopyrightedMusicResourceWithPosition(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            int startPosition = ZegoUtils.intValue((Number) call.argument("startPosition"));
+            String resourceID = call.argument("resourceID");
+
+            mediaPlayer.loadCopyrightedMusicResourceWithPosition(resourceID, startPosition, new IZegoMediaPlayerLoadResourceCallback() {
+                @Override
+                public void onLoadResourceCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    try {
+                        result.success(resultMap);
+                    } catch (Exception e) {
+                        ZegoLog.error("[onLoadResourceCallback] Receive multiple callbacks");
+                    }
+                }
+            });
+        }
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")

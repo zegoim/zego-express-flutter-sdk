@@ -2562,6 +2562,15 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
       'millisecond': millisecond
     });
   }
+
+  @override
+  Future<ZegoMediaPlayerLoadResourceResult> loadCopyrightedMusicResourceWithPosition(String resourceID, int startPosition) async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerLoadCopyrightedMusicResourceWithPosition', {
+      'index': _index,
+      'resourceID': resourceID,
+      'startPosition': startPosition
+    });
+  }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {

@@ -1661,6 +1661,27 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableAccurateSeek(flutter::Enco
     }
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerLoadCopyrightedMusicResourceWithPosition(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if(mediaPlayer) {
+        std::string resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        uint64_t startPosition = argument[FTValue("startPosition")].LongValue();
+
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+
+        mediaPlayer->loadCopyrightedMusicResourceWithPosition(resourceID, startPosition, [=](int errorCode) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+            sharedPtrResult->Success(retMap);
+        });
+    }
+}
+
 void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {

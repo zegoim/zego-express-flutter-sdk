@@ -2741,6 +2741,24 @@
     result(nil);
 }
 
+- (void)mediaPlayerLoadCopyrightedMusicResourceWithPosition:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+
+        NSString *resourceID = call.arguments[@"resourceID"];
+        int startPosition = [ZegoUtils intValue:call.arguments[@"startPosition"]];
+
+        [mediaPlayer loadCopyrightedMusicResourceWithPosition:resourceID startPosition:startPosition callback:^(int errorCode) {
+            result(@{
+                @"errorCode": @(errorCode)
+            });
+        }];
+    }
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {

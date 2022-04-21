@@ -140,6 +140,7 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
        /*{"mediaPlayerTakeSnapshot", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},*/
        {"mediaPlayerEnableFrequencySpectrumMonitor", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableFrequencySpectrumMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"mediaPlayerEnableSoundLevelMonitor", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerEnableSoundLevelMonitor, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"mediaPlayerLoadCopyrightedMusicResourceWithPosition", std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerLoadCopyrightedMusicResourceWithPosition, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        // Copyrighted Music
        {"createCopyrightedMusic", std::bind(&ZegoExpressEngineMethodHandler::createCopyrightedMusic, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"destroyCopyrightedMusic", std::bind(&ZegoExpressEngineMethodHandler::destroyCopyrightedMusic, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},

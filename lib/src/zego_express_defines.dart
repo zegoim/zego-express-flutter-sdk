@@ -2249,6 +2249,19 @@ abstract class ZegoMediaPlayer {
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResourceFromMediaData(Uint8List mediaData, int startPosition);
 
+  /// Load copyrighted music resource.
+  ///
+  /// Available: since 2.14.0
+  /// Description: Load media resources, and specify the progress, in milliseconds, at which playback begins.
+  /// Use case: Developers can load the resource ID of copyrighted music.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  ///
+  /// - [resourceID] The resource ID obtained from the copyrighted music module.
+  /// - [startPosition] The progress at which the playback started.
+  /// - Returns Notification of resource loading results
+  Future<ZegoMediaPlayerLoadResourceResult> loadCopyrightedMusicResourceWithPosition(String resourceID, int startPosition);
+
   /// Start playing.
   ///
   /// You need to load resources before playing
