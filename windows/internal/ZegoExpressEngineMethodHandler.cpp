@@ -1933,6 +1933,7 @@ void ZegoExpressEngineMethodHandler::createCopyrightedMusic(flutter::EncodableMa
     auto tmpCopyrightedMusic = EXPRESS::ZegoExpressSDK::getEngine()->createCopyrightedMusic();
     if (tmpCopyrightedMusic != nullptr) {
         copyrightedMusic_ = tmpCopyrightedMusic;
+        copyrightedMusic_->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
         result->Success(FTValue(0));
     }
     else

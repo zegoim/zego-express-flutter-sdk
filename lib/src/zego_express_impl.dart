@@ -2282,19 +2282,15 @@ class ZegoExpressImpl {
 
       /* Copyrighted Music */
       case 'onDownloadProgressUpdate':
-        if (ZegoExpressEngine.onDownloadProgressUpdate == null) return;
+        if (ZegoExpressEngine.onDownloadProgressUpdate == null || copyrightedMusicImpl == null) return;
 
-        if (ZegoExpressImpl.copyrightedMusicImpl != null) {
-          ZegoExpressEngine.onDownloadProgressUpdate!(ZegoExpressImpl.copyrightedMusicImpl!, map['resourceID'], map['progressRate']);
-        }       
+        ZegoExpressEngine.onDownloadProgressUpdate!(copyrightedMusicImpl!, map['resourceID'], map['progressRate']);    
         break;
       
       case 'onCurrentPitchValueUpdate':
-        if (ZegoExpressEngine.onCurrentPitchValueUpdate == null) return;
+        if (ZegoExpressEngine.onCurrentPitchValueUpdate == null || copyrightedMusicImpl == null) return;
 
-        if (ZegoExpressImpl.copyrightedMusicImpl != null) {
-          ZegoExpressEngine.onCurrentPitchValueUpdate!(ZegoExpressImpl.copyrightedMusicImpl!, map['resourceID'], map['currentDuration'], map['pitchValue']);
-        }       
+        ZegoExpressEngine.onCurrentPitchValueUpdate!(copyrightedMusicImpl!, map['resourceID'], map['currentDuration'], map['pitchValue']);       
         break;
 
       default:

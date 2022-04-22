@@ -17,6 +17,7 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoAudioDataHandler
     , public EXPRESS::IZegoDataRecordEventHandler
     , public EXPRESS::IZegoApiCalledEventHandler
+    , public EXPRESS::IZegoCopyrightedMusicEventHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -137,6 +138,12 @@ protected:
     void onCapturedDataRecordStateUpdate(EXPRESS::ZegoDataRecordState state, int errorCode, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
 
     void onCapturedDataRecordProgressUpdate(EXPRESS::ZegoDataRecordProgress progress, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
+
+protected:
+
+    void onDownloadProgressUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, float progressRate) override;
+
+    void onCurrentPitchValueUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, int currentDuration, int pitchValue) override;
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;

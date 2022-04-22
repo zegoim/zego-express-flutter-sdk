@@ -713,3 +713,30 @@ void ZegoExpressEngineEventHandler::onCapturedDataRecordProgressUpdate(EXPRESS::
         eventSink_->Success(retMap);
     }
 }
+
+void ZegoExpressEngineEventHandler::onDownloadProgressUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, float progressRate)
+{
+	if (eventSink_) {
+        FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onDownloadProgressUpdate");
+
+        retMap[FTValue("resourceID")] = FTValue(resourceID);
+        retMap[FTValue("progressRate")] = FTValue(progressRate);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onCurrentPitchValueUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, int currentDuration, int pitchValue) 
+{
+		if (eventSink_) {
+        FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onCurrentPitchValueUpdate");
+
+        retMap[FTValue("resourceID")] = FTValue(resourceID);
+        retMap[FTValue("currentDuration")] = FTValue(currentDuration);
+		retMap[FTValue("pitchValue")] = FTValue(pitchValue);
+
+        eventSink_->Success(retMap);
+    }
+}
