@@ -2565,11 +2565,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<ZegoMediaPlayerLoadResourceResult> loadCopyrightedMusicResourceWithPosition(String resourceID, int startPosition) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerLoadCopyrightedMusicResourceWithPosition', {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod('mediaPlayerLoadCopyrightedMusicResourceWithPosition', {
       'index': _index,
       'resourceID': resourceID,
       'startPosition': startPosition
     });
+    return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
 }
 
