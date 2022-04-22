@@ -3115,7 +3115,7 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void mediaPlayerLoadCopyrightedMusicResourceWithPosition(MethodCall call, Result result) {
+    public static void mediaPlayerLoadCopyrightedMusicResourceWithPosition(MethodCall call, final Result result) {
 
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
