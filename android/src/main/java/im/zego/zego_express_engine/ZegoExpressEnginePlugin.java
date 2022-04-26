@@ -69,6 +69,8 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
         this.eventChannel.setStreamHandler(null);
         this.eventChannel = null;
+
+        this.pluginBinding = null;
     }
 
 
