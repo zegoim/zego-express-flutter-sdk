@@ -3007,6 +3007,23 @@
     }
 }
 
+- (void)audioEffectPlayerSetPlaySpeed:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        float speed = [ZegoUtils floatValue:call.arguments[@"speed"]];
+        [audioEffectPlayer setPlaySpeed: speed audioEffectID: audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPlaySpeed_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPlaySpeed` but can't find specific player" details:nil]);
+    }
+}
+
 
 #pragma mark - Record
 

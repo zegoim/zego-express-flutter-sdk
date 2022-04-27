@@ -3389,6 +3389,23 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPlaySpeed(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = ZegoUtils.intValue((Number) call.argument("audioEffectID"));
+            float speed = ZegoUtils.floatValue((Number) call.argument("speed"));
+            audioEffectPlayer.setPlaySpeed(audioEffectID, speed);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPlaySpeed_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPlaySpeed` but can't find specific player", null);
+        }
+    }
 
     /* Record */
 

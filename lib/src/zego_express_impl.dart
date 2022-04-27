@@ -1459,6 +1459,18 @@ class ZegoExpressImpl {
             Map<String, dynamic>.from(extendedData));
         break;
 
+      case 'onRoomStateChanged':
+        if (ZegoExpressEngine.onRoomStateChanged == null) return;
+
+        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+
+        ZegoExpressEngine.onRoomStateChanged!(
+            map['roomID'],
+            ZegoRoomStateChangedReason.values[map['reason']],
+            map['errorCode'],
+            Map<String, dynamic>.from(extendedData));
+        break;
+
       case 'onRoomUserUpdate':
         if (ZegoExpressEngine.onRoomUserUpdate == null) return;
 
@@ -1633,6 +1645,20 @@ class ZegoExpressImpl {
             map['stream'], infoList);
         break;
 
+      case 'onPublisherVideoEncoderChanged':
+        if (ZegoExpressEngine.onPublisherVideoEncoderChanged == null) return;
+
+        ZegoExpressEngine.onPublisherVideoEncoderChanged!(ZegoVideoCodecID.values[map['fromCodecID']],
+            ZegoVideoCodecID.values[map['toCodecID']], ZegoPublishChannel.values[map['channel']]);
+        break;
+
+      case 'onPublisherStreamEvent':
+        if (ZegoExpressEngine.onPublisherStreamEvent == null) return;
+
+        ZegoExpressEngine.onPublisherStreamEvent!(ZegoStreamEvent.values[map['eventID']],
+            map['streamID'], map['extraInfo']);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -1725,6 +1751,13 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onPlayerLowFpsWarning!(
             ZegoVideoCodecID.values[map['codecID']], map['streamID']);
+        break;
+
+      case 'onPlayerStreamEvent':
+        if (ZegoExpressEngine.onPlayerStreamEvent == null) return;
+
+        ZegoExpressEngine.onPlayerStreamEvent!(
+            ZegoStreamEvent.values[map['eventID']], map['streamID'], map['extraInfo']);
         break;
 
       /* Mixer*/
@@ -2652,6 +2685,16 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   @override
   int getIndex() {
     return _index;
+  }
+
+  @override
+  Future<void> setPlaySpeed(int audioEffectID, double speed) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('audioEffectPlayerSetPlaySpeed', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'speed': speed
+    });
   }
 }
 

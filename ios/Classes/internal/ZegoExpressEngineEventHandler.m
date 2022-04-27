@@ -110,6 +110,33 @@
     }
 }
 
+- (void)onRoomStateChanged:(ZegoRoomStateChangedReason)reason errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRoomStateChanged] reason: %d, errorCode: %d, roomID: %@", (int)reason, errorCode, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        NSString *extendedDataJsonString = @"{}";
+        if (extendedData) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+            if (!jsonData) {
+                ZGLog(@"[onRoomStateChanged] extendedData error: %@", error);
+            }else{
+                extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+        }
+
+        sink(@{
+            @"method": @"onRoomStateChanged",
+            @"reason": @(reason),
+            @"errorCode": @(errorCode),
+            @"extendedData": extendedDataJsonString,
+            @"roomID": roomID
+        });
+    }
+}
+
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType userList:(NSArray<ZegoUser *> *)userList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onRoomUserUpdate] updateType: %@, usersCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)userList.count, roomID);
@@ -404,6 +431,21 @@
     }
 }
 
+- (void)onPublisherStreamEvent:(ZegoStreamEvent)eventID streamID:(NSString *)streamID extraInfo:(NSString *)extraInfo {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherStreamEvent] eventID: %d, streamID: %s, extraInfo: %s", (int)eventID, streamID, extraInfo;
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherStreamEvent",
+            @"eventID": @(eventID),
+            @"streamID": streamID,
+            @"extraInfo": extraInfo
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -565,6 +607,21 @@
             @"method": @"onPlayerLowFpsWarning",
             @"codecID": @(codecID),
             @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerStreamEvent:(ZegoStreamEvent)eventID streamID:(NSString *)streamID extraInfo:(NSString *)extraInfo {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerStreamEvent] eventID: %d,streamID: %@, extraInfo: %@", (int)eventID, streamID, extraInfo);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerStreamEvent",
+            @"eventID": @(eventID),
+            @"streamID": streamID,
+            @"extraInfo": extraInfo
         });
     }
 }

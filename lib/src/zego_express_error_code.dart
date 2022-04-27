@@ -37,6 +37,12 @@ class ZegoErrorCode {
   /// Illegal param.
   static const int CommonIllegalParam                                                     = 1000017;
 
+  /// Description: The Input CDN URL is too long. <br>Cause: The length of URL parameter passed in when calling [enablePublishDirectToCDN] or [startPlayingStream] exceeds the limit. <br>Solutions: URL length should be less than 1024 bytes.
+  static const int CommonCdnUrlTooLong                                                    = 1000018;
+
+  /// Description: The Input CDN auth param is too long. <br>Cause: The length of auth parameter passed in when calling [enablePublishDirectToCDN] or [startPlayingStream] exceeds the limit. <br>Solutions: Auth param length should be less than 1024 bytes.
+  static const int CommonCdnAuthParamTooLong                                              = 1000019;
+
   /// Description: This AppID has been removed from production. <br>Solutions: Please check the status of the AppID on the ZEGO official website console or contact ZEGO technical support.
   static const int CommonAppOfflineError                                                  = 1000037;
 
@@ -52,7 +58,7 @@ class ZegoErrorCode {
   /// Server dispatching exception. Please contact ZEGO technical support to solve the problem. This error code is deprecated.
   static const int CommonDispatchError                                                    = 1000065;
 
-  /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Please check whether the Android JVM environment is normal or contact ZEGO technical support.
+  /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Solutions: Please check whether the Android JVM environment is normal or contact ZEGO technical support.
   static const int CommonInnerNullptr                                                     = 1000090;
 
   /// AppID cannot be 0. Please check if the AppID is correct.
@@ -187,6 +193,21 @@ class ZegoErrorCode {
   /// Description: This method has been deprecated after version 2.9.0. <br>Cause: This method has been deprecated after version 2.9.0. <br>Solutions: Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room.
   static const int RoomMultiRoomDeprecated                                                = 1002065;
 
+  /// Description: If the user is in the server blacklist when logging in to the room, this error code will be returned, indicating that it is forbidden to log in to the room. <br>Cause: The user is currently in the server blacklist. <br>Solutions: Please contact ZEGO technical support.
+  static const int RoomUserInBlacklist                                                    = 1002066;
+
+  /// Description: This error code is returned if the user does not pass [AppSign] when creating the engine or [Token] when logging in to the room. <br>Cause: The Token is not transmitted in the login room. <br>Solutions: Set the [Token] when you login to the room.
+  static const int RoomNoToken                                                            = 1002067;
+
+  /// Description: The interface is called more frequently than the upper limit. <br>Cause: This application calls this interface too often. <br>Solutions: Please control the frequency of calls to this interface. Please refer to https://docs.zegocloud.com/article/7612 for details.
+  static const int RoomAppCallApiTooFrequent                                              = 1002071;
+
+  /// Description: The frequency of calls to the interface by users in the room exceeds the upper limit. <br>Cause: The interface is called too often by users in the room. <br>Solutions: Please control the frequency of calls to this interface by users in the room. Please refer to https://docs.zegocloud.com/article/7612 for details.
+  static const int RoomRoomCallApiTooFrequent                                             = 1002072;
+
+  /// Description: Room signalling type interfaces are called more frequently than the upper limit. <br>Cause: This application calls the room signalling type interface too often. (e.g., [sendCustomCommand] [sendBroadcastMessage]) <br>Solutions: Please control the frequency of application calls to the room signalling type interface. Please refer to https://docs.zegocloud.com/article/7612 for details.
+  static const int RoomAppCallTooFrequent                                                 = 1002073;
+
   /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError                                                         = 1002099;
 
@@ -232,6 +253,12 @@ class ZegoErrorCode {
   /// Description: Failed to send SEI. <br>Cause: The input data exceeds the length limit. <br>Solutions: The length of the sent SEI data should be less than 4096 bytes.
   static const int PublisherSeiDataTooLong                                                = 1003044;
 
+  /// Description: Failed to send audio side info. <br>Cause: data is empty. <br>Solutions: Incoming non-empty data.
+  static const int PublisherAudioSideDataNull                                             = 1003045;
+
+  /// Description: Failed to send audio side info. <br>Cause: The input data exceeds the length limit. <br>Solutions: The length of the sent audio side data should be less than 1024 bytes.
+  static const int PublisherAudioSideDataTooLong                                          = 1003046;
+
   /// The extra info of the stream is null.
   static const int PublisherExtraInfoNull                                                 = 1003050;
 
@@ -262,6 +289,9 @@ class ZegoErrorCode {
   /// Description: StartPlayingStream failed.<br>Caution: In multi-room mode, the publish-stream function is called incorrectly.<br>Solutions: In multi-room mode, A publish-stream function parameter 'roomID' cannot be empty.
   static const int PublisherErrorPublishWithRoomIdIsNullWhenUsingMultiRoom                = 1003071;
 
+  /// Description: Push-pull flow authentication is incorrect. <br>Caution: An [appSign] error was passed when creating the engine, or a Token error or timeout was passed when logging into the room. <br>Solutions: Pass the correct [Token] upon login, or invoke [renewToken] when recive [onRoomTokenWillExpire] callback.
+  static const int PublisherErrorDispatchAuthError                                        = 1003072;
+
   /// Description: Unsupported video encoder.<br>Caution: There is no selected video encoder in the current SDK.<br>Solutions: Please contact ZEGO technical support.
   static const int PublisherVideoEncoderNoSupportted                                      = 1003080;
 
@@ -276,6 +306,9 @@ class ZegoErrorCode {
 
   /// Description: Stream playing failed.<br>Caution: The stream does not exist.<br>Solutions: Please check whether the remote end publish is indeed successful, or whether the publish and play environment are inconsistent.
   static const int PlayerPlayStreamNotExist                                               = 1004002;
+
+  /// Description: Play stream authentication is incorrect. <br>Caution: The [Token] error or timeout required to playing stream across APP. <br>Solutions: Playing the stream to pass the correct [Token], or update the [Token] in time.
+  static const int PlayerErrorDispatchAuthError                                           = 1004003;
 
   /// Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
   static const int PlayerCountExceed                                                      = 1004010;
@@ -300,6 +333,9 @@ class ZegoErrorCode {
 
   /// Description: In the multi-room mode, the roomID parameter of the play stream cannot be empty. <br>Cause: The roomID parameter of the pull stream is empty. <br>Solutions: Please enter the correct roomID.
   static const int PlayerErrorPlayStreamWithRoomIdIsNullWhenUsingMultiRoom                = 1004071;
+
+  /// Description: When using the SDK to play the latency of live streaming, this error code will be returned if you have not subscribed to the low latency live streaming service. <br>Cause: Low-latency live broadcast service is not activated. <br>Solutions: Please contact ZEGO technical support staff to open the low-latency live broadcast service.
+  static const int PlayerNotConfigL3                                                      = 1004072;
 
   /// Description: Unsupported video decoder.<br>Caution: There is no selected video decoder in the current SDK.<br>Solutions: Please contact ZEGO technical support.
   static const int PlayerVideoDecoderNoSupportted                                         = 1004080;
@@ -364,11 +400,23 @@ class ZegoErrorCode {
   /// Description: Failed to start mixed stream. <br>Cause: The mixed stream input parameter is wrong, it may be that the layout of the input stream exceeds the canvas range. <br>Solutions: Please enter the correct mixed stream parameters. [ZegoMixerTask]
   static const int MixerInputParametersError                                              = 1005027;
 
+  /// Description: Mixed input text watermark is too long. <br>Cause: The length of the text watermark of the mixed stream input parameter exceeds the limit. <br>Solutions: Please make sure the input text watermark length does not exceed 512 bytes.
+  static const int MixerInputLabelTextTooLong                                             = 1005028;
+
+  /// Description: Mixed stream output target is too long. <br>Cause: The length of the target parameter of the mixed stream output exceeds the limit. <br>Solutions: Please make sure that the output destination length does not exceed 1024 bytes.
+  static const int MixerOutputTargetTooLongError                                          = 1005029;
+
   /// Description: Failed to start mixed stream. <br>Cause: Exceeding the maximum number of output streams. <br>Solutions: Support up to 3 output streams.
   static const int MixerExceedMaxOutputCount                                              = 1005030;
 
   /// Description: Failed to start mixed stream. <br>Cause: The maximum number of focus voice input streams is exceeded. <br>Solutions: Support up to 4 input streams to set the focus voice.
   static const int MixerExceedMaxAudioFocusStreamCount                                    = 1005031;
+
+  /// Description: The mixed-flow advanced configuration is too long. <br>Cause: The length of the mixed stream advanced configuration parameter exceeds the limit. <br>Solutions: Please make sure that the advanced configuration length does not exceed 512 bytes.
+  static const int MixerAdvancedConfigTooLongError                                        = 1005032;
+
+  /// Description: The mixed stream watermark path is too long. <br>Cause: The length of the mixed stream watermark path parameter exceeds the limit. <br>Solution: Please make sure the watermark path length does not exceed 512 bytes.
+  static const int MixerWatermarkTooLong                                                  = 1005033;
 
   /// Description: Failed to start mixed stream. <br>Cause: Mixed-stream authentication failed. <br>Solutions: Contact ZEGO technical support.
   static const int MixerAuthenticationFailed                                              = 1005050;
@@ -463,7 +511,7 @@ class ZegoErrorCode {
   /// Description: Failed to set the reverberation parameters. <br>Cause: The dry_wet_ratio parameter of the reverberation is invalid. <br>Solutions: The normal range of the dry_wet_ratio parameter of reverberation is greater than 0.0
   static const int PreprocessReverbParamDryWetRatioInvalid                                = 1007014;
 
-  /// Description: Failed to start virtual stereo. <br>Cause: The virtual stereo angle parameter is invalid. <br>Solutions: The normal range of angle parameter is 0 ~ 180.
+  /// Description: Failed to start virtual stereo. <br>Cause: The virtual stereo angle parameter is invalid. <br>Solutions: The normal range of angle parameter is -1 ~ 360.
   static const int PreprocessVirtualStereoAngleInvalid                                    = 1007015;
 
   /// Description: Failed to set the voice changing parameters. <br>Cause: The param setting of the voice changing parameter is invalid. <br>Solutions: The normal range of parameter param is -8.0 ~ 8.0
@@ -477,6 +525,18 @@ class ZegoErrorCode {
 
   /// Description: Failed to turn on or turn off the electronic sound effect. <br>Cause: the initial pitch parameter tonal of the electronic tone is invalid. <br>Solutions: The normal range of the starting pitch parameter of the electronic tone is 0 ~ 11.
   static const int PreprocessElectronicEffectsTonalInvalid                                = 1007019;
+
+  /// Description: Failed to open or close the beauty environment. <br>Cause: The beauty environment was not turned on or off before the engine started. <br>Solutions: Please make sure to turn on or turn off the beauty environment before the engine starts, for example: before calling (startPreview), (startPublishingStream), (startPlayingStream), (createMediaPlayer) or (createAudioEffectPlayer).
+  static const int PreprocessEnableEffectsEnvFailed                                       = 1007020;
+
+  /// Description: Failed to turn on or turn off the beauty effect. <br>Cause: The beauty environment is not activated. <br>Solutions: Please call [startEffectsEnv] to start the beauty environment first.
+  static const int PreprocessEnableEffectsBeautyFailed                                    = 1007021;
+
+  /// Description: Failed to set beauty parameters. <br>Cause: The beauty environment is not activated. <br>Solutions: Please call [startEffectsEnv] to start the beauty environment first.
+  static const int PreprocessSetEffectsParamFailed                                        = 1007022;
+
+  /// Description: Effects Beauty does not support the currently set video data type. <br>Cause: [enableCustomVideoProcessing] interface, Windows platform only supports raw_data, Apple device only supports cv_pixel_buffer, Android platform supports gl_texture_2d. <br>Solutions: select the correct video data type.
+  static const int PreprocessNotSupportEffectsBufferType                                  = 1007023;
 
   /// Description: The MediaPlayer failed to play the media. <br>Cause: The resource file is not loaded. <br> Solutions: Create a media player instance before using media players [createMediaPlayer].
   static const int MediaPlayerNoInstance                                                  = 1008001;
@@ -495,6 +555,9 @@ class ZegoErrorCode {
 
   /// Description: The MediaPlayer failed to load the file. <br>Cause: No supported audio/video stream exists. <br> Solutions: Check that the media file data is empty.
   static const int MediaPlayerFileNoSupportedStream                                       = 1008008;
+
+  /// Description: The copyrighted music resource file has expired. <br>Cause: The resource file has expired. <br>Solutions: Please request song or accompaniment again.
+  static const int MediaPlayerFileExpired                                                 = 1008009;
 
   /// Description: The MediaPlayer failed to load the file. <br>Cause: There was an error during file resolution. <br> Solutions: Try again or contact ZEGO technical support.
   static const int MediaPlayerDemuxError                                                  = 1008010;
@@ -646,19 +709,22 @@ class ZegoErrorCode {
   /// Description: This error code is deprecated. <br>Cause: None. <br> Solutions: None.
   static const int MediaDataPublisherFilePathError                                        = 1013002;
 
-  /// Description: File decoding exception. <br>Cause: Invalid media file format. <br>Solutions: Please check the file is a valid media file or not; check the file format is in the MediaPlayer support file format list or not. Please refer to https://doc-zh.zego.im/article/1153 for details.
+  /// Description: File decoding exception. <br>Cause: Invalid media file format. <br>Solutions: Please check the file is a valid media file or not; check the file format is in the MediaPlayer support file format list or not.
   static const int MediaDataPublisherFileCodecError                                       = 1013003;
 
   /// Description: Timestamp error. <br>Cause: the later frame timestamp is smaller than the previous frame timestamp. <br>Solutions: Please provide the media file, and contact ZEGO technical support.
   static const int MediaDataPublisherTimestampGoBackError                                 = 1013004;
 
+  /// Description: The number of instances of the media data publisher created exceeds the maximum limit. <br>Cause: The number of instances of the media data publisher created exceeds the maximum limit. <br> Solutions: Please check if the number of instances of the media data publisher created exceeds the maximum limit, the maximum number of instances allowed to be created is 1.
+  static const int MediaDataPublisherExceedMaxCount                                       = 1013005;
+
   /// Description: No audio effect player instance. <br>Cause: The audio effect player instance not created. <br> Solutions: Create an audio effect player instance before using it(createAudioEffectPlayer).
   static const int AudioEffectPlayerNoInstance                                            = 1014000;
 
-  /// Description: Load audio effect resource failed. <br>Cause: Invalid audio effect resource file. <br> Solutions: Check the file format is in the AudioEffectPlayer support file format list or not. Please refer to https://doc-zh.zego.im/article/5670 for details.
+  /// Description: Load audio effect resource failed. <br>Cause: Invalid audio effect resource file. <br> Solutions: Check the file format is in the AudioEffectPlayer support file format list or not.
   static const int AudioEffectPlayerLoadFailed                                            = 1014001;
 
-  /// Description: Play audio effect failed. <br>Cause: Invalid audio effect resource file. <br> Solutions: Check the file format is in the AudioEffectPlayer support file format list or not. Please refer to https://doc-zh.zego.im/article/5670 for details.
+  /// Description: Play audio effect failed. <br>Cause: Invalid audio effect resource file. <br> Solutions: Check the file format is in the AudioEffectPlayer support file format list or not.
   static const int AudioEffectPlayerPlayFailed                                            = 1014002;
 
   /// Description: Change audio effect progress failed. <br>Cause: The audio effect progress value exceed audio effect file duration. <br> Solutions: Please check the audio effect progress value exceed audio effect file duration or not.
@@ -691,6 +757,9 @@ class ZegoErrorCode {
   /// Description: Invalid system performance monitoring interval. <br>Cause: The set system performance monitoring interval is out of range. <br> Solutions: Please check if the system performance monitoring interval is out of range or not, valid range is [1000, 10000].
   static const int UtilitiesPerformanceMonitorIntervalInvalid                             = 1015031;
 
+  /// Description: Login to the room causes the network test to stop. <br>Cause: Already logged in to the room. <br>Solutions: Since the network test will take up bandwidth, please do it before logging in to the room.
+  static const int UtilitiesStopByLoginRoom                                               = 1015032;
+
   /// Description: The function call failed. <br>Cause: No range auido instance has been created. <br>Solutions: Create a range audio instance.
   static const int RangeAudioNoInstance                                                   = 1016000;
 
@@ -715,22 +784,22 @@ class ZegoErrorCode {
   /// Description: The song_id invalid. <br>Cause: The song_id entered is empty. <br>Solutions: Please check the song_id entered when calling the function to make sure it is not empty.
   static const int CopyrightedMusicSongIdInvalid                                          = 1017002;
 
-  /// Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.
+  /// Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [RequestAccompaniment]
   static const int CopyrightedMusicShareTokenInvalid                                      = 1017003;
 
-  /// Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.
+  /// Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [RequestSong] [RequestAccompaniment] [GetMusicByToken]
   static const int CopyrightedMusicResourceIdInvalid                                      = 1017004;
 
-  /// Description: The start_position invalid. <br>Cause: The start_position entered by the fuction [ZegoCopyrightedMusicPlay] is invalid. <br>Solutions: Please check the start_position entered when calling the function [ZegoCopyrightedMusicPlay] to make sure it is a positive number.
+  /// Description: The start_position invalid. <br>Cause: The start_position entered by the fuction [ZegoCopyrightedMusicPlay] is invalid. <br>Solutions: Please check the start_position entered when calling the function [ZegoCopyrightedMusicPlay] to make sure it is in 0 ~ song duration.
   static const int CopyrightedMusicStartPositionInvalid                                   = 1017005;
 
-  /// Description: The position invalid. <br>Cause: The position entered by the fuction [ZegoCopyrightedMusicSeek] is invalid. <br>Solutions: Please check the position entered when calling the function [ZegoCopyrightedMusicSeek] to make sure it is a positive number.
+  /// Description: The position invalid. <br>Cause: The position entered by the fuction [ZegoCopyrightedMusicSeek] is invalid. <br>Solutions: Please check the position entered when calling the function [ZegoCopyrightedMusicSeek] to make sure it is in 0 ~ song duration.
   static const int CopyrightedMusicPositionInvalid                                        = 1017006;
 
   /// Description: The volume invalid.. <br>Cause: The Volume entered by the fuction [ZegoCopyrightedMusicSetPlayVolume] is invalid. <br>Solutions: Please check the Volume entered when calling the function [ZegoCopyrightedMusicSetPlayVolume] to make sure it is in 0 ~ 200.
   static const int CopyrightedMusicVolumeInvalid                                          = 1017007;
 
-  /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.
+  /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [RequestAccompaniment]
   static const int CopyrightedMusicKrcTokenInvalid                                        = 1017008;
 
   /// Description: Request copyrighted server fail. <br>Cause: The params entered make mistake or some network reasons. <br>Solutions: Please check the params entered and retry.
@@ -751,22 +820,13 @@ class ZegoErrorCode {
   /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [load] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid                                    = 1017015;
 
-  /// Description: The resource does not support switching tracks. <br>Cause: The resource does not support switching tracks <br>Solutions: Please select a resource that supports track switching.
-  static const int CopyrightedMusicSwitchTrackNoSupport                                   = 1017016;
-
-  /// Description: Resource no play. <br>Cause: Resource no play. <br>Solutions: Please call the [play] function to play the resource file.
-  static const int CopyrightedMusicNoPlaying                                              = 1017017;
-
-  /// Description: The resource_id unauthorized. <br>Cause: When [load] is called to load resources, the resource_id is unauthorization. <br>Solutions: Please call the [requestSong]、[requestAccompaniment]、[getMusicByToken] function before call [load] function to load resource.
+  /// Description: The resource_id unauthorized. <br>Cause: When [load] is called to load resources, the resource_id is unauthorization. <br>Solutions: Please call the [requestSong] [requestAccompaniment] [getMusicByToken] function before call [load] function to load resource.
   static const int CopyrightedMusicResourceIdUnauthorized                                 = 1017018;
 
-  /// Description: MediaPlayer error. <br>Cause: Unknown internal error. <br>Solutions: Contact ZEGO technical support to deal with it.
-  static const int CopyrightedMusicMediaplayerError                                       = 1017020;
-
-  /// Description: No copyright. <br>Cause: No copyright. <br>Solutions: Please select another music.
+  /// Description: No copyright, unable to listen to and sing songs. <br>Cause: No copyright. <br>Solutions: Please select another music.
   static const int CopyrightedMusicNoCopyright                                            = 1017030;
 
-  /// Description: No permissions of lyric and music. <br>Cause: No permissions of lyric and music. <br>Solutions: Please select another music.
+  /// Description: No permissions of accompaniment, can only listen to songs, not sing. <br>Cause: No permissions of accompaniment. <br>Solutions: Please select another music.
   static const int CopyrightedMusicNoPermissionsOfLyricsAndMusic                          = 1017031;
 
   /// Description: Non monthly membership. <br>Cause: Unopened monthly membership. <br>Solutions: Open monthly membership or ues COUNT mode request music.
@@ -802,8 +862,14 @@ class ZegoErrorCode {
   /// Description: krcToken expired. <br>Cause: krcToken expired. <br>Solutions: Please select an unexpired krcToken to get lyrics in KRC format.
   static const int CopyrightedMusicKrcTokenExpired                                        = 1017047;
 
-  /// Description: Get krc lyric fail. <br>Cause: Krc format lyrics not found. <br>Solutions: Please try again later.
-  static const int CopyrightedMusicGetKrcLyricFail                                        = 1017048;
+  /// Description: Get lyric fail. <br>Cause: Lyrics not found. <br>Solutions: Please try again later.
+  static const int CopyrightedMusicGetLyricFail                                           = 1017048;
+
+  /// Description: Get pitch fail. <br>Cause: Pitch not found. <br>Solutions: Please try again later.
+  static const int CopyrightedMusicGetPitchFail                                           = 1017049;
+
+  /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int CopyrightedMusicNotSupportMethod                                       = 1017095;
 
   /// Description: The copyright music module is not initialized. <br>Cause: The [InitCopyrightedMusic] method is not called to initialize the copyright module. <br>Solutions: Please call the [InitCopyrightedMusic] method first.
   static const int CopyrightedMusicNoInit                                                 = 1017096;

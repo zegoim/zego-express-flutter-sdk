@@ -11,7 +11,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio.
   /// Use case: When you need to reduce the echo to improve the call quality and user experience, you can turn on this feature.
   /// Default value: When this function is not called, iOS turns off echo cancellation by default and other platforms turn on echo cancellation by default
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Caution: The AEC function only supports the processing of sounds playbacked through the SDK, such as sounds played by the playing stream, media player, audio effect player, etc.
   /// Restrictions: None.
   /// Related APIs: Developers can use [enableHeadphoneAEC] to set whether to enable AEC when using headphones, and use [setAECMode] to set the echo cancellation mode.
@@ -27,7 +27,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: When [enableAEC] is used to turn on echo cancellation, it is only turned on when the speaker is used for mobile terminal equipment. Call this function if you need to turn echo cancellation on or off when using the headset.
   /// Use case: It is common when the mobile device is connected to a external sound card as the audio output source. In order to eliminate the echo in this case, you need to call this function to turn on the echo cancellation.
   /// Default value: Android is off by default and iOS is on by default.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Caution: Turning on echo cancellation will increase the ear return delay. On the iOS platform, the SDK cannot distinguish between the headset and the external sound card. If you use this function to turn off the system echo cancellation when using the headset, the sound played by the external sound card will be collected when the user accesses the external sound card.
   /// Restrictions: None.
   /// Related APIs: When the headset is not used, you can set whether the SDK turns on echo cancellation through [enableAEC].
@@ -44,7 +44,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: When [enableAEC] is used to enable echo cancellation, this function can be used to switch between different echo cancellation modes to control the degree of echo cancellation.
   /// Use case: When the default echo cancellation effect does not meet expectations, this function can be used to adjust the echo cancellation mode.
   /// Default value: When this function is not called, the default echo cancellation mode is [Aggressive].
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Restrictions: The value set by this function is valid only after the echo cancellation function is turned on.
   ///
   /// - [mode] Echo cancellation mode
@@ -58,7 +58,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: After turning on this function, the SDK can automatically adjust the microphone volume to adapt to near and far sound pickups and keep the volume stable.
   /// Use case: When you need to ensure volume stability to improve call quality and user experience, you can turn on this feature.
   /// Default value: When this function is not called, AGC is enabled by default.
-  /// When to call: It needs to be called after [createEngine] and before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] and [createAudioEffectPlayer]. Note that the Mac needs to be called after [startPreview] and before [startPublishingStream].
+  /// When to call: It needs to be called after [createEngine] and before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager]. Note that the Mac needs to be called after [startPreview] and before [startPublishingStream].
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable automatic gain control, true: enable, false: disable
@@ -72,7 +72,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Enable the noise suppression can reduce the noise in the audio data and make the human voice clearer.
   /// Use case: When you need to suppress noise to improve call quality and user experience, you can turn on this feature.
   /// Default value: When this function is not called, ANS is enabled by default.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Related APIs: This function has a better suppression effect on continuous noise (such as the sound of rain, white noise). If you need to turn on transient noise suppression, please use [enableTransientANS]. And the noise suppression mode can be set by [setANSMode].
   /// Restrictions: None.
   ///
@@ -87,7 +87,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Enable the transient noise suppression can suppress the noises such as keyboard and desk knocks.
   /// Use case: When you need to suppress transient noise to improve call quality and user experience, you can turn on this feature.
   /// Default value: When this function is not called, this is disabled by default.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Related APIs: This function will not suppress normal noise after it is turned on. If you need to turn on normal noise suppression, please use [enableANS].
   /// Restrictions: None.
   ///
@@ -102,7 +102,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: When [enableANS] is used to enable noise suppression, this function can be used to switch between different noise suppression modes to control the degree of noise suppression.
   /// Use case: When the default noise suppression effect does not meet expectations, this function can be used to adjust the noise suppression mode.
   /// Default value: When this function is not called, the default echo cancellation mode is [Medium].
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer].
+  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Restrictions: The value set by this function is valid only after the noise suppression function is turned on.
   ///
   /// - [mode] Audio Noise Suppression mode
@@ -131,7 +131,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Use cases: It is often used in scenes such as video calls and live broadcasts.
   /// When to call: Must be called before calling [startPreview], [startPublishingStream]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
   /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
-  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] for best results.
   /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
   Future<void> stopEffectsEnv() async {
     return await ZegoExpressImpl.instance.stopEffectsEnv();
@@ -145,7 +145,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// When to call: You must call [startEffectsEnv] to enable the beauty environment before calling this function.
   /// Default value: When this function is not called, the beauty effect is not enabled by default.
   /// Related APIs: You can call the [setBeautifyOption] function to adjust the beauty parameters.
-  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] for best results.
   /// Restrictions: If this function is used on the Android platform, it only supports 5.0 and above, SDK version 21 and above.
   ///
   /// - [enable] Whether to enable the beauty effect, true is enabled; false is disabled, and the default is false.

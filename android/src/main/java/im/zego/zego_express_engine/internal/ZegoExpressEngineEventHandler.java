@@ -43,6 +43,8 @@ import im.zego.zegoexpress.constants.ZegoPublisherState;
 import im.zego.zegoexpress.constants.ZegoRangeAudioMicrophoneState;
 import im.zego.zegoexpress.constants.ZegoRemoteDeviceState;
 import im.zego.zegoexpress.constants.ZegoRoomState;
+import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason;
+import im.zego.zegoexpress.constants.ZegoStreamEvent;
 import im.zego.zegoexpress.constants.ZegoStreamQualityLevel;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
@@ -204,6 +206,24 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onRoomStateUpdate");
             map.put("roomID", roomID);
             map.put("state", state.value());
+            map.put("errorCode", errorCode);
+            map.put("extendedData", extendedData.toString());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode, JSONObject extendedData) {
+            super.onRoomStateChanged(roomID, reason, errorCode, extendedData);
+            ZegoLog.log("[onRoomStateChanged] roomID: %s, reason: %s, errorCode: %d", roomID, reason.name(), errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRoomStateChanged");
+            map.put("roomID", roomID);
+            map.put("reason", reason.value());
             map.put("errorCode", errorCode);
             map.put("extendedData", extendedData.toString());
 
@@ -456,6 +476,22 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPublisherStreamEvent(ZegoStreamEvent eventID, String streamID, String extraInfo) {
+            super.onPublisherStreamEvent(fromCodecID, toCodecID, channel);
+            ZegoLog.log("[onPublisherStreamEvent] fromCodecID: %s, toCodecID: %s, channel: %s", fromCodecID.name(), toCodecID.name(), channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPublisherStreamEvent");
+            map.put("eventID", eventID.value());
+            map.put("streamID", streamID);
+            map.put("extraInfo", extraInfo);
+
+            sink.success(map);
+        }
 
         /* Player */
 
@@ -630,6 +666,22 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPlayerStreamEvent(ZegoStreamEvent eventID, String streamID, String extraInfo) {
+            super.onPlayerStreamEvent(eventID, streamID, extraInfo);
+            ZegoLog.log("[onPlayerStreamEvent] eventID: %s, streamID: %s, extraInfo: %s", eventID.name(), streamID, extraInfo);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerStreamEvent");
+            map.put("eventID", eventID.value());
+            map.put("streamID", streamID);
+            map.put("extraInfo", extraInfo);
+
+            sink.success(map);
+        }
 
         /* Mixer */
 

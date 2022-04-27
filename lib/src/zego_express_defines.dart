@@ -46,6 +46,28 @@ enum ZegoRoomState {
   Connected
 }
 
+/// Room state change reason.
+enum ZegoRoomStateChangedReason {
+  /// Logging in to the room. When calling [loginRoom] to log in to the room or [switchRoom] to switch to the target room, it will enter this state, indicating that it is requesting to connect to the server. The application interface is usually displayed through this state.
+  Logining,
+  /// Log in to the room successfully. When the room is successfully logged in or switched, it will enter this state, indicating that the login to the room has been successful, and users can normally receive callback notifications of other users in the room and all stream information additions and deletions.
+  Logined,
+  /// Failed to log in to the room. When the login or switch room fails, it will enter this state, indicating that the login or switch room has failed, for example, AppID or Token is incorrect, etc.
+  LoginFailed,
+  /// The room connection is temporarily interrupted. If the interruption occurs due to poor network quality, the SDK will retry internally.
+  Reconnecting,
+  /// The room is successfully reconnected. If there is an interruption due to poor network quality, the SDK will retry internally, and enter this state after successful reconnection.
+  Reconnected,
+  /// The room fails to reconnect. If there is an interruption due to poor network quality, the SDK will retry internally, and enter this state after the reconnection fails.
+  ReconnectFailed,
+  /// Kicked out of the room by the server. For example, if you log in to the room with the same user name in other places, and the local end is kicked out of the room, it will enter this state.
+  KickOut,
+  /// Logout of the room is successful. It is in this state by default before logging into the room. When calling [logoutRoom] to log out of the room successfully or [switchRoom] to log out of the current room successfully, it will enter this state.
+  Logout,
+  /// Failed to log out of the room. Enter this state when calling [logoutRoom] fails to log out of the room or [switchRoom] fails to log out of the current room internally.
+  LogoutFailed
+}
+
 /// Publish channel.
 enum ZegoPublishChannel {
   /// The main (default/first) publish channel.
@@ -830,6 +852,46 @@ enum ZegoAudioVADStableStateMonitorType {
   CustomProcessed
 }
 
+/// CDN network protocol types supported by ZEGO
+enum ZegoCDNProtocol {
+  /// TCP protocol
+  TCP,
+  /// QUIC protocol
+  QUIC
+}
+
+/// Publish or play stream event
+enum ZegoStreamEvent {
+  /// Start publishing stream
+  PublishStart,
+  /// The first publish stream was successful
+  PublishSuccess,
+  /// Failed to publish stream for the first time
+  PublishFail,
+  /// Start retrying publishing stream
+  RetryPublishStart,
+  /// Retry publishing stream successfully
+  RetryPublishSuccess,
+  /// Failed to retry publishing stream
+  RetryPublishFail,
+  /// End of publishing stream
+  PublishEnd,
+  /// Start playing stream
+  PlayStart,
+  /// The first play stream was successful
+  PlaySuccess,
+  /// Failed to play stream for the first time
+  PlayFail,
+  /// Start retrying playing stream
+  RetryPlayStart,
+  /// Retry playing stream successfully
+  RetryPlaySuccess,
+  /// Failed to retry playing stream
+  RetryPlayFail,
+  /// End of playing stream
+  PlayEnd
+}
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -837,7 +899,7 @@ enum ZegoAudioVADStableStateMonitorType {
 /// Caution: None.
 class ZegoLogConfig {
 
-  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document https://doc-en.zego.im/faq/express_sdkLog. Caution: Developers need to ensure read and write permissions for files under this path.
+  /// The storage path of the log file. Description: Used to customize the storage path of the log file. Use cases: This configuration is required when you need to customize the log storage path. Required: False. Default value: The default path of each platform is different, please refer to the official website document https://docs.zegocloud.com/faq/express_sdkLog. Caution: Developers need to ensure read and write permissions for files under this path.
   String logPath;
 
   /// Maximum log file size(Bytes). Description: Used to customize the maximum log file size. Use cases: This configuration is required when you need to customize the upper limit of the log file size. Required: False. Default value: 5MB (5 * 1024 * 1024 Bytes). Value range: Minimum 1MB (1 * 1024 * 1024 Bytes), maximum 100M (100 * 1024 * 1024 Bytes), 0 means no need to write logs. Caution: The larger the upper limit of the log file size, the more log information it carries, but the log upload time will be longer.
@@ -876,13 +938,13 @@ class ZegoCustomAudioConfig {
 /// Profile for create engine
 class ZegoEngineProfile {
 
-  /// Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console-express.zego.im The value ranges from 0 to 4294967295.
+  /// Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.
   int appID;
 
-  /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room. Token generated way please refer to the [use token authentication] (https://doc-zh.zego.im/article/10360).
+  /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
   String? appSign;
 
-  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.The recommended configuration for different application scenarios can be referred to https://doc-zh.zego.im/faq/profile_difference.
+  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   ZegoScenario scenario;
 
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
@@ -917,7 +979,7 @@ class ZegoRoomConfig {
   /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
   bool isUserStatusNotify;
 
-  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description [use token authentication] (https://doc-en.zego.im/article/3881) Default is empty string, that is, no authentication. Version 2.17.0 or later If appSign is not passed when the [createEngine] interface is called to create an engine or appSign is empty, this parameter must be set for authentication when you log in to a room.
+  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description [use token authentication] (https://docs.zegocloud.com/article/3881) Default is empty string, that is, no authentication. Version 2.17.0 or later If appSign is not passed when the [createEngine] interface is called to create an engine or appSign is empty, this parameter must be set for authentication when you log in to a room.
   String token;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token);
@@ -1359,7 +1421,7 @@ class ZegoPlayStreamQuality {
   /// Audio break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0)
   double audioBreakRate;
 
-  /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://doc-en.zego.im/article/3720#4_4 (Available since 2.16.0)
+  /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://docs.zegocloud.com/article/3720#4_4 (Available since 2.16.0)
   double mos;
 
   /// Server to local delay, in milliseconds
@@ -1586,19 +1648,27 @@ class ZegoFontStyle {
   /// Font transparency. Required: False. Default value: 0. Value range: [0,100], 100 is completely opaque, 0 is completely transparent.
   int transparency;
 
-  ZegoFontStyle(this.type, this.size, this.color, this.transparency);
+  /// Whether the font has a border. Required: False. Default value: False. Value range: True/False.
+  bool border;
+
+  /// Font border color, the calculation formula is: R + G x 256 + B x 65536, the value range of R (red), G (green), and B (blue) [0,255]. Required: False. Default value: 0. Value range: [0,16777215].
+  int borderColor;
+
+  ZegoFontStyle(this.type, this.size, this.color, this.transparency, this.border, this.borderColor);
 
   Map<String, dynamic> toMap() {
     return {
       'type': this.type.index,
       'size': this.size,
       'color': this.color,
-      'transparency': this.transparency
+      'transparency': this.transparency,
+      'border': this.border,
+      'borderColor': this.borderColor
     };
   }
 
   /// Create a default font style object.
-  ZegoFontStyle.defaultStyle() : type = ZegoFontType.SourceHanSans, size = 24, color = 16777215, transparency = 0;
+  ZegoFontStyle.defaultStyle() : type = ZegoFontType.SourceHanSans, size = 24, color = 16777215, transparency = 0, border = false, borderColor = 0;
 
 }
 
@@ -1653,6 +1723,9 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
+  /// Input stream volume, valid range [0, 200], default is 100
+  int volume;
+
   /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled
   bool isAudioFocus;
 
@@ -1665,7 +1738,7 @@ class ZegoMixerInput {
   /// Video view render mode.
   ZegoMixRenderMode? renderMode;
 
-  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode});
+  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.volume, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode});
 
   Map<String, dynamic> toMap() {
     return {
@@ -1676,6 +1749,7 @@ class ZegoMixerInput {
       'right': this.layout.right.toInt(),
       'bottom': this.layout.bottom.toInt(),
       'soundLevelID': this.soundLevelID,
+      'volume': this.volume,
       'isAudioFocus': this.isAudioFocus,
       'audioDirection': this.audioDirection,
       'label': this.label?.toMap(),
@@ -1683,7 +1757,7 @@ class ZegoMixerInput {
     };
   }
 
-  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill;
+  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.volume = 100, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill;
 
 }
 
@@ -2500,7 +2574,7 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// Available since: 1.16.0
   /// Description: Set volume for a single audio effect. Both the local play volume and the publish volume are set.
-  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// When to call: The specified [audioEffectID] is [start].
   /// Restrictions: None.
   ///
   /// - [audioEffectID] ID for the audio effect.
@@ -2516,6 +2590,17 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolumeAll(int volume);
+
+  /// Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
+  ///
+  /// Available since: 2.18.0
+  /// Description: Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [speed] The speed of play. <br>Value range: The range is 0.5 ~ 2.0. <br>Default value: The default is 1.0.
+  Future<void> setPlaySpeed(int audioEffectID, double speed);
 
   /// Get the total duration of the specified audio effect resource.
   ///
@@ -2769,10 +2854,10 @@ abstract class ZegoRealTimeSequentialDataManager {
 
 /// Callback for setting room extra information.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoRoomSetRoomExtraInfoResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoRoomSetRoomExtraInfoResult(this.errorCode);
@@ -2781,10 +2866,10 @@ class ZegoRoomSetRoomExtraInfoResult {
 
 /// Callback for setting stream extra information.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoPublisherSetStreamExtraInfoResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoPublisherSetStreamExtraInfoResult(this.errorCode);
@@ -2793,10 +2878,10 @@ class ZegoPublisherSetStreamExtraInfoResult {
 
 /// Callback for add/remove CDN URL.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoPublisherUpdateCdnUrlResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoPublisherUpdateCdnUrlResult(this.errorCode);
@@ -2805,11 +2890,11 @@ class ZegoPublisherUpdateCdnUrlResult {
 
 /// Results of take publish stream snapshot.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [image] Snapshot image
 class ZegoPublisherTakeSnapshotResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Snapshot image
@@ -2821,11 +2906,11 @@ class ZegoPublisherTakeSnapshotResult {
 
 /// Results of take play stream snapshot.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [image] Snapshot image
 class ZegoPlayerTakeSnapshotResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Snapshot image
@@ -2837,11 +2922,11 @@ class ZegoPlayerTakeSnapshotResult {
 
 /// Results of starting a mixer task.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [extendedData] Extended Information
 class ZegoMixerStartResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Extended Information
@@ -2853,10 +2938,10 @@ class ZegoMixerStartResult {
 
 /// Results of stoping a mixer task.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoMixerStopResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoMixerStopResult(this.errorCode);
@@ -2865,10 +2950,10 @@ class ZegoMixerStopResult {
 
 /// Callback for sending real-time sequential data.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoRealTimeSequentialDataSentResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoRealTimeSequentialDataSentResult(this.errorCode);
@@ -2877,11 +2962,11 @@ class ZegoRealTimeSequentialDataSentResult {
 
 /// Callback for sending broadcast messages.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [messageID] ID of this message
 class ZegoIMSendBroadcastMessageResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// ID of this message
@@ -2893,11 +2978,11 @@ class ZegoIMSendBroadcastMessageResult {
 
 /// Callback for sending barrage message.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [messageID] ID of this message
 class ZegoIMSendBarrageMessageResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// ID of this message
@@ -2909,10 +2994,10 @@ class ZegoIMSendBarrageMessageResult {
 
 /// Callback for sending custom command.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoIMSendCustomCommandResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode);
@@ -2921,10 +3006,10 @@ class ZegoIMSendCustomCommandResult {
 
 /// Callback for media player loads resources.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoMediaPlayerLoadResourceResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoMediaPlayerLoadResourceResult(this.errorCode);
@@ -2933,10 +3018,10 @@ class ZegoMediaPlayerLoadResourceResult {
 
 /// Callback for media player seek to playback progress.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoMediaPlayerSeekToResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoMediaPlayerSeekToResult(this.errorCode);
@@ -2945,11 +3030,11 @@ class ZegoMediaPlayerSeekToResult {
 
 /// The callback of the screenshot of the media player playing screen
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [image] Snapshot image
 class ZegoMediaPlayerTakeSnapshotResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   /// Snapshot image
@@ -2961,10 +3046,10 @@ class ZegoMediaPlayerTakeSnapshotResult {
 
 /// Callback for audio effect player loads resources.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoAudioEffectPlayerLoadResourceResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoAudioEffectPlayerLoadResourceResult(this.errorCode);
@@ -2973,10 +3058,10 @@ class ZegoAudioEffectPlayerLoadResourceResult {
 
 /// Callback for audio effect player seek to playback progress.
 ///
-/// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 class ZegoAudioEffectPlayerSeekToResult {
 
-  /// Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
   ZegoAudioEffectPlayerSeekToResult(this.errorCode);
