@@ -3520,9 +3520,9 @@ void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
 
 - (void)reportPluginInfo {
 
-    if (pluginReported) { return; }
+    if (self.pluginReported) { return; }
 
-    pluginReported = true;
+    self.pluginReported = true;
 
     NSDictionary *advancedConfigMap = @{@"thirdparty_framework_info": @"flutter"};
 
