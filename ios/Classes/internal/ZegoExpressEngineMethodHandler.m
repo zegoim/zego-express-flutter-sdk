@@ -31,6 +31,8 @@
 
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
 
+@property (nonatomic, assign) BOOL pluginReported;
+
 @end
 
 @implementation ZegoExpressEngineMethodHandler
@@ -163,6 +165,9 @@
 }
 
 - (void)setEngineConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // Report framework info
+    [self reportPluginInfo];
 
     NSDictionary *configMap = call.arguments[@"config"];
     ZegoEngineConfig *configObject = nil;
@@ -3514,6 +3519,11 @@ void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
 }
 
 - (void)reportPluginInfo {
+
+    if (pluginReported) { return; }
+
+    pluginReported = true;
+
     NSDictionary *advancedConfigMap = @{@"thirdparty_framework_info": @"flutter"};
 
     ZegoEngineConfig *configObject = [[ZegoEngineConfig alloc] init];
