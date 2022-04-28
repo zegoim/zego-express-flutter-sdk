@@ -484,9 +484,55 @@ public class ZegoExpressEngineEventHandler {
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
-
+            int eventID_ = -1;
+            switch (eventID) {
+                case PUBLISH_START:
+                    eventID_ = 0;
+                    break;
+                case PUBLISH_SUCCESS:
+                    eventID_ = 1;
+                    break;
+                case PUBLISH_FAIL:
+                    eventID_ = 2;
+                    break;
+                case RETRY_PUBLISH_START:
+                    eventID_ = 3;
+                    break;
+                case RETRY_PUBLISH_SUCCESS:
+                    eventID_ = 4;
+                    break;
+                case RETRY_PUBLISH_FAIL:
+                    eventID_ = 5;
+                    break;
+                case PUBLISH_END:
+                    eventID_ = 6;
+                    break;
+                case PLAY_START:
+                    eventID_ = 7;
+                    break;
+                case PLAY_SUCCESS:
+                    eventID_ = 8;
+                    break;
+                case PLAY_FAIL:
+                    eventID_ = 9;
+                    break;
+                case RETRY_PLAY_START:
+                    eventID_ = 10;
+                    break;
+                case RETRY_PLAY_SUCCESS:
+                    eventID_ = 11;
+                    break;
+                case RETRY_PLAY_FAIL:
+                    eventID_ = 12;
+                    break;
+                case PLAY_END:
+                    eventID_ = 13;
+                    break;
+                default:
+                    eventID_ = -1;
+            }
             map.put("method", "onPublisherStreamEvent");
-            map.put("eventID", eventID.value());
+            map.put("eventID", eventID_);
             map.put("streamID", streamID);
             map.put("extraInfo", extraInfo);
 
@@ -675,8 +721,55 @@ public class ZegoExpressEngineEventHandler {
 
             HashMap<String, Object> map = new HashMap<>();
 
+            int eventID_ = -1;
+            switch (eventID) {
+                case PUBLISH_START:
+                    eventID_ = 0;
+                    break;
+                case PUBLISH_SUCCESS:
+                    eventID_ = 1;
+                    break;
+                case PUBLISH_FAIL:
+                    eventID_ = 2;
+                    break;
+                case RETRY_PUBLISH_START:
+                    eventID_ = 3;
+                    break;
+                case RETRY_PUBLISH_SUCCESS:
+                    eventID_ = 4;
+                    break;
+                case RETRY_PUBLISH_FAIL:
+                    eventID_ = 5;
+                    break;
+                case PUBLISH_END:
+                    eventID_ = 6;
+                    break;
+                case PLAY_START:
+                    eventID_ = 7;
+                    break;
+                case PLAY_SUCCESS:
+                    eventID_ = 8;
+                    break;
+                case PLAY_FAIL:
+                    eventID_ = 9;
+                    break;
+                case RETRY_PLAY_START:
+                    eventID_ = 10;
+                    break;
+                case RETRY_PLAY_SUCCESS:
+                    eventID_ = 11;
+                    break;
+                case RETRY_PLAY_FAIL:
+                    eventID_ = 12;
+                    break;
+                case PLAY_END:
+                    eventID_ = 13;
+                    break;
+                default:
+                    eventID_ = -1;
+            }
             map.put("method", "onPlayerStreamEvent");
-            map.put("eventID", eventID.value());
+            map.put("eventID", eventID_);
             map.put("streamID", streamID);
             map.put("extraInfo", extraInfo);
 
