@@ -149,6 +149,8 @@ public class ZegoExpressEngineMethodHandler {
 
     private static boolean enablePlatformView = false;
 
+    private static boolean pluginReported = false;
+
     private static final HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
@@ -261,6 +263,9 @@ public class ZegoExpressEngineMethodHandler {
 
     @SuppressWarnings({"unused", "unchecked"})
     public static void setEngineConfig(MethodCall call, Result result) {
+
+        // Report framework info
+        reportPluginInfo();
 
         HashMap<String, Object> configMap = call.argument("config");
         ZegoEngineConfig configObject;
@@ -3952,6 +3957,11 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     private static void reportPluginInfo() {
+
+        if (pluginReported) { return; }
+
+        pluginReported = true;
+
         HashMap<String, String> advancedConfigMap = new HashMap<>();
         advancedConfigMap.put("thirdparty_framework_info", "flutter");
         
