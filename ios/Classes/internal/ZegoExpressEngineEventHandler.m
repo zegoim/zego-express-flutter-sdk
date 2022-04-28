@@ -433,7 +433,7 @@
 
 - (void)onPublisherStreamEvent:(ZegoStreamEvent)eventID streamID:(NSString *)streamID extraInfo:(NSString *)extraInfo {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPublisherStreamEvent] eventID: %d, streamID: %s, extraInfo: %s", (int)eventID, streamID, extraInfo;
+    ZGLog(@"[onPublisherStreamEvent] eventID: %d, streamID: %@, extraInfo: %@", (int)eventID, streamID, extraInfo);
 
     GUARD_SINK
     if (sink) {
