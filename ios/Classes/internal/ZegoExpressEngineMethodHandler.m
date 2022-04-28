@@ -1195,6 +1195,10 @@
             unsigned int soundLevelID = [ZegoUtils unsignedIntValue:inputMap[@"soundLevelID"]];
             ZegoMixerInput *inputObject = [[ZegoMixerInput alloc] initWithStreamID:streamID contentType:(ZegoMixerInputContentType)contentType layout:rect soundLevelID:soundLevelID];
             [inputListObject addObject:inputObject];
+
+            inputObject.volume = [ZegoUtils intValue:inputMap[@"volume"]];
+            inputObject.isAudioFocus = [ZegoUtils boolValue:fontMap[@"isAudioFocus"]];
+            inputObject.audioDirection = [ZegoUtils intValue:inputMap[@"audioDirection"]];
             
             NSDictionary *labelMap = inputMap[@"label"];
             if (labelMap && ![ZegoUtils isNullObject:labelMap]) {
@@ -1210,6 +1214,8 @@
                 fontStyle.size = [ZegoUtils intValue:fontMap[@"size"]];
                 fontStyle.color = [ZegoUtils intValue:fontMap[@"color"]];
                 fontStyle.transparency = [ZegoUtils intValue:fontMap[@"transparency"]];
+                fontStyle.border = [ZegoUtils boolValue:fontMap[@"border"]];
+                fontStyle.borderColor = [ZegoUtils intValue:fontMap[@"borderColor"]];
             
                 labelInfo.font = fontStyle;
                 inputObject.label = labelInfo;

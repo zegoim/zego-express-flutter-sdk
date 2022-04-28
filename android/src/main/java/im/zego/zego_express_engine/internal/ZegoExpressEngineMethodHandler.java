@@ -1376,7 +1376,12 @@ public class ZegoExpressEngineMethodHandler {
                 int bottom = ZegoUtils.intValue((Number) inputMap.get("bottom"));
                 Rect rect = new Rect(left, top, right, bottom);
                 int soundLevelID = ZegoUtils.intValue((Number) inputMap.get("soundLevelID"));
+                
                 ZegoMixerInput inputObject = new ZegoMixerInput(streamID, ZegoMixerInputContentType.getZegoMixerInputContentType(contentType), rect, soundLevelID);
+
+                inputObject.volume = ZegoUtils.intValue((Number) inputMap.get("volume"));
+                inputObject.isAudioFocus = ZegoUtils.boolValue((Boolean) inputMap.get("isAudioFocus"));
+                inputObject.audioDirection = ZegoUtils.intValue((Number) inputMap.get("audioDirection"));
 
                 if (inputMap.containsKey("label") && inputMap.get("label") != null) {
                     HashMap<String, Object> labelMap = (HashMap<String, Object>) inputMap.get("label");
@@ -1392,6 +1397,8 @@ public class ZegoExpressEngineMethodHandler {
                     fontStyle.size = ZegoUtils.intValue((Number) fontMap.get("size"));
                     fontStyle.color = ZegoUtils.intValue((Number) fontMap.get("color"));
                     fontStyle.transparency = ZegoUtils.intValue((Number) fontMap.get("transparency"));
+                    fontStyle.border = ZegoUtils.boolValue((Boolean) fontMap.get("border"));
+                    fontStyle.borderColor = ZegoUtils.intValue((Number) fontMap.get("borderColor"));
 
                     labelInfo.font = fontStyle;
                     inputObject.label = labelInfo;
