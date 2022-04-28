@@ -1197,7 +1197,7 @@
             [inputListObject addObject:inputObject];
 
             inputObject.volume = [ZegoUtils intValue:inputMap[@"volume"]];
-            inputObject.isAudioFocus = [ZegoUtils boolValue:fontMap[@"isAudioFocus"]];
+            inputObject.isAudioFocus = [ZegoUtils boolValue:inputMap[@"isAudioFocus"]];
             inputObject.audioDirection = [ZegoUtils intValue:inputMap[@"audioDirection"]];
             
             NSDictionary *labelMap = inputMap[@"label"];
