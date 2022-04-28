@@ -478,8 +478,8 @@ public class ZegoExpressEngineEventHandler {
 
         @Override
         public void onPublisherStreamEvent(ZegoStreamEvent eventID, String streamID, String extraInfo) {
-            super.onPublisherStreamEvent(fromCodecID, toCodecID, channel);
-            ZegoLog.log("[onPublisherStreamEvent] fromCodecID: %s, toCodecID: %s, channel: %s", fromCodecID.name(), toCodecID.name(), channel.name());
+            super.onPublisherStreamEvent(eventID, streamID, extraInfo);
+            ZegoLog.log("[onPublisherStreamEvent] eventID: %s, streamID: %s, extraInfo: %s", eventID.name(), streamID, extraInfo);
 
             if (guardSink()) { return; }
 
