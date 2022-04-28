@@ -1,6 +1,77 @@
 # Change Log
 
 
+## 2.18.1
+
+### **New Features**
+1. Added AI noise reduction function.
+
+    Note: AI noise reduction will currently cause great damage to the music collected by the microphone, including the sound of people singing through the microphone. To use this feature, please contact ZEGO Technical Support.
+
+    AI noise reduction means that the SDK will perform noise reduction processing on the sound collected by the microphone. In the case of normal processing of the original steady-state noise, it will also deal with non-steady-state noise, mainly including mouse, keyboard sound, tapping , air conditioners, kitchen dishes, noisy restaurants, ambient wind, coughing, blowing and other non-human noises. The AI noise reduction mode is set through the ZegoANSMode parameter in the [setANSMode] interface, and the noise reduction mode can be adjusted in real time.
+
+    This function is often used in calls, conferences and other scenarios without background music, such as normal voice chat rooms, voice conferences, voice blackouts, and one-to-one video calls.
+
+    For related API, please refer to [setANSMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setANSMode.html)
+
+2. Support setting the playback speed of sound effects.
+
+    After playing the sound effect, you can call the [SetPlaySpeed] interface to set four playback speeds for the sound effect (the local playback speed and the streaming speed will be set at the same time), which are 0.5 times, original speed, 1.5 times and 2 times respectively, and the default is the original speed.
+
+3. Supports push-pull streaming using QUIC protocol during CDN live streaming.
+
+    The QUIC protocol push-pull streaming is mainly used to improve the unstable quality of CDN live streaming in a weak network environment, but the improvement is limited. It is recommended to use low-latency live streaming to enjoy high-quality and low-latency live streaming services. Currently, QUIC protocol push and pull streaming using Tencent and Wangsu's two CDN live streaming products are supported.
+
+    Configure the push protocol and QUIC version through the "ZegoCDNConfig" parameter in the [enablePublishDirectToCDN] interface. If you want to perform custom CDN streaming of the QUIC protocol, you need to configure the pull protocol through the "ZegoPlayerConfig" parameter in [startPlayingStream] and the QUIC version.
+
+    For related API, please refer to [enablePublishDirectToCDN](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enablePublishDirectToCDN.html)
+
+4. Address and protocol-related information that supports monitoring of push-pull streams.
+
+    After the push stream is initiated, you can monitor the push stream status in real time through the [onPublisherStreamEvent] callback, which will return the current push stream address, resource type, and protocol-related information.
+
+    After initiating the streaming, you can monitor the streaming status in real time through the [onPlayerStreamEvent] callback, which will return the current streaming address, resource type, and protocol-related information.
+
+    For related API, please refer to [onPublisherStreamEvent](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherStreamEvent.html), [onPlayerStreamEvent](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerStreamEvent.html)
+
+5. Support setting muxed watermark and muxed input volume through URL.
+
+    Call startMixerTask to start or update the muxing task. It supports setting the muxing watermark and muxing input volume through "backgroundUrl" and "inputVolume" respectively.
+
+    For related API, please refer to [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
+
+6. Added room state change notification [onRoomStateChanged].
+
+    When the connection state of the room changes, the [onRoomStateChanged] callback will be triggered, and the "ZegoRoomStateChangedReason" parameter will provide more detailed connection state and the reason for the state change.
+
+    For related API, please refer to [onRoomStateChanged](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRoomStateChanged.html)
+
+### **Enhancements**
+
+1. Mixed text watermark supports setting font border and color.
+
+    Call the startMixerTask interface, use the "border" property in "ZegoFontStyle" to set whether the font has a border, and use the "borderColor" property to set the font border color.
+
+    For related API, please refer to [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
+
+2. Improve the error code returned by the start mixing interface [startMixerTask].
+
+    Added an error code of 1005000, indicating that the mixed streaming service has not been activated. When this error code occurs, please activate the mixed streaming service by contact ZEGOCLOUD technical support.
+
+    For related API, please refer to [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
+
+### **Bug Fixes**
+
+1. Fixed an issue that could cause a crash when the parameter name length of the string type is too long.
+
+2. Fixed the issue that when the push-end App returned to the front-end from the background, the pull-end could not receive the BreakResume event.
+
+3. Fix a memory leak that the android plugin binding is not released when using v2 embedded.
+
+4. Fix a memory leak that the temp pixel buffer of the iOS texture renderer could not be released.
+
+5. Fixed other known issues.
+
 ## 2.17.2
 
 ### **Bug Fixes**
