@@ -73,7 +73,9 @@ void ZegoExpressEngineEventHandler::onRoomStateChanged(const std::string& roomID
 		retMap[FTValue("reason")] = FTValue(reason);
 		retMap[FTValue("errorCode")] = FTValue(errorCode);
 		retMap[FTValue("roomID")] = FTValue(roomID);
-		retMap[FTValue("extendedData")] = FTValue(extendedData);
+
+		std::string extendedData_ = extendedData.empty()? "{}": extendedData;
+		retMap[FTValue("extendedData")] = FTValue(extendedData_);
 
 		eventSink_->Success(retMap);
 	}
