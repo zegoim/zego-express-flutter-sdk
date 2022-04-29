@@ -1,5 +1,5 @@
 group 'im.zego.zego_express_engine'
-version '2.17.2'
+version '2.18.1'
 
 buildscript {
     repositories {

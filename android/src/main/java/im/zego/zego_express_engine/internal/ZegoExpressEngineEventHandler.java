@@ -45,6 +45,8 @@ import im.zego.zegoexpress.constants.ZegoPublisherState;
 import im.zego.zegoexpress.constants.ZegoRangeAudioMicrophoneState;
 import im.zego.zegoexpress.constants.ZegoRemoteDeviceState;
 import im.zego.zegoexpress.constants.ZegoRoomState;
+import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason;
+import im.zego.zegoexpress.constants.ZegoStreamEvent;
 import im.zego.zegoexpress.constants.ZegoStreamQualityLevel;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
@@ -206,6 +208,24 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onRoomStateUpdate");
             map.put("roomID", roomID);
             map.put("state", state.value());
+            map.put("errorCode", errorCode);
+            map.put("extendedData", extendedData.toString());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode, JSONObject extendedData) {
+            super.onRoomStateChanged(roomID, reason, errorCode, extendedData);
+            ZegoLog.log("[onRoomStateChanged] roomID: %s, reason: %s, errorCode: %d", roomID, reason.name(), errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRoomStateChanged");
+            map.put("roomID", roomID);
+            map.put("reason", reason.value());
             map.put("errorCode", errorCode);
             map.put("extendedData", extendedData.toString());
 
@@ -458,6 +478,68 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPublisherStreamEvent(ZegoStreamEvent eventID, String streamID, String extraInfo) {
+            super.onPublisherStreamEvent(eventID, streamID, extraInfo);
+            ZegoLog.log("[onPublisherStreamEvent] eventID: %s, streamID: %s, extraInfo: %s", eventID.name(), streamID, extraInfo);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            int eventID_ = -1;
+            switch (eventID) {
+                case PUBLISH_START:
+                    eventID_ = 0;
+                    break;
+                case PUBLISH_SUCCESS:
+                    eventID_ = 1;
+                    break;
+                case PUBLISH_FAIL:
+                    eventID_ = 2;
+                    break;
+                case RETRY_PUBLISH_START:
+                    eventID_ = 3;
+                    break;
+                case RETRY_PUBLISH_SUCCESS:
+                    eventID_ = 4;
+                    break;
+                case RETRY_PUBLISH_FAIL:
+                    eventID_ = 5;
+                    break;
+                case PUBLISH_END:
+                    eventID_ = 6;
+                    break;
+                case PLAY_START:
+                    eventID_ = 7;
+                    break;
+                case PLAY_SUCCESS:
+                    eventID_ = 8;
+                    break;
+                case PLAY_FAIL:
+                    eventID_ = 9;
+                    break;
+                case RETRY_PLAY_START:
+                    eventID_ = 10;
+                    break;
+                case RETRY_PLAY_SUCCESS:
+                    eventID_ = 11;
+                    break;
+                case RETRY_PLAY_FAIL:
+                    eventID_ = 12;
+                    break;
+                case PLAY_END:
+                    eventID_ = 13;
+                    break;
+                default:
+                    eventID_ = -1;
+            }
+            map.put("method", "onPublisherStreamEvent");
+            map.put("eventID", eventID_);
+            map.put("streamID", streamID);
+            map.put("extraInfo", extraInfo);
+
+            sink.success(map);
+        }
 
         /* Player */
 
@@ -632,6 +714,69 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPlayerStreamEvent(ZegoStreamEvent eventID, String streamID, String extraInfo) {
+            super.onPlayerStreamEvent(eventID, streamID, extraInfo);
+            ZegoLog.log("[onPlayerStreamEvent] eventID: %s, streamID: %s, extraInfo: %s", eventID.name(), streamID, extraInfo);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            int eventID_ = -1;
+            switch (eventID) {
+                case PUBLISH_START:
+                    eventID_ = 0;
+                    break;
+                case PUBLISH_SUCCESS:
+                    eventID_ = 1;
+                    break;
+                case PUBLISH_FAIL:
+                    eventID_ = 2;
+                    break;
+                case RETRY_PUBLISH_START:
+                    eventID_ = 3;
+                    break;
+                case RETRY_PUBLISH_SUCCESS:
+                    eventID_ = 4;
+                    break;
+                case RETRY_PUBLISH_FAIL:
+                    eventID_ = 5;
+                    break;
+                case PUBLISH_END:
+                    eventID_ = 6;
+                    break;
+                case PLAY_START:
+                    eventID_ = 7;
+                    break;
+                case PLAY_SUCCESS:
+                    eventID_ = 8;
+                    break;
+                case PLAY_FAIL:
+                    eventID_ = 9;
+                    break;
+                case RETRY_PLAY_START:
+                    eventID_ = 10;
+                    break;
+                case RETRY_PLAY_SUCCESS:
+                    eventID_ = 11;
+                    break;
+                case RETRY_PLAY_FAIL:
+                    eventID_ = 12;
+                    break;
+                case PLAY_END:
+                    eventID_ = 13;
+                    break;
+                default:
+                    eventID_ = -1;
+            }
+            map.put("method", "onPlayerStreamEvent");
+            map.put("eventID", eventID_);
+            map.put("streamID", streamID);
+            map.put("extraInfo", extraInfo);
+
+            sink.success(map);
+        }
 
         /* Mixer */
 

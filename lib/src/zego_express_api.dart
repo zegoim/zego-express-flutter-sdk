@@ -212,6 +212,22 @@ class ZegoExpressEngine {
   /// - [extendedData] Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
   static void Function(String roomID, ZegoRoomState state, int errorCode, Map<String, dynamic> extendedData)? onRoomStateUpdate;
 
+  /// The callback triggered when the room connection state changes.
+  ///
+  /// Available since: 2.18.0
+  /// Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.For versions 2.18.0 and above, it is recommended to use the onRoomStateChanged callback instead of the onRoomStateUpdate callback to monitor room state changes.
+  /// Use cases: Developers can use this callback to determine the status of the current user in the room.
+  /// When to trigger: Users will receive this notification when they call room functions (refer to [Related APIs]). 2. This notification may also be received when the user device's network conditions change (SDK will automatically log in to the room again when the connection is disconnected, refer to https://doc-zh.zego.im/faq/reconnect ).
+  /// Restrictions: None.
+  /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
+  /// Related APIs: [loginRoom], [logoutRoom], [switchRoom]
+  ///
+  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  /// - [reason] Room state change reason.
+  /// - [errorCode] Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  /// - [extendedData] Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
+  static void Function(String roomID, ZegoRoomStateChangedReason reason, int errorCode, Map<String, dynamic> extendedData)? onRoomStateChanged;
+
   /// The callback triggered when the number of other users in the room increases or decreases.
   ///
   /// Available since: 1.1.0
@@ -389,6 +405,18 @@ class ZegoExpressEngine {
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
   static void Function(ZegoVideoCodecID fromCodecID, ZegoVideoCodecID toCodecID, ZegoPublishChannel channel)? onPublisherVideoEncoderChanged;
 
+  /// The callback triggered when publishing stream.
+  ///
+  /// Available since: 2.18.0
+  /// Description: After start publishing stream, this callback will return the current stream address, resource type and protocol-related information.
+  /// When to trigger: Publish and retry publish events.
+  /// Caution: None.
+  ///
+  /// - [eventID] Publish stream event ID
+  /// - [streamID] Stream ID.
+  /// - [extraInfo] extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
+  static void Function(ZegoStreamEvent eventID, String streamID, String extraInfo)? onPublisherStreamEvent;
+
   /// The callback triggered when the state of stream playing changes.
   ///
   /// Available since: 1.1.0
@@ -492,6 +520,18 @@ class ZegoExpressEngine {
   /// - [codecID] Video codec ID.
   /// - [streamID] Stream ID.
   static void Function(ZegoVideoCodecID codecID, String streamID)? onPlayerLowFpsWarning;
+
+  /// The callback triggered when playing stream.
+  ///
+  /// Available since: 2.18.0
+  /// Description: After start playing stream, this callback will return the current stream address, resource type and protocol-related information.
+  /// When to trigger: Play and retry play events.
+  /// Caution: None.
+  ///
+  /// - [eventID] Play stream event ID
+  /// - [streamID] Stream ID.
+  /// - [extraInfo] extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
+  static void Function(ZegoStreamEvent eventID, String streamID, String extraInfo)? onPlayerStreamEvent;
 
   /// The callback triggered when the state of relayed streaming of the mixed stream to CDN changes.
   ///

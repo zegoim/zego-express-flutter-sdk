@@ -46,6 +46,28 @@ enum ZegoRoomState {
   Connected
 }
 
+/// Room state change reason.
+enum ZegoRoomStateChangedReason {
+  /// Logging in to the room. When calling [loginRoom] to log in to the room or [switchRoom] to switch to the target room, it will enter this state, indicating that it is requesting to connect to the server. The application interface is usually displayed through this state.
+  Logining,
+  /// Log in to the room successfully. When the room is successfully logged in or switched, it will enter this state, indicating that the login to the room has been successful, and users can normally receive callback notifications of other users in the room and all stream information additions and deletions.
+  Logined,
+  /// Failed to log in to the room. When the login or switch room fails, it will enter this state, indicating that the login or switch room has failed, for example, AppID or Token is incorrect, etc.
+  LoginFailed,
+  /// The room connection is temporarily interrupted. If the interruption occurs due to poor network quality, the SDK will retry internally.
+  Reconnecting,
+  /// The room is successfully reconnected. If there is an interruption due to poor network quality, the SDK will retry internally, and enter this state after successful reconnection.
+  Reconnected,
+  /// The room fails to reconnect. If there is an interruption due to poor network quality, the SDK will retry internally, and enter this state after the reconnection fails.
+  ReconnectFailed,
+  /// Kicked out of the room by the server. For example, if you log in to the room with the same user name in other places, and the local end is kicked out of the room, it will enter this state.
+  KickOut,
+  /// Logout of the room is successful. It is in this state by default before logging into the room. When calling [logoutRoom] to log out of the room successfully or [switchRoom] to log out of the current room successfully, it will enter this state.
+  Logout,
+  /// Failed to log out of the room. Enter this state when calling [logoutRoom] fails to log out of the room or [switchRoom] fails to log out of the current room internally.
+  LogoutFailed
+}
+
 /// Publish channel.
 enum ZegoPublishChannel {
   /// The main (default/first) publish channel.
@@ -852,6 +874,46 @@ enum ZegoAudioVADStableStateMonitorType {
   Captured,
   /// custom processed
   CustomProcessed
+}
+
+/// CDN network protocol types supported by ZEGO
+enum ZegoCDNProtocol {
+  /// TCP protocol
+  TCP,
+  /// QUIC protocol
+  QUIC
+}
+
+/// Publish or play stream event
+enum ZegoStreamEvent {
+  /// Start publishing stream
+  PublishStart,
+  /// The first publish stream was successful
+  PublishSuccess,
+  /// Failed to publish stream for the first time
+  PublishFail,
+  /// Start retrying publishing stream
+  RetryPublishStart,
+  /// Retry publishing stream successfully
+  RetryPublishSuccess,
+  /// Failed to retry publishing stream
+  RetryPublishFail,
+  /// End of publishing stream
+  PublishEnd,
+  /// Start playing stream
+  PlayStart,
+  /// The first play stream was successful
+  PlaySuccess,
+  /// Failed to play stream for the first time
+  PlayFail,
+  /// Start retrying playing stream
+  RetryPlayStart,
+  /// Retry playing stream successfully
+  RetryPlaySuccess,
+  /// Failed to retry playing stream
+  RetryPlayFail,
+  /// End of playing stream
+  PlayEnd
 }
 
 /// Log config.

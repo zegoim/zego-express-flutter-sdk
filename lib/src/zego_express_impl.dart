@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 
 class Global {
-  static String pluginVersion = "2.17.2";
+  static String pluginVersion = "2.18.1";
 }
 
 class ZegoExpressImpl {
@@ -1476,6 +1476,18 @@ class ZegoExpressImpl {
             Map<String, dynamic>.from(extendedData));
         break;
 
+      case 'onRoomStateChanged':
+        if (ZegoExpressEngine.onRoomStateChanged == null) return;
+
+        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+
+        ZegoExpressEngine.onRoomStateChanged!(
+            map['roomID'],
+            ZegoRoomStateChangedReason.values[map['reason']],
+            map['errorCode'],
+            Map<String, dynamic>.from(extendedData));
+        break;
+
       case 'onRoomUserUpdate':
         if (ZegoExpressEngine.onRoomUserUpdate == null) return;
 
@@ -1650,6 +1662,20 @@ class ZegoExpressImpl {
             map['stream'], infoList);
         break;
 
+      case 'onPublisherVideoEncoderChanged':
+        if (ZegoExpressEngine.onPublisherVideoEncoderChanged == null) return;
+
+        ZegoExpressEngine.onPublisherVideoEncoderChanged!(ZegoVideoCodecID.values[map['fromCodecID']],
+            ZegoVideoCodecID.values[map['toCodecID']], ZegoPublishChannel.values[map['channel']]);
+        break;
+
+      case 'onPublisherStreamEvent':
+        if (ZegoExpressEngine.onPublisherStreamEvent == null) return;
+
+        ZegoExpressEngine.onPublisherStreamEvent!(ZegoStreamEvent.values[map['eventID']],
+            map['streamID'], map['extraInfo']);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -1742,6 +1768,13 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onPlayerLowFpsWarning!(
             ZegoVideoCodecID.values[map['codecID']], map['streamID']);
+        break;
+
+      case 'onPlayerStreamEvent':
+        if (ZegoExpressEngine.onPlayerStreamEvent == null) return;
+
+        ZegoExpressEngine.onPlayerStreamEvent!(
+            ZegoStreamEvent.values[map['eventID']], map['streamID'], map['extraInfo']);
         break;
 
       /* Mixer*/

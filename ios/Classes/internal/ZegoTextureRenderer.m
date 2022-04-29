@@ -10,6 +10,8 @@
 #import "ZegoLog.h"
 #import <libkern/OSAtomic.h>
 
+#define TMP_BUFFER_NUM 3
+
 @interface ZegoTextureRenderer()
 
 @property (nonatomic, weak) id<FlutterTextureRegistry> registry;
@@ -24,7 +26,7 @@
     CVPixelBufferRef m_pRenderFrameBuffer;
     CVPixelBufferRef m_pTempToCopyFrameBuffer;
     
-    CVPixelBufferRef m_tmpProcessBufferList[3];
+    CVPixelBufferRef m_tmpProcessBufferList[TMP_BUFFER_NUM];
     int m_tmp_buffer_index;
     
     dispatch_queue_t  m_opengl_queue;
@@ -95,6 +97,13 @@
 - (void)destroy {
     [self destroyPixelBufferPool:m_buffer_pool];
     
+    for (int i = 0; i < TMP_BUFFER_NUM; i++) {
+        CVPixelBufferRef ref = self->m_tmpProcessBufferList[i];
+        if (ref) {
+            CFRelease(ref);
+        }
+    }
+    
     dispatch_async(m_opengl_queue, ^{
         
         [EAGLContext setCurrentContext:self.context];
@@ -145,13 +154,13 @@
 - (void)initPixelBuffer {
     [self createPixelBufferPool:&m_buffer_pool width:_viewWidth height:_viewHeight];
     
-    CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[0]);
-    CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[1]);
-    CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[2]);
+    for (int i = 0; i < TMP_BUFFER_NUM; i++) {
+        CVPixelBufferPoolCreatePixelBuffer(nil, m_buffer_pool, &m_tmpProcessBufferList[i]);
+    }
 }
 
 - (CVPixelBufferRef)getCurrentProcessBuffer {
-    if(m_tmp_buffer_index > 2) {
+    if (m_tmp_buffer_index > TMP_BUFFER_NUM - 1) {
         m_tmp_buffer_index = 0;
     }
     

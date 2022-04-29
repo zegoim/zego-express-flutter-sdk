@@ -110,6 +110,33 @@
     }
 }
 
+- (void)onRoomStateChanged:(ZegoRoomStateChangedReason)reason errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRoomStateChanged] reason: %d, errorCode: %d, roomID: %@", (int)reason, errorCode, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        NSString *extendedDataJsonString = @"{}";
+        if (extendedData) {
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+            if (!jsonData) {
+                ZGLog(@"[onRoomStateChanged] extendedData error: %@", error);
+            }else{
+                extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+        }
+
+        sink(@{
+            @"method": @"onRoomStateChanged",
+            @"reason": @(reason),
+            @"errorCode": @(errorCode),
+            @"extendedData": extendedDataJsonString,
+            @"roomID": roomID
+        });
+    }
+}
+
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType userList:(NSArray<ZegoUser *> *)userList roomID:(NSString *)roomID {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onRoomUserUpdate] updateType: %@, usersCount: %d, roomID: %@", updateType == ZegoUpdateTypeAdd ? @"Add" : @"Delete", (int)userList.count, roomID);
@@ -404,6 +431,69 @@
     }
 }
 
+- (void)onPublisherStreamEvent:(ZegoStreamEvent)eventID streamID:(NSString *)streamID extraInfo:(NSString *)extraInfo {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherStreamEvent] eventID: %d, streamID: %@, extraInfo: %@", (int)eventID, streamID, extraInfo);
+    
+    int eventID_ = -1;
+    switch (eventID) {
+        case ZegoStreamEventPublishStart:
+            eventID_ = 0;
+            break;
+        case ZegoStreamEventPublishSuccess:
+            eventID_ = 1;
+            break;
+        case ZegoStreamEventPublishFail:
+            eventID_ = 2;
+            break;
+        case ZegoStreamEventRetryPublishStart:
+            eventID_ = 3;
+            break;
+        case ZegoStreamEventRetryPublishSuccess:
+            eventID_ = 4;
+            break;
+        case ZegoStreamEventRetryPublishFail:
+            eventID_ = 5;
+            break;
+        case ZegoStreamEventPublishEnd:
+            eventID_ = 6;
+            break;
+        case ZegoStreamEventPlayStart:
+            eventID_ = 7;
+            break;
+        case ZegoStreamEventPlaySuccess:
+            eventID_ = 8;
+            break;
+        case ZegoStreamEventPlayFail:
+            eventID_ = 9;
+            break;
+        case ZegoStreamEventRetryPlayStart:
+            eventID_ = 10;
+            break;
+        case ZegoStreamEventRetryPlaySuccess:
+            eventID_ = 11;
+            break;
+        case ZegoStreamEventRetryPlayFail:
+            eventID_ = 12;
+            break;
+        case ZegoStreamEventPlayEnd:
+            eventID_ = 13;
+            break;
+        default:
+            break;
+    }
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherStreamEvent",
+            @"eventID": @(eventID_),
+            @"streamID": streamID,
+            @"extraInfo": extraInfo
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -565,6 +655,69 @@
             @"method": @"onPlayerLowFpsWarning",
             @"codecID": @(codecID),
             @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerStreamEvent:(ZegoStreamEvent)eventID streamID:(NSString *)streamID extraInfo:(NSString *)extraInfo {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerStreamEvent] eventID: %d,streamID: %@, extraInfo: %@", (int)eventID, streamID, extraInfo);
+
+    GUARD_SINK
+    
+    int eventID_ = -1;
+    switch (eventID) {
+        case ZegoStreamEventPublishStart:
+            eventID_ = 0;
+            break;
+        case ZegoStreamEventPublishSuccess:
+            eventID_ = 1;
+            break;
+        case ZegoStreamEventPublishFail:
+            eventID_ = 2;
+            break;
+        case ZegoStreamEventRetryPublishStart:
+            eventID_ = 3;
+            break;
+        case ZegoStreamEventRetryPublishSuccess:
+            eventID_ = 4;
+            break;
+        case ZegoStreamEventRetryPublishFail:
+            eventID_ = 5;
+            break;
+        case ZegoStreamEventPublishEnd:
+            eventID_ = 6;
+            break;
+        case ZegoStreamEventPlayStart:
+            eventID_ = 7;
+            break;
+        case ZegoStreamEventPlaySuccess:
+            eventID_ = 8;
+            break;
+        case ZegoStreamEventPlayFail:
+            eventID_ = 9;
+            break;
+        case ZegoStreamEventRetryPlayStart:
+            eventID_ = 10;
+            break;
+        case ZegoStreamEventRetryPlaySuccess:
+            eventID_ = 11;
+            break;
+        case ZegoStreamEventRetryPlayFail:
+            eventID_ = 12;
+            break;
+        case ZegoStreamEventPlayEnd:
+            eventID_ = 13;
+            break;
+        default:
+            break;
+    }
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerStreamEvent",
+            @"eventID": @(eventID_),
+            @"streamID": streamID,
+            @"extraInfo": extraInfo
         });
     }
 }
