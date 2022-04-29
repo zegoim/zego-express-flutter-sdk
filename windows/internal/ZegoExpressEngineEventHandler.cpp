@@ -65,6 +65,20 @@ void ZegoExpressEngineEventHandler::onRoomStateUpdate(const std::string& roomID,
 	}
 }
 
+void ZegoExpressEngineEventHandler::onRoomStateChanged(const std::string& roomID, EXPRESS::ZegoRoomStateChangedReason reason, int errorCode, const std::string& extendedData) {
+
+	if (eventSink_) {
+		FTMap retMap;
+		retMap[FTValue("method")] = FTValue("onRoomStateChanged");
+		retMap[FTValue("reason")] = FTValue(reason);
+		retMap[FTValue("errorCode")] = FTValue(errorCode);
+		retMap[FTValue("roomID")] = FTValue(roomID);
+		retMap[FTValue("extendedData")] = FTValue(extendedData);
+
+		eventSink_->Success(retMap);
+	}
+}
+
 void ZegoExpressEngineEventHandler::onRoomUserUpdate(const std::string& roomID, EXPRESS::ZegoUpdateType updateType, const std::vector<EXPRESS::ZegoUser>& userList) {
 
 	if (eventSink_) {
@@ -249,6 +263,68 @@ void ZegoExpressEngineEventHandler::onPublisherRelayCDNStateUpdate(const std::st
 
 }*/
 
+void ZegoExpressEngineEventHandler::onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) {
+
+	if (eventSink_) {
+		FTMap retMap;
+		int eventID_ = -1;
+		switch (eventID)
+		{
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_START:
+			eventID_ = 0;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_SUCCESS:
+			eventID_ = 1;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_FAIL:
+			eventID_ = 2;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_START:
+			eventID_ = 3;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_SUCCESS:
+			eventID_ = 4;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_FAIL:
+			eventID_ = 5;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_END:
+			eventID_ = 6;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_START:
+			eventID_ = 7;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_SUCCESS:
+			eventID_ = 8;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_FAIL:
+			eventID_ = 9;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_START:
+			eventID_ = 10;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_SUCCESS:
+			eventID_ = 11;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_FAIL:
+			eventID_ = 12;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_END:
+			eventID_ = 13;
+			break;
+		default:
+			break;
+		}
+		retMap[FTValue("method")] = FTValue("onPublisherStreamEvent");
+		retMap[FTValue("streamID")] = FTValue(streamID);
+		retMap[FTValue("eventID")] = flutter::EncodableValue(eventID_);
+		retMap[FTValue("streamID")] = flutter::EncodableValue(streamID);
+		retMap[FTValue("extraInfo")] = flutter::EncodableValue(extraInfo);
+
+		eventSink_->Success(retMap);
+	}
+}
+
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string& streamID, EXPRESS::ZegoPlayerState state, int errorCode, const std::string& extendedData) {
 
 	if (eventSink_) {
@@ -349,6 +425,68 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string& streamID,
 		std::vector<uint8_t> dataArray(nonConstData, nonConstData + dataLength);
 
 		retMap[FTValue("data")] = FTValue(dataArray);
+
+		eventSink_->Success(retMap);
+	}
+}
+
+void ZegoExpressEngineEventHandler::onPlayerStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) {
+
+	if (eventSink_) {
+		FTMap retMap;
+		int eventID_ = -1;
+		switch (eventID)
+		{
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_START:
+			eventID_ = 0;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_SUCCESS:
+			eventID_ = 1;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_FAIL:
+			eventID_ = 2;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_START:
+			eventID_ = 3;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_SUCCESS:
+			eventID_ = 4;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_FAIL:
+			eventID_ = 5;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_END:
+			eventID_ = 6;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_START:
+			eventID_ = 7;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_SUCCESS:
+			eventID_ = 8;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_FAIL:
+			eventID_ = 9;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_START:
+			eventID_ = 10;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_SUCCESS:
+			eventID_ = 11;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_FAIL:
+			eventID_ = 12;
+			break;
+		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_END:
+			eventID_ = 13;
+			break;
+		default:
+			break;
+		}
+		retMap[FTValue("method")] = FTValue("onPlayerStreamEvent");
+		retMap[FTValue("streamID")] = FTValue(streamID);
+		retMap[FTValue("eventID")] = flutter::EncodableValue(eventID_);
+		retMap[FTValue("streamID")] = flutter::EncodableValue(streamID);
+		retMap[FTValue("extraInfo")] = flutter::EncodableValue(extraInfo);
 
 		eventSink_->Success(retMap);
 	}

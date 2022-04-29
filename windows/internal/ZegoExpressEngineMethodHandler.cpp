@@ -1727,6 +1727,28 @@ void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argum
         input.layout.y = std::get<int32_t>(inputMap[FTValue("top")]);
         input.soundLevelID = std::get<int32_t>(inputMap[FTValue("soundLevelID")]);
 
+        input.volume = std::get<int32_t>(inputMap[FTValue("volume")]);
+        input.isAudioFocus = std::get<bool>(inputMap[FTValue("isAudioFocus")]);
+        input.audioDirection = std::get<int32_t>(inputMap[FTValue("audioDirection")]);
+
+        if (!inputMap[FTValue("label")].IsNull()) {
+            auto labelMap = std::get<flutter::EncodableMap>(inputMap[FTValue("label")]) ;
+            auto text = std::get<std::string>(labelMap[FTValue("text")]);
+            EXPRESS::ZegoLabelInfo labelInfo(text);
+            labelInfo.left = std::get<int32_t>(labelMap[FTValue("left")]);
+            labelInfo.top =  std::get<int32_t>(labelMap[FTValue("top")]);
+            auto fontMap = std::get<flutter::EncodableMap>(labelMap[FTValue("font")]);
+            EXPRESS::ZegoFontStyle fontStyle;
+            fontStyle.type = (EXPRESS::ZegoFontType)std::get<int32_t>(fontMap[FTValue("type")]);
+            fontStyle.size = std::get<int32_t>(fontMap[FTValue("size")]);
+            fontStyle.color = std::get<int32_t>(fontMap[FTValue("color")]);
+            fontStyle.transparency = std::get<int32_t>(fontMap[FTValue("transparency")]);
+            fontStyle.border = std::get<bool>(fontMap[FTValue("border")]);
+            fontStyle.borderColor = std::get<int32_t>(fontMap[FTValue("borderColor")]);
+            labelInfo.font = fontStyle;
+            input.label = labelInfo;
+        }
+
         task.inputList.push_back(input);
     }
     for (auto &outputIter : outputFlutterList) {
