@@ -95,14 +95,8 @@
 }
 
 - (void)destroy {
-    [self destroyPixelBufferPool:m_buffer_pool];
     
-    for (int i = 0; i < TMP_BUFFER_NUM; i++) {
-        CVPixelBufferRef ref = self->m_tmpProcessBufferList[i];
-        if (ref) {
-            CFRelease(ref);
-        }
-    }
+    [self releasePixelBuffer];
     
     dispatch_async(m_opengl_queue, ^{
         
@@ -159,6 +153,17 @@
     }
 }
 
+- (void)releasePixelBuffer {
+    [self destroyPixelBufferPool:m_buffer_pool];
+    
+    for (int i = 0; i < TMP_BUFFER_NUM; i++) {
+        CVPixelBufferRef ref = self->m_tmpProcessBufferList[i];
+        if (ref) {
+            CFRelease(ref);
+        }
+    }
+}
+
 - (CVPixelBufferRef)getCurrentProcessBuffer {
     if (m_tmp_buffer_index > TMP_BUFFER_NUM - 1) {
         m_tmp_buffer_index = 0;
@@ -199,9 +204,7 @@
             strong_ptr.viewWidth = size.width;
             strong_ptr.viewHeight = size.height;
             
-            [strong_ptr destroyPixelBufferPool:self->m_buffer_pool];
-            // [strong_ptr createPixelBufferPool:&self->m_buffer_pool width:strong_ptr.viewWidth height:strong_ptr.viewHeight];
-
+            [strong_ptr releasePixelBuffer];
             // 重新创建 pool 的同时，需要重新创建 pixelbuffer，width/height 作用在 pixelbuffer 上
             [strong_ptr initPixelBuffer];
             
