@@ -112,7 +112,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   ///
   /// - [data] AAC buffer data.
   /// - [dataLength] The total length of the buffer data.
-  /// - [configLength] The length of AAC specific config (Note: The AAC encoded data length is 'encodedLength = dataLength - configLength').
+  /// - [configLength] The length of AAC specific config (Note: The AAC encoded data length is 'encodedLength = dataLength - configLength').Value range: [0,64]
   /// - [referenceTimeMillisecond] The UNIX timestamp of this AAC audio frame in millisecond.
   /// - [param] The param of this AAC audio frame.
   /// - [channel] Publish channel for capturing audio frames.

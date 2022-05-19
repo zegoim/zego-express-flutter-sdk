@@ -5,9 +5,9 @@ import 'zego_express_defines.dart';
 
 extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
-  /// Logs in to a room with advanced room configurations. You must log in to a room before publishing or playing streams.
+  /// Log in to the room by configuring advanced properties, and return the login result through the callback parameter. You must log in to the room before pushing or pulling the stream.
   ///
-  /// Available since: 1.1.0
+  /// Available since: 2.18.0
   /// Description: SDK uses the 'room' to organize users. After users log in to a room, they can use interface such as push stream [startPublishingStream], pull stream [startPlayingStream], send and receive broadcast messages [sendBroadcastMessage], etc. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
   /// Use cases: In the same room, users can conduct live broadcast, audio and video calls, etc.
   /// When to call /Trigger: This interface is called after [createEngine] initializes the SDK.
@@ -32,7 +32,8 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
-  Future<void> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig? config}) async {
+  /// - Returns The result of this login room
+  Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig? config}) async {
     return await ZegoExpressImpl.instance.loginRoom(roomID, user, config: config);
   }
 
@@ -48,7 +49,8 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Related APIs: Users can use [loginRoom], [switchRoom] functions to log in or switch rooms.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  Future<void> logoutRoom([String? roomID]) async {
+  /// - Returns The result of this logout room
+  Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
     return await ZegoExpressImpl.instance.logoutRoom(roomID);
   }
 

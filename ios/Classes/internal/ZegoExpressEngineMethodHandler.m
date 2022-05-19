@@ -298,12 +298,30 @@
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
 
-        [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject];
+        [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
+            NSString *extendedDataJsonString = @"{}";
+            if (extendedData) {
+                NSError *error;
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+                if (!jsonData) {
+                    ZGLog(@"[loginRoomCallback] extendedData error: %@", error);
+                }else{
+                    extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+                }
+            }
+
+            result(@{
+                @"errorCode": @(errorCode),
+                @"extendedData": extendedDataJsonString
+            });
+        }];
     } else {
         [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject];
+        result(@{
+            @"errorCode": @(0),
+            @"extendedData": @"{}"
+        });
     }
-
-    result(nil);
 }
 
 - (void)loginMultiRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -334,12 +352,42 @@
 
     NSString *roomID = call.arguments[@"roomID"];
     if ([ZegoUtils isNullObject:roomID]) {
-        [[ZegoExpressEngine sharedEngine] logoutRoom];
+        [[ZegoExpressEngine sharedEngine] logoutRoom: ^(int errorCode, NSDictionary * _Nullable extendedData) {
+            NSString *extendedDataJsonString = @"{}";
+            if (extendedData) {
+                NSError *error;
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+                if (!jsonData) {
+                    ZGLog(@"[logoutRoomCallback] extendedData error: %@", error);
+                }else{
+                    extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+                }
+            }
+
+            result(@{
+                @"errorCode": @(errorCode),
+                @"extendedData": extendedDataJsonString
+            });
+        }];
     } else {
-        [[ZegoExpressEngine sharedEngine] logoutRoom:roomID];
+        [[ZegoExpressEngine sharedEngine] logoutRoom:roomID callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
+            NSString *extendedDataJsonString = @"{}";
+            if (extendedData) {
+                NSError *error;
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:extendedData options:0 error:&error];
+                if (!jsonData) {
+                    ZGLog(@"[logoutRoomCallback] extendedData error: %@", error);
+                }else{
+                    extendedDataJsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+                }
+            }
+
+            result(@{
+                @"errorCode": @(errorCode),
+                @"extendedData": extendedDataJsonString
+            });
+        }];
     }
-    
-    result(nil);
 }
 
 - (void)switchRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -855,6 +903,17 @@
     result(nil);
 }
 
+- (void)sendSEISyncWithCustomVideo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    FlutterStandardTypedData *data = call.arguments[@"data"];
+    int timeStampNs = [ZegoUtils intValue:call.arguments[@"timeStampNs"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] sendSEISyncWithCustomVideo:data.data timeStampNs: timeStampNs channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)enableHardwareEncoder:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
@@ -909,6 +968,7 @@
 
         playerConfig = [[ZegoPlayerConfig alloc] init];
         playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
+        playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
@@ -1013,6 +1073,18 @@
     NSString *streamID = call.arguments[@"streamID"];
 
     [[ZegoExpressEngine sharedEngine] setPlayStreamDecryptionKey:key streamID:streamID];
+
+    result(nil);
+}
+
+- (void)setPlayStreamCrossAppInfo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *streamID = call.arguments[@"streamID"];
+    NSDictionary *infoMap = call.arguments[@"info"];
+    ZegoCrossAppInfo *info = [[ZegoCDNConfig alloc] init];
+    info.appID = [ZegoUtils intValue:infoMap[@"appID"]];
+    info.token = infoMap[@"token"];
+    [[ZegoExpressEngine sharedEngine] setPlayStreamCrossAppInfo:streamID info:info];
 
     result(nil);
 }

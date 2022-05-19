@@ -699,6 +699,22 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onPlayerRecvAudioSideInfo(String streamID, byte[] data) {
+            super.onPlayerRecvAudioSideInfo(streamID, data);
+            ZegoLog.log("[onPlayerRecvAudioSideInfo] streamID: %s", streamID);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerRecvAudioSideInfo");
+            map.put("streamID", streamID);
+            map.put("data", data);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onPlayerLowFpsWarning(ZegoVideoCodecID codecID, String streamID) {
             super.onPlayerLowFpsWarning(codecID, streamID);
             ZegoLog.log("[onPlayerLowFpsWarning] ZegoVideoCodecID: %s, streamID: %s", codecID.name(), streamID);

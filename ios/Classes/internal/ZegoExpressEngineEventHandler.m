@@ -645,6 +645,20 @@
     }
 }
 
+- (void)onPlayerRecvAudioSideInfo:(NSData *)data streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerRecvAudioSideInfo] streamID: %@", streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRecvAudioSideInfo",
+            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
+            @"streamID": streamID
+        });
+    }
+}
+
 - (void)onPlayerLowFpsWarning:(ZegoVideoCodecID) codecID streamID:(NSString *) streamID {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPlayerLowFpsWarning] codecID: %d,streamID: %@", (int)codecID, streamID);

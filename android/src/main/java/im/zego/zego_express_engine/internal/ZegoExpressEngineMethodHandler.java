@@ -392,7 +392,7 @@ public class ZegoExpressEngineMethodHandler {
     /* Room */
 
     @SuppressWarnings("unused")
-    public static void loginRoom(MethodCall call, Result result) {
+    public static void loginRoom(MethodCall call, final Result result) {
 
         String roomID = call.argument("roomID");
 
@@ -405,12 +405,22 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
-            ZegoExpressEngine.getEngine().loginRoom(roomID, user, roomConfig);
+            ZegoExpressEngine.getEngine().loginRoom(roomID, user, roomConfig, new IZegoRoomLoginCallback() {
+                @Override
+                public void onRoomLoginResult(int errorCode, JSONObject extendedData) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("extendedData", extendedData.toString());
+                    result.success(resultMap);
+                }
+            });
         } else {
             ZegoExpressEngine.getEngine().loginRoom(roomID, user);
+            HashMap<String, Object> resultMap = new HashMap<>();
+            resultMap.put("errorCode", 0);
+            resultMap.put("extendedData", "{}");
+            result.success(resultMap);
         }
-
-        result.success(null);
     }
 
     @SuppressWarnings({"unused", "deprecation"})
@@ -433,16 +443,30 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void logoutRoom(MethodCall call, Result result) {
+    public static void logoutRoom(MethodCall call, final Result result) {
 
         String roomID = call.argument("roomID");
         if (roomID != null) {
-            ZegoExpressEngine.getEngine().logoutRoom(roomID);
+            ZegoExpressEngine.getEngine().logoutRoom(roomID, new IZegoRoomLogoutCallback() {
+                @Override
+                public void onRoomLogoutResult(int errorCode, JSONObject extendedData) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("extendedData", extendedData.toString());
+                    result.success(resultMap);
+                }
+            });
         } else {
-            ZegoExpressEngine.getEngine().logoutRoom();
+            ZegoExpressEngine.getEngine().logoutRoom(new IZegoRoomLogoutCallback() {
+                @Override
+                public void onRoomLogoutResult(int errorCode, JSONObject extendedData) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("extendedData", extendedData.toString());
+                    result.success(resultMap);
+                }
+            });
         }
-
-        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -1016,6 +1040,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void sendSEISyncWithCustomVideo(MethodCall call, Result result) {
+
+        byte[] data = call.argument("data");
+        int timeStampNs = ZegoUtils.intValue((Number) call.argument("timeStampNs"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().sendSEISyncWithCustomVideo(data, timeStampNs, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void enableHardwareEncoder(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
@@ -1076,6 +1112,7 @@ public class ZegoExpressEngineMethodHandler {
             playerConfig.resourceMode = ZegoStreamResourceMode.getZegoStreamResourceMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceMode")));
             playerConfig.videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(ZegoUtils.intValue((Number) playerConfigMap.get("videoLayer")));
             playerConfig.roomID = (String) playerConfigMap.get("roomID");
+            playerConfig.sourceResourceType = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("sourceResourceType")));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
             if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {
@@ -1182,6 +1219,19 @@ public class ZegoExpressEngineMethodHandler {
         String key = call.argument("key");
 
         ZegoExpressEngine.getEngine().setPlayStreamDecryptionKey(streamID, key);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPlayStreamCrossAppInfo(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        HashMap<String, Object> infoMap = call.argument("info");
+        ZegoCrossAppInfo info = new ZegoCrossAppInfo();
+        info.appID = ZegoUtils.intValue((Number) infoMap.get("appID"));
+        info.token = (String) infoMap.get("token");
+        ZegoExpressEngine.getEngine().setPlayStreamCrossAppInfo(streamID, info);
 
         result.success(null);
     }

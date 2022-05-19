@@ -386,6 +386,16 @@ enum ZegoPlayerMediaEvent {
   VideoBreakResume
 }
 
+/// Resource Type.
+enum ZegoResourceType {
+  /// CDN
+  CDN,
+  /// RTC
+  RTC,
+  /// L3
+  L3
+}
+
 /// Stream Resource Mode
 enum ZegoStreamResourceMode {
   /// Default mode. The SDK will automatically select the streaming resource according to the cdnConfig parameters set by the player config and the ready-made background configuration.
@@ -1003,7 +1013,7 @@ class ZegoRoomConfig {
   /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
   bool isUserStatusNotify;
 
-  /// The token issued by the developer's business server is used to ensure security. The generation rules are detailed in Room Login Authentication Description [use token authentication] (https://docs.zegocloud.com/article/3881) Default is empty string, that is, no authentication. Version 2.17.0 or later If appSign is not passed when the [createEngine] interface is called to create an engine or appSign is empty, this parameter must be set for authentication when you log in to a room.
+  /// The token issued by the developer's business server is used to ensure security. For the generation rules, please refer to [Using Token Authentication](https://doc-zh.zego.im/article/10360), the default is an empty string, that is, no authentication. In versions 2.17.0 and above, if appSign is not passed in when calling the [createEngine] API to create an engine, or if appSign is empty, this parameter must be set for authentication when logging in to a room.
   String token;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token);
@@ -1127,7 +1137,7 @@ class ZegoSEIConfig {
 /// Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
 class ZegoVoiceChangerParam {
 
-  /// Pitch parameter, value range [-8.0, 8.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note the tone-shifting sound effect is only effective for the sound played by the media player, and does not change the tone collected by the microphone.
+  /// Pitch parameter, value range [-12.0, 12.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note the tone-shifting sound effect is only effective for the sound played by the media player, and does not change the tone collected by the microphone. Note that on v2.18.0 and older version, the value range is [-8.0, 8.0].
   double pitch;
 
   ZegoVoiceChangerParam(this.pitch);
@@ -1397,10 +1407,13 @@ class ZegoPlayerConfig {
   /// The video encoding type of the stream.
   ZegoVideoCodecID videoCodecID;
 
-  ZegoPlayerConfig(this.resourceMode, this.videoCodecID, {this.cdnConfig, this.roomID});
+  /// The resource type of the source stream.
+  ZegoResourceType? sourceResourceType;
+
+  ZegoPlayerConfig(this.resourceMode, this.videoCodecID, {this.cdnConfig, this.roomID, this.sourceResourceType});
 
   /// Create a default advanced player config object
-  ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default, videoCodecID = ZegoVideoCodecID.Unknown;
+  ZegoPlayerConfig.defaultConfig() : resourceMode = ZegoStreamResourceMode.Default, videoCodecID = ZegoVideoCodecID.Unknown, sourceResourceType = ZegoResourceType.RTC;
 
 }
 
@@ -1485,6 +1498,19 @@ class ZegoPlayStreamQuality {
   double videoRecvBytes;
 
   ZegoPlayStreamQuality(this.videoRecvFPS, this.videoDejitterFPS, this.videoDecodeFPS, this.videoRenderFPS, this.videoKBPS, this.videoBreakRate, this.audioRecvFPS, this.audioDejitterFPS, this.audioDecodeFPS, this.audioRenderFPS, this.audioKBPS, this.audioBreakRate, this.mos, this.rtt, this.packetLostRate, this.peerToPeerDelay, this.peerToPeerPacketLostRate, this.level, this.delay, this.avTimestampDiff, this.isHardwareDecode, this.videoCodecID, this.totalRecvBytes, this.audioRecvBytes, this.videoRecvBytes);
+
+}
+
+/// Cross APP playing stream configuration.
+class ZegoCrossAppInfo {
+
+  /// AppID for playing streams across apps.
+  int appID;
+
+  /// The token that needs to be set.
+  String token;
+
+  ZegoCrossAppInfo(this.appID, this.token);
 
 }
 
@@ -2377,6 +2403,7 @@ abstract class ZegoMediaPlayer {
   /// Set the view of the player playing video.
   ///
   /// Only support platform view.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [canvas] Video rendered canvas object
   Future<void> setPlayerCanvas(ZegoCanvas canvas);
@@ -2445,6 +2472,7 @@ abstract class ZegoMediaPlayer {
   /// Take a screenshot of the current playing screen of the media player.
   ///
   /// Only in the case of calling [setPlayerCanvas] to set the display controls and the playback state, can the screenshot be taken normally
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   Future<ZegoMediaPlayerTakeSnapshotResult> takeSnapshot();
 
   /// Open precise seek and set relevant attributes.
@@ -3161,6 +3189,38 @@ class ZegoRoomSetRoomExtraInfoResult {
   int errorCode;
 
   ZegoRoomSetRoomExtraInfoResult(this.errorCode);
+
+}
+
+/// Login room result callback.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [extendedData] Extended Information
+class ZegoRoomLoginResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// Extended Information
+  Map<dynamic, dynamic> extendedData;
+
+  ZegoRoomLoginResult(this.errorCode, this.extendedData);
+
+}
+
+/// Logout room result callback.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [extendedData] Extended Information
+class ZegoRoomLogoutResult {
+
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// Extended Information
+  Map<dynamic, dynamic> extendedData;
+
+  ZegoRoomLogoutResult(this.errorCode, this.extendedData);
 
 }
 

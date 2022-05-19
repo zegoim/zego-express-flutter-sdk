@@ -514,7 +514,7 @@ class ZegoErrorCode {
   /// Description: Failed to start virtual stereo. <br>Cause: The virtual stereo angle parameter is invalid. <br>Solutions: The normal range of angle parameter is -1 ~ 360.
   static const int PreprocessVirtualStereoAngleInvalid                                    = 1007015;
 
-  /// Description: Failed to set the voice changing parameters. <br>Cause: The param setting of the voice changing parameter is invalid. <br>Solutions: The normal range of parameter param is -8.0 ~ 8.0
+  /// Description: Failed to set the voice changing parameters. <br>Cause: The param setting of the voice changing parameter is invalid. <br>Solutions: The normal range of parameter param is -12.0 ~ 12.0
   static const int PreprocessVoiceChangerParamInvalid                                     = 1007016;
 
   /// The reverberation echo parameters is null. Please check the input parameter.
@@ -574,7 +574,7 @@ class ZegoErrorCode {
   /// Description: The media player failed to specify the audio track index. <br>Cause: The audio track index not exist. <br>Solutions: Check file audio track index call [getAudioTrackCount] can get.
   static const int MediaPlayerSetAudioTrackIndexError                                     = 1008040;
 
-  /// Description: Media player setting sound change parameter invalid. <br>Cause: Error setting parameters. <br>Solutions: Checking setting parameters control during -8.0 to 8.0
+  /// Description: Media player setting sound change parameter invalid. <br>Cause: Error setting parameters. <br>Solutions: Checking setting parameters control during -12.0 to 12.0
   static const int MediaPlayerSetVoiceChangerParamInvalid                                 = 1008041;
 
   /// Description: takeSnapshot screenshot failed <br>Cause: The video is not playing or 'setPlayerCanvas' is not called to display the video to the control. <br>Solutions: Check whether the video plays normally(check [onPlayStart] callback) and the screen is displayed normally.
@@ -730,7 +730,7 @@ class ZegoErrorCode {
   /// Description: Change audio effect progress failed. <br>Cause: The audio effect progress value exceed audio effect file duration. <br> Solutions: Please check the audio effect progress value exceed audio effect file duration or not.
   static const int AudioEffectPlayerSeekFailed                                            = 1014003;
 
-  /// Description: The number of instances of the audio effect player created exceeds the maximum limit. <br>Cause: The number of instances of the audio effect player created exceeds the maximum limit. <br> Solutions: Please check if the number of instances of the audio effect player created exceeds the maximum limit, the maximum number of instances allowed to be created is 12.
+  /// Description: The number of instances of the audio effect player created exceeds the maximum limit. <br>Cause: The number of instances of the audio effect player created exceeds the maximum limit. <br> Solutions: Please check if the number of instances of the audio effect player created exceeds the maximum limit, the maximum number of instances allowed to be created is 1.
   static const int AudioEffectPlayerExceedMaxCount                                        = 1014004;
 
   /// Description: Network connectivity test failed. <br>Cause: Not connected to the network. <br> Solutions: Please check if you can access the Internet properly.

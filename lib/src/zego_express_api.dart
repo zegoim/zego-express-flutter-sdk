@@ -356,6 +356,7 @@ class ZegoExpressEngine {
   /// Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of video data. Developers can use this callback to determine whether SDK has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
   /// Trigger: In the case of no startPublishingStream video stream or preview, the first startPublishingStream video stream or first preview, that is, when the engine of the audio and video module inside SDK starts, it will collect video data of the local device and receive this callback.
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
   static void Function(ZegoPublishChannel channel)? onPublisherCapturedVideoFirstFrame;
@@ -365,6 +366,7 @@ class ZegoExpressEngine {
   /// Available since: 2.4.0
   /// Description: this callback will be called after SDK rendered the first frame of video data captured. This interface is for preview rendering. The first frame callback is only available for external collection and internal preview. If it is not for SDK rendering, there is no such callback.
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
   static void Function(ZegoPublishChannel channel)? onPublisherRenderVideoFirstFrame;
@@ -376,6 +378,7 @@ class ZegoExpressEngine {
   /// Trigger: After the successful publish [startPublishingStream], the callback will be received if there is a change in the video capture resolution in the process of publishing the stream.
   /// Use cases: You can use this callback to remove the cover of the local preview UI and similar operations.You can also dynamically adjust the scale of the preview view based on the resolution of the callback.
   /// Caution: What is notified during external collection is the change in encoding resolution, which will be affected by flow control.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [width] Video capture resolution width.
   /// - [height] Video capture resolution height.
@@ -471,6 +474,7 @@ class ZegoExpressEngine {
   /// Use cases: Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
   /// Trigger: This callback is triggered when SDK receives the first frame of video data from the network.
   /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerRenderVideoFirstFrame] determines whether the SDK has rendered the first frame of the received video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRecvVideoFirstFrame;
@@ -482,6 +486,7 @@ class ZegoExpressEngine {
   /// Use cases: Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
   /// Trigger: This callback is triggered when SDK rendered the first frame of video data from the network.
   /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerRecvVideoFirstFrame] determines whether the SDK has received the video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRenderVideoFirstFrame;
@@ -493,6 +498,7 @@ class ZegoExpressEngine {
   /// Use cases: Developers can update or switch the UI components that actually play the stream based on the final resolution of the stream.
   /// Trigger: After the [startPlayingStream] function is called successfully, this callback is triggered when the video resolution changes while playing the stream.
   /// Caution: If the stream is only audio data, the callback will not be triggered.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.
   /// - [width] Video decoding resolution width.
@@ -509,6 +515,18 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [data] SEI content.
   static void Function(String streamID, Uint8List data)? onPlayerRecvSEI;
+
+  /// Receive the audio side information content of the remote stream.
+  ///
+  /// Available since: 2.19.0
+  /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends audio side information, the local end will receive this callback.
+  /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends audio side information, the local end will receive this callback.
+  /// Caution: 1. When [mutePlayStreamAudio] or [muteAllPlayStreamAudio] is called to set only the video stream to be pulled, the audio side information not be received. 2. Due to factors such as the network, the received data may be missing, but the order is guaranteed.
+  /// Related APIs: Send audio side information by the [sendAudioSideInfo] function.
+  ///
+  /// - [streamID] Stream ID.
+  /// - [data] Audio side information content.
+  static void Function(String streamID, Uint8List data)? onPlayerRecvAudioSideInfo;
 
   /// Playing stream low frame rate warning.
   ///
@@ -588,6 +606,7 @@ class ZegoExpressEngine {
   /// When to trigger: This callback is triggered when a video device is added or removed from the system.
   /// Restrictions: None
   /// Platform differences: Only supports Windows and macOS.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceInfo] Audio device information
@@ -598,7 +617,9 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: The local captured audio sound level callback.
   /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
-  /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview].
+  /// Caution: 
+  ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview]. 
+  ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate]
   ///
   /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0.
@@ -609,7 +630,9 @@ class ZegoExpressEngine {
   /// Available since: 2.10.0
   /// Description: The local captured audio sound level callback.
   /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
-  /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+  /// Caution: 
+  ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
+  ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate] or [onRemoteSoundLevelInfoUpdate].
   ///
   /// - [soundLevelInfo] Locally captured sound level value, ranging from 0.0 to 100.0.
@@ -677,6 +700,7 @@ class ZegoExpressEngine {
   /// Use cases: Developers of 1v1 education scenarios or education small class scenarios and similar scenarios can use this callback notification to determine whether the camera device of the remote publishing stream device is working normally, and preliminary understand the cause of the device problem according to the corresponding state.
   /// Trigger: When the state of the remote camera device changes, such as switching the camera, by monitoring this callback, it is possible to obtain an event related to the far-end camera, which can be used to prompt the user that the video may be abnormal.
   /// Caution: This callback will not be called back when the remote stream is play from the CDN, or when custom video acquisition is used at the peer.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.
   /// - [state] Remote camera status.
@@ -1149,6 +1173,7 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
   /// Related APIs: After turning on the beauty features, you can call the [setBeautifyOption] function to adjust the beauty parameters.
   /// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the [ZegoEffects] AI SDK https://docs.zegocloud.com/article/9896 for best results.
   /// Restrictions: In the case of using the custom video capture function, since the developer has handle the video data capturing, the SDK is no longer responsible for the video data capturing, so this function is no longer valid. It is also invalid when using the custom video processing function.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// @deprecated Deprecated since 2.16.0, please use the [enableEffectsBeauty] function instead.
   /// - [featureBitmask] Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
@@ -1166,6 +1191,7 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
   /// When to call: It needs to be called after [createEngine].
   /// Restrictions: None.
   /// Caution: In the case of using a custom video capture function, because the developer has taken over the video data capturing, the SDK is no longer responsible for the video data capturing, call this function will not take effect. When using custom video processing, the video data collected by the SDK will be handed over to the business for further processing, call this function will not take effect either.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// @deprecated Deprecated since 2.16.0, please use the [setEffectsBeautyParam] function instead.
   /// - [option] Beautify option.
@@ -1217,6 +1243,7 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
   /// When the publisher has set the codecID to SVC through [setVideoConfig], the player can dynamically set whether to use the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer)
   /// Under normal circumstances, when the network is weak or the rendered UI form is small, you can choose to use the video that plays the base layer to save bandwidth.
   /// It can be set before and after playing stream.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// @deprecated This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
   /// - [streamID] Stream ID.

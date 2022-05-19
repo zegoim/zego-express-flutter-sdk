@@ -116,14 +116,14 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Enables or disables the audio capture device.
   ///
   /// Available since: 1.1.0
-  /// Description: This function is used to control whether to release the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
+  /// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
   /// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
-  /// Default value: The default is `false`.
+  /// Default value: The default is `true`.
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.
   /// Related APIs: Turning off or turning on the microphone on the hardware is a time-consuming operation, and there is a certain performance overhead when the user performs frequent operations. [muteMicrophone] is generally recommended.
   ///
-  /// - [enable] Whether to enable the audio capture device, `true`: disable audio capture device, `false`: enable audio capture device.
+  /// - [enable] Whether to enable the audio capture device, `true`: enable audio capture device, `false`: disable audio capture device.
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await ZegoExpressImpl.instance.enableAudioCaptureDevice(enable);
   }
@@ -160,6 +160,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.
   /// Caution: In the case of using the custom video capture function [enableCustomVideoCapture], since the developer has taken over the video data capture, the SDK is no longer responsible for the video data capture, but this function still affects whether to encode or not. Therefore, when developers use custom video capture, please ensure that the value of this function is `true`.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Whether to turn on the camera, `true`: turn on camera, `false`: turn off camera
   /// - [channel] Publishing stream channel
@@ -175,6 +176,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.
   /// Caution: When the custom video capture function [enableCustomVideoCapture] is turned on, since the developer has taken over the video data capture, the SDK is no longer responsible for the video data capture, and this function is no longer valid.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Whether to use the front camera, `true`: use the front camera, `false`: use the the rear camera.
   /// - [channel] Publishing stream channel
@@ -188,6 +190,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Whether the camera supports focusing.
   /// Trigger: Called after turn on preview [startPreivew].
   /// Caution: Need to start the camera successfully.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publishing stream channel
   /// - Returns Whether to support focus, support is true, not support is false.
@@ -201,6 +204,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Set the camera focus mode.
   /// Trigger: Called after turn on preview [startPreivew].
   /// Restrictions: Currently only supports iOS and Android platforms.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mode] focus mode.
   /// - [channel] Publishing stream channel
@@ -215,6 +219,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Trigger: Called after turn on preview [startPreivew].
   /// Restrictions: Currently only supports iOS and Android platforms.
   /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [x] Normalized X axis coordinate value, effective value [0,1].
   /// - [y] Normalized Y axis coordinate value, effective value [0,1].
@@ -229,6 +234,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Set the camera exposure mode.
   /// Trigger: Called after turn on preview [startPreivew].
   /// Restrictions: Currently only supports iOS and Android platforms.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mode] Exposure mode.
   /// - [channel] Publishing stream channel
@@ -243,6 +249,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Trigger: Called after turn on preview [startPreivew].
   /// Restrictions: Currently only supports iOS and Android platforms.
   /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [x] Normalized X axis coordinate value, effective value [0,1].
   /// - [y] Normalized Y axis coordinate value, effective value [0,1].
@@ -260,6 +267,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Restrictions: None.
   /// Caution: The setting will be invalid when the camera is restarted.
   /// Platform differences: Only supports iOS and Android.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [value] Camera exposure, the value range is [-1,1], the default 0, -1 tends to darken, 1 tends to brighten.
   /// - [channel] Publishing stream channel
@@ -273,6 +281,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Set the camera zoom factor. Every time the camera is restarted, the camera zoom factor will be restored to its initial value.
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: The settings will not take effect until the camera is started.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [factor] The zoom factor of the camera, the minimum value is 1.0, and the maximum value is the return value of [getCameraMaxZoomFactor].
   /// - [channel] Publishing stream channel
@@ -286,6 +295,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Set the camera zoom factor. Every time the camera is restarted, the camera zoom factor will be restored to its initial value.
   /// When to call: This is only available after the camera has been successfully started, and can generally be called when the captured first frame is received [onPublisherCapturedVideoFirstFrame] callback.
   /// Restrictions: None.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publishing stream channel
   /// - Returns The maximum zoom factor of the camera.
@@ -299,7 +309,9 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: After starting monitoring, you can receive local audio sound level via [onCapturedSoundLevelUpdate] callback, and receive remote audio sound level via [onRemoteSoundLevelUpdate] callback. Before entering the room, you can call [startPreview] with this function and combine it with [onCapturedSoundLevelUpdate] callback to determine whether the audio device is working properly.
   /// Use cases: During the publishing and playing process, determine who is talking on the wheat and do a UI presentation.
   /// When to call: After the engine is created [createEngine].
-  /// Caution: [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is the value set by the parameter.
+  /// Caution:
+  ///   1. [onCapturedSoundLevelUpdate] and [onRemoteSoundLevelUpdate] callback notification period is the value set by the parameter.
+  ///   2. After the sound monitoring is started, even if the local audio capture is not started, [onCapturedSoundLevelUpdate] will have a callback, and the sound level is 0.
   ///
   /// - [config] Configuration for starts the sound level monitor.
   Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {

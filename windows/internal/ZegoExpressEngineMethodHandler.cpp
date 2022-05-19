@@ -155,25 +155,52 @@ void ZegoExpressEngineMethodHandler::loginRoom(flutter::EncodableMap& argument,
         config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
         config.token = std::get<std::string>(configMap[FTValue("token")]);
 
-        EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user, config);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user, config, [=](int errorCode, std::string extendedData) {
+            FTMap retMap;
+
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("extendedData")] = FTValue(extendedData);
+
+            sharedPtrResult->Success(retMap);
+        });
     }
     else {
         EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user);
-    }
+        FTMap retMap;
+    
+        retMap[FTValue("errorCode")] = FTValue(0);
+        retMap[FTValue("extendedData")] = FTValue("{}");
 
-    result->Success();
+        result->Success(retMap);
+    }
 
 }
 
 void ZegoExpressEngineMethodHandler::logoutRoom(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
     if (!argument[FTValue("roomID")].IsNull()) {
         auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
 
-        EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom(roomID);
+        EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom(roomID, [=](int errorCode, std::string extendedData) {
+            FTMap retMap;
+
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("extendedData")] = FTValue(extendedData);
+
+            sharedPtrResult->Success(retMap);
+        });
     } else {
-        EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom();
+        EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom([=](int errorCode, std::string extendedData) {
+            FTMap retMap;
+
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("extendedData")] = FTValue(extendedData);
+
+            sharedPtrResult->Success(retMap);
+        });
     }
 
     result->Success();
@@ -370,6 +397,18 @@ void ZegoExpressEngineMethodHandler::sendSEI(flutter::EncodableMap& argument,
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::sendSEISyncWithCustomVideo(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto byteData = std::get<std::vector<uint8_t>>(argument[FTValue("data")]);
+    auto timeStampNs = argument[FTValue("timeStampNs")].LongValue();
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->sendSEISyncWithCustomVideo(byteData.data(), (unsigned int)byteData.size(), timeStampNs, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::enableHardwareEncoder(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -395,6 +434,9 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
 
         EXPRESS::ZegoPlayerConfig config;
         config.resourceMode = (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(configMap[FTValue("resourceMode")]);
+        config.videoLayer = (EXPRESS::ZegoPlayerVideoLayer)std::get<int32_t>(configMap[FTValue("videoLayer")]);
+        config.roomID = std::get<std::string>(configMap[FTValue("roomID")]);
+        config.sourceResourceType = (EXPRESS::ZegoResourceType)std::get<int32_t>(configMap[FTValue("sourceResourceType")]);
 
         std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
         if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("cdnConfig")])) {
@@ -424,6 +466,19 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(flutter::EncodableMap& ar
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
+
+    result->Success();
+}
+
+void setPlayStreamCrossAppInfo(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) 
+{
+    auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+    flutter::EncodableMap infoMap = std::get<flutter::EncodableMap>(argument[FTValue("info")]);
+    EXPRESS::ZegoCrossAppInfo info;
+    info.appID = infoMap[FTValue("appID")].LongValue();
+    info.token = std::get<std::string>(infoMap[FTValue("token")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setPlayStreamCrossAppInfo(streamID, info);
 
     result->Success();
 }

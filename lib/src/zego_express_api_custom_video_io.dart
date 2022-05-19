@@ -14,6 +14,7 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
   /// When to call: After [createEngine], call [startPreview], [startPublishingStream], [createRealTimeSequentialDataManager], and call [logoutRoom] to modify the configuration.
   /// Caution: Custom video rendering can be used in conjunction with custom video capture, but when both are enabled, the local capture frame callback for custom video rendering will no longer be triggered, and the developer should directly capture the captured video frame from the custom video capture source.
   /// Related callbacks: When developers to open a custom collection, by calling [setCustomVideoCaptureHandler] can be set up to receive a custom collection start-stop event notification.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] enable or disable
   /// - [config] custom video capture config

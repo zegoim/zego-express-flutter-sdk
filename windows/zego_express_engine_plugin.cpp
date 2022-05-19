@@ -18,6 +18,8 @@
 #include "internal/ZegoExpressEngineMethodHandler.h"
 #include "internal/ZegoExpressEngineEventHandler.h"
 
+#define EngineMethodHandler(funcName) std::bind(&ZegoExpressEngineMethodHandler::funcName, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)
+
 std::map<std::string, std::function<void(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)> > G_MethodMap = {
        {"getVersion", std::bind(&ZegoExpressEngineMethodHandler::getVersion, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -44,9 +46,11 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
        {"setCaptureVolume", std::bind(&ZegoExpressEngineMethodHandler::setCaptureVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"setAudioCaptureStereoMode", std::bind(&ZegoExpressEngineMethodHandler::setAudioCaptureStereoMode, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"sendSEI", std::bind(&ZegoExpressEngineMethodHandler::sendSEI, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"sendSEISyncWithCustomVideo", std::bind(&ZegoExpressEngineMethodHandler::sendSEISyncWithCustomVideo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"enableHardwareEncoder", std::bind(&ZegoExpressEngineMethodHandler::enableHardwareEncoder, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"startPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::startPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"stopPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::stopPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setPlayStreamCrossAppInfo", std::bind(&ZegoExpressEngineMethodHandler::setPlayStreamCrossAppInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"setPlayVolume", std::bind(&ZegoExpressEngineMethodHandler::setPlayVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"setAllPlayStreamVolume", std::bind(&ZegoExpressEngineMethodHandler::setAllPlayStreamVolume, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"mutePlayStreamAudio", std::bind(&ZegoExpressEngineMethodHandler::mutePlayStreamAudio, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},

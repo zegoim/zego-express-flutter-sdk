@@ -67,6 +67,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// When to call: After [createEngine].
   /// Restrictions: None.
   /// Caution: 1. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default. 2. Local view and preview modes can be updated by calling this function again. The user can only preview on one view. If you call [startPreview] again to pass in a new view, the preview screen will only be displayed in the new view. 3. You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored. 4. When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video..
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
   /// - [channel] Publish stream channel
@@ -74,10 +75,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.startPreview(canvas: canvas, channel: channel);
   }
 
-  /// Stops the local video preview (for the specified channel).
+  /// Stops the local preview (for the specified channel).
   ///
   /// Available since: 1.1.0
-  /// Description: This function can be called to stop previewing when there is no need to see the preview locally.
+  /// Description: This function can be called to stop the preview when the preview is not needed locally.
+  /// Caution: Stopping the preview will not affect the publish stream and playing stream functions.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publish stream channel
   Future<void> stopPreview({ZegoPublishChannel? channel}) async {
@@ -92,6 +95,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// When to call: After [createEngine].
   /// Restrictions: It is necessary to set the relevant video configuration before publishing the stream or startPreview, and only support the modification of the encoding resolution and the bit rate after publishing the stream.
   /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [config] Video configuration, the SDK provides a common setting combination of resolution, frame rate and bit rate, they also can be customized.
   /// - [channel] Publish stream channel.
@@ -102,6 +106,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Gets the current video configurations (for the specified channel).
   ///
   /// This function can be used to get the specified publish channel's current video frame rate, bit rate, video capture resolution, and video encoding output resolution.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publish stream channel
   /// - Returns Video configuration object
@@ -115,6 +120,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set whether the local preview video and the published video have mirror mode enabled. For specific mirroring mode.
   /// When to call: After [createEngine].
   /// Restrictions: None.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mirrorMode] Mirror mode for previewing or publishing the stream.
   /// - [channel] Publish stream channel.
@@ -129,6 +135,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: When users use mobile devices to conduct live broadcasts or video calls, they can set different video directions according to the scene.
   /// When to call: After [createEngine].
   /// Restrictions: None.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [orientation] Video orientation.
   /// - [channel] Publish stream channel.
@@ -189,6 +196,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Caution: The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post].
   /// Related callbacks: The screenshot result will be called back through [ZegoPublisherTakeSnapshotCallback].
   /// Related APIs: [takePlayStreamSnapshot].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [channel] Publish stream channel.
   /// - Returns Results of take publish stream snapshot.
@@ -219,6 +227,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Restrictions: None.
   /// Related callbacks: If you stop sending video streams locally, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteCameraStateUpdate] callbacks.
   /// Related APIs: [mutePublishStreamAudio].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mute] Whether to stop sending video streams, true means not to send video stream, and false means sending video stream. The default is false.
   /// - [channel] Publish stream channel.
@@ -264,6 +273,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// When to call: After the engine is created [createEngine], Called before [startPublishingStream] can take effect.
   /// Restrictions: The traffic control must be turned on [enableTrafficControl].
   /// Related APIs: [enableTrafficControl].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [bitrate] Minimum video bitrate (kbps).
   /// - [mode] Video sending mode below the minimum bitrate.
@@ -281,6 +291,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveFPS, Please refer to [ZegoTrafficControlProperty] for details.
   /// Related APIs: [enableTrafficControl].
   /// Caution: If you need to cancel the limit of the setting value, you can set it to 0.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [fps] The minimum video frame rate threshold for traffic control(fps).
   /// - [channel] Publish stream channel.
@@ -297,6 +308,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveResolution, Please refer to [ZegoTrafficControlProperty] for details.
   /// Related APIs: [enableTrafficControl].
   /// Caution: If you need to cancel the limit of the setting value, you can set width and height to 0.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [width] The flow controls the width of the lowest video resolution.
   /// - [height] The flow controls the height of the lowest video resolution.
@@ -406,6 +418,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: It is often used to identify the source of the publish.
   /// When to call: After creating the engine through [createEngine] function.
   /// Caution: The layout of the watermark cannot exceed the video encoding resolution of the stream. It can be set at any time before or during the publishing stream.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [watermark] The upper left corner of the watermark layout is the origin of the coordinate system, and the area cannot exceed the size set by the encoding resolution. If it is null, the watermark is cancelled. It supports Flutter assets resources, just set the 'imageURL' parameter of the watermark object to the prefix of 'flutter-asset://' and append the relative path of the resource file declared in 'pubspec.yaml'. For example, assuming that 'assets: - images/logo.png' is declared in 'pubspec.yaml', then set 'imageURL' parameter to 'flutter-asset://images/logo.png'.
   /// - [isPreviewVisible] the watermark is visible on local preview
@@ -444,6 +457,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.sendSEI(data, dataLength, channel: channel);
   }
 
+  /// Send the media supplementary enhancement information synchronized with the current video frame during custom video capture.
+  ///
+  /// Available since: 2.15.0
+  /// Description: When using custom video capture, push the stream to transmit the video stream data, and send the stream media enhancement supplementary information to synchronize some other additional information, which is synchronized with the current video frame.
+  /// Use cases: Generally used in scenes that need to be played back in strong synchronization with the video frame, such as video karaoke, video and lyrics are strongly synchronized; or scenes that need to be accurate to the frame level for strategic processing.
+  /// When to call: To ensure that the SEI is synchronized with the current video frame, it must be called before sending the video frame data.
+  /// Restrictions: Only used for custom video capture; only supports video-driven SEI sending; you should try to avoid calling this interface to send SEI continuously; to ensure that SEI is synchronized with the current video frame, it must be kept in the same thread as the interface for sending custom video frame data; SEI data length is limited to 4096 bytes.
+  /// Caution: The sent SEI information follows the video frame. Due to network problems, there may be frame loss. At this time, the SEI will follow the next frame of video data. Therefore, in order to keep the SEI synchronized with the video frame, you should avoid sending SEI continuously; only when using SurfaceTexture on the Android platform , Need to pass the time stamp parameter timeStampNs, otherwise the parameter is invalid.
+  /// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
+  ///
+  /// - [data] SEI data.
+  /// - [timeStampNs] video frame reference time, UNIX timestamp, in nanosecond.
+  /// - [channel] Publish stream channel.
+  Future<void> sendSEISyncWithCustomVideo(Uint8List data, int timeStampNs, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.sendSEISyncWithCustomVideo(data, timeStampNs, channel: channel);
+  }
+
   /// Enables or disables hardware encoding.
   ///
   /// Available since: 1.1.0
@@ -461,6 +491,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// When to call: This function needs to be set before call [startPreview] or [startPublishingStream].
   /// Caution: The main effect is Whether the local preview is affected when the acquisition resolution is different from the encoding resolution.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mode] The capture scale timing mode.
   Future<void> setCapturePipelineScaleMode(ZegoCapturePipelineScaleMode mode) async {

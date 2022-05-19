@@ -120,6 +120,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
   /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
   /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   Future<void> startEffectsEnv() async {
     return await ZegoExpressImpl.instance.startEffectsEnv();
   }
@@ -133,6 +134,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
   /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] for best results.
   /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   Future<void> stopEffectsEnv() async {
     return await ZegoExpressImpl.instance.stopEffectsEnv();
   }
@@ -147,6 +149,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Related APIs: You can call the [setBeautifyOption] function to adjust the beauty parameters.
   /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] for best results.
   /// Restrictions: If this function is used on the Android platform, it only supports 5.0 and above, SDK version 21 and above.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Whether to enable the beauty effect, true is enabled; false is disabled, and the default is false.
   Future<void> enableEffectsBeauty(bool enable) async {
@@ -161,6 +164,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// When to call: You must call [startEffectsEnv] to enable the beauty environment before calling this function.
   /// Related APIs: You can call [enableEffectsBeauty] to turn on or off the beauty function.
   /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [param] Beauty option param.
   Future<void> setEffectsBeautyParam(ZegoEffectsBeautyParam param) async {

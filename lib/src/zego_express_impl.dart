@@ -7,7 +7,7 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 
 class Global {
-  static String pluginVersion = "2.18.1";
+  static String pluginVersion = "2.19.0";
 }
 
 class ZegoExpressImpl {
@@ -136,13 +136,14 @@ class ZegoExpressImpl {
 
   /* Room */
 
-  Future<void> loginRoom(String roomID, ZegoUser user,
+  Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user,
       {ZegoRoomConfig? config}) async {
-    return await _channel.invokeMethod('loginRoom', {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('loginRoom', {
       'roomID': roomID,
       'user': {'userID': user.userID, 'userName': user.userName},
       'config': config?.toMap() ?? {}
     });
+    return ZegoRoomLoginResult(map['errorCode'], map['extendedData']);
   }
 
   Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
@@ -150,8 +151,9 @@ class ZegoExpressImpl {
         'loginMultiRoom', {'roomID': roomID, 'config': config?.toMap() ?? {}});
   }
 
-  Future<void> logoutRoom([String? roomID]) async {
-    return await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
+  Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
+    return ZegoRoomLogoutResult(map['errorCode'], map['extendedData']);
   }
 
   Future<void> switchRoom(String fromRoomID, String toRoomID,
@@ -442,6 +444,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> sendSEISyncWithCustomVideo(Uint8List data, int timeStampNs, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('sendSEISyncWithCustomVideo', {
+      'data': data,
+      'timeStampNs': timeStampNs,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<void> enableHardwareEncoder(bool enable) async {
     return await _channel
         .invokeMethod('enableHardwareEncoder', {'enable': enable});
@@ -486,7 +496,8 @@ class ZegoExpressImpl {
                       'authParam': config.cdnConfig?.authParam
                     }
                   : {},
-              'roomID': config.roomID ?? ''
+              'roomID': config.roomID ?? '',
+              'sourceResourceType': config.sourceResourceType?.index?? ZegoResourceType.RTC.index
             }
           : {}
     });
@@ -500,6 +511,14 @@ class ZegoExpressImpl {
   Future<void> setPlayStreamDecryptionKey(String streamID, String key) async {
     return await _channel.invokeMethod(
         'setPlayStreamDecryptionKey', {'streamID': streamID, 'key': key});
+  }
+
+  Future<void> setPlayStreamCrossAppInfo(String streamID, ZegoCrossAppInfo info) async {
+    return await _channel.invokeMethod(
+        'setPlayStreamCrossAppInfo', {'streamID': streamID, 'info': {
+          'appID': info.appID,
+          'token': info.token
+        }});
   }
 
   Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(
@@ -1761,6 +1780,12 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
 
         ZegoExpressEngine.onPlayerRecvSEI!(map['streamID'], map['data']);
+        break;
+
+      case 'onPlayerRecvAudioSideInfo':
+        if (ZegoExpressEngine.onPlayerRecvAudioSideInfo == null) return;
+
+        ZegoExpressEngine.onPlayerRecvAudioSideInfo!(map['streamID'], map['data']);
         break;
 
       case 'onPlayerLowFpsWarning':
