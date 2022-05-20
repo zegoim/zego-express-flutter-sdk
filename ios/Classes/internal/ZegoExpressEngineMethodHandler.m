@@ -1076,8 +1076,9 @@
     NSString *streamID = call.arguments[@"streamID"];
     NSDictionary *infoMap = call.arguments[@"info"];
     ZegoCrossAppInfo *info = [[ZegoCrossAppInfo alloc] init];
-    info.appID = [ZegoUtils intValue:infoMap[@"appID"]];
+    info.appID = [ZegoUtils unsignedIntValue:infoMap[@"appID"]];
     info.token = infoMap[@"token"];
+    
     [[ZegoExpressEngine sharedEngine] setPlayStreamCrossAppInfo:info streamID:streamID];
 
     result(nil);
