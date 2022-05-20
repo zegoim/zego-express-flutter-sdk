@@ -288,17 +288,18 @@
 
     ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
 
+    ZegoRoomConfig *configObject = [[ZegoRoomConfig alloc] init];
     if (configMap && configMap.count > 0) {
         unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
         BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
         NSString *token = configMap[@"token"];
 
-        ZegoRoomConfig *configObject = [[ZegoRoomConfig alloc] init];
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
+    } 
 
-        [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
+    [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
             NSString *extendedDataJsonString = @"{}";
             if (extendedData) {
                 NSError *error;
@@ -315,13 +316,6 @@
                 @"extendedData": extendedDataJsonString
             });
         }];
-    } else {
-        [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject];
-        result(@{
-            @"errorCode": @(0),
-            @"extendedData": @"{}"
-        });
-    }
 }
 
 - (void)loginMultiRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -352,7 +346,7 @@
 
     NSString *roomID = call.arguments[@"roomID"];
     if ([ZegoUtils isNullObject:roomID]) {
-        [[ZegoExpressEngine sharedEngine] logoutRoom: ^(int errorCode, NSDictionary * _Nullable extendedData) {
+        [[ZegoExpressEngine sharedEngine] logoutRoomWithCallback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
             NSString *extendedDataJsonString = @"{}";
             if (extendedData) {
                 NSError *error;
@@ -370,7 +364,7 @@
             });
         }];
     } else {
-        [[ZegoExpressEngine sharedEngine] logoutRoom:roomID callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
+        [[ZegoExpressEngine sharedEngine] logoutRoomWithCallback:roomID callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
             NSString *extendedDataJsonString = @"{}";
             if (extendedData) {
                 NSError *error;
@@ -1081,10 +1075,10 @@
 
     NSString *streamID = call.arguments[@"streamID"];
     NSDictionary *infoMap = call.arguments[@"info"];
-    ZegoCrossAppInfo *info = [[ZegoCDNConfig alloc] init];
+    ZegoCrossAppInfo *info = [[ZegoCrossAppInfo alloc] init];
     info.appID = [ZegoUtils intValue:infoMap[@"appID"]];
     info.token = infoMap[@"token"];
-    [[ZegoExpressEngine sharedEngine] setPlayStreamCrossAppInfo:streamID info:info];
+    [[ZegoExpressEngine sharedEngine] setPlayStreamCrossAppInfo:info streamID:streamID];
 
     result(nil);
 }

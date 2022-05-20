@@ -148,32 +148,19 @@ void ZegoExpressEngineMethodHandler::loginRoom(flutter::EncodableMap& argument,
         configMap = std::get<flutter::EncodableMap>(argument[FTValue("config")]);
     }
 
+    EXPRESS::ZegoRoomConfig config;
     if (configMap.size() > 0) {
-
-        EXPRESS::ZegoRoomConfig config;
         config.maxMemberCount = (unsigned int)std::get<int32_t>(configMap[FTValue("maxMemberCount")]);
         config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
-        config.token = std::get<std::string>(configMap[FTValue("token")]);
-
-        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
-        EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user, config, [=](int errorCode, std::string extendedData) {
-            FTMap retMap;
-
-            retMap[FTValue("errorCode")] = FTValue(errorCode);
-            retMap[FTValue("extendedData")] = FTValue(extendedData);
-
-            sharedPtrResult->Success(retMap);
-        });
+        config.token = std::get<std::string>(configMap[FTValue("token")]);  
     }
-    else {
-        EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user);
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user, config, [=](int errorCode, std::string extendedData) {
         FTMap retMap;
-    
-        retMap[FTValue("errorCode")] = FTValue(0);
-        retMap[FTValue("extendedData")] = FTValue("{}");
-
-        result->Success(retMap);
-    }
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("extendedData")] = FTValue(extendedData);
+        sharedPtrResult->Success(retMap);
+    });
 
 }
 

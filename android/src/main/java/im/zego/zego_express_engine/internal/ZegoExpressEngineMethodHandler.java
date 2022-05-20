@@ -400,27 +400,24 @@ public class ZegoExpressEngineMethodHandler {
         ZegoUser user = new ZegoUser((String) (userMap != null ? userMap.get("userID") : null), (String) (userMap != null ? userMap.get("userName") : null));
 
         HashMap<String, Object> configMap = call.argument("config");
+        ZegoRoomConfig roomConfig = new ZegoRoomConfig();
         if (configMap != null && !configMap.isEmpty()) {
-            ZegoRoomConfig roomConfig = new ZegoRoomConfig();
+            
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
-            ZegoExpressEngine.getEngine().loginRoom(roomID, user, roomConfig, new IZegoRoomLoginCallback() {
-                @Override
-                public void onRoomLoginResult(int errorCode, JSONObject extendedData) {
-                    HashMap<String, Object> resultMap = new HashMap<>();
-                    resultMap.put("errorCode", errorCode);
-                    resultMap.put("extendedData", extendedData.toString());
-                    result.success(resultMap);
-                }
-            });
-        } else {
-            ZegoExpressEngine.getEngine().loginRoom(roomID, user);
-            HashMap<String, Object> resultMap = new HashMap<>();
-            resultMap.put("errorCode", 0);
-            resultMap.put("extendedData", "{}");
-            result.success(resultMap);
+            
         }
+
+        ZegoExpressEngine.getEngine().loginRoom(roomID, user, roomConfig, new IZegoRoomLoginCallback() {
+            @Override
+            public void onRoomLoginResult(int errorCode, JSONObject extendedData) {
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("errorCode", errorCode);
+                resultMap.put("extendedData", extendedData.toString());
+                result.success(resultMap);
+            }
+        });
     }
 
     @SuppressWarnings({"unused", "deprecation"})

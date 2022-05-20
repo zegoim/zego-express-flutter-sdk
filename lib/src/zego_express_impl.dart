@@ -143,7 +143,8 @@ class ZegoExpressImpl {
       'user': {'userID': user.userID, 'userName': user.userName},
       'config': config?.toMap() ?? {}
     });
-    return ZegoRoomLoginResult(map['errorCode'], map['extendedData']);
+    Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+    return ZegoRoomLoginResult(map['errorCode'], Map<String, dynamic>.from(extendedData));
   }
 
   Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
@@ -153,7 +154,8 @@ class ZegoExpressImpl {
 
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
     final Map<dynamic, dynamic> map = await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
-    return ZegoRoomLogoutResult(map['errorCode'], map['extendedData']);
+    Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+    return ZegoRoomLogoutResult(map['errorCode'], Map<String, dynamic>.from(extendedData));
   }
 
   Future<void> switchRoom(String fromRoomID, String toRoomID,
