@@ -470,7 +470,7 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(flutter::EncodableMap& ar
     result->Success();
 }
 
-void setPlayStreamCrossAppInfo(flutter::EncodableMap& argument,
+void ZegoExpressEngineMethodHandler::setPlayStreamCrossAppInfo(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) 
 {
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
