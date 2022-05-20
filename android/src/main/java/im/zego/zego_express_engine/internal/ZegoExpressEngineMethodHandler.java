@@ -59,6 +59,8 @@ import im.zego.zegoexpress.callback.IZegoPlayerTakeSnapshotCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherSetStreamExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherTakeSnapshotCallback;
 import im.zego.zegoexpress.callback.IZegoPublisherUpdateCdnUrlCallback;
+import im.zego.zegoexpress.callback.IZegoRoomLoginCallback;
+import im.zego.zegoexpress.callback.IZegoRoomLogoutCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataSentCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
@@ -84,6 +86,7 @@ import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoRangeAudioMode;
+import im.zego.zegoexpress.constants.ZegoResourceType;
 import im.zego.zegoexpress.constants.ZegoReverbPreset;
 import im.zego.zegoexpress.constants.ZegoRoomMode;
 import im.zego.zegoexpress.constants.ZegoSEIType;
@@ -112,6 +115,7 @@ import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicConfig;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicRequestConfig;
+import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
@@ -1043,7 +1047,7 @@ public class ZegoExpressEngineMethodHandler {
     public static void sendSEISyncWithCustomVideo(MethodCall call, Result result) {
 
         byte[] data = call.argument("data");
-        int timeStampNs = ZegoUtils.intValue((Number) call.argument("timeStampNs"));
+        long timeStampNs = ZegoUtils.longValue((Number) call.argument("timeStampNs"));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().sendSEISyncWithCustomVideo(data, timeStampNs, channel);
