@@ -397,14 +397,14 @@ void ZegoExpressEngineMethodHandler::sendSEI(flutter::EncodableMap& argument,
     result->Success();
 }
 
-void ZegoExpressEngineMethodHandler::sendSEISyncWithCustomVideo(flutter::EncodableMap& argument,
+void ZegoExpressEngineMethodHandler::sendAudioSideInfo(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto byteData = std::get<std::vector<uint8_t>>(argument[FTValue("data")]);
-    auto timeStampNs = argument[FTValue("timeStampNs")].LongValue();
+    auto timeStampMs = std::get<double>(argument[FTValue("timeStampMs")]);
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->sendSEISyncWithCustomVideo(byteData.data(), (unsigned int)byteData.size(), timeStampNs, (EXPRESS::ZegoPublishChannel)channel);
+    EXPRESS::ZegoExpressSDK::getEngine()->sendAudioSideInfo(byteData.data(), (unsigned int)byteData.size(), timeStampMs, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success();
 }

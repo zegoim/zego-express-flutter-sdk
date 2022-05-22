@@ -683,7 +683,7 @@ public class ZegoExpressEngineMethodHandler {
         config.setVideoBitrate(bitrate);
         
         if (codecID > 3) {
-            config.setCodecID(ZegoVideoCodecID.ZegoVideoCodecIDUnknown);
+            config.setCodecID(ZegoVideoCodecID.UNKNOWN);
         } else {
             config.setCodecID(ZegoVideoCodecID.getZegoVideoCodecID(codecID));
         }
@@ -1046,13 +1046,13 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void sendSEISyncWithCustomVideo(MethodCall call, Result result) {
+    public static void sendAudioSideInfo(MethodCall call, Result result) {
 
         byte[] data = call.argument("data");
-        long timeStampNs = ZegoUtils.longValue((Number) call.argument("timeStampNs"));
+        double timeStampMs = ZegoUtils.doubleValue((Number) call.argument("timeStampMs"));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().sendSEISyncWithCustomVideo(data, timeStampNs, channel);
+        ZegoExpressEngine.getEngine().sendAudioSideInfo(data, timeStampMs, channel);
 
         result.success(null);
     }
@@ -1093,7 +1093,7 @@ public class ZegoExpressEngineMethodHandler {
         int codecIDIndex = ZegoUtils.intValue((Number) call.argument("codecID"));
         ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
         if (codecIDIndex > 3) {
-            codecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+            codecID = ZegoVideoCodecID.UNKNOWN;
         }
 
         boolean isSupport = ZegoExpressEngine.getEngine().isVideoEncoderSupported(codecID);
@@ -1123,7 +1123,7 @@ public class ZegoExpressEngineMethodHandler {
             
             int videoCodecIDIndex = ZegoUtils.intValue((Number) playerConfigMap.get("videoCodecID"));
             if (videoCodecIDIndex > 3) {
-                playerConfig.videoCodecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+                playerConfig.videoCodecID = ZegoVideoCodecID.UNKNOWN;
             } else {
                 playerConfig.videoCodecID = ZegoVideoCodecID.getZegoVideoCodecID(videoCodecIDIndex);
             }
@@ -1424,7 +1424,7 @@ public class ZegoExpressEngineMethodHandler {
         int videoCodecIDIndex = ZegoUtils.intValue((Number) call.argument("codecID"));
         ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(videoCodecIDIndex);
         if (videoCodecIDIndex > 3) {
-            codecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+            codecID = ZegoVideoCodecID.UNKNOWN;
         }
 
         boolean isSupport = ZegoExpressEngine.getEngine().isVideoDecoderSupported(codecID);
@@ -1513,7 +1513,7 @@ public class ZegoExpressEngineMethodHandler {
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
                     if (codecIDIndex > 3) {
-                        codecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+                        codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
@@ -1630,7 +1630,7 @@ public class ZegoExpressEngineMethodHandler {
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
                     if (codecIDIndex > 3) {
-                        codecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+                        codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
@@ -1684,7 +1684,7 @@ public class ZegoExpressEngineMethodHandler {
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
                     if (codecIDIndex > 3) {
-                        codecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+                        codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
@@ -1747,7 +1747,7 @@ public class ZegoExpressEngineMethodHandler {
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
                     if (codecIDIndex > 3) {
-                        codecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown;
+                        codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));

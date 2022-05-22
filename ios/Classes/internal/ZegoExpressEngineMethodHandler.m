@@ -900,13 +900,13 @@
     result(nil);
 }
 
-- (void)sendSEISyncWithCustomVideo:(FlutterMethodCall *)call result:(FlutterResult)result {
+- (void)sendAudioSideInfo:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     FlutterStandardTypedData *data = call.arguments[@"data"];
-    int timeStampNs = [ZegoUtils intValue:call.arguments[@"timeStampNs"]];
+    double timeStampMs = [ZegoUtils doubleValue:call.arguments[@"timeStampMs"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] sendSEISyncWithCustomVideo:data.data timeStampNs: timeStampNs channel:(ZegoPublishChannel)channel];
+    [[ZegoExpressEngine sharedEngine] sendAudioSideInfo:data.data timeStampMs: timeStampMs channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
@@ -971,7 +971,7 @@
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
         if (videoCodecIDIndex > 3) {
-            playerConfig.videoCodecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown
+            playerConfig.videoCodecID = ZegoVideoCodecIDUnknown;
         }
         playerConfig.roomID = playerConfigMap[@"roomID"];
         NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];

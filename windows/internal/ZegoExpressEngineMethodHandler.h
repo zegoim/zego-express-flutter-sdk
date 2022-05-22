@@ -68,7 +68,7 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void sendSEI(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void sendSEISyncWithCustomVideo(flutter::EncodableMap& argument,
+    void sendAudioSideInfo(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableHardwareEncoder(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

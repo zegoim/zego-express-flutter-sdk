@@ -457,21 +457,21 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.sendSEI(data, dataLength, channel: channel);
   }
 
-  /// Send the media supplementary enhancement information synchronized with the current video frame during custom video capture.
+  /// Send audio side information.
   ///
-  /// Available since: 2.15.0
-  /// Description: When using custom video capture, push the stream to transmit the video stream data, and send the stream media enhancement supplementary information to synchronize some other additional information, which is synchronized with the current video frame.
-  /// Use cases: Generally used in scenes that need to be played back in strong synchronization with the video frame, such as video karaoke, video and lyrics are strongly synchronized; or scenes that need to be accurate to the frame level for strategic processing.
-  /// When to call: To ensure that the SEI is synchronized with the current video frame, it must be called before sending the video frame data.
-  /// Restrictions: Only used for custom video capture; only supports video-driven SEI sending; you should try to avoid calling this interface to send SEI continuously; to ensure that SEI is synchronized with the current video frame, it must be kept in the same thread as the interface for sending custom video frame data; SEI data length is limited to 4096 bytes.
-  /// Caution: The sent SEI information follows the video frame. Due to network problems, there may be frame loss. At this time, the SEI will follow the next frame of video data. Therefore, in order to keep the SEI synchronized with the video frame, you should avoid sending SEI continuously; only when using SurfaceTexture on the Android platform , Need to pass the time stamp parameter timeStampNs, otherwise the parameter is invalid.
-  /// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
+  /// Available since: 2.19.0
+  /// Description: While streaming audio data, send audio side information to synchronize some additional information.
+  /// Use cases: In the carousel scene, the audio data channel is required to carry accompanying information, such as timestamps to help align the accompaniment, and the need to know who the user is currently singing, whether to amplify the volume, and so on.
+  /// When to call: After starting to push the stream [startPublishingStream].
+  /// Restrictions: 1. This function is only valid when publishing stream to the Zego RTC server and it also doesn't work when retweeting the stream from the RTC server to the CDN. 2. The audio side information data length is limited to 1024 bytes.
+  /// Caution: 1. Audio side information is driven by audio data, so audio data must be pushed (audio side information may be lost when the DTX function is enabled via the interface [setEngineConfig]). 2. Due to network issues, audio side information may be lost, and the SDK is responsible for transmission but does not guarantee reliability.
+  /// Related APIs: After the pusher sends the side information, the puller can obtain the side information content by monitoring the callback of [onPlayerRecvAudioSideInfo].
   ///
-  /// - [data] SEI data.
-  /// - [timeStampNs] video frame reference time, UNIX timestamp, in nanosecond.
+  /// - [data] Audio side info data.
+  /// - [timeStampMs] timeStampMs, derived from custom audio processing, in milliseconds. If you fill in 0, it is sent along with the frame that is currently ready to be sent.
   /// - [channel] Publish stream channel.
-  Future<void> sendSEISyncWithCustomVideo(Uint8List data, int timeStampNs, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.sendSEISyncWithCustomVideo(data, timeStampNs, channel: channel);
+  Future<void> sendAudioSideInfo(Uint8List data, double timeStampMs, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.sendAudioSideInfo(data, timeStampMs, channel: channel);
   }
 
   /// Enables or disables hardware encoding.

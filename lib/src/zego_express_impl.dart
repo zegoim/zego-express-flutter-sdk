@@ -446,10 +446,10 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> sendSEISyncWithCustomVideo(Uint8List data, int timeStampNs, {ZegoPublishChannel? channel}) async {
-    return await _channel.invokeMethod('sendSEISyncWithCustomVideo', {
+  Future<void> sendAudioSideInfo(Uint8List data, double timeStampMs, {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('sendAudioSideInfo', {
       'data': data,
-      'timeStampNs': timeStampNs,
+      'timeStampMs': timeStampMs,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
