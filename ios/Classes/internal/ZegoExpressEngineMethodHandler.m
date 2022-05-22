@@ -564,6 +564,9 @@
     configObject.encodeResolution = CGSizeMake(encWidth, encHeight);
     configObject.bitrate = bitrate;
     configObject.fps = fps;
+    if (codecID > 3) {
+        codecID = 100;
+    }
     configObject.codecID = (ZegoVideoCodecID)codecID;
     
     if (configMap[@"keyFrameInterval"]) {
@@ -938,7 +941,9 @@
 - (void)isVideoEncoderSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int codecID = [ZegoUtils intValue:call.arguments[@"codecID"]];
-
+    if (codecID > 3) {
+        codecID = 100;
+    }
     BOOL isSupport = [[ZegoExpressEngine sharedEngine] isVideoEncoderSupported:(ZegoVideoCodecID)codecID];
 
     result(@(isSupport));
@@ -963,10 +968,11 @@
         playerConfig = [[ZegoPlayerConfig alloc] init];
         playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
         playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        playerConfig.videoLayer = (ZegoPlayerVideoLayer)[ZegoUtils intValue:playerConfigMap[@"videoLayer"]];
-#pragma clang diagnostic pop
+        int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
+        playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
+        if (videoCodecIDIndex > 3) {
+            playerConfig.videoCodecID = ZegoVideoCodecID.ZegoVideoCodecIDUnknown
+        }
         playerConfig.roomID = playerConfigMap[@"roomID"];
         NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
 
@@ -1227,7 +1233,9 @@
 - (void)isVideoDecoderSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int codecID = [ZegoUtils intValue:call.arguments[@"codecID"]];
-
+    if (codecID > 3) {
+        codecID = 100;
+    }
     BOOL isSupport = [[ZegoExpressEngine sharedEngine] isVideoDecoderSupported:(ZegoVideoCodecID)codecID];
 
     result(@(isSupport));
@@ -1310,6 +1318,9 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                if (codecID > 3) {
+                    codecID = 100;
+                }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
@@ -1436,6 +1447,9 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                if (codecID > 3) {
+                    codecID = 100;
+                }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
@@ -1483,6 +1497,9 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                if (codecID > 3) {
+                    codecID = 100;
+                }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
@@ -1553,6 +1570,9 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                if (codecID > 3) {
+                    codecID = 100;
+                }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];

@@ -158,7 +158,12 @@ void ZegoExpressEngineMethodHandler::loginRoom(flutter::EncodableMap& argument,
     EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(roomID, user, config, [=](int errorCode, std::string extendedData) {
         FTMap retMap;
         retMap[FTValue("errorCode")] = FTValue(errorCode);
-        retMap[FTValue("extendedData")] = FTValue(extendedData);
+        if (extendedData.empty()) {
+            retMap[FTValue("extendedData")] = FTValue("{}");
+        }
+        else {
+            retMap[FTValue("extendedData")] = FTValue(extendedData);
+        }
         sharedPtrResult->Success(retMap);
     });
 
@@ -175,7 +180,12 @@ void ZegoExpressEngineMethodHandler::logoutRoom(flutter::EncodableMap& argument,
             FTMap retMap;
 
             retMap[FTValue("errorCode")] = FTValue(errorCode);
-            retMap[FTValue("extendedData")] = FTValue(extendedData);
+            if (extendedData.empty()) {
+                retMap[FTValue("extendedData")] = FTValue("{}");
+            }
+            else {
+                retMap[FTValue("extendedData")] = FTValue(extendedData);
+            }
 
             sharedPtrResult->Success(retMap);
         });
@@ -184,13 +194,16 @@ void ZegoExpressEngineMethodHandler::logoutRoom(flutter::EncodableMap& argument,
             FTMap retMap;
 
             retMap[FTValue("errorCode")] = FTValue(errorCode);
-            retMap[FTValue("extendedData")] = FTValue(extendedData);
+            if (extendedData.empty()) {
+                retMap[FTValue("extendedData")] = FTValue("{}");
+            }
+            else {
+                retMap[FTValue("extendedData")] = FTValue(extendedData);
+            }
 
             sharedPtrResult->Success(retMap);
         });
     }
-
-    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::switchRoom(flutter::EncodableMap& argument,
@@ -421,7 +434,14 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
 
         EXPRESS::ZegoPlayerConfig config;
         config.resourceMode = (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(configMap[FTValue("resourceMode")]);
-        config.videoLayer = (EXPRESS::ZegoPlayerVideoLayer)std::get<int32_t>(configMap[FTValue("videoLayer")]);
+        auto videoCodecIDIndex = std::get<int32_t>(configMap[FTValue("videoCodecID")]);
+        if (videoCodecIDIndex > 3) {
+            config.videoCodecID = EXPRESS::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
+        }
+        else {
+            config.videoCodecID = (EXPRESS::ZegoVideoCodecID)videoCodecIDIndex;
+        }
+        
         config.roomID = std::get<std::string>(configMap[FTValue("roomID")]);
         config.sourceResourceType = (EXPRESS::ZegoResourceType)std::get<int32_t>(configMap[FTValue("sourceResourceType")]);
 
