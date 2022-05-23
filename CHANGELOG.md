@@ -19,7 +19,7 @@
 
     In versions before 2.19.0, the SEI data was sent along with the video frame data. Generally, the video frame rate is much lower than the audio frame rate, resulting in insufficient SEI accuracy/frequency in mixed stream alignment and accompaniment alignment scenarios.
 
-    For related API, please refer to [onPlayerRecvAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRecvAudioSideInfo.html), [sendAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/startPlayingStream.html)
+    For related API, please refer to [onPlayerRecvAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRecvAudioSideInfo.html), [sendAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/sendAudioSideInfo.html)
 
 ### **Enhancements**
 
