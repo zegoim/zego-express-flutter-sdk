@@ -1,6 +1,40 @@
 # Change Log
 
 
+## 2.19.0
+
+### **New Features**
+
+1. Direct push CDN streams support pulling streams through L3.
+
+    When pushing CDN directly, without changing the push mode, the SDK pulls the stream from the customer's CDN source site, distributes the audio and video content to the audience through L3, and controls the source site resources through [ZegoResourceType]. This function is often used in live broadcast scenarios.
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+2. Support SEI data synchronization with audio frame in audio and video scenarios.
+
+    Note: Currently, only RTC scenarios are supported, and it is invalid in direct CDN and retweet CDN scenarios.
+
+    Starting from version 2.19.0, SEI (Media Supplemental Enhancement Information) can be sent synchronously with audio frames in audio and video scenarios. This function is often used in video scenarios where SEI is strongly related to audio, such as real-time KTV.
+
+    In versions before 2.19.0, the SEI data was sent along with the video frame data. Generally, the video frame rate is much lower than the audio frame rate, resulting in insufficient SEI accuracy/frequency in mixed stream alignment and accompaniment alignment scenarios.
+
+    For related API, please refer to [onPlayerRecvAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRecvAudioSideInfo.html), [sendAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/startPlayingStream.html)
+
+### **Enhancements**
+
+1. For improved security, this release upgrades curl to 7.82.0.
+
+### **Bug Fixes**
+
+1. Fixed the problem that the network speed measurement callback could not be received when the start streaming interface was called immediately after the network speed measurement interface was called.
+
+2. Fixed the issue that H.265 did not take effect when only recording local media (not streaming).
+
+3. Fixed the issue that when using certain Android models and certain Bluetooth headsets together, the call volume was changed from Bluetooth to loudspeaker when the acquisition was enabled.
+
+4. Fixed other known issues.
+
 ## 2.18.1
 
 ### **New Features**
