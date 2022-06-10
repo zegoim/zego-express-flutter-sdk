@@ -1302,12 +1302,13 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, int samples, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('sendCustomAudioCaptureAACData', {
       'data': data,
       'dataLength': dataLength,
       'configLength': configLength,
       'referenceTimeMillisecond': referenceTimeMillisecond,
+      'samples': samples,
       'param': {
         'sampleRate': param.sampleRate.index,
         'channel': param.channel.index

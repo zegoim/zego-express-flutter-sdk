@@ -2203,6 +2203,7 @@
     int dataLength = [ZegoUtils intValue:call.arguments[@"dataLength"]];
     int configLength = [ZegoUtils intValue:call.arguments[@"configLength"]];
     int referenceTimeMillisecond = [ZegoUtils intValue:call.arguments[@"referenceTimeMillisecond"]];
+    int samples = [ZegoUtils intValue:call.arguments[@"samples"]];
     NSDictionary *paramMap = call.arguments[@"param"];
 
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
@@ -2212,7 +2213,7 @@
     CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:(unsigned char*)[data.data bytes] dataLength:dataLength configLength:configLength timestamp:timestamp param:param channel:channel];
+    [[ZegoExpressEngine sharedEngine] sendCustomAudioCaptureAACData:(unsigned char*)[data.data bytes] dataLength:dataLength configLength:configLength timestamp:timestamp samples:samples param:param channel:channel];
 
     result(nil);
 }

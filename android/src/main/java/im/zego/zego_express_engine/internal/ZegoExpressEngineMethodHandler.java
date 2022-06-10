@@ -2567,6 +2567,7 @@ public class ZegoExpressEngineMethodHandler {
         int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
         int configLength = ZegoUtils.intValue((Number) call.argument("configLength"));
         int referenceTimeMillisecond = ZegoUtils.intValue((Number) call.argument("referenceTimeMillisecond"));
+        int samples = ZegoUtils.intValue((Number) call.argument("samples"));
         HashMap<String, Object> paramMap = call.argument("param");
 
         ZegoAudioFrameParam param = new ZegoAudioFrameParam();
@@ -2575,7 +2576,7 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, param, channel);
+        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, samples, param, channel);
 
         result.success(null);
     }
