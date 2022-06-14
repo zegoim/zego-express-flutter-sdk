@@ -156,6 +156,4 @@ protected:
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 
-private:
-    int getAudioSampleRateIndex(EXPRESS::ZegoAudioSampleRate sampleRate);
 };

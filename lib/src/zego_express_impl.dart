@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
+import 'zego_express_enum_extension.dart';
 
 class Global {
-  static String pluginVersion = "2.19.0";
+  static String pluginVersion = "2.20.0";
 }
 
 class ZegoExpressImpl {
@@ -189,7 +190,9 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('startPublishingStream', {
       'streamID': streamID,
       'config': config != null ? {
-        'roomID': config.roomID ?? ''
+        'roomID': config.roomID ?? '',
+        'forceSynchronousNetworkTime': config.forceSynchronousNetworkTime ?? 0,
+        'streamCensorshipMode': config.streamCensorshipMode?.index ?? ZegoStreamCensorshipMode.None
       } : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
@@ -583,6 +586,11 @@ class ZegoExpressImpl {
         'muteAllPlayStreamAudio', {'mute': mute});
   }
 
+  Future<void> muteAllPlayStreamVideo(bool mute) async {
+    return await _channel.invokeMethod(
+        'muteAllPlayStreamVideo', {'mute': mute});
+  }
+
   Future<void> enableHardwareDecoder(bool enable) async {
     return await _channel
         .invokeMethod('enableHardwareDecoder', {'enable': enable});
@@ -888,6 +896,11 @@ class ZegoExpressImpl {
   Future<double> getCameraMaxZoomFactor({ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('getCameraMaxZoomFactor',
         {'channel': channel?.index ?? ZegoPublishChannel.Main.index});
+  }
+
+  Future<void> enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('enableCameraAdaptiveFPS',
+        {'enable': enable, 'minFPS': minFPS, 'maxFPS': maxFPS, 'channel': channel.index});
   }
 
   Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {
@@ -1282,7 +1295,7 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('startAudioDataObserver', {
       'observerBitMask': observerBitMask,
       'param': {
-        'sampleRate': param.sampleRate.index,
+        'sampleRate': param.sampleRate.value,
         'channel': param.channel.index
       }
     });
@@ -1310,7 +1323,7 @@ class ZegoExpressImpl {
       'referenceTimeMillisecond': referenceTimeMillisecond,
       'samples': samples,
       'param': {
-        'sampleRate': param.sampleRate.index,
+        'sampleRate': param.sampleRate.value,
         'channel': param.channel.index
       },
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -1322,7 +1335,7 @@ class ZegoExpressImpl {
       'data': data,
       'dataLength': dataLength,
       'param': {
-        'sampleRate': param.sampleRate.index,
+        'sampleRate': param.sampleRate.value,
         'channel': param.channel.index
       },
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -1334,7 +1347,7 @@ class ZegoExpressImpl {
       'data': data,
       'dataLength': dataLength,
       'param': {
-        'sampleRate': param.sampleRate.index,
+        'sampleRate': param.sampleRate.value,
         'channel': param.channel.index
       }
     });
@@ -1695,7 +1708,7 @@ class ZegoExpressImpl {
       case 'onPublisherStreamEvent':
         if (ZegoExpressEngine.onPublisherStreamEvent == null) return;
 
-        ZegoExpressEngine.onPublisherStreamEvent!(ZegoStreamEvent.values[map['eventID']],
+        ZegoExpressEngine.onPublisherStreamEvent!(ZegoStreamEvent_.fromValue(map['eventID']),
             map['streamID'], map['extraInfo']);
         break;
 
@@ -1803,7 +1816,7 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerStreamEvent == null) return;
 
         ZegoExpressEngine.onPlayerStreamEvent!(
-            ZegoStreamEvent.values[map['eventID']], map['streamID'], map['extraInfo']);
+            ZegoStreamEvent_.fromValue(map['eventID']), map['streamID'], map['extraInfo']);
         break;
 
       /* Mixer*/
@@ -2071,7 +2084,7 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onProcessCapturedAudioData!(
           map['data'],
           map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRate.values[paramMap['sampleRate']], ZegoAudioChannel.values[paramMap['channel']]),
+          ZegoAudioFrameParam(ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
           map['timestamp']
         );
         break;
@@ -2084,7 +2097,7 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onProcessCapturedAudioDataAfterUsedHeadphoneMonitor!(
           map['data'],
           map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRate.values[paramMap['sampleRate']], ZegoAudioChannel.values[paramMap['channel']]),
+          ZegoAudioFrameParam(ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
           map['timestamp']
         );
         break;
@@ -2097,7 +2110,7 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onProcessRemoteAudioData!(
           map['data'],
           map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRate.values[paramMap['sampleRate']], ZegoAudioChannel.values[paramMap['channel']]),
+          ZegoAudioFrameParam(ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
           map['streamID'],
           map['timestamp']
         );
@@ -2111,7 +2124,7 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onProcessPlaybackAudioData!(
           map['data'],
           map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRate.values[paramMap['sampleRate']], ZegoAudioChannel.values[paramMap['channel']]),
+          ZegoAudioFrameParam(ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
           map['timestamp']
         );
         break;
@@ -2260,7 +2273,7 @@ class ZegoExpressImpl {
           data,
           dataLength,
           ZegoAudioFrameParam(
-            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']),
             ZegoAudioChannel.values[paramMap['channel']]
           )
         );
@@ -2276,7 +2289,7 @@ class ZegoExpressImpl {
           data,
           dataLength,
           ZegoAudioFrameParam(
-            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']),
             ZegoAudioChannel.values[paramMap['channel']]
           )
         );
@@ -2292,7 +2305,7 @@ class ZegoExpressImpl {
           data,
           dataLength,
           ZegoAudioFrameParam(
-            ZegoAudioSampleRate.values[paramMap['sampleRate']],
+            ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']),
             ZegoAudioChannel.values[paramMap['channel']]
           )
         );
@@ -2310,7 +2323,7 @@ class ZegoExpressImpl {
             data,
             dataLength,
             ZegoAudioFrameParam(
-              ZegoAudioSampleRate.values[paramMap['sampleRate']],
+              ZegoAudioSampleRate_.fromValue(paramMap['sampleRate']),
               ZegoAudioChannel.values[paramMap['channel']]
             ),
             streamID);
@@ -2629,6 +2642,16 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
       'startPosition': startPosition
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
+  }
+
+  @override
+  Future<void> clearView() {
+    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerClearView', {'index': _index,});
+  }
+
+  @override
+  Future<void> setActiveAudioChannel(ZegoMediaPlayerAudioChannel audioChannel) {
+    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetActiveAudioChannel', {'index': _index, 'audioChannel': audioChannel.index});
   }
 }
 

@@ -434,60 +434,12 @@
 - (void)onPublisherStreamEvent:(ZegoStreamEvent)eventID streamID:(NSString *)streamID extraInfo:(NSString *)extraInfo {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPublisherStreamEvent] eventID: %d, streamID: %@, extraInfo: %@", (int)eventID, streamID, extraInfo);
-    
-    int eventID_ = -1;
-    switch (eventID) {
-        case ZegoStreamEventPublishStart:
-            eventID_ = 0;
-            break;
-        case ZegoStreamEventPublishSuccess:
-            eventID_ = 1;
-            break;
-        case ZegoStreamEventPublishFail:
-            eventID_ = 2;
-            break;
-        case ZegoStreamEventRetryPublishStart:
-            eventID_ = 3;
-            break;
-        case ZegoStreamEventRetryPublishSuccess:
-            eventID_ = 4;
-            break;
-        case ZegoStreamEventRetryPublishFail:
-            eventID_ = 5;
-            break;
-        case ZegoStreamEventPublishEnd:
-            eventID_ = 6;
-            break;
-        case ZegoStreamEventPlayStart:
-            eventID_ = 7;
-            break;
-        case ZegoStreamEventPlaySuccess:
-            eventID_ = 8;
-            break;
-        case ZegoStreamEventPlayFail:
-            eventID_ = 9;
-            break;
-        case ZegoStreamEventRetryPlayStart:
-            eventID_ = 10;
-            break;
-        case ZegoStreamEventRetryPlaySuccess:
-            eventID_ = 11;
-            break;
-        case ZegoStreamEventRetryPlayFail:
-            eventID_ = 12;
-            break;
-        case ZegoStreamEventPlayEnd:
-            eventID_ = 13;
-            break;
-        default:
-            break;
-    }
 
     GUARD_SINK
     if (sink) {
         sink(@{
             @"method": @"onPublisherStreamEvent",
-            @"eventID": @(eventID_),
+            @"eventID": @(eventID),
             @"streamID": streamID,
             @"extraInfo": extraInfo
         });
@@ -679,57 +631,10 @@
 
     GUARD_SINK
     
-    int eventID_ = -1;
-    switch (eventID) {
-        case ZegoStreamEventPublishStart:
-            eventID_ = 0;
-            break;
-        case ZegoStreamEventPublishSuccess:
-            eventID_ = 1;
-            break;
-        case ZegoStreamEventPublishFail:
-            eventID_ = 2;
-            break;
-        case ZegoStreamEventRetryPublishStart:
-            eventID_ = 3;
-            break;
-        case ZegoStreamEventRetryPublishSuccess:
-            eventID_ = 4;
-            break;
-        case ZegoStreamEventRetryPublishFail:
-            eventID_ = 5;
-            break;
-        case ZegoStreamEventPublishEnd:
-            eventID_ = 6;
-            break;
-        case ZegoStreamEventPlayStart:
-            eventID_ = 7;
-            break;
-        case ZegoStreamEventPlaySuccess:
-            eventID_ = 8;
-            break;
-        case ZegoStreamEventPlayFail:
-            eventID_ = 9;
-            break;
-        case ZegoStreamEventRetryPlayStart:
-            eventID_ = 10;
-            break;
-        case ZegoStreamEventRetryPlaySuccess:
-            eventID_ = 11;
-            break;
-        case ZegoStreamEventRetryPlayFail:
-            eventID_ = 12;
-            break;
-        case ZegoStreamEventPlayEnd:
-            eventID_ = 13;
-            break;
-        default:
-            break;
-    }
     if (sink) {
         sink(@{
             @"method": @"onPlayerStreamEvent",
-            @"eventID": @(eventID_),
+            @"eventID": @(eventID),
             @"streamID": streamID,
             @"extraInfo": extraInfo
         });
@@ -1296,28 +1201,6 @@
 
 #pragma mark - Audio Data Callback
 
-- (int)getIndexWithZegoAudioSampleRate:(ZegoAudioSampleRate)sampleRate {
-    switch (sampleRate) {
-        case ZegoAudioSampleRateUnknown:
-            return 0;
-        case ZegoAudioSampleRate8K:
-            return 1;
-        case ZegoAudioSampleRate16K:
-            return 2;
-        case ZegoAudioSampleRate22K:
-            return 3;
-        case ZegoAudioSampleRate24K:
-            return 4;
-        case ZegoAudioSampleRate32K:
-            return 5;
-        case ZegoAudioSampleRate44K:
-            return 6;
-        case ZegoAudioSampleRate48K:
-            return 7;
-    }
-    return 0;
-}
-
 - (void)onCapturedAudioData:(const unsigned char * _Nonnull)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param {
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log
@@ -1332,7 +1215,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"sampleRate": @(param.sampleRate),
                     @"channel": @(param.channel)
             }
         });
@@ -1354,7 +1237,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"sampleRate": @(param.sampleRate),
                     @"channel": @(param.channel)
             }
         });
@@ -1376,7 +1259,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"sampleRate": @(param.sampleRate),
                     @"channel": @(param.channel)
             }
         });
@@ -1398,7 +1281,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                    @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                    @"sampleRate": @(param.sampleRate),
                     @"channel": @(param.channel)
             },
             @"streamID": streamID
@@ -1422,7 +1305,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"sampleRate": @(param.sampleRate),
                 @"channel": @(param.channel)
             },
             @"timestamp": @(timestamp)
@@ -1445,7 +1328,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"sampleRate": @(param.sampleRate),
                 @"channel": @(param.channel)
             },
             @"timestamp": @(timestamp)
@@ -1468,7 +1351,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"sampleRate": @(param.sampleRate),
                 @"channel": @(param.channel)
             },
             @"streamID": streamID,
@@ -1492,7 +1375,7 @@
             @"data": objData,
             @"dataLength": @(dataLength),
             @"param": @{
-                @"sampleRate": @([self getIndexWithZegoAudioSampleRate:param.sampleRate]),
+                @"sampleRate": @(param.sampleRate),
                 @"channel": @(param.channel)
             },
             @"timestamp": @(timestamp)

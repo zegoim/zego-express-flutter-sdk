@@ -26,7 +26,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   final TextEditingController _appIDEdController = new TextEditingController();
   final TextEditingController _userIDEdController = new TextEditingController();
   final TextEditingController _userNameEdController = new TextEditingController();
-  final TextEditingController _tokenEdController =
+  final TextEditingController _appSignEdController =
       new TextEditingController();
 
   String _version = "";
@@ -55,8 +55,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
 
     _userNameEdController.text = ZegoConfig.instance.userName;
 
-    if (ZegoConfig.instance.token.isNotEmpty) {
-      _tokenEdController.text = ZegoConfig.instance.token;
+    if (ZegoConfig.instance.appSign.isNotEmpty) {
+      _appSignEdController.text = ZegoConfig.instance.appSign;
     }
 
     _scenario = ZegoConfig.instance.scenario;
@@ -90,13 +90,13 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
           return AlertDialog(
             title: Text('Do you need to save the settings before exiting?'),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text('NO, EXIT'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text('OK, SAVE'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
@@ -116,7 +116,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     String strAppID = _appIDEdController.text.trim();
     String userID = _userIDEdController.text.trim();
     String userName = _userNameEdController.text.trim();
-    String appSign = _tokenEdController.text.trim();
+    String appSign = _appSignEdController.text.trim();
 
     int? appID = int.tryParse(strAppID);
 
@@ -136,9 +136,42 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     ZegoConfig.instance.appID = appID ?? 0;
     ZegoConfig.instance.userName = userName;
     ZegoConfig.instance.userID = userID;
-    ZegoConfig.instance.token = appSign;
+    ZegoConfig.instance.appSign = appSign;
     ZegoConfig.instance.scenario = this._scenario;
     ZegoConfig.instance.enablePlatformView = this._enablePlatformView;
+  }
+
+  bool get _needAskSave {
+    bool needAskSave = false;
+    if (!_isCameraPermissionGranted || !_isMicrophonePermissionGranted) {
+      needAskSave = true;
+    }
+
+    String strAppID = _appIDEdController.text.trim();
+    String userID = _userIDEdController.text.trim();
+    String userName = _userNameEdController.text.trim();
+    String appSign = _appSignEdController.text.trim();
+
+    int appID = int.tryParse(strAppID)?? 0;
+    if (!needAskSave && appID != ZegoConfig.instance.appID) {
+      needAskSave = true;
+    }
+    if (!needAskSave && userID != ZegoConfig.instance.userID) {
+      needAskSave = true;
+    }
+    if (!needAskSave && userName != ZegoConfig.instance.userName) {
+      needAskSave = true;
+    }
+    if (!needAskSave && appSign != ZegoConfig.instance.appSign) {
+      needAskSave = true;
+    }
+    if (!needAskSave && ZegoConfig.instance.scenario != this._scenario) {
+      needAskSave = true;
+    }
+    if (!needAskSave && ZegoConfig.instance.enablePlatformView != this._enablePlatformView) {
+      needAskSave = true;
+    }
+    return needAskSave;
   }
 
   // ----- Widgets -----
@@ -155,7 +188,12 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
       ),
       body: SafeArea(
           child: WillPopScope(
-              onWillPop: _onWillPop,
+              onWillPop: () async {
+                if (!_needAskSave) {
+                  return true;
+                }
+                return await _onWillPop();
+              },
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () =>
@@ -308,22 +346,22 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         Padding(padding: const EdgeInsets.only(top: 10.0)),
         Row(
           children: <Widget>[
-            Text('Token:'),
+            Text('AppSign:'),
             GestureDetector(
               child: Icon(Icons.help_outline),
               onTap: () {
                 ZegoUtils.showAlert(context,
-                    'The user ID used to generate the token needs to be the same as the userID filled in above! please apply on  https://console.zego.im/dashboard');
+                    'Developers can get appSign from admin console, please apply on  https://console.zego.im/dashboard');
               },
             ),
           ],
         ),
         TextField(
-          controller: _tokenEdController,
+          controller: _appSignEdController,
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
-            hintText: 'Please enter Token',
+            hintText: 'Please enter AppSign',
             enabledBorder:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: OutlineInputBorder(

@@ -103,7 +103,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
 
   /// Sends AAC audio data produced by custom audio capture to the SDK (for the specified channel).
   ///
-  /// Available since: 1.10.0
+  /// Available since: 2.20.0
   /// Description: Sends the captured audio AAC data to the SDK.
   /// Use cases: The customer needs to obtain input after acquisition from the existing audio stream, audio file, or customized acquisition system, and hand it over to the SDK for transmission.
   /// When to call: After [enableCustomAudioIO] and publishing stream successfully.
@@ -114,6 +114,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// - [dataLength] The total length of the buffer data.
   /// - [configLength] The length of AAC specific config (Note: The AAC encoded data length is 'encodedLength = dataLength - configLength').Value range: [0,64]
   /// - [referenceTimeMillisecond] The UNIX timestamp of this AAC audio frame in millisecond.
+  /// - [samples] The number of samples for this AAC audio frame.Value range: [480,512,1024,1960,2048].
   /// - [param] The param of this AAC audio frame.
   /// - [channel] Publish channel for capturing audio frames.
   Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, int samples, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
@@ -148,7 +149,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   ///
   /// - [data] A block of memory for storing audio PCM data that requires user to manage the memory block's lifecycle, the SDK will copy the audio frame rendering data to this memory block.
   /// - [dataLength] The length of the audio data to be fetch this time (dataLength = duration * sampleRate * channels * 2(16 bit depth i.e. 2 Btye)).
-  /// - [param] Specify the parameters of the fetched audio frame.
+  /// - [param] Specify the parameters of the fetched audio frame. sampleRate in ZegoAudioFrameParam must assignment
   Future<void> fetchCustomAudioRenderPCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param) async {
     return await ZegoExpressImpl.instance.fetchCustomAudioRenderPCMData(data, dataLength, param);
   }

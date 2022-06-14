@@ -443,6 +443,8 @@
     if (configMap && configMap.count > 0) {
         config = [[ZegoPublisherConfig alloc] init];
         config.roomID = configMap[@"roomID"];
+        config.forceSynchronousNetworkTime = [ZegoUtils intValue:configMap[@"forceSynchronousNetworkTime"]];
+        config.streamCensorshipMode = (ZegoStreamCensorshipMode)[ZegoUtils intValue:configMap[@"streamCensorshipMode"]];
     }
 
     if (config) {
@@ -1302,6 +1304,12 @@
             if (renderMode && ![ZegoUtils isNullObject:renderMode]) {
                 inputObject.renderMode = (ZegoMixRenderMode)[ZegoUtils intValue:renderMode];
             }
+
+            NSDictionary *imageInfoMap = inputMap[@"imageInfo"];
+            if (imageInfoMap && ![ZegoUtils isNullObject:imageInfoMap]) {
+                NSString *url = imageInfoMap[@"url"];
+                inputObject.imageInfo = [[ZegoMixerImageInfo alloc] initWithURL:url];
+            }
             
         }
         [taskObject setInputList:inputListObject];
@@ -1772,6 +1780,18 @@
     result(@(factor));
 }
 
+- (void)enableCameraAdaptiveFPS:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    int minFPS = [ZegoUtils intValue:call.arguments[@"minFPS"]];
+    int maxFPS = [ZegoUtils intValue:call.arguments[@"maxFPS"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableCameraAdaptiveFPS:enable minFPS:minFPS maxFPS:maxFPS channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)startSoundLevelMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     ZegoSoundLevelConfig *config = [[ZegoSoundLevelConfig alloc] init];
@@ -2084,28 +2104,6 @@
 
 #pragma mark - Custom Audio IO
 
-- (ZegoAudioSampleRate)convertAudioSampleRate:(int)sampleRateIndex {
-    switch (sampleRateIndex) {
-        case 0:
-            return ZegoAudioSampleRateUnknown;
-        case 1:
-            return ZegoAudioSampleRate8K;
-        case 2:
-            return ZegoAudioSampleRate16K;
-        case 3:
-            return ZegoAudioSampleRate22K;
-        case 4:
-            return ZegoAudioSampleRate24K;
-        case 5:
-            return ZegoAudioSampleRate32K;
-        case 6:
-            return ZegoAudioSampleRate44K;
-        case 7:
-            return ZegoAudioSampleRate48K;
-    }
-    return ZegoAudioSampleRateUnknown;
-}
-
 - (void)enableCustomAudioCaptureProcessing:(FlutterMethodCall *)call result:(FlutterResult)result {
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     NSDictionary *configMap = call.arguments[@"config"];
@@ -2167,7 +2165,7 @@
     NSDictionary *paramMap = call.arguments[@"param"];
 
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
-    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] startAudioDataObserver:bitmask param:param];
@@ -2207,7 +2205,7 @@
     NSDictionary *paramMap = call.arguments[@"param"];
 
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
-    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
 
     CMTime timestamp = CMTimeMakeWithSeconds(referenceTimeMillisecond, 1000);
@@ -2225,7 +2223,7 @@
     NSDictionary *paramMap = call.arguments[@"param"];
 
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
-    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
@@ -2242,7 +2240,7 @@
     NSDictionary *paramMap = call.arguments[@"param"];
 
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
-    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] fetchCustomAudioRenderPCMData:(unsigned char*)[data.data bytes] dataLength:dataLength param:param];
@@ -2257,7 +2255,7 @@
     NSDictionary *paramMap = call.arguments[@"param"];
 
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
-    param.sampleRate = [self convertAudioSampleRate:[ZegoUtils intValue:paramMap[@"sampleRate"]]];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
     param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] sendReferenceAudioPCMData:(unsigned char*)[data.data bytes] dataLength:dataLength param:param];
@@ -2856,6 +2854,31 @@
             });
         }];
     }
+}
+
+- (void)mediaPlayerClearView:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        [mediaPlayer clearView];
+    }
+
+    result(nil);
+}
+
+- (void)mediaPlayerSetActiveAudioChannel:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        int audioChannel = [ZegoUtils intValue:call.arguments[@"audioChannel"]];
+        [mediaPlayer setActiveAudioChannel: audioChannel];
+    }
+
+    result(nil);
 }
 
 #pragma mark - AudioEffectPlayer

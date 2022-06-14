@@ -134,6 +134,7 @@ class ZegoExpressEngine {
   /// Restrictions: 
   ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
   ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+  ///   3. Not supported that the filePath is a network link.
   /// Caution: 
   ///   1. The static picture cannot be seen in the local preview.
   ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
@@ -1066,7 +1067,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 1.1.0
   /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
-  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b100 that means 1 << 2, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
   /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback. When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
   ///

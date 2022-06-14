@@ -80,6 +80,18 @@ enum ZegoPublishChannel {
   Fourth
 }
 
+/// Publish CensorshipMode.
+enum ZegoStreamCensorshipMode {
+  /// no censorship.
+  None,
+  /// only censorship stream audio.
+  Audio,
+  /// only censorship stream video.
+  Video,
+  /// censorship stream audio and video.
+  AudioAndVideo
+}
+
 /// Video rendering fill mode.
 enum ZegoViewMode {
   /// The proportional scaling up, there may be black borders
@@ -1296,7 +1308,10 @@ class ZegoPublisherConfig {
   /// Whether to synchronize the network time when pushing streams. 1 is synchronized with 0 is not synchronized. And must be used with setStreamAlignmentProperty. It is used to align multiple streams at the mixed stream service or streaming end, such as the chorus scene of KTV.
   int? forceSynchronousNetworkTime;
 
-  ZegoPublisherConfig({this.roomID, this.forceSynchronousNetworkTime});
+  /// When pushing a flow, review the pattern of the flow. By default, no audit is performed. If you want to use this function, contact ZEGO technical support.
+  ZegoStreamCensorshipMode? streamCensorshipMode;
+
+  ZegoPublisherConfig({this.roomID, this.forceSynchronousNetworkTime, this.streamCensorshipMode});
 
 }
 
@@ -1756,6 +1771,27 @@ class ZegoLabelInfo {
 
 }
 
+/// Set the image information of a single input stream in the mux.
+///
+/// Available since: 2.19.0
+/// Description: Sets a picture for the content of a single input stream, which is used in place of the video, i.e. the video is not displayed when the picture is used. The `layout` layout in [ZegoMixerInput] for image multiplexing.
+/// Use case: The developer needs to temporarily turn off the camera to display the image during the video connection to the microphone, or display the picture when the audio is connected to the microphone.
+/// Restrictions: Image size is limited to 1M.
+class ZegoMixerImageInfo {
+
+  /// The image path, if not empty, the image will be displayed, otherwise, the video will be displayed. JPG and PNG formats are supported. There are 2 ways to use it: 1. URI: Provide the picture to ZEGO technical support for configuration. After the configuration is complete, the picture URI will be provided, for example: preset-id://xxx.jpg. 2. URL: Only HTTP protocol is supported.
+  String url;
+
+  ZegoMixerImageInfo(this.url);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'url': this.url
+    };
+  }
+
+}
+
 /// Mixer input.
 ///
 /// Configure the mix stream input stream ID, type, and the layout
@@ -1788,7 +1824,10 @@ class ZegoMixerInput {
   /// Video view render mode.
   ZegoMixRenderMode? renderMode;
 
-  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.volume, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode});
+  /// User image information.
+  ZegoMixerImageInfo? imageInfo;
+
+  ZegoMixerInput(this.streamID, this.contentType, this.layout, this.soundLevelID, this.volume, this.isAudioFocus, this.audioDirection, {this.label, this.renderMode, this.imageInfo});
 
   Map<String, dynamic> toMap() {
     return {
@@ -1803,11 +1842,12 @@ class ZegoMixerInput {
       'isAudioFocus': this.isAudioFocus,
       'audioDirection': this.audioDirection,
       'label': this.label?.toMap(),
-      'renderMode': this.renderMode?.index
+      'renderMode': this.renderMode?.index,
+      'imageInfo': this.imageInfo?.toMap(),
     };
   }
 
-  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.volume = 100, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill;
+  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.volume = 100, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill, this.imageInfo = ZegoMixerImageInfo("");
 
 }
 
@@ -2525,6 +2565,24 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Whether to enable monitoring, true is enabled, false is disabled.
   /// - [millisecond] Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [100, 3000].
   Future<void> enableFrequencySpectrumMonitor(bool enable, int millisecond);
+
+  /// Set the playback channel.
+  ///
+  /// Available since: 2.20.0
+  /// Description: Set the playback channel.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [audioChannel] Playback channel, the default is ZegoMediaPlayerAudioChannelAll.
+  Future<void> setActiveAudioChannel(ZegoMediaPlayerAudioChannel audioChannel);
+
+  /// Clears the last frame of the playback control that remains on the control after playback ends.
+  ///
+  /// Available since: 2.20.0
+  /// Description: Clears the last frame of the playback control that remains on the control after playback ends.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: The interface call takes effect only when the media player ends playing.
+  Future<void> clearView();
 
 }
 

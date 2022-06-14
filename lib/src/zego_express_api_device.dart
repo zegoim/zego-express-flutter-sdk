@@ -303,6 +303,23 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getCameraMaxZoomFactor(channel: channel);
   }
 
+  /// Enable camera adaptive frame rate.
+  ///
+  /// Available since: 2.20.0
+  /// Description: After enabling, the SDK matches the capture frame rate range supported by the camera according to the set frame rate range, and dynamically adjusts the capture frame rate of the camera according to the ambient brightness within this range to improve the screen brightness when the set frame rate is too high.
+  /// Use cases: The frame rate set by the user on the streaming end is too high, and the ambient lighting is low, so the subject cannot be displayed or recognized normally. For example, live broadcast scenes with high exposure requirements.
+  /// When to call: After creating the engine [createEngine], before the camera starts.
+  /// Caution: Takes When calling [setVideoConfig] to set the frame rate lower than the expected minimum frame rate, the frame rate value set by [setVideoConfig] will be used. Due to the different hardware and algorithm strategies of different mobile phone manufacturers, the effect of this interface is different on different models or on the front and rear cameras of the same model.
+  /// Related APIs: Through [setVideoConfig], you can set the camera capture frame rate and the encoder encoding frame rate.
+  ///
+  /// - [enable] Whether to enable camera adaptive frame rate. true means on, false means off.Off by default.
+  /// - [minFPS] Desired minimum frame rate, 15 recommended. Unit: fps.
+  /// - [maxFPS] Desired minimum frame rate, 25 recommended. Unit: fps.
+  /// - [channel] Publishing stream channel.
+  Future<void> enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance.enableCameraAdaptiveFPS(enable, minFPS, maxFPS, channel);
+  }
+
   /// Starts sound level monitoring. Support enable some advanced feature.
   ///
   /// Available since: 2.10.0
@@ -357,7 +374,9 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Enable/Disable headphone monitor, and users hear their own voices as they use the microphone to capture sounds.
   /// When to call: After the engine is created [createEngine].
   /// Default value: Disable.
-  /// Caution: This setting does not actually take effect until both the headset and microphone are connected.
+  /// Caution: 
+  ///   1. This setting does not actually take effect until both the headset and microphone are connected. 
+  ///   2. The default is to return after acquisition and before pre-processing. If you need to return after pre-processing, please contact ZEGO technical support.
   ///
   /// - [enable] Whether to use headphone monitor, true: enable, false: disable
   Future<void> enableHeadphoneMonitor(bool enable) async {

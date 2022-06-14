@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   void onPressQuickStartButton() {
     if (ZegoConfig.instance.appID > 0 &&
-        ZegoConfig.instance.token.isNotEmpty) {
+        ZegoConfig.instance.appSign.isNotEmpty) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (BuildContext context) {
         return QuickStartPage();
@@ -42,11 +42,11 @@ class _HomePageState extends State<HomePage> {
               content: Text(
                   'Please set up AppID and other necessary configuration first'),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('Cancel'),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();

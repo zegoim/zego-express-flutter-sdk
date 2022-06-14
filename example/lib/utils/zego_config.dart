@@ -17,7 +17,7 @@ class ZegoConfig {
 
   String userID = "";
   String userName = "";
-  String token = "";
+  String appSign = "";
 
   String roomID = "";
   String streamID = "";

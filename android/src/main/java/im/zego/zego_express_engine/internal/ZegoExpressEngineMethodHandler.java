@@ -105,6 +105,7 @@ import im.zego.zegoexpress.constants.ZegoCameraFocusMode;
 import im.zego.zegoexpress.constants.ZegoCameraExposureMode;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.constants.ZegoEncodeProfile;
+import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -148,6 +149,7 @@ import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
+import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -534,6 +536,8 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null && !configMap.isEmpty()) {
             config = new ZegoPublisherConfig();
             config.roomID = (String) configMap.get("roomID");
+            config.forceSynchronousNetworkTime = ZegoUtils.intValue((Number)configMap.get("forceSynchronousNetworkTime"));
+            config.streamCensorshipMode = ZegoStreamCensorshipMode.getZegoStreamCensorshipMode(ZegoUtils.intValue((Number)configMap.get("streamCensorshipMode")));
         }
 
         if (config != null) {
@@ -1494,6 +1498,12 @@ public class ZegoExpressEngineMethodHandler {
                 if (inputMap.containsKey("renderMode") && inputMap.get("renderMode") != null) {
                     inputObject.renderMode = ZegoMixRenderMode.getZegoMixRenderMode(ZegoUtils.intValue((Number) inputMap.get("renderMode")));
                 }
+
+                if (inputMap.containsKey("imageInfo") && inputMap.get("imageInfo") != null) {
+                    HashMap<String, Object> imageInfoMap = (HashMap<String, Object>) inputMap.get("imageInfo");
+                    String url = (String) imageInfoMap.get("url");
+                    inputObject.imageInfo = new ZegoMixerImageInfo(url);
+                }
                 
                 inputListObject.add(inputObject);
             }
@@ -1972,6 +1982,19 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void enableCameraAdaptiveFPS(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        int minFPS = ZegoUtils.intValue((Number) call.argument("minFPS"));
+        int maxFPS = ZegoUtils.intValue((Number) call.argument("maxFPS"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+        ZegoLog.error("[enableCameraAdaptiveFPS] enable: %s, minFPS: %d, maxFPS: %d, channel: %s", enable?"true":"false", minFPS, maxFPS, channel.name());
+        ZegoExpressEngine.getEngine().enableCameraAdaptiveFPS(enable, minFPS, maxFPS, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void startSoundLevelMonitor(MethodCall call, Result result) {
 
         ZegoSoundLevelConfig config = new ZegoSoundLevelConfig();
@@ -2443,29 +2466,6 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
-    /* Custom Audio IO */
-    private static ZegoAudioSampleRate convertAudioSampleRate(int index) {
-        switch (index) {
-            case 0:
-                return ZegoAudioSampleRate.UNKNOWN;
-            case 1:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K;
-            case 2:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K;
-            case 3:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K;
-            case 4:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K;
-            case 5:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K;
-            case 6:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K;
-            case 7:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K;
-        }
-        return ZegoAudioSampleRate.UNKNOWN;
-    }
-
     @SuppressWarnings("unused")
     public static void enableCustomAudioCaptureProcessing(MethodCall call, Result result) {
 
@@ -2529,7 +2529,7 @@ public class ZegoExpressEngineMethodHandler {
         HashMap<String, Object> paramMap = call.argument("param");
 
         ZegoAudioFrameParam param = new ZegoAudioFrameParam();
-        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
         ZegoExpressEngine.getEngine().startAudioDataObserver(bitmask, param);
@@ -2571,7 +2571,7 @@ public class ZegoExpressEngineMethodHandler {
         HashMap<String, Object> paramMap = call.argument("param");
 
         ZegoAudioFrameParam param = new ZegoAudioFrameParam();
-        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
@@ -2589,7 +2589,7 @@ public class ZegoExpressEngineMethodHandler {
         HashMap<String, Object> paramMap = call.argument("param");
 
         ZegoAudioFrameParam param = new ZegoAudioFrameParam();
-        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
@@ -2606,7 +2606,7 @@ public class ZegoExpressEngineMethodHandler {
         HashMap<String, Object> paramMap = call.argument("param");
 
         ZegoAudioFrameParam param = new ZegoAudioFrameParam();
-        param.sampleRate = convertAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
         ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(ByteBuffer.wrap(data), dataLength, param);
@@ -3236,6 +3236,33 @@ public class ZegoExpressEngineMethodHandler {
                 }
             });
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerClearView(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.clearView();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetActiveAudioChannel(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            ZegoMediaPlayerAudioChannel audioChannel = ZegoMediaPlayerAudioChannel.getZegoMediaPlayerAudioChannel(ZegoUtils.intValue((Number) call.argument("audioChannel")));
+            mediaPlayer.setActiveAudioChannel(audioChannel);
+        }
+
+        result.success(null);
     }
 
     /* AudioEffectPlayer */

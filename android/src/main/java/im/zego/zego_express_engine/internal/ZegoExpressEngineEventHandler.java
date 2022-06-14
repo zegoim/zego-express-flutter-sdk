@@ -96,28 +96,6 @@ public class ZegoExpressEngineEventHandler {
         }
     }
 
-    public int getAudioSampleRateIndex(ZegoAudioSampleRate sampleRate) {
-        switch (sampleRate) {
-            case UNKNOWN:
-                return 0;
-            case ZEGO_AUDIO_SAMPLE_RATE_8K:
-                return 1;
-            case ZEGO_AUDIO_SAMPLE_RATE_16K:
-                return 2;
-            case ZEGO_AUDIO_SAMPLE_RATE_22K:
-                return 3;
-            case ZEGO_AUDIO_SAMPLE_RATE_24K:
-                return 4;
-            case ZEGO_AUDIO_SAMPLE_RATE_32K:
-                return 5;
-            case ZEGO_AUDIO_SAMPLE_RATE_44K:
-                return 6;
-            case ZEGO_AUDIO_SAMPLE_RATE_48K:
-                return 7;
-        }
-        return 0;
-    }
-
     EventChannel.EventSink sink;
 
     private boolean guardSink() {
@@ -486,55 +464,8 @@ public class ZegoExpressEngineEventHandler {
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
-            int eventID_ = -1;
-            switch (eventID) {
-                case PUBLISH_START:
-                    eventID_ = 0;
-                    break;
-                case PUBLISH_SUCCESS:
-                    eventID_ = 1;
-                    break;
-                case PUBLISH_FAIL:
-                    eventID_ = 2;
-                    break;
-                case RETRY_PUBLISH_START:
-                    eventID_ = 3;
-                    break;
-                case RETRY_PUBLISH_SUCCESS:
-                    eventID_ = 4;
-                    break;
-                case RETRY_PUBLISH_FAIL:
-                    eventID_ = 5;
-                    break;
-                case PUBLISH_END:
-                    eventID_ = 6;
-                    break;
-                case PLAY_START:
-                    eventID_ = 7;
-                    break;
-                case PLAY_SUCCESS:
-                    eventID_ = 8;
-                    break;
-                case PLAY_FAIL:
-                    eventID_ = 9;
-                    break;
-                case RETRY_PLAY_START:
-                    eventID_ = 10;
-                    break;
-                case RETRY_PLAY_SUCCESS:
-                    eventID_ = 11;
-                    break;
-                case RETRY_PLAY_FAIL:
-                    eventID_ = 12;
-                    break;
-                case PLAY_END:
-                    eventID_ = 13;
-                    break;
-                default:
-                    eventID_ = -1;
-            }
             map.put("method", "onPublisherStreamEvent");
-            map.put("eventID", eventID_);
+            map.put("eventID", eventID.value());
             map.put("streamID", streamID);
             map.put("extraInfo", extraInfo);
 
@@ -738,56 +669,8 @@ public class ZegoExpressEngineEventHandler {
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
-
-            int eventID_ = -1;
-            switch (eventID) {
-                case PUBLISH_START:
-                    eventID_ = 0;
-                    break;
-                case PUBLISH_SUCCESS:
-                    eventID_ = 1;
-                    break;
-                case PUBLISH_FAIL:
-                    eventID_ = 2;
-                    break;
-                case RETRY_PUBLISH_START:
-                    eventID_ = 3;
-                    break;
-                case RETRY_PUBLISH_SUCCESS:
-                    eventID_ = 4;
-                    break;
-                case RETRY_PUBLISH_FAIL:
-                    eventID_ = 5;
-                    break;
-                case PUBLISH_END:
-                    eventID_ = 6;
-                    break;
-                case PLAY_START:
-                    eventID_ = 7;
-                    break;
-                case PLAY_SUCCESS:
-                    eventID_ = 8;
-                    break;
-                case PLAY_FAIL:
-                    eventID_ = 9;
-                    break;
-                case RETRY_PLAY_START:
-                    eventID_ = 10;
-                    break;
-                case RETRY_PLAY_SUCCESS:
-                    eventID_ = 11;
-                    break;
-                case RETRY_PLAY_FAIL:
-                    eventID_ = 12;
-                    break;
-                case PLAY_END:
-                    eventID_ = 13;
-                    break;
-                default:
-                    eventID_ = -1;
-            }
             map.put("method", "onPlayerStreamEvent");
-            map.put("eventID", eventID_);
+            map.put("eventID", eventID.value());
             map.put("streamID", streamID);
             map.put("extraInfo", extraInfo);
 
@@ -1533,7 +1416,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1562,7 +1445,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1591,7 +1474,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1620,7 +1503,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1653,7 +1536,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1683,7 +1566,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1713,7 +1596,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1744,7 +1627,7 @@ public class ZegoExpressEngineEventHandler {
             data.get(bytes);
 
             HashMap<String, Object> paramMap = new HashMap<>();
-            paramMap.put("sampleRate", getAudioSampleRateIndex(param.sampleRate));
+            paramMap.put("sampleRate", param.sampleRate.value());
             paramMap.put("channel", param.channel.value());
 
             final HashMap<String, Object> map = new HashMap<>();
@@ -1794,26 +1677,4 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
     };
-
-    private static ZegoAudioSampleRate convertAudioSampleRate(int index) {
-        switch (index) {
-            case 0:
-                return ZegoAudioSampleRate.UNKNOWN;
-            case 1:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_8K;
-            case 2:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_16K;
-            case 3:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_22K;
-            case 4:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_24K;
-            case 5:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_32K;
-            case 6:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_44K;
-            case 7:
-                return ZegoAudioSampleRate.ZEGO_AUDIO_SAMPLE_RATE_48K;
-        }
-        return ZegoAudioSampleRate.UNKNOWN;
-    }
 }

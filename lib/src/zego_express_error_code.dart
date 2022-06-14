@@ -91,7 +91,7 @@ class ZegoErrorCode {
   /// Description: The experimental API json parameter parsing failed. <br>Cause: Invalid json format; wrong function name or parameter. <br>Solutions: Please check json format is valid or not; check function name or parameter is correct or not, contact ZEGO technical support for specific function name and parameters.
   static const int EngineExperimentalJsonStrInvalid                                       = 1001091;
 
-  /// Description: The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room.<br>Cause: Login multiple rooms simultaneously under single room mode. <br>Solutions: Please check is login multiple rooms simultaneously or not under single room mode.
+  /// Description: The number of rooms the user attempted to log into simultaneously exceeds the maximum number allowed. Currently, a user can only be logged in to one main room.<br>Cause: In single-room mode, log in to multiple main rooms at the same time (including repeated calls to log in to the same room A without exiting room A). <br>Solutions: Please check is login multiple rooms simultaneously or not under single room mode.
   static const int RoomCountExceed                                                        = 1002001;
 
   /// Description: Haven't login with the input room ID.<br>Cause: Haven't login with the input room ID before call [logoutRoom] or [switchRoom] or [renewToken] or [setRoomExtraInfo]. <br>Solutions: Please check has login with the room ID or not.
@@ -418,6 +418,15 @@ class ZegoErrorCode {
   /// Description: The mixed stream watermark path is too long. <br>Cause: The length of the mixed stream watermark path parameter exceeds the limit. <br>Solution: Please make sure the watermark path length does not exceed 512 bytes.
   static const int MixerWatermarkTooLong                                                  = 1005033;
 
+  /// Description: The link to the muxed input image is too long. <br>Cause: The length of the image link of the mixed stream input parameter exceeds the limit. <br>Solution: Please make sure that the length of the input image link does not exceed 1024 bytes.
+  static const int MixerInputImageUrlTooLong                                              = 1005034;
+
+  /// Description: Failed to mix stream input image. <br>Cause: The image format of the mixed stream input parameter is incorrect. <br>Solution: Use JPG and PNG formats. There are 2 ways to use it: 1. URI: Provide the picture to ZEGO technical support for configuration. After the configuration is complete, the picture URI will be provided, for example: preset-id://xxx.jpg. 2. URL: Only HTTP protocol is supported.
+  static const int MixerInputImageUrlFormatError                                          = 1005035;
+
+  /// Description: Failed to mux input image. <br>Cause: The image size of the mixed stream input parameter exceeds the limit. <br>Solution: Image size is limited to 1M.
+  static const int MixerInputImageUrlSizeError                                            = 1005036;
+
   /// Description: Failed to start mixed stream. <br>Cause: Mixed-stream authentication failed. <br>Solutions: Contact ZEGO technical support.
   static const int MixerAuthenticationFailed                                              = 1005050;
 
@@ -606,6 +615,9 @@ class ZegoErrorCode {
 
   /// Description: Failed to send custom signaling. <br>Cause: The entered user ID is too long. <br>Solutions: Please enter the correct user ID, the maximum user ID cannot exceed 64 bytes.
   static const int IMUserIdTooLong                                                        = 1009012;
+
+  /// Description: Failed to send message. <br>Cause: The message input length exceeds the limit. <br>Solutions: Check the input content length or contact ZEGO technical support to expand the message content length.
+  static const int IMInputParamsLengthLimit                                               = 1009013;
 
   /// Description: Failed to send broadcast message,. <br>Cause: QPS exceeds the limit. <br>Solutions: Control the maximum QPS is 2 .
   static const int IMBroadcastMessageQpsOverload                                          = 1009015;
@@ -801,6 +813,9 @@ class ZegoErrorCode {
 
   /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [RequestAccompaniment]
   static const int CopyrightedMusicKrcTokenInvalid                                        = 1017008;
+
+  /// Description: Copyright music init authentication failed. <br>Cause: Appsign or token is not set. <br>Solutions: When using token authentication, call [loginroom] before calling [initcopyrightedmusic] or use appsign authentication.
+  static const int CopyrightedMusicCopyrightedMusicAuthParamInvalid                       = 1017009;
 
   /// Description: Request copyrighted server fail. <br>Cause: The params entered make mistake or some network reasons. <br>Solutions: Please check the params entered and retry.
   static const int CopyrightedMusicCopyrightedServerFail                                  = 1017010;

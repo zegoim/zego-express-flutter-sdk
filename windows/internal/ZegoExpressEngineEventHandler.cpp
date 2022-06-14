@@ -269,57 +269,10 @@ void ZegoExpressEngineEventHandler::onPublisherStreamEvent(EXPRESS::ZegoStreamEv
 
 	if (eventSink_) {
 		FTMap retMap;
-		int eventID_ = -1;
-		switch (eventID)
-		{
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_START:
-			eventID_ = 0;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_SUCCESS:
-			eventID_ = 1;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_FAIL:
-			eventID_ = 2;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_START:
-			eventID_ = 3;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_SUCCESS:
-			eventID_ = 4;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_FAIL:
-			eventID_ = 5;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_END:
-			eventID_ = 6;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_START:
-			eventID_ = 7;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_SUCCESS:
-			eventID_ = 8;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_FAIL:
-			eventID_ = 9;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_START:
-			eventID_ = 10;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_SUCCESS:
-			eventID_ = 11;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_FAIL:
-			eventID_ = 12;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_END:
-			eventID_ = 13;
-			break;
-		default:
-			break;
-		}
+		
 		retMap[FTValue("method")] = FTValue("onPublisherStreamEvent");
 		retMap[FTValue("streamID")] = FTValue(streamID);
-		retMap[FTValue("eventID")] = flutter::EncodableValue(eventID_);
+		retMap[FTValue("eventID")] = flutter::EncodableValue((int32_t)eventID);
 		retMap[FTValue("streamID")] = flutter::EncodableValue(streamID);
 		retMap[FTValue("extraInfo")] = flutter::EncodableValue(extraInfo);
 
@@ -452,57 +405,9 @@ void ZegoExpressEngineEventHandler::onPlayerStreamEvent(EXPRESS::ZegoStreamEvent
 
 	if (eventSink_) {
 		FTMap retMap;
-		int eventID_ = -1;
-		switch (eventID)
-		{
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_START:
-			eventID_ = 0;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_SUCCESS:
-			eventID_ = 1;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_FAIL:
-			eventID_ = 2;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_START:
-			eventID_ = 3;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_SUCCESS:
-			eventID_ = 4;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PUBLISH_FAIL:
-			eventID_ = 5;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PUBLISH_END:
-			eventID_ = 6;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_START:
-			eventID_ = 7;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_SUCCESS:
-			eventID_ = 8;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_FAIL:
-			eventID_ = 9;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_START:
-			eventID_ = 10;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_SUCCESS:
-			eventID_ = 11;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_RETRY_PLAY_FAIL:
-			eventID_ = 12;
-			break;
-		case EXPRESS::ZEGO_STREAM_EVENT_PLAY_END:
-			eventID_ = 13;
-			break;
-		default:
-			break;
-		}
 		retMap[FTValue("method")] = FTValue("onPlayerStreamEvent");
 		retMap[FTValue("streamID")] = FTValue(streamID);
-		retMap[FTValue("eventID")] = flutter::EncodableValue(eventID_);
+		retMap[FTValue("eventID")] = flutter::EncodableValue((int32_t)eventID);
 		retMap[FTValue("streamID")] = flutter::EncodableValue(streamID);
 		retMap[FTValue("extraInfo")] = flutter::EncodableValue(extraInfo);
 
@@ -743,10 +648,10 @@ void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char* dat
 		retMap[FTValue("method")] = FTValue("onCapturedAudioData");
 		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
-		retMap[FTValue("dataLength")] = (int)dataLength;
+		retMap[FTValue("dataLength")] = FTValue((int)dataLength);
 		FTMap paramMap;
-		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap[FTValue("channel")] = (int32_t)param.channel;
+		paramMap[FTValue("sampleRate")] = FTValue((int32_t)param.sampleRate);
+		paramMap[FTValue("channel")] = FTValue((int32_t)param.channel);
 		retMap[FTValue("param")] = paramMap;
 
 		eventSink_->Success(retMap);
@@ -760,10 +665,10 @@ void ZegoExpressEngineEventHandler::onPlaybackAudioData(const unsigned char* dat
 		retMap[FTValue("method")] = FTValue("onPlaybackAudioData");
 		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
-		retMap[FTValue("dataLength")] = (int)dataLength;
+		retMap[FTValue("dataLength")] = FTValue((int)dataLength);
 		FTMap paramMap;
-		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap[FTValue("channel")] = param.channel;
+		paramMap[FTValue("sampleRate")] = FTValue((int32_t)param.sampleRate);
+		paramMap[FTValue("channel")] = FTValue((int32_t)param.channel);
 		retMap[FTValue("param")] = paramMap;
 
 		eventSink_->Success(retMap);
@@ -777,10 +682,10 @@ void ZegoExpressEngineEventHandler::onMixedAudioData(const unsigned char* data, 
 		retMap[FTValue("method")] = FTValue("onMixedAudioData");
 		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
-		retMap[FTValue("dataLength")] = (int)dataLength;
+		retMap[FTValue("dataLength")] = FTValue((int)dataLength);
 		FTMap paramMap;
-		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap[FTValue("channel")] = param.channel;
+		paramMap[FTValue("sampleRate")] = FTValue((int32_t)param.sampleRate);
+		paramMap[FTValue("channel")] = FTValue((int32_t)param.channel);
 		retMap[FTValue("param")] = paramMap;
 
 		eventSink_->Success(retMap);
@@ -794,39 +699,15 @@ void ZegoExpressEngineEventHandler::onPlayerAudioData(const unsigned char* data,
 		retMap[FTValue("method")] = FTValue("onPlayerAudioData");
 		std::vector<uint8_t> dataVec(data, data + dataLength);
 		retMap[FTValue("data")] = dataVec;
-		retMap[FTValue("dataLength")] = (int)dataLength;
+		retMap[FTValue("dataLength")] = FTValue((int)dataLength);
 		FTMap paramMap;
-		paramMap[FTValue("sampleRate")] = getAudioSampleRateIndex(param.sampleRate);
-		paramMap[FTValue("channel")] = param.channel;
+		paramMap[FTValue("sampleRate")] = FTValue((int32_t)param.sampleRate);
+		paramMap[FTValue("channel")] = FTValue((int32_t)param.channel);
 		retMap[FTValue("param")] = paramMap;
-		retMap[FTValue("streamID")] = streamID;
+		retMap[FTValue("streamID")] = FTValue(streamID);
 
 		eventSink_->Success(retMap);
 	}
-}
-
-int ZegoExpressEngineEventHandler::getAudioSampleRateIndex(EXPRESS::ZegoAudioSampleRate sampleRate)
-{
-	switch (sampleRate)
-	{
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_UNKNOWN:
-		return 0;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_8K:
-		return 1;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_16K:
-		return 2;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_22K:
-		return 3;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_24K:
-		return 4;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_32K:
-		return 5;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_44K:
-		return 6;
-	case EXPRESS::ZegoAudioSampleRate::ZEGO_AUDIO_SAMPLE_RATE_48K:
-		return 7;
-	}
-	return 0;
 }
 
 void ZegoExpressEngineEventHandler::onCapturedDataRecordStateUpdate(EXPRESS::ZegoDataRecordState state, int errorCode, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel)
