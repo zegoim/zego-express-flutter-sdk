@@ -9,14 +9,14 @@
 #import "ZegoTextureRendererController.h"
 #import "ZegoLog.h"
 
-@interface ZegoTextureRendererController()
+@interface ZegoTextureRendererController ()
 
 // BufferRenderers for caching, the renderer created will not be immediately added to the renderers dictionary, but the developer will need to explicitly bind the relationship
-@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer*> *allRenderers;
+@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer *> *allRenderers;
 
-@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer*> *capturedRenderers;
-@property (strong) NSMutableDictionary<NSString *, ZegoTextureRenderer*> *remoteRenderers;
-@property(readonly, nonatomic) CADisplayLink* displayLink;
+@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer *> *capturedRenderers;
+@property (strong) NSMutableDictionary<NSString *, ZegoTextureRenderer *> *remoteRenderers;
+@property (readonly, nonatomic) CADisplayLink *displayLink;
 @property (nonatomic, assign) BOOL isRendering;
 @property (nonatomic, assign) BOOL isInited;
 
@@ -28,7 +28,7 @@
     static ZegoTextureRendererController *instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[ZegoTextureRendererController alloc] init];
+      instance = [[ZegoTextureRendererController alloc] init];
     });
     return instance;
 }
@@ -48,31 +48,37 @@
 
 /// The following methods are only triggered by the dart `zego_texture_render_utils`
 
-- (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height {
-    
-    ZegoTextureRenderer *renderer = [[ZegoTextureRenderer alloc] initWithTextureRegistry:registry viewWidth:width viewHeight:height];
+- (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry
+                       viewWidth:(int)width
+                      viewHeight:(int)height {
 
-    ZGLog(@"[createTextureRenderer] textureID:%ld, renderer:%p", (long)renderer.textureID, renderer);
-    
+    ZegoTextureRenderer *renderer = [[ZegoTextureRenderer alloc] initWithTextureRegistry:registry
+                                                                               viewWidth:width
+                                                                              viewHeight:height];
+
+    ZGLog(@"[createTextureRenderer] textureID:%ld, renderer:%p", (long)renderer.textureID,
+          renderer);
+
     [self.allRenderers setObject:renderer forKey:@(renderer.textureID)];
 
     [self logCurrentRenderers];
-    
+
     return renderer.textureID;
 }
 
 - (BOOL)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height {
-    
+
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
-    
+
     if (!renderer) {
-        ZGLog(@"[updateTextureRendererSize] renderer for textureID:%ld not exists", (long)textureID);
+        ZGLog(@"[updateTextureRendererSize] renderer for textureID:%ld not exists",
+              (long)textureID);
         [self logCurrentRenderers];
         return NO;
     }
 
     ZGLog(@"[updateTextureRendererSize] textureID:%ld, renderer:%p", (long)textureID, renderer);
-    
+
     [renderer updateRenderSize:CGSizeMake(width, height)];
 
     [self logCurrentRenderers];
@@ -81,9 +87,9 @@
 }
 
 - (BOOL)destroyTextureRenderer:(int64_t)textureID {
-    
+
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
-    
+
     if (!renderer) {
         ZGLog(@"[destroyTextureRenderer] renderer for textureID:%ld not exists", (long)textureID);
         [self logCurrentRenderers];
@@ -91,9 +97,9 @@
     }
 
     ZGLog(@"[destroyTextureRenderer] textureID:%ld, renderer:%p", (long)textureID, renderer);
-    
+
     [self.allRenderers removeObjectForKey:@(renderer.textureID)];
-    
+
     // Release renderer
     [renderer destroy];
 
@@ -111,14 +117,13 @@
     ZGLog(@"[ZegoTextureRendererController] currentRenderers: %@", desc);
 }
 
-
 #pragma mark - Dart Express Engine API Operation
 
 /// The following methods are only triggered by the dart `zego_express_api`
 
 - (void)initController {
 
-    if(!self.isInited) {
+    if (!self.isInited) {
         // Enable custom video render
         ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
         renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
@@ -131,7 +136,6 @@
         // To avoid call enableCustomVideoRender many times because of flutter hotreload
         self.isInited = YES;
     }
-    
 }
 
 - (void)uninitController {
@@ -140,10 +144,12 @@
     self.isInited = NO;
 }
 
-- (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel viewMode:(ZegoViewMode)viewMode {
-    
+- (BOOL)addCapturedRenderer:(int64_t)textureID
+                        key:(NSNumber *)channel
+                   viewMode:(ZegoViewMode)viewMode {
+
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
-    
+
     if (!renderer) {
         ZGLog(@"[addCapturedRenderer] renderer for textureID:%ld not exists", (long)textureID);
         [self logCurrentRenderers];
@@ -152,8 +158,9 @@
 
     [renderer setViewMode:viewMode];
 
-    ZGLog(@"[addCapturedRenderer] textureID:%ld, renderer:%p, channel:%d, viewMode: %d", (long)textureID, renderer, channel.intValue, (int)viewMode);
-    
+    ZGLog(@"[addCapturedRenderer] textureID:%ld, renderer:%p, channel:%d, viewMode: %d",
+          (long)textureID, renderer, channel.intValue, (int)viewMode);
+
     [self.capturedRenderers setObject:renderer forKey:channel];
 
     [self logCurrentRenderers];
@@ -177,10 +184,12 @@
     [self logCurrentRenderers];
 }
 
-- (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID viewMode:(ZegoViewMode)viewMode {
-    
+- (BOOL)addRemoteRenderer:(int64_t)textureID
+                      key:(NSString *)streamID
+                 viewMode:(ZegoViewMode)viewMode {
+
     ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
-    
+
     if (!renderer) {
         ZGLog(@"[addRemoteRenderer] renderer for textureID:%ld not exists", (long)textureID);
         [self logCurrentRenderers];
@@ -189,8 +198,9 @@
 
     [renderer setViewMode:viewMode];
 
-    ZGLog(@"[addRemoteRenderer] textureID:%ld, renderer:%p, streamID:%@, viewMode: %d", (long)textureID, renderer, streamID, (int)viewMode);
-    
+    ZGLog(@"[addRemoteRenderer] textureID:%ld, renderer:%p, streamID:%@, viewMode: %d",
+          (long)textureID, renderer, streamID, (int)viewMode);
+
     [self.remoteRenderers setObject:renderer forKey:streamID];
 
     [self logCurrentRenderers];
@@ -218,10 +228,9 @@
     if (self.isRendering) {
         return;
     }
-    
+
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-
 
     if (@available(iOS 10.0, *)) {
         // Set the FPS to 30Hz
@@ -232,7 +241,7 @@
     }
 
     _displayLink.paused = NO;
-    
+
     self.isRendering = YES;
 }
 
@@ -240,12 +249,12 @@
     if (!self.isRendering) {
         return;
     }
-    
+
     // TODO: 暂时先限定死只有在所有renderer都不存在时，停止渲染才成功
     if (self.capturedRenderers.count == 0 && self.remoteRenderers.count == 0) {
         self.displayLink.paused = YES;
         [_displayLink invalidate];
-        
+
         self.isRendering = NO;
     }
 }
@@ -258,27 +267,26 @@
     [self.allRenderers removeAllObjects];
 }
 
-- (void)onDisplayLink:(CADisplayLink*)link {
-    
+- (void)onDisplayLink:(CADisplayLink *)link {
+
     // Render local
     for (NSNumber *key in self.capturedRenderers) {
         ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:key];
-        if(!renderer || ![renderer isNewFrameAvailable])
+        if (!renderer || ![renderer isNewFrameAvailable])
             continue;
-        
+
         [renderer notifyDrawNewFrame];
     }
-    
+
     // Render remote
     for (NSString *key in self.remoteRenderers) {
         ZegoTextureRenderer *renderer = [self.remoteRenderers objectForKey:key];
-        if(!renderer || ![renderer isNewFrameAvailable])
+        if (!renderer || ![renderer isNewFrameAvailable])
             continue;
-        
+
         [renderer notifyDrawNewFrame];
     }
 }
-
 
 #pragma mark - ZegoCustomVideoRenderHandler
 
@@ -288,11 +296,14 @@
 /// @param param Video frame param
 /// @param flipMode video flip mode
 /// @param channel Publishing stream channel.
-- (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:(ZegoVideoFrameParam *)param flipMode:(ZegoVideoFlipMode)flipMode channel:(ZegoPublishChannel)channel {
+- (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
+                                    param:(ZegoVideoFrameParam *)param
+                                 flipMode:(ZegoVideoFlipMode)flipMode
+                                  channel:(ZegoPublishChannel)channel {
     if (!self.isRendering) {
         return;
     }
-    
+
     ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:@(channel)];
     if (renderer) {
         [renderer setUseMirrorEffect:flipMode == 1];
@@ -305,11 +316,13 @@
 /// @param buffer video data of CVPixelBuffer format
 /// @param param Video frame param
 /// @param streamID Stream ID
-- (void)onRemoteVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:(ZegoVideoFrameParam *)param streamID:(NSString *)streamID {
+- (void)onRemoteVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
+                                  param:(ZegoVideoFrameParam *)param
+                               streamID:(NSString *)streamID {
     if (!self.isRendering) {
         return;
     }
-    
+
     ZegoTextureRenderer *renderer = [self.remoteRenderers objectForKey:streamID];
     if (renderer) {
         [renderer setSrcFrameBuffer:buffer];

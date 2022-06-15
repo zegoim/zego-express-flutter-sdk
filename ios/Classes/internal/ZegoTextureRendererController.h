@@ -9,9 +9,9 @@
 #ifndef ZegoTextureRenderController_h
 #define ZegoTextureRenderController_h
 
+#import "ZegoTextureRenderer.h"
 #import <Foundation/Foundation.h>
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
-#import "ZegoTextureRenderer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,20 +21,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-
 #pragma mark - Dart Texture Render Utils Operation
 
 /// Called when dart invoke `createTextureRenderer`
 /// @return textureID
-- (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height;
+- (int64_t)createTextureRenderer:(id<FlutterTextureRegistry>)registry
+                       viewWidth:(int)width
+                      viewHeight:(int)height;
 
 /// Called when dart invoke `updateTextureRendererSize`
 - (BOOL)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height;
 
 /// Called when dart invoke `destroyTextureRenderer`
 - (BOOL)destroyTextureRenderer:(int64_t)textureID;
-
-
 
 #pragma mark - Dart Express Engine API Operation
 
@@ -44,21 +43,21 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when dart invoke `destroyEngine`
 - (void)uninitController;
 
-
-
 /// Called when dart invoke `startPreview`
-- (BOOL)addCapturedRenderer:(int64_t)textureID key:(NSNumber *)channel viewMode:(ZegoViewMode)viewMode;
+- (BOOL)addCapturedRenderer:(int64_t)textureID
+                        key:(NSNumber *)channel
+                   viewMode:(ZegoViewMode)viewMode;
 
 /// Called when dart invoke `stopPreview`
 - (void)removeCapturedRenderer:(NSNumber *)channel;
 
 /// Called when dart invoke `startPlayingStream`
-- (BOOL)addRemoteRenderer:(int64_t)textureID key:(NSString *)streamID viewMode:(ZegoViewMode)viewMode;
+- (BOOL)addRemoteRenderer:(int64_t)textureID
+                      key:(NSString *)streamID
+                 viewMode:(ZegoViewMode)viewMode;
 
 /// Called when dart invoke `stopPlayingStream`
 - (void)removeRemoteRenderer:(NSString *)streamID;
-
-
 
 /// For video preview/play
 - (void)startRendering;
@@ -66,8 +65,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// For video preview/play
 - (void)stopRendering;
 
-
-- (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:(ZegoVideoFrameParam *)param flipMode:(ZegoVideoFlipMode)flipMode channel:(ZegoPublishChannel)channel;
+- (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
+                                    param:(ZegoVideoFrameParam *)param
+                                 flipMode:(ZegoVideoFlipMode)flipMode
+                                  channel:(ZegoPublishChannel)channel;
 
 @end
 

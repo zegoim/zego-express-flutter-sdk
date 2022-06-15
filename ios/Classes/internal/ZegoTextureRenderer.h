@@ -9,8 +9,8 @@
 #ifndef ZegoTextureRenderer_h
 #define ZegoTextureRenderer_h
 
-#import <Foundation/Foundation.h>
 #import <Flutter/Flutter.h>
+#import <Foundation/Foundation.h>
 #import <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
@@ -24,7 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) int viewWidth;
 @property (nonatomic) int viewHeight;
 
-- (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry viewWidth:(int)width viewHeight:(int)height;
+- (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry
+                              viewWidth:(int)width
+                             viewHeight:(int)height;
 - (void)destroy;
 
 - (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer;
