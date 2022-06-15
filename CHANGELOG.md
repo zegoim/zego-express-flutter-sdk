@@ -1,6 +1,80 @@
 # Change Log
 
 
+## 2.20.0
+
+### **New Features**
+
+1. Media player supports setting the channel.
+
+    After calling the [createEngine] interface to initialize the engine and the [createMediaPlayer] interface to create a media player, you can call the [setActiveAudioChannel] interface to set the left channel, right channel or all channels. When initialized, the media player defaults to all channels.
+
+    For related API, please refer to [setActiveAudioChannel](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setActiveAudioChannel.html)
+
+2. Media player supports clearing the last frame when the playback ends.
+
+    Note: You must wait for the media player to finish playing before the API call takes effect.
+
+    Call the [createEngine] interface to initialize the engine, call the [createMediaPlayer] interface to create a media player, and call [clearView] to clear the last remaining frame.
+
+    For related API, please refer to [clearView](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/clearView.html)
+
+3. Support the camera to automatically change the frame rate.
+
+    Note: When the frame rate set by [setVideoConfig] is less than the minimum expected frame rate of [enableCameraAdaptiveFPS], the frame rate value set by [setVideoConfig] will be used. Due to the different hardware and algorithm strategies of different mobile phone manufacturers, the effect of this interface is different on different models or on the front and back cameras of the same model.
+
+    When the frame rate set by the user on the streaming end is high, and the ambient light is low and the subject cannot be displayed or recognized normally, you can call the [enableCameraAdaptiveFPS] interface to automatically reduce the frame rate within a certain range to increase exposure time, so as to improve the brightness of the video picture. This function is often used in live broadcast scenes with high exposure requirements. The [enableCameraAdaptiveFPS] interface needs to be called after calling the [createEngine] interface to initialize the engine and before starting the camera.
+
+    For related API, please refer to [enableCameraAdaptiveFPS](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/enableCameraAdaptiveFPS.html)
+
+4. Support setting the picture information of a single input stream in the mixed stream.
+
+    Note: The length of the image address must not exceed 1024 bytes, otherwise the error code 1005034 will appear; the image format should be JPG and PNG format, otherwise the error code 1005035 will appear; the image must not exceed 1M, otherwise the error code 1005036 will appear.
+
+    You can set the image address through the "ZegoMixerImageInfo" type parameter of the [startMixerTask] interface to set the content of a single input stream as an image, which is used to replace the video, that is, when the image is used, the video is not displayed. This function is mainly used in a video call when a video caller may need to temporarily turn off the camera to display the image, or in a call between a video caller and a voice caller when the image of the voice caller may need to be displayed.
+
+    For related API, please refer to [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
+
+5. Support setting whether to clear the last frame after calling the mutePlayStreamVideo interface.
+
+    NOTE: To use this feature, please contact ZEGO Technical Support.
+
+    When you finds that the stream publisher violates the regulations, you can call the [mutePlayStreamVideo] interface to discontinue the stream puller from pulling the video stream of the violating user, and request the violating user to make corrections. Using this function at the same time can avoid the risk of violation caused by the video interface of the stream puller still retaining the last frame.
+
+6. Supports linearly increasing volume gain. 
+
+    NOTE: To use this feature, please contact ZEGO Technical Support.
+
+    A new volume gain method is provided, and you can choose an appropriate volume gain method according to actual needs. 
+
+7. Supports automatic censorship of audio and video at the stream level.
+
+    Note: To use this function, please contact ZEGO technical support to activate the background service.
+
+    When calling the [startPublishingStream] API to start streaming, you can set the "ZegoStreamCensorshipMode" parameter to conduct automatic audio and video censorship at the stream level, and automatically identify sensitive content, thus reducing the integration difficulty and business maintenance costs.
+
+    For related API, please refer to [startPublishingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/startPublishingStream.html)
+
+### **Enhancements**
+
+1. The error code when the developer passes in a non-existing AppID has been optimized from 1002099 to 1001004.
+
+2. The echo cancellation has been optimized to solve the swallowed sound phenomenon in KTV and other scenarios.
+
+3. Added 1009013 error code.
+
+    It indicates that the message input length exceeds the limit. When this error code appears, please check the input content length or contact ZEGO technical support to extend the message content length.
+
+4. Added 1017009 error code.
+
+    When the copyrighted music is initialized, the authentication fails because the AppSign or Token is not set, and this error code will appear. At this time, if you use AppSign for authentication, please fill in AppSign when initializing the SDK; if you use Token authentication, before calling the [initCopyrightedMusic] interface, please call the [loginRoom] interface and pass in Token for authentication.
+
+    For related API, please refer to [initCopyrightedMusic](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/initCopyrightedMusic.html), [loginRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/loginRoom.html)
+
+### **Bug Fixes**
+
+1. Fixed an error reporting the custom capture AAC audio format.
+
 ## 2.19.0
 
 ### **New Features**
