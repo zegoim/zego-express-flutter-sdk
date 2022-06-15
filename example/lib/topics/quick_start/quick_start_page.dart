@@ -92,7 +92,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   void loginRoom() {
     // Instantiate a ZegoUser object
     ZegoUser user =
-        ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName);
+        ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName.isEmpty? ZegoConfig.instance.userID: ZegoConfig.instance.userName);
 
     // Login Room
     ZegoExpressEngine.instance.loginRoom(_roomID, user);
