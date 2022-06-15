@@ -147,7 +147,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// Available since: 1.3.4
   /// Description: You can set the combined value of the audio codec, bit rate, and audio channel through this function. If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
-  /// Default value: The default audio config refers to the default value of [ZegoAudioConfig]. 
+  /// Default value: The default audio config refers to the default value of [ZegoAudioConfig].
   /// When to call: After the engine is created [createEngine], and before publishing [startPublishingStream].
   /// Restrictions: None.
   /// Related APIs: [getAudioConfig].
@@ -178,7 +178,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Support calling this function to update the encryption key while publishing stream.
   /// When to call: After the engine is created [createEngine], Called before and after [startPublishingStream] can both take effect.
   /// Restrictions: This function is only valid when publishing stream to the Zego RTC server.
-  /// Caution: Note that developers need to update the player's decryption key before updating the publisher's encryption key. 
+  /// Caution: Note that developers need to update the player's decryption key before updating the publisher's encryption key.
   /// Related APIs: Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
   ///
   /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.

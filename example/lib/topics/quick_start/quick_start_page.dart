@@ -5,15 +5,17 @@
 //  Created by Patrick Fu on 2020/12/04.
 //  Copyright © 2020 Zego. All rights reserved.
 //
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:zego_express_engine/zego_express_engine.dart';
 
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
+
+import 'dart:html' as html show window;
 
 class QuickStartPage extends StatefulWidget {
   @override
@@ -21,7 +23,6 @@ class QuickStartPage extends StatefulWidget {
 }
 
 class _QuickStartPageState extends State<QuickStartPage> {
-  final String _roomID = 'QuickStartRoom-1';
 
   int _previewViewID = -1;
   int _playViewID = -1;
@@ -42,6 +43,20 @@ class _QuickStartPageState extends State<QuickStartPage> {
       new TextEditingController();
   TextEditingController _playingStreamIDController =
       new TextEditingController();
+  TextEditingController _appIDcontroller =
+      new TextEditingController();
+  TextEditingController _roomIDcontroller =
+      new TextEditingController();
+  TextEditingController _userIDcontroller =
+      new TextEditingController();
+  TextEditingController _tokencontroller =
+      new TextEditingController();
+
+  String _roomID = "";
+
+  bool muteVideo = false;
+  bool muteAudio = false;
+  bool enableMic = true;
 
   @override
   void initState() {
@@ -71,7 +86,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void createEngine() {
     ZegoEngineProfile profile = ZegoEngineProfile(
-      ZegoConfig.instance.appID, 
+      _appIDcontroller.text.trim().isEmpty ? ZegoConfig.instance.appID : int.parse(_appIDcontroller.text.trim()) ,
+      // int.parse(_appIDcontroller.text.trim()),
       ZegoConfig.instance.scenario,
       enablePlatformView: ZegoConfig.instance.enablePlatformView,
       appSign: ZegoConfig.instance.appSign);
@@ -82,9 +98,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
     print('🚀 Create ZegoExpressEngine');
 
-    ZegoExpressEngine.instance
-        .getAudioConfig()
-        .then((value) => print('get audio config: $value'));
+    // ZegoExpressEngine.instance
+    //     .getAudioConfig()
+    //     .then((value) => print('get audio config: $value'));
   }
 
   // MARK: - Step 2: LoginRoom
@@ -94,8 +110,21 @@ class _QuickStartPageState extends State<QuickStartPage> {
     ZegoUser user =
         ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName.isEmpty? ZegoConfig.instance.userID: ZegoConfig.instance.userName);
 
-    // Login Room
-    ZegoExpressEngine.instance.loginRoom(_roomID, user);
+        ZegoUser(_userIDcontroller.text.trim().isEmpty ? ZegoConfig.instance.userID : _userIDcontroller.text.trim(),
+          ZegoConfig.instance.userName);
+
+    if (kIsWeb) {
+      ZegoRoomConfig config = ZegoRoomConfig.defaultConfig();
+      config.token = ZegoConfig.instance.token;
+      // Login Room WEB only supports token;
+      ZegoExpressEngine.instance.loginRoom(_roomID, user, config: config);
+    } else {
+      // Login Room
+      ZegoExpressEngine.instance.loginRoom(_roomID, user);
+    }
+
+
+
 
     print('🚪 Start login room, roomID: $_roomID');
   }
@@ -113,29 +142,23 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   // MARK: - Step 3: StartPublishingStream
-
-  void startPublishingStream(String streamID,
-      {double width = 360, double height = 640}) {
-    void _startPreview(int viewID) {
+  void startPreview( {double width = 360, double height = 640}) {
+    Future<void> _startPreview(int viewID) async {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
-      ZegoExpressEngine.instance.startPreview(canvas: canvas);
+      await ZegoExpressEngine.instance.startPreview(canvas: canvas);
       print('🔌 Start preview, viewID: $viewID');
     }
 
-    void _startPublishingStream(String streamID) {
-      ZegoExpressEngine.instance.startPublishingStream(streamID);
-      print('📤 Start publishing stream, streamID: $streamID');
-    }
+    ZegoExpressEngine.instance.setVideoConfig(ZegoVideoConfig.preset(ZegoVideoConfigPreset.Preset1080P));
 
-    if (Platform.isIOS || Platform.isAndroid) {
-      if (ZegoConfig.instance.enablePlatformView) {
+    if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
+      if (ZegoConfig.instance.enablePlatformView || kIsWeb ) {
         // Render with PlatformView
         setState(() {
           _previewViewWidget =
-              ZegoExpressEngine.instance.createPlatformView((viewID) {
+              ZegoExpressEngine.instance.createPlatformView((viewID) async {
             _previewViewID = viewID;
-            _startPreview(_previewViewID);
-            _startPublishingStream(streamID);
+            await _startPreview(_previewViewID);
           });
         });
       } else {
@@ -146,18 +169,31 @@ class _QuickStartPageState extends State<QuickStartPage> {
           _previewViewID = viewID;
           setState(() => _previewViewWidget = Texture(textureId: viewID));
           _startPreview(viewID);
-          _startPublishingStream(streamID);
         });
       }
     } else {
       ZegoExpressEngine.instance.startPreview();
-      ZegoExpressEngine.instance.startPublishingStream(streamID);
     }
+  }
+
+  void stopPreview() {
+    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+
+    if (_previewViewWidget == null) {
+      return;
+    }
+
+    ZegoExpressEngine.instance.stopPreview();
+    clearPreviewView();
+  }
+
+  void startPublishingStream(String streamID) {
+    ZegoExpressEngine.instance.startPublishingStream(streamID);
+    print('📤 Start publishing stream, streamID: $streamID');
   }
 
   void stopPublishingStream() {
     ZegoExpressEngine.instance.stopPublishingStream();
-    ZegoExpressEngine.instance.stopPreview();
   }
 
   // MARK: - Step 4: StartPlayingStream
@@ -170,9 +206,10 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid) {
-      if (ZegoConfig.instance.enablePlatformView) {
+    if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
+      if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
         // Render with PlatformView
+        html.window.console.error("startPlayingStream create view");
         setState(() {
           _playViewWidget =
               ZegoExpressEngine.instance.createPlatformView((viewID) {
@@ -197,13 +234,13 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void stopPlayingStream(String streamID) {
     ZegoExpressEngine.instance.stopPlayingStream(streamID);
-
     clearPlayView();
   }
 
   // MARK: - Exit
 
   void destroyEngine() async {
+    stopPreview();
     clearPreviewView();
     clearPlayView();
 
@@ -250,7 +287,32 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print(
           '🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _playerState = state);
+
+      if (_playerState == ZegoPlayerState.NoPlay) {
+        stopPlayingStream(_playingStreamIDController.text.trim());
+      }
     };
+
+    ZegoExpressEngine.onRoomUserUpdate = (roomID, updateType, userList) {
+
+      userList.forEach((e) {
+        var userID = e.userID;
+        var userName = e.userName;
+         print(
+          '🚩 🚪 Room user update, roomID: $roomID, updateType: $updateType userID: $userID userName: $userName');
+      });
+    };
+
+    ZegoExpressEngine.onRoomStreamUpdate = ((roomID, updateType, streamList, extendedData) {
+        streamList.forEach((stream) {
+          var streamID = stream.streamID;
+          print('🚩 🚪 Room stream update, roomID: $roomID, updateType: $updateType streamID:$streamID');
+
+          if (updateType == ZegoPlayerState.NoPlay) {
+            stopPlayingStream(_playingStreamIDController.text.trim());
+          }
+        });
+    });
   }
 
   void clearZegoEventCallback() {
@@ -260,7 +322,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPreviewView() {
-    if (!Platform.isAndroid && !Platform.isIOS) return;
+    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
 
     if (_previewViewWidget == null) {
       return;
@@ -268,7 +330,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
     // Developers should destroy the [PlatformView] or [TextureRenderer] after
     // [stopPublishingStream] or [stopPreview] to release resource and avoid memory leaks
-    if (ZegoConfig.instance.enablePlatformView) {
+    if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
       ZegoExpressEngine.instance.destroyPlatformView(_previewViewID);
     } else {
       ZegoExpressEngine.instance.destroyTextureRenderer(_previewViewID);
@@ -277,7 +339,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPlayView() {
-    if (!Platform.isAndroid && !Platform.isIOS) return;
+    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
 
     if (_playViewWidget == null) {
       return;
@@ -285,7 +347,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
     // Developers should destroy the [PlatformView] or [TextureRenderer]
     // after [stopPlayingStream] to release resource and avoid memory leaks
-    if (ZegoConfig.instance.enablePlatformView) {
+    if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
       ZegoExpressEngine.instance.destroyPlatformView(_playViewID);
     } else {
       ZegoExpressEngine.instance.destroyTextureRenderer(_playViewID);
@@ -293,6 +355,28 @@ class _QuickStartPageState extends State<QuickStartPage> {
     setState(() => _playViewWidget = null);
   }
 
+  void mutePublishStreamVideo() {
+    if (muteVideo == true) {
+      muteVideo = false;
+    } else {
+      muteVideo = true;
+    }
+    ZegoExpressEngine.instance.mutePublishStreamVideo(muteVideo);
+  }
+
+  void mutePublishStreamAudio() {
+    if (muteAudio == true) {
+      muteAudio = false;
+    } else {
+      muteAudio = true;
+    }
+    ZegoExpressEngine.instance.mutePublishStreamAudio(muteAudio);
+  }
+
+  void sendBroadcastMessage() {
+
+    ZegoExpressEngine.instance.sendBroadcastMessage(_roomID, "FLUTTER WEB TEST");
+  }
   // MARK: Widget
 
   @override
@@ -376,12 +460,19 @@ class _QuickStartPageState extends State<QuickStartPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Row(children: [
-          Column(
-            children: [
-              Text('AppID: ${ZegoConfig.instance.appID}',
-                  style: TextStyle(fontSize: 10)),
-            ],
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Container(
+            width: MediaQuery.of(context).size.width / 2.5,
+            child: TextField(
+                controller: _appIDcontroller,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  isDense: true,
+                  labelText: 'appID:',
+                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
+                  hintText: 'Please enter appID',
+                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
+                ),
+              ),
           ),
           Spacer(),
           Container(
@@ -410,9 +501,48 @@ class _QuickStartPageState extends State<QuickStartPage> {
       Row(children: [
         Column(
           children: [
-            Text('RoomID: $_roomID', style: TextStyle(fontSize: 10)),
-            Text('UserID: ${ZegoConfig.instance.userID}',
-                style: TextStyle(fontSize: 10)),
+            Container(
+              width: MediaQuery.of(context).size.width / 2.5,
+              child: TextField(
+                controller: _tokencontroller,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  isDense: true,
+                  labelText: 'token:',
+                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
+                  hintText: 'Please enter token',
+                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width / 2.5,
+              child: TextField(
+                controller: _roomIDcontroller,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  isDense: true,
+                  labelText: 'roomID:',
+                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
+                  hintText: 'Please enter roomID',
+                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width / 2.5,
+              child: TextField(
+                controller: _userIDcontroller,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  isDense: true,
+                  labelText: 'userID:',
+                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
+                  hintText: 'Please enter userID',
+                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
+                ),
+              ),
+            )
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -464,7 +594,32 @@ class _QuickStartPageState extends State<QuickStartPage> {
         ),
         Spacer(),
         Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: MediaQuery.of(context).size.width / 5,
+          child: CupertinoButton.filled(
+            child: Text(
+              _previewViewWidget != null
+                  ? '✅ StartPreview'
+                  : 'StartPreview',
+              style: TextStyle(fontSize: 14.0),
+            ),
+            onPressed: _previewViewWidget == null
+                ? () {
+                    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+                    Size? widgetSize =
+                        _previewViewContainerKey.currentContext?.size;
+                    startPreview(
+                        width: widgetSize!.width * pixelRatio,
+                        height: widgetSize.height * pixelRatio);
+                  }
+                : () {
+                    stopPreview();
+                  },
+            padding: EdgeInsets.all(10.0),
+          ),
+        ),
+        Spacer(),
+        Container(
+          width: MediaQuery.of(context).size.width / 5,
           child: CupertinoButton.filled(
             child: Text(
               _publisherState == ZegoPublisherState.Publishing
@@ -478,9 +633,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
                     Size? widgetSize =
                         _previewViewContainerKey.currentContext?.size;
                     startPublishingStream(
-                        _publishingStreamIDController.text.trim(),
-                        width: widgetSize!.width * pixelRatio,
-                        height: widgetSize.height * pixelRatio);
+                        _publishingStreamIDController.text.trim());
                   }
                 : () {
                     stopPublishingStream();
@@ -490,6 +643,40 @@ class _QuickStartPageState extends State<QuickStartPage> {
         )
       ]),
       Divider(),
+      Row(children: [
+        Container(
+          width: MediaQuery.of(context).size.width / 5,
+          child: CupertinoButton.filled(
+            child: Text('mutePublishStreamVideo',
+              style: TextStyle(fontSize: 14.0),
+            ),
+            onPressed: mutePublishStreamVideo,
+            padding: EdgeInsets.all(10.0),
+          ),
+        ),
+        Spacer(),
+        Container(
+          width: MediaQuery.of(context).size.width / 5,
+          child: CupertinoButton.filled(
+            child: Text('mutePublishStreamAudio',
+              style: TextStyle(fontSize: 14.0),
+            ),
+            onPressed: mutePublishStreamAudio,
+            padding: EdgeInsets.all(10.0),
+          ),
+        ),
+        Spacer(),
+        Container(
+          width: MediaQuery.of(context).size.width / 5,
+          child: CupertinoButton.filled(
+            child: Text("sendBroadcastMessage",
+              style: TextStyle(fontSize: 14.0),
+            ),
+            onPressed: sendBroadcastMessage,
+            padding: EdgeInsets.all(10.0),
+          ),
+        )
+      ]),
     ]);
   }
 
@@ -528,7 +715,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
                   : 'StartPlaying',
               style: TextStyle(fontSize: 14.0),
             ),
-            onPressed: _playerState == ZegoPlayerState.NoPlay
+            onPressed:
+            _playerState == ZegoPlayerState.NoPlay
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
                     Size? widgetSize =

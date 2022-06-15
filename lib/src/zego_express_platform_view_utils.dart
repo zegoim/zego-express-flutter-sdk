@@ -1,8 +1,9 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_api.dart';
+import 'dart:html';
+import 'dart:ui' as ui;
 
 extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
 
@@ -25,6 +26,22 @@ extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
                       onViewCreated(viewID);
                 }
             );
+        } else if (kIsWeb) {
+          String webcamPushElement = 'plugins.zego.im/zego_express_view';
+          // ignore:undefined_prefixed_name
+          ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) =>
+            VideoElement()
+            ..id = "zego-view-${id}"
+            ..autoplay = true
+            ..controls = true
+          );
+
+          return HtmlElementView(
+            viewType: webcamPushElement,
+            onPlatformViewCreated: (int viewID) {
+              onViewCreated(viewID);
+            }
+          );
         }
 
         return null;

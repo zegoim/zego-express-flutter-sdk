@@ -15,7 +15,7 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:zego_express_engine_example/utils/zego_config.dart';
 import 'package:zego_express_engine_example/utils/zego_utils.dart';
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 class GlobalSettingPage extends StatefulWidget {
   @override
@@ -267,7 +267,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User ID: '),
           Padding(padding: const EdgeInsets.only(left: 10.0)),
-          Expanded(child: 
+          Expanded(child:
             TextField(
               controller: _userIDEdController,
               decoration: InputDecoration(
@@ -290,7 +290,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User Name: '),
           Padding(padding: const EdgeInsets.only(top: 10.0)),
-          Expanded(child: 
+          Expanded(child:
             TextField(
               controller: _userNameEdController,
               decoration: InputDecoration(
