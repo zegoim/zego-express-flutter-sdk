@@ -780,6 +780,8 @@
     }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)onDeviceError:(int)errorCode deviceName:(NSString *)deviceName {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onDeviceError] errorCode: %d, deviceName: %@", errorCode, deviceName);
@@ -793,6 +795,7 @@
         });
     }
 }
+#pragma clang diagnostic pop
 
 - (void)onRemoteCameraStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;

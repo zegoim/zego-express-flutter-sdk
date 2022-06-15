@@ -1975,8 +1975,10 @@
     int feature = [ZegoUtils intValue:call.arguments[@"featureBitmask"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] enableBeautify:(ZegoBeautifyFeature)feature channel:(ZegoPublishChannel)channel];
-
+#pragma clang diagnostic pop
     result(nil);
 }
 
@@ -1990,8 +1992,10 @@
 
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[ZegoExpressEngine sharedEngine] setBeautifyOption: optionObject channel:(ZegoPublishChannel)channel];
-
+#pragma clang diagnostic pop
     result(nil);
 }
 
