@@ -79,14 +79,13 @@
         m_isNewFrameAvailable = NO;
 
         m_pTempToCopyFrameBuffer = nil;
-        [self initPixelBuffer];
         m_tmp_buffer_index = 0;
 
-        __weak ZegoTextureRenderer *weak_ptr = self;
+        __weak __typeof__(self) weakSelf = self;
         dispatch_async(m_opengl_queue, ^{
-          ZegoTextureRenderer *strong_ptr = weak_ptr;
-          if (strong_ptr)
-              [strong_ptr setupGL];
+          __strong __typeof__(self) strongSelf = weakSelf;
+          [strongSelf initPixelBuffer];
+          [strongSelf setupGL];
         });
     }
 
@@ -97,9 +96,10 @@
 
 - (void)destroy {
 
-    [self releasePixelBuffer];
-
     dispatch_async(m_opengl_queue, ^{
+
+      [self releasePixelBuffer];
+
       [EAGLContext setCurrentContext:self.context];
 
       if (self->m_pInputFrameBuffer) {
@@ -192,20 +192,20 @@
 - (void)updateRenderSize:(CGSize)size {
     //切换大小时注意线程问题，保证线程同步
 
-    __weak ZegoTextureRenderer *weak_ptr = self;
+    __weak __typeof__(self) weakSelf = self;
     dispatch_async(m_opengl_queue, ^{
-      ZegoTextureRenderer *strong_ptr = weak_ptr;
-      if (strong_ptr == nil) {
+      __strong __typeof__(self) strongSelf = weakSelf;
+      if (strongSelf == nil) {
           return;
       }
 
-      if (strong_ptr.viewWidth != size.width || strong_ptr.viewHeight != size.height) {
-          strong_ptr.viewWidth = size.width;
-          strong_ptr.viewHeight = size.height;
+      if (strongSelf.viewWidth != size.width || strongSelf.viewHeight != size.height) {
+          strongSelf.viewWidth = size.width;
+          strongSelf.viewHeight = size.height;
 
-          [strong_ptr releasePixelBuffer];
+          [strongSelf releasePixelBuffer];
           // 重新创建 pool 的同时，需要重新创建 pixelbuffer，width/height 作用在 pixelbuffer 上
-          [strong_ptr initPixelBuffer];
+          [strongSelf initPixelBuffer];
 
           self->m_config_changed = YES;
       }
@@ -231,10 +231,10 @@
         return;
     }
 
-    __weak ZegoTextureRenderer *weak_ptr = self;
+    __weak __typeof__(self) weakSelf = self;
     dispatch_async(m_opengl_queue, ^{
-      ZegoTextureRenderer *strong_ptr = weak_ptr;
-      if (strong_ptr == nil) {
+      __strong __typeof__(self) strongSelf = weakSelf;
+      if (strongSelf == nil) {
           return;
       }
 
@@ -504,15 +504,6 @@
         glBindTexture(GL_TEXTURE_2D, 0);
         glFlush();
 
-        //        //std::lock_guard<std::mutex> lock(m_mutex);
-        //        dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-        //        //if(self->m_pRenderFrameBuffer)
-        //        //    CVBufferRelease(self->m_pRenderFrameBuffer);
-        //
-        //        self->m_pRenderFrameBuffer = processBuffer;
-        //        dispatch_semaphore_signal(_lock);
-        //        //CVBufferRetain(self->m_pRenderFrameBuffer);
-
         CVPixelBufferRef old = m_pRenderFrameBuffer;
         while (!OSAtomicCompareAndSwapPtr(old, processBuffer, (void **)&m_pRenderFrameBuffer)) {
             old = m_pRenderFrameBuffer;
@@ -531,21 +522,11 @@
 #pragma mark - FlutterTexture Delegate
 - (CVPixelBufferRef)copyPixelBuffer {
 
-    __weak ZegoTextureRenderer *weak_ptr = self;
+    __weak __typeof__(self) weakSelf = self;
     dispatch_async(m_opengl_queue, ^{
-      ZegoTextureRenderer *strong_ptr = weak_ptr;
-      [strong_ptr processingData];
+      __strong __typeof__(self) strongSelf = weakSelf;
+      [strongSelf processingData];
     });
-
-    // GPU处理任务过多，会导致copyPixelBuffer堆积，以至于同时多次 release 同一 pixelBuffer
-
-    //    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    //
-    //    CVBufferRelease(m_pTempToCopyFrameBuffer);
-    //    m_pTempToCopyFrameBuffer = m_pRenderFrameBuffer;
-    //    CVBufferRetain(m_pTempToCopyFrameBuffer);
-    //
-    //    dispatch_semaphore_signal(_lock);
 
     CVPixelBufferRef pixelBuffer = m_pRenderFrameBuffer;
     while (!OSAtomicCompareAndSwapPtr(pixelBuffer, nil, (void **)&m_pRenderFrameBuffer)) {
