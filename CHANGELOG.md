@@ -1,6 +1,14 @@
 # Change Log
 
 
+## 2.20.2
+
+### **Bug Fixes**
+
+1. Fixed a problem of probabilistic stream-playing failure.
+
+2. Optimized the problem that the audio device mode set before the SDK initialization does not take effect.
+
 ## 2.20.0
 
 ### **New Features**

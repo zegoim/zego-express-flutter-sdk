@@ -8,7 +8,7 @@ import 'zego_express_defines.dart';
 import 'zego_express_enum_extension.dart';
 
 class Global {
-  static String pluginVersion = "2.20.0";
+  static String pluginVersion = "2.20.2";
 }
 
 class ZegoExpressImpl {
