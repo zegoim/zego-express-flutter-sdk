@@ -192,7 +192,7 @@ class ZegoExpressImpl {
       'config': config != null ? {
         'roomID': config.roomID ?? '',
         'forceSynchronousNetworkTime': config.forceSynchronousNetworkTime ?? 0,
-        'streamCensorshipMode': config.streamCensorshipMode?.index ?? ZegoStreamCensorshipMode.None
+        'streamCensorshipMode': config.streamCensorshipMode?.index ?? ZegoStreamCensorshipMode.None.index
       } : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
