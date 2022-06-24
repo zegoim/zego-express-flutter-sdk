@@ -1247,7 +1247,7 @@ class ZegoExpressImpl {
       return await _channel.invokeMethod('enableCustomAudioCaptureProcessing', {
         'enable': enable,
         'config': {
-          'sampleRate': config.sampleRate.index,
+          'sampleRate': config.sampleRate.value,
           'channel': config.channel.index,
           'samples': config.samples
         }
@@ -1259,7 +1259,7 @@ class ZegoExpressImpl {
       return await _channel.invokeMethod('enableCustomAudioCaptureProcessingAfterHeadphoneMonitor', {
         'enable': enable,
         'config': {
-          'sampleRate': config.sampleRate.index,
+          'sampleRate': config.sampleRate.value,
           'channel': config.channel.index,
           'samples': config.samples
         }
@@ -1271,7 +1271,7 @@ class ZegoExpressImpl {
       return await _channel.invokeMethod('enableCustomAudioRemoteProcessing', {
         'enable': enable,
         'config': {
-          'sampleRate': config.sampleRate.index,
+          'sampleRate': config.sampleRate.value,
           'channel': config.channel.index,
           'samples': config.samples
         }
@@ -1283,7 +1283,7 @@ class ZegoExpressImpl {
       return await _channel.invokeMethod('enableCustomAudioPlaybackProcessing', {
         'enable': enable,
         'config': {
-          'sampleRate': config.sampleRate.index,
+          'sampleRate': config.sampleRate.value,
           'channel': config.channel.index,
           'samples': config.samples
         }

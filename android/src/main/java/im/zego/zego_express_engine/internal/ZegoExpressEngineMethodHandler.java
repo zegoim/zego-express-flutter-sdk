@@ -2469,7 +2469,7 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void enableCustomAudioCaptureProcessing(MethodCall call, Result result) {
 
-        Boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         HashMap<String, Object> configMap = call.argument("config");
 
         ZegoCustomAudioProcessConfig config = new ZegoCustomAudioProcessConfig();
@@ -2478,12 +2478,14 @@ public class ZegoExpressEngineMethodHandler {
         config.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) configMap.get("channel")));
 
         ZegoExpressEngine.getEngine().enableCustomAudioCaptureProcessing(enable, config);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
     public static void enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(MethodCall call, Result result) {
 
-        Boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         HashMap<String, Object> configMap = call.argument("config");
 
         ZegoCustomAudioProcessConfig config = new ZegoCustomAudioProcessConfig();
@@ -2492,12 +2494,14 @@ public class ZegoExpressEngineMethodHandler {
         config.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) configMap.get("channel")));
 
         ZegoExpressEngine.getEngine().enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(enable, config);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
     public static void enableCustomAudioRemoteProcessing(MethodCall call, Result result) {
 
-        Boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         HashMap<String, Object> configMap = call.argument("config");
 
         ZegoCustomAudioProcessConfig config = new ZegoCustomAudioProcessConfig();
@@ -2506,12 +2510,14 @@ public class ZegoExpressEngineMethodHandler {
         config.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) configMap.get("channel")));
 
         ZegoExpressEngine.getEngine().enableCustomAudioRemoteProcessing(enable, config);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
     public static void enableCustomAudioPlaybackProcessing(MethodCall call, Result result) {
 
-        Boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         HashMap<String, Object> configMap = call.argument("config");
 
         ZegoCustomAudioProcessConfig config = new ZegoCustomAudioProcessConfig();
@@ -2520,6 +2526,8 @@ public class ZegoExpressEngineMethodHandler {
         config.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) configMap.get("channel")));
 
         ZegoExpressEngine.getEngine().enableCustomAudioPlaybackProcessing(enable, config);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
