@@ -45,12 +45,12 @@ class ZegoExpressEngineWeb {
     });
 
 
-    // var element = ScriptElement()
-    //   ..src =
-    //       'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
-    //   ..type = 'application/javascript';
+    var element = ScriptElement()
+      ..src =
+          'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
+      ..type = 'application/javascript';
 
-    // document.body!.append(element);
+    document.body!.append(element);
   }
 
   /// Handles method calls over the MethodChannel of this plugin.
@@ -384,7 +384,13 @@ class ZegoExpressEngineWeb {
       isUserStatusNotify: config["isUserStatusNotify"]
     );
 
-    return await ZegoFlutterEngine.instance.loginRoom(roomID, _user, _config);
+    ZegoFlutterEngine.instance.loginRoom(roomID, _user, _config);
+
+    final map = new Map();
+    map["errorCode"] = 0;
+    map["extendedData"] = "{}";
+
+    return Future.value(map);
   }
 
   Future<void> logoutRoom(String roomID)  {

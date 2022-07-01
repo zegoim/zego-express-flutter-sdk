@@ -10,7 +10,7 @@ class ZegoConfig {
   ZegoConfig._internal();
 
   // ----- Persistence params -----
-  int appID = 3349318446;
+  int appID = 0;
   ZegoScenario scenario = ZegoScenario.General;
 
   bool enablePlatformView = false;

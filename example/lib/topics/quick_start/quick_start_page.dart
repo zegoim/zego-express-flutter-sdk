@@ -23,6 +23,7 @@ class QuickStartPage extends StatefulWidget {
 }
 
 class _QuickStartPageState extends State<QuickStartPage> {
+  final String _roomID = 'QuickStartRoom-1';
 
   int _previewViewID = -1;
   int _playViewID = -1;
@@ -43,20 +44,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
       new TextEditingController();
   TextEditingController _playingStreamIDController =
       new TextEditingController();
-  TextEditingController _appIDcontroller =
-      new TextEditingController();
-  TextEditingController _roomIDcontroller =
-      new TextEditingController();
-  TextEditingController _userIDcontroller =
-      new TextEditingController();
-  TextEditingController _tokencontroller =
-      new TextEditingController();
-
-  String _roomID = "";
-
-  bool muteVideo = false;
-  bool muteAudio = false;
-  bool enableMic = true;
 
   @override
   void initState() {
@@ -86,8 +73,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void createEngine() {
     ZegoEngineProfile profile = ZegoEngineProfile(
-      _appIDcontroller.text.trim().isEmpty ? ZegoConfig.instance.appID : int.parse(_appIDcontroller.text.trim()) ,
-      // int.parse(_appIDcontroller.text.trim()),
+      ZegoConfig.instance.appID,
       ZegoConfig.instance.scenario,
       enablePlatformView: ZegoConfig.instance.enablePlatformView,
       appSign: ZegoConfig.instance.appSign);
@@ -97,10 +83,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
     setState(() => _isEngineActive = true);
 
     print('🚀 Create ZegoExpressEngine');
-
-    // ZegoExpressEngine.instance
-    //     .getAudioConfig()
-    //     .then((value) => print('get audio config: $value'));
   }
 
   // MARK: - Step 2: LoginRoom
@@ -109,9 +91,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
     // Instantiate a ZegoUser object
     ZegoUser user =
         ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName.isEmpty? ZegoConfig.instance.userID: ZegoConfig.instance.userName);
-
-        ZegoUser(_userIDcontroller.text.trim().isEmpty ? ZegoConfig.instance.userID : _userIDcontroller.text.trim(),
-          ZegoConfig.instance.userName);
 
     if (kIsWeb) {
       ZegoRoomConfig config = ZegoRoomConfig.defaultConfig();
@@ -122,9 +101,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
       // Login Room
       ZegoExpressEngine.instance.loginRoom(_roomID, user);
     }
-
-
-
 
     print('🚪 Start login room, roomID: $_roomID');
   }
@@ -142,17 +118,12 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   // MARK: - Step 3: StartPublishingStream
-  void startPreview( {double width = 360, double height = 640}) {
+ void startPreview( {double width = 360, double height = 640}) {
     Future<void> _startPreview(int viewID) async {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
       await ZegoExpressEngine.instance.startPreview(canvas: canvas);
       print('🔌 Start preview, viewID: $viewID');
     }
-
-    ZegoExpressEngine.instance.setVideoConfig(ZegoVideoConfig.preset(ZegoVideoConfigPreset.Preset1080P));
-    ZegoExpressEngine.instance.enableAGC(false);
-    ZegoExpressEngine.instance.enableANS(false);
-    ZegoExpressEngine.instance.enableAEC(false);
 
     if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
       if (ZegoConfig.instance.enablePlatformView || kIsWeb ) {
@@ -212,7 +183,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
     if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
       if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
         // Render with PlatformView
-        html.window.console.error("startPlayingStream create view");
         setState(() {
           _playViewWidget =
               ZegoExpressEngine.instance.createPlatformView((viewID) {
@@ -237,6 +207,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void stopPlayingStream(String streamID) {
     ZegoExpressEngine.instance.stopPlayingStream(streamID);
+
     clearPlayView();
   }
 
@@ -290,10 +261,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print(
           '🚩 📥 Player state update, state: $state, errorCode: $errorCode, streamID: $streamID');
       setState(() => _playerState = state);
-
-      if (_playerState == ZegoPlayerState.NoPlay) {
-        stopPlayingStream(_playingStreamIDController.text.trim());
-      }
     };
 
     ZegoExpressEngine.onRoomUserUpdate = (roomID, updateType, userList) {
@@ -358,28 +325,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
     setState(() => _playViewWidget = null);
   }
 
-  void mutePublishStreamVideo() {
-    if (muteVideo == true) {
-      muteVideo = false;
-    } else {
-      muteVideo = true;
-    }
-    ZegoExpressEngine.instance.mutePublishStreamVideo(muteVideo);
-  }
-
-  void mutePublishStreamAudio() {
-    if (muteAudio == true) {
-      muteAudio = false;
-    } else {
-      muteAudio = true;
-    }
-    ZegoExpressEngine.instance.mutePublishStreamAudio(muteAudio);
-  }
-
-  void sendBroadcastMessage() {
-
-    ZegoExpressEngine.instance.sendBroadcastMessage(_roomID, "FLUTTER WEB TEST");
-  }
   // MARK: Widget
 
   @override
@@ -463,19 +408,12 @@ class _QuickStartPageState extends State<QuickStartPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Row(children: [
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            child: TextField(
-                controller: _appIDcontroller,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(10.0),
-                  isDense: true,
-                  labelText: 'appID:',
-                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
-                  hintText: 'Please enter appID',
-                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                ),
-              ),
+          Column(
+            children: [
+              Text('AppID: ${ZegoConfig.instance.appID}',
+                  style: TextStyle(fontSize: 10)),
+            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
           ),
           Spacer(),
           Container(
@@ -504,48 +442,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
       Row(children: [
         Column(
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width / 2.5,
-              child: TextField(
-                controller: _tokencontroller,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(10.0),
-                  isDense: true,
-                  labelText: 'token:',
-                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
-                  hintText: 'Please enter token',
-                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width / 2.5,
-              child: TextField(
-                controller: _roomIDcontroller,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(10.0),
-                  isDense: true,
-                  labelText: 'roomID:',
-                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
-                  hintText: 'Please enter roomID',
-                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width / 2.5,
-              child: TextField(
-                controller: _userIDcontroller,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(10.0),
-                  isDense: true,
-                  labelText: 'userID:',
-                  labelStyle: TextStyle(color: Colors.black54, fontSize: 14.0),
-                  hintText: 'Please enter userID',
-                  hintStyle: TextStyle(color: Colors.black26, fontSize: 10.0),
-                ),
-              ),
-            )
+            Text('RoomID: $_roomID', style: TextStyle(fontSize: 10)),
+            Text('UserID: ${ZegoConfig.instance.userID}',
+                style: TextStyle(fontSize: 10)),
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -597,7 +496,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         ),
         Spacer(),
         Container(
-          width: MediaQuery.of(context).size.width / 5,
+         width: MediaQuery.of(context).size.width / 5,
           child: CupertinoButton.filled(
             child: Text(
               _previewViewWidget != null
@@ -646,40 +545,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
         )
       ]),
       Divider(),
-      Row(children: [
-        Container(
-          width: MediaQuery.of(context).size.width / 5,
-          child: CupertinoButton.filled(
-            child: Text('mutePublishStreamVideo',
-              style: TextStyle(fontSize: 14.0),
-            ),
-            onPressed: mutePublishStreamVideo,
-            padding: EdgeInsets.all(10.0),
-          ),
-        ),
-        Spacer(),
-        Container(
-          width: MediaQuery.of(context).size.width / 5,
-          child: CupertinoButton.filled(
-            child: Text('mutePublishStreamAudio',
-              style: TextStyle(fontSize: 14.0),
-            ),
-            onPressed: mutePublishStreamAudio,
-            padding: EdgeInsets.all(10.0),
-          ),
-        ),
-        Spacer(),
-        Container(
-          width: MediaQuery.of(context).size.width / 5,
-          child: CupertinoButton.filled(
-            child: Text("sendBroadcastMessage",
-              style: TextStyle(fontSize: 14.0),
-            ),
-            onPressed: sendBroadcastMessage,
-            padding: EdgeInsets.all(10.0),
-          ),
-        )
-      ]),
     ]);
   }
 
@@ -718,8 +583,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
                   : 'StartPlaying',
               style: TextStyle(fontSize: 14.0),
             ),
-            onPressed:
-            _playerState == ZegoPlayerState.NoPlay
+            onPressed: _playerState == ZegoPlayerState.NoPlay
                 ? () {
                     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
                     Size? widgetSize =

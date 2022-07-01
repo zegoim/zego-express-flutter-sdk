@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   void onPressQuickStartButton() {
     if (ZegoConfig.instance.appID > 0 &&
-        ZegoConfig.instance.appSign.isNotEmpty &&
+        (ZegoConfig.instance.appSign.isNotEmpty || ZegoConfig.instance.token.isNotEmpty) &&
         ZegoConfig.instance.userID.isNotEmpty) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (BuildContext context) {

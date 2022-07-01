@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.21.0-prerelease.1
+
+### **New Features**
+
+1. It supports web now.
+    Now it supports the web, which will be different from other platforms in use. Some interface functions are not supported by the web. At present, the web supports basic functions
+
 
 ## 2.20.2
 
@@ -49,11 +56,11 @@
 
     When you finds that the stream publisher violates the regulations, you can call the [mutePlayStreamVideo] interface to discontinue the stream puller from pulling the video stream of the violating user, and request the violating user to make corrections. Using this function at the same time can avoid the risk of violation caused by the video interface of the stream puller still retaining the last frame.
 
-6. Supports linearly increasing volume gain. 
+6. Supports linearly increasing volume gain.
 
     NOTE: To use this feature, please contact ZEGO Technical Support.
 
-    A new volume gain method is provided, and you can choose an appropriate volume gain method according to actual needs. 
+    A new volume gain method is provided, and you can choose an appropriate volume gain method according to actual needs.
 
 7. Supports automatic censorship of audio and video at the stream level.
 
@@ -254,7 +261,7 @@
     For related API, please refer to [muteUser](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/muteUser.html)
 
 2. Pull stream quality callback [onPlayerQualityUpdate] added MOS sound quality score.
-    
+
     The [onPlayerQualityUpdate] callback adds a "mos" parameter, which indicates the rating of the streaming quality. When developers are more concerned about audio quality, they can use this parameter to know the current audio quality.
 
     For related API, please refer to [ZegoPlayStreamQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPlayStreamQuality-class.html)
@@ -388,19 +395,19 @@
 3. The media player supports specifying the start playback progress when loading media resources.
 
     The media player has a new [loadResourceWithPosition] interface, which supports specifying the start playback progress when loading media resources, in milliseconds.
-    
+
     For related APIs, please refer to [loadResourceWithPosition](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/loadResourceWithPosition.html)
 
 4. Support setting camera focus and exposure mode.
 
     The SDK supports setting the camera focus and exposure mode, which is often used in Jianbao live broadcast scenes to zoom in and focus on the details of some objects.
-    
+
     After starting the local preview, you can call the [isCameraFocusSupported] interface to turn on the camera focus function. Through the [setCameraFocusPointInPreview] and [setCameraExposurePointInPreview] interfaces, you can set the focus and exposure point in the preview view (every time the camera restarts the capture, Both settings will be invalid and need to be reset). Call the [setCameraFocusMode] and [setCameraExposureMode] interfaces to set the camera focus mode and exposure mode respectively.
-    
+
     For related API, please refer to [isCameraFocusSupported](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/isCameraFocusSupported.html), [setCameraFocusPointInPreview](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/setCameraFocusPointInPreview.html), [setCameraFocusMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/setCameraFocusMode.html), [setCameraExposureMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/setCameraExposureMode.html), [setCameraExposurePointInPreview](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/setCameraExposurePointInPreview.html)
 
 5. Added enable or disable pull flow alignment function.
-    
+
     This function is often used in scenes that require mixed stream alignment, such as KTV. When playing at the streaming end, use the [setPlayStreamsAlignmentProperty] interface to control whether the real-time audio and video streams need to be accurately aligned. If necessary, all the streams that contain precise alignment parameters will be aligned; if not, all streams are not aligned.
 
     For related API, please refer to [setPlayStreamsAlignmentProperty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/setPlayStreamsAlignmentProperty.html)
@@ -410,23 +417,23 @@
     This function can be used to determine whether someone is speaking into the microphone within a certain period of time, and is used to detect whether the audio data after collection or audio pre-processing is human voice or noise.
 
     For related API, please refer to [startAudioVADStableStateMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/startAudioVADStableStateMonitor.html), [stopAudioVADStableStateMonitor](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/stopAudioVADStableStateMonitor.html), [onAudioVADStateUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onAudioVADStateUpdate.html)
-   
+
 ### **Improved optimization**
 
 1. Nullable parameters are changed to optional parameters
 
     The nullable parameters of the interface before 2.14.0 need to be passed in null even when used for air conditioning.
-    
+
     After 2.14.0, the nullable parameters of the interface are changed to optional parameters. When the value is empty, it can not be passed in. When the value is not empty, the parameter name must be brought into the parameter.
-    
+
     For related API, please refer to [ZegoEngineConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoEngineConfig/ZegoEngineConfig.html)、[ZegoEngineProfile](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoEngineProfile/ZegoEngineProfile.html)、[ZegoPublisherConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPublisherConfig/ZegoPublisherConfig.html)、[ZegoCanvas](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCanvas/ZegoCanvas.html)、[ZegoVideoConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoVideoConfig/ZegoVideoConfig.html)、[ZegoPlayerConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPlayerConfig/ZegoPlayerConfig.html)、[ZegoMixerInput](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMixerInput/ZegoMixerInput.html)
-    
+
 2. Optimize the structure of [ZegoMixerOutput]
 
     [ZegoMixerOutput]’s videoConfig is changed to an optional parameter, and the structure can not be transmitted when the videoConfig does not need to be configured separately.
-    
+
     For related API, please refer to [ZegoMixerOutput](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMixerOutput/ZegoMixerOutput.html)
-    
+
 ## 2.13.0
 
 ### **New Features**

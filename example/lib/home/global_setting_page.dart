@@ -26,8 +26,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   final TextEditingController _appIDEdController = new TextEditingController();
   final TextEditingController _userIDEdController = new TextEditingController();
   final TextEditingController _userNameEdController = new TextEditingController();
-  final TextEditingController _appSignEdController =
-      new TextEditingController();
+  final TextEditingController _appSignEdController = new TextEditingController();
+  final TextEditingController _tokenEdController = new TextEditingController();
 
   String _version = "";
 
@@ -151,6 +151,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     String userID = _userIDEdController.text.trim();
     String userName = _userNameEdController.text.trim();
     String appSign = _appSignEdController.text.trim();
+    String token = _tokenEdController.text.trim();
 
     int appID = int.tryParse(strAppID)?? 0;
     if (!needAskSave && appID != ZegoConfig.instance.appID) {
@@ -162,7 +163,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     if (!needAskSave && userName != ZegoConfig.instance.userName) {
       needAskSave = true;
     }
-    if (!needAskSave && appSign != ZegoConfig.instance.appSign) {
+    if (!needAskSave && (appSign != ZegoConfig.instance.appSign) && (token != ZegoConfig.instance.token)) {
       needAskSave = true;
     }
     if (!needAskSave && ZegoConfig.instance.scenario != this._scenario) {
@@ -362,6 +363,30 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
             contentPadding:
                 const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
             hintText: 'Please enter AppSign',
+            enabledBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff0e88eb))),
+          ),
+        ),
+        Row(
+          children: <Widget>[
+            Text('token:'),
+            GestureDetector(
+              child: Icon(Icons.help_outline),
+              onTap: () {
+                ZegoUtils.showAlert(context,
+                    'Web only support token, Developers can get token from admin console, please apply on  https://console.zego.im/dashboard');
+              },
+            ),
+          ],
+        ),
+        TextField(
+          controller: _tokenEdController,
+          decoration: InputDecoration(
+            contentPadding:
+                const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+            hintText: 'Please enter token',
             enabledBorder:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: OutlineInputBorder(
