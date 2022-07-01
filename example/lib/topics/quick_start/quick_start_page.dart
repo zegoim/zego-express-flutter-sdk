@@ -71,8 +71,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
         ZegoConfig.instance.appID, ZegoConfig.instance.scenario,
         enablePlatformView: ZegoConfig.instance.enablePlatformView,
         appSign: ZegoConfig.instance.appSign);
-    if(kIsWeb) {
-      profile.appSign = null;
+    if (kIsWeb) {
+      profile.appSign = null; // Don't use appsign on web
     }
     ZegoExpressEngine.createEngineWithProfile(profile);
 
