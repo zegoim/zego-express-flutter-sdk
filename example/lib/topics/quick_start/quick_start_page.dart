@@ -8,14 +8,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:zego_express_engine/zego_express_engine.dart';
-
 import 'package:zego_express_engine_example/utils/zego_config.dart';
-
 import 'package:universal_io/io.dart';
-
-import 'dart:html' as html show window;
 
 class QuickStartPage extends StatefulWidget {
   @override

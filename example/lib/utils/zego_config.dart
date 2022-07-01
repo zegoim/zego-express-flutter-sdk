@@ -4,21 +4,20 @@ class ZegoConfig {
   static final ZegoConfig instance = ZegoConfig._internal();
   ZegoConfig._internal();
 
-  // ----- Persistence params -----
   int appID = 0;
-  ZegoScenario scenario = ZegoScenario.General;
 
+  String appSign = ""; // Only for native
+  String token =
+      ""; // Token is required for web, native recommends using token but not required
+
+  ZegoScenario scenario = ZegoScenario.General;
   bool enablePlatformView = false;
 
   String userID = "";
   String userName = "";
-  String appSign = "";
-  String token = "";
 
   String roomID = "";
   String streamID = "";
-
-  // ----- Short-term params -----
 
   bool isPreviewMirror = true;
   bool isPublishMirror = false;

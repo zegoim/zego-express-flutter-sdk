@@ -34,11 +34,13 @@ class _HomePageState extends State<HomePage> {
     if (ZegoConfig.instance.userID.isEmpty) {
       return false;
     }
-    if (kIsWeb) { // ZEGO RTC Web SDK requires token
+    if (kIsWeb) {
+      // ZEGO RTC Web SDK requires token
       if (ZegoConfig.instance.token.isEmpty) {
         return false;
       }
-    } else { // ZEGO RTC Native SDK requires appSign
+    } else {
+      // ZEGO RTC Native SDK requires appSign
       if (ZegoConfig.instance.appSign.isEmpty) {
         return false;
       }
