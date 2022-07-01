@@ -60,6 +60,13 @@ class ZegoExpressEngineWeb {
     // var args = <String, dynamic>{};
     switch (call.method) {
       case 'createEngineWithProfile':
+        if (call.arguments['profile'] != null && call.arguments['profile']['appSign'] != null) {
+          throw PlatformException(
+            code: 'Unimplemented',
+            details:
+                'zego_rtc_engine for web doesn\'t support appSign, Please remove it',
+          );
+        }
         ZegoFlutterEngine.setEventHandler(allowInterop((String event, String data) {
           _evenController.add({
             'methodName': event,
