@@ -150,6 +150,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
     }
 
     ZegoExpressEngine.instance.setVideoConfig(ZegoVideoConfig.preset(ZegoVideoConfigPreset.Preset1080P));
+    ZegoExpressEngine.instance.enableAGC(false);
+    ZegoExpressEngine.instance.enableANS(false);
+    ZegoExpressEngine.instance.enableAEC(false);
 
     if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
       if (ZegoConfig.instance.enablePlatformView || kIsWeb ) {

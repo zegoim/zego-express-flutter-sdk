@@ -9,6 +9,7 @@ import 'dart:html';
 import 'dart:js';
 import 'dart:js_util';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:zego_express_engine/src/zego_express_defines_web.dart';
@@ -20,7 +21,6 @@ import 'zego_express_engine.dart';
 class ZegoExpressEngineWeb {
   dynamic previewView;
   static StreamController _evenController = StreamController();
-  static String publishStreamID = '';
 
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
@@ -77,14 +77,22 @@ class ZegoExpressEngineWeb {
         return setVideoConfig(call.arguments["config"], call.arguments["channel"]);
       case 'getVideoConfig':
         return getVideoConfig(call.arguments["channel"]);
+      case 'enableAEC':
+        return enableAEC(call.arguments["enable"]);
+      case 'enableAGC':
+        return enableAGC(call.arguments["enable"]);
+      case 'enableANS':
+        return enableANS(call.arguments["enable"]);
+      case 'enableCamera':
+        return enableCamera(call.arguments["enable"], call.arguments["channel"]);
       case 'startPreview':
         return startPreview(call.arguments['canvas'], call.arguments["channel"]);
       case 'stopPreview':
         return stopPreview(call.arguments["channel"]);
       case 'mutePublishStreamVideo':
-        return mutePublishStreamVideo(call.arguments["mute"]);
+        return mutePublishStreamVideo(call.arguments["mute"], call.arguments["channel"]);
       case 'mutePublishStreamAudio':
-        return mutePublishStreamAudio(call.arguments["mute"]);
+        return mutePublishStreamAudio(call.arguments["mute"], call.arguments["channel"]);
       case 'startPublishingStream':
         return startPublishingStream(call.arguments["streamID"], call.arguments["config"], call.arguments["channel"]);
       case 'stopPublishingStream':
@@ -361,7 +369,6 @@ class ZegoExpressEngineWeb {
   Future<void> destroyEngine() {
     ZegoFlutterEngine.destroyEngine();
 
-    publishStreamID = '';
     return Future.value();
   }
 
@@ -427,13 +434,12 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> startPublishingStream(String streamID, dynamic config, int? channel) {
-    publishStreamID = streamID;
     ZegoFlutterEngine.instance.startPublishingStream(streamID, getPublishChannel(channel));
     return Future.value();
   }
 
   Future<void> stopPublishingStream(int? channel) {
-    ZegoFlutterEngine.instance.stopPublishingStream(publishStreamID, getPublishChannel(channel));
+    ZegoFlutterEngine.instance.stopPublishingStream(getPublishChannel(channel));
     return Future.value();
   }
 
@@ -457,12 +463,27 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> mutePublishStreamVideo(bool mute) async {
-    return await ZegoFlutterEngine.instance.mutePublishStreamVideo(previewView, mute);
+  Future<void> mutePublishStreamVideo(bool mute, int channel) async {
+    return await ZegoFlutterEngine.instance.mutePublishStreamVideo(mute, getPublishChannel(channel));
   }
 
-  Future<void> mutePublishStreamAudio(bool mute) async {
-    return await ZegoFlutterEngine.instance.mutePublishStreamAudio(previewView, mute);
+  Future<void> mutePublishStreamAudio(bool mute, int channel) async {
+    return await ZegoFlutterEngine.instance.mutePublishStreamAudio(mute, getPublishChannel(channel));
+  }
+
+  Future<void> enableAEC(bool enable) async {
+    ZegoFlutterEngine.instance.enableAEC(enable);
+    return Future.value();
+  }
+
+  Future<void> enableAGC(bool enable) async {
+    ZegoFlutterEngine.instance.enableAGC(enable);
+    return Future.value();
+  }
+
+  Future<void> enableANS(bool enable) async {
+    ZegoFlutterEngine.instance.enableANS(enable);
+    return Future.value();
   }
 
   Future<bool> destroyPlatformView(int viewID) {
@@ -476,4 +497,7 @@ class ZegoExpressEngineWeb {
     return Future.value(true);
   }
 
+  Future<void> enableCamera(bool enable, int channel) async {
+    ZegoFlutterEngine.instance.enableCamera(enable, getPublishChannel(channel));
+  }
 }

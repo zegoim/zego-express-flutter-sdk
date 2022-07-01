@@ -2281,6 +2281,9 @@ var BaseCenter = /** @class */ (function () {
     };
     //房间相关---登录，房间人员变化
     BaseCenter.prototype.loginRoom = function (roomID, user, config) {
+        if (typeof config.isUserStatusNotify == "boolean") {
+            this.stateCenter.userStateUpdate = config.isUserStatusNotify;
+        }
         this.zegoEntity.loginRoom(roomID, config.token, user, { userUpdate: this.stateCenter.userStateUpdate });
     };
     BaseCenter.prototype.logoutRoom = function (roomID) {
@@ -2626,6 +2629,11 @@ var StateCenter = /** @class */ (function () {
         this.debugVerbose = false;
         this.streamUpdated = false;
         this.channelPreviewMap = new Map();
+        this.audioConfig = {
+            AEC: true,
+            AGC: true,
+            ANS: true
+        };
     }
     return StateCenter;
 }());
@@ -5225,24 +5233,32 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
     ZegoFlutterEngine.prototype.startPreview = function (localVideo, channel) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var _a;
+            var _a, _b, _c;
             _this.logger.info("zl.p.sp.0 call");
             if (!localVideo) {
                 _this.logger.error("zl.p.sp.0 no localVideo");
                 reject();
                 return;
             }
-            var constraints = undefined;
-            var videoConfig = (_a = _this.stateCenter.channelPreviewMap.get(channel)) === null || _a === void 0 ? void 0 : _a.videoConfig;
+            if ((_a = _this.stateCenter.channelPreviewMap.get(channel)) === null || _a === void 0 ? void 0 : _a.localVideo) {
+                _this.logger.error("zl.p.sp.0 preview already exist");
+                return;
+            }
+            var videoConfig = (_b = _this.stateCenter.channelPreviewMap.get(channel)) === null || _b === void 0 ? void 0 : _b.videoConfig;
+            var enableCamera = (_c = _this.stateCenter.channelPreviewMap.get(channel)) === null || _c === void 0 ? void 0 : _c.enableCamera;
+            var constraints = {
+                camera: {
+                    AEC: _this.stateCenter.audioConfig.AEC,
+                    AGC: _this.stateCenter.audioConfig.AGC,
+                    ANS: _this.stateCenter.audioConfig.ANS
+                }
+            };
+            if (typeof enableCamera == "boolean") {
+                constraints.camera.video = enableCamera;
+            }
             if (videoConfig) {
                 constraints = {
-                    camera: {
-                        videoQuality: 4,
-                        width: videoConfig.captureWidth,
-                        height: videoConfig.captureHeight,
-                        frameRate: videoConfig.fps,
-                        bitrate: videoConfig.bitrate
-                    }
+                    camera: __assign(__assign({}, constraints.camera), { videoQuality: 4, width: videoConfig.captureWidth, height: videoConfig.captureHeight, frameRate: videoConfig.fps, bitrate: videoConfig.bitrate })
                 };
             }
             _this.zegoEntity
@@ -5257,9 +5273,10 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
                 channelMap = _this.stateCenter.channelPreviewMap.get(channel);
                 if (channelMap) {
                     channelMap.localVideo = localVideo;
+                    channelMap.isStopPre = false;
                 }
                 else {
-                    channelMap = { localVideo: localVideo };
+                    channelMap = { localVideo: localVideo, isStopPre: false };
                 }
                 _this.stateCenter.channelPreviewMap.set(channel, channelMap);
                 resolve();
@@ -5269,14 +5286,24 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
             });
         });
     };
-    ZegoFlutterEngine.prototype.mutePublishStreamVideo = function (localVideo, mute) {
+    ZegoFlutterEngine.prototype.mutePublishStreamVideo = function (mute, channel) {
+        var channelMap = this.stateCenter.channelPreviewMap.get(channel);
+        var localVideo;
+        if (channelMap) {
+            localVideo = channelMap.localVideo;
+        }
         if (!localVideo || !localVideo.srcObject) {
             return false;
         }
         var stream = localVideo.srcObject;
         return this.zegoEntity.mutePublishStreamVideo(stream, mute);
     };
-    ZegoFlutterEngine.prototype.mutePublishStreamAudio = function (localVideo, mute) {
+    ZegoFlutterEngine.prototype.mutePublishStreamAudio = function (mute, channel) {
+        var channelMap = this.stateCenter.channelPreviewMap.get(channel);
+        var localVideo;
+        if (channelMap) {
+            localVideo = channelMap.localVideo;
+        }
         if (!localVideo || !localVideo.srcObject) {
             return false;
         }
@@ -5302,23 +5329,40 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
         this.zegoEntity.destroyStream(videoStream.mediaStream);
         this.streamVideoCenter.removePublishVideo(localVideo);
         localVideo.srcObject = null;
+        var channelMap = this.stateCenter.channelPreviewMap.get(channel);
+        if (channelMap) {
+            channelMap.localVideo = undefined;
+            this.stateCenter.channelPreviewMap.set(channel, channelMap);
+        }
         return true;
     };
     /*
      *    "zl.p.sps.1": "ZegoFlutterEngine.startPublishingStream",开始推流
      */
     ZegoFlutterEngine.prototype.startPublishingStream = function (streamid, channel) {
+        var _this = this;
         var _a, _b;
         this.logger.info("zl.p.sps.1 call streamid: " + streamid);
         var localVideo = (_a = this.stateCenter.channelPreviewMap.get(channel)) === null || _a === void 0 ? void 0 : _a.localVideo;
         if (!localVideo) {
-            this.logger.info("zl.p.sp.1 param error");
-            return false;
+            this.logger.info("zl.p.sp.1 localVideo no found");
+            var _localVideo = document.createElement("video");
+            this.startPreview(_localVideo, channel).then(function () {
+                var channelMap = _this.stateCenter.channelPreviewMap.get(channel);
+                if (channelMap) {
+                    channelMap.isStopPre = true;
+                    _this.stateCenter.channelPreviewMap.set(channel, channelMap);
+                }
+                _this.startPublishingStream(streamid, channel);
+            }).catch(function (err) {
+                console.error(err);
+            });
+            return;
         }
         var videoStream = this.streamVideoCenter.checkPublishVideo(localVideo);
         if (!videoStream) {
             this.logger.info("zl.p.sp.1 video not found");
-            return false;
+            return;
         }
         var videoCodec;
         var config = (_b = this.stateCenter.channelPreviewMap.get(channel)) === null || _b === void 0 ? void 0 : _b.videoConfig;
@@ -5333,72 +5377,53 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
                 // @ts-ignore
                 // cdnUrl: playOption && playOption.cdnUrl
             });
+            var channelMap = this.stateCenter.channelPreviewMap.get(channel);
+            if (channelMap) {
+                channelMap.streamID = streamid;
+                this.stateCenter.channelPreviewMap.set(channel, channelMap);
+            }
         }
         catch (error) {
             console.error(error);
         }
-        return true;
+        return;
     };
     //结束推流
-    ZegoFlutterEngine.prototype.stopPublishingStream = function (streamid) {
-        return this.zegoEntity.stopPublishingStream(streamid);
-    };
-    //预加载音效
-    ZegoFlutterEngine.prototype.preloadEffect = function (id, effectUrl, callBack) {
-        if (!id ||
-            typeof id !== "number" ||
-            !effectUrl ||
-            typeof effectUrl !== "string") {
-            this.logger.error("zl.pe.0 params error");
-            return;
+    ZegoFlutterEngine.prototype.stopPublishingStream = function (channel) {
+        var channelMap = this.stateCenter.channelPreviewMap.get(channel);
+        if (channelMap) {
+            var streamID = channelMap.streamID;
+            if (!streamID) {
+                this.logger.error("zl.p.sps.1 streamID no found");
+                return false;
+            }
+            channelMap.streamID = undefined;
+            this.stateCenter.channelPreviewMap.set(channel, channelMap);
+            if (this.zegoEntity.stopPublishingStream(streamID) && channelMap.isStopPre) {
+                this.stopPreview(channel);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        this.zegoWebRTC.preloadEffect(id + "", effectUrl, callBack);
-    };
-    ZegoFlutterEngine.prototype.playEffect = function (audioMixConfig, start, end) {
-        if (!audioMixConfig.streamId ||
-            typeof audioMixConfig.streamId !== "string" ||
-            !audioMixConfig.effectId ||
-            typeof audioMixConfig.effectId !== "number") {
-            this.logger.error("zl.pe.1 params error");
-            return;
-        }
-        var loop = audioMixConfig.loop, playTime = audioMixConfig.playTime, replace = audioMixConfig.replace, streamId = audioMixConfig.streamId, effectId = audioMixConfig.effectId;
-        var _config = {
-            loop: loop,
-            playTime: playTime,
-            replace: replace,
-            streamID: streamId,
-            effectID: effectId + ""
-        };
-        this.zegoWebRTC.playEffect(_config, start, end);
-    };
-    ZegoFlutterEngine.prototype.pauseEffect = function (streamid) {
-        if (!streamid || typeof streamid !== "string") {
-            this.logger.error("zl.pe.2 streamid format error");
-            return;
-        }
-        this.zegoWebRTC.pauseEffect(streamid);
-    };
-    ZegoFlutterEngine.prototype.stopEffect = function (streamid) {
-        if (!streamid || typeof streamid !== "string") {
-            this.logger.error("zl.re.0 streamid format error");
-            return;
-        }
-        this.zegoWebRTC.stopEffect(streamid);
-    };
-    ZegoFlutterEngine.prototype.resumeEffect = function (streamid) {
-        if (!streamid || typeof streamid !== "string") {
-            this.logger.error("zl.re.0 streamid format error");
-            return;
-        }
-        this.zegoWebRTC.resumeEffect(streamid);
-    };
-    ZegoFlutterEngine.prototype.unloadEffect = function (effecId) {
-        if (!effecId || typeof effecId !== "number") {
-            this.logger.error("zl.ue.0 params error");
+        else {
             return false;
         }
-        return this.zegoWebRTC.unloadEffect(effecId + "");
+    };
+    ZegoFlutterEngine.prototype.enableCamera = function (enable, channel) {
+        if (typeof enable !== "boolean") {
+            return;
+        }
+        var channelMap = this.stateCenter.channelPreviewMap.get(channel);
+        if (channelMap) {
+            channelMap.enableCamera = enable;
+            this.mutePublishStreamVideo(enable, channel);
+        }
+        else {
+            channelMap = { enableCamera: enable };
+        }
+        this.stateCenter.channelPreviewMap.set(channel, channelMap);
     };
     //开始混音
     ZegoFlutterEngine.prototype.startMixingAudio = function (streamID, audio, replace) {
@@ -5736,6 +5761,21 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
     ZegoFlutterEngine.prototype.setSoundLevelDelegate = function (bool, timeInMs) {
         this.logger.info("zl.ssd.0 call");
         this.zegoEntity.setSoundLevelDelegate(bool, timeInMs);
+    };
+    ZegoFlutterEngine.prototype.enableAEC = function (enable) {
+        if (typeof enable == "boolean") {
+            this.stateCenter.audioConfig.AEC = enable;
+        }
+    };
+    ZegoFlutterEngine.prototype.enableAGC = function (enable) {
+        if (typeof enable == "boolean") {
+            this.stateCenter.audioConfig.AGC = enable;
+        }
+    };
+    ZegoFlutterEngine.prototype.enableANS = function (enable) {
+        if (typeof enable == "boolean") {
+            this.stateCenter.audioConfig.ANS = enable;
+        }
     };
     /**
      * 设置关闭摄像头时所推静态图片的路径

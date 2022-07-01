@@ -33,7 +33,6 @@ extension ZegoExpressPlatformViewUtils on ZegoExpressEngine {
             VideoElement()
             ..id = "zego-view-${id}"
             ..autoplay = true
-            ..controls = true
           );
 
           return HtmlElementView(

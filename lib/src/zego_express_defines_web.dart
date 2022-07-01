@@ -28,12 +28,16 @@ class ZegoFlutterEngine {
   external startPreview(dynamic canvas, int channel);
   external stopPreview(int channel);
   external startPublishingStream(String streamID, int? channel);
-  external stopPublishingStream(String streamID, int channel);
+  external stopPublishingStream(int channel);
   external startPlayingStream(String streamID, dynamic remoteVideo);
   external stopPlayingStream(String streamID);
   external sendBroadcastMessage(String roomID, String message);
-  external mutePublishStreamVideo(dynamic canvas, bool mute);
-  external mutePublishStreamAudio(dynamic canvas, bool mute);
+  external mutePublishStreamVideo(bool mute, int channel);
+  external mutePublishStreamAudio(bool mute, int channel);
+  external enableAEC(bool enable);
+  external enableAGC(bool enable);
+  external enableANS(bool enable);
+  external enableCamera(bool enable, int channel);
 }
 
 @JS()
