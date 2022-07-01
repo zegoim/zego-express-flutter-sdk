@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_io/io.dart';
-import 'dart:math' show Random;
-
 import 'package:zego_express_engine/zego_express_engine.dart' show ZegoScenario;
 
 class ZegoConfig {
@@ -29,5 +24,4 @@ class ZegoConfig {
   bool isPublishMirror = false;
 
   bool enableHardwareEncoder = false;
-
 }

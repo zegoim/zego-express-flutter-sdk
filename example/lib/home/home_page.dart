@@ -7,6 +7,7 @@
 //
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,10 +27,27 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  bool _checkConfiguration() {
+    if (ZegoConfig.instance.appID <= 0) {
+      return false;
+    }
+    if (ZegoConfig.instance.userID.isEmpty) {
+      return false;
+    }
+    if (kIsWeb) { // ZEGO RTC Web SDK requires token
+      if (ZegoConfig.instance.token.isEmpty) {
+        return false;
+      }
+    } else { // ZEGO RTC Native SDK requires appSign
+      if (ZegoConfig.instance.appSign.isEmpty) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   void onPressQuickStartButton() {
-    if (ZegoConfig.instance.appID > 0 &&
-        (ZegoConfig.instance.appSign.isNotEmpty || ZegoConfig.instance.token.isNotEmpty) &&
-        ZegoConfig.instance.userID.isNotEmpty) {
+    if (_checkConfiguration()) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (BuildContext context) {
         return QuickStartPage();
@@ -123,16 +141,4 @@ class _HomePageState extends State<HomePage> {
           ),
         )));
   }
-}
-
-class TopicWidget extends ListTile {
-  Widget? targetPage;
-  BuildContext? context;
-
-  TopicWidget(String title, Widget targetPage, BuildContext context)
-      : super(
-          title: Text(title),
-          trailing: Icon(Icons.keyboard_arrow_right),
-          onTap: () {},
-        ) {}
 }

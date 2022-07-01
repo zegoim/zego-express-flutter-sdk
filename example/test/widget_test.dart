@@ -10,6 +10,4 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:zego_express_engine_example/main.dart';
 
-void main() {
-
-}
+void main() {}

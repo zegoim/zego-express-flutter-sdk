@@ -73,10 +73,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void createEngine() {
     ZegoEngineProfile profile = ZegoEngineProfile(
-      ZegoConfig.instance.appID,
-      ZegoConfig.instance.scenario,
-      enablePlatformView: ZegoConfig.instance.enablePlatformView,
-      appSign: ZegoConfig.instance.appSign);
+        ZegoConfig.instance.appID, ZegoConfig.instance.scenario,
+        enablePlatformView: ZegoConfig.instance.enablePlatformView,
+        appSign: ZegoConfig.instance.appSign);
     ZegoExpressEngine.createEngineWithProfile(profile);
 
     // Notify View that engine state changed
@@ -89,8 +88,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void loginRoom() {
     // Instantiate a ZegoUser object
-    ZegoUser user =
-        ZegoUser(ZegoConfig.instance.userID, ZegoConfig.instance.userName.isEmpty? ZegoConfig.instance.userID: ZegoConfig.instance.userName);
+    ZegoUser user = ZegoUser(
+        ZegoConfig.instance.userID,
+        ZegoConfig.instance.userName.isEmpty
+            ? ZegoConfig.instance.userID
+            : ZegoConfig.instance.userName);
 
     if (kIsWeb) {
       ZegoRoomConfig config = ZegoRoomConfig.defaultConfig();
@@ -118,7 +120,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   // MARK: - Step 3: StartPublishingStream
- void startPreview( {double width = 360, double height = 640}) {
+  void startPreview({double width = 360, double height = 640}) {
     Future<void> _startPreview(int viewID) async {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
       await ZegoExpressEngine.instance.startPreview(canvas: canvas);
@@ -126,7 +128,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
     }
 
     if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
-      if (ZegoConfig.instance.enablePlatformView || kIsWeb ) {
+      if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
         // Render with PlatformView
         setState(() {
           _previewViewWidget =
@@ -264,24 +266,25 @@ class _QuickStartPageState extends State<QuickStartPage> {
     };
 
     ZegoExpressEngine.onRoomUserUpdate = (roomID, updateType, userList) {
-
       userList.forEach((e) {
         var userID = e.userID;
         var userName = e.userName;
-         print(
-          '🚩 🚪 Room user update, roomID: $roomID, updateType: $updateType userID: $userID userName: $userName');
+        print(
+            '🚩 🚪 Room user update, roomID: $roomID, updateType: $updateType userID: $userID userName: $userName');
       });
     };
 
-    ZegoExpressEngine.onRoomStreamUpdate = ((roomID, updateType, streamList, extendedData) {
-        streamList.forEach((stream) {
-          var streamID = stream.streamID;
-          print('🚩 🚪 Room stream update, roomID: $roomID, updateType: $updateType streamID:$streamID');
+    ZegoExpressEngine.onRoomStreamUpdate =
+        ((roomID, updateType, streamList, extendedData) {
+      streamList.forEach((stream) {
+        var streamID = stream.streamID;
+        print(
+            '🚩 🚪 Room stream update, roomID: $roomID, updateType: $updateType streamID:$streamID');
 
-          if (updateType == ZegoPlayerState.NoPlay) {
-            stopPlayingStream(_playingStreamIDController.text.trim());
-          }
-        });
+        if (updateType == ZegoPlayerState.NoPlay) {
+          stopPlayingStream(_playingStreamIDController.text.trim());
+        }
+      });
     });
   }
 
@@ -496,12 +499,10 @@ class _QuickStartPageState extends State<QuickStartPage> {
         ),
         Spacer(),
         Container(
-         width: MediaQuery.of(context).size.width / 5,
+          width: MediaQuery.of(context).size.width / 5,
           child: CupertinoButton.filled(
             child: Text(
-              _previewViewWidget != null
-                  ? '✅ StartPreview'
-                  : 'StartPreview',
+              _previewViewWidget != null ? '✅ StartPreview' : 'StartPreview',
               style: TextStyle(fontSize: 14.0),
             ),
             onPressed: _previewViewWidget == null
@@ -602,5 +603,4 @@ class _QuickStartPageState extends State<QuickStartPage> {
       Divider(),
     ]);
   }
-
 }

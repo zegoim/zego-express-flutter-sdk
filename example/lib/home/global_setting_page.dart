@@ -6,8 +6,8 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:zego_express_engine/zego_express_engine.dart';
@@ -25,8 +25,10 @@ class GlobalSettingPage extends StatefulWidget {
 class _GlobalSettingPageState extends State<GlobalSettingPage> {
   final TextEditingController _appIDEdController = new TextEditingController();
   final TextEditingController _userIDEdController = new TextEditingController();
-  final TextEditingController _userNameEdController = new TextEditingController();
-  final TextEditingController _appSignEdController = new TextEditingController();
+  final TextEditingController _userNameEdController =
+      new TextEditingController();
+  final TextEditingController _appSignEdController =
+      new TextEditingController();
   final TextEditingController _tokenEdController = new TextEditingController();
 
   String _version = "";
@@ -117,9 +119,9 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     String userID = _userIDEdController.text.trim();
     String userName = _userNameEdController.text.trim();
     String appSign = _appSignEdController.text.trim();
+    String token = _tokenEdController.text.trim();
 
     int? appID = int.tryParse(strAppID);
-
 
     if (!_isCameraPermissionGranted) {
       ZegoUtils.showAlert(context,
@@ -137,6 +139,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     ZegoConfig.instance.userName = userName;
     ZegoConfig.instance.userID = userID;
     ZegoConfig.instance.appSign = appSign;
+    ZegoConfig.instance.token = token;
     ZegoConfig.instance.scenario = this._scenario;
     ZegoConfig.instance.enablePlatformView = this._enablePlatformView;
   }
@@ -153,7 +156,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     String appSign = _appSignEdController.text.trim();
     String token = _tokenEdController.text.trim();
 
-    int appID = int.tryParse(strAppID)?? 0;
+    int appID = int.tryParse(strAppID) ?? 0;
     if (!needAskSave && appID != ZegoConfig.instance.appID) {
       needAskSave = true;
     }
@@ -163,13 +166,16 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     if (!needAskSave && userName != ZegoConfig.instance.userName) {
       needAskSave = true;
     }
-    if (!needAskSave && (appSign != ZegoConfig.instance.appSign) && (token != ZegoConfig.instance.token)) {
+    if (!needAskSave &&
+        (appSign != ZegoConfig.instance.appSign) &&
+        (token != ZegoConfig.instance.token)) {
       needAskSave = true;
     }
     if (!needAskSave && ZegoConfig.instance.scenario != this._scenario) {
       needAskSave = true;
     }
-    if (!needAskSave && ZegoConfig.instance.enablePlatformView != this._enablePlatformView) {
+    if (!needAskSave &&
+        ZegoConfig.instance.enablePlatformView != this._enablePlatformView) {
       needAskSave = true;
     }
     return needAskSave;
@@ -206,7 +212,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
                       userInfoWidget(),
                       checkPermissionWidget(),
                       appIDWidget(),
-                      tokenWidget(),
+                      appSignOrTokenWidget(),
                       selectScenarioWidget(),
                       selectRendererWidget(),
                     ],
@@ -268,20 +274,19 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User ID: '),
           Padding(padding: const EdgeInsets.only(left: 10.0)),
-          Expanded(child:
-            TextField(
-              controller: _userIDEdController,
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
-                hintText: 'Please enter UserID',
-                enabledBorder:
-                    OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xff0e88eb))),
-              ),
-            )
-          ),
+          Expanded(
+              child: TextField(
+            controller: _userIDEdController,
+            decoration: InputDecoration(
+              contentPadding:
+                  const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+              hintText: 'Please enter UserID',
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey)),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xff0e88eb))),
+            ),
+          )),
         ],
       ),
       Padding(
@@ -291,20 +296,19 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         children: <Widget>[
           Text('User Name: '),
           Padding(padding: const EdgeInsets.only(top: 10.0)),
-          Expanded(child:
-            TextField(
-              controller: _userNameEdController,
-              decoration: InputDecoration(
-                contentPadding:
-                    const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
-                hintText: 'Please enter UserName',
-                enabledBorder:
-                    OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xff0e88eb))),
-              ),
-            )
-          ),
+          Expanded(
+              child: TextField(
+            controller: _userNameEdController,
+            decoration: InputDecoration(
+              contentPadding:
+                  const EdgeInsets.only(left: 10.0, top: 12.0, bottom: 12.0),
+              hintText: 'Please enter UserName',
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey)),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xff0e88eb))),
+            ),
+          )),
         ],
       ),
     ]);
@@ -341,7 +345,15 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     );
   }
 
-  Widget tokenWidget() {
+  Widget appSignOrTokenWidget() {
+    if (kIsWeb) {
+      return _tokenWidget();
+    } else {
+      return _appSignWidget();
+    }
+  }
+
+  Widget _appSignWidget() {
     return Column(
       children: [
         Padding(padding: const EdgeInsets.only(top: 10.0)),
@@ -369,9 +381,17 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
                 borderSide: BorderSide(color: Color(0xff0e88eb))),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _tokenWidget() {
+    return Column(
+      children: [
+        Padding(padding: const EdgeInsets.only(top: 10.0)),
         Row(
           children: <Widget>[
-            Text('token:'),
+            Text('Token:'),
             GestureDetector(
               child: Icon(Icons.help_outline),
               onTap: () {
