@@ -18,10 +18,8 @@ export 'src/zego_express_api_custom_audio_io.dart';
 export 'src/zego_express_api_custom_video_io.dart';
 export 'src/zego_express_api_range_audio.dart';
 export 'src/zego_express_api_utilities.dart';
+export 'src/zego_express_api_copyrighted_music.dart';
 
 export 'src/zego_express_texture_render_utils.dart';
 export 'src/zego_express_platform_view_utils.dart';
 export 'src/zego_express_assets_utils.dart';
-
-// 版权音乐，需要特殊编包的sdk包
-export 'src/zego_express_api_copyrighted_music.dart';
