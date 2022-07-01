@@ -61,6 +61,10 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
       _appSignEdController.text = ZegoConfig.instance.appSign;
     }
 
+    if (ZegoConfig.instance.token.isNotEmpty) {
+      _tokenEdController.text = ZegoConfig.instance.token;
+    }
+
     _scenario = ZegoConfig.instance.scenario;
     _enablePlatformView = ZegoConfig.instance.enablePlatformView;
 
@@ -166,10 +170,11 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
     if (!needAskSave && userName != ZegoConfig.instance.userName) {
       needAskSave = true;
     }
-    if (!needAskSave &&
-        (appSign != ZegoConfig.instance.appSign) &&
-        (token != ZegoConfig.instance.token)) {
+    if (!needAskSave && token != ZegoConfig.instance.token) {
       needAskSave = true;
+    }
+    if (!needAskSave && appSign != ZegoConfig.instance.appSign) {
+          needAskSave = true;
     }
     if (!needAskSave && ZegoConfig.instance.scenario != this._scenario) {
       needAskSave = true;
