@@ -2,7 +2,7 @@
 
 [English](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README_zh.md)
 
-即构科技 (ZEGO) 极速音视频 Flutter SDK 是一个基于 [ZegoExpressEngine](https://doc-zh.zego.im/zh/693.html) 原生 Android/iOS SDK 的 Flutter Plugin Wrapper，提供视频直播以及实时音视频服务。🚀 仅需 4 行代码，30 分钟即可轻松接入。
+即构科技 (ZEGO) 极速音视频 Flutter SDK 是一个基于 [ZegoExpressEngine](https://doc-zh.zego.im/zh/693.html) RTC SDK (Native & Web) 的 Flutter Plugin Wrapper，提供视频直播以及实时音视频服务。🚀 仅需 4 行代码，30 分钟即可轻松接入。
 
 了解更多解决方案：[https://www.zego.im](https://www.zego.im)
 

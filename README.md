@@ -2,7 +2,7 @@
 
 [English](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README.md) | [中文](https://github.com/zegoim/zego-express-flutter-sdk/blob/main/README_zh.md)
 
-ZegoExpressEngine Audio/Video Flutter SDK is a flutter plugin wrapper based on [ZegoExpressEngine](https://doc-en.zego.im/en/693.html) native Android/iOS SDK, providing live video and real-time audio/video services. 🚀 It only needs 4 lines of code and can be easily accessed in 30 minutes.
+ZegoExpressEngine Audio/Video Flutter SDK is a flutter plugin wrapper based on [ZegoExpressEngine](https://doc-en.zego.im/en/693.html) RTC SDK (Native & Web), providing live video and real-time audio/video services. 🚀 It only needs 4 lines of code and can be easily accessed in 30 minutes.
 
 Learn more about the solution: [https://www.zego.im](https://www.zego.im)
 
