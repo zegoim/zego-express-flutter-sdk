@@ -7,6 +7,8 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 import 'zego_express_enum_extension.dart';
 
+// ignore_for_file: deprecated_member_use_from_same_package
+
 class Global {
   static String pluginVersion = "2.20.2";
 }

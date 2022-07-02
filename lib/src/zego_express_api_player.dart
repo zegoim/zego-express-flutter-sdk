@@ -3,6 +3,8 @@ import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
+// ignore_for_file: deprecated_member_use_from_same_package
+
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Starts playing a stream from ZEGO RTC server or from third-party CDN. Support multi-room mode.

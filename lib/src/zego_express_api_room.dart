@@ -3,6 +3,8 @@ import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
+// ignore_for_file: deprecated_member_use_from_same_package
+
 extension ZegoExpressEngineRoom on ZegoExpressEngine {
 
   /// Log in to the room by configuring advanced properties, and return the login result through the callback parameter. You must log in to the room before pushing or pulling the stream.
