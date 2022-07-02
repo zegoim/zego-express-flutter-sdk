@@ -22,7 +22,12 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   3. In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
   ///   4. To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
   ///
-  /// - [streamID] Stream ID, a string of up to 256 characters, needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [streamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   1. needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
+  ///   4. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
   /// - [config] Advanced publish configuration.
   /// - [channel] Publish stream channel.
   Future<void> startPublishingStream(String streamID, {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
@@ -149,7 +154,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// Available since: 1.3.4
   /// Description: You can set the combined value of the audio codec, bit rate, and audio channel through this function. If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
-  /// Default value: The default audio config refers to the default value of [ZegoAudioConfig].
+  /// Default value: The default audio config refers to the default value of [ZegoAudioConfig]. 
   /// When to call: After the engine is created [createEngine], and before publishing [startPublishingStream].
   /// Restrictions: None.
   /// Related APIs: [getAudioConfig].
@@ -180,7 +185,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Support calling this function to update the encryption key while publishing stream.
   /// When to call: After the engine is created [createEngine], Called before and after [startPublishingStream] can both take effect.
   /// Restrictions: This function is only valid when publishing stream to the Zego RTC server.
-  /// Caution: Note that developers need to update the player's decryption key before updating the publisher's encryption key.
+  /// Caution: Note that developers need to update the player's decryption key before updating the publisher's encryption key. 
   /// Related APIs: Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
   ///
   /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.

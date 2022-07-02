@@ -133,15 +133,15 @@ class ZegoExpressEngine {
   /// Description: Set the path of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
   /// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
   /// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
-  /// Restrictions: 
+  /// Restrictions:
   ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
   ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
   ///   3. Not supported that the filePath is a network link.
-  /// Caution: 
+  /// Caution:
   ///   1. The static picture cannot be seen in the local preview.
   ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
   ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
-  /// Platform differences: 
+  /// Platform differences:
   ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
   ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
   ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
@@ -202,8 +202,8 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.For versions 2.18.0 and above, it is recommended to use the onRoomStateChanged callback instead of the onRoomStateUpdate callback to monitor room state changes.
   /// Use cases: Developers can use this callback to determine the status of the current user in the room.
-  /// When to trigger: 
-  ///  1. The developer will receive this notification when calling the [loginRoom], [logoutRoom], [switchRoom] functions. 
+  /// When to trigger:
+  ///  1. The developer will receive this notification when calling the [loginRoom], [logoutRoom], [switchRoom] functions.
   ///  2. This notification may also be received when the network condition of the user's device changes (SDK will automatically log in to the room when disconnected, please refer to [Does ZEGO SDK support a fast reconnection for temporary disconnection] for details](https://docs.zegocloud.com/faq/reconnect?product=ExpressVideo&platform=all).
   /// Restrictions: None.
   /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
@@ -236,7 +236,7 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: When other users in the room are online or offline, which causes the user list in the room to change, the developer will be notified through this callback.
   /// Use cases: Developers can use this callback to update the user list display in the room in real time.
-  /// When to trigger: 
+  /// When to trigger:
   ///   1. When the user logs in to the room for the first time, if there are other users in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `userList` is the other users in the room at this time.
   ///   2. The user is already in the room. If another user logs in to the room through the [loginRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd].
   ///   3. If other users log out of this room through the [logoutRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
@@ -620,8 +620,8 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: The local captured audio sound level callback.
   /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
-  /// Caution: 
-  ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview]. 
+  /// Caution:
+  ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview].
   ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate]
   ///
@@ -633,7 +633,7 @@ class ZegoExpressEngine {
   /// Available since: 2.10.0
   /// Description: The local captured audio sound level callback.
   /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
-  /// Caution: 
+  /// Caution:
   ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
   ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate] or [onRemoteSoundLevelInfoUpdate].
@@ -778,7 +778,7 @@ class ZegoExpressEngine {
   /// Caution: The broadcast message sent by the user will not be notified through this callback.
   /// Related callbacks: You can receive room barrage messages through [onIMRecvBarrageMessage], and you can receive room custom signaling through [onIMRecvCustomCommand].
   ///
-  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes. Caution: The room ID is in string format and only supports numbers, English characters and'~','!','@','#','$','%','^','&', ' *','(',')','_','+','=','-','`',';',''',',','.','<' ,'>','/','\'.
+  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes.
   /// - [messageList] List of received messages. Value range: Up to 50 messages can be received each time.
   static void Function(String roomID, List<ZegoBroadcastMessageInfo> messageList)? onIMRecvBroadcastMessage;
 
@@ -792,7 +792,7 @@ class ZegoExpressEngine {
   /// Caution: Barrage messages sent by users themselves will not be notified through this callback. When there are a large number of barrage messages in the room, the notification may be delayed, and some barrage messages may be lost.
   /// Related callbacks: Develop can receive room broadcast messages through [onIMRecvBroadcastMessage], and can receive room custom signaling through [onIMRecvCustomCommand].
   ///
-  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes. Caution: The room ID is in string format and only supports numbers, English characters and'~','!','@','#','$','%','^','&', ' *','(',')','_','+','=','-','`',';',''',',','.','<' ,'>','/','\'.
+  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes.
   /// - [messageList] List of received messages. Value range: Up to 50 messages can be received each time.
   static void Function(String roomID, List<ZegoBarrageMessageInfo> messageList)? onIMRecvBarrageMessage;
 
@@ -806,7 +806,7 @@ class ZegoExpressEngine {
   /// Caution: The custom command sent by the user himself will not be notified through this callback.
   /// Related callbacks: You can receive room broadcast messages through [onIMRecvBroadcastMessage], and you can receive room barrage message through [onIMRecvBarrageMessage].
   ///
-  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes. Caution: The room ID is in string format and only supports numbers, English characters and'~','!','@','#','$','%','^','&', ' *','(',')','_','+','=','-','`',';',''',',','.','<' ,'>','/','\'.
+  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes.
   /// - [fromUser] Sender of the command.
   /// - [command] Command content received.Value range: The maximum length is 1024 bytes.
   static void Function(String roomID, ZegoUser fromUser, String command)? onIMRecvCustomCommand;

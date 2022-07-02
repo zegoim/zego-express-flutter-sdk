@@ -31,7 +31,10 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
   ///   3. Calling [destroyEngine] will also automatically log out.
   ///
-  /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  ///   Caution:
+  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
   /// - Returns The result of this login room
@@ -50,7 +53,10 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Related callbacks: After calling this function, you will receive [onRoomStateChanged] (Not supported before 2.18.0, please use [onRoomStateUpdate]) callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification(On the premise of enabling isUserStatusNotify configuration).
   /// Related APIs: Users can use [loginRoom], [switchRoom] functions to log in or switch rooms.
   ///
-  /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  ///   Caution:
+  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
   /// - Returns The result of this logout room
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
     return await ZegoExpressImpl.instance.logoutRoom(roomID);

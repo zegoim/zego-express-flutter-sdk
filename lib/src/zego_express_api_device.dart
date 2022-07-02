@@ -376,8 +376,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Description: Enable/Disable headphone monitor, and users hear their own voices as they use the microphone to capture sounds.
   /// When to call: After the engine is created [createEngine].
   /// Default value: Disable.
-  /// Caution: 
-  ///   1. This setting does not actually take effect until both the headset and microphone are connected. 
+  /// Caution:
+  ///   1. This setting does not actually take effect until both the headset and microphone are connected.
   ///   2. The default is to return after acquisition and before pre-processing. If you need to return after pre-processing, please contact ZEGO technical support.
   ///
   /// - [enable] Whether to use headphone monitor, true: enable, false: disable
