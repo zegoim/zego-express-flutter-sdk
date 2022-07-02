@@ -9,8 +9,6 @@
 @JS("ZegoFlutterEngine")
 library ZegoFlutterEngine;
 
-import 'dart:html';
-
 import 'package:js/js.dart';
 
 @JS()

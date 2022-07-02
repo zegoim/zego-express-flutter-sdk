@@ -530,9 +530,9 @@ class _QuickStartPageState extends State<QuickStartPage> {
             ),
             onPressed: _publisherState == ZegoPublisherState.NoPublish
                 ? () {
-                    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size? widgetSize =
-                        _previewViewContainerKey.currentContext?.size;
+                    // double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+                    // Size? widgetSize =
+                    //     _previewViewContainerKey.currentContext?.size;
                     startPublishingStream(
                         _publishingStreamIDController.text.trim());
                   }

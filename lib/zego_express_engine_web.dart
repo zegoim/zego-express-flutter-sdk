@@ -4,16 +4,12 @@ import 'dart:convert';
 // of your plugin as a separate package, instead of inlining it in the same
 // package as the core of your plugin.
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html show window;
 import 'dart:html';
 import 'dart:js';
-import 'dart:js_util';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:zego_express_engine/src/zego_express_defines_web.dart';
-import 'dart:ui' as ui;
 
 import 'zego_express_engine.dart';
 
@@ -379,7 +375,7 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<void> loginRoom(String roomID, dynamic user, dynamic? config) async {
+  Future<void> loginRoom(String roomID, dynamic user, dynamic config) async {
 
     ZegoUserWeb _user = ZegoUserWeb(
       userID: user["userID"],
