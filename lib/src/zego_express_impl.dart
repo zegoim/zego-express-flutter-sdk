@@ -2142,9 +2142,6 @@ class ZegoExpressImpl {
         if (mediaPlayer != null) {
           ZegoExpressEngine.onMediaPlayerStateUpdate!(mediaPlayer,
               ZegoMediaPlayerState.values[map['state']], map['errorCode']);
-        } else {
-          // TODO: Can't find media player
-
         }
         break;
 
@@ -2157,8 +2154,6 @@ class ZegoExpressImpl {
         if (mediaPlayer != null) {
           ZegoExpressEngine.onMediaPlayerNetworkEvent!(mediaPlayer,
               ZegoMediaPlayerNetworkEvent.values[map['networkEvent']]);
-        } else {
-          // TODO: Can't find media player
         }
         break;
 
@@ -2171,8 +2166,6 @@ class ZegoExpressImpl {
         if (mediaPlayer != null) {
           ZegoExpressEngine.onMediaPlayerPlayingProgress!(
               mediaPlayer, map['millisecond']);
-        } else {
-          // TODO: Can't find media player
         }
         break;
 
@@ -2184,10 +2177,7 @@ class ZegoExpressImpl {
             ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
         if (mediaPlayer != null) {
           ZegoExpressEngine.onMediaPlayerRecvSEI!(mediaPlayer, map['data']);
-        } else {
-          // TODO: Can't find media player
         }
-
         break;
 
       case 'onMediaPlayerSoundLevelUpdate':
@@ -2198,8 +2188,6 @@ class ZegoExpressImpl {
             ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
         if (mediaPlayer != null) {
           ZegoExpressEngine.onMediaPlayerSoundLevelUpdate!(mediaPlayer, map['soundLevel']);
-        } else {
-          // TODO: Can't find media player
         }
         break;
 
@@ -2212,8 +2200,6 @@ class ZegoExpressImpl {
         if (mediaPlayer != null) {
           List<double> spectrumList = List<double>.from(map['spectrumList']);
           ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate!(mediaPlayer, spectrumList);
-        } else {
-          // TODO: Can't find media player
         }
         break;
       /* AudioEffectPlayer */
@@ -2230,8 +2216,6 @@ class ZegoExpressImpl {
               map['audioEffectID'],
               ZegoAudioEffectPlayState.values[map['state']],
               map['errorCode']);
-        } else {
-          // TODO: Can't find audio effect player
         }
         break;
 
@@ -2353,8 +2337,6 @@ class ZegoExpressImpl {
         if (manager != null) {
           ZegoExpressEngine.onReceiveRealTimeSequentialData!(
               manager, map['data'], map['streamID']);
-        } else {
-          // TODO: Can't find data manager
         }
         break;
 
