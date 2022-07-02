@@ -43,7 +43,7 @@ extension ZegoAudioSampleRate_ on  ZegoAudioSampleRate {
       default:
         return ZegoAudioSampleRate.Unknown;
     }
-  } 
+  }
 }
 
 extension ZegoStreamEvent_ on ZegoStreamEvent {
@@ -115,7 +115,7 @@ extension ZegoStreamEvent_ on ZegoStreamEvent {
           return ZegoStreamEvent.PublishFail;
         } else {
           return ZegoStreamEvent.PlayFail;
-        }   
+        }
     }
-  } 
+  }
 }

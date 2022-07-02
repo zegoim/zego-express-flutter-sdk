@@ -36,7 +36,7 @@ class ZegoExpressImpl {
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
     _registerEventHandler();
-  
+
     await _channel.invokeMethod('createEngineWithProfile', {
       'profile': {
         'appID': profile.appID,
@@ -49,7 +49,7 @@ class ZegoExpressImpl {
     await _channel.invokeMethod('setPluginVersion', {
       'version': Global.pluginVersion
     });
-    
+
     return null;
   }
 
@@ -132,7 +132,7 @@ class ZegoExpressImpl {
 
   Future<void> setDummyCaptureImagePath(String filePath, ZegoPublishChannel channel) async {
     return await _channel.invokeMethod('setDummyCaptureImagePath', {
-      'filePath': filePath, 
+      'filePath': filePath,
       'channel': channel.index
     });
   }
@@ -359,7 +359,7 @@ class ZegoExpressImpl {
   }
 
   Future<void> setMinVideoBitrateForTrafficControl(
-      int bitrate, 
+      int bitrate,
       ZegoTrafficControlMinVideoBitrateMode mode,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setMinVideoBitrateForTrafficControl',
@@ -633,7 +633,7 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index 
+            'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
       }
@@ -669,7 +669,7 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index 
+            'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
       }
@@ -700,7 +700,7 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index 
+            'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
       }
@@ -730,7 +730,7 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index 
+            'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
       }
@@ -1080,8 +1080,8 @@ class ZegoExpressImpl {
 
   Future<void> enablePlayStreamVirtualStereo(bool enable, int angle, String streamID) async {
     return await _channel.invokeMethod('enablePlayStreamVirtualStereo', {
-      'enable': enable, 
-      'angle': angle, 
+      'enable': enable,
+      'angle': angle,
       'streamID': streamID
     });
   }
@@ -1448,7 +1448,7 @@ class ZegoExpressImpl {
       copyrightedMusicImpl = ZegoCopyrightedMusicImpl();
     } else {
       copyrightedMusicImpl = null;
-    }   
+    }
     return copyrightedMusicImpl;
   }
 
@@ -1493,7 +1493,7 @@ class ZegoExpressImpl {
         ZegoExpressEngine
             .onEngineStateUpdate!(ZegoEngineState.values[map['state']]);
         break;
-      
+
       case 'onNetworkTimeSynchronized':
         if (ZegoExpressEngine.onNetworkTimeSynchronized == null) return;
 
@@ -1611,7 +1611,7 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onRoomTokenWillExpire == null) return;
 
         ZegoExpressEngine.onRoomTokenWillExpire!(
-          map['roomID'], 
+          map['roomID'],
           map['remainTimeInSecond']
         );
         break;
@@ -1913,9 +1913,9 @@ class ZegoExpressImpl {
 
       case 'onCapturedAudioSpectrumUpdate':
         if (ZegoExpressEngine.onCapturedAudioSpectrumUpdate == null) return;
-        
+
         List<double> originAudioSpectrum = List<double>.from(map['audioSpectrum']);
-        
+
         ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(originAudioSpectrum);
         break;
 
@@ -1936,7 +1936,7 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onLocalDeviceExceptionOccurred == null) return;
 
         ZegoExpressEngine.onLocalDeviceExceptionOccurred!(
-          ZegoDeviceExceptionType.values[map['exceptionType']], 
+          ZegoDeviceExceptionType.values[map['exceptionType']],
           ZegoDeviceType.values[map['deviceType']],
           map['deviceID']);
         break;
@@ -2144,6 +2144,7 @@ class ZegoExpressImpl {
               ZegoMediaPlayerState.values[map['state']], map['errorCode']);
         } else {
           // TODO: Can't find media player
+
         }
         break;
 
@@ -2330,7 +2331,7 @@ class ZegoExpressImpl {
             ),
             streamID);
         break;
-      
+
       case 'onRangeAudioMicrophoneStateUpdate':
         if (ZegoExpressEngine.onRangeAudioMicrophoneStateUpdate == null || rangeAudioImpl == null) return;
 
@@ -2353,7 +2354,7 @@ class ZegoExpressImpl {
           ZegoExpressEngine.onReceiveRealTimeSequentialData!(
               manager, map['data'], map['streamID']);
         } else {
-          // TODO: Can't find date manager
+          // TODO: Can't find data manager
         }
         break;
 
@@ -2361,13 +2362,13 @@ class ZegoExpressImpl {
       case 'onDownloadProgressUpdate':
         if (ZegoExpressEngine.onDownloadProgressUpdate == null || copyrightedMusicImpl == null) return;
 
-        ZegoExpressEngine.onDownloadProgressUpdate!(copyrightedMusicImpl!, map['resourceID'], map['progressRate']);    
+        ZegoExpressEngine.onDownloadProgressUpdate!(copyrightedMusicImpl!, map['resourceID'], map['progressRate']);
         break;
-      
+
       case 'onCurrentPitchValueUpdate':
         if (ZegoExpressEngine.onCurrentPitchValueUpdate == null || copyrightedMusicImpl == null) return;
 
-        ZegoExpressEngine.onCurrentPitchValueUpdate!(copyrightedMusicImpl!, map['resourceID'], map['currentDuration'], map['pitchValue']);       
+        ZegoExpressEngine.onCurrentPitchValueUpdate!(copyrightedMusicImpl!, map['resourceID'], map['currentDuration'], map['pitchValue']);
         break;
 
       default:
@@ -2395,7 +2396,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   Future<ZegoMediaPlayerLoadResourceResult> loadResourceFromMediaData(Uint8List mediaData, int startPosition) async{
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerLoadResourceFromMediaData', {
-          'index': _index, 
+          'index': _index,
           'mediaData': mediaData,
           'startPosition': startPosition
         });
@@ -2470,8 +2471,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
       'mediaPlayerSetPlayerCanvas', {
         'index': _index,
         'canvas': {
-          'view': canvas.view, 
-          'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index, 
+          'view': canvas.view,
+          'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
           'backgroundColor': canvas.backgroundColor ?? 0x000000
         }
       }
@@ -2579,7 +2580,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   Future<ZegoNetWorkResourceCache> getNetWorkResourceCache() async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod(
       'mediaPlayerGetNetWorkResourceCache', {'index': _index});
-    
+
     return ZegoNetWorkResourceCache(map['time'], map['size']);
   }
 
@@ -3078,5 +3079,5 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
           'resourceID': resourceID
         });
   }
-  
+
 }
