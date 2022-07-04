@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
+// ignore_for_file: unnecessary_this, non_constant_identifier_names
+
 /// Application scenario.
 enum ZegoScenario {
   /// General scenario
@@ -1235,7 +1237,7 @@ class ZegoUser {
   /// Create a ZegoUser object
   ///
   /// userName and userID are set to match
-  ZegoUser.id(String userID): this.userID = userID, this.userName = userID;
+  ZegoUser.id(this.userID): this.userName = userID;
 
 }
 
@@ -1293,7 +1295,7 @@ class ZegoCanvas {
   ZegoCanvas(this.view, {this.viewMode, this.backgroundColor});
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
-  ZegoCanvas.view(int view): this.view = view, this.viewMode = ZegoViewMode.AspectFit, this.backgroundColor = 0x000000;
+  ZegoCanvas.view(this.view): this.viewMode = ZegoViewMode.AspectFit, this.backgroundColor = 0x000000;
 
 }
 
@@ -1767,7 +1769,7 @@ class ZegoLabelInfo {
   }
 
   /// Build a label info object with text.
-  ZegoLabelInfo.text(String text) : this.text = text, left = 0, top = 0, font = ZegoFontStyle.defaultStyle();
+  ZegoLabelInfo.text(this.text) : left = 0, top = 0, font = ZegoFontStyle.defaultStyle();
 
 }
 
@@ -1847,7 +1849,7 @@ class ZegoMixerInput {
     };
   }
 
-  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = Rect.fromLTRB(0,0,0,0), this.soundLevelID = 0, this.volume = 100, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill, this.imageInfo = ZegoMixerImageInfo("");
+  ZegoMixerInput.defaultConfig() : this.streamID = "", this.contentType = ZegoMixerInputContentType.Video, this.layout = const Rect.fromLTRB(0, 0, 0, 0), this.soundLevelID = 0, this.volume = 100, this.isAudioFocus = false, this.audioDirection = -1, this.label = ZegoLabelInfo.text(""), this.renderMode = ZegoMixRenderMode.Fill, this.imageInfo = ZegoMixerImageInfo("");
 
 }
 
@@ -1925,7 +1927,7 @@ class ZegoMixerTask {
   Map<String, String> advancedConfig;
 
   /// Create a mix stream task object with TaskID
-  ZegoMixerTask(String taskID) : this.taskID = taskID, inputList = [], outputList = [], audioConfig = ZegoMixerAudioConfig.defaultConfig(), videoConfig = ZegoMixerVideoConfig.defaultConfig(), watermark = ZegoWatermark('', Rect.fromLTRB(0, 0, 0, 0)), backgroundImageURL = "", enableSoundLevel = false, advancedConfig = {};
+  ZegoMixerTask(this.taskID) : inputList = [], outputList = [], audioConfig = ZegoMixerAudioConfig.defaultConfig(), videoConfig = ZegoMixerVideoConfig.defaultConfig(), watermark = ZegoWatermark('', const Rect.fromLTRB(0, 0, 0, 0)), backgroundImageURL = "", enableSoundLevel = false, advancedConfig = {};
 
   Map<String, dynamic> toMap() {
     return {
