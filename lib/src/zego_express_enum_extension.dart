@@ -1,8 +1,8 @@
 import 'zego_express_defines.dart';
 
-extension ZegoAudioSampleRate_ on  ZegoAudioSampleRate {
+extension ZegoAudioSampleRateExtension on ZegoAudioSampleRate {
   int get value {
-    switch(this) {
+    switch (this) {
       case ZegoAudioSampleRate.Unknown:
         return 0;
       case ZegoAudioSampleRate.SampleRate8K:
@@ -23,7 +23,7 @@ extension ZegoAudioSampleRate_ on  ZegoAudioSampleRate {
   }
 
   static ZegoAudioSampleRate fromValue(int value) {
-    switch(value) {
+    switch (value) {
       case 0:
         return ZegoAudioSampleRate.Unknown;
       case 8000:
@@ -46,9 +46,9 @@ extension ZegoAudioSampleRate_ on  ZegoAudioSampleRate {
   }
 }
 
-extension ZegoStreamEvent_ on ZegoStreamEvent {
+extension ZegoStreamEventExtension on ZegoStreamEvent {
   int get value {
-    switch(this) {
+    switch (this) {
       case ZegoStreamEvent.PublishStart:
         return 100;
       case ZegoStreamEvent.PublishSuccess:
@@ -81,7 +81,7 @@ extension ZegoStreamEvent_ on ZegoStreamEvent {
   }
 
   static ZegoStreamEvent fromValue(int value) {
-    switch(value) {
+    switch (value) {
       case 100:
         return ZegoStreamEvent.PublishStart;
       case 101:
