@@ -1,3 +1,5 @@
+// ignore_for_file: library_names
+
 /*
  * @Author: sunboylu
  * @Date: 2021-01-11 19:33:44
@@ -40,8 +42,8 @@ class ZegoFlutterEngine {
 
 @JS()
 @anonymous
-class streamListInfo {
-  external factory streamListInfo({
+class StreamListInfo {
+  external factory StreamListInfo({
     String soundLevel,
     String streamID,
   });

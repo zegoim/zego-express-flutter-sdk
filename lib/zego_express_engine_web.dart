@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:async';
 import 'dart:convert';
 // In order to *not* need this ignore, consider extracting the "web" version
@@ -16,7 +18,7 @@ import 'zego_express_engine.dart';
 /// A web implementation of the ZegoExpressEngineWeb plugin.
 class ZegoExpressEngineWeb {
   dynamic previewView;
-  static StreamController _evenController = StreamController();
+  static final StreamController _evenController = StreamController();
 
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
@@ -205,7 +207,7 @@ class ZegoExpressEngineWeb {
               ZegoUser(
                   streamMap['user']['userID'], streamMap['user']['userName']),
               streamMap['streamID'],
-              streamMap['extraInfo'] == null ? "" : streamMap['extraInfo']);
+              streamMap['extraInfo'] ?? "");
           streamList.add(stream);
         }
         extendedData = {};
@@ -359,14 +361,14 @@ class ZegoExpressEngineWeb {
   }
 
   static Future<void> createEngineWithProfile(dynamic profile) async {
-    final _appID = profile["appID"];
-    final _server = "wss://test.com";
-    Profile _profile = Profile(
-      appID: _appID,
-      server: _server
+    final appID = profile["appID"];
+    const server = "wss://test.com";
+    Profile engineProfile = Profile(
+      appID: appID,
+      server: server
     );
 
-    ZegoFlutterEngine.createEngineWithProfile(_profile);
+    ZegoFlutterEngine.createEngineWithProfile(engineProfile);
   }
 
   Future<void> destroyEngine() {
@@ -375,21 +377,21 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<void> loginRoom(String roomID, dynamic user, dynamic config) async {
+  Future<Map<dynamic, dynamic>> loginRoom(String roomID, dynamic user, dynamic config) async {
 
-    ZegoUserWeb _user = ZegoUserWeb(
+    ZegoUserWeb webUser = ZegoUserWeb(
       userID: user["userID"],
       userName: user["userName"]
     );
-    ZegoRoomConfigWeb _config = ZegoRoomConfigWeb(
+    ZegoRoomConfigWeb webConfig = ZegoRoomConfigWeb(
       maxMemberCount: config["maxMemberCount"],
       token: config["token"],
       isUserStatusNotify: config["isUserStatusNotify"]
     );
 
-    ZegoFlutterEngine.instance.loginRoom(roomID, _user, _config);
+    ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig);
 
-    final map = new Map();
+    final map = {};
     map["errorCode"] = 0;
     map["extendedData"] = "{}";
 
@@ -402,7 +404,7 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> setVideoConfig(dynamic config, int channel) {
-    ZegoWebVideoConfig _config = ZegoWebVideoConfig(
+    ZegoWebVideoConfig webVideoConfig = ZegoWebVideoConfig(
       captureWidth: config["captureWidth"],
       captureHeight: config["captureHeight"],
       fps: config["fps"],
@@ -410,13 +412,13 @@ class ZegoExpressEngineWeb {
       codecID: config["codecID"]
     );
 
-    ZegoFlutterEngine.instance.setVideoConfig(_config, getPublishChannel(channel));
+    ZegoFlutterEngine.instance.setVideoConfig(webVideoConfig, getPublishChannel(channel));
     return Future.value();
   }
 
   Future<Map<dynamic, dynamic>> getVideoConfig(int? channel) async {
     var config = ZegoFlutterEngine.instance.getVideoConfig(getPublishChannel(channel));
-    var map = new Map();
+    var map = {};
      map['captureWidth'] = config.captureWidth;
      map['captureHeight'] = config.captureHeight;
      map['encodeWidth'] = config.captureWidth;
@@ -463,9 +465,9 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<void> sendBroadcastMessage(String roomID, String message) async {
+  Future<Map<dynamic, dynamic>> sendBroadcastMessage(String roomID, String message) async {
     ZegoFlutterEngine.instance.sendBroadcastMessage(roomID, message);
-    final Map<dynamic, dynamic> map = new Map();
+    final Map<dynamic, dynamic> map = {};
     map["errorCode"] = 0;
     map["messageID"] = 0;
 
@@ -496,7 +498,7 @@ class ZegoExpressEngineWeb {
   }
 
   Future<bool> destroyPlatformView(int viewID) {
-    final media = document.getElementById("zego-view-${viewID}");
+    final media = document.getElementById("zego-view-$viewID");
     if (media != null) {
       media.remove();
     } else {
