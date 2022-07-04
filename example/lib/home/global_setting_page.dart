@@ -174,7 +174,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
       needAskSave = true;
     }
     if (!needAskSave && appSign != ZegoConfig.instance.appSign) {
-          needAskSave = true;
+      needAskSave = true;
     }
     if (!needAskSave && ZegoConfig.instance.scenario != this._scenario) {
       needAskSave = true;

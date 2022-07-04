@@ -6,9 +6,11 @@ class ZegoConfig {
 
   int appID = 0;
 
-  String appSign = ""; // Only for native
-  String token =
-      ""; // Token is required for web, native recommends using token but not required
+  // It is for native only, do not use it for web!
+  String appSign = "";
+
+  // It is required for web and is recommended for native but not required.
+  String token = "";
 
   ZegoScenario scenario = ZegoScenario.General;
   bool enablePlatformView = false;
