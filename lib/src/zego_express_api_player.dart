@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
-
   /// Starts playing a stream from ZEGO RTC server or from third-party CDN. Support multi-room mode.
   ///
   /// Available since: 1.1.0
@@ -24,8 +22,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///   3.  If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
   /// - [config] Advanced player configuration.
-  Future<void> startPlayingStream(String streamID, {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
-    return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas: canvas, config: config);
+  Future<void> startPlayingStream(String streamID,
+      {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
+    return await ZegoExpressImpl.instance
+        .startPlayingStream(streamID, canvas: canvas, config: config);
   }
 
   /// Stops playing a stream.
@@ -55,7 +55,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [key] The decryption key, note that the key length only supports 16/24/32 bytes.
   Future<void> setPlayStreamDecryptionKey(String streamID, String key) async {
-    return await ZegoExpressImpl.instance.setPlayStreamDecryptionKey(streamID, key);
+    return await ZegoExpressImpl.instance
+        .setPlayStreamDecryptionKey(streamID, key);
   }
 
   /// Set up cross App playing stream information.
@@ -69,8 +70,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [info] Information for cross App playing stream.
-  Future<void> setPlayStreamCrossAppInfo(String streamID, ZegoCrossAppInfo info) async {
-    return await ZegoExpressImpl.instance.setPlayStreamCrossAppInfo(streamID, info);
+  Future<void> setPlayStreamCrossAppInfo(
+      String streamID, ZegoCrossAppInfo info) async {
+    return await ZegoExpressImpl.instance
+        .setPlayStreamCrossAppInfo(streamID, info);
   }
 
   /// Take a snapshot of the playing stream.
@@ -84,7 +87,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID to be snapshot.
   /// - Returns Results of take play stream snapshot.
-  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(String streamID) async {
+  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(
+      String streamID) async {
     return await ZegoExpressImpl.instance.takePlayStreamSnapshot(streamID);
   }
 
@@ -128,8 +132,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [streamType] Video stream type.
-  Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
-    return await ZegoExpressImpl.instance.setPlayStreamVideoType(streamID, streamType);
+  Future<void> setPlayStreamVideoType(
+      String streamID, ZegoVideoStreamType streamType) async {
+    return await ZegoExpressImpl.instance
+        .setPlayStreamVideoType(streamID, streamType);
   }
 
   /// Set the adaptive adjustment interval range of the buffer for playing stream.
@@ -144,8 +150,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [minBufferInterval] The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms.
   /// - [maxBufferInterval] The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms.
-  Future<void> setPlayStreamBufferIntervalRange(String streamID, int minBufferInterval, int maxBufferInterval) async {
-    return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
+  Future<void> setPlayStreamBufferIntervalRange(
+      String streamID, int minBufferInterval, int maxBufferInterval) async {
+    return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(
+        streamID, minBufferInterval, maxBufferInterval);
   }
 
   /// Set the weight of the pull stream priority.
@@ -275,8 +283,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Related APIs: Set the precise alignment parameter of the stream channel [setStreamAlignmentProperty].
   ///
   /// - [mode] Setting the stream alignment mode.
-  Future<void> setPlayStreamsAlignmentProperty(ZegoStreamAlignmentMode mode) async {
+  Future<void> setPlayStreamsAlignmentProperty(
+      ZegoStreamAlignmentMode mode) async {
     return await ZegoExpressImpl.instance.setPlayStreamsAlignmentProperty(mode);
   }
-
 }

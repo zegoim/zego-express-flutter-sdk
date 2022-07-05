@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
-
   /// Enables or disables custom video capture (for the specified channel).
   ///
   /// Available since: 1.9.0
@@ -21,8 +19,10 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
   /// - [enable] enable or disable
   /// - [config] custom video capture config
   /// - [channel] publish channel
-  Future<void> enableCustomVideoCapture(bool enable, {ZegoCustomVideoCaptureConfig? config, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.enableCustomVideoCapture(enable, config: config, channel: channel);
+  Future<void> enableCustomVideoCapture(bool enable,
+      {ZegoCustomVideoCaptureConfig? config,
+      ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableCustomVideoCapture(enable, config: config, channel: channel);
   }
-
 }

@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineMixer on ZegoExpressEngine {
-
   /// Starts a stream mixing task.
   ///
   /// Available since: 1.2.1
@@ -53,7 +51,8 @@ extension ZegoExpressEngineMixer on ZegoExpressEngine {
   ///
   /// - [task] Auto mix stream task object
   /// - Returns Start auto mix stream task result callback notification
-  Future<ZegoMixerStartResult> startAutoMixerTask(ZegoAutoMixerTask task) async {
+  Future<ZegoMixerStartResult> startAutoMixerTask(
+      ZegoAutoMixerTask task) async {
     return await ZegoExpressImpl.instance.startAutoMixerTask(task);
   }
 
@@ -72,5 +71,4 @@ extension ZegoExpressEngineMixer on ZegoExpressEngine {
   Future<ZegoMixerStopResult> stopAutoMixerTask(ZegoAutoMixerTask task) async {
     return await ZegoExpressImpl.instance.stopAutoMixerTask(task);
   }
-
 }

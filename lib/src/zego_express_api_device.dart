@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineDevice on ZegoExpressEngine {
-
   /// Mutes or unmutes the microphone.
   ///
   /// Available since: 1.1.0
@@ -66,7 +64,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [deviceType] Audio device type
   /// - Returns Audo device List
-  Future<List<ZegoDeviceInfo>> getAudioDeviceList(ZegoAudioDeviceType deviceType) async {
+  Future<List<ZegoDeviceInfo>> getAudioDeviceList(
+      ZegoAudioDeviceType deviceType) async {
     return await ZegoExpressImpl.instance.getAudioDeviceList(deviceType);
   }
 
@@ -89,7 +88,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
-  Future<void> useAudioDevice(ZegoAudioDeviceType deviceType, String deviceID) async {
+  Future<void> useAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
     return await ZegoExpressImpl.instance.useAudioDevice(deviceType, deviceID);
   }
 
@@ -100,8 +100,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
   /// - Returns Device volume
-  Future<int> getAudioDeviceVolume(ZegoAudioDeviceType deviceType, String deviceID) async {
-    return await ZegoExpressImpl.instance.getAudioDeviceVolume(deviceType, deviceID);
+  Future<int> getAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance
+        .getAudioDeviceVolume(deviceType, deviceID);
   }
 
   /// Set volume for the specified audio device.
@@ -111,8 +113,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
   /// - [volume] Device volume
-  Future<void> setAudioDeviceVolume(ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
-    return await ZegoExpressImpl.instance.setAudioDeviceVolume(deviceType, deviceID, volume);
+  Future<void> setAudioDeviceVolume(
+      ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
+    return await ZegoExpressImpl.instance
+        .setAudioDeviceVolume(deviceType, deviceID, volume);
   }
 
   /// Enables or disables the audio capture device.
@@ -151,7 +155,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [defaultToSpeaker] Whether to use the built-in speaker to play sound, `true`: use the built-in speaker to play sound, `false`: use the highest priority audio output device scheduled by the current system to play sound
   Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
-    return await ZegoExpressImpl.instance.setAudioRouteToSpeaker(defaultToSpeaker);
+    return await ZegoExpressImpl.instance
+        .setAudioRouteToSpeaker(defaultToSpeaker);
   }
 
   /// Turns on/off the camera (for the specified channel).
@@ -167,7 +172,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [enable] Whether to turn on the camera, `true`: turn on camera, `false`: turn off camera
   /// - [channel] Publishing stream channel
   Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.enableCamera(enable, channel: channel);
+    return await ZegoExpressImpl.instance
+        .enableCamera(enable, channel: channel);
   }
 
   /// Switches to the front or the rear camera (for the specified channel).
@@ -182,8 +188,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [enable] Whether to use the front camera, `true`: use the front camera, `false`: use the the rear camera.
   /// - [channel] Publishing stream channel
-  Future<void> useFrontCamera(bool enable, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.useFrontCamera(enable, channel: channel);
+  Future<void> useFrontCamera(bool enable,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .useFrontCamera(enable, channel: channel);
   }
 
   /// Whether the camera supports focusing.
@@ -197,7 +205,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [channel] Publishing stream channel
   /// - Returns Whether to support focus, support is true, not support is false.
   Future<bool> isCameraFocusSupported({ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.isCameraFocusSupported(channel: channel);
+    return await ZegoExpressImpl.instance
+        .isCameraFocusSupported(channel: channel);
   }
 
   /// Set the camera focus mode.
@@ -210,8 +219,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [mode] focus mode.
   /// - [channel] Publishing stream channel
-  Future<void> setCameraFocusMode(ZegoCameraFocusMode mode, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setCameraFocusMode(mode, channel: channel);
+  Future<void> setCameraFocusMode(ZegoCameraFocusMode mode,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraFocusMode(mode, channel: channel);
   }
 
   /// Set the focus point in the preview view.
@@ -226,8 +237,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [x] Normalized X axis coordinate value, effective value [0,1].
   /// - [y] Normalized Y axis coordinate value, effective value [0,1].
   /// - [channel] Publishing stream channel
-  Future<void> setCameraFocusPointInPreview(double x, double y, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setCameraFocusPointInPreview(x, y, channel: channel);
+  Future<void> setCameraFocusPointInPreview(double x, double y,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraFocusPointInPreview(x, y, channel: channel);
   }
 
   /// Set the camera exposure mode.
@@ -240,8 +253,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [mode] Exposure mode.
   /// - [channel] Publishing stream channel
-  Future<void> setCameraExposureMode(ZegoCameraExposureMode mode, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setCameraExposureMode(mode, channel: channel);
+  Future<void> setCameraExposureMode(ZegoCameraExposureMode mode,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraExposureMode(mode, channel: channel);
   }
 
   /// Set the exposure point in the preview view.
@@ -256,8 +271,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [x] Normalized X axis coordinate value, effective value [0,1].
   /// - [y] Normalized Y axis coordinate value, effective value [0,1].
   /// - [channel] Publishing stream channel
-  Future<void> setCameraExposurePointInPreview(double x, double y, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setCameraExposurePointInPreview(x, y, channel: channel);
+  Future<void> setCameraExposurePointInPreview(double x, double y,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraExposurePointInPreview(x, y, channel: channel);
   }
 
   /// Set the camera exposure compensation value.
@@ -273,8 +290,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [value] Camera exposure, the value range is [-1,1], the default 0, -1 tends to darken, 1 tends to brighten.
   /// - [channel] Publishing stream channel
-  Future<void> setCameraExposureCompensation(double value, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setCameraExposureCompensation(value, channel: channel);
+  Future<void> setCameraExposureCompensation(double value,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraExposureCompensation(value, channel: channel);
   }
 
   /// Set the zoom factor of the camera. Every time the camera is restarted, the camera zoom factor will return to the initial value (1.0).
@@ -287,8 +306,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [factor] The zoom factor of the camera, the minimum value is 1.0, and the maximum value is the return value of [getCameraMaxZoomFactor].
   /// - [channel] Publishing stream channel
-  Future<void> setCameraZoomFactor(double factor, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setCameraZoomFactor(factor, channel: channel);
+  Future<void> setCameraZoomFactor(double factor,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraZoomFactor(factor, channel: channel);
   }
 
   /// Get the maximum zoom factor of the camera.
@@ -302,7 +323,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [channel] Publishing stream channel
   /// - Returns The maximum zoom factor of the camera.
   Future<double> getCameraMaxZoomFactor({ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.getCameraMaxZoomFactor(channel: channel);
+    return await ZegoExpressImpl.instance
+        .getCameraMaxZoomFactor(channel: channel);
   }
 
   /// Enable camera adaptive frame rate.
@@ -318,8 +340,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// - [minFPS] Desired minimum frame rate, 15 recommended. Unit: fps.
   /// - [maxFPS] Desired minimum frame rate, 25 recommended. Unit: fps.
   /// - [channel] Publishing stream channel.
-  Future<void> enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
-    return await ZegoExpressImpl.instance.enableCameraAdaptiveFPS(enable, minFPS, maxFPS, channel);
+  Future<void> enableCameraAdaptiveFPS(
+      bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance
+        .enableCameraAdaptiveFPS(enable, minFPS, maxFPS, channel);
   }
 
   /// Starts sound level monitoring. Support enable some advanced feature.
@@ -334,7 +358,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [config] Configuration for starts the sound level monitor.
   Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {
-    return await ZegoExpressImpl.instance.startSoundLevelMonitor(config: config);
+    return await ZegoExpressImpl.instance
+        .startSoundLevelMonitor(config: config);
   }
 
   /// Stops sound level monitoring.
@@ -357,7 +382,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
   Future<void> startAudioSpectrumMonitor({int? millisecond}) async {
-    return await ZegoExpressImpl.instance.startAudioSpectrumMonitor(millisecond: millisecond);
+    return await ZegoExpressImpl.instance
+        .startAudioSpectrumMonitor(millisecond: millisecond);
   }
 
   /// Stops audio spectrum monitoring.
@@ -409,8 +435,11 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [type] audio VAD monitor type.
   /// - [millisecond] monitoring period
-  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type, {int? millisecond}) async {
-    return await ZegoExpressImpl.instance.startAudioVADStableStateMonitor(type, millisecond: millisecond);
+  Future<void> startAudioVADStableStateMonitor(
+      ZegoAudioVADStableStateMonitorType type,
+      {int? millisecond}) async {
+    return await ZegoExpressImpl.instance
+        .startAudioVADStableStateMonitor(type, millisecond: millisecond);
   }
 
   /// Stop audio VAD stable state monitoring.
@@ -422,8 +451,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Related APIs: [startAudioVADStableStateMonitor].
   ///
   /// - [type] audio VAD monitor type.
-  Future<void> stopAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type) async {
+  Future<void> stopAudioVADStableStateMonitor(
+      ZegoAudioVADStableStateMonitorType type) async {
     return await ZegoExpressImpl.instance.stopAudioVADStableStateMonitor(type);
   }
-
 }

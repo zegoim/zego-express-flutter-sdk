@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineRangeAudio on ZegoExpressEngine {
-
   /// Creates a range audio instance.
   ///
   /// Available since: 2.11.0
@@ -30,5 +28,4 @@ extension ZegoExpressEngineRangeAudio on ZegoExpressEngine {
   Future<void> destroyRangeAudio(ZegoRangeAudio rangeAudio) async {
     return await ZegoExpressImpl.instance.destroyRangeAudio(rangeAudio);
   }
-
 }

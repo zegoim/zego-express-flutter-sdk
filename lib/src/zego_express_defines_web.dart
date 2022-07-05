@@ -89,16 +89,12 @@ class ZegoRoomConfigWeb {
   external bool get isUserStatusNotify;
   external String get token;
 }
+
 @JS()
 @anonymous
-class ZegoWebVideoConfig{
-  external factory ZegoWebVideoConfig({
-    int captureWidth,
-    int captureHeight,
-    int fps,
-    int bitrate,
-    int codecID
-  });
+class ZegoWebVideoConfig {
+  external factory ZegoWebVideoConfig(
+      {int captureWidth, int captureHeight, int fps, int bitrate, int codecID});
 
   external int get captureWidth;
   external int get captureHeight;
