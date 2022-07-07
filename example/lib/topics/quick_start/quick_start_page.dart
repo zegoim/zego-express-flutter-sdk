@@ -125,8 +125,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('🔌 Start preview, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
-      if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
+    if (Platform.isIOS || Platform.isAndroid || kIsWeb || Platform.isWindows) {
+      if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
         // Render with PlatformView
         setState(() {
           _previewViewWidget =
@@ -180,8 +180,8 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
-      if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
+    if (Platform.isIOS || Platform.isAndroid || kIsWeb || Platform.isWindows) {
+      if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
         // Render with PlatformView
         setState(() {
           _playViewWidget =
@@ -293,7 +293,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPreviewView() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb && !Platform.isWindows) return;
 
     if (_previewViewWidget == null) {
       return;
@@ -301,7 +301,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
     // Developers should destroy the [PlatformView] or [TextureRenderer] after
     // [stopPublishingStream] or [stopPreview] to release resource and avoid memory leaks
-    if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
+    if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
       ZegoExpressEngine.instance.destroyPlatformView(_previewViewID);
     } else {
       ZegoExpressEngine.instance.destroyTextureRenderer(_previewViewID);
@@ -310,7 +310,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPlayView() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb && !Platform.isWindows) return;
 
     if (_playViewWidget == null) {
       return;
@@ -318,7 +318,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
     // Developers should destroy the [PlatformView] or [TextureRenderer]
     // after [stopPlayingStream] to release resource and avoid memory leaks
-    if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
+    if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
       ZegoExpressEngine.instance.destroyPlatformView(_playViewID);
     } else {
       ZegoExpressEngine.instance.destroyTextureRenderer(_playViewID);

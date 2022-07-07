@@ -2,8 +2,9 @@
 
 #include <flutter/method_channel.h>
 #include <flutter/encodable_value.h>
-
+#include <flutter/plugin_registrar_windows.h>
 #include <ZegoExpressSDK.h>
+
 using namespace ZEGO;
 
 class ZegoExpressEngineMethodHandler
@@ -17,6 +18,11 @@ public:
         return m_instance;
     }
 
+    void setPluginRegistrar(flutter::PluginRegistrarWindows *registrar)
+    {
+        registrar_ = registrar;
+    }
+    
 public:
     void getVersion(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -337,6 +343,11 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicStopScore(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+    void createTextureRenderer(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void destroyTextureRenderer(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 private:
     ZegoExpressEngineMethodHandler() = default;
 
@@ -344,4 +355,6 @@ private:
     std::unordered_map<int, EXPRESS::IZegoAudioEffectPlayer *> audioEffectPlayerMap_;
     std::unordered_map<int, EXPRESS::IZegoMediaPlayer *> mediaPlayerMap_;
     EXPRESS::IZegoCopyrightedMusic* copyrightedMusic_ = nullptr;
+
+    flutter::PluginRegistrarWindows *registrar_;
 };

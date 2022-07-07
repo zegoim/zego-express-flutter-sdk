@@ -1,9 +1,11 @@
 #include "ZegoExpressEngineMethodHandler.h"
 #include "ZegoExpressEngineEventHandler.h"
+#include "ZegoTextureRendererController.h"
 
 #include <variant>
 #include <functional>
 #include <flutter/encodable_value.h>
+#include <flutter/plugin_registrar_windows.h>
 
 #include <Windows.h>
 
@@ -59,6 +61,8 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
         engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
         EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
+
+        ZegoTextureRendererController::getInstance()->init();
     }
     result->Success();
 }
@@ -69,6 +73,7 @@ void ZegoExpressEngineMethodHandler::destroyEngine(flutter::EncodableMap& argume
     auto engine = EXPRESS::ZegoExpressSDK::getEngine();
 
     if (engine) {
+        ZegoTextureRendererController::getInstance()->uninit();
         auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
         EXPRESS::ZegoExpressSDK::destroyEngine(engine, [=]() {
             sharedPtrResult->Success();
@@ -303,6 +308,17 @@ void ZegoExpressEngineMethodHandler::startPreview(flutter::EncodableMap& argumen
 {
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
+    flutter::EncodableMap canvasMap;
+    if (std::holds_alternative<flutter::EncodableMap>(argument[FTValue("canvas")])) {
+        canvasMap = std::get<flutter::EncodableMap>(argument[FTValue("canvas")]);
+    }
+
+    EXPRESS::ZegoCanvas canvas;
+    if (canvasMap.size() > 0) {
+        auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
+        auto viewID = canvasMap[FTValue("view")].LongValue();
+        ZegoTextureRendererController::getInstance()->addCapturedRenderer(viewID, (EXPRESS::ZegoPublishChannel)channel, viewMode);
+    }
     EXPRESS::ZegoExpressSDK::getEngine()->startPreview(nullptr, (EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
@@ -312,7 +328,8 @@ void ZegoExpressEngineMethodHandler::stopPreview(flutter::EncodableMap& argument
 {
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
     EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
-
+    ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
+        (EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 
@@ -426,6 +443,17 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& a
 {
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
+       flutter::EncodableMap canvasMap;
+    if (std::holds_alternative<flutter::EncodableMap>(argument[FTValue("canvas")])) {
+        canvasMap = std::get<flutter::EncodableMap>(argument[FTValue("canvas")]);
+    }
+
+    EXPRESS::ZegoCanvas canvas;
+    if (canvasMap.size() > 0) {
+        auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
+        auto viewID = canvasMap[FTValue("view")].LongValue();
+        ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
+    }
 
     flutter::EncodableMap configMap;
     if (std::holds_alternative<flutter::EncodableMap>(argument[FTValue("config")])) {
@@ -475,6 +503,7 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(flutter::EncodableMap& ar
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
+    ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
 
     result->Success();
 }
@@ -2431,4 +2460,25 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicStopScore(flutter::Encodabl
     {
         result->Error("copyrightedMusicStopScore_Can_not_find_instance", "Invoke `copyrightedMusicStopScore` but can't find specific instance");
     }
+}
+
+
+void ZegoExpressEngineMethodHandler::createTextureRenderer(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto width = std::get<int32_t>(argument[FTValue("width")]);
+    auto height = std::get<int32_t>(argument[FTValue("height")]);
+
+    auto textureID = ZegoTextureRendererController::getInstance()->createTextureRenderer(registrar_->texture_registrar(), width, height);
+
+    result->Success(FTValue(textureID));
+}
+
+void ZegoExpressEngineMethodHandler::destroyTextureRenderer(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto textureID = argument[FTValue("textureID")].LongValue();
+    bool state = ZegoTextureRendererController::getInstance()->destroyTextureRenderer(textureID);
+
+    result->Success(FTValue(state));
 }

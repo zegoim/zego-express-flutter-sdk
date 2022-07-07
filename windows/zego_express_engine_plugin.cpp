@@ -173,7 +173,11 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
        {"copyrightedMusicResumeScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicResumeScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"copyrightedMusicSendExtendedRequest", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"copyrightedMusicStartScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStartScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
-       {"copyrightedMusicStopScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStopScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)}
+       {"copyrightedMusicStopScore", std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStopScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+    
+        // textureRenderer 
+       {"createTextureRenderer", std::bind(&ZegoExpressEngineMethodHandler::createTextureRenderer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"destroyTextureRenderer", std::bind(&ZegoExpressEngineMethodHandler::destroyTextureRenderer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)}
     };
 
 class ZegoExpressEnginePlugin : public flutter::Plugin, public flutter::StreamHandler<flutter::EncodableValue> {
@@ -209,6 +213,8 @@ private:
 
 // static
 void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
+    ZegoExpressEngineMethodHandler::getInstance().setPluginRegistrar(registrar);
+
     auto methodChannel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>
       (registrar->messenger(), "plugins.zego.im/zego_express_engine", &flutter::StandardMethodCodec::GetInstance());
 
