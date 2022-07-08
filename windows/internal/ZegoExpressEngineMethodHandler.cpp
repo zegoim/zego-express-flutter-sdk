@@ -129,6 +129,15 @@ void ZegoExpressEngineMethodHandler::setLogConfig(flutter::EncodableMap& argumen
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setRoomMode(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto mode = (EXPRESS::ZegoRoomMode)std::get<int32_t>(argument[FTValue("mode")]);
+    EXPRESS::ZegoExpressSDK::setRoomMode(mode);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::uploadLog(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
