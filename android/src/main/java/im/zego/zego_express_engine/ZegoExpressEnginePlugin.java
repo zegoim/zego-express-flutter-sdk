@@ -163,10 +163,10 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             result.notImplemented();
         } catch (IllegalAccessException e) {
             ZegoLog.log("[DartCall] [IllegalAccessException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
-            result.notImplemented();
+            result.error("IllegalAccessException", String.format("[%s] %s", call.method, e.getMessage()), null);
         } catch (InvocationTargetException e) {
             ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
-            result.notImplemented();
+            result.error("InvocationTargetException", String.format("[%s] %s", call.method, e.getMessage()), null);
         }
     }
 
