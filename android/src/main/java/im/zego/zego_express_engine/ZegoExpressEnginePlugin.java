@@ -165,8 +165,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             ZegoLog.log("[DartCall] [IllegalAccessException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
             result.error("IllegalAccessException", String.format("[%s] %s", call.method, e.getMessage()), null);
         } catch (InvocationTargetException e) {
-            ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s", call.method, e.getMessage(), getStackTrace(e));
-            result.error("InvocationTargetException", String.format("[%s] %s", call.method, e.getMessage()), null);
+            Throwable t = e.getTargetException();
+            ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s | %s", call.method, t.getCause(), t.getMessage(), getStackTrace(t));
+            result.error("InvocationTargetException", String.format("[%s] %s", call.method, t.getMessage()), null);
         }
     }
 
