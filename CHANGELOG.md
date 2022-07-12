@@ -1,5 +1,65 @@
 # Change Log
 
+## 2.21.0
+
+### **New Features**
+
+1. It supports web now.
+
+    Now it supports the web, which will be different from other platforms in use. Some interface functions are not supported by the web. At present, the web supports basic functions
+
+2. Range voice supports custom distance update frequency.
+
+    The default distance update frequency of the SDK is changed from 1s to 100ms, which can basically meet the smooth attenuation effect for most developers when using range voice, optimize the experience of sound attenuation when using range voice, and achieve a smoother and more natural attenuation effect.
+
+    If you want to better match the actual business demand, you can call the [setPositionUpdateFrequency] interface to modify the frequency by yourself.
+
+    For related API, please refer to [setPositionUpdateFrequency]()
+
+3. Support setting the low-light enhancement.
+
+    Note: The [setLowlightEnhancement] interface should be called after calling the [createEngine] interface to create an engine.
+
+    When the surrounding environment of the stream-publishing user is dark, or the frame rate set by the camera is high, resulting in a dark live broadcast screen, and the subject cannot be displayed or recognized normally, you can call the [setLowlightEnhancement] interface to set the low-light enhancement to increase the brightness of the video screen. The low-light enhancement function includes three modes: 1: Disable the low-light enhancement (default), 2: Enable the low-light enhancement, 3: Automatically switch on/off the low-light enhancement.
+
+    You can choose different low-light enhancement modes according to business scenarios: when you want to judge whether the low-light enhancement is needed, you can switch between modes 1 and 2; when you want the SDK to automatically enhance the brightness, you can enable the mode 3, and the SDK will automatically determine the lighting environment where the user is in, and turn on or off the low-light enhancement.
+
+    For related API, please refer to [setLowlightEnhancement]()
+
+4. Support setting video borders to rounded corners when mixing streams.
+
+    When calling the [startMixerTask] interface to mix streams, you can set the "cornerRadius" through the "ZegoMixerInput" class to turn the video border to rounded corners. The unit of "cornerRadius" is px, and the value cannot exceed the half of the width or the height of video screen, which is shorter.
+
+    For related API, please refer to [startMixerTask]()
+
+5. Add the CDN Plus playing configuration to the startPlayingStream interface.
+
+    Note: If you want to control the stream-playing mode from the cloud by more criteria such as region and user, please contact ZEGO technical support for related configuration.
+
+    The [startPlayingStream] interface adds CDN_PLUS as a new ZegoResourceType. interface. You can enable CDN_PLUS to play stream by yourself based on to the stream critirion. The CDN Plus stream-playing is a cost-effective method, because its quality is higher than CDN stream-playing with similar price.
+
+    For related API, please refer to [startPlayingStream]()
+
+### **Enhancements**
+
+1. Optimize the related error codes of Token exceptions when mandatory login authentication is enabled.
+
+    Added 1002074, 1002075, 1002076, 1002077, 1002078, 1002079, 1002080 and other error codes. After enabling mandatory login authentication, if the Token is incorrect, these error codes will be returned. For details, please refer to Error codes.
+
+2. Optimized the alignment between vocal and accompaniment for real-time chorus scenario.
+
+    The alignment between vocal and accompaniment for real-time chorus scenario is optimized. Therefore，you can avoid the unaligned streams of vocal and accompaniment caused by the delay of device playback when the client publishes the two streams at the same time.
+
+### **Bug Fixes**
+
+1. Fixed an issue where [onStop] callbacks would be triggered repeatedly when external filters are turned off.
+
+2. Fixed an issue where play stream with L3 failed.
+
+    Fixed the issue that when the 2.20.0 ~ 2.20.2 SDK uses L3 to play streams, if the played-stream is the stream which is published by the SDK of 2.15.0 and earlier versions, it may fail.
+
+3. Fixed some bug about Custom Audio IO
+
 ## 2.21.0-prerelease.1
 
 ### **New Features**
