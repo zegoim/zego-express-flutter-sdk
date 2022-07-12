@@ -421,6 +421,17 @@ void ZegoExpressEngineMethodHandler::enableHardwareEncoder(flutter::EncodableMap
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setLowlightEnhancement(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto mode = std::get<int32_t>(argument[FTValue("mode")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setLowlightEnhancement((EXPRESS::ZegoLowlightEnhancementMode)mode, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -1827,6 +1838,10 @@ void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argum
             auto imageInfoMap = std::get<flutter::EncodableMap>(inputMap[FTValue("imageInfo")]);
             auto url = std::get<std::string>(imageInfoMap[FTValue("url")]);
             input.imageInfo = EXPRESS::ZegoMixerImageInfo(url);
+        }
+
+        if (!inputMap[FTValue("cornerRadius")].IsNull()) {
+            input.cornerRadius = std::get<int32_t>(inputMap[FTValue("cornerRadius")]);
         }
 
         task.inputList.push_back(input);

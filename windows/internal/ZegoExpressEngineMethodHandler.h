@@ -72,6 +72,9 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableHardwareEncoder(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setLowlightEnhancement(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void startPlayingStream(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopPlayingStream(flutter::EncodableMap& argument,

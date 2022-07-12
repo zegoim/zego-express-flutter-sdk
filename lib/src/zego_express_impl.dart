@@ -10,7 +10,7 @@ import 'zego_express_enum_extension.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.20.2";
+  static String pluginVersion = "2.21.0";
 }
 
 class ZegoExpressImpl {
@@ -477,6 +477,14 @@ class ZegoExpressImpl {
   Future<bool> isVideoEncoderSupported(ZegoVideoCodecID codecID) async {
     return await _channel
         .invokeMethod('isVideoEncoderSupported', {'codecID': codecID.index});
+  }
+
+  Future<void> setLowlightEnhancement(ZegoLowlightEnhancementMode mode,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setLowlightEnhancement', {
+      'mode': mode.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   /* Player */
@@ -2855,6 +2863,12 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   Future<void> muteUser(String userID, bool mute) async {
     return await ZegoExpressImpl._channel
         .invokeMethod('rangeAudioMuteUser', {'userID': userID, 'mute': mute});
+  }
+
+  @override
+  Future<void> setPositionUpdateFrequency(int frequency) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'rangeAudioSetPositionUpdateFrequency', {'frequency': frequency});
   }
 }
 

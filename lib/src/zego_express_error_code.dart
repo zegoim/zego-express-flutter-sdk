@@ -206,6 +206,27 @@ class ZegoErrorCode {
   /// Description: Room signalling type interfaces are called more frequently than the upper limit. <br>Cause: This application calls the room signalling type interface too often. (e.g., [sendCustomCommand] [sendBroadcastMessage]) <br>Solutions: Please control the frequency of application calls to the room signalling type interface. Please refer to https://docs.zegocloud.com/article/7612 for details.
   static const int RoomAppCallTooFrequent = 1002073;
 
+  /// Description: Token inner error. <br>Cause:  Unknown internal error. <br>Solutions: Contact ZEGO technical support to deal with it..
+  static const int RoomTokenInnerError = 1002074;
+
+  /// Description: Token Format error. <br>Cause: The generated Token transmission parameter payload is in non-JSON format. <br>Solutions: The payload is correctly transmitted in json format when the Token is generated.
+  static const int RoomTokenFormatError = 1002075;
+
+  /// Description: Token Appid error. <br>Cause: The generated Token Appid is inconsistent with the SDK used Appid, Or the appID type is incorrect. <br>Solutions: Use the Appid of the generated Token.
+  static const int RoomTokenAppidError = 1002076;
+
+  /// Description: Token userID error. <br>Cause: The generated Token userID is inconsistent with the login used userID Or the userID type is incorrect. <br>Solutions: Login using the userID that generates the Token.
+  static const int RoomTokenUseridError = 1002077;
+
+  /// Description: Token expire. <br>Cause: Token expire Or the generated Token validity period parameter type is incorrect. <br>Solutions: Regenerate the Token.
+  static const int RoomTokenExpireError = 1002078;
+
+  /// Description: Token version error. <br>Cause: Description The Token Version was generated incorrectly. <br>Solutions: Generate the Token with the correct version.
+  static const int RoomTokenVersionError = 1002079;
+
+  /// Description: The Token Nonce parameter type is incorrect. <br>Cause: The nonce parameter type of the generated Token is incorrect. <br>Solutions: Ensure that nonce is int64 data.
+  static const int RoomTokenNoncetypeError = 1002080;
+
   /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError = 1002099;
 
@@ -897,4 +918,10 @@ class ZegoErrorCode {
 
   /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicInnerError = 1017099;
+
+  /// Description: SDK internal return null pointer.
+  static const int AudioVADClientInnerNullptr = 1018000;
+
+  /// Description: The function call failed. <br>Cause: No audio vad instance has been created. <br>Solutions: Create a audio vad instance.
+  static const int AudioVADClientNoInstance = 1018001;
 }

@@ -48,6 +48,8 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
        {"sendSEI", std::bind(&ZegoExpressEngineMethodHandler::sendSEI, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"sendAudioSideInfo", std::bind(&ZegoExpressEngineMethodHandler::sendAudioSideInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"enableHardwareEncoder", std::bind(&ZegoExpressEngineMethodHandler::enableHardwareEncoder, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setLowlightEnhancement", std::bind(&ZegoExpressEngineMethodHandler::setLowlightEnhancement, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       
        {"startPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::startPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"stopPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::stopPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"setPlayStreamCrossAppInfo", std::bind(&ZegoExpressEngineMethodHandler::setPlayStreamCrossAppInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
