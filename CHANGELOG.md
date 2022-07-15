@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.21.1
+
+### **Bug Fixes**
+
+1. Fixed the problem of sending SEI failed in pure audio scene.
+
 ## 2.21.0
 
 ### **New Features**
