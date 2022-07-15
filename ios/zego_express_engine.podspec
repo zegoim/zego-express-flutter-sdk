@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.version          = '2.21.1'
   s.summary          = 'Zego Express Audio/Video Live SDK for Flutter'
   s.description      = <<-DESC
-ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZegoExpressEngine native Android / iOS SDK, providing live video and real-time audio/video services.
+ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZEGO Express RTC SDK (Native & Web), providing live video and real-time audio/video services.
                        DESC
   s.homepage         = 'https://zego.im'
   s.license          = { :file => '../LICENSE' }
