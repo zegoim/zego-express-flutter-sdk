@@ -7,6 +7,7 @@
 //
 
 #import "ZegoTextureRenderer.h"
+#import "ZegoEffectsPixelBufferHelper.h"
 #import "ZegoLog.h"
 #import <libkern/OSAtomic.h>
 
@@ -15,7 +16,7 @@
 @interface ZegoTextureRenderer ()
 
 @property (nonatomic, weak) id<FlutterTextureRegistry> registry;
-@property (nonatomic, strong) EAGLContext *context;
+@property (nonatomic, strong) ZGGLContext *context;
 @property (nonatomic, strong) dispatch_semaphore_t lock;
 
 @end
@@ -31,14 +32,14 @@
     dispatch_queue_t m_opengl_queue;
     GLfloat m_lstVertices[8];
     GLfloat m_lstTexCoord[8];
-    CVOpenGLESTextureCacheRef m_pTexCache;
+    ZGCVOpenGLTextureCacheRef m_pTexCache;
     GLuint m_hProgram;
     GLuint m_hVertexShader;
     GLuint m_hFragShader;
     GLuint m_framebuffer;
     int m_nFrameUniform;
     CVPixelBufferPoolRef m_buffer_pool;
-    CVOpenGLESTextureRef m_output_texture;
+    ZGCVOpenGLTextureRef m_output_texture;
     GLint m_position;
     GLint m_texcoord;
     ZegoViewMode m_view_mode;
@@ -99,8 +100,11 @@
     dispatch_async(m_opengl_queue, ^{
 
       [self releasePixelBuffer];
-
+#if TARGET_OS_IPHONE
       [EAGLContext setCurrentContext:self.context];
+#elif TARGET_OS_OSX
+      [self.context makeCurrentContext];
+#endif
 
       if (self->m_pInputFrameBuffer) {
           CVBufferRelease(self->m_pInputFrameBuffer);
@@ -287,20 +291,43 @@
     m_lstTexCoord[6] = 1.0;
     m_lstTexCoord[7] = 1.0;
 
-    //初始化context
+#if TARGET_OS_IPHONE
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (self.context == nil) {
         self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     }
 
     [EAGLContext setCurrentContext:self.context];
+#elif TARGET_OS_OSX
+    NSOpenGLPixelFormatAttribute attributes[] = {
+        NSOpenGLProfileVersion4_1Core,
+        NSOpenGLPFAAllRenderers,
+        NSOpenGLPFADoubleBuffer,
+        NSOpenGLPFADepthSize,
+        24,
+        NSOpenGLPFAAllowOfflineRenderers,
+        NSOpenGLPFAOpenGLProfile,
+        0
+    };
+
+    NSOpenGLPixelFormat *format = [[NSOpenGLPixelFormat alloc] initWithAttributes:attributes];
+    NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:format shareContext:nil];
+    self.context = context;
+    [context makeCurrentContext];
+#endif
 
     // * disable depth test
     glDisable(GL_DEPTH_TEST);
 
     // * create our texture cache
+#if TARGET_OS_IPHONE
     CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, self.context, NULL, &m_pTexCache);
     //CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, self.context, NULL, &m_pTexCache2);
+#elif TARGET_OS_OSX
+    CVOpenGLTextureCacheCreate(kCFAllocatorDefault,NULL, [context CGLContextObj],
+                               [[[NSOpenGLContext currentContext] pixelFormat] CGLPixelFormatObj],
+                               NULL, &m_pTexCache);
+#endif
     // * create our program
     m_hProgram = glCreateProgram();
 
@@ -439,7 +466,11 @@
 
 - (void)processingData {
 
+#if TARGET_OS_IPHONE
     [EAGLContext setCurrentContext:self.context];
+#elif TARGET_OS_OSX
+    
+#endif
 
     /* 销毁上一帧的texture缓存 */
     if (m_output_texture) {
@@ -467,20 +498,28 @@
     CVPixelBufferRef processBuffer = [self getCurrentProcessBuffer];
 
     /* create input frame texture from sdk */
-    CVOpenGLESTextureRef texture_input = NULL;
-    [self createTexture:&texture_input FromPixelBuffer:readInputBuffer];
+    ZGCVOpenGLTextureRef texture_input = NULL;
+//    [self createTexture:&texture_input FromPixelBuffer:readInputBuffer];
+    [ZegoEffectsPixelBufferHelper createTexture:&texture_input fromPixelBuffer:readInputBuffer cache:m_pTexCache];
 
     //create output frame texture to flutter
-    [self createTexture:&m_output_texture FromPixelBuffer:processBuffer];
+//    [self createTexture:&m_output_texture FromPixelBuffer:processBuffer];
+    [ZegoEffectsPixelBufferHelper createTexture:&m_output_texture fromPixelBuffer:processBuffer cache:m_pTexCache];
 
     if (texture_input && m_output_texture) {
 
         //Bind
+#if TARGET_OS_IPHONE
         glBindTexture(CVOpenGLESTextureGetTarget(m_output_texture),
                       CVOpenGLESTextureGetName(m_output_texture));
         glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                CVOpenGLESTextureGetName(m_output_texture), 0);
+#elif TARGET_OS_OSX
+    
+#endif
+        
+        
 
         glViewport(0, 0, self.viewWidth, self.viewHeight);
 
@@ -489,8 +528,12 @@
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(m_hProgram);
 
+#if TARGET_OS_IPHONE
         glBindTexture(CVOpenGLESTextureGetTarget(texture_input),
                       CVOpenGLESTextureGetName(texture_input));
+#elif TARGET_OS_OSX
+    
+#endif
         glUniform1i(m_nFrameUniform, 0);
 
         glEnableVertexAttribArray(m_position);
@@ -543,28 +586,28 @@
 
 #pragma mark OpenGL Methods
 
-- (void)createTexture:(CVOpenGLESTextureRef *)texture
-      FromPixelBuffer:(CVPixelBufferRef)pixelBuffer {
-    int width = (int)CVPixelBufferGetWidth(pixelBuffer);
-    int height = (int)CVPixelBufferGetHeight(pixelBuffer);
-
-    CVReturn err = CVOpenGLESTextureCacheCreateTextureFromImage(
-        kCFAllocatorDefault, m_pTexCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_RGBA, (GLsizei)width,
-        (GLsizei)height, GL_BGRA, GL_UNSIGNED_BYTE, 0, texture);
-    if (err != kCVReturnSuccess) {
-        CFRelease(*texture);
-        return;
-    }
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(CVOpenGLESTextureGetTarget(*texture), CVOpenGLESTextureGetName(*texture));
-
-    // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
+//- (void)createTexture:(ZGCVOpenGLTextureRef *)texture
+//      FromPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+//    int width = (int)CVPixelBufferGetWidth(pixelBuffer);
+//    int height = (int)CVPixelBufferGetHeight(pixelBuffer);
+//
+//    CVReturn err = CVOpenGLESTextureCacheCreateTextureFromImage(
+//        kCFAllocatorDefault, m_pTexCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_RGBA, (GLsizei)width,
+//        (GLsizei)height, GL_BGRA, GL_UNSIGNED_BYTE, 0, texture);
+//    if (err != kCVReturnSuccess) {
+//        CFRelease(*texture);
+//        return;
+//    }
+//
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(CVOpenGLESTextureGetTarget(*texture), CVOpenGLESTextureGetName(*texture));
+//
+//    // Set texture parameters
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//}
 
 - (void)createPixelBufferPool:(CVPixelBufferPoolRef *)pool width:(int)width height:(int)height {
     NSDictionary *pixelBufferAttributes = [NSDictionary

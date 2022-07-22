@@ -16,7 +16,10 @@
 
 @property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer *> *capturedRenderers;
 @property (strong) NSMutableDictionary<NSString *, ZegoTextureRenderer *> *remoteRenderers;
+#if TARGET_OS_IPHONE
 @property (readonly, nonatomic) CADisplayLink *displayLink;
+#elif TARGET_OS_OSX
+#endif
 @property (nonatomic, assign) BOOL isRendering;
 @property (nonatomic, assign) BOOL isInited;
 
@@ -228,7 +231,8 @@
     if (self.isRendering) {
         return;
     }
-
+    
+#if TARGET_OS_IPHONE
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 
@@ -241,6 +245,9 @@
     }
 
     _displayLink.paused = NO;
+    
+#elif TARGET_OS_OSX
+#endif
 
     self.isRendering = YES;
 }
@@ -252,8 +259,11 @@
 
     // TODO: 暂时先限定死只有在所有renderer都不存在时，停止渲染才成功
     if (self.capturedRenderers.count == 0 && self.remoteRenderers.count == 0) {
+#if TARGET_OS_IPHONE
         self.displayLink.paused = YES;
         [_displayLink invalidate];
+#elif TARGET_OS_OSX
+#endif
 
         self.isRendering = NO;
     }
@@ -267,6 +277,7 @@
     [self.allRenderers removeAllObjects];
 }
 
+#if TARGET_OS_IPHONE
 - (void)onDisplayLink:(CADisplayLink *)link {
 
     // Render local
@@ -287,6 +298,8 @@
         [renderer notifyDrawNewFrame];
     }
 }
+#elif TARGET_OS_OSX
+#endif
 
 #pragma mark - ZegoCustomVideoRenderHandler
 

@@ -297,7 +297,7 @@
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
-    } 
+    }
 
     [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
             NSString *extendedDataJsonString = @"{}";
@@ -611,7 +611,7 @@
 }
 
 - (void)setAppOrientation:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int orientation = [ZegoUtils intValue:call.arguments[@"orientation"]];
     UIInterfaceOrientation  uiOrientation = UIInterfaceOrientationUnknown;
     switch (orientation) {
@@ -633,8 +633,9 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setAppOrientation:uiOrientation channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
+
 }
 
 - (void)setAudioConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -680,7 +681,7 @@
 }
 
 - (void)takePublishStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, UIImage * _Nullable image) {
@@ -698,6 +699,7 @@
             });
         });
     } channel:(ZegoPublishChannel)channel];
+#endif
 }
 
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -853,6 +855,7 @@
         int right = [ZegoUtils intValue:watermarkMap[@"right"]];
         CGRect rect = CGRectMake(left, top, right - left, bottom - top);
 
+#if TARGET_OS_IPHONE
         NSString *flutterAssetPrefix = @"flutter-asset://";
         if ([imageURL hasPrefix:flutterAssetPrefix]) {
             NSString *assetName = [imageURL substringFromIndex:flutterAssetPrefix.length];
@@ -866,6 +869,7 @@
                 imageURL = processedURL;
             }
         }
+#endif
 
         watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
     }
@@ -1102,7 +1106,7 @@
 }
 
 - (void)takePlayStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     NSString *streamID = call.arguments[@"streamID"];
 
     [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, UIImage * _Nullable image) {
@@ -1120,6 +1124,7 @@
             });
         });
     }];
+#endif
 }
 
 - (void)setPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1667,7 +1672,7 @@
 }
 
 - (void)setBuiltInSpeakerOn:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
 
 #pragma clang diagnostic push
@@ -1676,22 +1681,25 @@
 #pragma clang diagnostic pop
 
     result(nil);
+#endif
 }
 
 - (void)setAudioRouteToSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     BOOL defaultToSpeaker = [ZegoUtils boolValue:call.arguments[@"defaultToSpeaker"]];
 
     [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:defaultToSpeaker];
 
     result(nil);
+#endif
 }
 
 - (void)getAudioRouteType:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     ZegoAudioRoute type = [[ZegoExpressEngine sharedEngine] getAudioRouteType];
 
     result(@(type));
+#endif
 }
 
 - (void)enableCamera:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1705,36 +1713,39 @@
 }
 
 - (void)useFrontCamera:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] useFrontCamera:enable channel:(ZegoPublishChannel)channel];
 
     result(nil);
+#endif
 }
 
 - (void)isCameraFocusSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     BOOL supported = [[ZegoExpressEngine sharedEngine] isCameraFocusSupported:(ZegoPublishChannel)channel];
 
     result(@(supported));
+#endif
 }
 
 - (void)setCameraFocusMode:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int model = [ZegoUtils intValue:call.arguments[@"mode"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraFocusMode:(ZegoCameraFocusMode)model channel:(ZegoPublishChannel)channel];
 
     result(nil);
+#endif
 }
 
 - (void)setCameraFocusPointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float x = [ZegoUtils floatValue:call.arguments[@"x"]];
     float y = [ZegoUtils floatValue:call.arguments[@"y"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
@@ -1742,20 +1753,22 @@
     [[ZegoExpressEngine sharedEngine] setCameraFocusPointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
 
     result(nil);
+#endif
 }
 
 - (void)setCameraExposureMode:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int model = [ZegoUtils intValue:call.arguments[@"mode"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposureMode:(ZegoCameraExposureMode)model channel:(ZegoPublishChannel)channel];
 
     result(nil);
+#endif
 }
 
 - (void)setCameraExposurePointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float x = [ZegoUtils floatValue:call.arguments[@"x"]];
     float y = [ZegoUtils floatValue:call.arguments[@"y"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
@@ -1763,35 +1776,39 @@
     [[ZegoExpressEngine sharedEngine] setCameraExposurePointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
 
     result(nil);
+#endif
 }
 
 - (void)setCameraExposureCompensation:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float value = [ZegoUtils floatValue:call.arguments[@"value"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposureCompensation:value channel:channel];
 
     result(nil);
+#endif
 }
 
 - (void)setCameraZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float factor = [ZegoUtils floatValue:call.arguments[@"factor"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraZoomFactor:factor channel:channel];
 
     result(nil);
+#endif
 }
 
 - (void)getCameraMaxZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     float factor = [[ZegoExpressEngine sharedEngine] getCameraMaxZoomFactor:channel];
 
     result(@(factor));
+#endif
 }
 
 - (void)enableCameraAdaptiveFPS:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2805,7 +2822,7 @@
 }
 
 - (void)mediaPlayerTakeSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     NSNumber *index = call.arguments[@"index"];
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
@@ -2826,6 +2843,7 @@
             });
         }];
     }
+#endif
 }
 
 - (void)mediaPlayerEnableFrequencySpectrumMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -3407,7 +3425,7 @@
     ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
 
     if (manager) {
-        [[ZegoExpressEngine sharedEngine] destroyRealTimeSequentialDataManager:manager];       
+        [[ZegoExpressEngine sharedEngine] destroyRealTimeSequentialDataManager:manager];
     }
 
     [self.realTimeSequentialDataManagerMap removeObjectForKey:index];
@@ -3428,7 +3446,7 @@
             result(@{
                 @"errorCode": @(errorCode)
             });
-        }];     
+        }];
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerSendRealTimeSequentialData_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerSendRealTimeSequentialData` but can't find data manager" details:nil]);
@@ -3445,7 +3463,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager startBroadcasting:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStartBroadcasting_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStartBroadcasting` but can't find data manager" details:nil]);
@@ -3461,7 +3479,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager startSubscribing:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStartSubscribing_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStartSubscribing` but can't find data manager" details:nil]);
@@ -3477,7 +3495,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager stopBroadcasting:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStopBroadcasting_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStopBroadcasting` but can't find data manager" details:nil]);
@@ -3493,7 +3511,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager stopSubscribing:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStopSubscribing_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStopSubscribing` but can't find data manager" details:nil]);
@@ -4005,7 +4023,7 @@
 #pragma mark - Assets Utils
 
 - (void)getAssetAbsolutePath:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     NSString *assetPath = call.arguments[@"assetPath"];
     NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
     NSString *realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
@@ -4013,6 +4031,7 @@
     ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
 
     result(realPath);
+#endif
 }
 
 #pragma mark - Private

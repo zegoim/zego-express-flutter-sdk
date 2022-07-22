@@ -9,12 +9,14 @@
 #ifndef ZegoTextureRenderer_h
 #define ZegoTextureRenderer_h
 
-#import <Flutter/Flutter.h>
 #import <Foundation/Foundation.h>
-#import <OpenGLES/EAGL.h>
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
 #import <ZegoExpressEngine/ZegoExpressDefines.h>
+
+#if TARGET_OS_IPHONE
+#import <Flutter/Flutter.h>
+#elif TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

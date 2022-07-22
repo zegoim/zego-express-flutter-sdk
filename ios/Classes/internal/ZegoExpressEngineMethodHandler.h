@@ -6,7 +6,14 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
+#import <TargetConditionals.h>
+
+#if TARGET_OS_IPHONE
 #import <Flutter/Flutter.h>
+#elif TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#endif
+
 
 NS_ASSUME_NONNULL_BEGIN
 
