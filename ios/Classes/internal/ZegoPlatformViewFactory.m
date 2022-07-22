@@ -84,6 +84,7 @@
 
 #pragma mark FlutterPlatformViewFactory Delegate
 
+#if TARGET_OS_IPHONE
 /// Called when dart invoke `createPlatformView`, that is, when Widget `UiKitView` is added to the flutter render tree
 - (NSObject<FlutterPlatformView>*)createWithFrame:(CGRect)frame
                                    viewIdentifier:(int64_t)viewId
@@ -94,5 +95,8 @@
     
     return view;
 }
+
+#elif TARGET_OS_OSX
+#endif
 
 @end

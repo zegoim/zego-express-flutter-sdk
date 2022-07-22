@@ -10,15 +10,26 @@
 #define ZegoPlatformViewRenderer_h
 
 #import <Foundation/Foundation.h>
+
+#if TARGET_OS_IPHONE
 #import <Flutter/FlutterPlatformViews.h>
+#elif TARGET_OS_OSX
+#import <FlutterMacOS/FlutterPlatformViews.h>
+#endif
+
+#import <ZegoExpressEngine/ZegoExpressEngine.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if TARGET_OS_IPHONE
 @interface ZegoPlatformView : NSObject<FlutterPlatformView>
+#elif TARGET_OS_OSX
+@interface ZegoPlatformView : NSObject
+#endif
 
 - (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID;
 
-- (UIView *)getUIView;
+- (ZGView *)getUIView;
 
 @end
 

@@ -11,7 +11,7 @@
 
 @interface ZegoPlatformView()
 
-@property (nonatomic, strong) UIView *uiView;
+@property (nonatomic, strong) ZGView *uiView;
 @property (nonatomic, assign) int64_t viewID;
 
 @end
@@ -21,8 +21,12 @@
 - (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID {
     self = [super init];
     if (self) {
+#if TARGET_OS_IPHONE
         _uiView = [[UIView alloc] initWithFrame:rect];
         _uiView.backgroundColor = [UIColor blackColor];
+#elif TARGET_OS_OSX
+//        _uiView
+#endif
         _viewID = viewID;
     }
 
@@ -31,7 +35,7 @@
     return self;
 }
 
-- (UIView *)getUIView {
+- (ZGView *)getUIView {
     return self.uiView;
 }
 
@@ -41,9 +45,11 @@
 
 # pragma mark - Flutter Platform View Delegate
 
+#if TARGET_OS_IPHONE
 - (UIView *)view {
     return self.uiView;
 }
+#endif
 
 
 @end
