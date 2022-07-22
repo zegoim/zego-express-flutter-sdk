@@ -542,6 +542,7 @@ void ZegoExpressEngineMethodHandler::takePublishStreamSnapshot(flutter::Encodabl
 
         auto tmpData = CreateFromHBITMAP((HBITMAP)image);
         std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
+        delete []tmpData.second;
 
         FTMap resultMap;
         resultMap[FTValue("errorCode")] = FTValue(errorCode);
