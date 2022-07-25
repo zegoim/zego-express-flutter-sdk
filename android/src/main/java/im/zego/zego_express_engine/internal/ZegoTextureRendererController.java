@@ -21,7 +21,7 @@ import io.flutter.view.TextureRegistry;
 
 public class ZegoTextureRendererController {
 
-    private static ZegoTextureRendererController instance;
+    private volatile static ZegoTextureRendererController instance;
 
     private HashMap<Long, ZegoTextureRenderer> renderers;
 
