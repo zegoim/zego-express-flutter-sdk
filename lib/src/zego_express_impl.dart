@@ -32,6 +32,12 @@ class ZegoExpressImpl {
   /// Exposing methodChannel to other files
   static MethodChannel get methodChannel => _channel;
 
+  // is create engine
+  static bool isCreateEngine = false;
+
+  // enablePlatformView
+  static bool enablePlatformView = false;
+
   /* Main */
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
@@ -48,6 +54,9 @@ class ZegoExpressImpl {
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+
+    isCreateEngine = true;
+    enablePlatformView = profile.enablePlatformView ?? false;
   }
 
   static Future<void> createEngine(
@@ -65,12 +74,17 @@ class ZegoExpressImpl {
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+
+    isCreateEngine = true;
+    enablePlatformView = enablePlatformView ?? false;
   }
 
   static Future<void> destroyEngine() async {
     await _channel.invokeMethod('destroyEngine');
 
     _unregisterEventHandler();
+
+    isCreateEngine = false;
   }
 
   static Future<void> setEngineConfig(ZegoEngineConfig config) async {
