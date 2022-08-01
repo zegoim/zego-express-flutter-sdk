@@ -33,7 +33,7 @@ class ZegoExpressImpl {
   static MethodChannel get methodChannel => _channel;
 
   // is create engine
-  static bool isCreateEngine = false;
+  static bool isEngineCreated = false;
 
   // enablePlatformView
   static bool enablePlatformView = false;
@@ -55,7 +55,7 @@ class ZegoExpressImpl {
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
 
-    isCreateEngine = true;
+    isEngineCreated = true;
     enablePlatformView = profile.enablePlatformView ?? false;
   }
 
@@ -75,7 +75,7 @@ class ZegoExpressImpl {
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
 
-    isCreateEngine = true;
+    isEngineCreated = true;
     enablePlatformView = enablePlatformView ?? false;
   }
 
@@ -84,7 +84,7 @@ class ZegoExpressImpl {
 
     _unregisterEventHandler();
 
-    isCreateEngine = false;
+    isEngineCreated = false;
   }
 
   static Future<void> setEngineConfig(ZegoEngineConfig config) async {

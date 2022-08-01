@@ -1251,7 +1251,7 @@ class ZegoEngineProfile {
   /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
   ZegoScenario scenario;
 
-  /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false.
+  /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false. Currently the web platform only supports rendering with Platform View. When using the [createCanvasView] interface, If the preferred render mode is not supported, another render mode is automatically used.
   bool? enablePlatformView;
 
   ZegoEngineProfile(this.appID, this.scenario,
