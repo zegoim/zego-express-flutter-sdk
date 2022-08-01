@@ -22,5 +22,6 @@ export 'src/zego_express_api_copyrighted_music.dart';
 
 export 'src/zego_express_texture_render_utils.dart';
 export 'src/zego_express_platform_view_utils.dart';
+export 'src/zego_express_canvas_view.dart';
 export 'src/zego_express_assets_utils.dart';
 export 'src/zego_express_error_code.dart';
