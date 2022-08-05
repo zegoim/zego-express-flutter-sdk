@@ -48,6 +48,34 @@
     return instance;
 }
 
+- (void)setRegistrar:(id<FlutterPluginRegistrar>)registrar eventSink:(FlutterEventSink)sink {
+    ZGLog(@"[setRegistrar] registrar:%p, sink:%p", registrar, sink);
+    _registrar = registrar;
+    // Set eventSink for ZegoExpressEngineEventHandler
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
+}
+
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    ZGLog(@"[DartCall] [%@]", call.method);
+    SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
+
+    // Handle unrecognized method
+    if (![self respondsToSelector:selector]) {
+        ZGLog(@"[handleMethodCall] Unrecognized selector: %@", call.method);
+        result(FlutterMethodNotImplemented);
+        return;
+    }
+
+    NSMethodSignature *signature = [self methodSignatureForSelector:selector];
+    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
+
+    invocation.target = self;
+    invocation.selector = selector;
+    [invocation setArgument:&call atIndex:2];
+    [invocation setArgument:&result atIndex:3];
+    [invocation invoke];
+}
+
 
 #pragma mark - Main
 
@@ -68,14 +96,6 @@
     int scenario = [ZegoUtils intValue:profileMap[@"scenario"]];
 
     _enablePlatformView = [ZegoUtils boolValue:profileMap[@"enablePlatformView"]];
-    _registrar = call.arguments[@"registrar"];
-
-    // Set eventSink for ZegoExpressEngineEventHandler
-    FlutterEventSink sink = call.arguments[@"eventSink"];
-    if (!sink) {
-        ZGError(@"[createEngineWithProfile] FlutterEventSink is nil");
-    }
-    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
     ZegoEngineProfile *profile = [ZegoEngineProfile new];
@@ -102,7 +122,7 @@
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
-    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, scenario);
+    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, scenario);
 
     result(nil);
 }
@@ -118,14 +138,6 @@
     int scenario = [ZegoUtils intValue:call.arguments[@"scenario"]];
 
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
-    _registrar = call.arguments[@"registrar"];
-
-    // Set eventSink for ZegoExpressEngineEventHandler
-    FlutterEventSink sink = call.arguments[@"eventSink"];
-    if (!sink) {
-        ZGError(@"[createEngine] FlutterEventSink is nil");
-    }
-    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
 #pragma clang diagnostic push
@@ -149,7 +161,7 @@
         [[ZegoTextureRendererController sharedInstance] initController];
     }
 
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }

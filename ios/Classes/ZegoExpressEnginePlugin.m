@@ -87,48 +87,10 @@
 #pragma mark - Handle Method Call
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    ZGLog(@"[DartCall] [%@]", call.method);
-
-    // When createEngine, re-create a FlutterMethodCall object to add additional parameters
-    if ([@"createEngine" isEqualToString:call.method]) {
-
-        NSMutableDictionary *argumentsMap = [NSMutableDictionary dictionaryWithDictionary:call.arguments];
-
-        argumentsMap[@"eventSink"] = _eventSink;
-        argumentsMap[@"registrar"] = _registrar;
-
-        call = [FlutterMethodCall methodCallWithMethodName:@"createEngine" arguments:argumentsMap];
-    } else if ([@"createEngineWithProfile" isEqualToString:call.method]) {
-
-        NSMutableDictionary *argumentsMap = [NSMutableDictionary dictionaryWithDictionary:call.arguments];
-
-        argumentsMap[@"eventSink"] = _eventSink;
-        argumentsMap[@"registrar"] = _registrar;
-
-        call = [FlutterMethodCall methodCallWithMethodName:@"createEngineWithProfile" arguments:argumentsMap];
+    if ([call.method hasPrefix:@"createEngine"]) {
+        [[ZegoExpressEngineMethodHandler sharedInstance] setRegistrar:_registrar eventSink:_eventSink];
     }
-
-    SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
-
-    // Handle unrecognized method
-    if (![[ZegoExpressEngineMethodHandler sharedInstance] respondsToSelector:selector]) {
-        ZGLog(@"[handleMethodCall] Unrecognized selector: %@", call.method);
-        result(FlutterMethodNotImplemented);
-        return;
-    }
-
-    NSMethodSignature *signature = [[ZegoExpressEngineMethodHandler sharedInstance] methodSignatureForSelector:selector];
-
-    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
-
-    invocation.target = [ZegoExpressEngineMethodHandler sharedInstance];
-    invocation.selector = selector;
-
-    [invocation setArgument:&call atIndex:2];
-    [invocation setArgument:&result atIndex:3];
-
-    [invocation invoke];
-
+    [[ZegoExpressEngineMethodHandler sharedInstance] handleMethodCall:call result:result];
 }
 
 @end
