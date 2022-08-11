@@ -97,6 +97,14 @@
 }
 
 #elif TARGET_OS_OSX
+
+- (nonnull NSView *)createWithViewIdentifier:(int64_t)viewId arguments:(nullable id)args {
+    ZegoPlatformView *view = [[ZegoPlatformView alloc] initWithRect:CGRectZero viewID:viewId];
+    [self addPlatformView:view viewID:@(viewId)];
+    
+    return view.getUIView;
+}
+
 #endif
 
 @end

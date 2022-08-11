@@ -18,14 +18,16 @@
 
 @implementation ZegoPlatformView
 
-- (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID {
+- (instancetype)initWithRect:(CGRect)rect viewID:(int64_t)viewID {
     self = [super init];
     if (self) {
 #if TARGET_OS_IPHONE
         _uiView = [[UIView alloc] initWithFrame:rect];
         _uiView.backgroundColor = [UIColor blackColor];
 #elif TARGET_OS_OSX
-//        _uiView
+        _uiView = [[NSView alloc] initWithFrame:rect];
+        _uiView.wantsLayer = YES;
+        _uiView.layer.backgroundColor = [NSColor blackColor].CGColor;
 #endif
         _viewID = viewID;
     }
