@@ -125,7 +125,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('🔌 Start preview, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
+    if (Platform.isIOS || Platform.isAndroid || Platform.isMacOS || kIsWeb) {
       if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
         // Render with PlatformView
         setState(() {
@@ -151,7 +151,12 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void stopPreview() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+    if (!Platform.isAndroid &&
+        !Platform.isIOS &&
+        !Platform.isMacOS &&
+        !kIsWeb) {
+      return;
+    }
 
     if (_previewViewWidget == null) {
       return;
@@ -180,7 +185,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || kIsWeb) {
+    if (Platform.isIOS || Platform.isAndroid || Platform.isMacOS || kIsWeb) {
       if (ZegoConfig.instance.enablePlatformView || kIsWeb) {
         // Render with PlatformView
         setState(() {
@@ -293,7 +298,12 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPreviewView() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+    if (!Platform.isAndroid &&
+        !Platform.isIOS &&
+        !Platform.isMacOS &&
+        !kIsWeb) {
+      return;
+    }
 
     if (_previewViewWidget == null) {
       return;
@@ -310,7 +320,12 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPlayView() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+    if (!Platform.isAndroid &&
+        !Platform.isIOS &&
+        !Platform.isMacOS &&
+        !kIsWeb) {
+      return;
+    }
 
     if (_playViewWidget == null) {
       return;
