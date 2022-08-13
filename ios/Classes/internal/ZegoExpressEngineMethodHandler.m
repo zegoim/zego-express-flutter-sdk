@@ -693,14 +693,19 @@
 }
 
 - (void)takePublishStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-#if TARGET_OS_IPHONE
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, UIImage * _Nullable image) {
+    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
             if (image) {
+#if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
             }
 
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -711,7 +716,6 @@
             });
         });
     } channel:(ZegoPublishChannel)channel];
-#endif
 }
 
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1118,14 +1122,19 @@
 }
 
 - (void)takePlayStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-#if TARGET_OS_IPHONE
     NSString *streamID = call.arguments[@"streamID"];
 
-    [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, UIImage * _Nullable image) {
+    [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
             if (image) {
+#if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
             }
 
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -1136,7 +1145,6 @@
             });
         });
     }];
-#endif
 }
 
 - (void)setPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2834,7 +2842,6 @@
 }
 
 - (void)mediaPlayerTakeSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-#if TARGET_OS_IPHONE
     NSNumber *index = call.arguments[@"index"];
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
@@ -2843,7 +2850,13 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSData *imageData = nil;
                 if (image) {
+#if TARGET_OS_IPHONE
                     imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
                 }
 
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -2855,7 +2868,6 @@
             });
         }];
     }
-#endif
 }
 
 - (void)mediaPlayerEnableFrequencySpectrumMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
