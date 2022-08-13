@@ -1700,8 +1700,8 @@
     [[ZegoExpressEngine sharedEngine] setBuiltInSpeakerOn:enable];
 #pragma clang diagnostic pop
 
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)setAudioRouteToSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1709,9 +1709,8 @@
     BOOL defaultToSpeaker = [ZegoUtils boolValue:call.arguments[@"defaultToSpeaker"]];
 
     [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:defaultToSpeaker];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)getAudioRouteType:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1719,6 +1718,8 @@
     ZegoAudioRoute type = [[ZegoExpressEngine sharedEngine] getAudioRouteType];
 
     result(@(type));
+#elif TARGET_OS_OSX
+    result(@(ZegoAudioRouteSpeaker)); // TODO: "Unknown"?
 #endif
 }
 
@@ -1738,9 +1739,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] useFrontCamera:enable channel:(ZegoPublishChannel)channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)isCameraFocusSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1748,8 +1748,9 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     BOOL supported = [[ZegoExpressEngine sharedEngine] isCameraFocusSupported:(ZegoPublishChannel)channel];
-
     result(@(supported));
+#elif TARGET_OS_OSX
+    result(@(NO));
 #endif
 }
 
@@ -1759,9 +1760,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraFocusMode:(ZegoCameraFocusMode)model channel:(ZegoPublishChannel)channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)setCameraFocusPointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1771,9 +1771,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraFocusPointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)setCameraExposureMode:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1782,9 +1781,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposureMode:(ZegoCameraExposureMode)model channel:(ZegoPublishChannel)channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)setCameraExposurePointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1794,9 +1792,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposurePointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)setCameraExposureCompensation:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1805,9 +1802,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposureCompensation:value channel:channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)setCameraZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1816,9 +1812,8 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraZoomFactor:factor channel:channel];
-
-    result(nil);
 #endif
+    result(nil);
 }
 
 - (void)getCameraMaxZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1828,6 +1823,8 @@
     float factor = [[ZegoExpressEngine sharedEngine] getCameraMaxZoomFactor:channel];
 
     result(@(factor));
+#elif TARGET_OS_OSX
+    result(@(1.0)); // TODO: Unknown?
 #endif
 }
 
@@ -4056,6 +4053,7 @@
 
     result(realPath);
 #endif
+    result(FlutterMethodNotImplemented);
 }
 
 #pragma mark - Private
