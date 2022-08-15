@@ -27,9 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZegoPlatformView : NSObject
 #endif
 
-- (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID;
+@property (nonatomic, strong, readonly) ZGView *view;
 
-- (ZGView *)getUIView;
+- (instancetype)initWithRect:(CGRect)rect viewID:(int64_t) viewID;
 
 @end
 

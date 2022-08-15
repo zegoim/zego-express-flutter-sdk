@@ -508,7 +508,7 @@
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
 
             if (platformView) {
-                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
 
@@ -1032,7 +1032,7 @@
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
 
             if (platformView) {
-                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
 
@@ -2598,7 +2598,7 @@
         ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
 
         if (platformView) {
-            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
             canvas.viewMode = (ZegoViewMode)viewMode;
             canvas.backgroundColor = backgroundColor;
 

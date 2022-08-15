@@ -44,7 +44,7 @@
         return NO;
     }
 
-    ZGLog(@"[destroyPlatformView] viewID:%d, UIView:%p", viewID.intValue, [platformView getUIView]);
+    ZGLog(@"[destroyPlatformView] viewID:%d, UIView:%p", viewID.intValue, platformView.view);
 
     [self.platformViewMap removeObjectForKey:viewID];
 
@@ -64,7 +64,7 @@
 
 - (void)addPlatformView:(ZegoPlatformView *)view viewID:(NSNumber *)viewID {
 
-    ZGLog(@"[createPlatformView] viewID:%d, UIView:%p", viewID.intValue, [view getUIView]);
+    ZGLog(@"[createPlatformView] viewID:%d, UIView:%p", viewID.intValue, view.view);
 
     [self.platformViewMap setObject:view forKey:viewID];
 
@@ -76,7 +76,7 @@
     for (NSNumber *i in self.platformViewMap) {
         ZegoPlatformView *eachPlatformView = self.platformViewMap[i];
         if (eachPlatformView) {
-            [desc appendFormat:@"[ID:%d|View:%p] ", i.intValue, eachPlatformView.getUIView];
+            [desc appendFormat:@"[ID:%d|View:%p] ", i.intValue, eachPlatformView.view];
         }
     }
     ZGLog(@"[ZegoPlatformViewFactory] currentPlatformViews: %@", desc);
@@ -102,7 +102,7 @@
     ZegoPlatformView *view = [[ZegoPlatformView alloc] initWithRect:CGRectZero viewID:viewId];
     [self addPlatformView:view viewID:@(viewId)];
     
-    return view.getUIView;
+    return view.view;
 }
 
 #endif

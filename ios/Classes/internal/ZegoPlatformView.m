@@ -11,7 +11,7 @@
 
 @interface ZegoPlatformView()
 
-@property (nonatomic, strong) ZGView *uiView;
+@property (nonatomic, strong, readwrite) ZGView *view;
 @property (nonatomic, assign) int64_t viewID;
 
 @end
@@ -22,36 +22,30 @@
     self = [super init];
     if (self) {
 #if TARGET_OS_IPHONE
-        _uiView = [[UIView alloc] initWithFrame:rect];
-        _uiView.backgroundColor = [UIColor blackColor];
+        _view = [[UIView alloc] initWithFrame:rect];
+        _view.backgroundColor = [UIColor blackColor];
 #elif TARGET_OS_OSX
-        _uiView = [[NSView alloc] initWithFrame:rect];
-        _uiView.wantsLayer = YES;
-        _uiView.layer.backgroundColor = [NSColor blackColor].CGColor;
+        _view = [[NSView alloc] initWithFrame:rect];
+        _view.wantsLayer = YES;
+        _view.layer.backgroundColor = [NSColor blackColor].CGColor;
 #endif
         _viewID = viewID;
     }
 
-    ZGLog(@"[ZegoPlatformView] [init] UIView:%p", self.uiView);
+    ZGLog(@"[ZegoPlatformView] [init] View:%p", self.view);
     
     return self;
 }
 
-- (ZGView *)getUIView {
-    return self.uiView;
-}
-
 - (void)dealloc {
-    ZGLog(@"[ZegoPlatformView] [dispose] UIView:%p", self.uiView);
+    ZGLog(@"[ZegoPlatformView] [dispose] View:%p", self.view);
 }
 
 # pragma mark - Flutter Platform View Delegate
 
-#if TARGET_OS_IPHONE
-- (UIView *)view {
-    return self.uiView;
+- (ZGView *)view {
+    return _view;
 }
-#endif
 
 
 @end
