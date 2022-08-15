@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.21.2
+
+### **Bug Fixes**
+
+1. Android build fail.
+
 ## 2.21.1
 
 ### **Bug Fixes**
