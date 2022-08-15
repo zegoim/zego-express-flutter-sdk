@@ -19,6 +19,7 @@
 #if TARGET_OS_IPHONE
 @property (readonly, nonatomic) CADisplayLink *displayLink;
 #elif TARGET_OS_OSX
+@property (assign) CVDisplayLinkRef displayLink;
 #endif
 @property (nonatomic, assign) BOOL isRendering;
 @property (nonatomic, assign) BOOL isInited;
@@ -247,6 +248,16 @@
     _displayLink.paused = NO;
     
 #elif TARGET_OS_OSX
+    CGDirectDisplayID displayID = CGMainDisplayID();
+    CVReturn error = kCVReturnSuccess;
+    error = CVDisplayLinkCreateWithCGDisplay(displayID, &_displayLink);
+    if (error) {
+        NSLog(@"DisplayLink created with error:%d", error);
+        _displayLink = NULL;
+    }
+    CVDisplayLinkSetOutputCallback(_displayLink, onDisplayLink, (__bridge void *)self);
+    CVDisplayLinkStart(_displayLink);
+//    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, <#CGLContextObj  _Nonnull cglContext#>, <#CGLPixelFormatObj  _Nonnull cglPixelFormat#>)
 #endif
 
     self.isRendering = YES;
@@ -263,8 +274,9 @@
         self.displayLink.paused = YES;
         [_displayLink invalidate];
 #elif TARGET_OS_OSX
+        CVDisplayLinkStop(_displayLink);
+        CVDisplayLinkRelease(_displayLink);
 #endif
-
         self.isRendering = NO;
     }
 }
@@ -277,9 +289,7 @@
     [self.allRenderers removeAllObjects];
 }
 
-#if TARGET_OS_IPHONE
-- (void)onDisplayLink:(CADisplayLink *)link {
-
+- (void)handleDisplayLinkCallback {
     // Render local
     for (NSNumber *key in self.capturedRenderers) {
         ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:key];
@@ -298,7 +308,21 @@
         [renderer notifyDrawNewFrame];
     }
 }
+
+#if TARGET_OS_IPHONE
+- (void)onDisplayLink:(CADisplayLink *)link {
+    [self handleDisplayLinkCallback];
+}
 #elif TARGET_OS_OSX
+static CVReturn onDisplayLink(CVDisplayLinkRef displayLink,
+                              const CVTimeStamp *inNow,
+                              const CVTimeStamp *inOutputTime,
+                              CVOptionFlags flagsIn,
+                              CVOptionFlags *flagsOut,
+                              void *displayLinkContext) {
+    [[ZegoTextureRendererController sharedInstance] handleDisplayLinkCallback];
+    return kCVReturnSuccess;
+}
 #endif
 
 #pragma mark - ZegoCustomVideoRenderHandler

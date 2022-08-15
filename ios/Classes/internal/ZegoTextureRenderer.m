@@ -19,6 +19,9 @@
 @property (nonatomic, strong) ZGGLContext *context;
 @property (nonatomic, strong) dispatch_semaphore_t lock;
 
+// For render with Texture
+@property (nonatomic, assign) ZGCVOpenGLTextureCacheRef textureCacheRef;
+
 @end
 
 @implementation ZegoTextureRenderer {
@@ -32,12 +35,12 @@
     dispatch_queue_t m_opengl_queue;
     GLfloat m_lstVertices[8];
     GLfloat m_lstTexCoord[8];
-    ZGCVOpenGLTextureCacheRef m_pTexCache;
     GLuint m_hProgram;
     GLuint m_hVertexShader;
     GLuint m_hFragShader;
     GLuint m_framebuffer;
-    int m_nFrameUniform;
+    GLint m_nTextureDimension;
+    GLint m_nFrameUniform;
     CVPixelBufferPoolRef m_buffer_pool;
     ZGCVOpenGLTextureRef m_output_texture;
     GLint m_position;
@@ -97,7 +100,9 @@
 
 - (void)destroy {
 
+    __weak __typeof__(self) weakSelf = self;
     dispatch_async(m_opengl_queue, ^{
+        __strong __typeof__(self) strongSelf = weakSelf;
 
       [self releasePixelBuffer];
 #if TARGET_OS_IPHONE
@@ -120,11 +125,13 @@
           CFRelease(self->m_output_texture);
           self->m_output_texture = NULL;
       }
-
-      if (self->m_pTexCache) {
-          CFRelease(self->m_pTexCache);
-          self->m_pTexCache = 0;
-      }
+        
+        // Release cache texture if need
+    if (strongSelf.textureCacheRef) {
+        ZGCVOpenGLTextureCacheFlush(strongSelf.textureCacheRef, 0);
+        CFRelease(strongSelf.textureCacheRef);
+        strongSelf.textureCacheRef = nil;
+    }
 
       if (self->m_framebuffer) {
           glDeleteBuffers(1, &self->m_framebuffer);
@@ -299,16 +306,7 @@
 
     [EAGLContext setCurrentContext:self.context];
 #elif TARGET_OS_OSX
-    NSOpenGLPixelFormatAttribute attributes[] = {
-        NSOpenGLProfileVersion4_1Core,
-        NSOpenGLPFAAllRenderers,
-        NSOpenGLPFADoubleBuffer,
-        NSOpenGLPFADepthSize,
-        24,
-        NSOpenGLPFAAllowOfflineRenderers,
-        NSOpenGLPFAOpenGLProfile,
-        0
-    };
+    NSOpenGLPixelFormatAttribute attributes[] = {NSOpenGLPFADoubleBuffer, 0};
 
     NSOpenGLPixelFormat *format = [[NSOpenGLPixelFormat alloc] initWithAttributes:attributes];
     NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:format shareContext:nil];
@@ -321,32 +319,25 @@
 
     // * create our texture cache
 #if TARGET_OS_IPHONE
-    CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, self.context, NULL, &m_pTexCache);
+    CVReturn result = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, self.context, NULL, &_textureCacheRef);
     //CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, self.context, NULL, &m_pTexCache2);
 #elif TARGET_OS_OSX
-    CVOpenGLTextureCacheCreate(kCFAllocatorDefault,NULL, [context CGLContextObj],
+    CVReturn result = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL, [context CGLContextObj],
                                [[[NSOpenGLContext currentContext] pixelFormat] CGLPixelFormatObj],
-                               NULL, &m_pTexCache);
+                               NULL, &_textureCacheRef);
 #endif
+    if (result) {
+        ZGLog(@"[setupGL] Create texture cache ref failed!");
+        return;
+    }
+
     // * create our program
     m_hProgram = glCreateProgram();
 
     // * compile vertex shader
-    const static char *strVertexShader = " \
-    attribute vec4 position; \
-    attribute mediump vec4 texcoord; \
-    \
-    varying mediump vec2 textureCoordinate; \
-    \
-    void main() \
-    { \
-    gl_Position = position; \
-    textureCoordinate = texcoord.xy; \
-    } \
-    ";
-
     m_hVertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(m_hVertexShader, 1, &strVertexShader, 0);
+    const char *vertexShader = [self getVertexShader].UTF8String;
+    glShaderSource(m_hVertexShader, 1, &vertexShader, 0);
     glCompileShader(m_hVertexShader);
     GLint status;
     glGetShaderiv(m_hVertexShader, GL_COMPILE_STATUS, &status);
@@ -357,17 +348,9 @@
     }
 
     // * compile fragment shader
-    const static char *strFragmentShader = " \
-    varying highp vec2 textureCoordinate; \
-    uniform sampler2D frame; \
-    \
-    void main() \
-    { \
-    gl_FragColor = texture2D(frame, textureCoordinate);\
-    } \
-    ";
+    const char *fragmentShader = [self getFragmentShader].UTF8String;
     m_hFragShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(m_hFragShader, 1, &strFragmentShader, 0);
+    glShaderSource(m_hFragShader, 1, &fragmentShader, 0);
     glCompileShader(m_hFragShader);
     // * to_do: check status
     if (status != GL_TRUE) {
@@ -392,6 +375,7 @@
     glUseProgram(m_hProgram);
 
     // * get uniform index
+    m_nTextureDimension = glGetUniformLocation(m_hProgram, "textureDimensions");
     m_nFrameUniform = glGetUniformLocation(m_hProgram, "frame");
 
     /* 获取OpenGL为我们分配的两个attribute位置 */
@@ -469,7 +453,7 @@
 #if TARGET_OS_IPHONE
     [EAGLContext setCurrentContext:self.context];
 #elif TARGET_OS_OSX
-    
+    [self.context makeCurrentContext];
 #endif
 
     /* 销毁上一帧的texture缓存 */
@@ -500,26 +484,20 @@
     /* create input frame texture from sdk */
     ZGCVOpenGLTextureRef texture_input = NULL;
 //    [self createTexture:&texture_input FromPixelBuffer:readInputBuffer];
-    [ZegoEffectsPixelBufferHelper createTexture:&texture_input fromPixelBuffer:readInputBuffer cache:m_pTexCache];
+    [ZegoEffectsPixelBufferHelper createTexture:&texture_input fromPixelBuffer:readInputBuffer cache:_textureCacheRef];
 
     //create output frame texture to flutter
 //    [self createTexture:&m_output_texture FromPixelBuffer:processBuffer];
-    [ZegoEffectsPixelBufferHelper createTexture:&m_output_texture fromPixelBuffer:processBuffer cache:m_pTexCache];
+    [ZegoEffectsPixelBufferHelper createTexture:&m_output_texture fromPixelBuffer:processBuffer cache:_textureCacheRef];
 
     if (texture_input && m_output_texture) {
 
         //Bind
-#if TARGET_OS_IPHONE
-        glBindTexture(CVOpenGLESTextureGetTarget(m_output_texture),
-                      CVOpenGLESTextureGetName(m_output_texture));
+        glBindTexture(ZGCVOpenGLTextureGetTarget(m_output_texture),
+                      ZGCVOpenGLTextureGetName(m_output_texture));
         glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                               CVOpenGLESTextureGetName(m_output_texture), 0);
-#elif TARGET_OS_OSX
-    
-#endif
-        
-        
+                               ZGCVOpenGLTextureGetName(m_output_texture), 0);
 
         glViewport(0, 0, self.viewWidth, self.viewHeight);
 
@@ -527,13 +505,10 @@
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(m_hProgram);
-
-#if TARGET_OS_IPHONE
-        glBindTexture(CVOpenGLESTextureGetTarget(texture_input),
-                      CVOpenGLESTextureGetName(texture_input));
-#elif TARGET_OS_OSX
-    
-#endif
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(ZGCVOpenGLTextureGetTarget(texture_input),
+                      ZGCVOpenGLTextureGetName(texture_input));
+        glUniform2f(m_nTextureDimension, width, height);
         glUniform1i(m_nFrameUniform, 0);
 
         glEnableVertexAttribArray(m_position);
@@ -548,9 +523,12 @@
         glFlush();
 
         CVPixelBufferRef old = m_pRenderFrameBuffer;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         while (!OSAtomicCompareAndSwapPtr(old, processBuffer, (void **)&m_pRenderFrameBuffer)) {
             old = m_pRenderFrameBuffer;
         }
+#pragma clang diagnostic pop
 
         if (old != nil) {
             CFRelease(old);
@@ -636,6 +614,65 @@
     CVPixelBufferPoolFlush(pool, flag);
     CFRelease(pool);
     pool = nil;
+}
+
+- (NSString *)getVertexShader {
+#if TARGET_OS_IPHONE
+    NSString *vertexShader = @" \
+    attribute vec4 position; \
+    attribute mediump vec4 texcoord; \
+    \
+    varying mediump vec2 textureCoordinate; \
+    \
+    void main() \
+    { \
+      gl_Position = position; \
+      textureCoordinate = texcoord.xy; \
+    } \
+    ";
+#elif TARGET_OS_OSX
+    NSString *vertexShader = @" \
+    attribute vec4 position; \
+    attribute vec4 texcoord; \
+    \
+    varying vec2 textureCoordinate; \
+    \
+    void main() \
+    { \
+    gl_Position = position; \
+    textureCoordinate = texcoord.xy; \
+    } \
+    ";
+#endif
+    return vertexShader;
+}
+
+- (NSString *)getFragmentShader {
+#if TARGET_OS_IPHONE
+    NSString *fragmentShader = @" \
+    varying highp vec2 textureCoordinate; \
+    uniform sampler2D frame; \
+    \
+    void main() \
+    { \
+      gl_FragColor = texture2D(frame, textureCoordinate); \
+    } \
+    ";
+#elif TARGET_OS_OSX
+    NSString *fragmentShader = @" \
+    varying vec2 textureCoordinate; \
+    uniform vec2 textureDimensions; \
+    uniform sampler2DRect frame; \
+    \
+    void main() \
+    { \
+        vec2 texCoord = vec2(textureCoordinate.s, textureCoordinate.t);\
+        vec2 recTexCoord = texCoord * textureDimensions;\
+        gl_FragColor = texture2DRect(frame, recTexCoord); \
+    } \
+    ";
+#endif
+    return fragmentShader;
 }
 
 @end
