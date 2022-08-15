@@ -41,20 +41,18 @@
         return;
     }
 
-#if TARGET_OS_IPHONE
-    GLuint textureID = CVOpenGLESTextureGetName(*textureRef);
-#elif TARGET_OS_OSX
-    GLuint textureID = CVOpenGLTextureGetName(*textureRef);
-#endif
+    GLenum target = ZGCVOpenGLTextureGetTarget(*textureRef);
+    GLuint textureID = ZGCVOpenGLTextureGetName(*textureRef);
 
     // 激活 Texture & 为 Texture 设定纹理参数
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, textureID); // CVOpenGLESTextureGetName 可以获得 texture id
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(target, textureID); // CVOpenGLESTextureGetName 可以获得 texture id
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
 
     // 重置 Context 的 GL_TEXTURE_2D，防止意外错误
     glBindTexture(GL_TEXTURE_2D, 0);
