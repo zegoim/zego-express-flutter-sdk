@@ -110,7 +110,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
 
     }
 
-    private static ZegoCustomVideoCaptureManager singleton;
+    private volatile static ZegoCustomVideoCaptureManager singleton;
 
     private ZegoVideoFrameParam mParam;
     private ZegoVideoMirrorMode mMirrorMode;

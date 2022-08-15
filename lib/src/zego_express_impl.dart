@@ -10,7 +10,7 @@ import 'zego_express_enum_extension.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.21.1";
+  static String pluginVersion = "2.21.2";
 }
 
 class ZegoExpressImpl {
@@ -32,6 +32,12 @@ class ZegoExpressImpl {
   /// Exposing methodChannel to other files
   static MethodChannel get methodChannel => _channel;
 
+  // is create engine
+  static bool isEngineCreated = false;
+
+  // enablePlatformView
+  static bool enablePlatformView = false;
+
   /* Main */
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
@@ -48,6 +54,9 @@ class ZegoExpressImpl {
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+
+    isEngineCreated = true;
+    enablePlatformView = profile.enablePlatformView ?? false;
   }
 
   static Future<void> createEngine(
@@ -65,12 +74,17 @@ class ZegoExpressImpl {
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+
+    isEngineCreated = true;
+    enablePlatformView = enablePlatformView ?? false;
   }
 
   static Future<void> destroyEngine() async {
     await _channel.invokeMethod('destroyEngine');
 
     _unregisterEventHandler();
+
+    isEngineCreated = false;
   }
 
   static Future<void> setEngineConfig(ZegoEngineConfig config) async {

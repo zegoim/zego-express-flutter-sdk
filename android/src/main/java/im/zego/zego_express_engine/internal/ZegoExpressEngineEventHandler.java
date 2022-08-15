@@ -75,7 +75,7 @@ import android.os.Looper;
 
 public class ZegoExpressEngineEventHandler {
 
-    private static ZegoExpressEngineEventHandler instance;
+    private volatile static ZegoExpressEngineEventHandler instance;
 
     public static ZegoExpressEngineEventHandler getInstance() {
         if (instance == null) {

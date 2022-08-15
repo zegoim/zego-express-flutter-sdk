@@ -20,7 +20,7 @@ import io.flutter.plugin.platform.PlatformViewFactory;
 
 public class ZegoPlatformViewFactory extends PlatformViewFactory {
 
-    private static ZegoPlatformViewFactory instance;
+    private volatile static ZegoPlatformViewFactory instance;
 
     private final HashMap<Integer, ZegoPlatformView> platformViews;
 
