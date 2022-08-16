@@ -46,9 +46,8 @@ class ZegoExpressImpl {
       }
     });
 
-    await _channel.invokeMethod('setPluginVersion', {
-      'version': Global.pluginVersion
-    });
+    await _channel
+        .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
   }
 
   static Future<void> createEngine(
@@ -64,9 +63,8 @@ class ZegoExpressImpl {
       'enablePlatformView': enablePlatformView ?? false
     });
 
-    await _channel.invokeMethod('setPluginVersion', {
-      'version': Global.pluginVersion
-    });
+    await _channel
+        .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
   }
 
   static Future<void> destroyEngine() async {
@@ -91,10 +89,7 @@ class ZegoExpressImpl {
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
     return await _channel.invokeMethod('setLogConfig', {
-      'config': {
-        'logPath': config.logPath,
-        'logSize': config.logSize
-      }
+      'config': {'logPath': config.logPath, 'logSize': config.logSize}
     });
   }
 
@@ -116,19 +111,19 @@ class ZegoExpressImpl {
   }
 
   Future<void> enableDebugAssistant(bool enable) async {
-    return await _channel.invokeMethod(
-        'enableDebugAssistant', {'enable': enable});
+    return await _channel
+        .invokeMethod('enableDebugAssistant', {'enable': enable});
   }
 
   Future<String> callExperimentalAPI(String params) async {
-    return await _channel.invokeMethod('callExperimentalAPI', {'params': params});
+    return await _channel
+        .invokeMethod('callExperimentalAPI', {'params': params});
   }
 
-  Future<void> setDummyCaptureImagePath(String filePath, ZegoPublishChannel channel) async {
-    return await _channel.invokeMethod('setDummyCaptureImagePath', {
-      'filePath': filePath,
-      'channel': channel.index
-    });
+  Future<void> setDummyCaptureImagePath(
+      String filePath, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('setDummyCaptureImagePath',
+        {'filePath': filePath, 'channel': channel.index});
   }
 
   /* Room */
@@ -141,7 +136,8 @@ class ZegoExpressImpl {
       'config': config?.toMap() ?? {}
     });
     Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
-    return ZegoRoomLoginResult(map['errorCode'], Map<String, dynamic>.from(extendedData));
+    return ZegoRoomLoginResult(
+        map['errorCode'], Map<String, dynamic>.from(extendedData));
   }
 
   Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
@@ -150,9 +146,11 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
-    final Map<dynamic, dynamic> map = await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
     Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
-    return ZegoRoomLogoutResult(map['errorCode'], Map<String, dynamic>.from(extendedData));
+    return ZegoRoomLogoutResult(
+        map['errorCode'], Map<String, dynamic>.from(extendedData));
   }
 
   Future<void> switchRoom(String fromRoomID, String toRoomID,
@@ -165,10 +163,8 @@ class ZegoExpressImpl {
   }
 
   Future<void> renewToken(String roomID, String token) async {
-    return await _channel.invokeMethod('renewToken', {
-      'roomID': roomID,
-      'token': token
-    });
+    return await _channel
+        .invokeMethod('renewToken', {'roomID': roomID, 'token': token});
   }
 
   Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(
@@ -185,11 +181,15 @@ class ZegoExpressImpl {
       {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('startPublishingStream', {
       'streamID': streamID,
-      'config': config != null ? {
-        'roomID': config.roomID ?? '',
-        'forceSynchronousNetworkTime': config.forceSynchronousNetworkTime ?? 0,
-        'streamCensorshipMode': config.streamCensorshipMode?.index ?? ZegoStreamCensorshipMode.None.index
-      } : {},
+      'config': config != null
+          ? {
+              'roomID': config.roomID ?? '',
+              'forceSynchronousNetworkTime':
+                  config.forceSynchronousNetworkTime ?? 0,
+              'streamCensorshipMode': config.streamCensorshipMode?.index ??
+                  ZegoStreamCensorshipMode.None.index
+            }
+          : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -283,7 +283,7 @@ class ZegoExpressImpl {
   }
 
   Future<void> setAudioConfig(ZegoAudioConfig config,
-    {ZegoPublishChannel? channel}) async {
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setAudioConfig', {
       'config': {
         'bitrate': config.bitrate,
@@ -295,10 +295,9 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoAudioConfig> getAudioConfig({ZegoPublishChannel? channel}) async {
-    final Map<dynamic, dynamic> map =
-        await _channel.invokeMethod('getAudioConfig', {
-          'channel': channel?.index ?? ZegoPublishChannel.Main.index
-        });
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod(
+        'getAudioConfig',
+        {'channel': channel?.index ?? ZegoPublishChannel.Main.index});
 
     return ZegoAudioConfig(
         map['bitrate'],
@@ -340,11 +339,10 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> setStreamAlignmentProperty(int alignment, ZegoPublishChannel channel) async {
-    return await _channel.invokeMethod('setStreamAlignmentProperty', {
-      'alignment': alignment,
-      'channel': channel.index
-    });
+  Future<void> setStreamAlignmentProperty(
+      int alignment, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('setStreamAlignmentProperty',
+        {'alignment': alignment, 'channel': channel.index});
   }
 
   Future<void> enableTrafficControl(bool enable, int property) async {
@@ -353,29 +351,35 @@ class ZegoExpressImpl {
   }
 
   Future<void> setMinVideoBitrateForTrafficControl(
-      int bitrate,
-      ZegoTrafficControlMinVideoBitrateMode mode,
+      int bitrate, ZegoTrafficControlMinVideoBitrateMode mode,
       {ZegoPublishChannel? channel}) async {
-    return await _channel.invokeMethod('setMinVideoBitrateForTrafficControl',
-        {'bitrate': bitrate, 'mode': mode.index, 'channel': channel?.index ?? ZegoPublishChannel.Main.index});
+    return await _channel.invokeMethod('setMinVideoBitrateForTrafficControl', {
+      'bitrate': bitrate,
+      'mode': mode.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
-  Future<void> setMinVideoFpsForTrafficControl(int fps, {ZegoPublishChannel? channel}) async{
+  Future<void> setMinVideoFpsForTrafficControl(int fps,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setMinVideoFpsForTrafficControl', {
       'fps': fps,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 
-  Future<void> setMinVideoResolutionForTrafficControl(int width, int height, {ZegoPublishChannel? channel}) async{
-    return await _channel.invokeMethod('setMinVideoResolutionForTrafficControl', {
+  Future<void> setMinVideoResolutionForTrafficControl(int width, int height,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel
+        .invokeMethod('setMinVideoResolutionForTrafficControl', {
       'width': width,
       'height': height,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 
-  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode, {ZegoPublishChannel? channel}) async {
+  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setTrafficControlFocusOn', {
       'mode': mode.index,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -445,7 +449,8 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> sendAudioSideInfo(Uint8List data, double timeStampMs, {ZegoPublishChannel? channel}) async {
+  Future<void> sendAudioSideInfo(Uint8List data, double timeStampMs,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('sendAudioSideInfo', {
       'data': data,
       'timeStampMs': timeStampMs,
@@ -499,7 +504,8 @@ class ZegoExpressImpl {
                   : {},
               'roomID': config.roomID ?? '',
               'videoCodecID': config.videoCodecID.index,
-              'sourceResourceType': config.sourceResourceType?.index?? ZegoResourceType.RTC.index
+              'sourceResourceType':
+                  config.sourceResourceType?.index ?? ZegoResourceType.RTC.index
             }
           : {}
     });
@@ -515,12 +521,12 @@ class ZegoExpressImpl {
         'setPlayStreamDecryptionKey', {'streamID': streamID, 'key': key});
   }
 
-  Future<void> setPlayStreamCrossAppInfo(String streamID, ZegoCrossAppInfo info) async {
-    return await _channel.invokeMethod(
-        'setPlayStreamCrossAppInfo', {'streamID': streamID, 'info': {
-          'appID': info.appID,
-          'token': info.token
-        }});
+  Future<void> setPlayStreamCrossAppInfo(
+      String streamID, ZegoCrossAppInfo info) async {
+    return await _channel.invokeMethod('setPlayStreamCrossAppInfo', {
+      'streamID': streamID,
+      'info': {'appID': info.appID, 'token': info.token}
+    });
   }
 
   Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(
@@ -538,8 +544,8 @@ class ZegoExpressImpl {
   }
 
   Future<void> setAllPlayStreamVolume(int volume) async {
-    return await _channel.invokeMethod(
-        'setAllPlayStreamVolume', {'volume': volume});
+    return await _channel
+        .invokeMethod('setAllPlayStreamVolume', {'volume': volume});
   }
 
   Future<void> setPlayStreamVideoLayer(
@@ -548,8 +554,10 @@ class ZegoExpressImpl {
         {'streamID': streamID, 'videoLayer': videoLayer.index});
   }
 
-  Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
-      return await _channel.invokeMethod('setPlayStreamVideoType', {'streamID': streamID, 'streamType': streamType.index});
+  Future<void> setPlayStreamVideoType(
+      String streamID, ZegoVideoStreamType streamType) async {
+    return await _channel.invokeMethod('setPlayStreamVideoType',
+        {'streamID': streamID, 'streamType': streamType.index});
   }
 
   Future<void> setPlayStreamBufferIntervalRange(
@@ -562,9 +570,8 @@ class ZegoExpressImpl {
   }
 
   Future<void> setPlayStreamFocusOn(String streamID) async {
-    return await _channel.invokeMethod('setPlayStreamFocusOn', {
-      'streamID': streamID
-    });
+    return await _channel
+        .invokeMethod('setPlayStreamFocusOn', {'streamID': streamID});
   }
 
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
@@ -578,13 +585,13 @@ class ZegoExpressImpl {
   }
 
   Future<void> muteAllPlayStreamAudio(bool mute) async {
-    return await _channel.invokeMethod(
-        'muteAllPlayStreamAudio', {'mute': mute});
+    return await _channel
+        .invokeMethod('muteAllPlayStreamAudio', {'mute': mute});
   }
 
   Future<void> muteAllPlayStreamVideo(bool mute) async {
-    return await _channel.invokeMethod(
-        'muteAllPlayStreamVideo', {'mute': mute});
+    return await _channel
+        .invokeMethod('muteAllPlayStreamVideo', {'mute': mute});
   }
 
   Future<void> enableHardwareDecoder(bool enable) async {
@@ -597,13 +604,14 @@ class ZegoExpressImpl {
   }
 
   Future<bool> isVideoDecoderSupported(ZegoVideoCodecID codecID) async {
-    return await _channel.invokeMethod(
-      'isVideoDecoderSupported', {'codecID': codecID.index});
+    return await _channel
+        .invokeMethod('isVideoDecoderSupported', {'codecID': codecID.index});
   }
 
-  Future<void> setPlayStreamsAlignmentProperty(ZegoStreamAlignmentMode mode) async {
-    return await _channel.invokeMethod(
-      'setPlayStreamsAlignmentProperty', {'mode': mode.index});
+  Future<void> setPlayStreamsAlignmentProperty(
+      ZegoStreamAlignmentMode mode) async {
+    return await _channel
+        .invokeMethod('setPlayStreamsAlignmentProperty', {'mode': mode.index});
   }
 
   /* Mixer */
@@ -619,8 +627,7 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null)
-      {
+      if (output.videoConfig != null) {
         outputList.add({
           'target': output.target,
           'videoConfig': {
@@ -630,8 +637,7 @@ class ZegoExpressImpl {
             'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
-      }
-      else{
+      } else {
         outputList.add({'target': output.target});
       }
     }
@@ -655,8 +661,7 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null)
-      {
+      if (output.videoConfig != null) {
         outputList.add({
           'target': output.target,
           'videoConfig': {
@@ -666,8 +671,7 @@ class ZegoExpressImpl {
             'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
-      }
-      else{
+      } else {
         outputList.add({'target': output.target});
       }
     }
@@ -681,13 +685,13 @@ class ZegoExpressImpl {
     );
   }
 
-  Future<ZegoMixerStartResult> startAutoMixerTask(ZegoAutoMixerTask task) async {
+  Future<ZegoMixerStartResult> startAutoMixerTask(
+      ZegoAutoMixerTask task) async {
     Map<String, dynamic> map = task.toMap();
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null)
-      {
+      if (output.videoConfig != null) {
         outputList.add({
           'target': output.target,
           'videoConfig': {
@@ -697,8 +701,7 @@ class ZegoExpressImpl {
             'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
-      }
-      else{
+      } else {
         outputList.add({'target': output.target});
       }
     }
@@ -716,8 +719,7 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null)
-      {
+      if (output.videoConfig != null) {
         outputList.add({
           'target': output.target,
           'videoConfig': {
@@ -727,8 +729,7 @@ class ZegoExpressImpl {
             'encodeProfile': output.videoConfig!.encodeProfile.index
           }
         });
-      }
-      else{
+      } else {
         outputList.add({'target': output.target});
       }
     }
@@ -741,7 +742,6 @@ class ZegoExpressImpl {
       result['errorCode'],
     );
   }
-
 
   /* Device */
 
@@ -787,7 +787,8 @@ class ZegoExpressImpl {
   }
 
   Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
-    return await _channel.invokeMethod('setAudioRouteToSpeaker', {'defaultToSpeaker': defaultToSpeaker});
+    return await _channel.invokeMethod(
+        'setAudioRouteToSpeaker', {'defaultToSpeaker': defaultToSpeaker});
   }
 
   Future<ZegoAudioRoute> getAudioRouteType() async {
@@ -864,7 +865,8 @@ class ZegoExpressImpl {
     List<ZegoDeviceInfo> deviceInfoList = [];
 
     for (var deviceInfoMap in deviceInfoMapList) {
-      deviceInfoList.add(ZegoDeviceInfo(deviceInfoMap["deviceID"], deviceInfoMap["deviceName"]));
+      deviceInfoList.add(ZegoDeviceInfo(
+          deviceInfoMap["deviceID"], deviceInfoMap["deviceName"]));
     }
 
     return deviceInfoList;
@@ -894,9 +896,14 @@ class ZegoExpressImpl {
         {'channel': channel?.index ?? ZegoPublishChannel.Main.index});
   }
 
-  Future<void> enableCameraAdaptiveFPS(bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
-    return await _channel.invokeMethod('enableCameraAdaptiveFPS',
-        {'enable': enable, 'minFPS': minFPS, 'maxFPS': maxFPS, 'channel': channel.index});
+  Future<void> enableCameraAdaptiveFPS(
+      bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('enableCameraAdaptiveFPS', {
+      'enable': enable,
+      'minFPS': minFPS,
+      'maxFPS': maxFPS,
+      'channel': channel.index
+    });
   }
 
   Future<void> startSoundLevelMonitor({ZegoSoundLevelConfig? config}) async {
@@ -931,9 +938,11 @@ class ZegoExpressImpl {
         .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
-  Future<void> startAudioVADStableStateMonitor(ZegoAudioVADStableStateMonitorType type, {int? millisecond}) async {
-    return await _channel
-        .invokeMethod('startAudioVADStableStateMonitor', {'type': type.index, 'millisecond': millisecond});
+  Future<void> startAudioVADStableStateMonitor(
+      ZegoAudioVADStableStateMonitorType type,
+      {int? millisecond}) async {
+    return await _channel.invokeMethod('startAudioVADStableStateMonitor',
+        {'type': type.index, 'millisecond': millisecond});
   }
 
   Future<void> stopAudioVADStableStateMonitor(
@@ -949,7 +958,8 @@ class ZegoExpressImpl {
   }
 
   Future<void> enableHeadphoneAEC(bool enable) async {
-    return await _channel.invokeMethod('enableHeadphoneAEC', {'enable': enable});
+    return await _channel
+        .invokeMethod('enableHeadphoneAEC', {'enable': enable});
   }
 
   Future<void> setAECMode(ZegoAECMode mode) async {
@@ -982,8 +992,8 @@ class ZegoExpressImpl {
   }
 
   Future<void> enableEffectsBeauty(bool enable) async {
-    return await _channel.invokeMethod('enableEffectsBeauty',
-        {'enable': enable});
+    return await _channel
+        .invokeMethod('enableEffectsBeauty', {'enable': enable});
   }
 
   Future<void> setEffectsBeautyParam(ZegoEffectsBeautyParam param) async {
@@ -1072,22 +1082,17 @@ class ZegoExpressImpl {
         'enableVirtualStereo', {'enable': enable, 'angle': angle});
   }
 
-  Future<void> enablePlayStreamVirtualStereo(bool enable, int angle, String streamID) async {
-    return await _channel.invokeMethod('enablePlayStreamVirtualStereo', {
-      'enable': enable,
-      'angle': angle,
-      'streamID': streamID
-    });
+  Future<void> enablePlayStreamVirtualStereo(
+      bool enable, int angle, String streamID) async {
+    return await _channel.invokeMethod('enablePlayStreamVirtualStereo',
+        {'enable': enable, 'angle': angle, 'streamID': streamID});
   }
 
-  Future<void> setElectronicEffects(bool enable, ZegoElectronicEffectsMode mode, int tonal) async {
-    return await _channel.invokeMethod('setElectronicEffects', {
-      'enable': enable,
-      'mode': mode.index,
-      'tonal': tonal
-    });
+  Future<void> setElectronicEffects(
+      bool enable, ZegoElectronicEffectsMode mode, int tonal) async {
+    return await _channel.invokeMethod('setElectronicEffects',
+        {'enable': enable, 'mode': mode.index, 'tonal': tonal});
   }
-
 
   /* IM */
 
@@ -1239,51 +1244,52 @@ class ZegoExpressImpl {
 
   /* Custom Audio IO */
   Future<void> enableCustomAudioCaptureProcessing(
-    bool enable, ZegoCustomAudioProcessConfig config) async {
-      return await _channel.invokeMethod('enableCustomAudioCaptureProcessing', {
-        'enable': enable,
-        'config': {
-          'sampleRate': config.sampleRate.value,
-          'channel': config.channel.index,
-          'samples': config.samples
-        }
-      });
+      bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await _channel.invokeMethod('enableCustomAudioCaptureProcessing', {
+      'enable': enable,
+      'config': {
+        'sampleRate': config.sampleRate.value,
+        'channel': config.channel.index,
+        'samples': config.samples
+      }
+    });
   }
 
   Future<void> enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(
-    bool enable, ZegoCustomAudioProcessConfig config) async {
-      return await _channel.invokeMethod('enableCustomAudioCaptureProcessingAfterHeadphoneMonitor', {
-        'enable': enable,
-        'config': {
-          'sampleRate': config.sampleRate.value,
-          'channel': config.channel.index,
-          'samples': config.samples
-        }
-      });
+      bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await _channel.invokeMethod(
+        'enableCustomAudioCaptureProcessingAfterHeadphoneMonitor', {
+      'enable': enable,
+      'config': {
+        'sampleRate': config.sampleRate.value,
+        'channel': config.channel.index,
+        'samples': config.samples
+      }
+    });
   }
 
   Future<void> enableCustomAudioRemoteProcessing(
-    bool enable, ZegoCustomAudioProcessConfig config) async {
-      return await _channel.invokeMethod('enableCustomAudioRemoteProcessing', {
-        'enable': enable,
-        'config': {
-          'sampleRate': config.sampleRate.value,
-          'channel': config.channel.index,
-          'samples': config.samples
-        }
-      });
+      bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await _channel.invokeMethod('enableCustomAudioRemoteProcessing', {
+      'enable': enable,
+      'config': {
+        'sampleRate': config.sampleRate.value,
+        'channel': config.channel.index,
+        'samples': config.samples
+      }
+    });
   }
 
   Future<void> enableCustomAudioPlaybackProcessing(
-    bool enable, ZegoCustomAudioProcessConfig config) async {
-      return await _channel.invokeMethod('enableCustomAudioPlaybackProcessing', {
-        'enable': enable,
-        'config': {
-          'sampleRate': config.sampleRate.value,
-          'channel': config.channel.index,
-          'samples': config.samples
-        }
-      });
+      bool enable, ZegoCustomAudioProcessConfig config) async {
+    return await _channel.invokeMethod('enableCustomAudioPlaybackProcessing', {
+      'enable': enable,
+      'config': {
+        'sampleRate': config.sampleRate.value,
+        'channel': config.channel.index,
+        'samples': config.samples
+      }
+    });
   }
 
   Future<void> startAudioDataObserver(
@@ -1301,17 +1307,23 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('stopAudioDataObserver', {});
   }
 
-  Future<void> enableCustomAudioIO(bool enable, ZegoCustomAudioConfig config, {ZegoPublishChannel? channel}) async {
+  Future<void> enableCustomAudioIO(bool enable, ZegoCustomAudioConfig config,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('enableCustomAudioIO', {
       'enable': enable,
-      'config': {
-        'sourceType': config.sourceType.index
-      },
+      'config': {'sourceType': config.sourceType.index},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 
-  Future<void> sendCustomAudioCaptureAACData(Uint8List data, int dataLength, int configLength, int referenceTimeMillisecond, int samples, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+  Future<void> sendCustomAudioCaptureAACData(
+      Uint8List data,
+      int dataLength,
+      int configLength,
+      int referenceTimeMillisecond,
+      int samples,
+      ZegoAudioFrameParam param,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('sendCustomAudioCaptureAACData', {
       'data': data,
       'dataLength': dataLength,
@@ -1326,7 +1338,9 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> sendCustomAudioCapturePCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param, {ZegoPublishChannel? channel}) async {
+  Future<void> sendCustomAudioCapturePCMData(
+      Uint8List data, int dataLength, ZegoAudioFrameParam param,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('sendCustomAudioCapturePCMData', {
       'data': data,
       'dataLength': dataLength,
@@ -1338,7 +1352,8 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> fetchCustomAudioRenderPCMData(Uint8List data, int dataLength, ZegoAudioFrameParam param) async {
+  Future<void> fetchCustomAudioRenderPCMData(
+      Uint8List data, int dataLength, ZegoAudioFrameParam param) async {
     return await _channel.invokeMethod('fetchCustomAudioRenderPCMData', {
       'data': data,
       'dataLength': dataLength,
@@ -1350,13 +1365,12 @@ class ZegoExpressImpl {
   }
 
   /* Range Audio */
-  // static final Map<int, ZegoRangeAudio> rangeAudioMap = Map();
   static ZegoRangeAudioImpl? rangeAudioImpl;
   Future<ZegoRangeAudio?> createRangeAudio() async {
     int index = await _channel.invokeMethod('createRangeAudio');
 
     if (index >= 0) {
-      ZegoRangeAudioImpl rangeAudio= ZegoRangeAudioImpl();
+      ZegoRangeAudioImpl rangeAudio = ZegoRangeAudioImpl();
       rangeAudioImpl = rangeAudio;
       return rangeAudioImpl;
     } else {
@@ -1382,11 +1396,11 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('stopPerformanceMonitor');
   }
 
-  Future<ZegoNetworkProbeResult> startNetworkProbe(ZegoNetworkProbeConfig config) async {
-    final Map<dynamic, dynamic> map = await _channel.invokeMethod('startNetworkProbe', {
-      'config': {
-        'enableTraceroute': config.enableTraceroute
-      }
+  Future<ZegoNetworkProbeResult> startNetworkProbe(
+      ZegoNetworkProbeConfig config) async {
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('startNetworkProbe', {
+      'config': {'enableTraceroute': config.enableTraceroute}
     });
 
     ZegoNetworkProbeHttpResult? httpProbeResult;
@@ -1395,26 +1409,39 @@ class ZegoExpressImpl {
     ZegoNetworkProbeTracerouteResult? tracerouteResult;
 
     if (map['httpProbeResult'] != null) {
-      httpProbeResult = ZegoNetworkProbeHttpResult(map['httpProbeResult']['errorCode'], map['httpProbeResult']['requestCostTime']);
+      httpProbeResult = ZegoNetworkProbeHttpResult(
+          map['httpProbeResult']['errorCode'],
+          map['httpProbeResult']['requestCostTime']);
     }
     if (map['tcpProbeResult'] != null) {
-      tcpProbeResult = ZegoNetworkProbeTcpResult(map['tcpProbeResult']['errorCode'], map['tcpProbeResult']['rtt'], map['tcpProbeResult']['connectCostTime']);
+      tcpProbeResult = ZegoNetworkProbeTcpResult(
+          map['tcpProbeResult']['errorCode'],
+          map['tcpProbeResult']['rtt'],
+          map['tcpProbeResult']['connectCostTime']);
     }
     if (map['udpProbeResult'] != null) {
-      udpProbeResult = ZegoNetworkProbeUdpResult(map['udpProbeResult']['errorCode'], map['udpProbeResult']['rtt']);
+      udpProbeResult = ZegoNetworkProbeUdpResult(
+          map['udpProbeResult']['errorCode'], map['udpProbeResult']['rtt']);
     }
     if (map['tracerouteResult'] != null) {
-      tracerouteResult = ZegoNetworkProbeTracerouteResult(map['tracerouteResult']['errorCode'], map['tracerouteResult']['tracerouteCostTime']);
+      tracerouteResult = ZegoNetworkProbeTracerouteResult(
+          map['tracerouteResult']['errorCode'],
+          map['tracerouteResult']['tracerouteCostTime']);
     }
 
-    return ZegoNetworkProbeResult(httpProbeResult: httpProbeResult, tcpProbeResult: tcpProbeResult, udpProbeResult: udpProbeResult, tracerouteResult: tracerouteResult);
+    return ZegoNetworkProbeResult(
+        httpProbeResult: httpProbeResult,
+        tcpProbeResult: tcpProbeResult,
+        udpProbeResult: udpProbeResult,
+        tracerouteResult: tracerouteResult);
   }
 
   Future<void> stopNetworkProbe() async {
     return await _channel.invokeMethod('stopNetworkProbe');
   }
 
-  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config, {int? interval}) async {
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config,
+      {int? interval}) async {
     return await _channel.invokeMethod('startNetworkSpeedTest', {
       'config': {
         'testUplink': config.testUplink,
@@ -1431,14 +1458,15 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoNetworkTimeInfo> getNetworkTimeInfo() async {
-    final Map<dynamic, dynamic> map = await _channel.invokeMethod('getNetworkTimeInfo');
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('getNetworkTimeInfo');
     return ZegoNetworkTimeInfo(map['timestamp'], map['maxDeviation']);
   }
 
   static ZegoCopyrightedMusic? copyrightedMusicImpl;
   Future<ZegoCopyrightedMusic?> createCopyrightedMusic() async {
     int errorCode = await _channel.invokeMethod('createCopyrightedMusic');
-    if(errorCode == 0) {
+    if (errorCode == 0) {
       copyrightedMusicImpl = ZegoCopyrightedMusicImpl();
     } else {
       copyrightedMusicImpl = null;
@@ -1446,7 +1474,8 @@ class ZegoExpressImpl {
     return copyrightedMusicImpl;
   }
 
-  Future<void> destroyCopyrightedMusic(ZegoCopyrightedMusic copyrightedMusic) async {
+  Future<void> destroyCopyrightedMusic(
+      ZegoCopyrightedMusic copyrightedMusic) async {
     await _channel.invokeMethod('destroyCopyrightedMusic');
     copyrightedMusicImpl = null;
     return;
@@ -1605,9 +1634,7 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onRoomTokenWillExpire == null) return;
 
         ZegoExpressEngine.onRoomTokenWillExpire!(
-          map['roomID'],
-          map['remainTimeInSecond']
-        );
+            map['roomID'], map['remainTimeInSecond']);
         break;
 
       /* Publisher */
@@ -1628,35 +1655,36 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPublisherQualityUpdate == null) return;
 
         ZegoExpressEngine.onPublisherQualityUpdate!(
-          map['streamID'],
-          ZegoPublishStreamQuality(
-            map['quality']['videoCaptureFPS'],
-            map['quality']['videoEncodeFPS'],
-            map['quality']['videoSendFPS'],
-            map['quality']['videoKBPS'],
-            map['quality']['audioCaptureFPS'],
-            map['quality']['audioSendFPS'],
-            map['quality']['audioKBPS'],
-            map['quality']['rtt'],
-            map['quality']['packetLostRate'],
-            ZegoStreamQualityLevel.values[map['quality']['level']],
-            map['quality']['isHardwareEncode'],
-            ZegoVideoCodecID.values[map['quality']['videoCodecID']],
-            map['quality']['totalSendBytes'],
-            map['quality']['audioSendBytes'],
-            map['quality']['videoSendBytes'],
-          )
-        );
+            map['streamID'],
+            ZegoPublishStreamQuality(
+              map['quality']['videoCaptureFPS'],
+              map['quality']['videoEncodeFPS'],
+              map['quality']['videoSendFPS'],
+              map['quality']['videoKBPS'],
+              map['quality']['audioCaptureFPS'],
+              map['quality']['audioSendFPS'],
+              map['quality']['audioKBPS'],
+              map['quality']['rtt'],
+              map['quality']['packetLostRate'],
+              ZegoStreamQualityLevel.values[map['quality']['level']],
+              map['quality']['isHardwareEncode'],
+              ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+              map['quality']['totalSendBytes'],
+              map['quality']['audioSendBytes'],
+              map['quality']['videoSendBytes'],
+            ));
         break;
 
       case 'onPublisherCapturedAudioFirstFrame':
-        if (ZegoExpressEngine.onPublisherCapturedAudioFirstFrame == null) return;
+        if (ZegoExpressEngine.onPublisherCapturedAudioFirstFrame == null)
+          return;
 
         ZegoExpressEngine.onPublisherCapturedAudioFirstFrame!();
         break;
 
       case 'onPublisherCapturedVideoFirstFrame':
-        if (ZegoExpressEngine.onPublisherCapturedVideoFirstFrame == null) return;
+        if (ZegoExpressEngine.onPublisherCapturedVideoFirstFrame == null)
+          return;
 
         ZegoExpressEngine.onPublisherCapturedVideoFirstFrame!(
             ZegoPublishChannel.values[map['channel']]);
@@ -1694,15 +1722,19 @@ class ZegoExpressImpl {
       case 'onPublisherVideoEncoderChanged':
         if (ZegoExpressEngine.onPublisherVideoEncoderChanged == null) return;
 
-        ZegoExpressEngine.onPublisherVideoEncoderChanged!(ZegoVideoCodecID.values[map['fromCodecID']],
-            ZegoVideoCodecID.values[map['toCodecID']], ZegoPublishChannel.values[map['channel']]);
+        ZegoExpressEngine.onPublisherVideoEncoderChanged!(
+            ZegoVideoCodecID.values[map['fromCodecID']],
+            ZegoVideoCodecID.values[map['toCodecID']],
+            ZegoPublishChannel.values[map['channel']]);
         break;
 
       case 'onPublisherStreamEvent':
         if (ZegoExpressEngine.onPublisherStreamEvent == null) return;
 
-        ZegoExpressEngine.onPublisherStreamEvent!(ZegoStreamEventExtension.fromValue(map['eventID']),
-            map['streamID'], map['extraInfo']);
+        ZegoExpressEngine.onPublisherStreamEvent!(
+            ZegoStreamEventExtension.fromValue(map['eventID']),
+            map['streamID'],
+            map['extraInfo']);
         break;
 
       /* Player */
@@ -1723,35 +1755,33 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
 
         ZegoExpressEngine.onPlayerQualityUpdate!(
-          map['streamID'],
-          ZegoPlayStreamQuality(
-            map['quality']['videoRecvFPS'],
-            map['quality']['videoDejitterFPS'],
-            map['quality']['videoDecodeFPS'],
-            map['quality']['videoRenderFPS'],
-            map['quality']['videoKBPS'],
-            map['quality']['videoBreakRate'],
-            map['quality']['audioRecvFPS'],
-            map['quality']['audioDejitterFPS'],
-            map['quality']['audioDecodeFPS'],
-            map['quality']['audioRenderFPS'],
-            map['quality']['audioKBPS'],
-            map['quality']['audioBreakRate'],
-            map['quality']['mos'],
-            map['quality']['rtt'],
-            map['quality']['packetLostRate'],
-            map['quality']['peerToPeerDelay'],
-            map['quality']['peerToPeerPacketLostRate'],
-            ZegoStreamQualityLevel.values[map['quality']['level']],
-            map['quality']['delay'],
-            map['quality']['avTimestampDiff'],
-            map['quality']['isHardwareDecode'],
-            ZegoVideoCodecID.values[map['quality']['videoCodecID']],
-            map['quality']['totalRecvBytes'],
-            map['quality']['audioRecvBytes'],
-            map['quality']['videoRecvBytes']
-          )
-        );
+            map['streamID'],
+            ZegoPlayStreamQuality(
+                map['quality']['videoRecvFPS'],
+                map['quality']['videoDejitterFPS'],
+                map['quality']['videoDecodeFPS'],
+                map['quality']['videoRenderFPS'],
+                map['quality']['videoKBPS'],
+                map['quality']['videoBreakRate'],
+                map['quality']['audioRecvFPS'],
+                map['quality']['audioDejitterFPS'],
+                map['quality']['audioDecodeFPS'],
+                map['quality']['audioRenderFPS'],
+                map['quality']['audioKBPS'],
+                map['quality']['audioBreakRate'],
+                map['quality']['mos'],
+                map['quality']['rtt'],
+                map['quality']['packetLostRate'],
+                map['quality']['peerToPeerDelay'],
+                map['quality']['peerToPeerPacketLostRate'],
+                ZegoStreamQualityLevel.values[map['quality']['level']],
+                map['quality']['delay'],
+                map['quality']['avTimestampDiff'],
+                map['quality']['isHardwareDecode'],
+                ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+                map['quality']['totalRecvBytes'],
+                map['quality']['audioRecvBytes'],
+                map['quality']['videoRecvBytes']));
         break;
 
       case 'onPlayerMediaEvent':
@@ -1795,7 +1825,8 @@ class ZegoExpressImpl {
       case 'onPlayerRecvAudioSideInfo':
         if (ZegoExpressEngine.onPlayerRecvAudioSideInfo == null) return;
 
-        ZegoExpressEngine.onPlayerRecvAudioSideInfo!(map['streamID'], map['data']);
+        ZegoExpressEngine.onPlayerRecvAudioSideInfo!(
+            map['streamID'], map['data']);
         break;
 
       case 'onPlayerLowFpsWarning':
@@ -1809,7 +1840,9 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerStreamEvent == null) return;
 
         ZegoExpressEngine.onPlayerStreamEvent!(
-            ZegoStreamEventExtension.fromValue(map['eventID']), map['streamID'], map['extraInfo']);
+            ZegoStreamEventExtension.fromValue(map['eventID']),
+            map['streamID'],
+            map['extraInfo']);
         break;
 
       /* Mixer*/
@@ -1874,8 +1907,8 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onCapturedSoundLevelInfoUpdate == null) return;
 
         Map<dynamic, dynamic> soundLevelInfo = map['soundLevelInfo'];
-        ZegoExpressEngine.onCapturedSoundLevelInfoUpdate!(
-          ZegoSoundLevelInfo(soundLevelInfo['soundLevel'], soundLevelInfo['vad']));
+        ZegoExpressEngine.onCapturedSoundLevelInfoUpdate!(ZegoSoundLevelInfo(
+            soundLevelInfo['soundLevel'], soundLevelInfo['vad']));
         break;
 
       case 'onRemoteSoundLevelUpdate':
@@ -1896,16 +1929,15 @@ class ZegoExpressImpl {
         Map<String, ZegoSoundLevelInfo> resultMap = {};
         Map<dynamic, dynamic> soundLevelInfos = map['soundLevelInfos'];
         soundLevelInfos.forEach((k, v) =>
-          resultMap[k] = ZegoSoundLevelInfo(v['soundLevel'], v['vad'])
-        );
-        ZegoExpressEngine
-            .onRemoteSoundLevelInfoUpdate!(resultMap);
+            resultMap[k] = ZegoSoundLevelInfo(v['soundLevel'], v['vad']));
+        ZegoExpressEngine.onRemoteSoundLevelInfoUpdate!(resultMap);
         break;
 
       case 'onCapturedAudioSpectrumUpdate':
         if (ZegoExpressEngine.onCapturedAudioSpectrumUpdate == null) return;
 
-        List<double> originAudioSpectrum = List<double>.from(map['audioSpectrum']);
+        List<double> originAudioSpectrum =
+            List<double>.from(map['audioSpectrum']);
 
         ZegoExpressEngine.onCapturedAudioSpectrumUpdate!(originAudioSpectrum);
         break;
@@ -1927,9 +1959,9 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onLocalDeviceExceptionOccurred == null) return;
 
         ZegoExpressEngine.onLocalDeviceExceptionOccurred!(
-          ZegoDeviceExceptionType.values[map['exceptionType']],
-          ZegoDeviceType.values[map['deviceType']],
-          map['deviceID']);
+            ZegoDeviceExceptionType.values[map['exceptionType']],
+            ZegoDeviceType.values[map['deviceType']],
+            map['deviceID']);
         break;
 
       case 'onDeviceError':
@@ -2046,8 +2078,10 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onNetworkSpeedTestQualityUpdate == null) return;
 
         ZegoExpressEngine.onNetworkSpeedTestQualityUpdate!(
-            ZegoNetworkSpeedTestQuality(map['quality']['connectCost'],
-                map['quality']['rtt'], map['quality']['packetLostRate'],
+            ZegoNetworkSpeedTestQuality(
+                map['quality']['connectCost'],
+                map['quality']['rtt'],
+                map['quality']['packetLostRate'],
                 ZegoStreamQualityLevel.values[map['quality']['quality']]),
             ZegoNetworkSpeedTestType.values[map['type']]);
         break;
@@ -2062,10 +2096,9 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onNetworkQuality == null) return;
 
         ZegoExpressEngine.onNetworkQuality!(
-          map['userID'],
-          ZegoStreamQualityLevel.values[map['upstreamQuality']],
-          ZegoStreamQualityLevel.values[map['downstreamQuality']]
-        );
+            map['userID'],
+            ZegoStreamQualityLevel.values[map['upstreamQuality']],
+            ZegoStreamQualityLevel.values[map['downstreamQuality']]);
         break;
 
       /* Process Audio Data */
@@ -2075,24 +2108,28 @@ class ZegoExpressImpl {
         Map<dynamic, dynamic> paramMap = map['param'];
 
         ZegoExpressEngine.onProcessCapturedAudioData!(
-          map['data'],
-          map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
-          map['timestamp']
-        );
+            map['data'],
+            map['dataLength'],
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]),
+            map['timestamp']);
         break;
 
       case 'onProcessCapturedAudioDataAfterUsedHeadphoneMonitor':
-        if (ZegoExpressEngine.onProcessCapturedAudioDataAfterUsedHeadphoneMonitor == null) return;
+        if (ZegoExpressEngine
+                .onProcessCapturedAudioDataAfterUsedHeadphoneMonitor ==
+            null) return;
 
         Map<dynamic, dynamic> paramMap = map['param'];
 
         ZegoExpressEngine.onProcessCapturedAudioDataAfterUsedHeadphoneMonitor!(
-          map['data'],
-          map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
-          map['timestamp']
-        );
+            map['data'],
+            map['dataLength'],
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]),
+            map['timestamp']);
         break;
 
       case 'onProcessRemoteAudioData':
@@ -2101,12 +2138,13 @@ class ZegoExpressImpl {
         Map<dynamic, dynamic> paramMap = map['param'];
 
         ZegoExpressEngine.onProcessRemoteAudioData!(
-          map['data'],
-          map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
-          map['streamID'],
-          map['timestamp']
-        );
+            map['data'],
+            map['dataLength'],
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]),
+            map['streamID'],
+            map['timestamp']);
         break;
 
       case 'onProcessPlaybackAudioData':
@@ -2115,11 +2153,12 @@ class ZegoExpressImpl {
         Map<dynamic, dynamic> paramMap = map['param'];
 
         ZegoExpressEngine.onProcessPlaybackAudioData!(
-          map['data'],
-          map['dataLength'],
-          ZegoAudioFrameParam(ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']), ZegoAudioChannel.values[paramMap['channel']]),
-          map['timestamp']
-        );
+            map['data'],
+            map['dataLength'],
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]),
+            map['timestamp']);
         break;
 
       /* MediaPlayer */
@@ -2178,19 +2217,22 @@ class ZegoExpressImpl {
         ZegoMediaPlayer? mediaPlayer =
             ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
         if (mediaPlayer != null) {
-          ZegoExpressEngine.onMediaPlayerSoundLevelUpdate!(mediaPlayer, map['soundLevel']);
+          ZegoExpressEngine.onMediaPlayerSoundLevelUpdate!(
+              mediaPlayer, map['soundLevel']);
         }
         break;
 
       case 'onMediaPlayerFrequencySpectrumUpdate':
-        if (ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate == null) return;
+        if (ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate == null)
+          return;
 
         int? mediaPlayerIndex = map['mediaPlayerIndex'];
         ZegoMediaPlayer? mediaPlayer =
             ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
         if (mediaPlayer != null) {
           List<double> spectrumList = List<double>.from(map['spectrumList']);
-          ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate!(mediaPlayer, spectrumList);
+          ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate!(
+              mediaPlayer, spectrumList);
         }
         break;
       /* AudioEffectPlayer */
@@ -2218,25 +2260,20 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onCapturedDataRecordStateUpdate!(
             ZegoDataRecordState.values[map['state']],
             map['errorCode'],
-            ZegoDataRecordConfig(
-              map['config']['filePath'],
-              ZegoDataRecordType.values[map['config']['recordType']]
-            ),
+            ZegoDataRecordConfig(map['config']['filePath'],
+                ZegoDataRecordType.values[map['config']['recordType']]),
             ZegoPublishChannel.values[map['channel']]);
         break;
 
       case 'onCapturedDataRecordProgressUpdate':
-        if (ZegoExpressEngine.onCapturedDataRecordProgressUpdate == null) return;
+        if (ZegoExpressEngine.onCapturedDataRecordProgressUpdate == null)
+          return;
 
         ZegoExpressEngine.onCapturedDataRecordProgressUpdate!(
-            ZegoDataRecordProgress(
-              map['progress']['duration'],
-              map['progress']['currentFileSize']
-            ),
-            ZegoDataRecordConfig(
-              map['config']['filePath'],
-              ZegoDataRecordType.values[map['config']['recordType']]
-            ),
+            ZegoDataRecordProgress(map['progress']['duration'],
+                map['progress']['currentFileSize']),
+            ZegoDataRecordConfig(map['config']['filePath'],
+                ZegoDataRecordType.values[map['config']['recordType']]),
             ZegoPublishChannel.values[map['channel']]);
         break;
 
@@ -2247,13 +2284,11 @@ class ZegoExpressImpl {
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
         ZegoExpressEngine.onCapturedAudioData!(
-          data,
-          dataLength,
-          ZegoAudioFrameParam(
-            ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
-            ZegoAudioChannel.values[paramMap['channel']]
-          )
-        );
+            data,
+            dataLength,
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]));
         break;
 
       case 'onPlaybackAudioData':
@@ -2263,13 +2298,11 @@ class ZegoExpressImpl {
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
         ZegoExpressEngine.onPlaybackAudioData!(
-          data,
-          dataLength,
-          ZegoAudioFrameParam(
-            ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
-            ZegoAudioChannel.values[paramMap['channel']]
-          )
-        );
+            data,
+            dataLength,
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]));
         break;
 
       case 'onMixedAudioData':
@@ -2279,13 +2312,11 @@ class ZegoExpressImpl {
         int dataLength = map['dataLength'];
         Map<dynamic, dynamic> paramMap = map['param'];
         ZegoExpressEngine.onMixedAudioData!(
-          data,
-          dataLength,
-          ZegoAudioFrameParam(
-            ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
-            ZegoAudioChannel.values[paramMap['channel']]
-          )
-        );
+            data,
+            dataLength,
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]));
         break;
 
       case 'onPlayerAudioData':
@@ -2300,20 +2331,19 @@ class ZegoExpressImpl {
             data,
             dataLength,
             ZegoAudioFrameParam(
-              ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
-              ZegoAudioChannel.values[paramMap['channel']]
-            ),
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]),
             streamID);
         break;
 
       case 'onRangeAudioMicrophoneStateUpdate':
-        if (ZegoExpressEngine.onRangeAudioMicrophoneStateUpdate == null || rangeAudioImpl == null) return;
+        if (ZegoExpressEngine.onRangeAudioMicrophoneStateUpdate == null ||
+            rangeAudioImpl == null) return;
 
         ZegoExpressEngine.onRangeAudioMicrophoneStateUpdate!(
-          rangeAudioImpl!,
-          ZegoRangeAudioMicrophoneState.values[map['state']],
-          map['errorCode']
-        );
+            rangeAudioImpl!,
+            ZegoRangeAudioMicrophoneState.values[map['state']],
+            map['errorCode']);
         break;
       /* Real Time Sequential Data Manager */
 
@@ -2332,15 +2362,19 @@ class ZegoExpressImpl {
 
       /* Copyrighted Music */
       case 'onDownloadProgressUpdate':
-        if (ZegoExpressEngine.onDownloadProgressUpdate == null || copyrightedMusicImpl == null) return;
+        if (ZegoExpressEngine.onDownloadProgressUpdate == null ||
+            copyrightedMusicImpl == null) return;
 
-        ZegoExpressEngine.onDownloadProgressUpdate!(copyrightedMusicImpl!, map['resourceID'], map['progressRate']);
+        ZegoExpressEngine.onDownloadProgressUpdate!(
+            copyrightedMusicImpl!, map['resourceID'], map['progressRate']);
         break;
 
       case 'onCurrentPitchValueUpdate':
-        if (ZegoExpressEngine.onCurrentPitchValueUpdate == null || copyrightedMusicImpl == null) return;
+        if (ZegoExpressEngine.onCurrentPitchValueUpdate == null ||
+            copyrightedMusicImpl == null) return;
 
-        ZegoExpressEngine.onCurrentPitchValueUpdate!(copyrightedMusicImpl!, map['resourceID'], map['currentDuration'], map['pitchValue']);
+        ZegoExpressEngine.onCurrentPitchValueUpdate!(copyrightedMusicImpl!,
+            map['resourceID'], map['currentDuration'], map['pitchValue']);
         break;
 
       default:
@@ -2365,13 +2399,14 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
-  Future<ZegoMediaPlayerLoadResourceResult> loadResourceFromMediaData(Uint8List mediaData, int startPosition) async{
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceFromMediaData(
+      Uint8List mediaData, int startPosition) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerLoadResourceFromMediaData', {
-          'index': _index,
-          'mediaData': mediaData,
-          'startPosition': startPosition
-        });
+      'index': _index,
+      'mediaData': mediaData,
+      'startPosition': startPosition
+    });
 
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
@@ -2439,16 +2474,15 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<void> setPlayerCanvas(ZegoCanvas canvas) async {
-    return await ZegoExpressImpl._channel.invokeMethod(
-      'mediaPlayerSetPlayerCanvas', {
-        'index': _index,
-        'canvas': {
-          'view': canvas.view,
-          'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
-          'backgroundColor': canvas.backgroundColor ?? 0x000000
-        }
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerSetPlayerCanvas', {
+      'index': _index,
+      'canvas': {
+        'view': canvas.view,
+        'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
+        'backgroundColor': canvas.backgroundColor ?? 0x000000
       }
-    );
+    });
   }
 
   @override
@@ -2538,80 +2572,74 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
-  Future<void> enableAccurateSeek(bool enable, ZegoAccurateSeekConfig config) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableAccurateSeek', {
+  Future<void> enableAccurateSeek(
+      bool enable, ZegoAccurateSeekConfig config) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerEnableAccurateSeek', {
       'index': _index,
       'enable': enable,
-      'config': {
-        'timeout': config.timeout
-      }
+      'config': {'timeout': config.timeout}
     });
   }
 
   @override
   Future<ZegoNetWorkResourceCache> getNetWorkResourceCache() async {
-    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod(
-      'mediaPlayerGetNetWorkResourceCache', {'index': _index});
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetNetWorkResourceCache', {'index': _index});
 
     return ZegoNetWorkResourceCache(map['time'], map['size']);
   }
 
   @override
   Future<void> setNetWorkBufferThreshold(int threshold) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetNetWorkBufferThreshold', {
-      'index': _index,
-      'threshold': threshold
-    });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetNetWorkBufferThreshold',
+        {'index': _index, 'threshold': threshold});
   }
 
   @override
   Future<void> setNetWorkResourceMaxCache(int time, int size) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetNetWorkResourceMaxCache', {
-      'index': _index,
-      'time': time,
-      'size': size
-    });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetNetWorkResourceMaxCache',
+        {'index': _index, 'time': time, 'size': size});
   }
 
   @override
   Future<void> setPlaySpeed(double speed) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetPlaySpeed', {
-      'index': _index,
-      'speed': speed
-    });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetPlaySpeed', {'index': _index, 'speed': speed});
   }
 
   @override
   Future<ZegoMediaPlayerTakeSnapshotResult> takeSnapshot() async {
-    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod(
-        'mediaPlayerTakeSnapshot', {'index': _index}
-    );
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerTakeSnapshot', {'index': _index});
 
     return ZegoMediaPlayerTakeSnapshotResult(map['errorCode'],
         image: map['image'] != null ? MemoryImage(map['image']) : null);
   }
 
   @override
-  Future<void> enableFrequencySpectrumMonitor(bool enable, int millisecond) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableFrequencySpectrumMonitor', {
-      'index': _index,
-      'enable': enable,
-      'millisecond': millisecond
-    });
+  Future<void> enableFrequencySpectrumMonitor(
+      bool enable, int millisecond) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableFrequencySpectrumMonitor',
+        {'index': _index, 'enable': enable, 'millisecond': millisecond});
   }
 
   @override
   Future<void> enableSoundLevelMonitor(bool enable, int millisecond) async {
-    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableSoundLevelMonitor', {
-      'index': _index,
-      'enable': enable,
-      'millisecond': millisecond
-    });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableSoundLevelMonitor',
+        {'index': _index, 'enable': enable, 'millisecond': millisecond});
   }
 
   @override
-  Future<ZegoMediaPlayerLoadResourceResult> loadCopyrightedMusicResourceWithPosition(String resourceID, int startPosition) async {
-    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel.invokeMethod('mediaPlayerLoadCopyrightedMusicResourceWithPosition', {
+  Future<ZegoMediaPlayerLoadResourceResult>
+      loadCopyrightedMusicResourceWithPosition(
+          String resourceID, int startPosition) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerLoadCopyrightedMusicResourceWithPosition', {
       'index': _index,
       'resourceID': resourceID,
       'startPosition': startPosition
@@ -2621,12 +2649,16 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<void> clearView() {
-    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerClearView', {'index': _index,});
+    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerClearView', {
+      'index': _index,
+    });
   }
 
   @override
   Future<void> setActiveAudioChannel(ZegoMediaPlayerAudioChannel audioChannel) {
-    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetActiveAudioChannel', {'index': _index, 'audioChannel': audioChannel.index});
+    return ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetActiveAudioChannel',
+        {'index': _index, 'audioChannel': audioChannel.index});
   }
 }
 
@@ -2756,70 +2788,61 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
 
   @override
   Future<void> setPlaySpeed(int audioEffectID, double speed) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('audioEffectPlayerSetPlaySpeed', {
-      'index': _index,
-      'audioEffectID': audioEffectID,
-      'speed': speed
-    });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlaySpeed',
+        {'index': _index, 'audioEffectID': audioEffectID, 'speed': speed});
   }
 }
 
 class ZegoRangeAudioImpl extends ZegoRangeAudio {
-
   @override
   Future<void> enableMicrophone(bool enable) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioEnableMicrophone', {
-      'enable': enable
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioEnableMicrophone', {'enable': enable});
   }
 
   @override
   Future<void> enableSpatializer(bool enable) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioEnableSpatializer', {
-      'enable': enable
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioEnableSpatializer', {'enable': enable});
   }
 
   @override
   Future<void> enableSpeaker(bool enable) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioEnableSpeaker', {
-      'enable': enable
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioEnableSpeaker', {'enable': enable});
   }
 
   @override
   Future<void> setAudioReceiveRange(double range) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioSetAudioReceiveRange', {
-      'range': range
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetAudioReceiveRange', {'range': range});
   }
 
   @override
   Future<void> setRangeAudioMode(ZegoRangeAudioMode mode) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioSetMode', {
-      'mode': mode.index
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetMode', {'mode': mode.index});
   }
 
   @override
   Future<void> setTeamID(String teamID) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioSetTeamID', {
-      'teamID': teamID
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetTeamID', {'teamID': teamID});
   }
 
   @override
   Future<void> updateAudioSource(String userID, Float32List position) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioUpdateAudioSource', {
-      'userID': userID,
-      'position': position
-    });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'rangeAudioUpdateAudioSource',
+        {'userID': userID, 'position': position});
   }
 
   @override
-  Future<void> updateSelfPosition(Float32List position, Float32List axisForward, Float32List axisRight, Float32List axisUp) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioUpdateSelfPosition', {
+  Future<void> updateSelfPosition(Float32List position, Float32List axisForward,
+      Float32List axisRight, Float32List axisUp) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioUpdateSelfPosition', {
       'position': position,
       'axisForward': axisForward,
       'axisRight': axisRight,
@@ -2829,10 +2852,8 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
 
   @override
   Future<void> muteUser(String userID, bool mute) async {
-    return await ZegoExpressImpl._channel.invokeMethod('rangeAudioMuteUser', {
-      'userID': userID,
-      'mute': mute
-    });
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioMuteUser', {'userID': userID, 'mute': mute});
   }
 }
 
@@ -2859,33 +2880,35 @@ class ZegoRealTimeSequentialDataManagerImpl
 
   @override
   Future<void> startBroadcasting(String streamID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStartBroadcasting', {'index': _index, 'streamID': streamID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'dataManagerStartBroadcasting',
+        {'index': _index, 'streamID': streamID});
   }
 
   @override
   Future<void> startSubscribing(String streamID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStartSubscribing', {'index': _index, 'streamID': streamID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'dataManagerStartSubscribing', {'index': _index, 'streamID': streamID});
   }
 
   @override
   Future<void> stopBroadcasting(String streamID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStopBroadcasting', {'index': _index, 'streamID': streamID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'dataManagerStopBroadcasting', {'index': _index, 'streamID': streamID});
   }
 
   @override
   Future<void> stopSubscribing(String streamID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('dataManagerStopSubscribing', {'index': _index, 'streamID': streamID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'dataManagerStopSubscribing', {'index': _index, 'streamID': streamID});
   }
 }
 
 class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   @override
   Future<void> clearCache() async {
-    return await ZegoExpressImpl._channel.invokeMethod('copyrightedMusicClearCache');
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicClearCache');
   }
 
   @override
@@ -2897,8 +2920,8 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
 
   @override
   Future<int> getAverageScore(String resourceID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetAverageScore', {'resourceID': resourceID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicGetAverageScore', {'resourceID': resourceID});
   }
 
   @override
@@ -2909,65 +2932,76 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
 
   @override
   Future<int> getCurrentPitch(String resourceID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetCurrentPitch', {'resourceID': resourceID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicGetCurrentPitch', {'resourceID': resourceID});
   }
 
   @override
   Future<int> getDuration(String resourceID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetDuration', {'resourceID': resourceID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicGetDuration', {'resourceID': resourceID});
   }
 
   @override
-  Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(String krcToken) async{
+  Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(
+      String krcToken) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetKrcLyricByToken', {'krcToken': krcToken});
-    return ZegoCopyrightedMusicGetKrcLyricByTokenResult(map['errorCode'], map['lyrics']);
+        .invokeMethod(
+            'copyrightedMusicGetKrcLyricByToken', {'krcToken': krcToken});
+    return ZegoCopyrightedMusicGetKrcLyricByTokenResult(
+        map['errorCode'], map['lyrics']);
   }
 
   @override
-  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID) async {
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(
+      String songID) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicGetLrcLyric', {'songID': songID});
-    return ZegoCopyrightedMusicGetLrcLyricResult(map['errorCode'], map['lyrics']);
+    return ZegoCopyrightedMusicGetLrcLyricResult(
+        map['errorCode'], map['lyrics']);
   }
 
   @override
-  Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(String shareToken) async {
+  Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
+      String shareToken) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetMusicByToken', {'shareToken': shareToken});
-    return ZegoCopyrightedMusicGetMusicByTokenResult(map['errorCode'], map['resource']);
+        .invokeMethod(
+            'copyrightedMusicGetMusicByToken', {'shareToken': shareToken});
+    return ZegoCopyrightedMusicGetMusicByTokenResult(
+        map['errorCode'], map['resource']);
   }
 
   @override
   Future<int> getPreviousScore(String resourceID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetPreviousScore', {'resourceID': resourceID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicGetPreviousScore', {'resourceID': resourceID});
   }
 
   @override
-  Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(String resourceID) async {
+  Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(
+      String resourceID) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetStandardPitch', {'resourceID': resourceID});
-    return ZegoCopyrightedMusicGetStandardPitchResult(map['errorCode'], map['pitch']);
+        .invokeMethod(
+            'copyrightedMusicGetStandardPitch', {'resourceID': resourceID});
+    return ZegoCopyrightedMusicGetStandardPitchResult(
+        map['errorCode'], map['pitch']);
   }
 
   @override
   Future<int> getTotalScore(String resourceID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetTotalScore', {'resourceID': resourceID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicGetTotalScore', {'resourceID': resourceID});
   }
 
   @override
-  Future<ZegoCopyrightedMusicInitResult> initCopyrightedMusic(ZegoCopyrightedMusicConfig config) async {
+  Future<ZegoCopyrightedMusicInitResult> initCopyrightedMusic(
+      ZegoCopyrightedMusicConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicInitCopyrightedMusic', {'config': {
-          'user': {
-            'userID': config.user.userID,
-            'userName': config.user.userName
-          }
-        }});
+        .invokeMethod('copyrightedMusicInitCopyrightedMusic', {
+      'config': {
+        'user': {'userID': config.user.userID, 'userName': config.user.userName}
+      }
+    });
     return ZegoCopyrightedMusicInitResult(map['errorCode']);
   }
 
@@ -2979,38 +3013,41 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
 
   @override
   Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicQueryCache', {'songID': songID, 'type': type.index});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicQueryCache', {'songID': songID, 'type': type.index});
   }
 
   @override
-  Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(ZegoCopyrightedMusicRequestConfig config) async {
+  Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(
+      ZegoCopyrightedMusicRequestConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicRequestAccompaniment', {'config': {
-          'songID': config.songID,
-          'mode': config.mode.index
-        }});
-    return ZegoCopyrightedMusicRequestAccompanimentResult(map['errorCode'], map['resource']);
+        .invokeMethod('copyrightedMusicRequestAccompaniment', {
+      'config': {'songID': config.songID, 'mode': config.mode.index}
+    });
+    return ZegoCopyrightedMusicRequestAccompanimentResult(
+        map['errorCode'], map['resource']);
   }
 
   @override
-  Future<ZegoCopyrightedMusicRequestAccompanimentClipResult> requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config) async {
+  Future<ZegoCopyrightedMusicRequestAccompanimentClipResult>
+      requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicRequestAccompanimentClip', {'config': {
-          'songID': config.songID,
-          'mode': config.mode.index
-        }});
-    return ZegoCopyrightedMusicRequestAccompanimentClipResult(map['errorCode'], map['resource']);
+        .invokeMethod('copyrightedMusicRequestAccompanimentClip', {
+      'config': {'songID': config.songID, 'mode': config.mode.index}
+    });
+    return ZegoCopyrightedMusicRequestAccompanimentClipResult(
+        map['errorCode'], map['resource']);
   }
 
   @override
-  Future<ZegoCopyrightedMusicRequestSongResult> requestSong(ZegoCopyrightedMusicRequestConfig config) async {
+  Future<ZegoCopyrightedMusicRequestSongResult> requestSong(
+      ZegoCopyrightedMusicRequestConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicRequestSong', {'config': {
-          'songID': config.songID,
-          'mode': config.mode.index
-        }});
-    return ZegoCopyrightedMusicRequestSongResult(map['errorCode'], map['resource']);
+        .invokeMethod('copyrightedMusicRequestSong', {
+      'config': {'songID': config.songID, 'mode': config.mode.index}
+    });
+    return ZegoCopyrightedMusicRequestSongResult(
+        map['errorCode'], map['resource']);
   }
 
   @override
@@ -3021,35 +3058,30 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
 
   @override
   Future<int> resumeScore(String resourceID) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicResumeScore', {'resourceID': resourceID});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicResumeScore', {'resourceID': resourceID});
   }
 
   @override
-  Future<ZegoCopyrightedMusicSendExtendedRequestResult> sendExtendedRequest(String command, String params) async {
+  Future<ZegoCopyrightedMusicSendExtendedRequestResult> sendExtendedRequest(
+      String command, String params) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicSendExtendedRequest', {
-          'command': command,
-          'params': params
-        });
-    return ZegoCopyrightedMusicSendExtendedRequestResult(map['errorCode'], map['command'], map['result']);
+        .invokeMethod('copyrightedMusicSendExtendedRequest',
+            {'command': command, 'params': params});
+    return ZegoCopyrightedMusicSendExtendedRequestResult(
+        map['errorCode'], map['command'], map['result']);
   }
 
   @override
   Future<int> startScore(String resourceID, int pitchValueInterval) async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicStartScore', {
-          'resourceID': resourceID,
-          'pitchValueInterval': pitchValueInterval
-        });
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicStartScore',
+        {'resourceID': resourceID, 'pitchValueInterval': pitchValueInterval});
   }
 
   @override
   Future<int> stopScore(String resourceID) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicStopScore', {
-          'resourceID': resourceID
-        });
+        .invokeMethod('copyrightedMusicStopScore', {'resourceID': resourceID});
   }
-
 }

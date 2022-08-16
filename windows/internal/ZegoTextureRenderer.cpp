@@ -1,6 +1,7 @@
 #include "ZegoTextureRenderer.h"
 
 #include <cassert>
+#include <iostream>
 
 ZegoTextureRenderer::ZegoTextureRenderer(flutter::TextureRegistrar* texture_registrar, uint32_t width, uint32_t height)
     : textureRegistrar_(texture_registrar), width_(width), height_(height) {
@@ -145,6 +146,33 @@ const FlutterDesktopPixelBuffer* ZegoTextureRenderer::ConvertPixelBufferForFlutt
     }
 
     flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
+    // double aspectRatio = width_/height_;
+    // switch (viewMode_)
+    // {
+    // case ZEGO::EXPRESS::ZegoViewMode::ZEGO_VIEW_MODE_ASPECT_FILL:
+    //   if (target_width <=  target_height) {
+    //     height_ = target_height;
+    //     width_ = height_ /aspectRatio;
+    //   } else {
+    //     width_ = target_width;
+    //     height_ = width_*aspectRatio;
+    //   }
+    //   /* code */
+    //   break;
+    // case ZEGO::EXPRESS::ZegoViewMode::ZEGO_VIEW_MODE_ASPECT_FIT:
+    //   if (target_width >=  target_height) {
+    //     height_ = target_height;
+    //     width_ = height_ /aspectRatio;
+    //   } else {
+    //     width_ = target_width;
+    //     height_ = width_*aspectRatio;
+    //   }
+    //   break;
+    // case ZEGO::EXPRESS::ZegoViewMode::ZEGO_VIEW_MODE_SCALE_TO_FILL:
+    //   break;
+    // default:
+    //   break;
+    // }
     flutterDesktopPixelBuffer_->width = width_;
     flutterDesktopPixelBuffer_->height = height_;
 

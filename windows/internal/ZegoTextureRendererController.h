@@ -5,7 +5,8 @@
 #include "ZegoTextureRenderer.h"
 
 
-class ZegoTextureRendererController : public ZEGO::EXPRESS::IZegoCustomVideoRenderHandler
+class ZegoTextureRendererController : public ZEGO::EXPRESS::IZegoCustomVideoRenderHandler, 
+    public ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler
 {
 public:
     ZegoTextureRendererController(/* args */);
@@ -37,6 +38,12 @@ public:
     /// Called when dart invoke `stopPlayingStream`
     void removeRemoteRenderer(std::string streamID);
 
+    /// Called when dart invoke `mediaPlayer.setPlayerCanvas`
+    bool addMediaPlayerRenderer(int64_t textureID, ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, ZEGO::EXPRESS::ZegoViewMode viewMode);
+
+    /// Called when dart invoke `destroyMediaPlayer`
+    void removeMediaPlayerRenderer(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer);
+
     /// For video preview/play
     void startRendering();
 
@@ -55,10 +62,15 @@ protected:
     virtual void onRemoteVideoFrameRawData(unsigned char ** data, unsigned int * dataLength,
                                            ZEGO::EXPRESS::ZegoVideoFrameParam param,
                                            const std::string & streamID) override;
+
+    // The callback triggered when the media player throws out video frame data.
+    virtual void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
+                              unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param) override;
 private:
     std::unordered_map<int64_t , std::shared_ptr<ZegoTextureRenderer> > renderers_;
     std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel , std::shared_ptr<ZegoTextureRenderer> > capturedRenderers_;
     std::unordered_map<std::string , std::shared_ptr<ZegoTextureRenderer> > remoteRenderers_;
+    std::unordered_map<ZEGO::EXPRESS::IZegoMediaPlayer * , std::shared_ptr<ZegoTextureRenderer> > mediaPlayerRenderers_;
 
     std::atomic_bool isInit = false;
 };

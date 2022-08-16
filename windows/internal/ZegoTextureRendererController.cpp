@@ -96,6 +96,31 @@ void ZegoTextureRendererController::removeRemoteRenderer(std::string streamID)
 {
     remoteRenderers_.erase(streamID);
 }
+
+/// Called when dart invoke `mediaPlayer.setPlayerCanvas`
+bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, ZEGO::EXPRESS::ZegoViewMode viewMode)
+{
+     auto renderer = renderers_.find(textureID);
+
+    if (renderer == renderers_.end()) {
+        return false;
+    }
+
+    mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(), ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32);
+
+    renderer->second->setViewMode(viewMode);
+
+    mediaPlayerRenderers_.insert(std::pair(mediaPlayer, renderer->second));
+
+    return true;
+}
+/// Called when dart invoke `destroyMediaPlayer`
+void ZegoTextureRendererController::removeMediaPlayerRenderer(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
+{
+    mediaPlayer->setVideoHandler(nullptr, ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32);
+    mediaPlayerRenderers_.erase(mediaPlayer);
+}
+
 /// For video preview/play
 void ZegoTextureRendererController::startRendering()
 {
@@ -127,5 +152,14 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** d
     auto renderer = remoteRenderers_.find(streamID);
     if (renderer != remoteRenderers_.end()) {
         renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
+    }
+}
+
+void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
+                              unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param)
+{
+    auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
+    if (renderer != mediaPlayerRenderers_.end()) {
+        renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
     }
 }

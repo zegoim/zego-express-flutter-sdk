@@ -74,7 +74,9 @@ class ZegoTextureRenderer {
 
   void setBackgroundColor(int colode) {}
   
-  void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {}
+  void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {
+    viewMode_ = mode;
+  }
 
   void setUseMirrorEffect(bool mirror) { isUseMirror_ = mirror; }
 
@@ -98,6 +100,7 @@ class ZegoTextureRenderer {
   uint32_t srcBufferSize_ = 0;
   uint32_t width_ = 0;
   uint32_t height_ = 0;
+  ZEGO::EXPRESS::ZegoViewMode viewMode_ = ZEGO::EXPRESS::ZegoViewMode::ZEGO_VIEW_MODE_ASPECT_FIT;
   ZEGO::EXPRESS::ZegoVideoFrameFormat srcVideoFrameFormat_ = ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32;
 
   std::vector<uint8_t> srcBuffer_;
