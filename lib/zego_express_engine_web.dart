@@ -29,19 +29,17 @@ class ZegoExpressEngineWeb {
 
     // ignore: unused_local_variable
     final eventChannel = PluginEventChannel(
-      'plugins.zego.im/zego_express_event_handler',
-      const StandardMethodCodec(),
-      registrar
-    );
+        'plugins.zego.im/zego_express_event_handler',
+        const StandardMethodCodec(),
+        registrar);
 
     final pluginInstance = ZegoExpressEngineWeb();
     channel.setMethodCallHandler(pluginInstance.handleMethodCall);
     eventChannel.setController(ZegoExpressEngineWeb._evenController);
 
     _evenController.stream.listen((event) {
-       _eventListener(event);
+      _eventListener(event);
     });
-
 
     var element = ScriptElement()
       ..src =
@@ -58,28 +56,29 @@ class ZegoExpressEngineWeb {
     // var args = <String, dynamic>{};
     switch (call.method) {
       case 'createEngineWithProfile':
-        if (call.arguments['profile'] != null && call.arguments['profile']['appSign'] != null) {
+        if (call.arguments['profile'] != null &&
+            call.arguments['profile']['appSign'] != null) {
           throw PlatformException(
             code: 'Unimplemented',
             details:
                 'zego_rtc_engine for web doesn\'t support appSign, Please remove it',
           );
         }
-        ZegoFlutterEngine.setEventHandler(allowInterop((String event, String data) {
-          _evenController.add({
-            'methodName': event,
-            'data': data
-          });
+        ZegoFlutterEngine.setEventHandler(
+            allowInterop((String event, String data) {
+          _evenController.add({'methodName': event, 'data': data});
         }));
         return createEngineWithProfile(call.arguments['profile']);
       case 'getVersion':
         return getVersion();
       case 'loginRoom':
-        return loginRoom(call.arguments['roomID'], call.arguments['user'], call.arguments['config']);
+        return loginRoom(call.arguments['roomID'], call.arguments['user'],
+            call.arguments['config']);
       case 'logoutRoom':
         return logoutRoom(call.arguments['roomID']);
       case 'setVideoConfig':
-        return setVideoConfig(call.arguments["config"], call.arguments["channel"]);
+        return setVideoConfig(
+            call.arguments["config"], call.arguments["channel"]);
       case 'getVideoConfig':
         return getVideoConfig(call.arguments["channel"]);
       case 'enableAEC':
@@ -89,21 +88,27 @@ class ZegoExpressEngineWeb {
       case 'enableANS':
         return enableANS(call.arguments["enable"]);
       case 'enableCamera':
-        return enableCamera(call.arguments["enable"], call.arguments["channel"]);
+        return enableCamera(
+            call.arguments["enable"], call.arguments["channel"]);
       case 'startPreview':
-        return startPreview(call.arguments['canvas'], call.arguments["channel"]);
+        return startPreview(
+            call.arguments['canvas'], call.arguments["channel"]);
       case 'stopPreview':
         return stopPreview(call.arguments["channel"]);
       case 'mutePublishStreamVideo':
-        return mutePublishStreamVideo(call.arguments["mute"], call.arguments["channel"]);
+        return mutePublishStreamVideo(
+            call.arguments["mute"], call.arguments["channel"]);
       case 'mutePublishStreamAudio':
-        return mutePublishStreamAudio(call.arguments["mute"], call.arguments["channel"]);
+        return mutePublishStreamAudio(
+            call.arguments["mute"], call.arguments["channel"]);
       case 'startPublishingStream':
-        return startPublishingStream(call.arguments["streamID"], call.arguments["config"], call.arguments["channel"]);
+        return startPublishingStream(call.arguments["streamID"],
+            call.arguments["config"], call.arguments["channel"]);
       case 'stopPublishingStream':
         return stopPublishingStream(call.arguments["channel"]);
       case 'startPlayingStream':
-        return startPlayingStream(call.arguments["streamID"], call.arguments["canvas"]);
+        return startPlayingStream(
+            call.arguments["streamID"], call.arguments["canvas"]);
       case 'stopPlayingStream':
         return stopPlayingStream(call.arguments["streamID"]);
       case 'destroyPlatformView':
@@ -111,18 +116,18 @@ class ZegoExpressEngineWeb {
       case 'destroyEngine':
         return destroyEngine();
       case 'sendBroadcastMessage':
-        return sendBroadcastMessage(call.arguments["roomID"], call.arguments["message"]);
+        return sendBroadcastMessage(
+            call.arguments["roomID"], call.arguments["message"]);
       case 'setPluginVersion':
         return;
       default:
         throw PlatformException(
-        code: 'Unimplemented',
-        details:
-            'zego_rtc_engine for web doesn\'t implement \'${call.method}\'',
-      );
+          code: 'Unimplemented',
+          details:
+              'zego_rtc_engine for web doesn\'t implement \'${call.method}\'',
+        );
     }
   }
-
 
   /// Returns a [String] containing the version of the platform.
   Future<String> getVersion() {
@@ -157,19 +162,18 @@ class ZegoExpressEngineWeb {
         extendedData = {};
 
         ZegoExpressEngine.onRoomStateUpdate!(
-          data["roomID"],
-          ZegoRoomState.values[state],
-          data['errorCode'],
-          Map<String, dynamic>.from(extendedData)
-        );
+            data["roomID"],
+            ZegoRoomState.values[state],
+            data['errorCode'],
+            Map<String, dynamic>.from(extendedData));
         break;
       case "onRoomUserUpdate":
         if (ZegoExpressEngine.onRoomUserUpdate == null) return;
 
-        var data = jsonDecode(map["data"]) ;
+        var data = jsonDecode(map["data"]);
         var updateType;
 
-        switch(data["updateType"]){
+        switch (data["updateType"]) {
           case "ADD":
             updateType = 0;
             break;
@@ -212,7 +216,7 @@ class ZegoExpressEngineWeb {
         }
         extendedData = {};
 
-        switch(data["updateType"]) {
+        switch (data["updateType"]) {
           case "ADD":
             updateType = 0;
             break;
@@ -261,25 +265,24 @@ class ZegoExpressEngineWeb {
         if (ZegoExpressEngine.onPublisherQualityUpdate == null) return;
 
         ZegoExpressEngine.onPublisherQualityUpdate!(
-          map['streamID'],
-          ZegoPublishStreamQuality(
-            map['quality']['videoCaptureFPS'],
-            map['quality']['videoEncodeFPS'],
-            map['quality']['videoSendFPS'],
-            map['quality']['videoKBPS'],
-            map['quality']['audioCaptureFPS'],
-            map['quality']['audioSendFPS'],
-            map['quality']['audioKBPS'],
-            map['quality']['rtt'],
-            map['quality']['packetLostRate'],
-            ZegoStreamQualityLevel.values[map['quality']['level']],
-            map['quality']['isHardwareEncode'],
-            ZegoVideoCodecID.values[map['quality']['videoCodecID']],
-            map['quality']['totalSendBytes'],
-            map['quality']['audioSendBytes'],
-            map['quality']['videoSendBytes'],
-          )
-        );
+            map['streamID'],
+            ZegoPublishStreamQuality(
+              map['quality']['videoCaptureFPS'],
+              map['quality']['videoEncodeFPS'],
+              map['quality']['videoSendFPS'],
+              map['quality']['videoKBPS'],
+              map['quality']['audioCaptureFPS'],
+              map['quality']['audioSendFPS'],
+              map['quality']['audioKBPS'],
+              map['quality']['rtt'],
+              map['quality']['packetLostRate'],
+              ZegoStreamQualityLevel.values[map['quality']['level']],
+              map['quality']['isHardwareEncode'],
+              ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+              map['quality']['totalSendBytes'],
+              map['quality']['audioSendBytes'],
+              map['quality']['videoSendBytes'],
+            ));
         break;
       case "onPlayerStateUpdate":
         if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
@@ -317,35 +320,33 @@ class ZegoExpressEngineWeb {
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
 
         ZegoExpressEngine.onPlayerQualityUpdate!(
-          map['streamID'],
-          ZegoPlayStreamQuality(
-            map['quality']['videoRecvFPS'],
-            map['quality']['videoDejitterFPS'],
-            map['quality']['videoDecodeFPS'],
-            map['quality']['videoRenderFPS'],
-            map['quality']['videoKBPS'],
-            map['quality']['videoBreakRate'],
-            map['quality']['audioRecvFPS'],
-            map['quality']['audioDejitterFPS'],
-            map['quality']['audioDecodeFPS'],
-            map['quality']['audioRenderFPS'],
-            map['quality']['audioKBPS'],
-            map['quality']['audioBreakRate'],
-            map['quality']['mos'],
-            map['quality']['rtt'],
-            map['quality']['packetLostRate'],
-            map['quality']['peerToPeerDelay'],
-            map['quality']['peerToPeerPacketLostRate'],
-            ZegoStreamQualityLevel.values[map['quality']['level']],
-            map['quality']['delay'],
-            map['quality']['avTimestampDiff'],
-            map['quality']['isHardwareDecode'],
-            ZegoVideoCodecID.values[map['quality']['videoCodecID']],
-            map['quality']['totalRecvBytes'],
-            map['quality']['audioRecvBytes'],
-            map['quality']['videoRecvBytes']
-          )
-        );
+            map['streamID'],
+            ZegoPlayStreamQuality(
+                map['quality']['videoRecvFPS'],
+                map['quality']['videoDejitterFPS'],
+                map['quality']['videoDecodeFPS'],
+                map['quality']['videoRenderFPS'],
+                map['quality']['videoKBPS'],
+                map['quality']['videoBreakRate'],
+                map['quality']['audioRecvFPS'],
+                map['quality']['audioDejitterFPS'],
+                map['quality']['audioDecodeFPS'],
+                map['quality']['audioRenderFPS'],
+                map['quality']['audioKBPS'],
+                map['quality']['audioBreakRate'],
+                map['quality']['mos'],
+                map['quality']['rtt'],
+                map['quality']['packetLostRate'],
+                map['quality']['peerToPeerDelay'],
+                map['quality']['peerToPeerPacketLostRate'],
+                ZegoStreamQualityLevel.values[map['quality']['level']],
+                map['quality']['delay'],
+                map['quality']['avTimestampDiff'],
+                map['quality']['isHardwareDecode'],
+                ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+                map['quality']['totalRecvBytes'],
+                map['quality']['audioRecvBytes'],
+                map['quality']['videoRecvBytes']));
         break;
       default:
         break;
@@ -363,10 +364,7 @@ class ZegoExpressEngineWeb {
   static Future<void> createEngineWithProfile(dynamic profile) async {
     final appID = profile["appID"];
     const server = "wss://test.com";
-    Profile engineProfile = Profile(
-      appID: appID,
-      server: server
-    );
+    Profile engineProfile = Profile(appID: appID, server: server);
 
     ZegoFlutterEngine.createEngineWithProfile(engineProfile);
   }
@@ -377,17 +375,14 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<Map<dynamic, dynamic>> loginRoom(String roomID, dynamic user, dynamic config) async {
-
-    ZegoUserWeb webUser = ZegoUserWeb(
-      userID: user["userID"],
-      userName: user["userName"]
-    );
+  Future<Map<dynamic, dynamic>> loginRoom(
+      String roomID, dynamic user, dynamic config) async {
+    ZegoUserWeb webUser =
+        ZegoUserWeb(userID: user["userID"], userName: user["userName"]);
     ZegoRoomConfigWeb webConfig = ZegoRoomConfigWeb(
-      maxMemberCount: config["maxMemberCount"],
-      token: config["token"],
-      isUserStatusNotify: config["isUserStatusNotify"]
-    );
+        maxMemberCount: config["maxMemberCount"],
+        token: config["token"],
+        isUserStatusNotify: config["isUserStatusNotify"]);
 
     ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig);
 
@@ -398,43 +393,44 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> logoutRoom(String roomID)  {
+  Future<void> logoutRoom(String roomID) {
     ZegoFlutterEngine.instance.logoutRoom(roomID);
     return Future.value();
   }
 
   Future<void> setVideoConfig(dynamic config, int channel) {
     ZegoWebVideoConfig webVideoConfig = ZegoWebVideoConfig(
-      captureWidth: config["captureWidth"],
-      captureHeight: config["captureHeight"],
-      fps: config["fps"],
-      bitrate: config["bitrate"],
-      codecID: config["codecID"]
-    );
+        captureWidth: config["captureWidth"],
+        captureHeight: config["captureHeight"],
+        fps: config["fps"],
+        bitrate: config["bitrate"],
+        codecID: config["codecID"]);
 
-    ZegoFlutterEngine.instance.setVideoConfig(webVideoConfig, getPublishChannel(channel));
+    ZegoFlutterEngine.instance
+        .setVideoConfig(webVideoConfig, getPublishChannel(channel));
     return Future.value();
   }
 
   Future<Map<dynamic, dynamic>> getVideoConfig(int? channel) async {
-    var config = ZegoFlutterEngine.instance.getVideoConfig(getPublishChannel(channel));
+    var config =
+        ZegoFlutterEngine.instance.getVideoConfig(getPublishChannel(channel));
     var map = {};
-     map['captureWidth'] = config.captureWidth;
-     map['captureHeight'] = config.captureHeight;
-     map['encodeWidth'] = config.captureWidth;
-     map['encodeHeight'] = config.captureHeight;
-     map['fps'] = config.fps;
-     map['bitrate'] = config.bitrate;
-     map['codecID'] = config.codecID;
+    map['captureWidth'] = config.captureWidth;
+    map['captureHeight'] = config.captureHeight;
+    map['encodeWidth'] = config.captureWidth;
+    map['encodeHeight'] = config.captureHeight;
+    map['fps'] = config.fps;
+    map['bitrate'] = config.bitrate;
+    map['codecID'] = config.codecID;
 
     return Future.value(map);
   }
 
   Future<void> startPreview(dynamic canvas, int channel) async {
-
     previewView = document.getElementById("zego-view-${canvas["view"]}");
     previewView.muted = true;
-    ZegoFlutterEngine.instance.startPreview(previewView, getPublishChannel(channel));
+    ZegoFlutterEngine.instance
+        .startPreview(previewView, getPublishChannel(channel));
 
     return Future.value();
   }
@@ -444,8 +440,10 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<void> startPublishingStream(String streamID, dynamic config, int? channel) {
-    ZegoFlutterEngine.instance.startPublishingStream(streamID, getPublishChannel(channel));
+  Future<void> startPublishingStream(
+      String streamID, dynamic config, int? channel) {
+    ZegoFlutterEngine.instance
+        .startPublishingStream(streamID, getPublishChannel(channel));
     return Future.value();
   }
 
@@ -465,7 +463,8 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<Map<dynamic, dynamic>> sendBroadcastMessage(String roomID, String message) async {
+  Future<Map<dynamic, dynamic>> sendBroadcastMessage(
+      String roomID, String message) async {
     ZegoFlutterEngine.instance.sendBroadcastMessage(roomID, message);
     final Map<dynamic, dynamic> map = {};
     map["errorCode"] = 0;
@@ -475,11 +474,13 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> mutePublishStreamVideo(bool mute, int channel) async {
-    return await ZegoFlutterEngine.instance.mutePublishStreamVideo(mute, getPublishChannel(channel));
+    return await ZegoFlutterEngine.instance
+        .mutePublishStreamVideo(mute, getPublishChannel(channel));
   }
 
   Future<void> mutePublishStreamAudio(bool mute, int channel) async {
-    return await ZegoFlutterEngine.instance.mutePublishStreamAudio(mute, getPublishChannel(channel));
+    return await ZegoFlutterEngine.instance
+        .mutePublishStreamAudio(mute, getPublishChannel(channel));
   }
 
   Future<void> enableAEC(bool enable) async {

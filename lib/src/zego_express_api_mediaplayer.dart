@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineMediaPlayer on ZegoExpressEngine {
-
   /// Creates a media player instance.
   ///
   /// Available since: 2.1.0
@@ -32,5 +30,4 @@ extension ZegoExpressEngineMediaPlayer on ZegoExpressEngine {
   Future<void> destroyMediaPlayer(ZegoMediaPlayer mediaPlayer) async {
     return await ZegoExpressImpl.instance.destroyMediaPlayer(mediaPlayer);
   }
-
 }

@@ -224,6 +224,9 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableHardwareEncoder(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setLowlightEnhancement(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void startPlayingStream(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopPlayingStream(flutter::EncodableMap& argument,
@@ -515,7 +518,9 @@ public:
     void rangeAudioUpdateSelfPosition(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void rangeAudioMuteUser(flutter::EncodableMap& argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);    
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void rangeAudioSetPositionUpdateFrequency(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     // RealTimeSequentialDataManager
     void createRealTimeSequentialDataManager(flutter::EncodableMap& argument,
@@ -536,6 +541,8 @@ public:
     void createTextureRenderer(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void destroyTextureRenderer(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void updateTextureRendererSize(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 private:
     ZegoExpressEngineMethodHandler() = default;

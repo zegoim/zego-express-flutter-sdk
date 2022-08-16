@@ -951,6 +951,15 @@
     result(@(isSupport));
 }
 
+- (void)setLowlightEnhancement:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setLowlightEnhancement:(ZegoLowlightEnhancementMode)mode channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
 
 #pragma mark - Player
 
@@ -1309,6 +1318,11 @@
             if (imageInfoMap && ![ZegoUtils isNullObject:imageInfoMap]) {
                 NSString *url = imageInfoMap[@"url"];
                 inputObject.imageInfo = [[ZegoMixerImageInfo alloc] initWithURL:url];
+            }
+
+            NSNumber *cornerRadius = inputMap[@"cornerRadius"];
+            if (cornerRadius && ![ZegoUtils isNullObject:cornerRadius]) {
+                inputObject.cornerRadius = [ZegoUtils intValue:cornerRadius];
             }
             
         }
@@ -3345,6 +3359,19 @@
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioMuteUser` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)rangeAudioSetPositionUpdateFrequency:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        int frequency = [ZegoUtils intValue:call.arguments[@"frequency"]];
+
+        [self.rangeAudioInstance setPositionUpdateFrequency:frequency];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetPositionUpdateFrequency` but can't find specific instance" details:nil]);
     }
 }
 

@@ -629,6 +629,17 @@ void ZegoExpressEngineMethodHandler::enableHardwareEncoder(flutter::EncodableMap
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setLowlightEnhancement(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto mode = std::get<int32_t>(argument[FTValue("mode")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setLowlightEnhancement((EXPRESS::ZegoLowlightEnhancementMode)mode, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::startPlayingStream(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -2094,6 +2105,10 @@ void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argum
             auto imageInfoMap = std::get<flutter::EncodableMap>(inputMap[FTValue("imageInfo")]);
             auto url = std::get<std::string>(imageInfoMap[FTValue("url")]);
             input.imageInfo = EXPRESS::ZegoMixerImageInfo(url);
+        }
+
+        if (!inputMap[FTValue("cornerRadius")].IsNull()) {
+            input.cornerRadius = std::get<int32_t>(inputMap[FTValue("cornerRadius")]);
         }
 
         task.inputList.push_back(input);
@@ -3637,6 +3652,22 @@ void ZegoExpressEngineMethodHandler::rangeAudioMuteUser(flutter::EncodableMap& a
     }
 }
 
+void ZegoExpressEngineMethodHandler::rangeAudioSetPositionUpdateFrequency(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (rangeAudio_) {
+        auto frequency = std::get<int32_t>(argument[FTValue("frequency")]);
+
+        rangeAudio_->setPositionUpdateFrequency(frequency);
+
+        result->Success();
+    } 
+    else 
+    {
+        result->Error("rangeAudioSetPositionUpdateFrequency_Can_not_find_instance", "Invoke `rangeAudioSetPositionUpdateFrequency` but can't find specific instance");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::createRealTimeSequentialDataManager(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -3740,4 +3771,10 @@ void ZegoExpressEngineMethodHandler::dataManagerStopSubscribing(flutter::Encodab
     } else {
         result->Error("dataManagerStopSubscribing_Can_not_find_instance", "Invoke `dataManagerStopSubscribing` but can't find specific instance");
     }
+}
+
+void ZegoExpressEngineMethodHandler::updateTextureRendererSize(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    result->Success(FTValue(true));
 }

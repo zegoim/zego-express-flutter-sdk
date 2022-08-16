@@ -106,6 +106,7 @@ import im.zego.zegoexpress.constants.ZegoCameraExposureMode;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.constants.ZegoEncodeProfile;
 import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
+import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -1105,6 +1106,17 @@ public class ZegoExpressEngineMethodHandler {
         result.success(isSupport);
     }
 
+    @SuppressWarnings("unused")
+    public static void setLowlightEnhancement(MethodCall call, Result result) {
+
+        ZegoLowlightEnhancementMode mode = ZegoLowlightEnhancementMode.getZegoLowlightEnhancementMode(ZegoUtils.intValue((Number) call.argument("mode")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setLowlightEnhancement(mode, channel);
+
+        result.success(null);
+    }
+
 
     /* Player */
 
@@ -1503,6 +1515,10 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> imageInfoMap = (HashMap<String, Object>) inputMap.get("imageInfo");
                     String url = (String) imageInfoMap.get("url");
                     inputObject.imageInfo = new ZegoMixerImageInfo(url);
+                }
+
+                if (inputMap.containsKey("cornerRadius") && inputMap.get("cornerRadius") != null) {
+                    inputObject.cornerRadius = ZegoUtils.intValue((Number) inputMap.get("cornerRadius"));
                 }
                 
                 inputListObject.add(inputObject);
@@ -3763,6 +3779,20 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioMuteUser` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void rangeAudioSetPositionUpdateFrequency(MethodCall call, Result result) {
+        
+        if (rangeAudioInstance != null) {
+            int frequency = ZegoUtils.intValue((Number) call.argument("frequency"));
+            rangeAudioInstance.setPositionUpdateFrequency(frequency);
+            
+            result.success(null);
+
+        } else {
+            result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetPositionUpdateFrequency` but can't find specific instance", null);
         }
     }
 

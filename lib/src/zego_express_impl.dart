@@ -7,10 +7,10 @@ import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 import 'zego_express_enum_extension.dart';
 
-// ignore_for_file: deprecated_member_use_from_same_package
+// ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.20.2";
+  static String pluginVersion = "2.21.2";
 }
 
 class ZegoExpressImpl {
@@ -32,6 +32,12 @@ class ZegoExpressImpl {
   /// Exposing methodChannel to other files
   static MethodChannel get methodChannel => _channel;
 
+  // is create engine
+  static bool isEngineCreated = false;
+
+  // enablePlatformView
+  static bool enablePlatformView = false;
+
   /* Main */
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
@@ -48,6 +54,9 @@ class ZegoExpressImpl {
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+
+    isEngineCreated = true;
+    enablePlatformView = profile.enablePlatformView ?? false;
   }
 
   static Future<void> createEngine(
@@ -65,12 +74,17 @@ class ZegoExpressImpl {
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+
+    isEngineCreated = true;
+    enablePlatformView = enablePlatformView ?? false;
   }
 
   static Future<void> destroyEngine() async {
     await _channel.invokeMethod('destroyEngine');
 
     _unregisterEventHandler();
+
+    isEngineCreated = false;
   }
 
   static Future<void> setEngineConfig(ZegoEngineConfig config) async {
@@ -477,6 +491,14 @@ class ZegoExpressImpl {
   Future<bool> isVideoEncoderSupported(ZegoVideoCodecID codecID) async {
     return await _channel
         .invokeMethod('isVideoEncoderSupported', {'codecID': codecID.index});
+  }
+
+  Future<void> setLowlightEnhancement(ZegoLowlightEnhancementMode mode,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setLowlightEnhancement', {
+      'mode': mode.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   /* Player */
@@ -2854,6 +2876,12 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   Future<void> muteUser(String userID, bool mute) async {
     return await ZegoExpressImpl._channel
         .invokeMethod('rangeAudioMuteUser', {'userID': userID, 'mute': mute});
+  }
+
+  @override
+  Future<void> setPositionUpdateFrequency(int frequency) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'rangeAudioSetPositionUpdateFrequency', {'frequency': frequency});
   }
 }
 

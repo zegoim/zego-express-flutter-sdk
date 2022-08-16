@@ -44,7 +44,7 @@ public class ZegoUtils {
         return ret;
     }
 
-    public static String getStackTrace(Exception e) {
+    public static String getStackTrace(Throwable e) {
         StringBuilder message = new StringBuilder();
         if (e != null) {
             message.append(e.getClass()).append(": ").append(e.getMessage()).append(" | ");

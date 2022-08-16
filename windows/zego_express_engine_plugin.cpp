@@ -126,6 +126,8 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
        {"sendSEI", std::bind(&ZegoExpressEngineMethodHandler::sendSEI, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"sendAudioSideInfo", std::bind(&ZegoExpressEngineMethodHandler::sendAudioSideInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"enableHardwareEncoder", std::bind(&ZegoExpressEngineMethodHandler::enableHardwareEncoder, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"setLowlightEnhancement", std::bind(&ZegoExpressEngineMethodHandler::setLowlightEnhancement, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       
        {"startPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::startPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"stopPlayingStream", std::bind(&ZegoExpressEngineMethodHandler::stopPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"setPlayStreamCrossAppInfo", std::bind(&ZegoExpressEngineMethodHandler::setPlayStreamCrossAppInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -267,7 +269,7 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
        {"rangeAudioUpdateAudioSource", std::bind(&ZegoExpressEngineMethodHandler::rangeAudioUpdateAudioSource, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"rangeAudioUpdateSelfPosition", std::bind(&ZegoExpressEngineMethodHandler::rangeAudioUpdateSelfPosition, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"rangeAudioMuteUser", std::bind(&ZegoExpressEngineMethodHandler::rangeAudioMuteUser, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
-
+       {"rangeAudioSetPositionUpdateFrequency", std::bind(&ZegoExpressEngineMethodHandler::rangeAudioSetPositionUpdateFrequency, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
         // RealTimeSequentialDataManager
        {"createRealTimeSequentialDataManager", std::bind(&ZegoExpressEngineMethodHandler::createRealTimeSequentialDataManager, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"destroyRealTimeSequentialDataManager", std::bind(&ZegoExpressEngineMethodHandler::destroyRealTimeSequentialDataManager, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -279,6 +281,7 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
 
         // textureRenderer 
        {"createTextureRenderer", std::bind(&ZegoExpressEngineMethodHandler::createTextureRenderer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       {"updateTextureRendererSize", std::bind(&ZegoExpressEngineMethodHandler::updateTextureRendererSize, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"destroyTextureRenderer", std::bind(&ZegoExpressEngineMethodHandler::destroyTextureRenderer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)}
     };
 

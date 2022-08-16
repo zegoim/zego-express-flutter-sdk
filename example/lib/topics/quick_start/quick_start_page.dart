@@ -24,8 +24,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
   int _playViewID = -1;
   Widget? _previewViewWidget;
   Widget? _playViewWidget;
-  GlobalKey _playViewContainerKey = GlobalKey();
-  GlobalKey _previewViewContainerKey = GlobalKey();
   static const double viewRatio = 3.0 / 4.0;
 
   ZegoMediaPlayer? mediaPlayer;
@@ -118,7 +116,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   // MARK: - Step 3: StartPublishingStream
-  void startPreview({double width = 360, double height = 640}) {
+  void startPreview() {
     Future<void> _startPreview(int viewID) async {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
       await ZegoExpressEngine.instance.startPreview(canvas: canvas);
@@ -126,25 +124,13 @@ class _QuickStartPageState extends State<QuickStartPage> {
     }
 
     if (Platform.isIOS || Platform.isAndroid || kIsWeb || Platform.isWindows) {
-      if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
-        // Render with PlatformView
+      ZegoExpressEngine.instance.createCanvasView((viewID) {
+        _startPreview(viewID);
+      }).then((widget) {
         setState(() {
-          _previewViewWidget =
-              ZegoExpressEngine.instance.createPlatformView((viewID) async {
-            _previewViewID = viewID;
-            await _startPreview(_previewViewID);
-          });
+          _previewViewWidget = widget;
         });
-      } else {
-        // Render with TextureRenderer
-        ZegoExpressEngine.instance
-            .createTextureRenderer(width.toInt(), height.toInt())
-            .then((viewID) {
-          _previewViewID = viewID;
-          setState(() => _previewViewWidget = Texture(textureId: viewID));
-          _startPreview(viewID);
-        });
-      }
+      });
     } else {
       ZegoExpressEngine.instance.startPreview();
     }
@@ -172,8 +158,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   // MARK: - Step 4: StartPlayingStream
 
-  void startPlayingStream(String streamID,
-      {double width = 360, double height = 640}) {
+  void startPlayingStream(String streamID) {
     void _startPlayingStream(int viewID, String streamID) {
       ZegoCanvas canvas = ZegoCanvas.view(viewID);
       ZegoExpressEngine.instance.startPlayingStream(streamID, canvas: canvas);
@@ -181,25 +166,14 @@ class _QuickStartPageState extends State<QuickStartPage> {
     }
 
     if (Platform.isIOS || Platform.isAndroid || kIsWeb || Platform.isWindows) {
-      if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
-        // Render with PlatformView
+      print('📥 Start playing stream, streamID');
+      ZegoExpressEngine.instance.createCanvasView((viewID) {
+        _startPlayingStream(viewID, streamID);
+      }).then((widget) {
         setState(() {
-          _playViewWidget =
-              ZegoExpressEngine.instance.createPlatformView((viewID) {
-            _playViewID = viewID;
-            _startPlayingStream(viewID, streamID);
-          });
+          _playViewWidget = widget;
         });
-      } else {
-        // Render with TextureRenderer
-        ZegoExpressEngine.instance
-            .createTextureRenderer(width.toInt(), height.toInt())
-            .then((viewID) {
-          _playViewID = viewID;
-          setState(() => _playViewWidget = Texture(textureId: viewID));
-          _startPlayingStream(viewID, streamID);
-        });
-      }
+      });
     } else {
       ZegoExpressEngine.instance.startPlayingStream(streamID);
     }
@@ -293,36 +267,34 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void clearPreviewView() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb && !Platform.isWindows) return;
+    if (!Platform.isAndroid &&
+        !Platform.isIOS &&
+        !kIsWeb &&
+        !Platform.isWindows) return;
 
     if (_previewViewWidget == null) {
       return;
     }
 
-    // Developers should destroy the [PlatformView] or [TextureRenderer] after
+    // Developers should destroy the [CanvasView] after
     // [stopPublishingStream] or [stopPreview] to release resource and avoid memory leaks
-    if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
-      ZegoExpressEngine.instance.destroyPlatformView(_previewViewID);
-    } else {
-      ZegoExpressEngine.instance.destroyTextureRenderer(_previewViewID);
-    }
+    ZegoExpressEngine.instance.destroyCanvasView(_previewViewID);
     setState(() => _previewViewWidget = null);
   }
 
   void clearPlayView() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb && !Platform.isWindows) return;
+    if (!Platform.isAndroid &&
+        !Platform.isIOS &&
+        !kIsWeb &&
+        !Platform.isWindows) return;
 
     if (_playViewWidget == null) {
       return;
     }
 
-    // Developers should destroy the [PlatformView] or [TextureRenderer]
+    // Developers should destroy the [CanvasView]
     // after [stopPlayingStream] to release resource and avoid memory leaks
-    if (ZegoConfig.instance.enablePlatformView || kIsWeb && !Platform.isWindows) {
-      ZegoExpressEngine.instance.destroyPlatformView(_playViewID);
-    } else {
-      ZegoExpressEngine.instance.destroyTextureRenderer(_playViewID);
-    }
+    ZegoExpressEngine.instance.destroyCanvasView(_playViewID);
     setState(() => _playViewWidget = null);
   }
 
@@ -383,7 +355,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
             Container(
               color: Colors.grey,
               child: _previewViewWidget,
-              key: _previewViewContainerKey,
             ),
             Text('Local Preview View', style: TextStyle(color: Colors.white))
           ], alignment: AlignmentDirectional.topCenter),
@@ -391,7 +362,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
             Container(
               color: Colors.grey,
               child: _playViewWidget,
-              key: _playViewContainerKey,
             ),
             Text('Remote Play View', style: TextStyle(color: Colors.white))
           ], alignment: AlignmentDirectional.topCenter),
@@ -505,12 +475,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
             ),
             onPressed: _previewViewWidget == null
                 ? () {
-                    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size? widgetSize =
-                        _previewViewContainerKey.currentContext?.size;
-                    startPreview(
-                        width: widgetSize!.width * pixelRatio,
-                        height: widgetSize.height * pixelRatio);
+                    startPreview();
                   }
                 : () {
                     stopPreview();
@@ -530,9 +495,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
             ),
             onPressed: _publisherState == ZegoPublisherState.NoPublish
                 ? () {
-                    // double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    // Size? widgetSize =
-                    //     _previewViewContainerKey.currentContext?.size;
                     startPublishingStream(
                         _publishingStreamIDController.text.trim());
                   }
@@ -584,12 +546,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
             ),
             onPressed: _playerState == ZegoPlayerState.NoPlay
                 ? () {
-                    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-                    Size? widgetSize =
-                        _playViewContainerKey.currentContext?.size;
-                    startPlayingStream(_playingStreamIDController.text.trim(),
-                        width: widgetSize!.width * pixelRatio,
-                        height: widgetSize.height * pixelRatio);
+                    startPlayingStream(_playingStreamIDController.text.trim());
                   }
                 : () {
                     stopPlayingStream(_playingStreamIDController.text.trim());

@@ -1,12 +1,83 @@
 # Change Log
 
+## 2.21.2
+
+### **Bug Fixes**
+
+1. Android build fail.
+
+## 2.21.1
+
+### **Bug Fixes**
+
+1. Fixed the problem of sending SEI failed in pure audio scene.
+
+## 2.21.0
+
+### **New Features**
+
+1. It supports web now.
+
+    Now it supports the web, which will be different from other platforms in use. Some interface functions are not supported by the web. At present, the web supports basic functions
+
+2. Range voice supports custom distance update frequency.
+
+    The default distance update frequency of the SDK is changed from 1s to 100ms, which can basically meet the smooth attenuation effect for most developers when using range voice, optimize the experience of sound attenuation when using range voice, and achieve a smoother and more natural attenuation effect.
+
+    If you want to better match the actual business demand, you can call the [setPositionUpdateFrequency] interface to modify the frequency by yourself.
+
+    For related API, please refer to [setPositionUpdateFrequency](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setPositionUpdateFrequency.html)
+
+3. Support setting the low-light enhancement.
+
+    Note: The [setLowlightEnhancement] interface should be called after calling the [createEngine] interface to create an engine.
+
+    When the surrounding environment of the stream-publishing user is dark, or the frame rate set by the camera is high, resulting in a dark live broadcast screen, and the subject cannot be displayed or recognized normally, you can call the [setLowlightEnhancement] interface to set the low-light enhancement to increase the brightness of the video screen. The low-light enhancement function includes three modes: 1: Disable the low-light enhancement (default), 2: Enable the low-light enhancement, 3: Automatically switch on/off the low-light enhancement.
+
+    You can choose different low-light enhancement modes according to business scenarios: when you want to judge whether the low-light enhancement is needed, you can switch between modes 1 and 2; when you want the SDK to automatically enhance the brightness, you can enable the mode 3, and the SDK will automatically determine the lighting environment where the user is in, and turn on or off the low-light enhancement.
+
+    For related API, please refer to [setLowlightEnhancement](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setLowlightEnhancement.html)
+
+4. Support setting video borders to rounded corners when mixing streams.
+
+    When calling the [startMixerTask] interface to mix streams, you can set the "cornerRadius" through the "ZegoMixerInput" class to turn the video border to rounded corners. The unit of "cornerRadius" is px, and the value cannot exceed the half of the width or the height of video screen, which is shorter.
+
+    For related API, please refer to [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
+
+5. Add the CDN Plus playing configuration to the startPlayingStream interface.
+
+    Note: If you want to control the stream-playing mode from the cloud by more criteria such as region and user, please contact ZEGO technical support for related configuration.
+
+    The [startPlayingStream] interface adds CDN_PLUS as a new ZegoResourceType. interface. You can enable CDN_PLUS to play stream by yourself based on to the stream critirion. The CDN Plus stream-playing is a cost-effective method, because its quality is higher than CDN stream-playing with similar price.
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+### **Enhancements**
+
+1. Optimize the related error codes of Token exceptions when mandatory login authentication is enabled.
+
+    Added 1002074, 1002075, 1002076, 1002077, 1002078, 1002079, 1002080 and other error codes. After enabling mandatory login authentication, if the Token is incorrect, these error codes will be returned. For details, please refer to Error codes.
+
+2. Optimized the alignment between vocal and accompaniment for real-time chorus scenario.
+
+    The alignment between vocal and accompaniment for real-time chorus scenario is optimized. Therefore，you can avoid the unaligned streams of vocal and accompaniment caused by the delay of device playback when the client publishes the two streams at the same time.
+
+### **Bug Fixes**
+
+1. Fixed an issue where [onStop] callbacks would be triggered repeatedly when external filters are turned off.
+
+2. Fixed an issue where play stream with L3 failed.
+
+    Fixed the issue that when the 2.20.0 ~ 2.20.2 SDK uses L3 to play streams, if the played-stream is the stream which is published by the SDK of 2.15.0 and earlier versions, it may fail.
+
+3. Fixed some bug about Custom Audio IO
+
 ## 2.21.0-prerelease.1
 
 ### **New Features**
 
 1. It supports web now.
-    Now it supports the web, which will be different from other platforms in use. Some interface functions are not supported by the web. At present, the web supports basic functions
-
+    Now it supports the web, which will be different from other platforms in use. Some interface functions are not supported by the web. At present, the web supports basic functions.
 
 ## 2.20.2
 
@@ -127,6 +198,7 @@
 ## 2.18.1
 
 ### **New Features**
+
 1. Added AI noise reduction function.
 
     Note: AI noise reduction will currently cause great damage to the music collected by the microphone, including the sound of people singing through the microphone. To use this feature, please contact ZEGO Technical Support.
@@ -198,6 +270,7 @@
 ## 2.17.2
 
 ### **Bug Fixes**
+
 1. Fixed the problem of log file collection during log reporting.
 
 2. Fixed echo cancellation issues on some phones.
@@ -205,6 +278,7 @@
 ## 2.17.1
 
 ### **New Features**
+
 1. Supports setting the minimum video frame rate and video resolution.
 
     Added the [setMinVideoFpsForTrafficControl] and [setMinVideoResolutionForTrafficControl] interfaces, which can be used to set the minimum video frame rate and resolution by calling the interface when the user's network is poor and the flow control is turned on, helping the user to comprehensively control the video display effect.
@@ -232,6 +306,7 @@
     For related API, please refer to [enableDebugAssistant](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRangeAudioMode.html)
 
 ### **Enhancements**
+
 1. The authentication method is optimized.
 
     For versions 2.17.0 and above, pass the AppSign blank or not when creating the engine, and you must pass in the Token when logging in to the room. After the authentication is passed, you can use the real-time audio and video function.
@@ -241,6 +316,7 @@
     For related API, please refer to [createEngineWithProfile](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/createEngineWithProfile.html), [ZegoEngineProfile](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoEngineProfile-class.html),  [loginRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/loginRoom.html), [ZegoRoomConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRoomConfig-class.html)
 
 ### **Bug Fixes**
+
 1. Fixed an issue that could cause a crash when the parameter name length of the string type is too long.
 
 2. Fixed the issue that when the push-end App returned to the front-end from the background, the pull-end could not receive the BreakResume event.
@@ -252,6 +328,7 @@
 ## 2.16.3
 
 ### **New Features**
+
 1. Game voice support setting whether to receive audio data from the specified user.
 
     The [muteUser] interface has been added to the game voice module. Local users can set whether to receive audio data from the specified remote user through the [MuteUser] interface after initializing the game voice [CreateRangeAudio] according to their needs.
@@ -285,6 +362,7 @@
     For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
 
 ### **Enhancements**
+
 1. Android SDK minimum supported OS version changed from Android 4.1 to Android 4.4.
 
     Starting from this version, the API level required by the Android SDK is not lower than 19, and the minimum supported OS version has changed from Android 4.1 to Android 4.4. If you need to support Android 4.1, please contact ZEGO technical support.
@@ -306,6 +384,7 @@
     For related API, please refer to [getNetworkTimeInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/getNetworkTimeInfo.html)
 
 ### **Deleted**
+
 1. Abandoned the old version of the basic beauty related interface.
 
     The old beauty function is relatively simple and does not meet the developer's expectations. Therefore, the [enableBeautify] interface is deprecated in version 2.16.0 and above, please use the [enableEffectsBeauty] interface instead; the [setBeautifyOption] interface is deprecated, please use [setEffectsBeautyParam] ] replace.
@@ -313,7 +392,8 @@
     For related API, please refer to [enableBeautify](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDeprecatedApi/enableBeautify.html), [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html), [setBeautifyOption](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDeprecatedApi/setBeautifyOption.html), [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html)
 
 ### **Bug Fixes**
-1.  Fixed the issue that when the [loginRoom] and [startPublishingStream] interfaces are called at the same time, the peer end may not receive a new stream notification.
+
+1. Fixed the issue that when the [loginRoom] and [startPublishingStream] interfaces are called at the same time, the peer end may not receive a new stream notification.
 
 2. Fixed an issue where users could not receive room additional messages sent by other users in the room before logging into the room.
 
@@ -322,6 +402,7 @@
 ## 2.15.0
 
 ### **New Features**
+
 1. The media player supports obtaining sound waves and spectrum when playing music
 
     The media player has added a new sound wave spectrum callback and switch interface, which can control whether to turn on the callback and the frequency of the callback, so as to obtain the current sound wave and spectrum of the media player. When playing resources through the media player, such as watching a movie together or chatting in a room with a game, this function can be used to perform the function of spectrum animation to increase the interest.
@@ -347,6 +428,7 @@
     For related API, please refer to [onLocalDeviceExceptionOccurred](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onLocalDeviceExceptionOccurred.html)
 
 ### **Enhancements**
+
 1. Mixed stream output supports advanced encoding parameter configuration.
 
     Mixed-stream output video configuration [ZegoMixerOutputVideoConfig] Added encodeProfile and encodeLatency parameters, which are used to set the mixed-stream output video encoding specifications and the mixed-stream output video encoding delay respectively.
@@ -366,9 +448,11 @@
     When using the SDK to lower the latency of live streaming, this error code will be returned if you have not subscribed to the low latency live streaming service.
 
 ### **Bug Fixes**
+
 1. Fixed the problem that the call to [startMixerTask] may crash
 
 ### **Deleted**
+
 1. Deprecated [onDeviceError] callback.
 
     In order to allow developers to intuitively understand the type of abnormal device and the specific abnormal situation, the [onDeviceError] callback is abolished in 2.15.0 and above. Please use the [onLocalDeviceExceptionOccurred] callback instead.
@@ -378,6 +462,7 @@
 ## 2.14.0
 
 ### **New Features**
+
 1. Added real time sequential data function.
 
     When developers need to distribute instructions such as remote control, cloud games, etc., through real-time signaling, they can obtain news from the publisher with low latency.
@@ -437,6 +522,7 @@
 ## 2.13.0
 
 ### **New Features**
+
 1. Features are aligned with Native SDK 2.13.0 version.
 
     Support basic push and pull streaming, log in to multiple rooms, room real-time messaging, audio and video live broadcast, 3A processing, CDN direct push retweet, mixed streaming, media player, audio player, game voice, flow control, user control authority and other functions.
@@ -454,7 +540,8 @@
 1. Add audio config parameter adaptation window.
 2. Upgrade native sdk 2.10.1
 
-# 2.8.2
+## 2.8.2
+
 1. Fix bugs on the window platform.
 
 ## 2.8.1
