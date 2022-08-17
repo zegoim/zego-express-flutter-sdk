@@ -708,6 +708,19 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onAutoMixerSoundLevelUpdate(HashMap<String, Float> soundLevels) {
+            super.onAutoMixerSoundLevelUpdate(soundLevels);
+            // Super high frequency callbacks do not log, do not guard sink
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAutoMixerSoundLevelUpdate");
+            map.put("soundLevels", soundLevels);
+
+            sink.success(map);
+        }
+
 
         /* Device */
 
@@ -866,6 +879,22 @@ public class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onRemoteCameraStateUpdate");
+            map.put("streamID", streamID);
+            map.put("state", state.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRemoteSpeakerStateUpdate(String streamID, ZegoRemoteDeviceState state) {
+            super.onRemoteSpeakerStateUpdate(streamID, state);
+            ZegoLog.log("[onRemoteSpeakerStateUpdate] streamID: %s, state: %s", streamID, state.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRemoteSpeakerStateUpdate");
             map.put("streamID", streamID);
             map.put("state", state.value());
 

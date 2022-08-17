@@ -1732,8 +1732,11 @@ class ZegoExpressImpl {
         List<dynamic> infoMapList = map['infoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
         for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
-              infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
+          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
+              infoMap['url'],
+              ZegoStreamRelayCDNState.values[infoMap['state']],
+              ZegoStreamRelayCDNUpdateReason.values[infoMap['updateReason']],
+              infoMap['stateTime']);
           infoList.add(info);
         }
 
@@ -1895,6 +1898,15 @@ class ZegoExpressImpl {
             .onMixerSoundLevelUpdate!(Map<int, double>.from(soundLevels));
         break;
 
+      case 'onAutoMixerSoundLevelUpdate':
+        if (ZegoExpressEngine.onAutoMixerSoundLevelUpdate == null) return;
+
+        Map<dynamic, dynamic> soundLevels = map['soundLevels'];
+
+        ZegoExpressEngine.onAutoMixerSoundLevelUpdate!(
+            Map<String, double>.from(soundLevels));
+        break;
+
       /* Device */
 
       case 'onAudioDeviceStateChanged':
@@ -1996,6 +2008,13 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onRemoteCameraStateUpdate == null) return;
 
         ZegoExpressEngine.onRemoteCameraStateUpdate!(
+            map['streamID'], ZegoRemoteDeviceState.values[map['state']]);
+        break;
+
+      case 'onRemoteSpeakerStateUpdate':
+        if (ZegoExpressEngine.onRemoteSpeakerStateUpdate == null) return;
+
+        ZegoExpressEngine.onRemoteSpeakerStateUpdate!(
             map['streamID'], ZegoRemoteDeviceState.values[map['state']]);
         break;
 

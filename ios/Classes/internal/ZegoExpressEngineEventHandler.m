@@ -679,6 +679,18 @@
     }
 }
 
+- (void)onAutoMixerSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    FlutterEventSink sink = _eventSink;
+    // Super high frequency callbacks do not log, do not guard sink
+
+    if (sink) {
+        sink(@{
+            @"method": @"onAutoMixerSoundLevelUpdate",
+            @"soundLevels": soundLevels
+        });
+    }
+}
+
 #pragma mark Device Callback
 
 - (void)onCapturedSoundLevelUpdate:(NSNumber *)soundLevel {
@@ -805,6 +817,20 @@
     if (sink) {
         sink(@{
             @"method": @"onRemoteCameraStateUpdate",
+            @"state": @(state),
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onRemoteSpeakerStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRemoteSpeakerStateUpdate] state: %d, streamID: %@", (int)state, streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteSpeakerStateUpdate",
             @"state": @(state),
             @"streamID": streamID
         });
