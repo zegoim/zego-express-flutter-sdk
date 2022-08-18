@@ -1615,6 +1615,34 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onAlignedAudioAuxData(ByteBuffer data,int dataLength,ZegoAudioFrameParam param) {
+            super.onAlignedAudioAuxData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", param.sampleRate.value());
+            paramMap.put("channel", param.channel.value());
+
+            final HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAlignedAudioAuxData");
+            map.put("data", bytes);
+            map.put("param", paramMap);
+
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
+        }
+
+        @Override
         public void onProcessRemoteAudioData(ByteBuffer data, int dataLength, ZegoAudioFrameParam param, String streamID, double timestamp) {
             super.onProcessRemoteAudioData(data, dataLength, param, streamID, timestamp);
 

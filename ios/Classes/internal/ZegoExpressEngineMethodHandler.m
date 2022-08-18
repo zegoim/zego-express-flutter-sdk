@@ -56,6 +56,13 @@
     result([ZegoExpressEngine getVersion]);
 }
 
+- (void)isFeatureSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int featureType = [ZegoUtils intValue:call.arguments[@"featureType"]];
+    BOOL ret = [ZegoExpressEngine isFeatureSupported:(ZegoFeatureType)featureType];
+    result(@(ret));
+}
+
 - (void)createEngineWithProfile:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     // Report framework info
@@ -1410,6 +1417,10 @@
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     [taskObject enableSoundLevel:enableSoundLevel];
 
+    // minPlayStreamBufferLength
+    int minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
+    [taskObject setMinPlayStreamBufferLength:minPlayStreamBufferLength];
+
     // Set AdvancedConfig
     NSDictionary<NSString *, NSString *> *advancedConfig = call.arguments[@"advancedConfig"];
     [taskObject setAdvancedConfig:advancedConfig];
@@ -1655,6 +1666,14 @@
     BOOL muted = [[ZegoExpressEngine sharedEngine] isSpeakerMuted];
 
     result(@(muted));
+}
+
+- (void)setAudioDeviceMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceMode = [ZegoUtils intValue:call.arguments[@"deviceMode"]];
+    [[ZegoExpressEngine sharedEngine] setAudioDeviceMode:(ZegoAudioDeviceMode)deviceMode];
+
+    result(nil);
 }
 
 - (void)enableAudioCaptureDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2146,6 +2165,19 @@
     config.channel = [ZegoUtils intValue:configMap[@"channel"]];
     
     [[ZegoExpressEngine sharedEngine] enableCustomAudioCaptureProcessingAfterHeadphoneMonitor:enable config:config];
+    
+    result(nil);
+}
+
+- (void)enableAlignedAudioAuxData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *paramMap = call.arguments[@"param"];
+    
+    ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
+    
+    [[ZegoExpressEngine sharedEngine] enableAlignedAudioAuxData:enable param:param];
     
     result(nil);
 }

@@ -15,6 +15,81 @@ enum ZegoScenario {
   Live
 }
 
+/// SDK feature type.
+enum ZegoFeatureType {
+  /// Basic audio feature.
+  Audio,
+
+  /// Basic video feature.
+  Video,
+
+  /// Media player feature.
+  MediaPlayer,
+
+  /// Local media data recorder feature.
+  MediaDataRecorder,
+
+  /// Media data publisher feature.
+  MediaDataPublisher,
+
+  /// Supplemental Enhancement Information (media side info) feature.
+  SEI,
+
+  /// SDK video capture feature.
+  SdkVideoCapture,
+
+  /// Custom video capture feature.
+  CustomVideoCapture,
+
+  /// SDK video rendering feature.
+  SdkVideoRender,
+
+  /// Custom video rendering feature.
+  CustomVideoRender,
+
+  /// SDK video processing feature (including low-light enhancement feature).
+  SdkVideoProcessing,
+
+  /// Custom video processing feature.
+  CustomVideoProcessing,
+
+  /// Streaming encryption / decryption feature.
+  StreamEncryption,
+
+  /// RTMP streaming feature.
+  Rtmp,
+
+  /// RTMPS streaming feature.
+  Rtmps,
+
+  /// RTMP over QUIC streaming feature.
+  RtmpOverQuic,
+
+  /// RTMP streaming feature.
+  HttpFlv,
+
+  /// HTTPS-FLV streaming feature.
+  HttpsFlv,
+
+  /// HTTP-FLV over QUIC streaming feature.
+  HttpFlvOverQuic,
+
+  /// Super resolution imaging feature.
+  SuperResolution,
+
+  /// Effects beauty feature.
+  EffectsBeauty,
+
+  /// Whiteboard beauty feature.
+  Whiteboard,
+
+  /// Range audio feature.
+  RangeAudio,
+
+  /// Copy righted music feature.
+  CopyRightedMusic
+}
+
 /// Language.
 enum ZegoLanguage {
   /// English
@@ -128,7 +203,7 @@ enum ZegoViewMode {
 
 /// Mirror mode for previewing or playing the of the stream.
 enum ZegoVideoMirrorMode {
-  /// The mirror image only for previewing locally. This mode is used by default.
+  /// The mirror image only for previewing locally. This mode is used by default. When the mobile terminal uses a rear camera, this mode is still used by default, but it does not work. Local preview does not set mirroring.
   OnlyPreviewMirror,
 
   /// Both the video previewed locally and the far end playing the stream will see mirror image.
@@ -723,6 +798,33 @@ enum ZegoAudioDeviceType {
   Output
 }
 
+/// Audio device mode.
+enum ZegoAudioDeviceMode {
+  /// Enable system echo cancellation.
+  Communication,
+
+  /// The system echo cancellation function is disabled.
+  General,
+
+  /// Automatically select whether to enable system echo cancellation based on the scenario.
+  Auto,
+
+  /// Enable system echo cancellation. Compared with Communication, this mode always occupies the microphone device.
+  Communication2,
+
+  /// Enable system echo cancellation. Compared with Communication, in this mode, the microphone is released and the media volume is reduced.
+  Communication3,
+
+  /// Disable system echo cancellation. Compared with General, this mode is not released when a microphone device is used.
+  General2,
+
+  /// Disable system echo cancellation. Compared with General, this mode will always occupy the microphone device.
+  General3,
+
+  /// Enable system echo cancellation. Compared with Communication, this mode of wheat after releasing the microphone, maintain the call volume.
+  Communication4
+}
+
 /// Audio route
 enum ZegoAudioRoute {
   /// Speaker
@@ -1305,6 +1407,7 @@ class ZegoRoomConfig {
 ///
 /// Configure parameters used for publishing stream, such as bitrate, frame rate, and resolution.
 /// Developers should note that the width and height resolution of the mobile and desktop are opposite. For example, 360p, the resolution of the mobile is 360x640, and the desktop is 640x360.
+/// When using external capture, the capture and encoding resolution of RTC cannot be set to 0*0, otherwise, there will be no video data in the publishing stream in the entire engine life cycle.
 class ZegoVideoConfig {
   /// Capture resolution width, control the width of camera image acquisition. SDK requires this member to be set to an even number. Only the camera is not started and the custom video capture is not used, the setting is effective. For performance reasons, the SDK scales the video frame to the encoding resolution after capturing from camera and before rendering to the preview view. Therefore, the resolution of the preview image is the encoding resolution. If you need the resolution of the preview image to be this value, Please call [setCapturePipelineScaleMode] first to change the capture pipeline scale mode to [Post]
   int captureWidth;
@@ -1489,7 +1592,7 @@ class ZegoReverbEchoParam {
 /// User object.
 ///
 /// Configure user ID and username to identify users in the room.
-/// Note that the userID must be unique under the same appID, otherwise mutual kicks out will occur.
+/// Note that the userID must be unique under the same appID, otherwise, there will be mutual kicks when logging in to the room.
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
   /// User ID, a string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK.
@@ -2236,6 +2339,9 @@ class ZegoMixerTask {
   /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.
   Map<String, String> advancedConfig;
 
+  /// Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.
+  int minPlayStreamBufferLength;
+
   /// Create a mix stream task object with TaskID
   ZegoMixerTask(this.taskID)
       : inputList = [],
@@ -2245,7 +2351,8 @@ class ZegoMixerTask {
         watermark = ZegoWatermark('', const Rect.fromLTRB(0, 0, 0, 0)),
         backgroundImageURL = "",
         enableSoundLevel = false,
-        advancedConfig = {};
+        advancedConfig = {},
+        minPlayStreamBufferLength = -1;
 
   Map<String, dynamic> toMap() {
     return {
@@ -2257,7 +2364,8 @@ class ZegoMixerTask {
       'watermark': this.watermark.toMap(),
       'backgroundImageURL': this.backgroundImageURL,
       'enableSoundLevel': this.enableSoundLevel,
-      'advancedConfig': this.advancedConfig
+      'advancedConfig': this.advancedConfig,
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
   }
 }
@@ -2816,12 +2924,15 @@ abstract class ZegoMediaPlayer {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   Future<ZegoMediaPlayerTakeSnapshotResult> takeSnapshot();
 
-  /// Open precise seek and set relevant attributes.
+  /// Enable accurate seek and set relevant attributes.
   ///
-  /// Call the setting before loading the resource. After setting, it will be valid throughout the life cycle of the media player. For multiple calls to ‘enableAccurateSeek’, the configuration is an overwrite relationship, and each call to ‘enableAccurateSeek’ only takes effect on the resources loaded later.
+  /// Available since: 2.4.0
+  /// Description: The timestamp specified by normal seek may not an I frame, and then returns the I frame near the specified timestamp, which is not so accurate. But the accurate seek, when the specified timestamp is not an I frame, it will use the I frame near the specified timestamp to decode the frame of the specified timestamp.
+  /// Use cases: When user needs to seek to the specified timestamp accurately.
+  /// When to call: The setting must be called before [loadResource], and it will take effect during the entire life cycle of the media player.
   ///
   /// - [enable] Whether to enable accurate seek
-  /// - [config] The property setting of precise seek is valid only when enable is true.
+  /// - [config] The property setting of accurate seek, only valid when enable is true.
   Future<void> enableAccurateSeek(bool enable, ZegoAccurateSeekConfig config);
 
   /// Set the maximum cache duration and cache data size of web materials.
@@ -3083,7 +3194,7 @@ abstract class ZegoAudioEffectPlayer {
 
 /// CopyrightedMusic play configuration.
 class ZegoCopyrightedMusicConfig {
-  /// User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
+  /// User object instance, configure userID, userName. Note that the user ID set here needs to be consistent with the user ID set when logging in to the room, otherwise the request for the copyright music background service will fail.
   ZegoUser user;
 
   ZegoCopyrightedMusicConfig(this.user);
@@ -3313,7 +3424,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Initialize the copyrighted music so that you can use the function of the copyrighted music later.
   /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
-  /// Restrictions: The real user information must be passed in, otherwise the song resources cannot be obtained for playback.
+  /// Caution: 1. The real user information must be passed in, otherwise the song resources cannot be obtained for playback. 2. The user ID set when initializing copyrighted music needs to be the same as the user ID set when logging in to the room.
   ///
   /// - [config] the copyrighted music configuration.
   Future<ZegoCopyrightedMusicInitResult> initCopyrightedMusic(
@@ -3342,9 +3453,9 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Initialize the copyrighted music so that you can use the function of the copyrighted music later.
   /// Use case: Used to get a list of songs.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
-  /// - [command] request command, see details for specific supported commands.
+  /// - [command] request command, details about the commands supported.
   /// - [params] request parameters, each request command has corresponding request parameters.
   Future<ZegoCopyrightedMusicSendExtendedRequestResult> sendExtendedRequest(
       String command, String params);
@@ -3354,7 +3465,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Get lyrics in lrc format, support parsing lyrics line by line.
   /// Use case: Used to display lyrics line by line.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
   Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID);
@@ -3364,7 +3475,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Get lyrics in krc format, support parsing lyrics word by word.
   /// Use case: Used to display lyrics word by word.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [krcToken] The krcToken obtained by calling requestAccompaniment.
   Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(
@@ -3373,10 +3484,10 @@ abstract class ZegoCopyrightedMusic {
   /// Request a song.
   ///
   /// Available since: 2.13.0
-  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, or share_token for sharing to others, there are also some related authentications. information. Support three ways to request a song, pay-per-use, monthly billing by user, and monthly billing by room.
+  /// Description: By requesting a song, you can not only obtain basic information about a song (such as duration, song name, and artist), but also obtain the resource ID for local playback, share_token for sharing with others, and related authentication information. Support by the time, by the user monthly, by the room monthly subscription three ways.
   /// Use case: Get copyrighted songs for local playback and sharing.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
-  /// Restrictions: This interface will trigger billing. A song may have three sound qualities: normal, high-definition, and lossless. Each sound quality has a different resource file, and each resource file has a unique resource ID.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: This interface will trigger billing. A song may have three sound qualities: normal, high-definition, and lossless. Each sound quality has a different resource file, and each resource file has a unique resource ID.
   ///
   /// - [config] request configuration.
   Future<ZegoCopyrightedMusicRequestSongResult> requestSong(
@@ -3385,10 +3496,10 @@ abstract class ZegoCopyrightedMusic {
   /// Request accompaniment.
   ///
   /// Available since: 2.13.0
-  /// Description: You can get the accompaniment resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Support three ways to request accompaniment, pay-per-use, monthly billing by user, and monthly billing by room.
+  /// Description: You can get the accompaniment resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports click-by-point accompaniment.
   /// Use case: Get copyrighted accompaniment for local playback and sharing.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
-  /// Restrictions: This interface will trigger billing.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: This interface will trigger billing.
   ///
   /// - [config] request configuration.
   Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(
@@ -3397,10 +3508,10 @@ abstract class ZegoCopyrightedMusic {
   /// Request accompaniment clip.
   ///
   /// Available since: 2.13.0
-  /// Description: You can obtain the climax clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Support three ways to request accompaniment clip, pay-per-use, monthly billing by user, and monthly billing by room.
+  /// Description: You can get the climax clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports accompaniment climax clips by pay-per-use.
   /// Use case: Get copyrighted accompaniment clip for local playback and sharing.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
-  /// Restrictions: This interface will trigger billing.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: This interface will trigger billing.
   ///
   /// - [config] request configuration.
   Future<ZegoCopyrightedMusicRequestAccompanimentClipResult>
@@ -3411,7 +3522,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: After the user successfully obtains the song/accompaniment/climax clip resource, he can get the corresponding shareToken, share the shareToken with other users, and other users call this interface to obtain the shared music resources.
   /// Use case: In the online KTV scene, after receiving the song or accompaniment token shared by the lead singer, the chorus obtains the corresponding song or accompaniment through this interface, and then plays it on the local end.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [shareToken] access the corresponding authorization token for a song or accompaniment.
   Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
@@ -3422,8 +3533,8 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Download a song or accompaniment. It can only be played after downloading successfully.
   /// Use case: Get copyrighted accompaniment for local playback and sharing.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
-  /// Restrictions: Loading songs or accompaniment resources is affected by the network.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: Loading songs or accompaniment resources is affected by the network.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<ZegoCopyrightedMusicDownloadResult> download(String resourceID);
@@ -3433,7 +3544,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Query the resource is existed or not.
   /// Use case: Can be used to check the resource's cache is existed or not
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
   /// - [type] the song resource type.
@@ -3444,7 +3555,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.13.0
   /// Description: Get the playing time of a song or accompaniment file.
   /// Use case: Can be used to display the playing time information of the song or accompaniment on the view.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getDuration(String resourceID);
@@ -3536,7 +3647,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get standard pitch data.
   /// Use case: Can be used to display standard pitch lines on the view.
-  /// Restrictions: Only accompaniment or climactic clip assets have pitch lines.
+  /// Cation: Only accompaniment or climactic clip assets have pitch lines.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(

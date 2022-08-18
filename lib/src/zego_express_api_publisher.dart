@@ -134,7 +134,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Set whether the local preview video and the published video have mirror mode enabled. For specific mirroring mode.
   /// When to call: After [createEngine].
-  /// Restrictions: None.
+  /// Restrictions: This setting only works if the SDK is responsible for rendering.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mirrorMode] Mirror mode for previewing or publishing the stream.
@@ -232,7 +232,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Stops or resumes sending the audio part of a stream for the specified channel.
   ///
   /// Available since: 1.1.0
-  /// Description: This function can be called when publishing the stream to realize not publishing the audio data stream. The SDK still collects and processes the audio, but does not send the audio data to the network.
+  /// Description: This function can be called when publishing the stream to realize not publishing the audio data stream. The SDK still collects and processes the audio, but send muted audio frame packets to the network.
   /// When to call: Called after the engine is created [createEngine] can take effect.
   /// Restrictions: None.
   /// Related callbacks: If you stop sending audio streams, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteMicStateUpdate] callbacks.
@@ -592,7 +592,6 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: The environment on the streaming end is dark, or the frame rate set by the camera is high, which causes the picture to be dark, and the subject cannot be displayed or recognized normally.
   /// Default value: Off.
   /// When to call: After creating the engine [createEngine].
-  /// Restrictions: Metal video rendering is temporarily not supported.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mode] Low light enhancement mode.
