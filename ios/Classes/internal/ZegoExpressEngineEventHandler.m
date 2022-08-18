@@ -1365,6 +1365,27 @@
     }
 }
 
+- (void)onAlignedAudioAuxData:(const unsigned char * _Nonnull) data dataLength:(unsigned int) dataLength param:(ZegoAudioFrameParam *) param {
+    FlutterEventSink sink = _eventSink;
+    
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onAlignedAudioAuxData",
+            @"data": objData,
+            @"param": @{
+                @"sampleRate": @(param.sampleRate),
+                @"channel": @(param.channel)
+            }
+        });
+    }
+}
+
 - (void)onProcessRemoteAudioData:(unsigned char *)data dataLength:(unsigned int)dataLength param:(ZegoAudioFrameParam *)param streamID:(NSString *)streamID timestamp:(double)timestamp {
     FlutterEventSink sink = _eventSink;
     

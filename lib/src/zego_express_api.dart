@@ -86,6 +86,21 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.getVersion();
   }
 
+  /// Query whether the current SDK supports the specified feature.
+  ///
+  /// Available since: 2.22.0
+  /// Description:
+  ///   Since the SDK supports feature trimming, some features may be trimmed;
+  ///   you can use this function to quickly determine whether the current SDK supports the specified features,
+  ///   such as querying whether the media player feature is supported.
+  /// When to call: Any time.
+  ///
+  /// - [featureType] Type of feature to query.
+  /// - Returns Whether the specified feature is supported. true: supported; false: not supported.
+  static Future<bool> isFeatureSupported(ZegoFeatureType featureType) async {
+    return await ZegoExpressImpl.isFeatureSupported(featureType);
+  }
+
   /// Uploads logs to the ZEGO server.
   ///
   /// Available since: 1.1.0
@@ -345,7 +360,7 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [state] State of publishing stream.
   /// - [errorCode] The error code corresponding to the status change of the publish stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
-  /// - [extendedData] Extended information with state updates.
+  /// - [extendedData] Extended information with state updates, include playing stream CDN address.
   static void Function(String streamID, ZegoPublisherState state, int errorCode,
       Map<String, dynamic> extendedData)? onPublisherStateUpdate;
 
@@ -658,7 +673,7 @@ class ZegoExpressEngine {
   /// Description: The local captured audio sound level callback.
   /// Trigger: After you start the sound level monitor by calling [startSoundLevelMonitor].
   /// Caution:
-  ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview].
+  ///   1. The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] and [startPreview].
   ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate]
   ///
@@ -708,7 +723,7 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: The local captured audio spectrum callback.
   /// Trigger: After you start the audio spectrum monitor by calling [startAudioSpectrumMonitor].
-  /// Caution: The callback notification period is the parameter value set when the [startAudioSpectrumMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] or [startPreview].
+  /// Caution: The callback notification period is the parameter value set when the [startAudioSpectrumMonitor] is called. The callback value is the default value of 0 When you have not called the interface [startPublishingStream] and [startPreview].
   /// Related APIs: Start audio spectrum monitoring via [startAudioSpectrumMonitor]. Monitoring remote played audio spectrum by callback [onRemoteAudioSpectrumUpdate]
   ///
   /// - [audioSpectrum] Locally captured audio spectrum value list. Spectrum value range is [0-2^30].
@@ -1063,6 +1078,8 @@ class ZegoExpressEngine {
   ///   Version 2.14.0 and above:
   ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
   ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
+  ///   Version 2.22.0 and above:
+  ///   1. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
   /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
   /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
   ///
@@ -1103,6 +1120,19 @@ class ZegoExpressEngine {
       int dataLength,
       ZegoAudioFrameParam param,
       double timestamp)? onProcessCapturedAudioDataAfterUsedHeadphoneMonitor;
+
+  /// Aligned audio aux frames callback.
+  ///
+  /// Available: Since 2.22.0
+  /// Description: In this callback, you can receive the audio aux frames which aligned with accompany. Developers can record locally.
+  /// When to trigger: This callback function will not be triggered until [enableAlignedAudioAuxData] is called to turn on the function and [startpublishingstream] or [startrecordingcaptureddata] is called.
+  /// Restrictions: To obtain audio aux data of the media player from this callback, developers need to call [enableAux] and [start] of MediaPlayer.
+  /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback, and the data in this callback cannot be modified.
+  ///
+  /// - [data] Audio data in PCM format.
+  /// - [param] Parameters of the audio frame.
+  static void Function(Uint8List data, ZegoAudioFrameParam param)?
+      onAlignedAudioAuxData;
 
   /// Custom audio processing remote playing stream PCM audio frame callback.
   ///

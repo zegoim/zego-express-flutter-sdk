@@ -52,6 +52,13 @@ void ZegoExpressEngineMethodHandler::getVersion(flutter::EncodableMap& argument,
     result->Success(EXPRESS::ZegoExpressSDK::getVersion());
 }
 
+void ZegoExpressEngineMethodHandler::isFeatureSupported(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto featureType = std::get<int32_t>(argument[FTValue("featureType")]);
+    result->Success(EXPRESS::ZegoExpressSDK::isFeatureSupported((EXPRESS::ZegoFeatureType)featureType));
+}
+
 void ZegoExpressEngineMethodHandler::setPluginVersion(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -77,6 +84,7 @@ void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argumen
 
     engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
+    engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
     EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
 
     ZegoTextureRendererController::getInstance()->init();
@@ -99,6 +107,7 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
 
         engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
         EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
 
         ZegoTextureRendererController::getInstance()->init();
@@ -2053,6 +2062,9 @@ void ZegoExpressEngineMethodHandler::startMixerTask(flutter::EncodableMap& argum
     task.backgroundImageURL = std::get<std::string>(argument[FTValue("backgroundImageURL")]);
     task.enableSoundLevel = std::get<bool>(argument[FTValue("enableSoundLevel")]);
 
+    // minPlayStreamBufferLength
+    task.minPlayStreamBufferLength = std::get<int32_t>(argument[FTValue("minPlayStreamBufferLength")]);
+
     task.audioConfig.bitrate = std::get<int32_t>(taskAudioConfig[FTValue("bitrate")]);
     task.audioConfig.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(taskAudioConfig[FTValue("channel")]);
     task.audioConfig.codecID = (EXPRESS::ZegoAudioCodecID)std::get<int32_t>(taskAudioConfig[FTValue("codecID")]);
@@ -2225,6 +2237,35 @@ void ZegoExpressEngineMethodHandler::setAudioDeviceVolume(flutter::EncodableMap&
     EXPRESS::ZegoExpressSDK::getEngine()->setAudioDeviceVolume((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID.c_str(), volume);
 
     result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::muteAudioDevice(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+    auto mute = std::get<bool>(argument[FTValue("mute")]);
+    
+    EXPRESS::ZegoExpressSDK::getEngine()->muteAudioDevice((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID.c_str(), mute);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::isAudioDeviceMuted(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+
+    auto ret = EXPRESS::ZegoExpressSDK::getEngine()->isAudioDeviceMuted((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID);
+    
+    result->Success(FTValue(ret));
+}
+
+void ZegoExpressEngineMethodHandler::setAudioDeviceMode(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::getAudioDeviceVolume(flutter::EncodableMap& argument,
@@ -3050,67 +3091,67 @@ void ZegoExpressEngineMethodHandler::stopAutoMixerTask(flutter::EncodableMap& ar
 void ZegoExpressEngineMethodHandler::setAudioRouteToSpeaker(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::getAudioRouteType(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::useFrontCamera(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::isCameraFocusSupported(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::setCameraFocusMode(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::setCameraFocusPointInPreview(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::setCameraExposureMode(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::setCameraExposurePointInPreview(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::setCameraExposureCompensation(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::setCameraZoomFactor(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::getCameraMaxZoomFactor(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::startAudioSpectrumMonitor(flutter::EncodableMap& argument,
@@ -3134,7 +3175,7 @@ void ZegoExpressEngineMethodHandler::stopAudioSpectrumMonitor(flutter::Encodable
 void ZegoExpressEngineMethodHandler::enableHeadphoneAEC(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    result->Error("Not Support", "This interface does not support Windows platform");
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::startEffectsEnv(flutter::EncodableMap& argument,
@@ -3289,6 +3330,12 @@ void ZegoExpressEngineMethodHandler::enableCustomAudioCaptureProcessingAfterHead
     EXPRESS::ZegoExpressSDK::getEngine()->enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(enable, &config);
 
     result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableAlignedAudioAuxData(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::enableCustomAudioRemoteProcessing(flutter::EncodableMap& argument,
@@ -3490,6 +3537,7 @@ void ZegoExpressEngineMethodHandler::createRangeAudio(flutter::EncodableMap& arg
 {
     rangeAudio_ = EXPRESS::ZegoExpressSDK::getEngine()->createRangeAudio();
     if (rangeAudio_) {
+        rangeAudio_->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
         result->Success(FTValue(0));
     } else {
         result->Success(FTValue(-1));
@@ -3675,6 +3723,7 @@ void ZegoExpressEngineMethodHandler::createRealTimeSequentialDataManager(flutter
 
     auto dataManager = EXPRESS::ZegoExpressSDK::getEngine()->createRealTimeSequentialDataManager(roomID);
     if (dataManager) {
+        dataManager->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
         dataManagerMap_[dataManager->getIndex()] = dataManager;
         result->Success(FTValue(dataManager->getIndex()) );
     } else {

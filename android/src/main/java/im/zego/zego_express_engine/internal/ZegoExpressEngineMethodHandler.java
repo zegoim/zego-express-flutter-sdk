@@ -78,6 +78,7 @@ import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
+import im.zego.zegoexpress.constants.ZegoFeatureType;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
@@ -107,6 +108,7 @@ import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.constants.ZegoEncodeProfile;
 import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
 import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
+import im.zego.zegoexpress.constants.ZegoAudioDeviceMode;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -345,6 +347,13 @@ public class ZegoExpressEngineMethodHandler {
     public static void getVersion(MethodCall call, Result result) {
 
         result.success(ZegoExpressEngine.getVersion());
+    }
+
+    @SuppressWarnings("unused")
+    public static void isFeatureSupported(MethodCall call, Result result) {
+
+        ZegoFeatureType featureType = ZegoFeatureType.getZegoFeatureType(ZegoUtils.intValue((Number)call.argument("featureType")));
+        result.success(ZegoExpressEngine.isFeatureSupported(featureType));
     }
 
     @SuppressWarnings("unused")
@@ -1603,6 +1612,10 @@ public class ZegoExpressEngineMethodHandler {
         boolean enableSoundLevel = ZegoUtils.boolValue((Boolean) call.argument("enableSoundLevel"));
         taskObject.enableSoundLevel(enableSoundLevel);
 
+        // minPlayStreamBufferLength
+        int minPlayStreamBufferLength = ZegoUtils.intValue((Number) call.argument("minPlayStreamBufferLength"));
+        taskObject.setMinPlayStreamBufferLength(minPlayStreamBufferLength);
+
         // Set AdvancedConfig
         HashMap<String, String> advancedConfig = call.argument("advancedConfig");
         taskObject.setAdvancedConfig(advancedConfig);
@@ -1842,6 +1855,15 @@ public class ZegoExpressEngineMethodHandler {
         boolean muted = ZegoExpressEngine.getEngine().isSpeakerMuted();
 
         result.success(muted);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setAudioDeviceMode(MethodCall call, Result result) {
+
+        ZegoAudioDeviceMode deviceMode = ZegoAudioDeviceMode.getZegoAudioDeviceMode( ZegoUtils.intValue((Number) call.argument("deviceMode")));
+        ZegoExpressEngine.getEngine().setAudioDeviceMode(deviceMode);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -2510,6 +2532,21 @@ public class ZegoExpressEngineMethodHandler {
         config.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) configMap.get("channel")));
 
         ZegoExpressEngine.getEngine().enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(enable, config);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableAlignedAudioAuxData(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Object> paramMap = call.argument("param");
+
+        ZegoAudioFrameParam param = new ZegoAudioFrameParam();
+        param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
+        param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
+
+        ZegoExpressEngine.getEngine().enableAlignedAudioAuxData(enable, param);
 
         result.success(null);
     }

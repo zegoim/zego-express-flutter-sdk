@@ -39,6 +39,23 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
             enable, config);
   }
 
+  /// Enable feature of throwing audio aux frames which aligned with accompany.
+  ///
+  /// Available since: 2.22.0
+  /// Description: Enable feature of throwing audio aux frames which aligned with accompany, and developers can receive the aligned audio aux frame through [onAlignedAudioAuxData].
+  /// Use cases: In KTV scene, this function can be used if the user wants to record voice and accompaniment for free processing.
+  /// When to call: It needs to be called after [createEngine] to be effective.
+  /// Restrictions: None.
+  /// Caution: When throwing onAlignedAudioAuxData audio aux frames is enabled, the streaming data of [startPublishingStream] does not contain audio aux frames.
+  ///
+  /// - [enable] Whether to enable the feature of throwing alignmented audio aux frames.
+  /// - [param] param of audio frame. Currently supports 8k, 16k, 32k, 44.1k, 48k sampling rate, mono or stereo.
+  Future<void> enableAlignedAudioAuxData(
+      bool enable, ZegoAudioFrameParam param) async {
+    return await ZegoExpressImpl.instance
+        .enableAlignedAudioAuxData(enable, param);
+  }
+
   /// Enable custom audio processing for remote playing stream.
   ///
   /// Available since: 1.13.0

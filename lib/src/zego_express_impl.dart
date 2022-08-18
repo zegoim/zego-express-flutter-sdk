@@ -10,7 +10,7 @@ import 'zego_express_enum_extension.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.21.2";
+  static String pluginVersion = "2.22.0";
 }
 
 class ZegoExpressImpl {
@@ -113,6 +113,11 @@ class ZegoExpressImpl {
 
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
+  }
+
+  static Future<bool> isFeatureSupported(ZegoFeatureType featureType) async {
+    return await _channel
+        .invokeMethod('isFeatureSupported', {'featureType': featureType.index});
   }
 
   Future<void> uploadLog() async {
@@ -798,6 +803,25 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> muteAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID, bool mute) async {
+    return await _channel.invokeMethod('muteAudioDevice',
+        {'deviceType': deviceType.index, 'deviceID': deviceID, 'mute': mute});
+  }
+
+  Future<bool> isAudioDeviceMuted(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('isAudioDeviceMuted', {
+      'deviceType': deviceType.index,
+      'deviceID': deviceID,
+    });
+  }
+
+  Future<void> setAudioDeviceMode(ZegoAudioDeviceMode deviceMode) async {
+    return await _channel
+        .invokeMethod('setAudioDeviceMode', {'deviceMode': deviceMode.value});
+  }
+
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await _channel
         .invokeMethod('enableAudioCaptureDevice', {'enable': enable});
@@ -1286,6 +1310,17 @@ class ZegoExpressImpl {
         'sampleRate': config.sampleRate.value,
         'channel': config.channel.index,
         'samples': config.samples
+      }
+    });
+  }
+
+  Future<void> enableAlignedAudioAuxData(
+      bool enable, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('enableAlignedAudioAuxData', {
+      'enable': enable,
+      'param': {
+        'sampleRate': param.sampleRate.value,
+        'channel': param.channel.index,
       }
     });
   }
@@ -2171,6 +2206,18 @@ class ZegoExpressImpl {
                 ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
                 ZegoAudioChannel.values[paramMap['channel']]),
             map['timestamp']);
+        break;
+
+      case 'onAlignedAudioAuxData':
+        if (ZegoExpressEngine.onAlignedAudioAuxData == null) return;
+
+        Map<dynamic, dynamic> paramMap = map['param'];
+
+        ZegoExpressEngine.onAlignedAudioAuxData!(
+            map['data'],
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]));
         break;
 
       case 'onProcessRemoteAudioData':
