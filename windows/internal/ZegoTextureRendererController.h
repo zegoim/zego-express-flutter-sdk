@@ -1,16 +1,18 @@
 #pragma once
 
 #include <unordered_map>
+#include <flutter/event_channel.h>
 
 #include "ZegoTextureRenderer.h"
 
+class ZegoTextureRendererControllerEventChannel;
 
 class ZegoTextureRendererController : public ZEGO::EXPRESS::IZegoCustomVideoRenderHandler, 
     public ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler
 {
 public:
     ZegoTextureRendererController(/* args */);
-  ZegoTextureRendererController(const ZegoTextureRendererController &old) = default;
+    ZegoTextureRendererController(const ZegoTextureRendererController &old) = default;
     virtual ~ZegoTextureRendererController();
 
     static std::shared_ptr<ZegoTextureRendererController> getInstance()
@@ -19,7 +21,14 @@ public:
         return instance_;
     }
 
-    void init();
+    inline void setEventSink(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> &&eventSink) {
+        eventSink_ = std::move(eventSink);
+    }
+    inline void clearEventSink() {
+        eventSink_.reset();
+    }
+
+    void init(flutter::BinaryMessenger *message);
     void uninit();
 
     int64_t createTextureRenderer(flutter::TextureRegistrar* texture_registrar, uint32_t width, uint32_t height);
@@ -73,6 +82,30 @@ private:
     std::unordered_map<ZEGO::EXPRESS::IZegoMediaPlayer * , std::shared_ptr<ZegoTextureRenderer> > mediaPlayerRenderers_;
 
     std::atomic_bool isInit = false;
+
+    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 };
 
+class ZegoTextureRendererControllerEventChannel : public flutter::StreamHandler<flutter::EncodableValue> {
+public:
+    ZegoTextureRendererControllerEventChannel() {}
+    virtual ~ZegoTextureRendererControllerEventChannel() {}
+
+protected:
+    virtual std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> OnListenInternal(
+        const flutter::EncodableValue* arguments,
+        std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& events) override {
+            ZegoTextureRendererController::getInstance()->setEventSink(std::move(events));
+            std::cout << "ZegoTextureRendererController on listen event" << std::endl;
+            return nullptr;
+        }
+
+    // Implementation of the public interface, to be provided by subclasses.
+    virtual std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> OnCancelInternal(
+        const flutter::EncodableValue* arguments) override {
+            ZegoTextureRendererController::getInstance()->clearEventSink();
+            std::cout << "ZegoTextureRendererController on cancel listen event" << std::endl;
+            return nullptr;
+        }
+};
 

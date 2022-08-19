@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'zego_express_texture_info.dart';
 import 'zego_express_texture_render_utils.dart';
 import 'zego_express_platform_view_utils.dart';
 import 'zego_express_impl.dart';
@@ -20,16 +22,16 @@ extension ZegoExpressCanvasViewImpl on ZegoExpressEngine {
       if (usePlatformView) {
         widget = ZegoExpressEngine.instance.createPlatformView(onViewCreated);
       } else {
+        ZegoExpressTextureInfo().init();
+
         final int textureID =
             await ZegoExpressEngine.instance.createTextureRenderer(0, 0);
-        widget = LayoutBuilder(builder: ((context, constraints) {
-          final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-          ZegoExpressEngine.instance.updateTextureRendererSize(
-              textureID,
-              (constraints.biggest.width * pixelRatio).toInt(),
-              (constraints.biggest.height * pixelRatio).toInt());
-          return Texture(textureId: textureID);
-        }));
+        widget = ZegoTextureWidget(
+          stream: ZegoExpressTextureInfo().getStream(textureID),
+          textureID: textureID,
+          updateTextureRendererSize:
+              ZegoExpressEngine.instance.updateTextureRendererSize,
+        );
         onViewCreated.call(textureID);
       }
     }
@@ -48,6 +50,7 @@ extension ZegoExpressCanvasViewImpl on ZegoExpressEngine {
       if (usePlatformView) {
         return ZegoExpressEngine.instance.destroyPlatformView(viewID);
       } else {
+        ZegoExpressTextureInfo().removeTexture(viewID);
         return ZegoExpressEngine.instance.destroyTextureRenderer(viewID);
       }
     }

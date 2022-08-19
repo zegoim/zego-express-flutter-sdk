@@ -72,6 +72,10 @@ class ZegoTextureRenderer {
     height_ = height;
   }
 
+  std::pair<int32_t, int32_t> getSize() {
+    return std::pair<int32_t, int32_t>(width_, height_);
+  }
+
   void setBackgroundColor(int colode) {}
   
   void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {

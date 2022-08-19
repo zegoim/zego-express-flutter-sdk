@@ -87,7 +87,7 @@ void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argumen
     engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
     EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
 
-    ZegoTextureRendererController::getInstance()->init();
+    ZegoTextureRendererController::getInstance()->init(registrar_->messenger());
 
     result->Success();
 }
@@ -110,7 +110,7 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
         engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
         EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
 
-        ZegoTextureRendererController::getInstance()->init();
+        ZegoTextureRendererController::getInstance()->init(registrar_->messenger());
     }
     result->Success();
 }

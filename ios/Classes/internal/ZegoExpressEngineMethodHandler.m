@@ -59,7 +59,8 @@
 - (void)isFeatureSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int featureType = [ZegoUtils intValue:call.arguments[@"featureType"]];
-    result([ZegoExpressEngine isFeatureSupported:(ZegoFeatureType)featureType]);
+    BOOL ret = [ZegoExpressEngine isFeatureSupported:(ZegoFeatureType)featureType];
+    result(@(ret));
 }
 
 - (void)createEngineWithProfile:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2173,8 +2174,8 @@
     NSDictionary *paramMap = call.arguments[@"param"];
     
     ZegoAudioFrameParam *param = [[ZegoAudioFrameParam alloc] init];
-    config.sampleRate = [ZegoUtils intValue:configMap[@"sampleRate"]];
-    config.channel = [ZegoUtils intValue:configMap[@"channel"]];
+    param.sampleRate = [ZegoUtils intValue:paramMap[@"sampleRate"]];
+    param.channel = [ZegoUtils intValue:paramMap[@"channel"]];
     
     [[ZegoExpressEngine sharedEngine] enableAlignedAudioAuxData:enable param:param];
     
@@ -4017,7 +4018,7 @@
     int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
     BOOL state = [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
 
-    ZGLog(@"[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %ld, success: %@", viewWidth, viewHeight, (long)textureID, state ? @"true" : @"false");
+    // ZGLog(@"[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %ld, success: %@", viewWidth, viewHeight, (long)textureID, state ? @"true" : @"false");
 
     result(@(state));
 }

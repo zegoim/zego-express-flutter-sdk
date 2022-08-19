@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'zego_express_texture_info.dart';
 import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 import 'zego_express_enum_extension.dart';
@@ -232,6 +233,13 @@ class ZegoExpressImpl {
 
   Future<void> startPreview(
       {ZegoCanvas? canvas, ZegoPublishChannel? channel}) async {
+    if (canvas != null) {
+      ZegoExpressTextureInfo()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      ZegoExpressTextureInfo()
+          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+    }
+
     return await _channel.invokeMethod('startPreview', {
       'canvas': canvas != null
           ? {
@@ -510,6 +518,13 @@ class ZegoExpressImpl {
 
   Future<void> startPlayingStream(String streamID,
       {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
+    if (canvas != null) {
+      ZegoExpressTextureInfo()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      ZegoExpressTextureInfo()
+          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+    }
+
     return await _channel.invokeMethod('startPlayingStream', {
       'streamID': streamID,
       'canvas': canvas != null
@@ -2562,6 +2577,11 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<void> setPlayerCanvas(ZegoCanvas canvas) async {
+    ZegoExpressTextureInfo()
+        .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+    ZegoExpressTextureInfo()
+        .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+
     return await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerSetPlayerCanvas', {
       'index': _index,
