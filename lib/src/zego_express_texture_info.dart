@@ -130,6 +130,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   void initState() {
     super.initState();
+
     widget.stream.listen((map) {
       if (map['type'] == 'resize') {
         _size = Size(map['width'], map['height']);
@@ -139,6 +140,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   }
 
   Rect _viewModeCalculate(double width, double height) {
+    final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     var textureWidth = width;
     var textureHeight = height;
     var x = 0.0;
@@ -162,8 +164,10 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
               x = (width - textureWidth) / 2;
               y = (height - textureHeight) / 2;
             }
-            widget.updateTextureRendererSize(widget.textureID,
-                (textureWidth).toInt(), (textureHeight).toInt());
+            widget.updateTextureRendererSize(
+                widget.textureID,
+                (textureWidth * pixelRatio).toInt(),
+                (textureHeight * pixelRatio).toInt());
           }
           break;
         case ZegoViewMode.AspectFill:
@@ -180,16 +184,18 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
               x = (width - textureWidth) / 2;
               y = (height - textureHeight) / 2;
             }
-            widget.updateTextureRendererSize(widget.textureID,
-                (textureWidth).toInt(), (textureHeight).toInt());
+            widget.updateTextureRendererSize(
+                widget.textureID,
+                (textureWidth * pixelRatio).toInt(),
+                (textureHeight * pixelRatio).toInt());
           }
           break;
         case ZegoViewMode.ScaleToFill:
           break;
       }
     } else {
-      widget.updateTextureRendererSize(
-          widget.textureID, width.toInt(), height.toInt());
+      widget.updateTextureRendererSize(widget.textureID,
+          (width * pixelRatio).toInt(), (height * pixelRatio).toInt());
     }
     return Rect.fromLTWH(x, y, textureWidth, textureHeight);
   }
@@ -197,10 +203,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: ((context, constraints) {
-      final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-
-      var rect = _viewModeCalculate(constraints.biggest.width * pixelRatio,
-          constraints.biggest.height * pixelRatio);
+      var rect = _viewModeCalculate(
+          constraints.biggest.width, constraints.biggest.height);
       var textureWidth = rect.width;
       var textureHeight = rect.height;
       var x = rect.left;
@@ -220,7 +224,6 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
             height: textureHeight,
             child: Texture(
               textureId: widget.textureID,
-              filterQuality: FilterQuality.high,
             ),
           )
         ],
