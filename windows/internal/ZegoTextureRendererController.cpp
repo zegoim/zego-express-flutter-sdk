@@ -112,7 +112,7 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
         return false;
     }
 
-    mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(), ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32);
+    mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(), ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
 
     renderer->second->setViewMode(viewMode);
 
@@ -123,7 +123,7 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
 /// Called when dart invoke `destroyMediaPlayer`
 void ZegoTextureRendererController::removeMediaPlayerRenderer(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
 {
-    mediaPlayer->setVideoHandler(nullptr, ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32);
+    mediaPlayer->setVideoHandler(nullptr, ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
     mediaPlayerRenderers_.erase(mediaPlayer);
 }
 
