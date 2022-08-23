@@ -72,7 +72,7 @@ class ZegoTextureRenderer {
     height_ = height;
   }
 
-  std::pair<int32_t, int32_t> getSize() {
+  inline std::pair<int32_t, int32_t> getSize() {
     return std::pair<int32_t, int32_t>(width_, height_);
   }
 
@@ -80,6 +80,10 @@ class ZegoTextureRenderer {
   
   void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {
     viewMode_ = mode;
+  }
+
+  inline bool getUseMirrorEffect() {
+    return isUseMirror_;
   }
 
   void setUseMirrorEffect(bool mirror) { isUseMirror_ = mirror; }

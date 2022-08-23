@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +87,8 @@ class ZegoExpressTextureInfo {
           'textureID': textureID,
           'type': 'resize',
           'width': double.parse(map['width'].toString()),
-          'height': double.parse(map['height'].toString())
+          'height': double.parse(map['height'].toString()),
+          'isMirror': map['isMirror']
         });
     }
   }
@@ -126,6 +128,7 @@ class ZegoTextureWidget extends StatefulWidget {
 
 class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   Size? _size;
+  bool? _isMirror;
 
   @override
   void initState() {
@@ -134,60 +137,74 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
     widget.stream.listen((map) {
       if (map['type'] == 'resize') {
         _size = Size(map['width'], map['height']);
+        _isMirror = map['isMirror'];
       }
       setState(() {});
     });
   }
 
+  Rect _calculateHeight(Size size, double width, double height) {
+    var textureWidth = width;
+    var textureHeight = textureWidth * size.height / size.width;
+    var x = (width - textureWidth) / 2;
+    var y = (height - textureHeight) / 2;
+    return Rect.fromLTWH(x, y, textureWidth, textureHeight);
+  }
+
+  Rect _calculateWidth(Size size, double width, double height) {
+    var textureHeight = height;
+    var textureWidth = textureHeight * size.width / size.height;
+    var x = (width - textureWidth) / 2;
+    var y = (height - textureHeight) / 2;
+    return Rect.fromLTWH(x, y, textureWidth, textureHeight);
+  }
+
   Rect _viewModeCalculate(double width, double height) {
     final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    var textureWidth = width;
-    var textureHeight = height;
-    var x = 0.0;
-    var y = 0.0;
+    var rect = Rect.fromLTWH(0, 0, width, height);
 
     if (_size != null) {
       Size size = _size!;
       var viewMode = ZegoExpressTextureInfo().getViewMode(widget.textureID) ??
           ZegoViewMode.AspectFit;
+
       switch (viewMode) {
         case ZegoViewMode.AspectFit:
           {
             if (size.width > size.height) {
-              textureWidth = width;
-              textureHeight = textureWidth * size.height / size.width;
-              x = (width - textureWidth) / 2;
-              y = (height - textureHeight) / 2;
+              rect = _calculateHeight(size, width, height);
+              if (rect.height > height) {
+                rect = _calculateWidth(size, width, height);
+              }
             } else {
-              textureHeight = height;
-              textureWidth = textureHeight * size.width / size.height;
-              x = (width - textureWidth) / 2;
-              y = (height - textureHeight) / 2;
+              rect = _calculateWidth(size, width, height);
+              if (rect.width > width) {
+                rect = _calculateHeight(size, width, height);
+              }
             }
             widget.updateTextureRendererSize(
                 widget.textureID,
-                (textureWidth * pixelRatio).toInt(),
-                (textureHeight * pixelRatio).toInt());
+                (rect.width * pixelRatio).toInt(),
+                (rect.height * pixelRatio).toInt());
           }
           break;
         case ZegoViewMode.AspectFill:
           {
             if (size.width > size.height) {
-              textureHeight = height;
-              textureWidth = textureHeight * size.width / size.height;
-
-              x = (width - textureWidth) / 2;
-              y = (height - textureHeight) / 2;
+              rect = _calculateWidth(size, width, height);
+              if (rect.width < width) {
+                rect = _calculateHeight(size, width, height);
+              }
             } else {
-              textureWidth = width;
-              textureHeight = textureWidth * size.height / size.width;
-              x = (width - textureWidth) / 2;
-              y = (height - textureHeight) / 2;
+              rect = _calculateHeight(size, width, height);
+              if (rect.height < height) {
+                rect = _calculateWidth(size, width, height);
+              }
             }
             widget.updateTextureRendererSize(
                 widget.textureID,
-                (textureWidth * pixelRatio).toInt(),
-                (textureHeight * pixelRatio).toInt());
+                (rect.width * pixelRatio).toInt(),
+                (rect.height * pixelRatio).toInt());
           }
           break;
         case ZegoViewMode.ScaleToFill:
@@ -197,12 +214,13 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       widget.updateTextureRendererSize(widget.textureID,
           (width * pixelRatio).toInt(), (height * pixelRatio).toInt());
     }
-    return Rect.fromLTWH(x, y, textureWidth, textureHeight);
+    return rect;
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: ((context, constraints) {
+      // Calculate the scaled size
       var rect = _viewModeCalculate(
           constraints.biggest.width, constraints.biggest.height);
       var textureWidth = rect.width;
@@ -212,6 +230,21 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
 
       var backgroundColor =
           ZegoExpressTextureInfo().getColor(widget.textureID) ?? Colors.black;
+
+      Widget child = Texture(
+        textureId: widget.textureID,
+      );
+      // mirror
+      if (_isMirror != null && _isMirror!) {
+        var matrix4 = Matrix4.rotationY(pi);
+        matrix4.setTranslationRaw(textureWidth, 0, 0);
+        child = Transform(
+          transform: matrix4,
+          child: Texture(
+            textureId: widget.textureID,
+          ),
+        );
+      }
       return Stack(
         children: [
           Container(
@@ -222,9 +255,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
             top: y,
             width: textureWidth,
             height: textureHeight,
-            child: Texture(
-              textureId: widget.textureID,
-            ),
+            child: child,
           )
         ],
       );

@@ -146,18 +146,21 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
 {
     auto renderer = capturedRenderers_.find(channel);
     if (renderer != capturedRenderers_.end()) {
+        bool isMirror = flipMode == ZEGO_VIDEO_FLIP_MODE_X;
         if (eventSink_) {
             auto size = renderer->second->getSize();
-            if (size.first != param.width || size.second != param.height) {
+            
+            if (size.first != param.width || size.second != param.height || renderer->second->getUseMirrorEffect() != isMirror) {
                 flutter::EncodableMap map;
                 map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
                 map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
                 map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
                 map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
+                map[flutter::EncodableValue("isMirror")] =  flutter::EncodableValue(isMirror);
                 eventSink_->Success(map);
             }
         }
-        renderer->second->setUseMirrorEffect(flipMode == ZEGO_VIDEO_FLIP_MODE_X);
+        renderer->second->setUseMirrorEffect(isMirror);
         renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
     }
 }

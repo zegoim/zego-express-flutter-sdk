@@ -74,6 +74,9 @@ void ZegoExpressEngineMethodHandler::setPluginVersion(flutter::EncodableMap& arg
 void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
+    EXPRESS::ZegoEngineConfig config;
+    config.advancedConfig = {{"video_data_image_colorspace", "rgba"}, {"thirdparty_framework_info", "flutter"}};
+    EXPRESS::ZegoExpressSDK::setEngineConfig(config);
     // TODO: need to write getValue utils
     unsigned int appID = argument[FTValue("appID")].LongValue();
     std::string appSign = std::get<std::string>(argument[FTValue("appSign")]);
@@ -97,6 +100,10 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
 {
     FTMap profileMap = std::get<FTMap>(argument[FTValue("profile")]);
     if(profileMap.size() > 0) {
+        EXPRESS::ZegoEngineConfig config;
+        config.advancedConfig = {{"video_data_image_colorspace", "rgba"}, {"thirdparty_framework_info", "flutter"}};
+        EXPRESS::ZegoExpressSDK::setEngineConfig(config);
+
         EXPRESS::ZegoEngineProfile profilePtr;
         profilePtr.appID = profileMap[FTValue("appID")].LongValue();
         if (!profileMap[FTValue("appSign")].IsNull()) {
