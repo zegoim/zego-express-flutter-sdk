@@ -1062,12 +1062,12 @@ void ZegoExpressEngineMethodHandler::setReverbEchoParam(flutter::EncodableMap& a
     param.numDelays = std::get<int>(paramMap[FTValue("numDelays")]);
     memset(param.delay, 0, sizeof(int));
     memset(param.decay, 0, sizeof(float));
-    std::vector<int> delayVec = std::get<std::vector<int>>(paramMap[FTValue("delay")]);
-    std::vector<double> decayVec = std::get<std::vector<double>>(paramMap[FTValue("decay")]);
+    FTArray delayVec = std::get<FTArray>(paramMap[FTValue("delay")]);
+    FTArray decayVec = std::get<FTArray>(paramMap[FTValue("decay")]);
 
     for (int i = 0; i < param.numDelays; i++) {
-        param.delay[i] = delayVec.at(i);
-        param.decay[i] = (float)decayVec.at(i);
+        param.delay[i] = std::get<int32_t>(delayVec.at(i));
+        param.decay[i] = (float)std::get<double>(decayVec.at(i));
     }
 
     EXPRESS::ZegoExpressSDK::getEngine()->setReverbEchoParam(param);
