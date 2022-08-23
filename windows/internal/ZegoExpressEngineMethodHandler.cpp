@@ -2018,26 +2018,29 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetActiveAudioChannel(flutter::E
 void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayerCanvas(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto index = std::get<int32_t>(argument[FTValue("index")]);
-    auto mediaPlayer = mediaPlayerMap_[index];
+    // There is currently a problem, not open
+    result->NotImplemented();
 
-    if (mediaPlayer) {
+    // auto index = std::get<int32_t>(argument[FTValue("index")]);
+    // auto mediaPlayer = mediaPlayerMap_[index];
 
-        flutter::EncodableMap canvasMap = std::get<flutter::EncodableMap>(argument[FTValue("canvas")]);
+    // if (mediaPlayer) {
 
-        EXPRESS::ZegoCanvas canvas;
-        auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
-        auto viewID = canvasMap[FTValue("view")].LongValue();
-        if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(viewID, mediaPlayer, viewMode)) {
-            result->Success();
-        } else {
-            result->Error("mediaPlayerSetPlayerCanvas_Canvas_error", "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check canvas");
-        }
-    }
-    else
-    {
-        result->Error("mediaPlayerSetPlayerCanvas_Can_not_find_player", "Invoke `mediaPlayerSetPlayerCanvas` but can't find specific player");
-    }
+    //     flutter::EncodableMap canvasMap = std::get<flutter::EncodableMap>(argument[FTValue("canvas")]);
+
+    //     EXPRESS::ZegoCanvas canvas;
+    //     auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
+    //     auto viewID = canvasMap[FTValue("view")].LongValue();
+    //     if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(viewID, mediaPlayer, viewMode)) {
+    //         result->Success();
+    //     } else {
+    //         result->Error("mediaPlayerSetPlayerCanvas_Canvas_error", "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check canvas");
+    //     }
+    // }
+    // else
+    // {
+    //     result->Error("mediaPlayerSetPlayerCanvas_Can_not_find_player", "Invoke `mediaPlayerSetPlayerCanvas` but can't find specific player");
+    // }
 }
 
 void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(flutter::EncodableMap& argument,
