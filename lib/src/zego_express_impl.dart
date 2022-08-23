@@ -1779,7 +1779,7 @@ class ZegoExpressImpl {
       case 'onPublisherRelayCDNStateUpdate':
         if (ZegoExpressEngine.onPublisherRelayCDNStateUpdate == null) return;
 
-        List<dynamic> infoMapList = map['infoList'];
+        List<dynamic> infoMapList = map['streamInfoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
         for (Map<dynamic, dynamic> infoMap in infoMapList) {
           ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
@@ -1791,7 +1791,7 @@ class ZegoExpressImpl {
         }
 
         ZegoExpressEngine.onPublisherRelayCDNStateUpdate!(
-            map['stream'], infoList);
+            map['streamID'], infoList);
         break;
 
       case 'onPublisherVideoEncoderChanged':

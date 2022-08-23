@@ -839,7 +839,7 @@ void ZegoExpressEngineEventHandler::onPublisherRelayCDNStateUpdate(const std::st
             infoMap[FTValue("stateTime")] = FTValue((int64_t)info.stateTime);
             infoListArray.push_back(FTValue(infoMap));
         }
-        retMap[FTValue("infoList")] = FTValue(infoListArray);
+        retMap[FTValue("streamInfoList")] = FTValue(infoListArray);
 
         eventSink_->Success(retMap);
     }
