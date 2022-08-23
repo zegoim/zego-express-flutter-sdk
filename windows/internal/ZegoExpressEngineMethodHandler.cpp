@@ -739,6 +739,25 @@ void ZegoExpressEngineMethodHandler::setPlayStreamCrossAppInfo(flutter::Encodabl
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::takePlayStreamSnapshot(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) 
+{
+    auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    EXPRESS::ZegoExpressSDK::getEngine()->takePlayStreamSnapshot(streamID, [=](int errorCode, void *image){
+
+        auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+        std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
+        delete []tmpData.second;   
+
+        FTMap resultMap;
+        resultMap[FTValue("errorCode")] = FTValue(errorCode);
+        resultMap[FTValue("image")] = FTValue(raw_image);
+        sharedPtrResult->Success(resultMap);
+    });
+}
+
 void ZegoExpressEngineMethodHandler::setPlayVolume(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
