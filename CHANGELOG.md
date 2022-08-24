@@ -44,9 +44,9 @@
 
 7. It supports windows now.
 
-    Now it supports windows, and the interface is basically aligned with the mobile phone, except for a few interfaces that only support specific platforms. Windows currently does not support [setPlayerCanvas], there is a problem with the screenshot function.
+    Now it supports windows, and the interface is basically aligned with the mobile phone, except for a few interfaces that only support specific platforms. Windows currently does not support [setPlayerCanvas] [takePublishStreamSnapshot] [takePlayStreamSnapshot] [takeSnapshot].
 
-    For related API, please refer to [setPlayerCanvas](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayerCanvas.html)
+    For related API, please refer to [setPlayerCanvas](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayerCanvas.html), [takePublishStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/takePublishStreamSnapshot.html), [takePlayStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/takePlayStreamSnapshot.html), [takeSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/takeSnapshot.html)
 
 8. Add [createCanvasView], Used to create canvas views.
 
@@ -58,7 +58,7 @@
 
 1. Optimize network quality callbacks to sense abnormal status of remote users.
 
-    When the remote user is abnormal, [onNetworkQuality] will call back the quality unknown state (ZegoStreamQualityLevelUnknown state) every 2s. When the user remains in this state for 8s, the remote user is considered to be abnormally disconnected, and the quality abnormal state (ZegoStreamQualityLevelDie state) will be called back.
+    When the remote user is abnormal, [onNetworkQuality] will call back the quality unknown state (ZegoStreamQualityLevel.Unknown state) every 2s. When the user remains in this state for 8s, the remote user is considered to be abnormally disconnected, and the quality abnormal state (ZegoStreamQualityLevel.Die state) will be called back.
 
     For related API, please refer to [onNetworkQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onNetworkQuality.html)
 
