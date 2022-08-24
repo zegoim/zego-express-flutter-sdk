@@ -13,14 +13,16 @@ class ZegoExpressTextureInfo {
   factory ZegoExpressTextureInfo() => _instance;
 
   void init() async {
-    _streamSubscriptionTextureRendererController ??=
-        _textureRendererControllerEvent
-            .receiveBroadcastStream()
-            .listen(_textureRendererControllerEventListener);
+    if (Platform.isWindows) {
+      _streamSubscriptionTextureRendererController ??=
+          _textureRendererControllerEvent
+              .receiveBroadcastStream()
+              .listen(_textureRendererControllerEventListener);
+    }
   }
 
   void uninit() async {
-    if (_textRenderViewModes.isEmpty) {
+    if (_textRenderViewModes.isEmpty && Platform.isWindows) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
     }
