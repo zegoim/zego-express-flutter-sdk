@@ -1680,9 +1680,11 @@
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
 
-    [[ZegoExpressEngine sharedEngine] enableAudioCaptureDevice:enable];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{  
+        [[ZegoExpressEngine sharedEngine] enableAudioCaptureDevice:enable];
 
-    result(nil);
+        result(nil);
+    });  
 }
 
 - (void)setBuiltInSpeakerOn:(FlutterMethodCall *)call result:(FlutterResult)result {
