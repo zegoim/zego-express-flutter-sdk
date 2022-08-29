@@ -126,7 +126,7 @@
 
     // Init texture renderer
     if (!self.enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] initController];
+        [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
     ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, scenario);
@@ -165,7 +165,7 @@
 
     // Init texture renderer
     if (!self.enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] initController];
+        [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
     ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
@@ -531,9 +531,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel) viewMode:(ZegoViewMode)viewMode]) {
-                [[ZegoTextureRendererController sharedInstance] startRendering];
-            } else {
+            if (![[ZegoTextureRendererController sharedInstance] bindCapturedChannel:@(channel) withTexture:viewID]) {
                 // Preview video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
@@ -562,8 +560,7 @@
 
     if (!self.enablePlatformView) {
         // Stop Texture Renderer
-        [[ZegoTextureRendererController sharedInstance] removeCapturedRenderer:@(channel)];
-        [[ZegoTextureRendererController sharedInstance] stopRendering];
+        [[ZegoTextureRendererController sharedInstance] unbindCapturedChannel:@(channel)];
     }
 
     result(nil);
@@ -1059,9 +1056,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID viewMode:(ZegoViewMode)viewMode]) {
-                [[ZegoTextureRendererController sharedInstance] startRendering];
-            } else {
+            if (![[ZegoTextureRendererController sharedInstance] bindRemoteStreamId:streamID withTexture:viewID]) {
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
@@ -1098,8 +1093,7 @@
 
     if (!self.enablePlatformView) {
         // Stop Texture render
-        [[ZegoTextureRendererController sharedInstance] removeRemoteRenderer:streamID];
-        [[ZegoTextureRendererController sharedInstance] stopRendering];
+        [[ZegoTextureRendererController sharedInstance] unbindRemoteStreamId:streamID];
     }
 
     result(nil);
@@ -4051,15 +4045,7 @@
 }
 
 - (void)updateTextureRendererSize:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
-    int viewWidth = [ZegoUtils intValue:call.arguments[@"width"]];
-    int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
-    BOOL state = [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
-
-    // ZGLog(@"[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %ld, success: %@", viewWidth, viewHeight, (long)textureID, state ? @"true" : @"false");
-
-    result(@(state));
+    result(@(YES));
 }
 
 - (void)destroyTextureRenderer:(FlutterMethodCall *)call result:(FlutterResult)result {

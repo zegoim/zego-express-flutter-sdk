@@ -13,7 +13,7 @@ class ZegoExpressTextureInfo {
   factory ZegoExpressTextureInfo() => _instance;
 
   void init() async {
-    if (Platform.isWindows) {
+    if (!kIsWeb) {
       _streamSubscriptionTextureRendererController ??=
           _textureRendererControllerEvent
               .receiveBroadcastStream()
@@ -22,7 +22,7 @@ class ZegoExpressTextureInfo {
   }
 
   void uninit() async {
-    if (_textRenderViewModes.isEmpty && Platform.isWindows) {
+    if (_textRenderViewModes.isEmpty && !kIsWeb) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
     }

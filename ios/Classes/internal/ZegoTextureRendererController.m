@@ -9,20 +9,17 @@
 #import "ZegoTextureRendererController.h"
 #import "ZegoLog.h"
 
-@interface ZegoTextureRendererController ()
+@interface ZegoTextureRendererController () <FlutterStreamHandler>
 
 // BufferRenderers for caching, the renderer created will not be immediately added to the renderers dictionary, but the developer will need to explicitly bind the relationship
-@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer *> *allRenderers;
+@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer *> *renderers;
 
-@property (strong) NSMutableDictionary<NSNumber *, ZegoTextureRenderer *> *capturedRenderers;
-@property (strong) NSMutableDictionary<NSString *, ZegoTextureRenderer *> *remoteRenderers;
-#if TARGET_OS_IPHONE
-@property (readonly, nonatomic) CADisplayLink *displayLink;
-#elif TARGET_OS_OSX
-@property (assign) CVDisplayLinkRef displayLink;
-#endif
-@property (nonatomic, assign) BOOL isRendering;
+@property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *capturedTextureIdMap;
+@property (strong) NSMutableDictionary<NSString *, NSNumber *> *remoteTextureIdMap;
+
 @property (nonatomic, assign) BOOL isInited;
+
+@property (nonatomic, strong) FlutterEventSink eventSink;
 
 @end
 
@@ -40,10 +37,9 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _capturedRenderers = [NSMutableDictionary dictionary];
-        _remoteRenderers = [NSMutableDictionary dictionary];
-        _allRenderers = [NSMutableDictionary dictionary];
-        _isRendering = NO;
+        _renderers = [NSMutableDictionary dictionary];
+        _capturedTextureIdMap = [NSMutableDictionary dictionary];
+        _remoteTextureIdMap = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -56,43 +52,21 @@
                        viewWidth:(int)width
                       viewHeight:(int)height {
 
-    ZegoTextureRenderer *renderer = [[ZegoTextureRenderer alloc] initWithTextureRegistry:registry
-                                                                               viewWidth:width
-                                                                              viewHeight:height];
+    ZegoTextureRenderer *renderer = [[ZegoTextureRenderer alloc] initWithTextureRegistry:registry size:CGSizeMake(width, height)];
 
     ZGLog(@"[createTextureRenderer] textureID:%ld, renderer:%p", (long)renderer.textureID,
           renderer);
 
-    [self.allRenderers setObject:renderer forKey:@(renderer.textureID)];
+    [self.renderers setObject:renderer forKey:@(renderer.textureID)];
 
     [self logCurrentRenderers];
 
     return renderer.textureID;
 }
 
-- (BOOL)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height {
-
-    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
-
-    if (!renderer) {
-        ZGLog(@"[updateTextureRendererSize] renderer for textureID:%ld not exists",
-              (long)textureID);
-        [self logCurrentRenderers];
-        return NO;
-    }
-
-    ZGLog(@"[updateTextureRendererSize] textureID:%ld, renderer:%p", (long)textureID, renderer);
-
-    [renderer updateRenderSize:CGSizeMake(width, height)];
-
-    [self logCurrentRenderers];
-
-    return YES;
-}
-
 - (BOOL)destroyTextureRenderer:(int64_t)textureID {
 
-    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
+    ZegoTextureRenderer *renderer = [self.renderers objectForKey:@(textureID)];
 
     if (!renderer) {
         ZGLog(@"[destroyTextureRenderer] renderer for textureID:%ld not exists", (long)textureID);
@@ -102,7 +76,7 @@
 
     ZGLog(@"[destroyTextureRenderer] textureID:%ld, renderer:%p", (long)textureID, renderer);
 
-    [self.allRenderers removeObjectForKey:@(renderer.textureID)];
+    [self.renderers removeObjectForKey:@(renderer.textureID)];
 
     // Release renderer
     [renderer destroy];
@@ -114,8 +88,8 @@
 
 - (void)logCurrentRenderers {
     NSMutableString *desc = [[NSMutableString alloc] init];
-    for (NSNumber *i in self.allRenderers) {
-        ZegoTextureRenderer *eachRenderer = self.allRenderers[i];
+    for (NSNumber *i in self.renderers) {
+        ZegoTextureRenderer *eachRenderer = self.renderers[i];
         [desc appendFormat:@"[ID:%d|Rnd:%p] ", i.intValue, eachRenderer];
     }
     ZGLog(@"[ZegoTextureRendererController] currentRenderers: %@", desc);
@@ -125,9 +99,12 @@
 
 /// The following methods are only triggered by the dart `zego_express_api`
 
-- (void)initController {
+- (void)initControllerWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger {
 
     if (!self.isInited) {
+        FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.zego.im/zego_texture_renderer_controller_event_handler" binaryMessenger:messenger];
+        [eventChannel setStreamHandler:self];
+        
         // Enable custom video render
         ZegoCustomVideoRenderConfig *renderConfig = [[ZegoCustomVideoRenderConfig alloc] init];
         renderConfig.frameFormatSeries = ZegoVideoFrameFormatSeriesRGB;
@@ -143,227 +120,161 @@
 }
 
 - (void)uninitController {
-    [self removeAllRenderer];
+    [self.renderers removeAllObjects];
+    [self.capturedTextureIdMap removeAllObjects];
+    [self.remoteTextureIdMap removeAllObjects];
 
     self.isInited = NO;
 }
 
-- (BOOL)addCapturedRenderer:(int64_t)textureID
-                        key:(NSNumber *)channel
-                   viewMode:(ZegoViewMode)viewMode {
+- (BOOL)bindCapturedChannel:(NSNumber *)channel withTexture:(int64_t)textureID {
 
-    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
+    ZegoTextureRenderer *renderer = [self.renderers objectForKey:@(textureID)];
 
     if (!renderer) {
-        ZGLog(@"[addCapturedRenderer] renderer for textureID:%ld not exists", (long)textureID);
+        ZGLog(@"[bindCapturedChannel] renderer for textureID:%ld not exists", (long)textureID);
         [self logCurrentRenderers];
         return NO;
     }
 
-    [renderer setViewMode:viewMode];
+    ZGLog(@"[bindCapturedChannel] textureID:%ld, renderer:%p, channel:%d",
+          (long)textureID, renderer, channel.intValue);
 
-    ZGLog(@"[addCapturedRenderer] textureID:%ld, renderer:%p, channel:%d, viewMode: %d",
-          (long)textureID, renderer, channel.intValue, (int)viewMode);
+    @synchronized (self) {
+        [self.capturedTextureIdMap setObject:@(textureID) forKey:channel];
+    }
+    
+    [self logCurrentRenderers];
 
-    [self.capturedRenderers setObject:renderer forKey:channel];
+    return YES;
+}
+
+- (void)unbindCapturedChannel:(NSNumber *)channel {
+    ZGLog(@"[unbindCapturedChannel] channel:%d", channel.intValue);
+
+    @synchronized (self) {
+        [self.capturedTextureIdMap removeObjectForKey:channel];
+    }
+
+    [self logCurrentRenderers];
+}
+
+- (BOOL)bindRemoteStreamId:(NSString *)streamId withTexture:(int64_t)textureID {
+
+    ZegoTextureRenderer *renderer = [self.renderers objectForKey:@(textureID)];
+
+    if (!renderer) {
+        ZGLog(@"[bindRemoteStreamId] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
+        return NO;
+    }
+
+    ZGLog(@"[bindRemoteStreamId] textureID:%ld, renderer:%p, streamId:%@",
+          (long)textureID, renderer, streamId);
+
+    @synchronized (self) {
+        [self.remoteTextureIdMap setObject:@(textureID) forKey:streamId];
+    }
 
     [self logCurrentRenderers];
 
     return YES;
 }
 
-- (void)removeCapturedRenderer:(NSNumber *)channel {
-    ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:channel];
+- (void)unbindRemoteStreamId:(NSString *)streamId {
+    ZGLog(@"[unbindRemoteStreamId] streamId:%@", streamId);
 
-    if (!renderer) {
-        ZGLog(@"[removeCapturedRenderer] renderer for channel:%d not exists", channel.intValue);
-        [self logCurrentRenderers];
-        return;
+    @synchronized (self) {
+        [self.remoteTextureIdMap removeObjectForKey:streamId];
     }
-
-    ZGLog(@"[removeCapturedRenderer] channel:%d, renderer:%p", channel.intValue, renderer);
-
-    [self.capturedRenderers removeObjectForKey:channel];
 
     [self logCurrentRenderers];
-}
-
-- (BOOL)addRemoteRenderer:(int64_t)textureID
-                      key:(NSString *)streamID
-                 viewMode:(ZegoViewMode)viewMode {
-
-    ZegoTextureRenderer *renderer = [self.allRenderers objectForKey:@(textureID)];
-
-    if (!renderer) {
-        ZGLog(@"[addRemoteRenderer] renderer for textureID:%ld not exists", (long)textureID);
-        [self logCurrentRenderers];
-        return NO;
-    }
-
-    [renderer setViewMode:viewMode];
-
-    ZGLog(@"[addRemoteRenderer] textureID:%ld, renderer:%p, streamID:%@, viewMode: %d",
-          (long)textureID, renderer, streamID, (int)viewMode);
-
-    [self.remoteRenderers setObject:renderer forKey:streamID];
-
-    [self logCurrentRenderers];
-
-    return YES;
-}
-
-- (void)removeRemoteRenderer:(NSString *)streamID {
-    ZegoTextureRenderer *renderer = [self.remoteRenderers objectForKey:streamID];
-
-    if (!renderer) {
-        ZGLog(@"[removeRemoteRenderer] renderer for streamID:%@ not exists", streamID);
-        [self logCurrentRenderers];
-        return;
-    }
-
-    ZGLog(@"[removeRemoteRenderer] streamID:%@, renderer:%p", streamID, renderer);
-
-    [self.remoteRenderers removeObjectForKey:streamID];
-
-    [self logCurrentRenderers];
-}
-
-- (void)startRendering {
-    if (self.isRendering) {
-        return;
-    }
-    
-#if TARGET_OS_IPHONE
-    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
-    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-
-    if (@available(iOS 10.0, *)) {
-        // Set the FPS to 30Hz
-        _displayLink.preferredFramesPerSecond = 30;
-    } else {
-        // The FPS of iOS9 and below is 60Hz, so set triggered every two frames, that is, 30Hz
-        _displayLink.frameInterval = 2;
-    }
-
-    _displayLink.paused = NO;
-    
-#elif TARGET_OS_OSX
-    CGDirectDisplayID displayID = CGMainDisplayID();
-    CVReturn error = kCVReturnSuccess;
-    error = CVDisplayLinkCreateWithCGDisplay(displayID, &_displayLink);
-    if (error) {
-        NSLog(@"DisplayLink created with error:%d", error);
-        _displayLink = NULL;
-    }
-    CVDisplayLinkSetOutputCallback(_displayLink, onDisplayLink, (__bridge void *)self);
-    CVDisplayLinkStart(_displayLink);
-//    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, <#CGLContextObj  _Nonnull cglContext#>, <#CGLPixelFormatObj  _Nonnull cglPixelFormat#>)
-#endif
-
-    self.isRendering = YES;
-}
-
-- (void)stopRendering {
-    if (!self.isRendering) {
-        return;
-    }
-
-    // TODO: 暂时先限定死只有在所有renderer都不存在时，停止渲染才成功
-    if (self.capturedRenderers.count == 0 && self.remoteRenderers.count == 0) {
-#if TARGET_OS_IPHONE
-        self.displayLink.paused = YES;
-        [_displayLink invalidate];
-#elif TARGET_OS_OSX
-        CVDisplayLinkStop(_displayLink);
-        CVDisplayLinkRelease(_displayLink);
-#endif
-        self.isRendering = NO;
-    }
 }
 
 #pragma mark - Private Methods
 
-- (void)removeAllRenderer {
-    [self.capturedRenderers removeAllObjects];
-    [self.remoteRenderers removeAllObjects];
-    [self.allRenderers removeAllObjects];
-}
-
-- (void)handleDisplayLinkCallback {
-    // Render local
-    for (NSNumber *key in self.capturedRenderers) {
-        ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:key];
-        if (!renderer || ![renderer isNewFrameAvailable])
-            continue;
-
-        [renderer notifyDrawNewFrame];
+- (void)updateRenderer:(ZegoTextureRenderer *)renderer
+            withBuffer:(CVPixelBufferRef)buffer
+                 param:(ZegoVideoFrameParam *)param
+              flipMode:(ZegoVideoFlipMode)flipMode {
+    
+    if ((int)param.size.width != (int)renderer.imageSize.width ||
+        (int)param.size.height != (int)renderer.imageSize.height ||
+        param.rotation != renderer.rotation ||
+        flipMode != renderer.flipMode) {
+        NSDictionary *map = @{
+            @"type": @"update",
+            @"textureID": @(renderer.textureID),
+            @"width": @(param.size.width),
+            @"height": @(param.size.height),
+            @"isMirror": @(renderer.flipMode),
+            // TODO: Rotation & FlipModeY
+        };
+        self.eventSink(map);
     }
-
-    // Render remote
-    for (NSString *key in self.remoteRenderers) {
-        ZegoTextureRenderer *renderer = [self.remoteRenderers objectForKey:key];
-        if (!renderer || ![renderer isNewFrameAvailable])
-            continue;
-
-        [renderer notifyDrawNewFrame];
-    }
+    
+    renderer.imageSize = param.size;
+    renderer.rotation = param.rotation;
+    renderer.flipMode = flipMode;
+    
+    [renderer updateSrcFrameBuffer:buffer];
 }
-
-#if TARGET_OS_IPHONE
-- (void)onDisplayLink:(CADisplayLink *)link {
-    [self handleDisplayLinkCallback];
-}
-#elif TARGET_OS_OSX
-static CVReturn onDisplayLink(CVDisplayLinkRef displayLink,
-                              const CVTimeStamp *inNow,
-                              const CVTimeStamp *inOutputTime,
-                              CVOptionFlags flagsIn,
-                              CVOptionFlags *flagsOut,
-                              void *displayLinkContext) {
-    [[ZegoTextureRendererController sharedInstance] handleDisplayLinkCallback];
-    return kCVReturnSuccess;
-}
-#endif
 
 #pragma mark - ZegoCustomVideoRenderHandler
 
-/// Remote playing stream video frame raw data callback, you can differentiate different streams by streamID
-///
-/// @param buffer video data of CVPixelBuffer format
-/// @param param Video frame param
-/// @param flipMode video flip mode
-/// @param channel Publishing stream channel.
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                     param:(ZegoVideoFrameParam *)param
                                  flipMode:(ZegoVideoFlipMode)flipMode
                                   channel:(ZegoPublishChannel)channel {
-    if (!self.isRendering) {
-        return;
-    }
+    NSNumber *textureID = nil;
+    ZegoTextureRenderer *renderer = nil;
 
-    ZegoTextureRenderer *renderer = [self.capturedRenderers objectForKey:@(channel)];
-    if (renderer) {
-        [renderer setUseMirrorEffect:flipMode == 1];
-        [renderer setSrcFrameBuffer:buffer];
+    @synchronized (self) {
+        textureID = [self.capturedTextureIdMap objectForKey:@(channel)];
+        if (!textureID) {
+            return;
+        }
+        renderer = [self.renderers objectForKey:textureID];
+        if (!renderer) {
+            return;
+        }
     }
+    
+    [self updateRenderer:renderer withBuffer:buffer param:param flipMode:flipMode];
 }
 
-/// Remote playing stream video frame CVPixelBuffer data callback, you can differentiate different streams by streamID
-///
-/// @param buffer video data of CVPixelBuffer format
-/// @param param Video frame param
-/// @param streamID Stream ID
 - (void)onRemoteVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                   param:(ZegoVideoFrameParam *)param
                                streamID:(NSString *)streamID {
-    if (!self.isRendering) {
-        return;
-    }
+    NSNumber *textureID = nil;
+    ZegoTextureRenderer *renderer = nil;
 
-    ZegoTextureRenderer *renderer = [self.remoteRenderers objectForKey:streamID];
-    if (renderer) {
-        [renderer setSrcFrameBuffer:buffer];
+    @synchronized (self) {
+        textureID = [self.remoteTextureIdMap objectForKey:streamID];
+        if (!textureID) {
+            return;
+        }
+        renderer = [self.renderers objectForKey:textureID];
+        if (!renderer) {
+            return;
+        }
     }
+    
+    [self updateRenderer:renderer withBuffer:buffer param:param flipMode:ZegoVideoFlipModeNone];
+}
+
+#pragma mark - FlutterStreamHandler
+
+- (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
+    self.eventSink = events;
+    ZGLog(@"[ZegoTextureRendererController] [onListen] set eventSink: %p", _eventSink);
+    return nil;
+}
+
+- (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    ZGLog(@"[ZegoTextureRendererController] [onCancel] set eventSink: %p to nil", _eventSink);
+    self.eventSink = nil;
+    return nil;
 }
 
 @end

@@ -23,22 +23,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZegoTextureRenderer : NSObject <FlutterTexture>
 
 @property (nonatomic, readonly) int64_t textureID;
-@property (nonatomic) int viewWidth;
-@property (nonatomic) int viewHeight;
 
-- (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry
-                              viewWidth:(int)width
-                             viewHeight:(int)height;
+@property (nonatomic, assign) CGSize imageSize;
+@property (nonatomic, assign) int rotation;
+@property (nonatomic, assign) ZegoVideoFlipMode flipMode;
+
+- (instancetype)initWithTextureRegistry:(id<FlutterTextureRegistry>)registry size:(CGSize)size;
 - (void)destroy;
 
-- (void)setSrcFrameBuffer:(CVPixelBufferRef)srcFrameBuffer;
-- (void)setViewMode:(ZegoViewMode)mode;
-- (void)setUseMirrorEffect:(BOOL)isUse;
-- (void)setBackgroundColor:(int)color;
-- (void)updateRenderSize:(CGSize)size;
-
-- (BOOL)isNewFrameAvailable;
-- (void)notifyDrawNewFrame;
+- (void)updateSrcFrameBuffer:(CVPixelBufferRef)buffer;
 
 @end
 
