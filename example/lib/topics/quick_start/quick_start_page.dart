@@ -129,6 +129,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         Platform.isMacOS ||
         kIsWeb) {
       ZegoExpressEngine.instance.createCanvasView((viewID) {
+        _previewViewID = viewID;
         _startPreview(viewID);
       }).then((widget) {
         setState(() {
@@ -181,6 +182,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
         kIsWeb) {
       print('📥 Start playing stream, streamID');
       ZegoExpressEngine.instance.createCanvasView((viewID) {
+        _playViewID = viewID;
         _startPlayingStream(viewID, streamID);
       }).then((widget) {
         setState(() {
