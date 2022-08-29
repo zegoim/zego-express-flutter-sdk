@@ -130,7 +130,7 @@ class ZegoTextureWidget extends StatefulWidget {
 
 class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   Size? _size;
-  bool? _isMirror;
+  int? _isMirror;
 
   @override
   void initState() {
@@ -237,7 +237,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
         textureId: widget.textureID,
       );
       // mirror
-      if (_isMirror != null && _isMirror!) {
+      if (_isMirror != null && _isMirror! == 1) {
         var matrix4 = Matrix4.rotationY(pi);
         matrix4.setTranslationRaw(textureWidth, 0, 0);
         child = Transform(

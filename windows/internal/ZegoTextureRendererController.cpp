@@ -156,7 +156,7 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
                 map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
                 map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
                 map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
-                map[flutter::EncodableValue("isMirror")] =  flutter::EncodableValue(isMirror);
+                map[flutter::EncodableValue("isMirror")] =  flutter::EncodableValue(isMirror ? 1 : 0);
                 eventSink_->Success(map);
             }
         }
