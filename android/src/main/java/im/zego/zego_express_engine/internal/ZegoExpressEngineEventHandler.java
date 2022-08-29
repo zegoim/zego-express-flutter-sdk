@@ -708,6 +708,19 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onAutoMixerSoundLevelUpdate(HashMap<String, Float> soundLevels) {
+            super.onAutoMixerSoundLevelUpdate(soundLevels);
+            // Super high frequency callbacks do not log, do not guard sink
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAutoMixerSoundLevelUpdate");
+            map.put("soundLevels", soundLevels);
+
+            sink.success(map);
+        }
+
 
         /* Device */
 
@@ -866,6 +879,22 @@ public class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onRemoteCameraStateUpdate");
+            map.put("streamID", streamID);
+            map.put("state", state.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRemoteSpeakerStateUpdate(String streamID, ZegoRemoteDeviceState state) {
+            super.onRemoteSpeakerStateUpdate(streamID, state);
+            ZegoLog.log("[onRemoteSpeakerStateUpdate] streamID: %s, state: %s", streamID, state.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onRemoteSpeakerStateUpdate");
             map.put("streamID", streamID);
             map.put("state", state.value());
 
@@ -1576,6 +1605,34 @@ public class ZegoExpressEngineEventHandler {
             map.put("dataLength", dataLength);
             map.put("param", paramMap);
             map.put("timestamp", timestamp);
+
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
+        }
+
+        @Override
+        public void onAlignedAudioAuxData(ByteBuffer data,int dataLength,ZegoAudioFrameParam param) {
+            super.onAlignedAudioAuxData(data, dataLength, param);
+
+            if (guardSink()) { return; }
+
+            int len = data.limit() - data.position();
+            byte[] bytes = new byte[len];
+            data.get(bytes);
+
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("sampleRate", param.sampleRate.value());
+            paramMap.put("channel", param.channel.value());
+
+            final HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAlignedAudioAuxData");
+            map.put("data", bytes);
+            map.put("param", paramMap);
 
             mUIHandler.post(new Runnable() {
                 @Override

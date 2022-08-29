@@ -123,7 +123,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('🔌 Start preview, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || Platform.isMacOS || kIsWeb) {
+    if (Platform.isIOS ||
+        Platform.isAndroid ||
+        Platform.isWindows ||
+        Platform.isMacOS ||
+        kIsWeb) {
       ZegoExpressEngine.instance.createCanvasView((viewID) {
         _startPreview(viewID);
       }).then((widget) {
@@ -170,7 +174,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || Platform.isMacOS || kIsWeb) {
+    if (Platform.isIOS ||
+        Platform.isAndroid ||
+        Platform.isWindows ||
+        Platform.isMacOS ||
+        kIsWeb) {
       print('📥 Start playing stream, streamID');
       ZegoExpressEngine.instance.createCanvasView((viewID) {
         _startPlayingStream(viewID, streamID);
@@ -275,6 +283,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
     if (!Platform.isAndroid &&
         !Platform.isIOS &&
         !Platform.isMacOS &&
+        !Platform.isWindows &&
         !kIsWeb) {
       return;
     }
@@ -293,6 +302,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
     if (!Platform.isAndroid &&
         !Platform.isIOS &&
         !Platform.isMacOS &&
+        !Platform.isWindows &&
         !kIsWeb) {
       return;
     }

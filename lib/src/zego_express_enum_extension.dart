@@ -119,3 +119,49 @@ extension ZegoStreamEventExtension on ZegoStreamEvent {
     }
   }
 }
+
+extension ZegoAudioDeviceModeExtension on ZegoAudioDeviceMode {
+  int get value {
+    switch (this) {
+      case ZegoAudioDeviceMode.Communication:
+        return 1;
+      case ZegoAudioDeviceMode.General:
+        return 2;
+      case ZegoAudioDeviceMode.Auto:
+        return 3;
+      case ZegoAudioDeviceMode.Communication2:
+        return 4;
+      case ZegoAudioDeviceMode.Communication3:
+        return 5;
+      case ZegoAudioDeviceMode.General2:
+        return 6;
+      case ZegoAudioDeviceMode.General3:
+        return 7;
+      case ZegoAudioDeviceMode.Communication4:
+        return 8;
+    }
+  }
+
+  static ZegoAudioDeviceMode fromValue(int value) {
+    switch (value) {
+      case 1:
+        return ZegoAudioDeviceMode.Communication;
+      case 2:
+        return ZegoAudioDeviceMode.General;
+      case 3:
+        return ZegoAudioDeviceMode.Auto;
+      case 4:
+        return ZegoAudioDeviceMode.Communication2;
+      case 5:
+        return ZegoAudioDeviceMode.Communication3;
+      case 6:
+        return ZegoAudioDeviceMode.General2;
+      case 7:
+        return ZegoAudioDeviceMode.General3;
+      case 8:
+        return ZegoAudioDeviceMode.Communication4;
+      default:
+        return ZegoAudioDeviceMode.Auto;
+    }
+  }
+}

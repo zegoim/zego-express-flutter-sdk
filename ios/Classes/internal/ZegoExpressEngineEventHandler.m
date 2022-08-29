@@ -679,6 +679,18 @@
     }
 }
 
+- (void)onAutoMixerSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    FlutterEventSink sink = _eventSink;
+    // Super high frequency callbacks do not log, do not guard sink
+
+    if (sink) {
+        sink(@{
+            @"method": @"onAutoMixerSoundLevelUpdate",
+            @"soundLevels": soundLevels
+        });
+    }
+}
+
 #pragma mark Device Callback
 
 - (void)onCapturedSoundLevelUpdate:(NSNumber *)soundLevel {
@@ -805,6 +817,20 @@
     if (sink) {
         sink(@{
             @"method": @"onRemoteCameraStateUpdate",
+            @"state": @(state),
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onRemoteSpeakerStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRemoteSpeakerStateUpdate] state: %d, streamID: %@", (int)state, streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRemoteSpeakerStateUpdate",
             @"state": @(state),
             @"streamID": streamID
         });
@@ -1335,6 +1361,27 @@
                 @"channel": @(param.channel)
             },
             @"timestamp": @(timestamp)
+        });
+    }
+}
+
+- (void)onAlignedAudioAuxData:(const unsigned char * _Nonnull) data dataLength:(unsigned int) dataLength param:(ZegoAudioFrameParam *) param {
+    FlutterEventSink sink = _eventSink;
+    
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+
+    NSData *objData = [[NSData alloc] initWithBytes:data length:dataLength];
+
+    if (sink) {
+        sink(@{
+            @"method": @"onAlignedAudioAuxData",
+            @"data": objData,
+            @"param": @{
+                @"sampleRate": @(param.sampleRate),
+                @"channel": @(param.channel)
+            }
         });
     }
 }

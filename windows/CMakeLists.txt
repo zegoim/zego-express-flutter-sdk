@@ -22,6 +22,10 @@ add_library(${PLUGIN_NAME} SHARED
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineMethodHandler.h
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRenderer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRenderer.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRendererController.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRendererController.h
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")

@@ -69,7 +69,7 @@ public class ZegoTextureRendererController {
             return false;
         }
 
-        ZegoLog.log("[updateTextureRendererSize] textureID:%d, renderer:%s", textureID, renderer.hashCode());
+        // ZegoLog.log("[updateTextureRendererSize] textureID:%d, renderer:%s", textureID, renderer.hashCode());
 
         Surface originSurface = renderer.getSurface();
 

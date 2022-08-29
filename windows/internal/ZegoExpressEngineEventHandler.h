@@ -18,6 +18,9 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoDataRecordEventHandler
     , public EXPRESS::IZegoApiCalledEventHandler
     , public EXPRESS::IZegoCopyrightedMusicEventHandler
+    , public EXPRESS::IZegoRealTimeSequentialDataEventHandler
+    , public EXPRESS::IZegoRangeAudioEventHandler
+    , public EXPRESS::IZegoCustomAudioProcessHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -64,14 +67,6 @@ protected:
     void onPublisherQualityUpdate(const std::string& streamID, const EXPRESS::ZegoPublishStreamQuality& quality) override;
 
     void onPublisherCapturedAudioFirstFrame() override;
-
-    //void onPublisherCapturedVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
-
-    //void onPublisherRenderVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
-
-    //void onPublisherVideoSizeChanged(int /*width*/, int /*height*/, EXPRESS::ZegoPublishChannel channel) override;
-
-    //void onPublisherRelayCDNStateUpdate(const std::string& streamID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) override;
     
     void onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;
 
@@ -82,12 +77,6 @@ protected:
     void onPlayerMediaEvent(const std::string& streamID, EXPRESS::ZegoPlayerMediaEvent event) override;
 
     void onPlayerRecvAudioFirstFrame(const std::string& streamID) override;
-
-    //void onPlayerRecvVideoFirstFrame(const std::string& streamID) override;
-
-    //void onPlayerRenderVideoFirstFrame(const std::string& streamID) override;
-
-    //void onPlayerVideoSizeChanged(const std::string& streamID, int width, int height) override;
 
     void onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
@@ -101,23 +90,82 @@ protected:
 
     void onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) override;
 
-    //void onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume) override;
-
-    //void onVideoDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo& deviceInfo) override;
-
     void onCapturedSoundLevelUpdate(float soundLevel) override;
 
     void onRemoteSoundLevelUpdate(const std::unordered_map<std::string, float>& soundLevels) override;
 
-    //void onCapturedAudioSpectrumUpdate(const EXPRESS::ZegoAudioSpectrum& audioSpectrum) override;
-
-    //void onRemoteAudioSpectrumUpdate(const std::unordered_map<std::string, EXPRESS::ZegoAudioSpectrum>& audioSpectrums) override;
-
     void onDeviceError(int errorCode, const std::string& deviceName) override;
 
-    //void onRemoteCameraStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) override;
-
     void onRemoteMicStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) override;
+
+
+    void onNetworkTimeSynchronized() override;
+
+    void onRoomTokenWillExpire(const std::string & roomID, int remainTimeInSecond) override;
+
+    void onPublisherCapturedVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
+
+    void onPublisherRenderVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
+
+    void onPublisherVideoSizeChanged(int width, int height, EXPRESS::ZegoPublishChannel channel) override;
+
+    void onPublisherRelayCDNStateUpdate(const std::string & streamID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo> & infoList) override;
+
+    void onPublisherVideoEncoderChanged(EXPRESS::ZegoVideoCodecID fromCodecID, EXPRESS::ZegoVideoCodecID toCodecID, EXPRESS::ZegoPublishChannel channel) override;
+
+    void onPlayerRecvVideoFirstFrame(const std::string & streamID) override;
+
+    void onPlayerRenderVideoFirstFrame(const std::string & streamID) override;
+
+    void onPlayerVideoSizeChanged(const std::string & streamID, int width, int height) override;
+
+    void onPlayerLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, const std::string & streamID) override;
+
+    void onAutoMixerSoundLevelUpdate(const std::unordered_map<std::string, float> & soundLevels) override;
+
+    void onVideoDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo & deviceInfo) override;
+
+    void onCapturedSoundLevelInfoUpdate(const EXPRESS::ZegoSoundLevelInfo & soundLevelInfo) override;
+
+    void onRemoteSoundLevelInfoUpdate( const std::unordered_map<std::string, EXPRESS::ZegoSoundLevelInfo> & soundLevelInfos) override;
+
+    void onCapturedAudioSpectrumUpdate(const EXPRESS::ZegoAudioSpectrum & audioSpectrum) override;
+
+    void onRemoteAudioSpectrumUpdate(const std::unordered_map<std::string, EXPRESS::ZegoAudioSpectrum> & audioSpectrums) override;
+
+    void onLocalDeviceExceptionOccurred(EXPRESS::ZegoDeviceExceptionType exceptionType, EXPRESS::ZegoDeviceType deviceType, const std::string & deviceID) override;
+
+    void onRemoteCameraStateUpdate(const std::string & streamID, EXPRESS::ZegoRemoteDeviceState state) override;
+
+    void onRemoteSpeakerStateUpdate(const std::string & streamID, EXPRESS::ZegoRemoteDeviceState state) override;
+
+    void onAudioVADStateUpdate(EXPRESS::ZegoAudioVADStableStateMonitorType type, EXPRESS::ZegoAudioVADType state) override;
+
+    void onIMRecvBroadcastMessage(const std::string & roomID, std::vector<EXPRESS::ZegoBroadcastMessageInfo> messageList) override;
+
+    void onIMRecvBarrageMessage(const std::string & roomID, std::vector<EXPRESS::ZegoBarrageMessageInfo> messageList) override;
+
+    void onIMRecvCustomCommand(const std::string & roomID, EXPRESS::ZegoUser fromUser, const std::string & command) override;
+
+    void onPerformanceStatusUpdate(const EXPRESS::ZegoPerformanceStatus & status) override;
+
+    void onNetworkModeChanged(EXPRESS::ZegoNetworkMode mode) override;
+
+    void onNetworkSpeedTestError(int errorCode, EXPRESS::ZegoNetworkSpeedTestType type) override;
+
+    void onNetworkSpeedTestQualityUpdate(const EXPRESS::ZegoNetworkSpeedTestQuality & quality, EXPRESS::ZegoNetworkSpeedTestType type) override;
+
+    void onRecvExperimentalAPI(const std::string & content) override;
+
+    void onNetworkQuality(const std::string & userID, EXPRESS::ZegoStreamQualityLevel upstreamQuality, EXPRESS::ZegoStreamQualityLevel downstreamQuality) override;
+
+// RealTimeSequentialData
+protected:
+    void onReceiveRealTimeSequentialData(EXPRESS::IZegoRealTimeSequentialDataManager * manager, const unsigned char * data, unsigned int dataLength, const std::string & streamID) override;
+
+// rangeAudio
+protected:
+    void onRangeAudioMicrophoneStateUpdate(EXPRESS::IZegoRangeAudio * rangeAudio, EXPRESS::ZegoRangeAudioMicrophoneState state, int errorCode) override;
 
 protected:
     void onAudioEffectPlayStateUpdate(EXPRESS::IZegoAudioEffectPlayer* audioEffectPlayer, unsigned int audioEffectID, EXPRESS::ZegoAudioEffectPlayState state, int errorCode) override;
@@ -147,6 +195,16 @@ protected:
 
     void onCapturedDataRecordProgressUpdate(EXPRESS::ZegoDataRecordProgress progress, EXPRESS::ZegoDataRecordConfig config, EXPRESS::ZegoPublishChannel channel) override;
 
+// CustomAudioProcessHandler
+protected:
+    void onProcessCapturedAudioData(unsigned char * data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam * param, double timestamp) override;
+
+    void onProcessCapturedAudioDataAfterUsedHeadphoneMonitor( unsigned char * data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam * param, double timestamp) override;
+
+    void onProcessRemoteAudioData(unsigned char * data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam * param, const std::string & streamID, double timestamp) override;
+
+    void onProcessPlaybackAudioData(unsigned char * data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam * param, double timestamp) override;
+    
 protected:
 
     void onDownloadProgressUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, float progressRate) override;

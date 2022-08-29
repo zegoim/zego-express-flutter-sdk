@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'zego_express_texture_info.dart';
 import 'zego_express_api.dart';
 import 'zego_express_defines.dart';
 import 'zego_express_enum_extension.dart';
@@ -10,7 +11,7 @@ import 'zego_express_enum_extension.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.21.2";
+  static String pluginVersion = "2.22.0";
 }
 
 class ZegoExpressImpl {
@@ -113,6 +114,11 @@ class ZegoExpressImpl {
 
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
+  }
+
+  static Future<bool> isFeatureSupported(ZegoFeatureType featureType) async {
+    return await _channel
+        .invokeMethod('isFeatureSupported', {'featureType': featureType.index});
   }
 
   Future<void> uploadLog() async {
@@ -227,6 +233,13 @@ class ZegoExpressImpl {
 
   Future<void> startPreview(
       {ZegoCanvas? canvas, ZegoPublishChannel? channel}) async {
+    if (canvas != null) {
+      ZegoExpressTextureInfo()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      ZegoExpressTextureInfo()
+          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+    }
+
     return await _channel.invokeMethod('startPreview', {
       'canvas': canvas != null
           ? {
@@ -505,6 +518,13 @@ class ZegoExpressImpl {
 
   Future<void> startPlayingStream(String streamID,
       {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
+    if (canvas != null) {
+      ZegoExpressTextureInfo()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      ZegoExpressTextureInfo()
+          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+    }
+
     return await _channel.invokeMethod('startPlayingStream', {
       'streamID': streamID,
       'canvas': canvas != null
@@ -796,6 +816,25 @@ class ZegoExpressImpl {
       'deviceID': deviceID,
       'volume': volume
     });
+  }
+
+  Future<void> muteAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID, bool mute) async {
+    return await _channel.invokeMethod('muteAudioDevice',
+        {'deviceType': deviceType.index, 'deviceID': deviceID, 'mute': mute});
+  }
+
+  Future<bool> isAudioDeviceMuted(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('isAudioDeviceMuted', {
+      'deviceType': deviceType.index,
+      'deviceID': deviceID,
+    });
+  }
+
+  Future<void> setAudioDeviceMode(ZegoAudioDeviceMode deviceMode) async {
+    return await _channel
+        .invokeMethod('setAudioDeviceMode', {'deviceMode': deviceMode.value});
   }
 
   Future<void> enableAudioCaptureDevice(bool enable) async {
@@ -1290,6 +1329,17 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> enableAlignedAudioAuxData(
+      bool enable, ZegoAudioFrameParam param) async {
+    return await _channel.invokeMethod('enableAlignedAudioAuxData', {
+      'enable': enable,
+      'param': {
+        'sampleRate': param.sampleRate.value,
+        'channel': param.channel.index,
+      }
+    });
+  }
+
   Future<void> enableCustomAudioRemoteProcessing(
       bool enable, ZegoCustomAudioProcessConfig config) async {
     return await _channel.invokeMethod('enableCustomAudioRemoteProcessing', {
@@ -1387,7 +1437,6 @@ class ZegoExpressImpl {
   }
 
   /* Range Audio */
-  // static final Map<int, ZegoRangeAudio> rangeAudioMap = Map();
   static ZegoRangeAudioImpl? rangeAudioImpl;
   Future<ZegoRangeAudio?> createRangeAudio() async {
     int index = await _channel.invokeMethod('createRangeAudio');
@@ -1730,16 +1779,19 @@ class ZegoExpressImpl {
       case 'onPublisherRelayCDNStateUpdate':
         if (ZegoExpressEngine.onPublisherRelayCDNStateUpdate == null) return;
 
-        List<dynamic> infoMapList = map['infoList'];
+        List<dynamic> infoMapList = map['streamInfoList'];
         List<ZegoStreamRelayCDNInfo> infoList = [];
         for (Map<dynamic, dynamic> infoMap in infoMapList) {
-          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(infoMap['url'],
-              infoMap['state'], infoMap['updateReason'], infoMap['stateTime']);
+          ZegoStreamRelayCDNInfo info = ZegoStreamRelayCDNInfo(
+              infoMap['url'],
+              ZegoStreamRelayCDNState.values[infoMap['state']],
+              ZegoStreamRelayCDNUpdateReason.values[infoMap['updateReason']],
+              infoMap['stateTime']);
           infoList.add(info);
         }
 
         ZegoExpressEngine.onPublisherRelayCDNStateUpdate!(
-            map['stream'], infoList);
+            map['streamID'], infoList);
         break;
 
       case 'onPublisherVideoEncoderChanged':
@@ -1896,6 +1948,15 @@ class ZegoExpressImpl {
             .onMixerSoundLevelUpdate!(Map<int, double>.from(soundLevels));
         break;
 
+      case 'onAutoMixerSoundLevelUpdate':
+        if (ZegoExpressEngine.onAutoMixerSoundLevelUpdate == null) return;
+
+        Map<dynamic, dynamic> soundLevels = map['soundLevels'];
+
+        ZegoExpressEngine.onAutoMixerSoundLevelUpdate!(
+            Map<String, double>.from(soundLevels));
+        break;
+
       /* Device */
 
       case 'onAudioDeviceStateChanged':
@@ -1997,6 +2058,13 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onRemoteCameraStateUpdate == null) return;
 
         ZegoExpressEngine.onRemoteCameraStateUpdate!(
+            map['streamID'], ZegoRemoteDeviceState.values[map['state']]);
+        break;
+
+      case 'onRemoteSpeakerStateUpdate':
+        if (ZegoExpressEngine.onRemoteSpeakerStateUpdate == null) return;
+
+        ZegoExpressEngine.onRemoteSpeakerStateUpdate!(
             map['streamID'], ZegoRemoteDeviceState.values[map['state']]);
         break;
 
@@ -2153,6 +2221,18 @@ class ZegoExpressImpl {
                 ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
                 ZegoAudioChannel.values[paramMap['channel']]),
             map['timestamp']);
+        break;
+
+      case 'onAlignedAudioAuxData':
+        if (ZegoExpressEngine.onAlignedAudioAuxData == null) return;
+
+        Map<dynamic, dynamic> paramMap = map['param'];
+
+        ZegoExpressEngine.onAlignedAudioAuxData!(
+            map['data'],
+            ZegoAudioFrameParam(
+                ZegoAudioSampleRateExtension.fromValue(paramMap['sampleRate']),
+                ZegoAudioChannel.values[paramMap['channel']]));
         break;
 
       case 'onProcessRemoteAudioData':
@@ -2497,6 +2577,11 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<void> setPlayerCanvas(ZegoCanvas canvas) async {
+    ZegoExpressTextureInfo()
+        .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+    ZegoExpressTextureInfo()
+        .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+
     return await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerSetPlayerCanvas', {
       'index': _index,

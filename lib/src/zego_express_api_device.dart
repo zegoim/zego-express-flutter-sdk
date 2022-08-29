@@ -60,7 +60,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Gets a list of audio devices.
   ///
-  /// Only supports Windows and Mac.
+  /// Only for Windows / macOS / Linux
   ///
   /// - [deviceType] Audio device type
   /// - Returns Audo device List
@@ -71,7 +71,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Get the device ID of the default audio device.
   ///
-  /// Only supports Windows and Mac.
+  /// Only for Windows / macOS / Linux
   ///
   /// - [deviceType] Audio device type
   /// - Returns Default Audio device ID
@@ -84,7 +84,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Available since: 1.0.0
   /// Description: Chooses to use the specified audio device.
   /// When to call: After creating the engine [createEngine] and before call [startPublishingStream] or [startPlayingStream].
-  /// Restrictions: Only supports Windows/macOS.
+  /// Restrictions: Only supports Windows / macOS / Linux
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -95,7 +95,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Get volume for the specified audio device.
   ///
-  /// Get volume for the specified audio device. Only for Windows/macOS.
+  /// Get volume for the specified audio device. Only for Windows / macOS / Linux
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -108,7 +108,8 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Set volume for the specified audio device.
   ///
-  /// Only for Windows/macOS. The direct operating system device may fail due to system restrictions. Please use [setCaptureVolume] and [setPlayVolume] first to adjust the volume of publish and play streams.
+  /// The direct operating system device may fail due to system restrictions. Please use [setCaptureVolume] and [setPlayVolume] first to adjust the volume of publish and play streams.
+  /// Only for Windows / macOS / Linux
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -117,6 +118,45 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
       ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
     return await ZegoExpressImpl.instance
         .setAudioDeviceVolume(deviceType, deviceID, volume);
+  }
+
+  /// Mutes or unmutes the audio device.
+  ///
+  /// Only for Windows / macOS / Linux
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  /// - [mute] Whether to mute the audio device; true means to mute the audio device; false means to unmute the audio device.
+  Future<void> muteAudioDevice(
+      ZegoAudioDeviceType deviceType, String deviceID, bool mute) async {
+    return await ZegoExpressImpl.instance
+        .muteAudioDevice(deviceType, deviceID, mute);
+  }
+
+  /// Set the audio device mode.
+  ///
+  /// Available since: 2.22.0
+  /// Description: Select audio equipment mode according to the need of the scene.
+  /// Use cases: In the case of KTV, the General mode must be used, but in the language room, the Communication2 or Communication3 mode is required in order to avoid the sound of third-party music being collected.
+  /// When to call: After creating the engine [createEngine].
+  /// Caution: This interface triggers startup switchover of the device. You are advised not to invoke this interface frequently to avoid unnecessary overhead and hardware problems. This interface may cause the volume mode to switch between call and media. If the media volume is inconsistent with the call volume, the volume may change.
+  ///
+  /// - [deviceMode] Audio device mode
+  Future<void> setAudioDeviceMode(ZegoAudioDeviceMode deviceMode) async {
+    return await ZegoExpressImpl.instance.setAudioDeviceMode(deviceMode);
+  }
+
+  /// Check if the audio device is muted.
+  ///
+  /// Only for Windows / macOS / Linux
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  /// - Returns Whether the audio device is muted; true means the audio device is muted; false means the audio device is not muted.
+  Future<bool> isAudioDeviceMuted(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance
+        .isAudioDeviceMuted(deviceType, deviceID);
   }
 
   /// Enables or disables the audio capture device.

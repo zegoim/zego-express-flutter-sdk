@@ -1,5 +1,85 @@
 # Change Log
 
+## 2.22.0
+
+### **New Features**
+
+1. Add support for SOCKS5 client proxy
+
+    In an intranet or firewall scenario, you can interact with the public network through a proxy server, and set the proxy server address through [setEngineConfig] to ensure that the ZEGO's cloud-based RTC service is normal. Currently only supports SOCKS5 protocol.
+
+    For related API, please refer to [setEngineConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setEngineConfig.html)
+
+2. Low-light enhancement supports using Metal
+
+    Note: Low-light enhancement uses OpenGL by default, if you need to specify Metal, please contact ZEGO technical support.
+
+3. The custom video capture function supports H.265 encoded stream.
+
+    Note: It is recommended to set a GOP every 2s, and each I frame must carry SPS and PPS and put them at the first. When calling [enableCustomVideoCapture], the type must be set to [ZegoVideoBufferType.EncodedData]. It does not supports B frame.
+
+    For related API, please refer to [enableCustomVideoCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineCustomVideoIO/enableCustomVideoCapture.html)
+
+4. Support dynamically modify AudioDeviceMode [iOS/Android]
+
+    Add [setAudioDeviceMode] to dynamically modify the audio mode of the device. This configuration determines the volume mode, preprocessing mode and Mic occupation logic of the device. You can choose according to specific scenarios.
+
+    For related API, please refer to [setAudioDeviceMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineDevice/setAudioDeviceMode.html)
+
+5. Support for calling back vocal-aligned PCM data from media player. [iOS/Android]
+
+    Note: 1. When using the media player to play the accompaniment, you need to use the [enableAux] interface at the same time. 2. After enabling the [enableAlignedAudioAuxData] interface, the data of the media player will not be pushed out.
+
+    If you need to tune the accompaniment and align the vocals in the recording and singing scene, you can first mix the accompaniment into the main channel through the [enableAux] interface, then turn on the switch through the [enableAlignedAudioAuxData] interface, and finally through the [onAlignedAudioAuxData] interface. ] The callback obtains the PCM data of the media player. At this time, the data collected by the media player and the Mic are aligned, and the data frames correspond one-to-one.
+
+    For related API, please refer to [enableAlignedAudioAuxData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineCustomAudioIO/enableAlignedAudioAuxData.html), [onAlignedAudioAuxData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onAlignedAudioAuxData.html), [enableAux](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableAux.html)
+
+6. The H.264 and H.265 hardware codec function supports using AMD/NVIDIA/Intel graphics cards. [Windows]
+
+    Note: To enable this feature, you need to contact ZEGO technical support.
+
+    It supports AMD/NVIDIA discrete graphics cards and Intel / AMD integrated graphics in Windows. You can modify the default graphics card priority through [setEngineConfig].
+
+    For related API, please refer to [setEngineConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setEngineConfig.html), [enableHardwareEncoder](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableHardwareEncoder.html), [enableHardwareDecoder](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/enableHardwareDecoder.html)
+
+7. It supports windows now.
+
+    Now it supports windows, and the interface is basically aligned with the mobile phone, except for a few interfaces that only support specific platforms. Windows currently does not support [setPlayerCanvas] [takePublishStreamSnapshot] [takePlayStreamSnapshot] [takeSnapshot].
+
+    For related API, please refer to [setPlayerCanvas](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayerCanvas.html), [takePublishStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/takePublishStreamSnapshot.html), [takePlayStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/takePlayStreamSnapshot.html), [takeSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/takeSnapshot.html)
+
+8. Add [createCanvasView], Used to create canvas views.
+
+    It integrates the [createTextureRenderer] and [createPlatformView] interfaces to simplify the creation of the rendering window. When it is a TextureRenderer, it is no longer necessary to actively call [updateTextureRendererSize] to update the window size. The corresponding destruction needs to use [destroyCanvasView].
+
+    For related API, please refer to [createCanvasView](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressCanvasViewImpl/createCanvasView.html), [destroyCanvasView](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressCanvasViewImpl/destroyCanvasView.html)
+
+### **Enhancements**
+
+1. Optimize network quality callbacks to sense abnormal status of remote users.
+
+    When the remote user is abnormal, [onNetworkQuality] will call back the quality unknown state (ZegoStreamQualityLevel.Unknown state) every 2s. When the user remains in this state for 8s, the remote user is considered to be abnormally disconnected, and the quality abnormal state (ZegoStreamQualityLevel.Die state) will be called back.
+
+    For related API, please refer to [onNetworkQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onNetworkQuality.html)
+
+2. Optimize the network quality callback, the network quality feedback is more sensitive.
+
+    The push-pull stream quality callback will call back the result with the worst quality every 3s. When serious jitter or packet loss occurs during the period, the poor stream quality can be immediately reported.
+
+    For related API, please refer to [onPlayerQualityUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerQualityUpdate.html), [onPublisherQualityUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherQualityUpdate.html), [onNetworkQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onNetworkQuality.html)
+
+3. Optimize log reporting strategy.
+
+    Optimize the log reporting strategy, improve log upload efficiency.
+
+4. Optimized harmonic detection algorithm for AGC.
+
+    AGC's newly improved harmonic detection algorithm has a crash problem, and is now back to the old version of the harmonic detection algorithm.
+
+### **Bug Fixes**
+
+1. Fixed a very low probability of crash in the network module.
+
 ## 2.21.2
 
 ### **Bug Fixes**
