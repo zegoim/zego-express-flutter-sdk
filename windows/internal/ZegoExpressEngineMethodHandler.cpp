@@ -21,14 +21,14 @@ std::pair<long, BYTE*> CreateFromHBITMAP(HBITMAP hBitmap)
     bi.bmiHeader.biWidth=bm.bmWidth;
     bi.bmiHeader.biHeight=bm.bmHeight;
     bi.bmiHeader.biPlanes=1;
-    bi.bmiHeader.biBitCount=24;
+    bi.bmiHeader.biBitCount=32;
     bi.bmiHeader.biCompression=BI_RGB;
     bi.bmiHeader.biSizeImage=0;
     bi.bmiHeader.biXPelsPerMeter=bm.bmWidth;
     bi.bmiHeader.biYPelsPerMeter=bm.bmHeight;
     bi.bmiHeader.biClrUsed=0;
     bi.bmiHeader.biClrImportant=0;
-    int bitsize=bm.bmWidth*bm.bmHeight*3;
+    int bitsize=bm.bmWidth*bm.bmHeight*4;
     BYTE* buff=new BYTE[sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bitsize];
     BYTE* tmpbuff = buff;
     RtlZeroMemory(buff,sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bitsize);
