@@ -76,6 +76,10 @@ class ZegoTextureRenderer {
     return std::pair<int32_t, int32_t>(width_, height_);
   }
 
+  inline const std::vector<uint8_t> * getFrame() {
+    return &srcBuffer_;
+  }
+
   void setBackgroundColor(int colode) {}
   
   void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {

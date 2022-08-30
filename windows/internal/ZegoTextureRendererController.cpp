@@ -203,3 +203,22 @@ void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer
         renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
     }
 }
+
+/// Called when dart invoke `mediaPlayerTakeSnapshot`
+std::pair<int32_t, int32_t> ZegoTextureRendererController::getMediaPlayerSize(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
+{
+    auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
+    if (renderer != mediaPlayerRenderers_.end()) {
+        return renderer->second->getSize();
+    }
+    return std::pair(0, 0);
+}
+
+const std::vector<uint8_t> *ZegoTextureRendererController::getMediaPlayerFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
+{
+    auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
+    if (renderer != mediaPlayerRenderers_.end()) {
+        return renderer->second->getFrame();
+    }
+    return nullptr;
+}

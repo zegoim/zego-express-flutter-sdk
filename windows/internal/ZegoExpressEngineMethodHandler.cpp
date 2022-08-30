@@ -46,6 +46,65 @@ std::pair<long, BYTE*> CreateFromHBITMAP(HBITMAP hBitmap)
     return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bitsize, buff) ;
 }
 
+std::pair<long, BYTE*> makeBtimap(const std::vector<uint8_t> *frame, std::pair<int32_t, int32_t> size)
+{
+    auto bufferLen = frame->size();
+    auto width = size.first;
+    auto height = size.second;
+    // rgba -> bgra  视频帧数据格式转换，windows只支持bgra
+    std::vector<uint8_t> destBuffer_;
+    {
+        std::vector<uint8_t> srcBuffer_(*frame);
+        destBuffer_.resize(bufferLen);
+        FlutterDesktopPixel* src =
+            reinterpret_cast<FlutterDesktopPixel*>(srcBuffer_.data());
+        VideoFormatBGRAPixel* dst =
+            reinterpret_cast<VideoFormatBGRAPixel*>(destBuffer_.data());
+        
+        for (uint32_t y = 0; y < height; y++) {
+            for (uint32_t x = 0; x < width; x++) {
+                uint32_t sp = (y * width) + x;
+                {
+                    dst[sp].r = src[sp].r;
+                    dst[sp].g = src[sp].g;
+                    dst[sp].b = src[sp].b;
+                    dst[sp].a = 255;
+                }
+            }
+          }
+    }
+    BITMAPINFO bi;
+    bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
+    bi.bmiHeader.biWidth=width;
+    bi.bmiHeader.biHeight=height;
+    bi.bmiHeader.biPlanes=1;
+    bi.bmiHeader.biBitCount=32;
+    bi.bmiHeader.biCompression=BI_RGB;
+    bi.bmiHeader.biSizeImage=0;
+  
+    bi.bmiHeader.biXPelsPerMeter=width;
+    bi.bmiHeader.biYPelsPerMeter=height;
+    bi.bmiHeader.biClrUsed=0;
+    bi.bmiHeader.biClrImportant=0;
+    // int bitsize=height*height*3;
+    BYTE* buff=new BYTE[sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen];
+    BYTE* tmpbuff = buff;
+    RtlZeroMemory(buff,sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen);
+    BITMAPFILEHEADER bf;
+    bf.bfType=0x4d42;
+    bf.bfSize=bufferLen+14+sizeof(BITMAPINFOHEADER);
+    bf.bfOffBits=sizeof(bi.bmiHeader)+sizeof(bf);
+    bf.bfReserved1=0;
+    bf.bfReserved2=0;
+    RtlMoveMemory(tmpbuff,&bf,sizeof(BITMAPFILEHEADER));
+    tmpbuff += sizeof(BITMAPFILEHEADER);
+    RtlMoveMemory(tmpbuff,&bi,sizeof(BITMAPINFO));
+    tmpbuff += sizeof(BITMAPINFO);
+    RtlMoveMemory(tmpbuff,destBuffer_.data(),bufferLen);
+    return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen, buff) ;
+}
+
+
 void ZegoExpressEngineMethodHandler::getVersion(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -2048,17 +2107,20 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(flutter::EncodableM
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
-        mediaPlayer->takeSnapshot([=](int errorCode, void *image){
-            auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+        auto pFrame = ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
+        auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
+        FTMap resultMap;
+        if (pFrame && size != std::pair(0,0)) {
+            auto tmpData = makeBtimap(pFrame, size);
             std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
             delete []tmpData.second;
 
-            FTMap resultMap;
-            resultMap[FTValue("errorCode")] = FTValue(errorCode);
             resultMap[FTValue("image")] = FTValue(raw_image);
-            sharedPtrResult->Success(resultMap);
-        });
+            resultMap[FTValue("errorCode")] = FTValue(0);
+        } else {
+            resultMap[FTValue("errorCode")] = FTValue(-1);
+        }
+        result->Success(resultMap);
     }
     else
     {
