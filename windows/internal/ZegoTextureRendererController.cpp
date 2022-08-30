@@ -112,8 +112,6 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
         return false;
     }
 
-    mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(), ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
-
     renderer->second->setViewMode(viewMode);
 
     mediaPlayerRenderers_.insert(std::pair(mediaPlayer, renderer->second));

@@ -1450,6 +1450,7 @@ void ZegoExpressEngineMethodHandler::createMediaPlayer(flutter::EncodableMap& ar
         auto index = mediaPlayer->getIndex();
 
         mediaPlayer->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(), ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
         mediaPlayerMap_[index] = mediaPlayer;
 
         result->Success(FTValue(index));
@@ -2018,29 +2019,26 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetActiveAudioChannel(flutter::E
 void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayerCanvas(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    // There is currently a problem, not open
-    result->NotImplemented();
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
 
-    // auto index = std::get<int32_t>(argument[FTValue("index")]);
-    // auto mediaPlayer = mediaPlayerMap_[index];
+    if (mediaPlayer) {
 
-    // if (mediaPlayer) {
+        flutter::EncodableMap canvasMap = std::get<flutter::EncodableMap>(argument[FTValue("canvas")]);
 
-    //     flutter::EncodableMap canvasMap = std::get<flutter::EncodableMap>(argument[FTValue("canvas")]);
-
-    //     EXPRESS::ZegoCanvas canvas;
-    //     auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
-    //     auto viewID = canvasMap[FTValue("view")].LongValue();
-    //     if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(viewID, mediaPlayer, viewMode)) {
-    //         result->Success();
-    //     } else {
-    //         result->Error("mediaPlayerSetPlayerCanvas_Canvas_error", "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check canvas");
-    //     }
-    // }
-    // else
-    // {
-    //     result->Error("mediaPlayerSetPlayerCanvas_Can_not_find_player", "Invoke `mediaPlayerSetPlayerCanvas` but can't find specific player");
-    // }
+        EXPRESS::ZegoCanvas canvas;
+        auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
+        auto viewID = canvasMap[FTValue("view")].LongValue();
+        if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(viewID, mediaPlayer, viewMode)) {
+            result->Success();
+        } else {
+            result->Error("mediaPlayerSetPlayerCanvas_Canvas_error", "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check canvas");
+        }
+    }
+    else
+    {
+        result->Error("mediaPlayerSetPlayerCanvas_Can_not_find_player", "Invoke `mediaPlayerSetPlayerCanvas` but can't find specific player");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(flutter::EncodableMap& argument,
