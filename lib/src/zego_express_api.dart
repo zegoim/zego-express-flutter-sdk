@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'zego_express_impl.dart';
+import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package

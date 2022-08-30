@@ -6,7 +6,7 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
-import 'zego_express_impl.dart';
+import 'impl/zego_express_impl.dart';
 import 'zego_express_api.dart';
 
 extension ZegoExpressAssetsUtils on ZegoExpressEngine {
