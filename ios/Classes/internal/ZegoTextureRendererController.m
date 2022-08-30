@@ -207,7 +207,7 @@
             @"textureID": @(renderer.textureID),
             @"width": @(param.size.width),
             @"height": @(param.size.height),
-            @"isMirror": @(renderer.flipMode),
+            @"isMirror": @(flipMode == ZegoVideoFlipModeX ? 1 : 0),
             // TODO: Rotation & FlipModeY
         };
         self.eventSink(map);
