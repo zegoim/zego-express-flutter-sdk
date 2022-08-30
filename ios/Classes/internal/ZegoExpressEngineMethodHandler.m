@@ -4044,10 +4044,6 @@
     result(@(textureID));
 }
 
-- (void)updateTextureRendererSize:(FlutterMethodCall *)call result:(FlutterResult)result {
-    result(@(YES));
-}
-
 - (void)destroyTextureRenderer:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];

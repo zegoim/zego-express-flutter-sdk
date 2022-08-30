@@ -554,8 +554,6 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void destroyTextureRenderer(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void updateTextureRendererSize(flutter::EncodableMap& argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 private:
     ZegoExpressEngineMethodHandler() = default;
 

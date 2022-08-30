@@ -287,7 +287,6 @@ std::map<std::string, std::function<void(flutter::EncodableMap& argument,
 
         // textureRenderer 
        {"createTextureRenderer", std::bind(&ZegoExpressEngineMethodHandler::createTextureRenderer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
-       {"updateTextureRendererSize", std::bind(&ZegoExpressEngineMethodHandler::updateTextureRendererSize, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        {"destroyTextureRenderer", std::bind(&ZegoExpressEngineMethodHandler::destroyTextureRenderer, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)}
     };
 

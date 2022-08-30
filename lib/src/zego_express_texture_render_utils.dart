@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'zego_express_impl.dart';
 import 'zego_express_api.dart';
 
@@ -14,9 +17,13 @@ extension ZegoExpressTextureRenderUtils on ZegoExpressEngine {
   /// If it returns false, it's probably because the `textureID` to be updated doesn't exist.
   Future<bool> updateTextureRendererSize(
       int textureID, int width, int height) async {
-    return await ZegoExpressImpl.methodChannel.invokeMethod(
-        'updateTextureRendererSize',
-        {'textureID': textureID, 'width': width, 'height': height});
+    if (Platform.isAndroid) {
+      return await ZegoExpressImpl.methodChannel.invokeMethod(
+          'updateTextureRendererSize',
+          {'textureID': textureID, 'width': width, 'height': height});
+    } else {
+      return true;
+    }
   }
 
   /// Destroys the Texture renderer and releases its resources
