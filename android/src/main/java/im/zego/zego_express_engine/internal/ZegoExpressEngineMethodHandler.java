@@ -2677,6 +2677,10 @@ public class ZegoExpressEngineMethodHandler {
 
     /* MediaPlayer */
 
+    public static ZegoMediaPlayer getMediaPlayer(Integer index) {
+        return mediaPlayerHashMap.get(index);
+    }
+
     @SuppressWarnings("unused")
     public static void createMediaPlayer(MethodCall call, Result result) {
 
@@ -2706,6 +2710,11 @@ public class ZegoExpressEngineMethodHandler {
         }
 
         mediaPlayerHashMap.remove(index);
+
+        // Mark the canvas is no longer used
+        if (!enablePlatformView) {
+            ZegoTextureRendererController.getInstance().mediaPlayerCanvasInUse.remove(index);
+        }
 
         result.success(null);
     }
@@ -2918,23 +2927,52 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
 
-            // Render with PlatformView
-            ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+            Object view;
 
-            if (platformView != null) {
-                ZegoCanvas canvas = new ZegoCanvas(platformView.getSurfaceView());
+            if (enablePlatformView) {
+
+                // Render with PlatformView
+                ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+
+                if (platformView != null) {
+                    view  = platformView.getSurfaceView();
+                } else {
+                    // Media video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.error("[mediaPlayerSetPlayerCanvas] %s", errorMessage);
+                    result.error("mediaPlayerSetPlayerCanvas_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
+                }
+            } else {
+                // Render with Texture
+                ZegoTextureRenderer textureRenderer = ZegoTextureRendererController.getInstance().getTextureRenderer((long)viewID);
+
+                if (textureRenderer != null) {
+                    view = textureRenderer.getSurface();
+                } else {
+                    // Media video without creating TextureRenderer in advance
+                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    ZegoLog.error("[mediaPlayerSetPlayerCanvas] %s", errorMessage);
+                    result.error("mediaPlayerSetPlayerCanvas_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
+                }
+            }
+
+            ZegoCanvas canvas = null;
+
+            if (view != null) {
+                canvas = new ZegoCanvas(view);
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
 
-                mediaPlayer.setPlayerCanvas(canvas);
+                // Mark the canvas is in use
+                if (!enablePlatformView) {
+                    ZegoTextureRendererController.getInstance().mediaPlayerCanvasInUse.put(index, canvas);
+                }
 
-            } else {
-                // Media video without creating the PlatformView in advance
-                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
-                String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
-                ZegoLog.error("[mediaPlayerSetPlayerCanvas] %s", errorMessage);
-                result.error("setPlayerCanvas_No_PlatformView".toUpperCase(), errorMessage, null);
-                return;
+                mediaPlayer.setPlayerCanvas(canvas);
             }
         }
 
