@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZegoTextureRendererController : NSObject <ZegoCustomVideoRenderHandler>
 
-@property (nonatomic, assign) BOOL isUseFrontCam;
-
 + (instancetype)sharedInstance;
 
 #pragma mark - Dart Texture Render Utils Operation
@@ -29,42 +27,30 @@ NS_ASSUME_NONNULL_BEGIN
                        viewWidth:(int)width
                       viewHeight:(int)height;
 
-/// Called when dart invoke `updateTextureRendererSize`
-- (BOOL)updateTextureRenderer:(int64_t)textureID viewWidth:(int)width viewHeight:(int)height;
-
 /// Called when dart invoke `destroyTextureRenderer`
 - (BOOL)destroyTextureRenderer:(int64_t)textureID;
 
 #pragma mark - Dart Express Engine API Operation
 
 /// Called when dart invoke `createEngine`
-- (void)initController;
+- (void)initControllerWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
 /// Called when dart invoke `destroyEngine`
 - (void)uninitController;
 
 /// Called when dart invoke `startPreview`
-- (BOOL)addCapturedRenderer:(int64_t)textureID
-                        key:(NSNumber *)channel
-                   viewMode:(ZegoViewMode)viewMode;
+- (BOOL)bindCapturedChannel:(NSNumber *)channel withTexture:(int64_t)textureID;
 
 /// Called when dart invoke `stopPreview`
-- (void)removeCapturedRenderer:(NSNumber *)channel;
+- (void)unbindCapturedChannel:(NSNumber *)channel;
 
 /// Called when dart invoke `startPlayingStream`
-- (BOOL)addRemoteRenderer:(int64_t)textureID
-                      key:(NSString *)streamID
-                 viewMode:(ZegoViewMode)viewMode;
+- (BOOL)bindRemoteStreamId:(NSString *)streamId withTexture:(int64_t)textureID;
 
 /// Called when dart invoke `stopPlayingStream`
-- (void)removeRemoteRenderer:(NSString *)streamID;
+- (void)unbindRemoteStreamId:(NSString *)streamId;
 
-/// For video preview/play
-- (void)startRendering;
-
-/// For video preview/play
-- (void)stopRendering;
-
+#pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                     param:(ZegoVideoFrameParam *)param
                                  flipMode:(ZegoVideoFlipMode)flipMode

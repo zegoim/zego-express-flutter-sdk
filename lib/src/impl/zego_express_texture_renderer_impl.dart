@@ -6,14 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'zego_express_defines.dart';
+import '../zego_express_defines.dart';
 import 'zego_express_impl.dart';
 
-class ZegoExpressTextureInfo {
-  factory ZegoExpressTextureInfo() => _instance;
+class ZegoExpressTextureRenderer {
+  factory ZegoExpressTextureRenderer() => _instance;
 
   void init() async {
-    if (Platform.isWindows) {
+    if (!kIsWeb && !Platform.isAndroid) {
       _streamSubscriptionTextureRendererController ??=
           _textureRendererControllerEvent
               .receiveBroadcastStream()
@@ -22,10 +22,39 @@ class ZegoExpressTextureInfo {
   }
 
   void uninit() async {
-    if (_textRenderViewModes.isEmpty && Platform.isWindows) {
+    if (_textRenderViewModes.isEmpty && !kIsWeb && !Platform.isAndroid) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
     }
+  }
+
+  /// Create a Texture renderer and return the texture ID
+  Future<int> createTextureRenderer(int width, int height) async {
+    final int textureID = await ZegoExpressImpl.methodChannel.invokeMethod(
+        'createTextureRenderer', {'width': width, 'height': height});
+
+    return textureID;
+  }
+
+  /// Update the size of the Texture renderer
+  /// If it returns false, it's probably because the `textureID` to be updated doesn't exist.
+  /// Note: Only used by Android!
+  Future<bool> updateTextureRendererSize(
+      int textureID, int width, int height) async {
+    if (Platform.isAndroid) {
+      return await ZegoExpressImpl.methodChannel.invokeMethod(
+          'updateTextureRendererSize',
+          {'textureID': textureID, 'width': width, 'height': height});
+    } else {
+      return true;
+    }
+  }
+
+  /// Destroys the Texture renderer and releases its resources
+  /// If it returns false, it's probably because the `textureID` to be destroyed doesn't exist.
+  Future<bool> destroyTextureRenderer(int textureID) async {
+    return await ZegoExpressImpl.methodChannel
+        .invokeMethod('destroyTextureRenderer', {'textureID': textureID});
   }
 
   void setViewMode(int textureID, ZegoViewMode viewMode) {
@@ -95,8 +124,9 @@ class ZegoExpressTextureInfo {
     }
   }
 
-  ZegoExpressTextureInfo._();
-  static final ZegoExpressTextureInfo _instance = ZegoExpressTextureInfo._();
+  ZegoExpressTextureRenderer._();
+  static final ZegoExpressTextureRenderer _instance =
+      ZegoExpressTextureRenderer._();
 
   static final Map<int, ZegoViewMode> _textRenderViewModes = {};
   static final Map<int, Color> _textRenderColorss = {};
@@ -130,7 +160,7 @@ class ZegoTextureWidget extends StatefulWidget {
 
 class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   Size? _size;
-  bool? _isMirror;
+  int? _isMirror;
 
   @override
   void initState() {
@@ -167,8 +197,9 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
 
     if (_size != null) {
       Size size = _size!;
-      var viewMode = ZegoExpressTextureInfo().getViewMode(widget.textureID) ??
-          ZegoViewMode.AspectFit;
+      var viewMode =
+          ZegoExpressTextureRenderer().getViewMode(widget.textureID) ??
+              ZegoViewMode.AspectFit;
 
       switch (viewMode) {
         case ZegoViewMode.AspectFit:
@@ -231,13 +262,14 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       var y = rect.top;
 
       var backgroundColor =
-          ZegoExpressTextureInfo().getColor(widget.textureID) ?? Colors.black;
+          ZegoExpressTextureRenderer().getColor(widget.textureID) ??
+              Colors.black;
 
       Widget child = Texture(
         textureId: widget.textureID,
       );
       // mirror
-      if (_isMirror != null && _isMirror!) {
+      if (_isMirror != null && _isMirror! == 1) {
         var matrix4 = Matrix4.rotationY(pi);
         matrix4.setTranslationRaw(textureWidth, 0, 0);
         child = Transform(

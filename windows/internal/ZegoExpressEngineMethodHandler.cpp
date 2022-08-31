@@ -3850,9 +3850,3 @@ void ZegoExpressEngineMethodHandler::dataManagerStopSubscribing(flutter::Encodab
         result->Error("dataManagerStopSubscribing_Can_not_find_instance", "Invoke `dataManagerStopSubscribing` but can't find specific instance");
     }
 }
-
-void ZegoExpressEngineMethodHandler::updateTextureRendererSize(flutter::EncodableMap& argument,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
-{
-    result->Success(FTValue(true));
-}

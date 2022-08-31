@@ -48,6 +48,34 @@
     return instance;
 }
 
+- (void)setRegistrar:(id<FlutterPluginRegistrar>)registrar eventSink:(FlutterEventSink)sink {
+    ZGLog(@"[setRegistrar] registrar:%p, sink:%p", registrar, sink);
+    _registrar = registrar;
+    // Set eventSink for ZegoExpressEngineEventHandler
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
+}
+
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    ZGLog(@"[DartCall] [%@]", call.method);
+    SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
+
+    // Handle unrecognized method
+    if (![self respondsToSelector:selector]) {
+        ZGLog(@"[handleMethodCall] Unrecognized selector: %@", call.method);
+        result(FlutterMethodNotImplemented);
+        return;
+    }
+
+    NSMethodSignature *signature = [self methodSignatureForSelector:selector];
+    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
+
+    invocation.target = self;
+    invocation.selector = selector;
+    [invocation setArgument:&call atIndex:2];
+    [invocation setArgument:&result atIndex:3];
+    [invocation invoke];
+}
+
 
 #pragma mark - Main
 
@@ -75,14 +103,6 @@
     int scenario = [ZegoUtils intValue:profileMap[@"scenario"]];
 
     _enablePlatformView = [ZegoUtils boolValue:profileMap[@"enablePlatformView"]];
-    _registrar = call.arguments[@"registrar"];
-
-    // Set eventSink for ZegoExpressEngineEventHandler
-    FlutterEventSink sink = call.arguments[@"eventSink"];
-    if (!sink) {
-        ZGError(@"[createEngineWithProfile] FlutterEventSink is nil");
-    }
-    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
     ZegoEngineProfile *profile = [ZegoEngineProfile new];
@@ -106,10 +126,10 @@
 
     // Init texture renderer
     if (!self.enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] initController];
+        [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, scenario);
+    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, scenario);
 
     result(nil);
 }
@@ -125,14 +145,6 @@
     int scenario = [ZegoUtils intValue:call.arguments[@"scenario"]];
 
     _enablePlatformView = [ZegoUtils boolValue:call.arguments[@"enablePlatformView"]];
-    _registrar = call.arguments[@"registrar"];
-
-    // Set eventSink for ZegoExpressEngineEventHandler
-    FlutterEventSink sink = call.arguments[@"eventSink"];
-    if (!sink) {
-        ZGError(@"[createEngine] FlutterEventSink is nil");
-    }
-    [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 
     // Create engine
 #pragma clang diagnostic push
@@ -153,10 +165,10 @@
 
     // Init texture renderer
     if (!self.enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] initController];
+        [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, sink: %p, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", sink, appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }
@@ -304,7 +316,7 @@
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
-    } 
+    }
 
     [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
             NSString *extendedDataJsonString = @"{}";
@@ -503,7 +515,7 @@
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
 
             if (platformView) {
-                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
 
@@ -519,9 +531,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addCapturedRenderer:viewID key:@(channel) viewMode:(ZegoViewMode)viewMode]) {
-                [[ZegoTextureRendererController sharedInstance] startRendering];
-            } else {
+            if (![[ZegoTextureRendererController sharedInstance] bindCapturedChannel:@(channel) withTexture:viewID]) {
                 // Preview video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
@@ -550,8 +560,7 @@
 
     if (!self.enablePlatformView) {
         // Stop Texture Renderer
-        [[ZegoTextureRendererController sharedInstance] removeCapturedRenderer:@(channel)];
-        [[ZegoTextureRendererController sharedInstance] stopRendering];
+        [[ZegoTextureRendererController sharedInstance] unbindCapturedChannel:@(channel)];
     }
 
     result(nil);
@@ -618,7 +627,7 @@
 }
 
 - (void)setAppOrientation:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int orientation = [ZegoUtils intValue:call.arguments[@"orientation"]];
     UIInterfaceOrientation  uiOrientation = UIInterfaceOrientationUnknown;
     switch (orientation) {
@@ -640,8 +649,9 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setAppOrientation:uiOrientation channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
+
 }
 
 - (void)setAudioConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -687,14 +697,19 @@
 }
 
 - (void)takePublishStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, UIImage * _Nullable image) {
+    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
             if (image) {
+#if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
             }
 
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -860,6 +875,7 @@
         int right = [ZegoUtils intValue:watermarkMap[@"right"]];
         CGRect rect = CGRectMake(left, top, right - left, bottom - top);
 
+#if TARGET_OS_IPHONE
         NSString *flutterAssetPrefix = @"flutter-asset://";
         if ([imageURL hasPrefix:flutterAssetPrefix]) {
             NSString *assetName = [imageURL substringFromIndex:flutterAssetPrefix.length];
@@ -873,6 +889,7 @@
                 imageURL = processedURL;
             }
         }
+#endif
 
         watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
     }
@@ -1019,7 +1036,7 @@
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
 
             if (platformView) {
-                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
 
@@ -1039,9 +1056,7 @@
 
         } else {
             // Render with Texture
-            if ([[ZegoTextureRendererController sharedInstance] addRemoteRenderer:viewID key:streamID viewMode:(ZegoViewMode)viewMode]) {
-                [[ZegoTextureRendererController sharedInstance] startRendering];
-            } else {
+            if (![[ZegoTextureRendererController sharedInstance] bindRemoteStreamId:streamID withTexture:viewID]) {
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
@@ -1078,8 +1093,7 @@
 
     if (!self.enablePlatformView) {
         // Stop Texture render
-        [[ZegoTextureRendererController sharedInstance] removeRemoteRenderer:streamID];
-        [[ZegoTextureRendererController sharedInstance] stopRendering];
+        [[ZegoTextureRendererController sharedInstance] unbindRemoteStreamId:streamID];
     }
 
     result(nil);
@@ -1109,14 +1123,19 @@
 }
 
 - (void)takePlayStreamSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-
     NSString *streamID = call.arguments[@"streamID"];
 
-    [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, UIImage * _Nullable image) {
+    [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
             if (image) {
+#if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
             }
 
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -1686,7 +1705,7 @@
 }
 
 - (void)setBuiltInSpeakerOn:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
 
 #pragma clang diagnostic push
@@ -1694,23 +1713,27 @@
     [[ZegoExpressEngine sharedEngine] setBuiltInSpeakerOn:enable];
 #pragma clang diagnostic pop
 
+#endif
     result(nil);
 }
 
 - (void)setAudioRouteToSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     BOOL defaultToSpeaker = [ZegoUtils boolValue:call.arguments[@"defaultToSpeaker"]];
 
     [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:defaultToSpeaker];
-
+#endif
     result(nil);
 }
 
 - (void)getAudioRouteType:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     ZegoAudioRoute type = [[ZegoExpressEngine sharedEngine] getAudioRouteType];
 
     result(@(type));
+#elif TARGET_OS_OSX
+    result(@(ZegoAudioRouteSpeaker)); // TODO: "Unknown"?
+#endif
 }
 
 - (void)enableCamera:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1724,93 +1747,98 @@
 }
 
 - (void)useFrontCamera:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] useFrontCamera:enable channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
 }
 
 - (void)isCameraFocusSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     BOOL supported = [[ZegoExpressEngine sharedEngine] isCameraFocusSupported:(ZegoPublishChannel)channel];
-
     result(@(supported));
+#elif TARGET_OS_OSX
+    result(@(NO));
+#endif
 }
 
 - (void)setCameraFocusMode:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int model = [ZegoUtils intValue:call.arguments[@"mode"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraFocusMode:(ZegoCameraFocusMode)model channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
 }
 
 - (void)setCameraFocusPointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float x = [ZegoUtils floatValue:call.arguments[@"x"]];
     float y = [ZegoUtils floatValue:call.arguments[@"y"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraFocusPointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
 }
 
 - (void)setCameraExposureMode:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int model = [ZegoUtils intValue:call.arguments[@"mode"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposureMode:(ZegoCameraExposureMode)model channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
 }
 
 - (void)setCameraExposurePointInPreview:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float x = [ZegoUtils floatValue:call.arguments[@"x"]];
     float y = [ZegoUtils floatValue:call.arguments[@"y"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposurePointInPreviewX:x y: y channel:(ZegoPublishChannel)channel];
-
+#endif
     result(nil);
 }
 
 - (void)setCameraExposureCompensation:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float value = [ZegoUtils floatValue:call.arguments[@"value"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraExposureCompensation:value channel:channel];
-
+#endif
     result(nil);
 }
 
 - (void)setCameraZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     float factor = [ZegoUtils floatValue:call.arguments[@"factor"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setCameraZoomFactor:factor channel:channel];
-
+#endif
     result(nil);
 }
 
 - (void)getCameraMaxZoomFactor:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     float factor = [[ZegoExpressEngine sharedEngine] getCameraMaxZoomFactor:channel];
 
     result(@(factor));
+#elif TARGET_OS_OSX
+    result(@(1.0)); // TODO: Unknown?
+#endif
 }
 
 - (void)enableCameraAdaptiveFPS:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2596,7 +2624,7 @@
         ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
 
         if (platformView) {
-            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:[platformView getUIView]];
+            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
             canvas.viewMode = (ZegoViewMode)viewMode;
             canvas.backgroundColor = backgroundColor;
 
@@ -2837,7 +2865,6 @@
 }
 
 - (void)mediaPlayerTakeSnapshot:(FlutterMethodCall *)call result:(FlutterResult)result {
-
     NSNumber *index = call.arguments[@"index"];
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
@@ -2846,7 +2873,13 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSData *imageData = nil;
                 if (image) {
+#if TARGET_OS_IPHONE
                     imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
                 }
 
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -3439,7 +3472,7 @@
     ZegoRealTimeSequentialDataManager *manager = self.realTimeSequentialDataManagerMap[index];
 
     if (manager) {
-        [[ZegoExpressEngine sharedEngine] destroyRealTimeSequentialDataManager:manager];       
+        [[ZegoExpressEngine sharedEngine] destroyRealTimeSequentialDataManager:manager];
     }
 
     [self.realTimeSequentialDataManagerMap removeObjectForKey:index];
@@ -3460,7 +3493,7 @@
             result(@{
                 @"errorCode": @(errorCode)
             });
-        }];     
+        }];
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerSendRealTimeSequentialData_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerSendRealTimeSequentialData` but can't find data manager" details:nil]);
@@ -3477,7 +3510,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager startBroadcasting:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStartBroadcasting_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStartBroadcasting` but can't find data manager" details:nil]);
@@ -3493,7 +3526,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager startSubscribing:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStartSubscribing_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStartSubscribing` but can't find data manager" details:nil]);
@@ -3509,7 +3542,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager stopBroadcasting:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStopBroadcasting_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStopBroadcasting` but can't find data manager" details:nil]);
@@ -3525,7 +3558,7 @@
     if (manager) {
         NSString *streamID = call.arguments[@"streamID"];
         [manager stopSubscribing:streamID];
-        result(nil);    
+        result(nil);
 
     } else {
         result([FlutterError errorWithCode:[@"dataManagerStopSubscribing_Can_not_find_manager" uppercaseString] message:@"Invoke `dataManagerStopSubscribing` but can't find data manager" details:nil]);
@@ -4011,18 +4044,6 @@
     result(@(textureID));
 }
 
-- (void)updateTextureRendererSize:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
-    int viewWidth = [ZegoUtils intValue:call.arguments[@"width"]];
-    int viewHeight = [ZegoUtils intValue:call.arguments[@"height"]];
-    BOOL state = [[ZegoTextureRendererController sharedInstance] updateTextureRenderer:textureID viewWidth:viewWidth viewHeight:viewHeight];
-
-    // ZGLog(@"[updateTextureRendererSize][Result] w: %d, h: %d, textureID: %ld, success: %@", viewWidth, viewHeight, (long)textureID, state ? @"true" : @"false");
-
-    result(@(state));
-}
-
 - (void)destroyTextureRenderer:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int64_t textureID = [ZegoUtils longLongValue:call.arguments[@"textureID"]];
@@ -4037,7 +4058,7 @@
 #pragma mark - Assets Utils
 
 - (void)getAssetAbsolutePath:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     NSString *assetPath = call.arguments[@"assetPath"];
     NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
     NSString *realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
@@ -4045,6 +4066,8 @@
     ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
 
     result(realPath);
+#endif
+    result(FlutterMethodNotImplemented);
 }
 
 #pragma mark - Private

@@ -6,7 +6,14 @@
 //  Copyright © 2020 Zego. All rights reserved.
 //
 
+#import <TargetConditionals.h>
+
+#if TARGET_OS_IPHONE
 #import <Flutter/Flutter.h>
+#elif TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#endif
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) BOOL enablePlatformView;
 
 + (instancetype)sharedInstance;
+
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result;
+
+- (void)setRegistrar:(id<FlutterPluginRegistrar>)registrar eventSink:(FlutterEventSink)sink;
 
 @end
 

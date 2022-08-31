@@ -6,7 +6,8 @@ class ZegoExpressPlatformViewImpl {
   /// Create a PlatformView and return the view ID
   static Widget? createPlatformView(Function(int viewID) onViewCreated,
       {Key? key}) {
-    if (TargetPlatform.iOS == defaultTargetPlatform) {
+    if (TargetPlatform.iOS == defaultTargetPlatform ||
+        TargetPlatform.macOS == defaultTargetPlatform) {
       return UiKitView(
           key: key,
           viewType: 'plugins.zego.im/zego_express_view',

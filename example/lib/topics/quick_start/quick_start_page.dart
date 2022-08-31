@@ -123,8 +123,13 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('🔌 Start preview, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || kIsWeb || Platform.isWindows) {
+    if (Platform.isIOS ||
+        Platform.isAndroid ||
+        Platform.isWindows ||
+        Platform.isMacOS ||
+        kIsWeb) {
       ZegoExpressEngine.instance.createCanvasView((viewID) {
+        _previewViewID = viewID;
         _startPreview(viewID);
       }).then((widget) {
         setState(() {
@@ -137,7 +142,12 @@ class _QuickStartPageState extends State<QuickStartPage> {
   }
 
   void stopPreview() {
-    if (!Platform.isAndroid && !Platform.isIOS && !kIsWeb) return;
+    if (!Platform.isAndroid &&
+        !Platform.isIOS &&
+        !Platform.isMacOS &&
+        !kIsWeb) {
+      return;
+    }
 
     if (_previewViewWidget == null) {
       return;
@@ -165,9 +175,14 @@ class _QuickStartPageState extends State<QuickStartPage> {
       print('📥 Start playing stream, streamID: $streamID, viewID: $viewID');
     }
 
-    if (Platform.isIOS || Platform.isAndroid || kIsWeb || Platform.isWindows) {
+    if (Platform.isIOS ||
+        Platform.isAndroid ||
+        Platform.isWindows ||
+        Platform.isMacOS ||
+        kIsWeb) {
       print('📥 Start playing stream, streamID');
       ZegoExpressEngine.instance.createCanvasView((viewID) {
+        _playViewID = viewID;
         _startPlayingStream(viewID, streamID);
       }).then((widget) {
         setState(() {
@@ -269,8 +284,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
   void clearPreviewView() {
     if (!Platform.isAndroid &&
         !Platform.isIOS &&
-        !kIsWeb &&
-        !Platform.isWindows) return;
+        !Platform.isMacOS &&
+        !Platform.isWindows &&
+        !kIsWeb) {
+      return;
+    }
 
     if (_previewViewWidget == null) {
       return;
@@ -285,8 +303,11 @@ class _QuickStartPageState extends State<QuickStartPage> {
   void clearPlayView() {
     if (!Platform.isAndroid &&
         !Platform.isIOS &&
-        !kIsWeb &&
-        !Platform.isWindows) return;
+        !Platform.isMacOS &&
+        !Platform.isWindows &&
+        !kIsWeb) {
+      return;
+    }
 
     if (_playViewWidget == null) {
       return;
