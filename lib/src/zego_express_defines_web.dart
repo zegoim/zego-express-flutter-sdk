@@ -21,7 +21,7 @@ class ZegoFlutterEngine {
   external static getVersion();
   external static createEngineWithProfile(dynamic profile);
   external static setEventHandler(Function handler);
-  external loginRoom(String roomID, dynamic user, dynamic config);
+  external loginRoom(String roomID, dynamic user, dynamic config, dynamic success, dynamic fail );
   external logoutRoom(String roomID);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);
@@ -32,12 +32,32 @@ class ZegoFlutterEngine {
   external startPlayingStream(String streamID, dynamic remoteVideo);
   external stopPlayingStream(String streamID);
   external sendBroadcastMessage(String roomID, String message);
+  external sendBarrageMessage(String roomID, String message);
+  external sendCustomCommand(String roomID, String message, List toUserList);
+  external setSEIConfig(Map<dynamic, dynamic> config);
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
   external enableAEC(bool enable);
   external enableAGC(bool enable);
   external enableANS(bool enable);
   external enableCamera(bool enable, int channel);
+  external renewToken(String roomID, String token);
+  external mutePlayStreamAudio(String streamID, bool mute);
+  external mutePlayStreamVideo(String streamID, bool mute);
+  @JS('enumDevices')
+  external enumDevices(dynamic success, dynamic fail);
+  external getCameras(dynamic success, dynamic fail);
+  external getMicrophones(dynamic success, dynamic fail);
+  external getSpeakers(dynamic success, dynamic fail);
+  external useVideoDevice(int channel, String deviceID);
+  external useAudioDevice(int channel, String deviceID);
+  external useAudioOutputDevice(dynamic media, String deviceID);
+  external setEngineConfig(dynamic config);
+  external setStreamExtraInfo(String extraInfo, int channel);
+  external sendSEI(dynamic data, int dataLength, int channel);
+  external sendReliableMessage(String roomID, String key, String value);
+  external createMediaPlayer();
+  external mediaPlayerSetPlayerCanvas(dynamic viewElem, Map<dynamic, dynamic> canvas, dynamic MediaPlayer, dynamic success, dynamic fail);
 }
 
 @JS()
@@ -107,4 +127,22 @@ enum ZegoWebVideoCodecID {
   Default,
 
   Vp8
+}
+
+@JS("MediaPlayer")
+@anonymous
+class MediaPlayer {
+  external MediaPlayer instance;
+  external enableRepeat(bool enable);
+  external loadResource(String path, dynamic success, dynamic fail);
+  external loadResourceFromMediaData(dynamic mediaData,int startPosition, dynamic success, dynamic fail);
+  external start();
+  external pause();
+  external stop();
+  external resume();
+  external setPlaySpeed(double speed);
+  external muteLocal(bool enable);
+  external getTotalDuration();
+  external setVolume(int volume );
+  external destroy();
 }
