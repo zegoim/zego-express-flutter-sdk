@@ -21,7 +21,8 @@ class ZegoFlutterEngine {
   external static getVersion();
   external static createEngineWithProfile(dynamic profile);
   external static setEventHandler(Function handler);
-  external loginRoom(String roomID, dynamic user, dynamic config, dynamic success, dynamic fail );
+  external loginRoom(String roomID, dynamic user, dynamic config,
+      dynamic success, dynamic fail);
   external logoutRoom(String roomID);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);
@@ -57,7 +58,12 @@ class ZegoFlutterEngine {
   external sendSEI(dynamic data, int dataLength, int channel);
   external sendReliableMessage(String roomID, String key, String value);
   external createMediaPlayer();
-  external mediaPlayerSetPlayerCanvas(dynamic viewElem, Map<dynamic, dynamic> canvas, dynamic MediaPlayer, dynamic success, dynamic fail);
+  external mediaPlayerSetPlayerCanvas(
+      dynamic viewElem,
+      Map<dynamic, dynamic> canvas,
+      dynamic MediaPlayer,
+      dynamic success,
+      dynamic fail);
 }
 
 @JS()
@@ -135,7 +141,8 @@ class MediaPlayer {
   external MediaPlayer instance;
   external enableRepeat(bool enable);
   external loadResource(String path, dynamic success, dynamic fail);
-  external loadResourceFromMediaData(dynamic mediaData,int startPosition, dynamic success, dynamic fail);
+  external loadResourceFromMediaData(
+      dynamic mediaData, int startPosition, dynamic success, dynamic fail);
   external start();
   external pause();
   external stop();
@@ -143,6 +150,6 @@ class MediaPlayer {
   external setPlaySpeed(double speed);
   external muteLocal(bool enable);
   external getTotalDuration();
-  external setVolume(int volume );
+  external setVolume(int volume);
   external destroy();
 }

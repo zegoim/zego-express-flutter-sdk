@@ -1,5 +1,5 @@
-import 'impl/zego_express_impl.dart';
 import 'zego_express_api.dart';
+import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -93,28 +93,6 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useAudioDevice(deviceType, deviceID);
   }
 
-
-  Future<void> useVideoDevice(
-      ZegoVideoDeviceType deviceType, String deviceID) async {
-    return await ZegoExpressImpl.instance.useVideoDevice(deviceType, deviceID);
-  }
-  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
-    return await ZegoExpressImpl.instance.useAudioOutputDevice(mediaID, deviceID);
-  }
-
-  Future<Map<dynamic, dynamic>> enumDevices() async {
-    return await ZegoExpressImpl.instance.enumDevices();
-  }
-
-  Future<List> getCameras() async {
-    return await ZegoExpressImpl.instance.getCameras();
-  }
-  Future<List> getMicrophones() async {
-    return await ZegoExpressImpl.instance.getMicrophones();
-  }
-  Future<List> getSpeakers() async {
-    return await ZegoExpressImpl.instance.getSpeakers();
-  }
   /// Get volume for the specified audio device.
   ///
   /// Get volume for the specified audio device. Only for Windows / macOS / Linux
@@ -406,6 +384,73 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
       bool enable, int minFPS, int maxFPS, ZegoPublishChannel channel) async {
     return await ZegoExpressImpl.instance
         .enableCameraAdaptiveFPS(enable, minFPS, maxFPS, channel);
+  }
+
+  /// Chooses to use the specified video device (for the specified channel).
+  ///
+  /// When to call: After [startPreview] or [startPublishingStream].
+  /// Caution: Only for Windows / macOS / Web.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [deviceID] ID of a device obtained by [getVideoDeviceList]
+  /// - [channel] Publishing stream channel
+  /// - [deviceType] Video device type. It does not need to be passed in Windows and macOS, and it must be passed in for web.
+  Future<void> useVideoDevice(String deviceID,
+      {ZegoPublishChannel? channel, ZegoVideoDeviceType? deviceType}) async {
+    return await ZegoExpressImpl.instance
+        .useVideoDevice(deviceID, channel: channel, deviceType: deviceType);
+  }
+
+  /// Switch the audio output device.
+  ///
+  /// When to call: after using [getSpeakers] to get the list of audio output devices.
+  /// Caution: Only for Web.
+  ///
+  /// - [mediaID] Media tag element, <audio> or <video>.
+  /// - [deviceID] Audio output device ID.
+  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
+    return await ZegoExpressImpl.instance
+        .useAudioOutputDevice(mediaID, deviceID);
+  }
+
+  /// Obtain the device hardware information and provide the device id parameter for operating the hardware device interface.
+  ///
+  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
+  /// Caution: Only for Web.
+  ///
+  /// - Returns Device hardware information.
+  Future<Map<dynamic, dynamic>> enumDevices() async {
+    return await ZegoExpressImpl.instance.enumDevices();
+  }
+
+  /// Get the list of camera devices and provide the device id parameter for operating the hardware device interface.
+  ///
+  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
+  /// Caution: Only for Web.
+  ///
+  /// - Returns Camera devices.
+  Future<List> getCameras() async {
+    return await ZegoExpressImpl.instance.getCameras();
+  }
+
+  /// Get the list of microphone devices and provide the device id parameter for operating the hardware device interface.
+  ///
+  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
+  /// Caution: Only for Web.
+  ///
+  /// - Returns Microphone devices.
+  Future<List> getMicrophones() async {
+    return await ZegoExpressImpl.instance.getMicrophones();
+  }
+
+  /// Get the list of speaker devices and provide the device id parameter for operating the hardware device interface.
+  ///
+  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
+  /// Caution: Only for Web.
+  ///
+  /// - Returns Speaker devices.
+  Future<List> getSpeakers() async {
+    return await ZegoExpressImpl.instance.getSpeakers();
   }
 
   /// Starts sound level monitoring. Support enable some advanced feature.

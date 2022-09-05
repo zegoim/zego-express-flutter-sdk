@@ -128,43 +128,16 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableDebugAssistant(enable);
   }
 
-  /// Call the RTC experimental API.
+  /// Call the experimental API.
   ///
   /// Available since: 2.7.0
   /// Description: ZEGO provides some technical previews or special customization functions in RTC business through this API. If you need to get the use of the function or the details, please consult ZEGO technical support.
   /// When to call: After [createEngine].
   ///
-  /// - [params] You need to pass in a parameter in the form of a JSON string, please consult ZEGO technical support for details.
+  /// - [params] Parameters in the format of a JSON string, please consult ZEGO technical support for details.
   /// - Returns Returns an argument in the format of a JSON string, please consult ZEGO technical support for details.
   Future<String> callExperimentalAPI(String params) async {
     return await ZegoExpressImpl.instance.callExperimentalAPI(params);
-  }
-
-  /// Set the path of the static picture would be published when the camera is closed.
-  ///
-  /// Available: since 2.9.0
-  /// Description: Set the path of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
-  /// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
-  /// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
-  /// Restrictions:
-  ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
-  ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
-  ///   3. Not supported that the filePath is a network link.
-  /// Caution:
-  ///   1. The static picture cannot be seen in the local preview.
-  ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
-  ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
-  /// Platform differences:
-  ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
-  ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
-  ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
-  ///
-  /// - [filePath] Picture file path
-  /// - [channel] Publish channel.
-  Future<void> setDummyCaptureImagePath(
-      String filePath, ZegoPublishChannel channel) async {
-    return await ZegoExpressImpl.instance
-        .setDummyCaptureImagePath(filePath, channel);
   }
 
   /// The callback for obtaining debugging error information.
@@ -208,11 +181,14 @@ class ZegoExpressEngine {
   /// - [state] The audio/video engine state.
   static void Function(ZegoEngineState state)? onEngineStateUpdate;
 
-  /// Successful callback of network time synchronization..
+  /// Experimental API callback
   ///
-  /// Available since: 2.12.0
-  /// This callback is triggered when internal network time synchronization completes after a developer calls [createEngine].
-  static void Function()? onNetworkTimeSynchronized;
+  /// Available since: 2.7.0
+  /// Description: Receive experimental API callbacks in JSON string format.
+  /// Caution: Please use this feature with the help of ZEGO Technical Support.
+  ///
+  /// - [content] Callback content in JSON string format.
+  static void Function(String content)? onRecvExperimentalAPI;
 
   /// The callback triggered when the room connection state changes.
   ///
@@ -1058,16 +1034,6 @@ class ZegoExpressEngine {
           ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type)?
       onNetworkSpeedTestQualityUpdate;
 
-  /// Receive experiment API JSON content.
-  ///
-  /// Available since: 2.7.0
-  /// Description: Receive experiment API JSON content.
-  /// When to trigger: This callback will triggered after call LiveRoom experiment API.
-  /// Restrictions: None.
-  ///
-  /// - [content] Experiment API JSON content.
-  static void Function(String content)? onRecvExperimentalAPI;
-
   /// The network quality callback of users who are publishing in the room.
   ///
   /// Available since: 2.10.0
@@ -1088,6 +1054,12 @@ class ZegoExpressEngine {
   /// - [downstreamQuality] Downstream network quality
   static void Function(String userID, ZegoStreamQualityLevel upstreamQuality,
       ZegoStreamQualityLevel downstreamQuality)? onNetworkQuality;
+
+  /// Successful callback of network time synchronization..
+  ///
+  /// Available since: 2.12.0
+  /// This callback is triggered when internal network time synchronization completes after a developer calls [createEngine].
+  static void Function()? onNetworkTimeSynchronized;
 
   /// Custom audio processing local captured PCM audio frame callback.
   ///

@@ -399,27 +399,27 @@ enum ZegoAudioCaptureStereoMode {
   Adaptive
 }
 
-/// Audio Codec ID.
+/// Audio codec ID.
 enum ZegoAudioCodecID {
-  /// default
+  /// Default, determined by the [scenario] when calling [createEngine].
   Default,
 
-  /// Normal
+  /// Can be used for RTC and CDN streaming; bitrate range from 10kbps to 128kbps; supports stereo; latency is around 500ms. Server cloud transcoding is required when communicating with the Web SDK, and it is not required when relaying to CDN.
   Normal,
 
-  /// Normal2
+  /// Can be used for RTC and CDN streaming; good compatibility; bitrate range from 16kbps to 192kbps; supports stereo; latency is around 350ms; the sound quality is worse than [Normal] in the same (low) bitrate. Server cloud transcoding is required when communicating with the Web SDK, and it is not required when relaying to CDN.
   Normal2,
 
-  /// Normal3
+  /// Not recommended; if you need to use it, please contact ZEGO technical support. Can only be used for RTC streaming.
   Normal3,
 
-  /// Low
+  /// Not recommended; if you need to use it, please contact ZEGO technical support. Can only be used for RTC streaming.
   Low,
 
-  /// Low2
+  /// Not recommended; if you need to use it, please contact ZEGO technical support. Can only be used for RTC streaming; maximum bitrate is 16kbps.
   Low2,
 
-  /// Low3
+  /// Can only be used for RTC streaming; bitrate range from 6kbps to 192kbps; supports stereo; latency is around 200ms; Under the same bitrate (low bitrate), the sound quality is significantly better than [Normal] and [Normal2]; low CPU overhead. Server cloud transcoding is not required when communicating with the Web SDK, and it is required when relaying to CDN.
   Low3
 }
 
@@ -789,19 +789,21 @@ enum ZegoRemoteDeviceState {
   NotSupport
 }
 
+/// Video device type.
+enum ZegoVideoDeviceType {
+  /// Video input type
+  Input,
+
+  /// Video output type
+  Output
+}
+
 /// Audio device type.
 enum ZegoAudioDeviceType {
   /// Audio input type
   Input,
 
   /// Audio output type
-  Output
-}
-enum ZegoVideoDeviceType {
-  /// video input type
-  Input,
-
-  /// video output type
   Output
 }
 
@@ -978,7 +980,7 @@ enum ZegoRangeAudioMode {
   /// Team mode, only communicate with members of the team.
   Team,
 
-  /// Secret team mode, communicate with members of the team, can hear the voices of members who are in the world mode and are within the audio receive range.
+  /// Secret team mode, communicate with members of the team (with team members), can hear the voices of members who within the audio receive range (except the team members).
   SecretTeam
 }
 
@@ -1602,10 +1604,10 @@ class ZegoReverbEchoParam {
 /// Note that the userID must be unique under the same appID, otherwise, there will be mutual kicks when logging in to the room.
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
-  /// User ID, a string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK.
+  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK.
   String userID;
 
-  /// User Name, a string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
+  /// User Name, a utf8 string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   String userName;
 
   ZegoUser(this.userID, this.userName);
@@ -1808,14 +1810,21 @@ class ZegoPlayerConfig {
   /// The resource type of the source stream.
   ZegoResourceType? sourceResourceType;
 
+  /// Preconfigured codec template ID
+  int? codecTemplateID;
+
   ZegoPlayerConfig(this.resourceMode, this.videoCodecID,
-      {this.cdnConfig, this.roomID, this.sourceResourceType});
+      {this.cdnConfig,
+      this.roomID,
+      this.sourceResourceType,
+      this.codecTemplateID});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
       : resourceMode = ZegoStreamResourceMode.Default,
         videoCodecID = ZegoVideoCodecID.Unknown,
-        sourceResourceType = ZegoResourceType.RTC;
+        sourceResourceType = ZegoResourceType.RTC,
+        codecTemplateID = 0;
 }
 
 /// Played stream quality information.
@@ -2575,7 +2584,7 @@ class ZegoCustomAudioProcessConfig {
   /// Number of sound channels, the expected number of sound channels for input data of the audio pre-processing module in App. If 0, the default is the number of internal channels in the SDK
   ZegoAudioChannel channel;
 
-  /// The number of samples required to encode a frame; When encode = false, if samples = 0, the SDK will use the internal sample number, and the SDK will pass the audio data to the external pre-processing module. If the samples! = 0 (the effective value of samples is between [160, 2048]), and the SDK will send audio data to the external preprocessing module that sets the length of sample number. Encode = true, the number of samples for a frame of AAC encoding can be set as (480/512/1024/1960/2048)
+  /// The number of samples required to encode a frame; if samples = 0, the SDK will use the internal sample number, and the SDK will pass the audio data to the external pre-processing module. If the samples! = 0 (the effective value of samples is between [160, 2048]), and the SDK will send audio data to the external preprocessing module that sets the length of sample number.
   int samples;
 
   ZegoCustomAudioProcessConfig(this.sampleRate, this.channel, this.samples);

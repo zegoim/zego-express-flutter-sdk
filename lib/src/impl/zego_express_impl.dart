@@ -954,6 +954,7 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod(
         'useAudioOutputDevice', {'mediaID': mediaID, 'deviceID': deviceID});
   }
+
   Future<Map<dynamic, dynamic>> enumDevices() async {
     return await _channel.invokeMethod('enumDevices');
   }
@@ -961,9 +962,11 @@ class ZegoExpressImpl {
   Future<List> getCameras() async {
     return await _channel.invokeMethod('getCameras');
   }
+
   Future<List> getMicrophones() async {
     return await _channel.invokeMethod('getMicrophones');
   }
+
   Future<List> getSpeakers() async {
     return await _channel.invokeMethod('getSpeakers');
   }
