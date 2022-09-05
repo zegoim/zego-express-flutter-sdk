@@ -43,4 +43,4 @@ flutter:
         pluginClass: ZegoExpressEngineWeb
         fileName: zego_express_engine_web.dart
   assets:
-    - assets/
+    - assets/ZegoExpressWebFlutterWrapper.js
