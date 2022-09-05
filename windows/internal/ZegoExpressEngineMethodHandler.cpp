@@ -2372,8 +2372,14 @@ void ZegoExpressEngineMethodHandler::enableAudioCaptureDevice(flutter::Encodable
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto enable = std::get<bool>(argument[FTValue("enable")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->enableAudioCaptureDevice(enable);
-    result->Success();
+
+    auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+    std::thread tmpThread([=](){
+        EXPRESS::ZegoExpressSDK::getEngine()->enableAudioCaptureDevice(enable);
+        sharedPtrResult->Success();
+    });
+
+    tmpThread.detach();
 }
 
 /*

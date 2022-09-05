@@ -1867,13 +1867,19 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void enableAudioCaptureDevice(MethodCall call, Result result) {
+    public static void enableAudioCaptureDevice(MethodCall call, final Result result) {
 
-        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        final boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
 
-        ZegoExpressEngine.getEngine().enableAudioCaptureDevice(enable);
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                ZegoExpressEngine.getEngine().enableAudioCaptureDevice(enable);
 
-        result.success(null);
+                result.success(null);
+            }
+        }.start();
     }
 
     @SuppressWarnings("unused")
