@@ -905,6 +905,30 @@ class ZegoExpressImpl {
         'useAudioDevice', {'type': deviceType.index, 'deviceID': deviceID});
   }
 
+  Future<void> useVideoDevice(
+      ZegoVideoDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod(
+        'useVideoDevice', {'type': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
+    return await _channel.invokeMethod(
+        'useAudioOutputDevice', {'mediaID': mediaID, 'deviceID': deviceID});
+  }
+  Future<Map<dynamic, dynamic>> enumDevices() async {
+    return await _channel.invokeMethod('enumDevices');
+  }
+
+  Future<List> getCameras() async {
+    return await _channel.invokeMethod('getCameras');
+  }
+  Future<List> getMicrophones() async {
+    return await _channel.invokeMethod('getMicrophones');
+  }
+  Future<List> getSpeakers() async {
+    return await _channel.invokeMethod('getSpeakers');
+  }
+
   Future<void> setCameraZoomFactor(double factor,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setCameraZoomFactor', {
@@ -2409,7 +2433,6 @@ class ZegoExpressImpl {
 
 class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   final int _index;
-
   ZegoMediaPlayerImpl(int index) : _index = index;
 
   @override

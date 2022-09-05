@@ -722,6 +722,13 @@ enum ZegoAudioDeviceType {
   /// Audio output type
   Output
 }
+enum ZegoVideoDeviceType {
+  /// video input type
+  Input,
+
+  /// video output type
+  Output
+}
 
 /// Audio route
 enum ZegoAudioRoute {

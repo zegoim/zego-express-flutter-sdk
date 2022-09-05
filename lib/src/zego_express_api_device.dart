@@ -93,6 +93,28 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.useAudioDevice(deviceType, deviceID);
   }
 
+
+  Future<void> useVideoDevice(
+      ZegoVideoDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance.useVideoDevice(deviceType, deviceID);
+  }
+  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
+    return await ZegoExpressImpl.instance.useAudioOutputDevice(mediaID, deviceID);
+  }
+
+  Future<Map<dynamic, dynamic>> enumDevices() async {
+    return await ZegoExpressImpl.instance.enumDevices();
+  }
+
+  Future<List> getCameras() async {
+    return await ZegoExpressImpl.instance.getCameras();
+  }
+  Future<List> getMicrophones() async {
+    return await ZegoExpressImpl.instance.getMicrophones();
+  }
+  Future<List> getSpeakers() async {
+    return await ZegoExpressImpl.instance.getSpeakers();
+  }
   /// Get volume for the specified audio device.
   ///
   /// Get volume for the specified audio device. Only for Windows/macOS.
