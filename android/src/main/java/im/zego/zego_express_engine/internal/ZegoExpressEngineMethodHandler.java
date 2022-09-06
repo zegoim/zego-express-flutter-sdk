@@ -4057,7 +4057,8 @@ public class ZegoExpressEngineMethodHandler {
         config.testDownlink = ZegoUtils.boolValue((Boolean) configMap.get("testDownlink"));
         config.expectedDownlinkBitrate = ZegoUtils.intValue((Number) call.argument("expectedDownlinkBitrate"));
 
-        ZegoExpressEngine.getEngine().startNetworkSpeedTest(config);
+        int interval = ZegoUtils.intValue((Number)call.argument("interval"));
+        ZegoExpressEngine.getEngine().startNetworkSpeedTest(config, interval);
 
         result.success(null);
     }

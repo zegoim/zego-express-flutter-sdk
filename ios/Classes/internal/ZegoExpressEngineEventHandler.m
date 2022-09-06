@@ -1012,6 +1012,7 @@
                 @"connectCost": @(quality.connectCost),
                 @"rtt": @(quality.rtt),
                 @"packetLostRate": @(quality.packetLostRate),
+                @"quality": @(quality.quality),
             },
             @"type": @(type)
         });

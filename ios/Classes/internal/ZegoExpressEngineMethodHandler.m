@@ -3651,7 +3651,8 @@
     config.testDownlink = [ZegoUtils boolValue:configMap[@"testDownlink"]];
     config.expectedDownlinkBitrate = [ZegoUtils intValue:configMap[@"expectedDownlinkBitrate"]];
 
-    [[ZegoExpressEngine sharedEngine] startNetworkSpeedTest:config];
+    unsigned int interval = [ZegoUtils unsignedIntValue:call.arguments[@"interval"]];
+    [[ZegoExpressEngine sharedEngine] startNetworkSpeedTest:config interval: interval];
 
     result(nil);
 }

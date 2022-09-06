@@ -1101,6 +1101,7 @@ public class ZegoExpressEngineEventHandler {
             qualityMap.put("connectCost", quality.connectCost);
             qualityMap.put("rtt", quality.rtt);
             qualityMap.put("packetLostRate", quality.packetLostRate);
+            qualityMap.put("quality", quality.quality.value());
 
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onNetworkSpeedTestQualityUpdate");
