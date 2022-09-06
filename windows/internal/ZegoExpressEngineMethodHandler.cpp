@@ -2328,6 +2328,28 @@ void ZegoExpressEngineMethodHandler::setAudioDeviceVolume(flutter::EncodableMap&
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::startAudioDeviceVolumeMonitor(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->startAudioDeviceVolumeMonitor((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::stopAudioDeviceVolumeMonitor(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->stopAudioDeviceVolumeMonitor((EXPRESS::ZegoAudioDeviceType)deviceType, deviceID);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::muteAudioDevice(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
@@ -2454,6 +2476,108 @@ void ZegoExpressEngineMethodHandler::enableCameraAdaptiveFPS(flutter::EncodableM
 
     result->Success();
 }
+
+void ZegoExpressEngineMethodHandler::useVideoDevice(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->useVideoDevice(deviceID, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::getVideoDeviceList(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    FTArray deviceListArray;
+    auto deviceList = EXPRESS::ZegoExpressSDK::getEngine()->getVideoDeviceList();
+    for(auto &deviceInfo : deviceList) {
+        FTMap deviceMap;
+        deviceMap[FTValue("deviceID")] = FTValue(deviceInfo.deviceID);
+        deviceMap[FTValue("deviceName")] = FTValue(deviceInfo.deviceName);
+
+        deviceListArray.emplace_back(FTValue(deviceMap));
+    }
+
+    result->Success(deviceListArray);
+}
+
+void ZegoExpressEngineMethodHandler::getDefaultVideoDeviceID(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto deviceID = EXPRESS::ZegoExpressSDK::getEngine()->getDefaultVideoDeviceID();
+    result->Success(FTValue(deviceID));
+}
+
+void ZegoExpressEngineMethodHandler::enableMixSystemPlayout(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableMixSystemPlayout(enable);
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setMixSystemPlayoutVolume(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto volume = std::get<int32_t>(argument[FTValue("volume")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setMixSystemPlayoutVolume(volume);
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableMixEnginePlayout(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableMixEnginePlayout(enable);
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::startAudioVADStableStateMonitor(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto type = std::get<int32_t>(argument[FTValue("type")]);
+    if (argument[FTValue("millisecond")].IsNull()) {
+        EXPRESS::ZegoExpressSDK::getEngine()->startAudioVADStableStateMonitor((EXPRESS::ZegoAudioVADStableStateMonitorType)type);
+    } else {
+        auto millisecond = std::get<int32_t>(argument[FTValue("millisecond")]);
+        EXPRESS::ZegoExpressSDK::getEngine()->startAudioVADStableStateMonitor((EXPRESS::ZegoAudioVADStableStateMonitorType)type, millisecond);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::stopAudioVADStableStateMonitor(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto type = std::get<int32_t>(argument[FTValue("type")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopAudioVADStableStateMonitor((EXPRESS::ZegoAudioVADStableStateMonitorType)type);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::getCurrentAudioDevice(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+
+    auto deviceType = std::get<int32_t>(argument[FTValue("deviceType")]);
+    auto deviceInfo = EXPRESS::ZegoExpressSDK::getEngine()->getCurrentAudioDevice((EXPRESS::ZegoAudioDeviceType)deviceType);
+
+    FTMap resultMap;
+    resultMap[FTValue("deviceID")] = FTValue(deviceInfo.deviceID);
+    resultMap[FTValue("deviceName")] = FTValue(deviceInfo.deviceName);
+    result->Success(resultMap);
+}
+
 
 void ZegoExpressEngineMethodHandler::createCopyrightedMusic(flutter::EncodableMap& argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {

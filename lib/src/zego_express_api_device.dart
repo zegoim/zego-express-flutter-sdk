@@ -60,7 +60,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Gets a list of audio devices.
   ///
-  /// Only for Windows / macOS / Linux
+  /// Only for Windows / macOS / Web
   ///
   /// - [deviceType] Audio device type
   /// - Returns Audo device List
@@ -118,6 +118,30 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
       ZegoAudioDeviceType deviceType, String deviceID, int volume) async {
     return await ZegoExpressImpl.instance
         .setAudioDeviceVolume(deviceType, deviceID, volume);
+  }
+
+  /// Turn on audio device volume monitoring.
+  ///
+  /// Only for Windows / macOS / Linux
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  Future<void> startAudioDeviceVolumeMonitor(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance
+        .startAudioDeviceVolumeMonitor(deviceType, deviceID);
+  }
+
+  /// Turn off audio device volume monitoring. Only for Windows/macOS.
+  ///
+  /// Only for Windows / macOS / Linux
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
+  Future<void> stopAudioDeviceVolumeMonitor(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await ZegoExpressImpl.instance
+        .stopAudioDeviceVolumeMonitor(deviceType, deviceID);
   }
 
   /// Mutes or unmutes the audio device.
@@ -394,63 +418,42 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [deviceID] ID of a device obtained by [getVideoDeviceList]
   /// - [channel] Publishing stream channel
-  /// - [deviceType] Video device type. It does not need to be passed in Windows and macOS, and it must be passed in for web.
   Future<void> useVideoDevice(String deviceID,
-      {ZegoPublishChannel? channel, ZegoVideoDeviceType? deviceType}) async {
+      {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
-        .useVideoDevice(deviceID, channel: channel, deviceType: deviceType);
+        .useVideoDevice(deviceID, channel: channel);
+  }
+
+  /// Gets a list of video devices.
+  ///
+  /// Only for Windows / macOS / Web
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - Returns Video device List
+  Future<List<ZegoDeviceInfo>> getVideoDeviceList() async {
+    return await ZegoExpressImpl.instance.getVideoDeviceList();
   }
 
   /// Switch the audio output device.
   ///
-  /// When to call: after using [getSpeakers] to get the list of audio output devices.
+  /// When to call: after using [getAudioDeviceList] to get the list of audio output devices.
   /// Caution: Only for Web.
   ///
-  /// - [mediaID] Media tag element, <audio> or <video>.
+  /// - [viewID] The viewID obtained from the createCanvasView callback function.
   /// - [deviceID] Audio output device ID.
-  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
+  Future<void> useAudioOutputDevice(int viewID, String deviceID) async {
     return await ZegoExpressImpl.instance
-        .useAudioOutputDevice(mediaID, deviceID);
+        .useAudioOutputDevice(viewID, deviceID);
   }
 
-  /// Obtain the device hardware information and provide the device id parameter for operating the hardware device interface.
+  /// Get the device ID of the default video device.
   ///
-  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
-  /// Caution: Only for Web.
+  /// Only for Windows / macOS / Linux
+  /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
-  /// - Returns Device hardware information.
-  Future<Map<dynamic, dynamic>> enumDevices() async {
-    return await ZegoExpressImpl.instance.enumDevices();
-  }
-
-  /// Get the list of camera devices and provide the device id parameter for operating the hardware device interface.
-  ///
-  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
-  /// Caution: Only for Web.
-  ///
-  /// - Returns Camera devices.
-  Future<List> getCameras() async {
-    return await ZegoExpressImpl.instance.getCameras();
-  }
-
-  /// Get the list of microphone devices and provide the device id parameter for operating the hardware device interface.
-  ///
-  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
-  /// Caution: Only for Web.
-  ///
-  /// - Returns Microphone devices.
-  Future<List> getMicrophones() async {
-    return await ZegoExpressImpl.instance.getMicrophones();
-  }
-
-  /// Get the list of speaker devices and provide the device id parameter for operating the hardware device interface.
-  ///
-  /// When to call: After creating the engine [createEngine], before the [startPreview] or [startPublishingStream].
-  /// Caution: Only for Web.
-  ///
-  /// - Returns Speaker devices.
-  Future<List> getSpeakers() async {
-    return await ZegoExpressImpl.instance.getSpeakers();
+  /// - Returns Default video device ID
+  Future<String> getDefaultVideoDeviceID() async {
+    return await ZegoExpressImpl.instance.getDefaultVideoDeviceID();
   }
 
   /// Starts sound level monitoring. Support enable some advanced feature.
@@ -531,6 +534,52 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setHeadphoneMonitorVolume(volume);
   }
 
+  /// Enable or disable system audio capture.
+  ///
+  /// Available since: 1.9.0
+  /// Description: Enable sound card capture to mix sounds played by the system into the publishing stream, such as sounds played by the browser, sounds played by the third-party player, etc.
+  /// Default value: Default is disable.
+  /// When to call: Called this function after calling [startPublishingStream] or [startPreview].
+  /// Restrictions: None.
+  /// Caution: The system sound card sound does not include streaming sound, media player sound and sound effect player sound.
+  /// Related APIs: [setMixSystemPlayoutVolume] function can set system audio capture volume.
+  /// Platform differences: Only supports Windows and macOS.
+  ///
+  /// - [enable] Whether to mix system playout.
+  Future<void> enableMixSystemPlayout(bool enable) async {
+    return await ZegoExpressImpl.instance.enableMixSystemPlayout(enable);
+  }
+
+  /// set system audio capture volume.
+  ///
+  /// Available since: 2.4.0
+  /// Description:  set system audio capture volume.
+  /// Use cases: User needs to adjust the volume which system playout mix to stream publishing.
+  /// When to call /Trigger: Called this function after calling [startPublishingStream] or [startPreview].
+  /// Restrictions: None.
+  /// Related APIs: [enableMixSystemPlayout] enable or disable mix system playout.
+  /// Platform differences: Only supports Windows and macOS.
+  ///
+  /// - [volume] the volume. Valid range [0, 200], default is 100.
+  Future<void> setMixSystemPlayoutVolume(int volume) async {
+    return await ZegoExpressImpl.instance.setMixSystemPlayoutVolume(volume);
+  }
+
+  /// Enable or disable mix SDK playout to stream publishing.
+  ///
+  /// Available since: 1.0.0
+  /// Description: Enable mix SDK playout sounds into the stream publishing.
+  /// Use cases: Users need to mix the sound of SDK playout into stream publishing. For example, when the class scene, the teacher and student Co-hosting, and the teacher can mix the play streaming sound into the publish streaming.
+  /// Default value: Default is disable.
+  /// When to call /Trigger: Called this function after calling [startPublishingStream] or [startPreview].
+  /// Restrictions: None.
+  /// Platform differences: Only supports Windows and macOS.
+  ///
+  /// - [enable] Whether to mix engine playout
+  Future<void> enableMixEnginePlayout(bool enable) async {
+    return await ZegoExpressImpl.instance.enableMixEnginePlayout(enable);
+  }
+
   /// Start audio VAD stable state monitoring, and the monitoring period can be set.
   ///
   /// Available: since 2.14.0
@@ -561,5 +610,21 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   Future<void> stopAudioVADStableStateMonitor(
       ZegoAudioVADStableStateMonitorType type) async {
     return await ZegoExpressImpl.instance.stopAudioVADStableStateMonitor(type);
+  }
+
+  /// Get the audio device information currently in use.
+  ///
+  /// Available since: 2.12.0
+  /// Description: Get the audio device information currently in use.
+  /// Use cases: Used for scenes that need to manually switch between multiple audio devices.
+  /// When to call: Called this function after calling [startPublishingStream] or [startPreview].
+  /// Restrictions: Only supports Windows and macOS.
+  /// Related APIs: The default audio device ID can be obtained through [getDefaultAudioDeviceID].
+  ///
+  /// - [deviceType] Audio device type.Required:Yes.
+  /// - Returns Audio device information.
+  Future<ZegoDeviceInfo> getCurrentAudioDevice(
+      ZegoAudioDeviceType deviceType) async {
+    return await ZegoExpressImpl.instance.getCurrentAudioDevice(deviceType);
   }
 }

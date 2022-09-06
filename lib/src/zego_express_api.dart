@@ -629,6 +629,21 @@ class ZegoExpressEngine {
       ZegoAudioDeviceType deviceType,
       ZegoDeviceInfo deviceInfo)? onAudioDeviceStateChanged;
 
+  /// The callback triggered when there is a change of the volume for the audio devices.
+  ///
+  /// Available since: 1.0.0
+  /// Description: This callback is used to receive audio device volume change events.
+  /// When to trigger: The callback triggered when there is a change of the volume fo the audio devices.
+  /// Restrictions: None
+  /// Platform differences: Only supports Windows and macOS.
+  ///
+  /// - [deviceType] Audio device type
+  /// - [deviceID] Audio device ID
+  /// - [volume] audio device volume
+  static void Function(
+          ZegoAudioDeviceType deviceType, String deviceID, int volume)?
+      onAudioDeviceVolumeChanged;
+
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
   /// Available since: 1.0.0

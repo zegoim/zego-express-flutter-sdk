@@ -818,6 +818,18 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> startAudioDeviceVolumeMonitor(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('startAudioDeviceVolumeMonitor',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> stopAudioDeviceVolumeMonitor(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('stopAudioDeviceVolumeMonitor',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
   Future<void> muteAudioDevice(
       ZegoAudioDeviceType deviceType, String deviceID, bool mute) async {
     return await _channel.invokeMethod('muteAudioDevice',
@@ -944,15 +956,30 @@ class ZegoExpressImpl {
         'useAudioDevice', {'type': deviceType.index, 'deviceID': deviceID});
   }
 
-  Future<void> useVideoDevice(
-      ZegoVideoDeviceType deviceType, String deviceID) async {
-    return await _channel.invokeMethod(
-        'useVideoDevice', {'type': deviceType.index, 'deviceID': deviceID});
+  Future<void> useVideoDevice(String deviceID,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('useVideoDevice', {
+      'deviceID': deviceID,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
-  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
+  Future<List<ZegoDeviceInfo>> getVideoDeviceList() async {
+    var resultList = await _channel.invokeMethod('getVideoDeviceList', {});
+    var retList = <ZegoDeviceInfo>[];
+    for (Map<String, dynamic> map in resultList) {
+      retList.add(ZegoDeviceInfo(map['deviceID'], map['deviceName']));
+    }
+    return retList;
+  }
+
+  Future<void> useAudioOutputDevice(int mediaID, String deviceID) async {
     return await _channel.invokeMethod(
         'useAudioOutputDevice', {'mediaID': mediaID, 'deviceID': deviceID});
+  }
+
+  Future<String> getDefaultVideoDeviceID() async {
+    return await _channel.invokeMethod('getDefaultVideoDeviceID', {});
   }
 
   Future<Map<dynamic, dynamic>> enumDevices() async {
@@ -1026,6 +1053,21 @@ class ZegoExpressImpl {
         .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
+  Future<void> enableMixSystemPlayout(bool enable) async {
+    return await _channel
+        .invokeMethod('enableMixSystemPlayout', {'enable': enable});
+  }
+
+  Future<void> setMixSystemPlayoutVolume(int volume) async {
+    return await _channel
+        .invokeMethod('setMixSystemPlayoutVolume', {'volume': volume});
+  }
+
+  Future<void> enableMixEnginePlayout(bool enable) async {
+    return await _channel
+        .invokeMethod('enableMixEnginePlayout', {'enable': enable});
+  }
+
   Future<void> startAudioVADStableStateMonitor(
       ZegoAudioVADStableStateMonitorType type,
       {int? millisecond}) async {
@@ -1037,6 +1079,13 @@ class ZegoExpressImpl {
       ZegoAudioVADStableStateMonitorType type) async {
     return await _channel
         .invokeMethod('stopAudioVADStableStateMonitor', {'type': type.index});
+  }
+
+  Future<ZegoDeviceInfo> getCurrentAudioDevice(
+      ZegoAudioDeviceType deviceType) async {
+    var resultMap = await _channel.invokeMethod(
+        'getCurrentAudioDevice', {'deviceType': deviceType.index});
+    return ZegoDeviceInfo(resultMap['deviceID'], resultMap['deviceName']);
   }
 
   /* PreProcess */
@@ -1996,6 +2045,15 @@ class ZegoExpressImpl {
             ZegoUpdateType.values[map['updateType']],
             ZegoAudioDeviceType.values[map['deviceType']],
             info);
+        break;
+
+      case 'onAudioDeviceVolumeChanged':
+        if (ZegoExpressEngine.onAudioDeviceVolumeChanged == null) return;
+
+        ZegoExpressEngine.onAudioDeviceVolumeChanged!(
+            ZegoAudioDeviceType.values[map['deviceType']],
+            map['deviceID'],
+            map['volume']);
         break;
 
       case 'onVideoDeviceStateChanged':

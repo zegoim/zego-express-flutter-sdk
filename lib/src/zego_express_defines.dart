@@ -789,15 +789,6 @@ enum ZegoRemoteDeviceState {
   NotSupport
 }
 
-/// Video device type.
-enum ZegoVideoDeviceType {
-  /// Video input type
-  Input,
-
-  /// Video output type
-  Output
-}
-
 /// Audio device type.
 enum ZegoAudioDeviceType {
   /// Audio input type
