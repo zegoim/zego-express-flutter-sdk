@@ -966,9 +966,11 @@ class ZegoExpressImpl {
 
   Future<List<ZegoDeviceInfo>> getVideoDeviceList() async {
     var resultList = await _channel.invokeMethod('getVideoDeviceList', {});
+    print(resultList);
     var retList = <ZegoDeviceInfo>[];
-    for (Map<String, dynamic> map in resultList) {
-      retList.add(ZegoDeviceInfo(map['deviceID'], map['deviceName']));
+    for (dynamic info in resultList) {
+      print(info['deviceID']);
+      retList.add(ZegoDeviceInfo(info['deviceID'], info['deviceName']));
     }
     return retList;
   }

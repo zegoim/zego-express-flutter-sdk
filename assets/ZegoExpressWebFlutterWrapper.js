@@ -8223,16 +8223,14 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
             _this.zegoEntity
                 .createStream(constraints)
                 .then(function (stream) {
-                localVideo.srcObject = stream;
-                _this.streamVideoCenter.publishVideoStreamList.push({
-                    video: localVideo,
-                    mediaStream: stream
-                });
                 var channelMap;
+                var _stream = stream;
+                localVideo.srcObject = stream;
                 channelMap = _this.stateCenter.channelPreviewMap.get(channel);
                 if (channelMap) {
                     if (channelMap.localVideo) {
-                        localVideo.srcObject = channelMap.localVideo.srcObject;
+                        _stream = channelMap.localVideo.srcObject;
+                        localVideo.srcObject = _stream;
                         stream.getTracks().forEach(function (track) {
                             track === null || track === void 0 ? void 0 : track.stop();
                         });
@@ -8243,6 +8241,10 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
                 else {
                     channelMap = { localVideo: localVideo, isStopPre: false };
                 }
+                _this.streamVideoCenter.publishVideoStreamList.push({
+                    video: localVideo,
+                    mediaStream: _stream
+                });
                 _this.stateCenter.channelPreviewMap.set(channel, channelMap);
                 resolve();
             })
@@ -8793,24 +8795,24 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
             }, 0);
         }
     };
-    ZegoFlutterEngine.prototype.getCameras = function (success, fail) {
+    // type 0 为 input, 1 为output
+    ZegoFlutterEngine.prototype.getAudioDeviceList = function (type, success, fail) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (type == 1) {
+                    return [2 /*return*/, this.zegoEntity.getSpeakers().then(function (res) { return success(JSON.stringify(res)); }).catch(function (err) { return fail(JSON.stringify(err)); })];
+                }
+                else {
+                    return [2 /*return*/, this.zegoEntity.getMicrophones().then(function (res) { return success(JSON.stringify(res)); }).catch(function (err) { return fail(JSON.stringify(err)); })];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    ZegoFlutterEngine.prototype.getVideoDeviceList = function (success, fail) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.zegoEntity.getCameras().then(function (res) { return success(JSON.stringify(res)); }).catch(function (err) { return fail(JSON.stringify(err)); })];
-            });
-        });
-    };
-    ZegoFlutterEngine.prototype.getSpeakers = function (success, fail) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.zegoEntity.getSpeakers().then(function (res) { return success(JSON.stringify(res)); }).catch(function (err) { return fail(JSON.stringify(err)); })];
-            });
-        });
-    };
-    ZegoFlutterEngine.prototype.getMicrophones = function (success, fail) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.zegoEntity.getMicrophones().then(function (res) { return success(JSON.stringify(res)); }).catch(function (err) { return fail(JSON.stringify(err)); })];
             });
         });
     };
@@ -8917,14 +8919,9 @@ var ZegoFlutterEngine = /** @class */ (function (_super) {
     //       }
     //     });
     // }
-    ZegoFlutterEngine.prototype.enumDevices = function (success, fail) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                this.zegoEntity.enumDevices().then(function (res) { return success(JSON.stringify(res)); }).catch(function (err) { return fail(JSON.stringify(err)); });
-                return [2 /*return*/];
-            });
-        });
-    };
+    // async enumDevices(success: Function, fail: Function) {
+    //   this.zegoEntity.enumDevices().then(res => success(JSON.stringify(res))).catch(err => fail(JSON.stringify(err)))
+    // }
     ZegoFlutterEngine.getAudioInfo = function (el, errCallBack, option) {
         if (!el.srcObject) {
             console.error("srcObject is empty!");

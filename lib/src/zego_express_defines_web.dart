@@ -45,13 +45,10 @@ class ZegoFlutterEngine {
   external renewToken(String roomID, String token);
   external mutePlayStreamAudio(String streamID, bool mute);
   external mutePlayStreamVideo(String streamID, bool mute);
-  @JS('enumDevices')
-  external enumDevices(dynamic success, dynamic fail);
-  external getCameras(dynamic success, dynamic fail);
-  external getMicrophones(dynamic success, dynamic fail);
-  external getSpeakers(dynamic success, dynamic fail);
-  external useVideoDevice(int channel, String deviceID);
-  external useAudioDevice(int channel, String deviceID);
+  external getAudioDeviceList(int type, dynamic success, dynamic fail);
+  external getVideoDeviceList(dynamic success, dynamic fail);
+  external useVideoDevice(String deviceID, int channel);
+  external useAudioDevice(int type, String deviceID);
   external useAudioOutputDevice(dynamic media, String deviceID);
   external setEngineConfig(dynamic config);
   external setStreamExtraInfo(String extraInfo, int channel);

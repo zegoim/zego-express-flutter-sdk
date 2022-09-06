@@ -135,16 +135,12 @@ class ZegoExpressEngineWeb {
         return mutePlayStreamAudio(call.arguments['streamID'], call.arguments['mute']);
       case 'mutePlayStreamVideo':
         return mutePlayStreamVideo(call.arguments['streamID'], call.arguments['mute']);
-      case 'enumDevices':
-        return enumDevices();
-      case 'getCameras':
-        return getCameras();
-      case 'getMicrophones':
-        return getMicrophones();
-      case 'getSpeakers':
-        return getSpeakers();
+      case 'getAudioDeviceList':
+        return getAudioDeviceList(call.arguments['type']);
+      case 'getVideoDeviceList':
+        return getVideoDeviceList();
       case 'useVideoDevice':
-        return useVideoDevice(call.arguments['type'], call.arguments['deviceID']);
+        return useVideoDevice(call.arguments['deviceID'], call.arguments['channel']);
       case 'useAudioDevice':
         return useAudioDevice(call.arguments['type'], call.arguments['deviceID']);
       case 'useAudioOutputDevice':
@@ -757,61 +753,51 @@ class ZegoExpressEngineWeb {
   Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
     await ZegoFlutterEngine.instance.mutePlayStreamVideo(streamID, mute);
   }
+  // type 0 为input, 1 为output
+  Future<List> getAudioDeviceList(int type) async {
+    var result = await ((){
+      Map completerMap = createCompleter();
+      ZegoFlutterEngine.instance.getAudioDeviceList(type, completerMap["success"], completerMap["fail"]);
+      return completerMap["completer"].future;
+    })();
+    return formatDeviceList(jsonDecode(result));
+  }
   static formatDeviceList(list){
-    List<Map<String, dynamic>> newList = [];
+    var newList = [];
     if(list == null || !(list is List)) return newList;
-    for(dynamic item in list) {
-      newList.add({"deviceID": item["deviceID"], "deviceName": item["deviceName"]});
-    }
+    list.forEach((item) { 
+      Map<String, dynamic> info = {};
+      info["deviceID"] = item["deviceID"]; 
+      info["deviceName"] = item["deviceName"];
+      print(item["deviceID"]);
+      print(item["deviceName"]);
+      newList.add(info);
+    });
     return newList;
   }
-  Future<Map<dynamic, dynamic>> enumDevices() async {
+  Future<List> getVideoDeviceList() async {
     var result = await ((){
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.enumDevices(completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.getVideoDeviceList(completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
-    result = jsonDecode(result);
-    Map map = {
-      'cameras': formatDeviceList(result.cameras),
-      'microphones': formatDeviceList(result.microphones),
-      'speakers': formatDeviceList(result.speakers),
-    };
-    return map;
+    return formatDeviceList(jsonDecode(result));
   }
-  Future<List> getCameras() async {
-    var result = await ((){
-      Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.getCameras(completerMap["success"], completerMap["fail"]);
-      return completerMap["completer"].future;
-    })();
-    return jsonDecode(result);
-  }
-  Future<List> getMicrophones() async {
-    var result = await ((){
-      Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.getMicrophones(completerMap["success"], completerMap["fail"]);
-      return completerMap["completer"].future;
-    })();
-    return jsonDecode(result);
-  }
-  Future<List> getSpeakers() async {
-    var result = await ((){
-      Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.getSpeakers(completerMap["success"], completerMap["fail"]);
-      return completerMap["completer"].future;
-    })();
-    return jsonDecode(result);
-  }
-  Future<void> useVideoDevice(int type, String deviceID) async {
-    return await ZegoFlutterEngine.instance.useVideoDevice(type, deviceID);
+  Future<void> useVideoDevice(String deviceID, int channel) async {
+    if(deviceID == null) {
+      throw PlatformException(
+            code: 'Unimplemented',
+            details:
+                'the type in useVideoDevice is required');
+    }
+    return await ZegoFlutterEngine.instance.useVideoDevice(deviceID, channel);
   }
   // type：input 0, output 1
   Future<void> useAudioDevice(int type, String deviceID) async {
     return ZegoFlutterEngine.instance.useAudioDevice(type, deviceID);
   }
-  Future<void> useAudioOutputDevice(String mediaID, String deviceID) async {
-    return await ZegoFlutterEngine.instance.useAudioOutputDevice(document.querySelector('#'+mediaID), deviceID);
+  Future<void> useAudioOutputDevice(String viewID, String deviceID) async {
+    return await ZegoFlutterEngine.instance.useAudioOutputDevice(document.querySelector('#zego-view-'+viewID), deviceID);
   }
   Future<void> setEngineConfig(dynamic config) async {
     return await ZegoFlutterEngine.instance.setEngineConfig(config);
