@@ -3600,9 +3600,9 @@ void ZegoExpressEngineMethodHandler::startNetworkSpeedTest(flutter::EncodableMap
 {
     auto configMap = std::get<FTMap>(argument[FTValue("config")]);
     EXPRESS::ZegoNetworkSpeedTestConfig config;
-    config.testUplink = std::get<int32_t>(configMap[FTValue("testUplink")]);
+    config.testUplink = std::get<bool>(configMap[FTValue("testUplink")]);
     config.expectedUplinkBitrate = std::get<int32_t>(configMap[FTValue("expectedUplinkBitrate")]);
-    config.testDownlink = std::get<int32_t>(configMap[FTValue("testDownlink")]);
+    config.testDownlink = std::get<bool>(configMap[FTValue("testDownlink")]);
     config.expectedDownlinkBitrate = std::get<int32_t>(configMap[FTValue("expectedDownlinkBitrate")]);
     auto interval = argument[FTValue("interval")].LongValue();
 
