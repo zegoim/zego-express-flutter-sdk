@@ -1113,6 +1113,21 @@ enum ZegoDataRecordState {
   Success
 }
 
+/// Audio data callback function enable bitmask enumeration.
+class ZegoAudioDataCallbackBitMask {
+  /// The mask bit of this field corresponds to the enable [onCapturedAudioData] callback function
+  static const int Captured = 1 << 0;
+
+  /// The mask bit of this field corresponds to the enable [onPlaybackAudioData] callback function
+  static const int Playback = 1 << 1;
+
+  /// The mask bit of this field corresponds to the enable [onMixedAudioData] callback function
+  static const int Mixed = 1 << 2;
+
+  /// The mask bit of this field corresponds to the enable [onPlayerAudioData] callback function
+  static const int Player = 1 << 3;
+}
+
 /// Network mode
 enum ZegoNetworkMode {
   /// Offline (No network)
