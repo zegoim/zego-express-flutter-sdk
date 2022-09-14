@@ -2437,6 +2437,7 @@
         NSNumber *index = mediaPlayer.index;
 
         [mediaPlayer setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        [mediaPlayer setVideoHandler:[ZegoTextureRendererController sharedInstance] format:ZegoVideoFrameFormatBGRA32 type:ZegoVideoBufferTypeCVPixelBuffer];
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);
@@ -2451,6 +2452,7 @@
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
+        [[ZegoTextureRendererController sharedInstance] unbindMediaPlayerIndex:index];
         [[ZegoExpressEngine sharedEngine] destroyMediaPlayer:mediaPlayer];
     }
 
@@ -2620,22 +2622,34 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
 
-        // Render with PlatformView
-        ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
-
-        if (platformView) {
-            ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
-            canvas.viewMode = (ZegoViewMode)viewMode;
-            canvas.backgroundColor = backgroundColor;
-
-            [mediaPlayer setPlayerCanvas:canvas];
+        if (self.enablePlatformView) {
+            // Render with PlatformView
+            ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+            
+            if (platformView) {
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
+                canvas.viewMode = (ZegoViewMode)viewMode;
+                canvas.backgroundColor = backgroundColor;
+                
+                [mediaPlayer setPlayerCanvas:canvas];
+            } else {
+                // Media video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGError(@"[mediaPlayerSetPlayerCanvas] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"mediaPlayerSetPlayerCanvas_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
+            }
         } else {
-            // media video without creating the PlatformView in advance
-            // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
-            NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
-            ZGError(@"[mediaPlayerSetPlayerCanvas] %@", errorMessage);
-            result([FlutterError errorWithCode:[@"setPlayerCanvas_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
-            return;
+            // Render with Texture
+            if (![[ZegoTextureRendererController sharedInstance] bindMediaPlayerIndex:index withTexture:viewID]) {
+                // Media video without creating TextureRenderer in advance
+                // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                ZGError(@"[mediaPlayerSetPlayerCanvas] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"mediaPlayerSetPlayerCanvas_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                return;
+            }
         }
 
     }
