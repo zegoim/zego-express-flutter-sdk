@@ -1,5 +1,5 @@
-import 'impl/zego_express_impl.dart';
 import 'zego_express_api.dart';
+import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -50,8 +50,9 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
+  ///   1. room ID is defined by yourself.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
   /// - Returns Send broadcast message result callback
   Future<ZegoIMSendBroadcastMessageResult> sendBroadcastMessage(
@@ -71,8 +72,9 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
+  ///   1. room ID is defined by yourself.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
   /// - Returns Send barrage message result callback.
   Future<ZegoIMSendBarrageMessageResult> sendBarrageMessage(
@@ -93,8 +95,9 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
+  ///   1. room ID is defined by yourself.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [command] Custom command content. Required: Yes. Value range: The maximum length is 1024 bytes. Caution: To protect privacy, please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   /// - [toUserList] List of recipients of signaling. Required: Yes. Value range: user list or [null]. Caution: When it is [null], the SDK will send custom signaling back to all users in the room
   /// - Returns Send command result callback.

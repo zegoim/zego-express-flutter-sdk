@@ -90,6 +90,8 @@ protected:
 
     void onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) override;
 
+    void onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume);
+
     void onCapturedSoundLevelUpdate(float soundLevel) override;
 
     void onRemoteSoundLevelUpdate(const std::unordered_map<std::string, float>& soundLevels) override;

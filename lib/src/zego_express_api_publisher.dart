@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
-import 'impl/zego_express_impl.dart';
 import 'zego_express_api.dart';
+import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -22,10 +22,11 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
-  ///   1. needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
-  ///   4. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  ///   1. Stream ID is defined by you.
+  ///   2. needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
+  ///   3. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   4. If you need to communicate with the Web SDK, please do not use '%'.
+  ///   5. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
   /// - [config] Advanced publish configuration.
   /// - [channel] Publish stream channel.
   Future<void> startPublishingStream(String streamID,
@@ -555,6 +556,33 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   Future<void> setCapturePipelineScaleMode(
       ZegoCapturePipelineScaleMode mode) async {
     return await ZegoExpressImpl.instance.setCapturePipelineScaleMode(mode);
+  }
+
+  /// Set the path of the static picture would be published when the camera is closed.
+  ///
+  /// Available: since 2.9.0
+  /// Description: Set the path of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
+  /// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
+  /// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
+  /// Restrictions:
+  ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
+  ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+  ///   3. Not supported that the filePath is a network link.
+  /// Caution:
+  ///   1. The static picture cannot be seen in the local preview.
+  ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
+  ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+  /// Platform differences:
+  ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
+  ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
+  ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+  ///
+  /// - [filePath] Picture file path
+  /// - [channel] Publish channel.
+  Future<void> setDummyCaptureImagePath(
+      String filePath, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance
+        .setDummyCaptureImagePath(filePath, channel);
   }
 
   /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
