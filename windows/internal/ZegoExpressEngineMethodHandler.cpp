@@ -3100,6 +3100,23 @@ void ZegoExpressEngineMethodHandler::setPublishWatermark(flutter::EncodableMap& 
         watermark.layout.y = std::get<int32_t>(watermarkMap[FTValue("top")]);
         watermark.layout.width = std::get<int32_t>(watermarkMap[FTValue("right")]) - watermark.layout.x;
         watermark.layout.height = std::get<int32_t>(watermarkMap[FTValue("bottom")]) - watermark.layout.y;
+
+        const std::string flutterAssertTaget = "flutter-asset://";
+        if (watermark.imageURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+            watermark.imageURL.replace(0, flutterAssertTaget.size(), "");
+
+            wchar_t exePath[MAX_PATH] = {0};
+            ::GetModuleFileName(NULL,exePath,MAX_PATH);
+            std::wstring exePathStrW{exePath};
+            std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
+            exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
+            if (!exePathStr.empty()) {
+                watermark.imageURL = "file:///" + exePathStr + "\\data\\flutter_assets\\" + watermark.imageURL;
+            } else {
+                result->Error("setPublishWatermark_get_exe_path_fail", "Failed to get the directory where the application is located");
+                return;
+            }
+        }
     }
     auto isPreviewVisible = std::get<bool>(argument[FTValue("isPreviewVisible")]);
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
