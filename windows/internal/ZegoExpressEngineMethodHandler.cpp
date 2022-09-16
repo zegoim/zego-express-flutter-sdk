@@ -3469,7 +3469,7 @@ void ZegoExpressEngineMethodHandler::enableCustomAudioIO(flutter::EncodableMap& 
     auto enable = std::get<bool>(argument[FTValue("enable")]);
     auto configMap = std::get<FTMap>(argument[FTValue("config")]);
     EXPRESS::ZegoCustomAudioConfig config;
-    config.sourceType = (EXPRESS::ZegoAudioSourceType)std::get<int32_t>(argument[FTValue("sourceType")]);
+    config.sourceType = (EXPRESS::ZegoAudioSourceType)std::get<int32_t>(configMap[FTValue("sourceType")]);
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->enableCustomAudioIO(enable, &config, (EXPRESS::ZegoPublishChannel)channel);
