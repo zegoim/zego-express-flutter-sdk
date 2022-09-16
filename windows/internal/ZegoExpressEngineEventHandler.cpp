@@ -453,13 +453,20 @@ void ZegoExpressEngineEventHandler::onAudioDeviceStateChanged(EXPRESS::ZegoUpdat
     }
 }
 
-/*void ZegoExpressEngineEventHandler::onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume) {
+void ZegoExpressEngineEventHandler::onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume) {
 
-}*/
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAudioDeviceVolumeChanged");
 
-/*void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo& deviceInfo) {
+        retMap[FTValue("deviceType")] = FTValue((int32_t)deviceType);
 
-}*/
+        retMap[FTValue("deviceID")] = FTValue(deviceID);
+        retMap[FTValue("volume")] = FTValue(volume);
+
+        eventSink_->Success(retMap);
+    }
+}
 
 void ZegoExpressEngineEventHandler::onCapturedSoundLevelUpdate(float soundLevel) {
 

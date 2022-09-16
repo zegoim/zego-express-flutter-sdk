@@ -818,6 +818,18 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> startAudioDeviceVolumeMonitor(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('startAudioDeviceVolumeMonitor',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
+  Future<void> stopAudioDeviceVolumeMonitor(
+      ZegoAudioDeviceType deviceType, String deviceID) async {
+    return await _channel.invokeMethod('stopAudioDeviceVolumeMonitor',
+        {'deviceType': deviceType.index, 'deviceID': deviceID});
+  }
+
   Future<void> muteAudioDevice(
       ZegoAudioDeviceType deviceType, String deviceID, bool mute) async {
     return await _channel.invokeMethod('muteAudioDevice',
@@ -944,6 +956,50 @@ class ZegoExpressImpl {
         'useAudioDevice', {'type': deviceType.index, 'deviceID': deviceID});
   }
 
+  Future<void> useVideoDevice(String deviceID,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('useVideoDevice', {
+      'deviceID': deviceID,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<List<ZegoDeviceInfo>> getVideoDeviceList() async {
+    var resultList = await _channel.invokeMethod('getVideoDeviceList', {});
+    print(resultList);
+    var retList = <ZegoDeviceInfo>[];
+    for (dynamic info in resultList) {
+      print(info['deviceID']);
+      retList.add(ZegoDeviceInfo(info['deviceID'], info['deviceName']));
+    }
+    return retList;
+  }
+
+  Future<void> useAudioOutputDevice(int mediaID, String deviceID) async {
+    return await _channel.invokeMethod(
+        'useAudioOutputDevice', {'mediaID': mediaID, 'deviceID': deviceID});
+  }
+
+  Future<String> getDefaultVideoDeviceID() async {
+    return await _channel.invokeMethod('getDefaultVideoDeviceID', {});
+  }
+
+  Future<Map<dynamic, dynamic>> enumDevices() async {
+    return await _channel.invokeMethod('enumDevices');
+  }
+
+  Future<List> getCameras() async {
+    return await _channel.invokeMethod('getCameras');
+  }
+
+  Future<List> getMicrophones() async {
+    return await _channel.invokeMethod('getMicrophones');
+  }
+
+  Future<List> getSpeakers() async {
+    return await _channel.invokeMethod('getSpeakers');
+  }
+
   Future<void> setCameraZoomFactor(double factor,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setCameraZoomFactor', {
@@ -999,6 +1055,21 @@ class ZegoExpressImpl {
         .invokeMethod('setHeadphoneMonitorVolume', {'volume': volume});
   }
 
+  Future<void> enableMixSystemPlayout(bool enable) async {
+    return await _channel
+        .invokeMethod('enableMixSystemPlayout', {'enable': enable});
+  }
+
+  Future<void> setMixSystemPlayoutVolume(int volume) async {
+    return await _channel
+        .invokeMethod('setMixSystemPlayoutVolume', {'volume': volume});
+  }
+
+  Future<void> enableMixEnginePlayout(bool enable) async {
+    return await _channel
+        .invokeMethod('enableMixEnginePlayout', {'enable': enable});
+  }
+
   Future<void> startAudioVADStableStateMonitor(
       ZegoAudioVADStableStateMonitorType type,
       {int? millisecond}) async {
@@ -1010,6 +1081,13 @@ class ZegoExpressImpl {
       ZegoAudioVADStableStateMonitorType type) async {
     return await _channel
         .invokeMethod('stopAudioVADStableStateMonitor', {'type': type.index});
+  }
+
+  Future<ZegoDeviceInfo> getCurrentAudioDevice(
+      ZegoAudioDeviceType deviceType) async {
+    var resultMap = await _channel.invokeMethod(
+        'getCurrentAudioDevice', {'deviceType': deviceType.index});
+    return ZegoDeviceInfo(resultMap['deviceID'], resultMap['deviceName']);
   }
 
   /* PreProcess */
@@ -1971,6 +2049,15 @@ class ZegoExpressImpl {
             info);
         break;
 
+      case 'onAudioDeviceVolumeChanged':
+        if (ZegoExpressEngine.onAudioDeviceVolumeChanged == null) return;
+
+        ZegoExpressEngine.onAudioDeviceVolumeChanged!(
+            ZegoAudioDeviceType.values[map['deviceType']],
+            map['deviceID'],
+            map['volume']);
+        break;
+
       case 'onVideoDeviceStateChanged':
         if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
@@ -2489,7 +2576,6 @@ class ZegoExpressImpl {
 
 class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   final int _index;
-
   ZegoMediaPlayerImpl(int index) : _index = index;
 
   @override

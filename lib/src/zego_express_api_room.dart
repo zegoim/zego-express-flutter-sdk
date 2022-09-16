@@ -1,5 +1,5 @@
-import 'impl/zego_express_impl.dart';
 import 'zego_express_api.dart';
+import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -8,7 +8,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Log in to the room by configuring advanced properties, and return the login result through the callback parameter. You must log in to the room before pushing or pulling the stream.
   ///
   /// Available since: 2.18.0
-  /// Description: SDK uses the 'room' to organize users. After users log in to a room, they can use interface such as push stream [startPublishingStream], pull stream [startPlayingStream], send and receive broadcast messages [sendBroadcastMessage], etc. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
+  /// Description: If the room does not exist, [loginRoom] creates and logs in the room. SDK uses the 'room' to organize users. After users log in to a room, they can use interface such as push stream [startPublishingStream], pull stream [startPlayingStream], send and receive broadcast messages [sendBroadcastMessage], etc. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
   /// Use cases: In the same room, users can conduct live broadcast, audio and video calls, etc.
   /// When to call /Trigger: This interface is called after [createEngine] initializes the SDK.
   /// Restrictions: For restrictions on the use of this function, please refer to https://docs.zegocloud.com/article/7611 or contact ZEGO technical support.
@@ -31,8 +31,9 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
+  ///   1. room ID is defined by yourself.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
   /// - Returns The result of this login room
