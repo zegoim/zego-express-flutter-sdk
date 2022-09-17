@@ -1687,6 +1687,163 @@
     result(@(muted));
 }
 
+#if TARGET_OS_OSX
+
+- (void)getAudioDeviceList:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+    NSArray<ZegoDeviceInfo *> * audioDeviceList = [[ZegoExpressEngine sharedEngine] getAudioDeviceList: (ZegoAudioDeviceType)type];
+    NSMutableArray *audioDeviceListResult = [[NSMutableArray alloc] init];
+    for (ZegoDeviceInfo *info in audioDeviceList) {
+        [audioDeviceListResult addObject:@{
+            @"deviceID": info.deviceID,
+            @"deviceName": info.deviceName
+        }];
+    }
+    
+    result(audioDeviceListResult);
+}
+
+- (void)getDefaultAudioDeviceID:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+    NSString *deviceID = [[ZegoExpressEngine sharedEngine] getDefaultAudioDeviceID: (ZegoAudioDeviceType)type];
+
+    result(deviceID);
+}
+
+- (void)useAudioDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    [[ZegoExpressEngine sharedEngine] useAudioDevice:deviceID deviceType: (ZegoAudioDeviceType)type];
+
+    result(nil);
+}
+
+- (void)useVideoDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    [[ZegoExpressEngine sharedEngine] useVideoDevice:deviceID channel: (ZegoPublishChannel) channel];
+
+    result(nil);
+}
+
+- (void)getVideoDeviceList:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSArray<ZegoDeviceInfo *> * videoDeviceList = [[ZegoExpressEngine sharedEngine] getVideoDeviceList];
+    NSMutableArray *videoDeviceListResult = [[NSMutableArray alloc] init];
+    for (ZegoDeviceInfo *info in videoDeviceList) {
+        [videoDeviceListResult addObject:@{
+            @"deviceID": info.deviceID,
+            @"deviceName": info.deviceName
+        }];
+    }
+    
+    result(videoDeviceListResult);
+}
+
+- (void)getDefaultVideoDeviceID:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *deviceID = [[ZegoExpressEngine sharedEngine] getDefaultVideoDeviceID];
+
+    result(deviceID);
+}
+
+- (void)getAudioDeviceVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    int volume = [[ZegoExpressEngine sharedEngine] getAudioDeviceVolume:deviceID  deviceType: (ZegoAudioDeviceType)deviceType];
+
+    result(@(volume));
+}
+
+- (void)setAudioDeviceVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+    [[ZegoExpressEngine sharedEngine] setAudioDeviceVolume:deviceID deviceType: (ZegoAudioDeviceType)deviceType volume: volume];
+
+    result(nil);
+}
+
+- (void)startAudioDeviceVolumeMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    [[ZegoExpressEngine sharedEngine] startAudioDeviceVolumeMonitor:deviceID deviceType: (ZegoAudioDeviceType)deviceType];
+
+    result(nil);
+}
+
+- (void)stopAudioDeviceVolumeMonitor:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    [[ZegoExpressEngine sharedEngine] stopAudioDeviceVolumeMonitor:deviceID deviceType: (ZegoAudioDeviceType)deviceType];
+
+    result(nil);
+}
+
+- (void)muteAudioDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+    [[ZegoExpressEngine sharedEngine] muteAudioDevice:deviceID deviceType: (ZegoAudioDeviceType)deviceType mute: mute];
+
+    result(nil);
+}
+
+- (void)isAudioDeviceMuted:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    NSString *deviceID = call.arguments[@"deviceID"];
+    BOOL mute = [[ZegoExpressEngine sharedEngine] isAudioDeviceMuted:deviceID deviceType: (ZegoAudioDeviceType)deviceType];
+
+    result(@(mute));
+}
+
+- (void)enableMixSystemPlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    [[ZegoExpressEngine sharedEngine] enableMixSystemPlayout:enable];
+
+    result(nil);
+}
+
+- (void)setMixSystemPlayoutVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+    [[ZegoExpressEngine sharedEngine] setMixSystemPlayoutVolume:volume];
+
+    result(nil);
+}
+
+- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
+
+    result(nil);
+}
+
+- (void)getCurrentAudioDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int deviceType = [ZegoUtils intValue:call.arguments[@"deviceType"]];
+    ZegoDeviceInfo *info = [[ZegoExpressEngine sharedEngine] getCurrentAudioDevice:(ZegoAudioDeviceType)deviceType];
+
+    result(@{
+        @"deviceID": info.deviceID,
+        @"deviceName": info.deviceName
+    });
+}
+
+#endif
+
 - (void)setAudioDeviceMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int deviceMode = [ZegoUtils intValue:call.arguments[@"deviceMode"]];
