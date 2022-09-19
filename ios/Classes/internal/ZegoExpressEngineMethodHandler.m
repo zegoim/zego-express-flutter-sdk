@@ -875,12 +875,16 @@
         int right = [ZegoUtils intValue:watermarkMap[@"right"]];
         CGRect rect = CGRectMake(left, top, right - left, bottom - top);
 
-#if TARGET_OS_IPHONE
         NSString *flutterAssetPrefix = @"flutter-asset://";
         if ([imageURL hasPrefix:flutterAssetPrefix]) {
             NSString *assetName = [imageURL substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
             NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
             NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+            NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+            NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
             NSString *processedURL = [NSString stringWithFormat:@"file://%@", assetRealPath];
             ZGLog(@"[setPublishWatermark] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", imageURL, processedURL);
             if (!assetRealPath) {
@@ -889,7 +893,6 @@
                 imageURL = processedURL;
             }
         }
-#endif
 
         watermarkObject = [[ZegoWatermark alloc] initWithImageURL:imageURL layout:rect];
     }
@@ -1699,11 +1702,11 @@
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{  
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[ZegoExpressEngine sharedEngine] enableAudioCaptureDevice:enable];
 
         result(nil);
-    });  
+    });
 }
 
 - (void)setBuiltInSpeakerOn:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -4075,16 +4078,16 @@
 #pragma mark - Assets Utils
 
 - (void)getAssetAbsolutePath:(FlutterMethodCall *)call result:(FlutterResult)result {
-#if TARGET_OS_IPHONE
     NSString *assetPath = call.arguments[@"assetPath"];
+#if TARGET_OS_IPHONE
     NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
     NSString *realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
-
-    ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
-
-    result(realPath);
+#elif TARGET_OS_OSX
+    NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+    NSString *realPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetPath];
 #endif
-    result(FlutterMethodNotImplemented);
+    ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
+    result(realPath);
 }
 
 #pragma mark - Private
