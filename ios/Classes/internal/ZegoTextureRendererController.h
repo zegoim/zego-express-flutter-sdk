@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZegoTextureRendererController : NSObject <ZegoCustomVideoRenderHandler>
+@interface ZegoTextureRendererController : NSObject <ZegoCustomVideoRenderHandler, ZegoMediaPlayerVideoHandler>
 
 + (instancetype)sharedInstance;
 
@@ -49,6 +49,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Called when dart invoke `stopPlayingStream`
 - (void)unbindRemoteStreamId:(NSString *)streamId;
+
+/// Called when dart invoke `mediaPlayerSetPlayerCanvas`
+- (BOOL)bindMediaPlayerIndex:(NSNumber *)index withTexture:(int64_t)textureID;
+
+/// Called when dart invoke `destroyMediaPlayer`
+- (void)unbindMediaPlayerIndex:(NSNumber *)index;
 
 #pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer

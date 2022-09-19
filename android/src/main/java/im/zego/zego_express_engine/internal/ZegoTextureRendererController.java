@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
@@ -30,6 +31,8 @@ public class ZegoTextureRendererController {
     public HashMap<String, ZegoCanvas> playerCanvasInUse = new HashMap<>(); // Key is playing streamID
 
     public HashMap<String, ZegoPlayerConfig> playerConfigInUse = new HashMap<>(); // Key is playing streamID
+
+    public HashMap<Integer, ZegoCanvas> mediaPlayerCanvasInUse = new HashMap<>(); // Key is media player index
 
     public static ZegoTextureRendererController getInstance() {
         if (instance == null) {
@@ -91,6 +94,17 @@ public class ZegoTextureRendererController {
                 canvas.view = renderer.getSurface();
                 ZegoExpressEngine.getEngine().startPlayingStream(streamID, canvas, config);
                 return true;
+            }
+        }
+
+        for (Integer index : mediaPlayerCanvasInUse.keySet()) {
+            ZegoCanvas canvas = mediaPlayerCanvasInUse.get(index);
+            if (canvas != null && originSurface.equals(canvas.view)) {
+                ZegoMediaPlayer mediaPlayer = ZegoExpressEngineMethodHandler.getMediaPlayer(index);
+                if (mediaPlayer != null) {
+                    canvas.view = renderer.getSurface();
+                    mediaPlayer.setPlayerCanvas(canvas);
+                }
             }
         }
 

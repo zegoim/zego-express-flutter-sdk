@@ -16,6 +16,7 @@
 
 @property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *capturedTextureIdMap;
 @property (strong) NSMutableDictionary<NSString *, NSNumber *> *remoteTextureIdMap;
+@property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *mediaPlayerTextureIdMap;
 
 @property (nonatomic, assign) BOOL isInited;
 
@@ -40,6 +41,7 @@
         _renderers = [NSMutableDictionary dictionary];
         _capturedTextureIdMap = [NSMutableDictionary dictionary];
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
+        _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -191,6 +193,37 @@
     [self logCurrentRenderers];
 }
 
+- (BOOL)bindMediaPlayerIndex:(NSNumber *)index withTexture:(int64_t)textureID {
+    ZegoTextureRenderer *renderer = [self.renderers objectForKey:@(textureID)];
+
+    if (!renderer) {
+        ZGLog(@"[bindMediaPlayerIndex] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
+        return NO;
+    }
+
+    ZGLog(@"[bindMediaPlayerIndex] textureID:%ld, renderer:%p, index:%@",
+          (long)textureID, renderer, index);
+
+    @synchronized (self) {
+        [self.mediaPlayerTextureIdMap setObject:@(textureID) forKey:index];
+    }
+
+    [self logCurrentRenderers];
+
+    return YES;
+}
+
+- (void)unbindMediaPlayerIndex:(NSNumber *)index {
+    ZGLog(@"[unbindMediaPlayerIndex] index:%@", index);
+
+    @synchronized (self) {
+        [self.mediaPlayerTextureIdMap removeObjectForKey:index];
+    }
+
+    [self logCurrentRenderers];
+}
+
 #pragma mark - Private Methods
 
 - (void)updateRenderer:(ZegoTextureRenderer *)renderer
@@ -251,6 +284,24 @@
 
     @synchronized (self) {
         textureID = [self.remoteTextureIdMap objectForKey:streamID];
+        if (!textureID) {
+            return;
+        }
+        renderer = [self.renderers objectForKey:textureID];
+        if (!renderer) {
+            return;
+        }
+    }
+    
+    [self updateRenderer:renderer withBuffer:buffer param:param flipMode:ZegoVideoFlipModeNone];
+}
+
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer videoFramePixelBuffer:(CVPixelBufferRef)buffer param:(ZegoVideoFrameParam *)param extraInfo:(NSDictionary *)extraInfo {
+    NSNumber *textureID = nil;
+    ZegoTextureRenderer *renderer = nil;
+
+    @synchronized (self) {
+        textureID = [self.mediaPlayerTextureIdMap objectForKey:mediaPlayer.index];
         if (!textureID) {
             return;
         }
