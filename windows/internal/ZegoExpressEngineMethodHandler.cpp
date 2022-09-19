@@ -130,6 +130,24 @@ void ZegoExpressEngineMethodHandler::setPluginVersion(flutter::EncodableMap& arg
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::getAssetAbsolutePath(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    std::string assetPath = std::get<std::string>(argument[FTValue("assetPath")]);
+    wchar_t exePath[MAX_PATH] = {0};
+    ::GetModuleFileName(NULL,exePath,MAX_PATH);
+    std::wstring exePathStrW{exePath};
+    std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
+    exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
+    if (!exePathStr.empty()) {
+        assetPath = exePathStr + "\\data\\flutter_assets\\" + assetPath;
+    } else {
+        result->Error("getAssetAbsolutePath_get_exe_path_fail", "Failed to get the directory where the application is located");
+        return;
+    }
+    result->Success(FTValue(assetPath));
+}
+
 void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
