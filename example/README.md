@@ -1,16 +1,7 @@
 # zego_express_engine_example
 
-Demonstrates how to use the zego_express_engine plugin.
+A simple publish & play stream demo, shows the basic function of the SDK.
 
-## Getting Started
+## You can refer to this example topic demo for more use cases
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**[https://github.com/zegoim/zego-express-example-topics-flutter](https://github.com/zegoim/zego-express-example-topics-flutter)**
