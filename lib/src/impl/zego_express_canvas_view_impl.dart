@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../zego_express_api.dart';
 import 'zego_express_impl.dart';
 import 'zego_express_texture_renderer_impl.dart';
 import 'zego_express_platform_view_impl.dart'
