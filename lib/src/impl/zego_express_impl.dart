@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'zego_express_texture_renderer_impl.dart';
@@ -37,19 +39,34 @@ class ZegoExpressImpl {
   static bool isEngineCreated = false;
 
   // enablePlatformView
-  static bool enablePlatformView = false;
+  static bool _enablePlatformView = false;
+
+  static bool shouldUsePlatformView() {
+    bool use = ZegoExpressImpl._enablePlatformView;
+    // Web only supports PlatformView
+    use |= kIsWeb;
+    // TODO: PlatformView support on Windows has not yet been implemented
+    // Ref: https://github.com/flutter/flutter/issues/31713
+    use &= !Platform.isWindows;
+    // TODO: PlatformView support on macOS has a crash issue, don't use it now
+    // Ref: https://github.com/flutter/flutter/issues/96668
+    use &= !Platform.isMacOS;
+    return use;
+  }
 
   /* Main */
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
     _registerEventHandler();
 
+    _enablePlatformView = profile.enablePlatformView ?? false;
+
     await _channel.invokeMethod('createEngineWithProfile', {
       'profile': {
         'appID': profile.appID,
         'appSign': profile.appSign,
         'scenario': profile.scenario.index,
-        'enablePlatformView': profile.enablePlatformView ?? false
+        'enablePlatformView': shouldUsePlatformView()
       }
     });
 
@@ -57,7 +74,6 @@ class ZegoExpressImpl {
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
 
     isEngineCreated = true;
-    enablePlatformView = profile.enablePlatformView ?? false;
   }
 
   static Future<void> createEngine(
@@ -65,19 +81,20 @@ class ZegoExpressImpl {
       {bool? enablePlatformView}) async {
     _registerEventHandler();
 
+    _enablePlatformView = enablePlatformView ?? false;
+
     await _channel.invokeMethod('createEngine', {
       'appID': appID,
       'appSign': appSign,
       'isTestEnv': isTestEnv,
       'scenario': scenario.index,
-      'enablePlatformView': enablePlatformView ?? false
+      'enablePlatformView': shouldUsePlatformView()
     });
 
     await _channel
         .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
 
     isEngineCreated = true;
-    enablePlatformView = enablePlatformView ?? false;
   }
 
   static Future<void> destroyEngine() async {
@@ -233,7 +250,7 @@ class ZegoExpressImpl {
 
   Future<void> startPreview(
       {ZegoCanvas? canvas, ZegoPublishChannel? channel}) async {
-    if (canvas != null) {
+    if (canvas != null && !shouldUsePlatformView()) {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
       ZegoExpressTextureRenderer()
@@ -518,7 +535,7 @@ class ZegoExpressImpl {
 
   Future<void> startPlayingStream(String streamID,
       {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
-    if (canvas != null) {
+    if (canvas != null && !shouldUsePlatformView()) {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
       ZegoExpressTextureRenderer()
@@ -2663,10 +2680,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<void> setPlayerCanvas(ZegoCanvas canvas) async {
-    ZegoExpressTextureRenderer()
-        .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
-    ZegoExpressTextureRenderer()
-        .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+    if (!ZegoExpressImpl.shouldUsePlatformView()) {
+      ZegoExpressTextureRenderer()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      ZegoExpressTextureRenderer()
+          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+    }
 
     return await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerSetPlayerCanvas', {

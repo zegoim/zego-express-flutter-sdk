@@ -15,11 +15,7 @@ class ZegoExpressCanvasViewImpl {
       {Key? key}) async {
     Widget? widget;
     if (ZegoExpressImpl.isEngineCreated) {
-      /// web only has PlatformView, windows only has TextureRenderer
-      bool usePlatformView =
-          ZegoExpressImpl.enablePlatformView && !Platform.isWindows;
-      usePlatformView = usePlatformView || kIsWeb;
-      if (usePlatformView) {
+      if (ZegoExpressImpl.shouldUsePlatformView()) {
         widget = ZegoExpressPlatformViewImpl.createPlatformView(onViewCreated);
       } else {
         ZegoExpressTextureRenderer().init();
@@ -42,11 +38,7 @@ class ZegoExpressCanvasViewImpl {
   /// If it returns false, it's probably because the `textureID` to be destroyed doesn't exist or ZegoExpressEngine not create.
   static Future<bool> destroyCanvasView(int viewID) async {
     if (ZegoExpressImpl.isEngineCreated) {
-      /// web only has PlatformView, windows only has TextureRenderer
-      bool usePlatformView =
-          ZegoExpressImpl.enablePlatformView && !Platform.isWindows;
-      usePlatformView = usePlatformView || kIsWeb;
-      if (usePlatformView) {
+      if (ZegoExpressImpl.shouldUsePlatformView()) {
         return await ZegoExpressImpl.methodChannel
             .invokeMethod('destroyPlatformView', {'viewID': viewID});
       } else {
