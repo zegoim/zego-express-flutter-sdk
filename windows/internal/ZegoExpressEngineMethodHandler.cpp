@@ -3111,17 +3111,18 @@ void ZegoExpressEngineMethodHandler::setPublishWatermark(flutter::EncodableMap& 
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto watermarkMap = std::get<FTMap>(argument[FTValue("watermark")]);
-    EXPRESS::ZegoWatermark watermark;
+    EXPRESS::ZegoWatermark *watermark = nullptr;
+    EXPRESS::ZegoWatermark watermarkTemp;
     if (watermarkMap.size() > 0) {
-        watermark.imageURL = std::get<std::string>(watermarkMap[FTValue("imageURL")]);
-        watermark.layout.x = std::get<int32_t>(watermarkMap[FTValue("left")]);
-        watermark.layout.y = std::get<int32_t>(watermarkMap[FTValue("top")]);
-        watermark.layout.width = std::get<int32_t>(watermarkMap[FTValue("right")]) - watermark.layout.x;
-        watermark.layout.height = std::get<int32_t>(watermarkMap[FTValue("bottom")]) - watermark.layout.y;
+        watermarkTemp.imageURL = std::get<std::string>(watermarkMap[FTValue("imageURL")]);
+        watermarkTemp.layout.x = std::get<int32_t>(watermarkMap[FTValue("left")]);
+        watermarkTemp.layout.y = std::get<int32_t>(watermarkMap[FTValue("top")]);
+        watermarkTemp.layout.width = std::get<int32_t>(watermarkMap[FTValue("right")]) - watermarkTemp.layout.x;
+        watermarkTemp.layout.height = std::get<int32_t>(watermarkMap[FTValue("bottom")]) - watermarkTemp.layout.y;
 
         const std::string flutterAssertTaget = "flutter-asset://";
-        if (watermark.imageURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
-            watermark.imageURL.replace(0, flutterAssertTaget.size(), "");
+        if (watermarkTemp.imageURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+            watermarkTemp.imageURL.replace(0, flutterAssertTaget.size(), "");
 
             wchar_t exePath[MAX_PATH] = {0};
             ::GetModuleFileName(NULL,exePath,MAX_PATH);
@@ -3129,17 +3130,17 @@ void ZegoExpressEngineMethodHandler::setPublishWatermark(flutter::EncodableMap& 
             std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
             exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
             if (!exePathStr.empty()) {
-                watermark.imageURL = "file:///" + exePathStr + "\\data\\flutter_assets\\" + watermark.imageURL;
+                watermarkTemp.imageURL = "file:///" + exePathStr + "\\data\\flutter_assets\\" + watermarkTemp.imageURL;
             } else {
                 result->Error("setPublishWatermark_get_exe_path_fail", "Failed to get the directory where the application is located");
                 return;
             }
         }
+        watermark = &watermarkTemp;
     }
     auto isPreviewVisible = std::get<bool>(argument[FTValue("isPreviewVisible")]);
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
-
-    EXPRESS::ZegoExpressSDK::getEngine()->setPublishWatermark(&watermark, isPreviewVisible, (EXPRESS::ZegoPublishChannel)channel);
+    EXPRESS::ZegoExpressSDK::getEngine()->setPublishWatermark(watermark, isPreviewVisible, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success();
 }
