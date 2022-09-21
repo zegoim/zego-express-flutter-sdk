@@ -626,8 +626,7 @@ class ZegoExpressEngineWeb {
   Future<void> startPreview(dynamic canvas, int channel) async {
     previewView = document.getElementById("zego-view-${canvas["view"]}");
     previewView.muted = true;
-    setVideoMode(canvas["viewMode"], previewView);
-    
+    ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
     ZegoFlutterEngine.instance
         .startPreview(previewView, getPublishChannel(channel));
 
@@ -653,7 +652,7 @@ class ZegoExpressEngineWeb {
 
   Future<void> startPlayingStream(String streamID, dynamic canvas) {
     final playView = document.getElementById('zego-view-${canvas["view"]}');
-    setVideoMode(canvas["viewMode"], playView);
+    ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
     ZegoFlutterEngine.instance.startPlayingStream(streamID, playView);
     return Future.value();
   }
@@ -822,7 +821,7 @@ class ZegoExpressEngineWeb {
     if(MediaPlayers[index] == null) {
       return Future.value();
     }
-    setVideoMode(canvas["viewMode"], viewElem);
+    ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
     var result = await ((){
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.mediaPlayerSetPlayerCanvas(viewElem, canvas, MediaPlayers[index].instance, completerMap["success"], completerMap["fail"]);
@@ -915,20 +914,8 @@ class ZegoExpressEngineWeb {
     }
     return Future.value(MediaPlayers[index].instance.setVolume(volume));
   }
-  void setVideoMode(int mode, dynamic elem) {
-    // AspectFit 0, AspectFill 1, ScaleToFill 2
-    var fit = '';
-    switch(mode) {
-      case 0: fit = "contain";break;
-      case 1: fit = "cover";break;
-      case 2: fit = "fill";break;
-      default: fit = "none";
-    }
-    elem.style.objectFit = fit;
-  }
   Future<int> mediaPlayerGetTotalDuration(int index) async {
     var duration = MediaPlayers[index].instance.getTotalDuration();
-    print("--------------${duration}");
     return Future.value(duration);
   }
 }
