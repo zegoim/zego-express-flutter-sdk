@@ -11,7 +11,7 @@ import '../zego_express_enum_extension.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.22.0";
+  static String pluginVersion = "2.23.0";
 }
 
 class ZegoExpressImpl {
