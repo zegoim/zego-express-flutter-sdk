@@ -22,7 +22,7 @@ class ZegoExpressTextureRenderer {
   }
 
   void uninit() async {
-    if (_textRenderViewModes.isEmpty && !kIsWeb && !Platform.isAndroid) {
+    if (_viewModeMap.isEmpty && !kIsWeb && !Platform.isAndroid) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
     }
@@ -58,40 +58,27 @@ class ZegoExpressTextureRenderer {
   }
 
   void setViewMode(int textureID, ZegoViewMode viewMode) {
-    bool usePlatformView =
-        ZegoExpressImpl.enablePlatformView && !Platform.isWindows;
-    usePlatformView = usePlatformView || kIsWeb;
-    if (!usePlatformView) {
-      if (_textRenderViewModes.containsKey(textureID) &&
-          _textRenderViewModes[textureID] != viewMode) {
-        _updateController.sink.add({
-          'textureID': textureID,
-          'type': 'update',
-        });
-      }
-      _textRenderViewModes[textureID] = viewMode;
+    if (_viewModeMap.containsKey(textureID) &&
+        _viewModeMap[textureID] != viewMode) {
+      _updateController.sink.add({
+        'textureID': textureID,
+        'type': 'update',
+      });
     }
+    _viewModeMap[textureID] = viewMode;
   }
 
   void setBackgroundColor(int textureID, int backgroundColor) {
-    bool usePlatformView =
-        ZegoExpressImpl.enablePlatformView && !Platform.isWindows;
-    usePlatformView = usePlatformView || kIsWeb;
-    if (!usePlatformView) {
-      _updateController.sink.add({'textureID': textureID, 'type': 'update'});
-      _textRenderColorss[textureID] = Color(backgroundColor | 0xff000000);
-    }
+    _updateController.sink.add({'textureID': textureID, 'type': 'update'});
+    _backgroundColorMap[textureID] = Color(backgroundColor | 0xff000000);
   }
 
-  bool isContains(int textureID) =>
-      _textRenderViewModes.keys.contains(textureID);
-
-  ZegoViewMode? getViewMode(int textureID) => _textRenderViewModes[textureID];
-  Color? getColor(int textureID) => _textRenderColorss[textureID];
+  ZegoViewMode? getViewMode(int textureID) => _viewModeMap[textureID];
+  Color? getBackgroundColor(int textureID) => _backgroundColorMap[textureID];
 
   bool removeTexture(int textureID) {
-    if (_textRenderViewModes.containsKey(textureID)) {
-      _textRenderViewModes.remove(textureID);
+    if (_viewModeMap.containsKey(textureID)) {
+      _viewModeMap.remove(textureID);
       uninit();
       return true;
     } else {
@@ -128,8 +115,8 @@ class ZegoExpressTextureRenderer {
   static final ZegoExpressTextureRenderer _instance =
       ZegoExpressTextureRenderer._();
 
-  static final Map<int, ZegoViewMode> _textRenderViewModes = {};
-  static final Map<int, Color> _textRenderColorss = {};
+  static final Map<int, ZegoViewMode> _viewModeMap = {};
+  static final Map<int, Color> _backgroundColorMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -262,7 +249,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       var y = rect.top;
 
       var backgroundColor =
-          ZegoExpressTextureRenderer().getColor(widget.textureID) ??
+          ZegoExpressTextureRenderer().getBackgroundColor(widget.textureID) ??
               Colors.black;
 
       Widget child = Texture(
