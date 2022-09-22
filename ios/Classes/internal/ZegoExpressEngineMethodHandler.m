@@ -1847,6 +1847,7 @@
 
 #endif
 
+#if TARGET_OS_IPHONE
 - (void)setAudioDeviceMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int deviceMode = [ZegoUtils intValue:call.arguments[@"deviceMode"]];
@@ -1854,6 +1855,8 @@
 
     result(nil);
 }
+
+#endif
 
 - (void)enableAudioCaptureDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
 
