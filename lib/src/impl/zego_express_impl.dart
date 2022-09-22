@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +7,7 @@ import 'zego_express_texture_renderer_impl.dart';
 import '../zego_express_api.dart';
 import '../zego_express_defines.dart';
 import '../zego_express_enum_extension.dart';
+import '../utils/zego_express_utils.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
@@ -47,10 +46,10 @@ class ZegoExpressImpl {
     use |= kIsWeb;
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
-    use &= !Platform.isWindows;
+    use &= !kIsWindows;
     // TODO: PlatformView support on macOS has a crash issue, don't use it now
     // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= !Platform.isMacOS;
+    use &= !kIsMacOS;
     return use;
   }
 

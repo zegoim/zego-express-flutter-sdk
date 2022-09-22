@@ -7,13 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../zego_express_defines.dart';
+import '../utils/zego_express_utils.dart';
 import 'zego_express_impl.dart';
 
 class ZegoExpressTextureRenderer {
   factory ZegoExpressTextureRenderer() => _instance;
 
   void init() async {
-    if (!kIsWeb && !Platform.isAndroid) {
+    if (!kIsWeb && !kIsAndroid) {
       _streamSubscriptionTextureRendererController ??=
           _textureRendererControllerEvent
               .receiveBroadcastStream()
@@ -22,7 +23,7 @@ class ZegoExpressTextureRenderer {
   }
 
   void uninit() async {
-    if (_viewModeMap.isEmpty && !kIsWeb && !Platform.isAndroid) {
+    if (_viewModeMap.isEmpty && !kIsWeb && !kIsAndroid) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
     }
@@ -41,7 +42,7 @@ class ZegoExpressTextureRenderer {
   /// Note: Only used by Android!
   Future<bool> updateTextureRendererSize(
       int textureID, int width, int height) async {
-    if (Platform.isAndroid) {
+    if (kIsAndroid) {
       return await ZegoExpressImpl.methodChannel.invokeMethod(
           'updateTextureRendererSize',
           {'textureID': textureID, 'width': width, 'height': height});
