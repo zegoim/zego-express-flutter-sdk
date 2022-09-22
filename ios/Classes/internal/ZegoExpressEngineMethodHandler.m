@@ -3558,7 +3558,7 @@
 
     if (self.rangeAudioInstance) {
         NSString *userID = call.arguments[@"userID"];
-        NSArray<NSNumber *> *positionArray = call.arguments[@"position"];
+        FlutterStandardTypedData *positionArray = call.arguments[@"position"];
         float position[3];
         convertFloatArray(position, positionArray);
         [self.rangeAudioInstance updateAudioSource:userID position:position];
@@ -3572,10 +3572,10 @@
 - (void)rangeAudioUpdateSelfPosition:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.rangeAudioInstance) {
-        NSArray<NSNumber *> *positionArray = call.arguments[@"position"];
-        NSArray<NSNumber *> *axisForwardArray = call.arguments[@"axisForward"];
-        NSArray<NSNumber *> *axisRightArray = call.arguments[@"axisRight"];
-        NSArray<NSNumber *> *axisUpArray = call.arguments[@"axisUp"];
+        FlutterStandardTypedData *positionArray = call.arguments[@"position"];
+        FlutterStandardTypedData *axisForwardArray = call.arguments[@"axisForward"];
+        FlutterStandardTypedData *axisRightArray = call.arguments[@"axisRight"];
+        FlutterStandardTypedData *axisUpArray = call.arguments[@"axisUp"];
         float position[3];
         float axisForward[3];
         float axisRight[3];
@@ -4260,9 +4260,10 @@
     result(nil);
 }
 
-void convertFloatArray(float *position, NSArray<NSNumber *> *list) {
-    for (int i = 0; i < list.count; i++) {
-        position[i] = list[i].floatValue;
+void convertFloatArray(float *position, FlutterStandardTypedData *list) {
+    const float* tmp = list.data.bytes;
+    for (int i = 0; i < list.elementCount; i++) {
+        position[i] = *(tmp + i);
     }
 }
 
