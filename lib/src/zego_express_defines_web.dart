@@ -55,6 +55,7 @@ class ZegoFlutterEngine {
   external sendSEI(dynamic data, int dataLength, int channel);
   external sendReliableMessage(String roomID, String key, String value);
   external createMediaPlayer();
+  external setStyleByCanvas(dynamic canvas);
   external mediaPlayerSetPlayerCanvas(
       dynamic viewElem,
       Map<dynamic, dynamic> canvas,
