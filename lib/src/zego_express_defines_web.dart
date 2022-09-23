@@ -30,12 +30,12 @@ class ZegoFlutterEngine {
   external stopPreview(int channel);
   external startPublishingStream(String streamID, int? channel);
   external stopPublishingStream(int channel);
-  external startPlayingStream(String streamID, dynamic remoteVideo);
+  external startPlayingStream(String streamID, dynamic remoteVideo, String s, dynamic config);
   external stopPlayingStream(String streamID);
   external sendBroadcastMessage(String roomID, String message);
   external sendBarrageMessage(String roomID, String message);
   external sendCustomCommand(String roomID, String message, List toUserList);
-  external setSEIConfig(Map<dynamic, dynamic> config);
+  external setSEIConfig(int config);
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
   external enableAEC(bool enable);
@@ -50,7 +50,7 @@ class ZegoFlutterEngine {
   external useVideoDevice(String deviceID, int channel);
   external useAudioDevice(int type, String deviceID);
   external useAudioOutputDevice(dynamic media, String deviceID);
-  external setEngineConfig(dynamic config);
+  external static setEngineConfig(dynamic config);
   external setStreamExtraInfo(String extraInfo, int channel);
   external sendSEI(dynamic data, int dataLength, int channel);
   external sendReliableMessage(String roomID, String key, String value);
