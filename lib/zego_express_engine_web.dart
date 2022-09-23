@@ -8,6 +8,7 @@ import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:js';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -520,8 +521,17 @@ class ZegoExpressEngineWeb {
         break;
       case 'onPlayerRecvSEI':
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
-
-        ZegoExpressEngine.onPlayerRecvSEI!(map['streamID'], map['data']);
+        final data = jsonDecode(map["data"]);
+        print(data["data"]);
+        var encodeString = utf8.encode(data["data"]);
+        var length = encodeString.length;
+        var bytedata = ByteData(length);
+        bytedata.setUint32(0, length, Endian.big);
+        var bytes = bytedata.buffer.asUint8List();
+        bytes.setRange(0, length, encodeString);
+        print(bytes.length);
+        print(bytes.lengthInBytes);
+        ZegoExpressEngine.onPlayerRecvSEI!(data['streamID'], bytes);
         break;
       case 'onRoomStreamExtraInfoUpdate':
         if (ZegoExpressEngine.onRoomStreamExtraInfoUpdate == null) return;
