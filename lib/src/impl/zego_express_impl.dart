@@ -563,8 +563,9 @@ class ZegoExpressImpl {
                   : {},
               'roomID': config.roomID ?? '',
               'videoCodecID': config.videoCodecID.index,
-              'sourceResourceType':
-                  config.sourceResourceType?.index ?? ZegoResourceType.RTC.index
+              'sourceResourceType': config.sourceResourceType?.index ??
+                  ZegoResourceType.RTC.index,
+              'codecTemplateID': config.codecTemplateID ?? 0
             }
           : {}
     });

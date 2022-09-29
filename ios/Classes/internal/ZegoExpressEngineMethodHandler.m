@@ -55,6 +55,10 @@
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 }
 
+- (void)initApiCalledCallback {
+    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     ZGLog(@"[DartCall] [%@]", call.method);
     SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
@@ -119,7 +123,6 @@
         ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
     }
 
-    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
@@ -158,7 +161,6 @@
         ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
     }
 
-    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
@@ -1006,6 +1008,7 @@
         playerConfig = [[ZegoPlayerConfig alloc] init];
         playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
         playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
+        playerConfig.codecTemplateID = [ZegoUtils intValue:playerConfigMap[@"codecTemplateID"]];
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
         if (videoCodecIDIndex > 3) {

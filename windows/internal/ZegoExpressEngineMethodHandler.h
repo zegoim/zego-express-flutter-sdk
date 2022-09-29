@@ -22,6 +22,10 @@ public:
     {
         registrar_ = registrar;
     }
+
+    void initApiCalledCallback();
+
+    bool isEngineCreated();
     
 public:
     void getVersion(flutter::EncodableMap& argument,

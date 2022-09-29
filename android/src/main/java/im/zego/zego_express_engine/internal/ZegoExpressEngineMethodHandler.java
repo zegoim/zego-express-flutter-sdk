@@ -186,6 +186,11 @@ public class ZegoExpressEngineMethodHandler {
     private static ZegoCopyrightedMusic copyrightedMusicInstance = null;
 
     @SuppressWarnings("unused")
+    public static void initApiCalledCallback() {
+        ZegoExpressEngine.setApiCalledCallback(ZegoExpressEngineEventHandler.getInstance().apiCalledEventHandler);
+    }
+
+    @SuppressWarnings("unused")
     public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         // Report framework info
@@ -225,7 +230,6 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.createEngine(profile, ZegoExpressEngineEventHandler.getInstance().eventHandler);
         setPlatformLanguage();
 
-        ZegoExpressEngine.setApiCalledCallback(ZegoExpressEngineEventHandler.getInstance().apiCalledEventHandler);
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
@@ -269,7 +273,6 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.createEngine(appID, appSign, isTestEnv, scenario, application, ZegoExpressEngineEventHandler.getInstance().eventHandler);
         setPlatformLanguage();
 
-        ZegoExpressEngine.setApiCalledCallback(ZegoExpressEngineEventHandler.getInstance().apiCalledEventHandler);
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
@@ -1154,6 +1157,7 @@ public class ZegoExpressEngineMethodHandler {
             }
             playerConfig.roomID = (String) playerConfigMap.get("roomID");
             playerConfig.sourceResourceType = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("sourceResourceType")));
+            playerConfig.codecTemplateID = ZegoUtils.intValue((Number) playerConfigMap.get("codecTemplateID"));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
             if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {

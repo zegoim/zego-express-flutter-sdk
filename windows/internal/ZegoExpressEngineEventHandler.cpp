@@ -341,18 +341,6 @@ void ZegoExpressEngineEventHandler::onPlayerRecvAudioFirstFrame(const std::strin
     }
 }
 
-/*void ZegoExpressEngineEventHandler::onPlayerRecvVideoFirstFrame(const std::string& streamID) {
-
-}
-
-void ZegoExpressEngineEventHandler::onPlayerRenderVideoFirstFrame(const std::string& streamID) {
-
-}
-
-void ZegoExpressEngineEventHandler::onPlayerVideoSizeChanged(const std::string& streamID, int width, int height) {
-
-}*/
-
 void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) {
 
     if (eventSink_) {
@@ -514,18 +502,6 @@ void ZegoExpressEngineEventHandler::onDeviceError(int errorCode, const std::stri
         eventSink_->Success(retMap);
     }
 }
-
-/*void ZegoExpressEngineEventHandler::onRemoteCameraStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) {
-
-    if (eventSink_) {
-        FTMap retMap;
-        retMap[FTValue("method")] = FTValue("onRemoteCameraStateUpdate");
-        retMap[FTValue("streamID")] = FTValue(streamID);
-        retMap[FTValue("state")] = FTValue(state);
-
-        eventSink_->Success(retMap);
-    }
-}*/
 
 void ZegoExpressEngineEventHandler::onRemoteMicStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) {
 

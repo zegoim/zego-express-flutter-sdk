@@ -113,6 +113,18 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
         this.eventChannel = eventChannel;
         this.eventChannel.setStreamHandler(this);
+
+        try {
+            Method initApiCalledCallbackMethod = this.manager.getMethod("initApiCalledCallback");
+            initApiCalledCallbackMethod.invoke(null);
+        } catch (NoSuchMethodException e) {
+            ZegoLog.log("[DartCall] [NoSuchMethodException] [%s] %s | %s", "initApiCalledCallback", e.getMessage(), getStackTrace(e));
+        } catch (IllegalAccessException e) {
+            ZegoLog.log("[DartCall] [IllegalAccessException] [%s] %s | %s", "initApiCalledCallback", e.getMessage(), getStackTrace(e));
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();
+            ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s | %s", "initApiCalledCallback", t.getCause(), t.getMessage(), getStackTrace(t));
+        }
     }
 
 
