@@ -160,6 +160,8 @@ void ZegoExpressEngineMethodHandler::getAssetAbsolutePath(flutter::EncodableMap&
 void ZegoExpressEngineMethodHandler::createEngine(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
+    initApiCalledCallback();
+
     EXPRESS::ZegoEngineConfig config;
     config.advancedConfig = {{"video_data_image_colorspace", "rgba"}, {"thirdparty_framework_info", "flutter"}};
     EXPRESS::ZegoExpressSDK::setEngineConfig(config);
@@ -185,6 +187,9 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(flutter::EncodableM
 {
     FTMap profileMap = std::get<FTMap>(argument[FTValue("profile")]);
     if(profileMap.size() > 0) {
+        
+        initApiCalledCallback();
+        
         EXPRESS::ZegoEngineConfig config;
         config.advancedConfig = {{"video_data_image_colorspace", "rgba"}, {"thirdparty_framework_info", "flutter"}};
         EXPRESS::ZegoExpressSDK::setEngineConfig(config);
