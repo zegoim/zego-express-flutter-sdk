@@ -22,6 +22,9 @@ public class ZegoExpressEnginePlugin: NSObject, FlutterPlugin, FlutterStreamHand
 
         // Register platform view factory
         registrar.register(ZegoPlatformViewFactory.sharedInstance(), withId: "plugins.zego.im/zego_express_view")
+
+        // init api called callback
+        ZegoExpressEngineMethodHandler.sharedInstance().initApiCalledCallback()
     }
 
 
