@@ -62,6 +62,8 @@ class ZegoFlutterEngine {
       dynamic MediaPlayer,
       dynamic success,
       dynamic fail);
+  external mediaPlayerEnableAux(bool enable, dynamic MediaPlayer);
+  external mediaPlayerSetVolume(int volume, dynamic MediaPlayer);
 }
 
 @JS()
@@ -118,10 +120,10 @@ class ZegoRoomConfigWeb {
 @anonymous
 class ZegoWebVideoConfig {
   external factory ZegoWebVideoConfig(
-      {int captureWidth, int captureHeight, int fps, int bitrate, int codecID});
+      {int encodeWidth, int encodeHeight, int fps, int bitrate, int codecID});
 
-  external int get captureWidth;
-  external int get captureHeight;
+  external int get encodeWidth;
+  external int get encodeHeight;
   external int get fps;
   external int get bitrate;
   external int codecID;
@@ -148,6 +150,5 @@ class MediaPlayer {
   external setPlaySpeed(double speed);
   external muteLocal(bool enable);
   external getTotalDuration();
-  external setVolume(int volume);
   external destroy();
 }

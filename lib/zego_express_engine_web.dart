@@ -173,7 +173,9 @@ class ZegoExpressEngineWeb {
       case 'mediaPlayerSetPlaySpeed':
         return mediaPlayerSetPlaySpeed(call.arguments['index'], call.arguments['speed']);
       case 'mediaPlayerMuteLocal':
-        return mediaPlayerMuteLocal(call.arguments['index'], call.arguments['enable']);
+        return mediaPlayerMuteLocal(call.arguments['index'], call.arguments['mute']);
+      case 'mediaPlayerEnableAux':
+        return mediaPlayerEnableAux(call.arguments['index'], call.arguments['enable']);
       case 'destroyMediaPlayer':
         return destroyMediaPlayer(call.arguments['index']);
       case 'mediaPlayerSetVolume':
@@ -523,14 +525,7 @@ class ZegoExpressEngineWeb {
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
         final data = jsonDecode(map["data"]);
         print(data["data"]);
-        var encodeString = utf8.encode(data["data"]);
-        var length = encodeString.length;
-        var bytedata = ByteData(length);
-        bytedata.setUint32(0, length, Endian.big);
-        var bytes = bytedata.buffer.asUint8List();
-        bytes.setRange(0, length, encodeString);
-        print(bytes.length);
-        print(bytes.lengthInBytes);
+        var bytes = Uint8List.fromList(utf8.encode(data["data"]));
         ZegoExpressEngine.onPlayerRecvSEI!(data['streamID'], bytes);
         break;
       case 'onRoomStreamExtraInfoUpdate':
@@ -609,8 +604,8 @@ class ZegoExpressEngineWeb {
 
   Future<void> setVideoConfig(dynamic config, int channel) {
     ZegoWebVideoConfig webVideoConfig = ZegoWebVideoConfig(
-        captureWidth: config["captureWidth"],
-        captureHeight: config["captureHeight"],
+        encodeWidth: config["encodeWidth"],
+        encodeHeight: config["encodeHeight"],
         fps: config["fps"],
         bitrate: config["bitrate"],
         codecID: config["codecID"]);
@@ -916,6 +911,12 @@ class ZegoExpressEngineWeb {
     }
     return MediaPlayers[index].instance.muteLocal(enable);
   }
+  Future<void> mediaPlayerEnableAux(int index, bool enable) async {
+    if(MediaPlayers[index] == null) {
+      return;
+    }
+    return ZegoFlutterEngine.instance.mediaPlayerEnableAux(enable, MediaPlayers[index].instance);
+  }
   Future<void> destroyMediaPlayer(int index) async {
     if(MediaPlayers[index] == null) {
       return;
@@ -928,7 +929,7 @@ class ZegoExpressEngineWeb {
     if(MediaPlayers[index] == null) {
       return Future.value();
     }
-    return Future.value(MediaPlayers[index].instance.setVolume(volume));
+    return Future.value(ZegoFlutterEngine.instance.mediaPlayerSetVolume(volume, MediaPlayers[index].instance));
   }
   Future<int> mediaPlayerGetTotalDuration(int index) async {
     var duration = MediaPlayers[index].instance.getTotalDuration();
