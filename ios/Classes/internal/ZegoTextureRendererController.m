@@ -59,7 +59,9 @@
     ZGLog(@"[createTextureRenderer] textureID:%ld, renderer:%p", (long)renderer.textureID,
           renderer);
 
-    [self.renderers setObject:renderer forKey:@(renderer.textureID)];
+    @synchronized (self) {
+        [self.renderers setObject:renderer forKey:@(renderer.textureID)];
+    }
 
     [self logCurrentRenderers];
 
@@ -78,7 +80,9 @@
 
     ZGLog(@"[destroyTextureRenderer] textureID:%ld, renderer:%p", (long)textureID, renderer);
 
-    [self.renderers removeObjectForKey:@(renderer.textureID)];
+    @synchronized (self) {
+        [self.renderers removeObjectForKey:@(renderer.textureID)];
+    }
 
     // Release renderer
     [renderer destroy];
@@ -122,10 +126,11 @@
 }
 
 - (void)uninitController {
-    [self.renderers removeAllObjects];
-    [self.capturedTextureIdMap removeAllObjects];
-    [self.remoteTextureIdMap removeAllObjects];
-
+    @synchronized (self) {
+        [self.renderers removeAllObjects];
+        [self.capturedTextureIdMap removeAllObjects];
+        [self.remoteTextureIdMap removeAllObjects];
+    }
     self.isInited = NO;
 }
 
