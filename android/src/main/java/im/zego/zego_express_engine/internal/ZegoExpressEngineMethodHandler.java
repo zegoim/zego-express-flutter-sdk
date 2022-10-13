@@ -3827,8 +3827,8 @@ public class ZegoExpressEngineMethodHandler {
 
         if (rangeAudioInstance != null) {
             String userID = call.argument("userID");
-            ArrayList<Double> positionList = call.argument("position");
-            rangeAudioInstance.updateAudioSource(userID, converFloatArray(positionList));
+            float[] positionList = call.argument("position");
+            rangeAudioInstance.updateAudioSource(userID, positionList);
             result.success(null);
 
         } else {
@@ -3840,11 +3840,11 @@ public class ZegoExpressEngineMethodHandler {
     public static void rangeAudioUpdateSelfPosition(MethodCall call, Result result) {
 
         if (rangeAudioInstance != null) {
-            ArrayList<Double> position = call.argument("position");
-            ArrayList<Double> axisForward = call.argument("axisForward");
-            ArrayList<Double> axisRight = call.argument("axisRight");
-            ArrayList<Double> axisUp = call.argument("axisUp");
-            rangeAudioInstance.updateSelfPosition(converFloatArray(position), converFloatArray(axisForward), converFloatArray(axisRight), converFloatArray(axisUp));
+            float[] position = call.argument("position");
+            float[] axisForward = call.argument("axisForward");
+            float[] axisRight = call.argument("axisRight");
+            float[] axisUp = call.argument("axisUp");
+            rangeAudioInstance.updateSelfPosition(position, axisForward, axisRight, axisUp);
             result.success(null);
 
         } else {
