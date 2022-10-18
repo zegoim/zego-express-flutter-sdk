@@ -22,6 +22,8 @@
 
 @property (nonatomic, strong) FlutterEventSink eventSink;
 
+@property (nonatomic, assign) BOOL isAppEnterBackground;
+
 @end
 
 @implementation ZegoTextureRendererController
@@ -37,13 +39,29 @@
 
 - (instancetype)init {
     self = [super init];
+    self.isAppEnterBackground = NO;
     if (self) {
         _renderers = [NSMutableDictionary dictionary];
         _capturedTextureIdMap = [NSMutableDictionary dictionary];
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
         _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
     }
     return self;
+}
+
+-(void)applicationDidEnterBackground:(NSNotification *)notification {
+    @synchronized (self) {
+        self.isAppEnterBackground = YES;
+    }
+}
+
+-(void)applicationWillEnterForeground:(NSNotification *)notification {
+    @synchronized (self) {
+        self.isAppEnterBackground = NO;
+    }
 }
 
 #pragma mark - Dart Texture Render Utils Operation
@@ -255,7 +273,11 @@
     renderer.rotation = param.rotation;
     renderer.flipMode = flipMode;
     
-    [renderer updateSrcFrameBuffer:buffer];
+    @synchronized (self) {
+        if (!self.isAppEnterBackground) {
+            [renderer updateSrcFrameBuffer:buffer];
+        }
+    }
 }
 
 #pragma mark - ZegoCustomVideoRenderHandler
