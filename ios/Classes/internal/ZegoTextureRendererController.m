@@ -46,8 +46,10 @@
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
         _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
         
+#if TARGET_OS_IPHONE
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+#endif
     }
     return self;
 }
