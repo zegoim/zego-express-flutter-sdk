@@ -613,6 +613,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.isVideoEncoderSupported(codecID);
   }
 
+  /// Set the orientation mode of the video.
+  ///
+  /// Available since: 2.23.0
+  /// Description: In order to simplify the complexity of processing video screen rotation for mobile developers, the SDK supports setting multiple video orientation modes, and developers can choose different modes according to the needs of the scene.
+  /// Use cases: Scenarios for live streaming or video calls using mobile devices.
+  /// Default value: Custom mode.
+  /// When to call: This function needs to be valid after calling [createEngine] and before calling preview [startPreview] or push stream [startPublishingStream].
+  /// Caution:
+  ///   1. It is valid for all channels.
+  ///   2. The adaptive mode takes effect in preview, streaming, and mixed streaming scenarios. It does not support external video capture, media player, cloud recording, local recording, or publishing/playing stream through CDN.
+  /// Related APIs: You can call the [setAppOrientation] function to set the orientation of the App in custom mode.
+  ///
+  /// - [mode] Orientation mode of the video.
+  Future<void> setAppOrientationMode(ZegoOrientationMode mode) async {
+    return await ZegoExpressImpl.instance.setAppOrientationMode(mode);
+  }
+
   /// Set low light enhancement.
   ///
   /// Available since: 2.21.0

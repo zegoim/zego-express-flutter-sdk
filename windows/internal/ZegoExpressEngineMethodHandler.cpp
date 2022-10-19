@@ -556,7 +556,8 @@ void ZegoExpressEngineMethodHandler::setVideoConfig(flutter::EncodableMap& argum
     config.bitrate = std::get<int32_t>(configMap[FTValue("bitrate")]);
     config.captureHeight = std::get<int32_t>(configMap[FTValue("captureHeight")]);
     config.captureWidth = std::get<int32_t>(configMap[FTValue("captureWidth")]);
-    config.codecID = (EXPRESS::ZegoVideoCodecID)std::get<int32_t>(configMap[FTValue("codecID")]);
+    auto codecIDIndex = std::get<int32_t>(configMap[FTValue("codecID")]);
+    config.codecID = (EXPRESS::ZegoVideoCodecID)(codecIDIndex > 3? EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN : codecIDIndex);
     config.encodeHeight = std::get<int32_t>(configMap[FTValue("encodeHeight")]);
     config.encodeWidth = std::get<int32_t>(configMap[FTValue("encodeWidth")]);
     config.fps = std::get<int32_t>(configMap[FTValue("fps")]);
@@ -577,7 +578,7 @@ void ZegoExpressEngineMethodHandler::getVideoConfig(flutter::EncodableMap& argum
     configMap[FTValue("bitrate")] = FTValue(config.bitrate);
     configMap[FTValue("captureHeight")] = FTValue(config.captureHeight);
     configMap[FTValue("captureWidth")] = FTValue(config.captureWidth);
-    configMap[FTValue("codecID")] = FTValue((int32_t)config.codecID);
+    configMap[FTValue("codecID")] = FTValue(config.codecID == EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN ? 4: (int32_t)config.codecID);
     configMap[FTValue("encodeHeight")] = FTValue(config.encodeHeight);
     configMap[FTValue("encodeWidth")] = FTValue(config.encodeWidth);
     configMap[FTValue("fps")] = FTValue(config.fps);
@@ -732,6 +733,38 @@ void ZegoExpressEngineMethodHandler::enableHardwareEncoder(flutter::EncodableMap
     EXPRESS::ZegoExpressSDK::getEngine()->enableHardwareEncoder(enable);
 
     result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setCapturePipelineScaleMode(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto mode = std::get<int32_t>(argument[FTValue("mode")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setCapturePipelineScaleMode((EXPRESS::ZegoCapturePipelineScaleMode)mode);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableH265EncodeFallback(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableH265EncodeFallback(enable);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::isVideoEncoderSupported(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto codecID = std::get<int32_t>(argument[FTValue("codecID")]);
+    if (codecID > 3) {
+        codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
+    }
+    auto ret = EXPRESS::ZegoExpressSDK::getEngine()->isVideoEncoderSupported((EXPRESS::ZegoVideoCodecID)codecID);
+
+    result->Success(FTValue(ret));
 }
 
 void ZegoExpressEngineMethodHandler::setLowlightEnhancement(flutter::EncodableMap& argument,
@@ -3227,7 +3260,9 @@ void ZegoExpressEngineMethodHandler::isVideoDecoderSupported(flutter::EncodableM
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto codecID = std::get<int32_t>(argument[FTValue("codecID")]);
-
+    if (codecID > 3) {
+        codecID = 100;
+    }
     bool ret = EXPRESS::ZegoExpressSDK::getEngine()->isVideoDecoderSupported((EXPRESS::ZegoVideoCodecID)codecID);
 
     result->Success(FTValue(ret));
@@ -3960,6 +3995,58 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetPositionUpdateFrequency(flutte
     else 
     {
         result->Error("rangeAudioSetPositionUpdateFrequency_Can_not_find_instance", "Invoke `rangeAudioSetPositionUpdateFrequency` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::rangeAudioSetRangeAudioVolume(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (rangeAudio_) {
+        auto volume = std::get<int32_t>(argument[FTValue("volume")]);
+
+        rangeAudio_->setRangeAudioVolume(volume);
+
+        result->Success();
+    } 
+    else 
+    {
+        result->Error("rangeAudioSetRangeAudioVolume_Can_not_find_instance", "Invoke `rangeAudioSetRangeAudioVolume` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::rangeAudioSetStreamVocalRange(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (rangeAudio_) {
+        auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+
+        auto vocalRange = std::get<double>(argument[FTValue("vocalRange")]);
+
+        rangeAudio_->setStreamVocalRange(streamID, vocalRange);
+
+        result->Success();
+    } 
+    else 
+    {
+        result->Error("rangeAudioSetStreamVocalRange_Can_not_find_instance", "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::rangeAudioUpdateStreamPosition(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    if (rangeAudio_) {
+        auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+
+        auto position = std::get<std::vector<float>>(argument[FTValue("position")]);
+
+        rangeAudio_->updateStreamPosition(streamID, position.data());
+
+        result->Success();
+    } 
+    else 
+    {
+        result->Error("rangeAudioUpdateStreamPosition_Can_not_find_instance", "Invoke `rangeAudioUpdateStreamPosition` but can't find specific instance");
     }
 }
 

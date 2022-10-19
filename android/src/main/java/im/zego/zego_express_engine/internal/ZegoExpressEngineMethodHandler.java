@@ -97,6 +97,7 @@ import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
+import im.zego.zegoexpress.constants.ZegoOrientationMode;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.constants.ZegoVideoStreamType;
@@ -1116,6 +1117,16 @@ public class ZegoExpressEngineMethodHandler {
         boolean isSupport = ZegoExpressEngine.getEngine().isVideoEncoderSupported(codecID);
 
         result.success(isSupport);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setAppOrientationMode(MethodCall call, Result result) {
+
+        ZegoOrientationMode mode = ZegoOrientationMode.getZegoOrientationMode( ZegoUtils.intValue((Number) call.argument("mode")) );
+
+        ZegoExpressEngine.getEngine().setAppOrientationMode(mode);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -3878,6 +3889,50 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetPositionUpdateFrequency` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void rangeAudioSetRangeAudioVolume(MethodCall call, Result result) {
+        
+        if (rangeAudioInstance != null) {
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            rangeAudioInstance.setRangeAudioVolume(volume);
+            
+            result.success(null);
+
+        } else {
+            result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetRangeAudioVolume` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void rangeAudioSetStreamVocalRange(MethodCall call, Result result) {
+        
+        if (rangeAudioInstance != null) {
+            String streamID = call.argument("streamID");
+            float vocalRange = ZegoUtils.floatValue((Number) call.argument("vocalRange"));
+            rangeAudioInstance.setStreamVocalRange(streamID, vocalRange);
+            
+            result.success(null);
+
+        } else {
+            result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void rangeAudioUpdateStreamPosition(MethodCall call, Result result) {
+        
+        if (rangeAudioInstance != null) {
+            String streamID = call.argument("streamID");
+            float[] position = call.argument("position");
+            rangeAudioInstance.updateStreamPosition(streamID, position);
+            
+            result.success(null);
+
+        } else {
+            result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioUpdateStreamPosition` but can't find specific instance", null);
         }
     }
 

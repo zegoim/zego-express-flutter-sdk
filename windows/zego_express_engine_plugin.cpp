@@ -139,6 +139,9 @@ static const std::map<std::string, std::pair< std::function<void(flutter::Encoda
        EngineMethodHandler(sendSEI), //std::bind(&ZegoExpressEngineMethodHandler::sendSEI, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(sendAudioSideInfo), //std::bind(&ZegoExpressEngineMethodHandler::sendAudioSideInfo, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(enableHardwareEncoder), //std::bind(&ZegoExpressEngineMethodHandler::enableHardwareEncoder, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       EngineMethodHandler(setCapturePipelineScaleMode),
+       EngineMethodHandler(enableH265EncodeFallback),
+       EngineMethodHandler(isVideoEncoderSupported),
        EngineMethodHandler(setLowlightEnhancement), //std::bind(&ZegoExpressEngineMethodHandler::setLowlightEnhancement, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        
        EngineMethodHandler(startPlayingStream), //std::bind(&ZegoExpressEngineMethodHandler::startPlayingStream, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -299,6 +302,9 @@ static const std::map<std::string, std::pair< std::function<void(flutter::Encoda
        EngineMethodHandler(rangeAudioUpdateSelfPosition), //std::bind(&ZegoExpressEngineMethodHandler::rangeAudioUpdateSelfPosition, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(rangeAudioMuteUser), //std::bind(&ZegoExpressEngineMethodHandler::rangeAudioMuteUser, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(rangeAudioSetPositionUpdateFrequency), //std::bind(&ZegoExpressEngineMethodHandler::rangeAudioSetPositionUpdateFrequency, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       EngineMethodHandler(rangeAudioSetRangeAudioVolume),
+       EngineMethodHandler(rangeAudioSetStreamVocalRange),
+       EngineMethodHandler(rangeAudioUpdateStreamPosition),
         // RealTimeSequentialDataManager
        EngineMethodHandler(createRealTimeSequentialDataManager), //std::bind(&ZegoExpressEngineMethodHandler::createRealTimeSequentialDataManager, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(destroyRealTimeSequentialDataManager), //std::bind(&ZegoExpressEngineMethodHandler::destroyRealTimeSequentialDataManager, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
