@@ -1,5 +1,51 @@
 # Change Log
 
+## 2.23.0
+
+### **New Features**
+
+1. It supports macOS now.
+
+    Now it supports macOS, and the interface is basically aligned with the mobile phone, except for a few interfaces that only support specific platforms. macOS now only supports TextureRenderer for rendering.
+
+2. Windows support [setPlayerCanvas] [takePublishStreamSnapshot] [takePlayStreamSnapshot] [takeSnapshot].
+
+    For related API, please refer to [setPlayerCanvas](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayerCanvas.html), [takePublishStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/takePublishStreamSnapshot.html), [takePlayStreamSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/takePlayStreamSnapshot.html), [takeSnapshot](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/takeSnapshot.html)
+
+3. Added 3 new modes for video capture and rotation function on mobile.
+
+    Due to the angle, resolution, rotation and other characteristics of mobile cameras, developers need to do many complex adaptations.
+
+    The current SDK encapsulates various configurations and provides simple mode selection. On the basis of the original custom mode, a new fixed scale mode, adaptive mode and alignment mode can be added, which can effectively reduce the access cost of developers.
+
+    Not supported in TextureRenderer render mode on iOS now.
+
+    For related API, please refer to [setAppOrientationMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setAppOrientationMode.html)
+
+4. Added support for reverb effects to the system ear feedback of Huawei mobile phones.
+
+    Note: To use this feature, please contact ZEGO Technical Support.
+
+    When use the system ear return of Huawei mobile phones, add the reverberation effect support. Due to the limitation of the system, only the following three reverb effects are supported: KTV, Theater, Concert, and the default is KTV. If you choose a reverb effect other than those three effects, it still defaults to the KTV effect.
+
+### **Enhancements**
+
+1. Optimized the performance of the super-resolution feature for Android machines using Qualcomm chips.
+
+    Note: To use this feature, please contact ZEGO Technical Support.
+
+    Optimize the performance of the super-resolution function, increase the maximum supported resolution, improve the model coverage, optimize resource usage and inference speed.
+
+### **Bug Fixes**
+
+1. Fixed an issue where calling [loginRoom] during network switching (Wi-Fi or cellular) may not have a callback in multi-room mode.
+
+2. Fixed the issue that the voice of people in the original squad could be heard outside the range of the range voice function after exiting the squad.
+
+3. Fixed a possible crash on Android 5.1 and below.
+
+4. Fixed some bugs found.
+
 ## 2.22.0
 
 ### **New Features**
