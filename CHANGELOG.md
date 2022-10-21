@@ -28,6 +28,20 @@
 
     When use the system ear return of Huawei mobile phones, add the reverberation effect support. Due to the limitation of the system, only the following three reverb effects are supported: KTV, Theater, Concert, and the default is KTV. If you choose a reverb effect other than those three effects, it still defaults to the KTV effect.
 
+### **Deleted**
+
+1. Abandoned the old version of the create renderer interface.
+
+    In order to facilitate developers to implement the video rendering feature, the [createTextureRenderer] [destroyTextureRenderer] [updateTextureRendererSize] and [createPlatformView] [destroyPlatformView] API modules have been removed since v2.23.0.
+
+    Therefore, when upgrading from an old version to v2.23.0, developers need to migrate to the new [createCanvasView] and [destroyCanvasView] API to implement the video rendering feature.
+
+    The new ZegoExpressCanvasViewUtils API module can support both External Texture and PlatformView rendering methods.
+
+    For the migration documentation, see [v2.23.0 Upgrade Guide](https://docs.zegocloud.com/article/14906)
+
+    For related API, please refer to [createCanvasView](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressCanvasViewUtils/createCanvasView.html), [destroyCanvasView](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressCanvasViewUtils/destroyCanvasView.html)
+
 ### **Enhancements**
 
 1. Optimized the performance of the super-resolution feature for Android machines using Qualcomm chips.
