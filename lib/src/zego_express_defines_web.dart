@@ -42,6 +42,7 @@ class ZegoFlutterEngine {
   external enableAGC(bool enable);
   external enableANS(bool enable);
   external enableCamera(bool enable, int channel);
+  external useFrontCamera(bool enable, int channel);
   external renewToken(String roomID, String token);
   external mutePlayStreamAudio(String streamID, bool mute);
   external mutePlayStreamVideo(String streamID, bool mute);

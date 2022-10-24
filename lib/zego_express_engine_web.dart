@@ -92,6 +92,9 @@ class ZegoExpressEngineWeb {
       case 'enableCamera':
         return enableCamera(
             call.arguments["enable"], call.arguments["channel"]);
+      case 'useFrontCamera':
+        return useFrontCamera(
+            call.arguments["enable"], call.arguments["channel"]);
       case 'startPreview':
         return startPreview(
             call.arguments['canvas'], call.arguments["channel"]);
@@ -578,12 +581,14 @@ class ZegoExpressEngineWeb {
         maxMemberCount: config["maxMemberCount"],
         token: config["token"],
         isUserStatusNotify: config["isUserStatusNotify"]);
-    
-    var result = await ((){
+    print('login');
+    var result;
+    result = await ((){
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance?.loginRoom(roomID, webUser, webConfig, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
+    print('loginend');
     final map = {};
     map["errorCode"] = 0;
     map["extendedData"] = "{}";
@@ -710,7 +715,7 @@ class ZegoExpressEngineWeb {
     return await ZegoFlutterEngine.instance.setSEIConfig(config['type']);
   }
   Future<void> sendSEI(dynamic data, int dataLength, int channel) async {
-    return await ZegoFlutterEngine.instance.sendSEI(data, dataLength, channel);
+    return await ZegoFlutterEngine.instance.sendSEI(Utf8Decoder().convert(data), dataLength, channel);
   }
 
   Future<void> mutePublishStreamVideo(bool mute, int channel) async {
@@ -751,6 +756,9 @@ class ZegoExpressEngineWeb {
 
   Future<void> enableCamera(bool enable, int channel) async {
     return await ZegoFlutterEngine.instance.enableCamera(enable, getPublishChannel(channel));
+  }
+  Future<void> useFrontCamera(bool enable, int channel) async {
+    return await ZegoFlutterEngine.instance.useFrontCamera(enable, getPublishChannel(channel));
   }
 
   Future<void> renewToken(String roomID, String token) async {
