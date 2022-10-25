@@ -40,6 +40,9 @@
 
     // Register platform view factory
     [registrar registerViewFactory:[ZegoPlatformViewFactory sharedInstance] withId:@"plugins.zego.im/zego_express_view"];
+
+    // init api called callback
+    [[ZegoExpressEngineMethodHandler sharedInstance] initApiCalledCallback];
 }
 
 #pragma mark - Handle Event Sink

@@ -22,6 +22,10 @@ public:
     {
         registrar_ = registrar;
     }
+
+    void initApiCalledCallback();
+
+    bool isEngineCreated();
     
 public:
     void getVersion(flutter::EncodableMap& argument,
@@ -229,6 +233,12 @@ public:
     void sendAudioSideInfo(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableHardwareEncoder(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setCapturePipelineScaleMode(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableH265EncodeFallback(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void isVideoEncoderSupported(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setLowlightEnhancement(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -557,6 +567,12 @@ public:
     void rangeAudioMuteUser(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void rangeAudioSetPositionUpdateFrequency(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void rangeAudioSetRangeAudioVolume(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void rangeAudioSetStreamVocalRange(flutter::EncodableMap& argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void rangeAudioUpdateStreamPosition(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     // RealTimeSequentialDataManager

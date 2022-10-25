@@ -523,6 +523,11 @@ class ZegoExpressImpl {
         .invokeMethod('isVideoEncoderSupported', {'codecID': codecID.index});
   }
 
+  Future<void> setAppOrientationMode(ZegoOrientationMode mode) async {
+    return await _channel
+        .invokeMethod('setAppOrientationMode', {'mode': mode.index});
+  }
+
   Future<void> setLowlightEnhancement(ZegoLowlightEnhancementMode mode,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setLowlightEnhancement', {
@@ -563,8 +568,9 @@ class ZegoExpressImpl {
                   : {},
               'roomID': config.roomID ?? '',
               'videoCodecID': config.videoCodecID.index,
-              'sourceResourceType':
-                  config.sourceResourceType?.index ?? ZegoResourceType.RTC.index
+              'sourceResourceType': config.sourceResourceType?.index ??
+                  ZegoResourceType.RTC.index,
+              'codecTemplateID': config.codecTemplateID ?? 0
             }
           : {}
     });
@@ -3073,6 +3079,27 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   Future<void> setPositionUpdateFrequency(int frequency) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'rangeAudioSetPositionUpdateFrequency', {'frequency': frequency});
+  }
+
+  @override
+  Future<void> setRangeAudioVolume(int volume) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetRangeAudioVolume', {'volume': volume});
+  }
+
+  @override
+  Future<void> setStreamVocalRange(String streamID, double vocalRange) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'rangeAudioSetStreamVocalRange',
+        {'streamID': streamID, 'vocalRange': vocalRange});
+  }
+
+  @override
+  Future<void> updateStreamPosition(
+      String streamID, Float32List position) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'rangeAudioUpdateStreamPosition',
+        {'streamID': streamID, 'position': position});
   }
 }
 

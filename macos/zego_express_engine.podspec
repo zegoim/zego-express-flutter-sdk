@@ -19,6 +19,7 @@ ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZEGO Express 
   s.platform = :osx, '10.11'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+  s.prepare_command = 'sh setup.sh'
   s.script_phases = [
     { :name => 'Precompile',
       :script => '${PODS_TARGET_SRCROOT}/setup.sh',

@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setRegistrar:(id<FlutterPluginRegistrar>)registrar eventSink:(FlutterEventSink)sink;
 
+- (void)initApiCalledCallback;
+
 @end
 
 NS_ASSUME_NONNULL_END

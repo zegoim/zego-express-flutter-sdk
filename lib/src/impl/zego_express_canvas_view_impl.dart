@@ -16,12 +16,14 @@ class ZegoExpressCanvasViewImpl {
     Widget? widget;
     if (ZegoExpressImpl.isEngineCreated) {
       if (ZegoExpressImpl.shouldUsePlatformView()) {
-        widget = ZegoExpressPlatformViewImpl.createPlatformView(onViewCreated);
+        widget = ZegoExpressPlatformViewImpl.createPlatformView(onViewCreated,
+            key: key);
       } else {
         ZegoExpressTextureRenderer().init();
         final int textureID =
             await ZegoExpressTextureRenderer().createTextureRenderer(0, 0);
         widget = ZegoTextureWidget(
+          key: key,
           stream: ZegoExpressTextureRenderer().getStream(textureID),
           textureID: textureID,
           updateTextureRendererSize:

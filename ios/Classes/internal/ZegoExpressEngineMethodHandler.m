@@ -55,6 +55,10 @@
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 }
 
+- (void)initApiCalledCallback {
+    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     ZGLog(@"[DartCall] [%@]", call.method);
     SEL selector = NSSelectorFromString([NSString stringWithFormat:@"%@:result:", call.method]);
@@ -119,7 +123,6 @@
         ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
     }
 
-    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
@@ -158,7 +161,6 @@
         ((void (*)(id, SEL, int))objc_msgSend)(ZegoExpressEngine.class, selector, 4);
     }
 
-    [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
@@ -978,6 +980,17 @@
     result(@(isSupport));
 }
 
+- (void)setAppOrientationMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+#if TARGET_OS_IPHONE
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+
+    [[ZegoExpressEngine sharedEngine] setAppOrientationMode:(ZegoOrientationMode)mode];
+#endif
+
+    result(nil);
+}
+
 - (void)setLowlightEnhancement:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
@@ -1006,6 +1019,7 @@
         playerConfig = [[ZegoPlayerConfig alloc] init];
         playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
         playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
+        playerConfig.codecTemplateID = [ZegoUtils intValue:playerConfigMap[@"codecTemplateID"]];
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
         if (videoCodecIDIndex > 3) {
@@ -3616,6 +3630,48 @@
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetPositionUpdateFrequency` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)rangeAudioSetRangeAudioVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+
+        [self.rangeAudioInstance setRangeAudioVolume:volume];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetRangeAudioVolume` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)rangeAudioSetStreamVocalRange:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        NSString* streamID = call.arguments[@"streamID"];
+        float vocalRange = [ZegoUtils floatValue:call.arguments[@"vocalRange"]];
+
+        [self.rangeAudioInstance setStreamVocalRange:streamID vocalRange: vocalRange];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)rangeAudioUpdateStreamPosition:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        NSString* streamID = call.arguments[@"streamID"];
+        FlutterStandardTypedData *positionArray = call.arguments[@"position"];
+        float position[3];
+        convertFloatArray(position, positionArray);
+        [self.rangeAudioInstance updateStreamPosition:streamID position: position];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioUpdateStreamPosition` but can't find specific instance" details:nil]);
     }
 }
 

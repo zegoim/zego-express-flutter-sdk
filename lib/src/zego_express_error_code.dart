@@ -56,6 +56,9 @@ class ZegoErrorCode {
   /// Server dispatching exception. Please contact ZEGO technical support to solve the problem. This error code is deprecated.
   static const int CommonDispatchError = 1000065;
 
+  /// Description: The engine audio and video module has been activated, and this setting is not supported. <br>Possible reason: Only supports setting before starting the audio and video module of the engine. <br>Processing suggestion: Please set it before calling [startPreviewView] [startPublishingStream] [startPlayingStream] to start the audio and video module.
+  static const int CommonConfigAfterEngineStarted = 1000066;
+
   /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Solutions: Please check whether the Android JVM environment is normal or contact ZEGO technical support.
   static const int CommonInnerNullptr = 1000090;
 
@@ -808,34 +811,34 @@ class ZegoErrorCode {
   /// Description: Failed to set the team ID.<br>Cause: The input user ID contains invalid characters. <br>Solutions: User ID can only contains numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', ',', '.', '<', '>', '/', '\'.
   static const int RangeAudioTeamIdInvalidCharacter = 1016004;
 
-  /// Description: The command invalid. <br>Cause: The command entered by the [ZegoCopyrightedSendExtendedRequest] function is empty. <br>Solutions: Please check the command entered when calling the [ZegoCopyrightedSendExtendedRequest] function to make sure it is not empty.
+  /// Description: The command invalid. <br>Cause: The command entered by the [sendExtendedRequest] function is empty. <br>Solutions: Please check the command entered when calling the [sendExtendedRequest] function to make sure it is not empty.
   static const int CopyrightedMusicCommandInvalid = 1017000;
 
-  /// Description: The params invalid. <br>Cause: The params entered by the [ZegoCopyrightedSendExtendedRequest] function is empty. <br>Solutions: Please check the params entered when calling the [ZegoCopyrightedSendExtendedRequest] function to make sure it is not empty.
+  /// Description: The params invalid. <br>Cause: The params entered by the [sendExtendedRequest] function is empty. <br>Solutions: Please check the params entered when calling the [sendExtendedRequest] function to make sure it is not empty.
   static const int CopyrightedMusicParamsInvalid = 1017001;
 
   /// Description: The song_id invalid. <br>Cause: The song_id entered is empty. <br>Solutions: Please check the song_id entered when calling the function to make sure it is not empty.
   static const int CopyrightedMusicSongIdInvalid = 1017002;
 
-  /// Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [RequestAccompaniment]
+  /// Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [requestAccompaniment]
   static const int CopyrightedMusicShareTokenInvalid = 1017003;
 
-  /// Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [RequestSong] [RequestAccompaniment] [GetMusicByToken]
+  /// Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [requestSong] [requestAccompaniment] [getMusicByToken]
   static const int CopyrightedMusicResourceIdInvalid = 1017004;
 
-  /// Description: The start_position invalid. <br>Cause: The start_position entered by the fuction [ZegoCopyrightedMusicPlay] is invalid. <br>Solutions: Please check the start_position entered when calling the function [ZegoCopyrightedMusicPlay] to make sure it is in 0 ~ song duration.
+  /// Description: The start_position invalid. <br>Cause: The start_position entered by the fuction [loadCopyrightedMusicResourceWithPosition] is invalid. <br>Solutions: Please check the start_position entered when calling the function [loadCopyrightedMusicResourceWithPosition] to make sure it is in 0 ~ song duration.
   static const int CopyrightedMusicStartPositionInvalid = 1017005;
 
-  /// Description: The position invalid. <br>Cause: The position entered by the fuction [ZegoCopyrightedMusicSeek] is invalid. <br>Solutions: Please check the position entered when calling the function [ZegoCopyrightedMusicSeek] to make sure it is in 0 ~ song duration.
+  /// Description: The position invalid. <br>Cause: The position entered by the fuction [seek] is invalid. <br>Solutions: Please check the position entered when calling the function [seek] to make sure it is in 0 ~ song duration.
   static const int CopyrightedMusicPositionInvalid = 1017006;
 
-  /// Description: The volume invalid.. <br>Cause: The Volume entered by the fuction [ZegoCopyrightedMusicSetPlayVolume] is invalid. <br>Solutions: Please check the Volume entered when calling the function [ZegoCopyrightedMusicSetPlayVolume] to make sure it is in 0 ~ 200.
+  /// Description: The volume invalid.. <br>Cause: The Volume entered by the fuction [setPlayVolume] is invalid. <br>Solutions: Please check the Volume entered when calling the function [setPlayVolume] to make sure it is in 0 ~ 200.
   static const int CopyrightedMusicVolumeInvalid = 1017007;
 
-  /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [RequestAccompaniment]
+  /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [requestAccompaniment]
   static const int CopyrightedMusicKrcTokenInvalid = 1017008;
 
-  /// Description: Copyright music init authentication failed. <br>Cause: Appsign or token is not set. <br>Solutions: When using token authentication, call [loginroom] before calling [initcopyrightedmusic] or use appsign authentication.
+  /// Description: Copyright music init authentication failed. <br>Cause: Appsign or token is not set. <br>Solutions: When using token authentication, call [loginRoom] before calling [initCopyrightedMusic] or use appsign authentication.
   static const int CopyrightedMusicCopyrightedMusicAuthParamInvalid = 1017009;
 
   /// Description: Request copyrighted server fail. <br>Cause: The params entered make mistake or some network reasons. <br>Solutions: Please check the params entered and retry.
@@ -853,10 +856,10 @@ class ZegoErrorCode {
   /// Description: Resource file expired. <br>Cause: The resource file has expired. <br>Solutions: Please request song or accompaniment again.
   static const int CopyrightedMusicResourceFileExpired = 1017014;
 
-  /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [load] function to reload media resource.
+  /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid = 1017015;
 
-  /// Description: The resource_id unauthorized. <br>Cause: When [load] is called to load resources, the resource_id is unauthorization. <br>Solutions: Please call the [requestSong] [requestAccompaniment] [getMusicByToken] function before call [load] function to load resource.
+  /// Description: The resource_id unauthorized. <br>Cause: When [download] is called to download resources, the resource_id is unauthorization. <br>Solutions: Please call the [requestSong] [requestAccompaniment] [requestAccompanimentClip] [getMusicByToken] function before call [load] function to load resource.
   static const int CopyrightedMusicResourceIdUnauthorized = 1017018;
 
   /// Description: No copyright, unable to listen to and sing songs. <br>Cause: No copyright. <br>Solutions: Please select another music.
@@ -907,7 +910,7 @@ class ZegoErrorCode {
   /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicNotSupportMethod = 1017095;
 
-  /// Description: The copyright music module is not initialized. <br>Cause: The [InitCopyrightedMusic] method is not called to initialize the copyright module. <br>Solutions: Please call the [InitCopyrightedMusic] method first.
+  /// Description: The copyright music module is not initialized. <br>Cause: The [initCopyrightedMusic] method is not called to initialize the copyright module. <br>Solutions: Please call the [initCopyrightedMusic] method first.
   static const int CopyrightedMusicNoInit = 1017096;
 
   /// Description: System is busy. <br>Cause: System is busy. <br>Solutions: Please try again.

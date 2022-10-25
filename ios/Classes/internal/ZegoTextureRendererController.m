@@ -22,6 +22,8 @@
 
 @property (nonatomic, strong) FlutterEventSink eventSink;
 
+@property (nonatomic, assign) BOOL isAppEnterBackground;
+
 @end
 
 @implementation ZegoTextureRendererController
@@ -37,13 +39,31 @@
 
 - (instancetype)init {
     self = [super init];
+    self.isAppEnterBackground = NO;
     if (self) {
         _renderers = [NSMutableDictionary dictionary];
         _capturedTextureIdMap = [NSMutableDictionary dictionary];
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
         _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
+        
+#if TARGET_OS_IPHONE
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+#endif
     }
     return self;
+}
+
+-(void)applicationDidEnterBackground:(NSNotification *)notification {
+    @synchronized (self) {
+        self.isAppEnterBackground = YES;
+    }
+}
+
+-(void)applicationWillEnterForeground:(NSNotification *)notification {
+    @synchronized (self) {
+        self.isAppEnterBackground = NO;
+    }
 }
 
 #pragma mark - Dart Texture Render Utils Operation
@@ -59,7 +79,9 @@
     ZGLog(@"[createTextureRenderer] textureID:%ld, renderer:%p", (long)renderer.textureID,
           renderer);
 
-    [self.renderers setObject:renderer forKey:@(renderer.textureID)];
+    @synchronized (self) {
+        [self.renderers setObject:renderer forKey:@(renderer.textureID)];
+    }
 
     [self logCurrentRenderers];
 
@@ -78,7 +100,9 @@
 
     ZGLog(@"[destroyTextureRenderer] textureID:%ld, renderer:%p", (long)textureID, renderer);
 
-    [self.renderers removeObjectForKey:@(renderer.textureID)];
+    @synchronized (self) {
+        [self.renderers removeObjectForKey:@(renderer.textureID)];
+    }
 
     // Release renderer
     [renderer destroy];
@@ -122,10 +146,11 @@
 }
 
 - (void)uninitController {
-    [self.renderers removeAllObjects];
-    [self.capturedTextureIdMap removeAllObjects];
-    [self.remoteTextureIdMap removeAllObjects];
-
+    @synchronized (self) {
+        [self.renderers removeAllObjects];
+        [self.capturedTextureIdMap removeAllObjects];
+        [self.remoteTextureIdMap removeAllObjects];
+    }
     self.isInited = NO;
 }
 
@@ -250,7 +275,11 @@
     renderer.rotation = param.rotation;
     renderer.flipMode = flipMode;
     
-    [renderer updateSrcFrameBuffer:buffer];
+    @synchronized (self) {
+        if (!self.isAppEnterBackground) {
+            [renderer updateSrcFrameBuffer:buffer];
+        }
+    }
 }
 
 #pragma mark - ZegoCustomVideoRenderHandler

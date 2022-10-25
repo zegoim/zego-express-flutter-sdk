@@ -98,18 +98,21 @@ class ZegoExpressTextureRenderer {
   }
 
   static void _textureRendererControllerEventListener(dynamic data) {
-    final Map<dynamic, dynamic> map = data;
-    switch (map['type']) {
-      case 'update':
-        int textureID = map['textureID'];
-        _updateController.sink.add({
-          'textureID': textureID,
-          'type': 'resize',
-          'width': double.parse(map['width'].toString()),
-          'height': double.parse(map['height'].toString()),
-          'isMirror': map['isMirror']
-        });
-    }
+    var func = (data) {
+      final Map<dynamic, dynamic> map = data;
+      switch (map['type']) {
+        case 'update':
+          int textureID = map['textureID'];
+          _updateController.sink.add({
+            'textureID': textureID,
+            'type': 'resize',
+            'width': double.parse(map['width'].toString()),
+            'height': double.parse(map['height'].toString()),
+            'isMirror': map['isMirror']
+          });
+      }
+    };
+    Timer(Duration(milliseconds: 10), () => func(data));
   }
 
   ZegoExpressTextureRenderer._();

@@ -1254,6 +1254,21 @@ enum ZegoAudioVADStableStateMonitorType {
   CustomProcessed
 }
 
+/// Orientation mode of the video.
+enum ZegoOrientationMode {
+  /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end. For details, please refer to the documentation https://doc-en.zego.im/article/4823.
+  Custom,
+
+  /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModePlayerSelfAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
+  PlayerSelfAdaption,
+
+  /// Player adapt to pulisher mode.Description: Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
+  PlayerAdaptToPulisher,
+
+  /// Fixed resolution ratio mode.Description: Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
+  FixedResolutionRatio
+}
+
 /// CDN network protocol types supported by ZEGO
 enum ZegoCDNProtocol {
   /// TCP protocol
@@ -3335,6 +3350,39 @@ abstract class ZegoRangeAudio {
   ///
   /// - [frequency] the frequency, the value must be greater than 15 ms.
   Future<void> setPositionUpdateFrequency(int frequency);
+
+  /// Set range voice volume.
+  ///
+  /// Available since: 2.23.0
+  /// Description: Set range voice volume.
+  /// Use case: This interface allows you to increase or decrease the volume of a range voice stream when the user calls [startPlayingStream] and pulls another stream.
+  /// Default value: 100.
+  /// When to call: After initializing the range audio [createRangeAudio].
+  ///
+  /// - [volume] volume, [0,200].
+  Future<void> setRangeAudioVolume(int volume);
+
+  /// Set the sound range for the stream.
+  ///
+  /// Available since: 2.23.0
+  /// Description: Set range voice volume.
+  /// Use case: When a user calls [startPlayingStream] and pulls another stream, the stream has a range speech effect by setting the range of sounds for that stream and calling [updateStreamPosition]. After the call will be the sound source of the sound range of the distance attenuation effect. Note that calling [startPlayingStream] if the stream is pulled by the CDN, enabling the call scope voice for [enableMicrophone] will become pulled from the RTC. To pull the CDN flow, you are advised to use the CDN address to customize the CDN flow.
+  /// When to call: After initializing the range audio [createRangeAudio] and after [startPlayingStream].
+  ///
+  /// - [streamID] play stream id
+  /// - [vocalRange] Flow sound range.
+  Future<void> setStreamVocalRange(String streamID, double vocalRange);
+
+  /// Update the location of the flow.
+  ///
+  /// Available since: 2.23.0
+  /// Description: Set range voice volume.
+  /// Use case: When the user calls [startPlayingStream] to pull another stream, call [setStreamVocalRange] to set the stream's voice position, then call this interface to set the stream's position, so that the stream also has the range voice effect.
+  /// When to call: After initializing the range audio [createRangeAudio] and after [startPlayingStream].
+  ///
+  /// - [streamID] play stream id
+  /// - [position] The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3. The three values ​​represent the front, right, and top coordinate values ​​in turn.
+  Future<void> updateStreamPosition(String streamID, Float32List position);
 
   /// Update self position and orentation.
   ///
