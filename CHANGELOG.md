@@ -27,8 +27,10 @@
     Note: To use this feature, please contact ZEGO Technical Support.
 
     When use the system ear return of Huawei mobile phones, add the reverberation effect support. Due to the limitation of the system, only the following three reverb effects are supported: KTV, Theater, Concert, and the default is KTV. If you choose a reverb effect other than those three effects, it still defaults to the KTV effect.
+
 5. Added web support for some interfaces.
     Some interface functions are not supported by the web. At present, the web supports more basic functions.we supports to setting video config, sending message, mixing audio, etc;
+    
 ### **Deleted**
 
 1. Abandoned the old version of the create renderer interface.
