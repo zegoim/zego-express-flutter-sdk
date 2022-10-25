@@ -15,7 +15,7 @@ class ZegoExpressPlatformViewImpl {
           ..id = "zego-view-$id"
           ..autoplay = true);
     return HtmlElementView(
-        key: UniqueKey(),
+        key: key,
         viewType: webcamPushElement,
         onPlatformViewCreated: (int viewID) {
           onViewCreated(viewID);
