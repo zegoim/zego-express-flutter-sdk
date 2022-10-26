@@ -24,6 +24,10 @@
 
     📲 一个实现了 Android/iOS 屏幕采集并推流直播的示例 Demo。
 
+## 💥 Breaking changes
+
+1. **[v2.23.0 升级指南](./docs/v2.23.0_upgrade_guide_zh.md)**
+
 ## 🔗 API 文档
 
 [ZegoExpressEngine API Reference](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine-class.html)

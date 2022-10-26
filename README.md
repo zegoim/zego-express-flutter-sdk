@@ -24,6 +24,10 @@ Learn more about the solution: [https://www.zegocloud.com](https://www.zegocloud
 
     📲 An example demo that implements screen capture and live broadcast on Android/iOS.
 
+## 💥 Breaking changes
+
+1. **[v2.23.0 Upgrade Guide](./docs/v2.23.0_upgrade_guide.md)**
+
 ## 🔗 API documentation
 
 [ZegoExpressEngine API Reference](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine-class.html)

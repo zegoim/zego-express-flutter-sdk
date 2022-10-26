@@ -2,6 +2,10 @@
 
 ## 2.23.0
 
+### **💥 Breaking changes**
+
+This version contains breaking changes, please refer to [v2.23.0 Upgrade Guide](./docs/v2.23.0_upgrade_guide.md) for details.
+
 ### **New Features**
 
 1. It supports macOS now.
@@ -30,10 +34,10 @@
 
 5. Added web support for some interfaces.
     Some interface functions are not supported by the web. At present, the web supports more basic functions.we supports to setting video config, sending message, mixing audio, etc;
-    
+
 ### **Deleted**
 
-1. Abandoned the old version of the create renderer interface.
+1. Legacy video rendering APIs have been removed.
 
     In order to facilitate developers to implement the video rendering feature, the [createTextureRenderer] [destroyTextureRenderer] [updateTextureRendererSize] and [createPlatformView] [destroyPlatformView] API modules have been removed since v2.23.0.
 
