@@ -96,8 +96,6 @@ protected:
 
     void onRemoteSoundLevelUpdate(const std::unordered_map<std::string, float>& soundLevels) override;
 
-    void onDeviceError(int errorCode, const std::string& deviceName) override;
-
     void onRemoteMicStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) override;
 
 

@@ -854,22 +854,6 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
-        public void onDeviceError(int errorCode, String deviceName) {
-            super.onDeviceError(errorCode, deviceName);
-            ZegoLog.log("[onDeviceError] errorCode: %d, deviceName: %s", errorCode, deviceName);
-
-            if (guardSink()) { return; }
-
-            HashMap<String, Object> map = new HashMap<>();
-
-            map.put("method", "onDeviceError");
-            map.put("errorCode", errorCode);
-            map.put("deviceName", deviceName);
-
-            sink.success(map);
-        }
-
-        @Override
         public void onRemoteCameraStateUpdate(String streamID, ZegoRemoteDeviceState state) {
             super.onRemoteCameraStateUpdate(streamID, state);
             ZegoLog.log("[onRemoteCameraStateUpdate] streamID: %s, state: %s", streamID, state.name());

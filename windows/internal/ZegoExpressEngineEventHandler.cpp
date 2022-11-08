@@ -491,18 +491,6 @@ void ZegoExpressEngineEventHandler::onRemoteAudioSpectrumUpdate(const std::unord
 
 }*/
 
-void ZegoExpressEngineEventHandler::onDeviceError(int errorCode, const std::string& deviceName) {
-
-    if (eventSink_) {
-        FTMap retMap;
-        retMap[FTValue("method")] = FTValue("onDeviceError");
-        retMap[FTValue("errorCode")] = FTValue(errorCode);
-        retMap[FTValue("deviceName")] = FTValue(deviceName);
-
-        eventSink_->Success(retMap);
-    }
-}
-
 void ZegoExpressEngineEventHandler::onRemoteMicStateUpdate(const std::string& streamID, EXPRESS::ZegoRemoteDeviceState state) {
 
     if (eventSink_) {

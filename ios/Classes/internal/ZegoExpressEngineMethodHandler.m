@@ -95,6 +95,13 @@
     result(@(ret));
 }
 
+- (void)setRoomScenario:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int scenario = [ZegoUtils intValue:call.arguments[@"scenario"]];
+    [[ZegoExpressEngine sharedEngine] setRoomScenario:(ZegoScenario)scenario];
+    result(nil);
+}
+
 - (void)createEngineWithProfile:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     // Report framework info
@@ -257,19 +264,6 @@
     result(nil);
 }
 
-- (void)setDebugVerbose:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-    int language = [ZegoUtils intValue:call.arguments[@"language"]];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[ZegoExpressEngine sharedEngine] setDebugVerbose:enable language:(ZegoLanguage)language];
-#pragma clang diagnostic pop
-
-    result(nil);
-}
-
 - (void)enableDebugAssistant:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
@@ -337,30 +331,6 @@
                 @"extendedData": extendedDataJsonString
             });
         }];
-}
-
-- (void)loginMultiRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSString *roomID = call.arguments[@"roomID"];
-    NSDictionary *configMap = call.arguments[@"config"];
-    ZegoRoomConfig *configObject = nil;
-
-    if (configMap && configMap.count > 0) {
-        unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
-        BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
-        NSString *token = configMap[@"token"];
-
-        configObject = [[ZegoRoomConfig alloc] init];
-        configObject.maxMemberCount = maxMemberCount;
-        configObject.isUserStatusNotify = isUserStatusNotify;
-        configObject.token = token;
-    }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[ZegoExpressEngine sharedEngine] loginMultiRoom:roomID config:configObject];
-#pragma clang diagnostic pop
-
-    result(nil);
 }
 
 - (void)logoutRoom:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1184,19 +1154,6 @@
     result(nil);
 }
 
-- (void)setPlayStreamVideoLayer:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    int videoLayer = [ZegoUtils intValue:call.arguments[@"videoLayer"]];
-    NSString *streamID = call.arguments[@"streamID"];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[ZegoExpressEngine sharedEngine] setPlayStreamVideoLayer:(ZegoPlayerVideoLayer)videoLayer streamID:streamID];
-#pragma clang diagnostic pop
-
-    result(nil);
-}
-
 - (void)setPlayStreamVideoType:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int streamType = [ZegoUtils intValue:call.arguments[@"streamType"]];
@@ -1881,19 +1838,6 @@
 
         result(nil);
     });
-}
-
-- (void)setBuiltInSpeakerOn:(FlutterMethodCall *)call result:(FlutterResult)result {
-#if TARGET_OS_IPHONE
-    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[ZegoExpressEngine sharedEngine] setBuiltInSpeakerOn:enable];
-#pragma clang diagnostic pop
-
-#endif
-    result(nil);
 }
 
 - (void)setAudioRouteToSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {

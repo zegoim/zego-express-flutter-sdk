@@ -24,9 +24,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   Caution:
   ///   1. Stream ID is defined by you.
   ///   2. needs to be globally unique within the entire AppID. If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
-  ///   3. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   4. If you need to communicate with the Web SDK, please do not use '%'.
-  ///   5. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  ///   3. Only support numbers, English characters and '-', ' '.
   /// - [config] Advanced publish configuration.
   /// - [channel] Publish stream channel.
   Future<void> startPublishingStream(String streamID,
@@ -149,7 +147,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the video orientation (for the specified channel).
   ///
   /// Available since: 1.1.0
-  /// Description: Set the video orientation, please refer to https://doc-zh.zego.im/article/10365.
+  /// Description: Set the video orientation.
   /// Use cases: When users use mobile devices to conduct live broadcasts or video calls, they can set different video directions according to the scene.
   /// When to call: After [createEngine].
   /// Restrictions: None.

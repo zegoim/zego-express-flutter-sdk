@@ -361,20 +361,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void uploadLog(MethodCall call, Result result) {
+    public static void setRoomScenario(MethodCall call, Result result) {
 
-        ZegoExpressEngine.getEngine().uploadLog();
+        ZegoScenario scenario = ZegoScenario.getZegoScenario(ZegoUtils.intValue((Number)call.argument("scenario")));
+        ZegoExpressEngine.getEngine().setRoomScenario(scenario);
 
         result.success(null);
     }
 
-    @SuppressWarnings({"unused", "deprecation"})
-    public static void setDebugVerbose(MethodCall call, Result result) {
+    @SuppressWarnings("unused")
+    public static void uploadLog(MethodCall call, Result result) {
 
-        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
-        ZegoLanguage language = ZegoLanguage.getZegoLanguage(ZegoUtils.intValue((Number)call.argument("language")));
-
-        ZegoExpressEngine.getEngine().setDebugVerbose(enable, language);
+        ZegoExpressEngine.getEngine().uploadLog();
 
         result.success(null);
     }
@@ -438,25 +436,6 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(resultMap);
             }
         });
-    }
-
-    @SuppressWarnings({"unused", "deprecation"})
-    public static void loginMultiRoom(MethodCall call, Result result) {
-
-        String roomID = call.argument("roomID");
-
-        HashMap<String, Object> configMap = call.argument("config");
-        ZegoRoomConfig roomConfig = null;
-        if (configMap != null && !configMap.isEmpty()) {
-            roomConfig = new ZegoRoomConfig();
-            roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
-            roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
-            roomConfig.token = (String)configMap.get("token");
-        }
-
-        ZegoExpressEngine.getEngine().loginMultiRoom(roomID, roomConfig);
-
-        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -1353,17 +1332,6 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void setPlayStreamVideoLayer(MethodCall call, Result result) {
-
-        String streamID = call.argument("streamID");
-        ZegoPlayerVideoLayer videoLayer = ZegoPlayerVideoLayer.getZegoPlayerVideoLayer(ZegoUtils.intValue((Number) call.argument("videoLayer")));
-
-        ZegoExpressEngine.getEngine().setPlayStreamVideoLayer(streamID, videoLayer);
-
-        result.success(null);
-    }
-
-    @SuppressWarnings("unused")
     public static void setPlayStreamVideoType(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
@@ -1895,16 +1863,6 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(null);
             }
         }.start();
-    }
-
-    @SuppressWarnings("unused")
-    public static void setBuiltInSpeakerOn(MethodCall call, Result result) {
-
-        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
-
-        ZegoExpressEngine.getEngine().setBuiltInSpeakerOn(enable);
-
-        result.success(null);
     }
 
     @SuppressWarnings("unused")

@@ -64,7 +64,7 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// Start network speed test. Support set speed test interval。
   ///
   /// Available since: 1.20.0
-  /// Description: This function supports uplink/downlink network speed test.
+  /// Description: This function supports uplink/downlink network speed test when the network can be connected.
   /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
   /// When to call: It needs to be called after [loginRoom], and before [startPublishingStream]. If you call [startPublishingStream] while speed testing, the speed test will automatically stop.
   /// Restrictions: The maximum allowable test time for a single network speed test is 3 minutes.

@@ -101,6 +101,24 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.isFeatureSupported(featureType);
   }
 
+  /// Set room scenario.
+  ///
+  /// Available since: 3.0.0
+  /// Description: You can set the scenario of the room, and the SDK will adopt different optimization strategies for different scenarios in order to obtain better effects; this function does exactly the same thing as the [scenario] parameter in the [profile] configuration of [createEngine].
+  /// Use cases: This function is suitable for apps in various audio and video business scenarios, such as 1v1 video call (or voice call) scenario and live show scenario; this function can be used to switch scenarios without destroying the engine through [destroyEngine].
+  /// When to call: Must be set before calling [loginRoom] AND after calling [createEngine].
+  /// Restrictions: Once you log in to the room, you are no longer allowed to modify the room scenario. If you need to modify the scenario, you need to log out of the room first. If you log in to multiple rooms, you need to log out of all rooms before you can modify it.
+  /// Caution:
+  ///   1. Users in the same room are recommended to use the same room scenario for best results.
+  ///   2. Setting the scenario will affect the audio and video bit rate, frame rate, resolution, codec id, audio device mode, audio route type, traffic control, 3A, ear return and other audio and video configurations. If you have special needs, you can call various other APIs to set the above configuration after calling this API.
+  ///   3. Calling this function will override the scenario specified on [createEngine] or the scenario set by the last call to this function.
+  ///   4. Calling this function will overwrite the audio and video related configuration you set through APIs such as [setVideoConfig], [setAudioConfig], so it is recommended to set the scenario first and then adjust the audio and video configuration through other APIs.
+  ///
+  /// - [scenario] Room scenario.
+  Future<void> setRoomScenario(ZegoScenario scenario) async {
+    return await ZegoExpressImpl.instance.setRoomScenario(scenario);
+  }
+
   /// Uploads logs to the ZEGO server.
   ///
   /// Available since: 1.1.0
@@ -113,17 +131,17 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.uploadLog();
   }
 
-  /// Enable the debugg assistant. Note, do not enable this feature in the online version! Use only during development phase!
+  /// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
   ///
   /// Available since: 2.17.0
   /// Description: After enabled, the SDK will print logs to the console, and will pop-up an alert (toast) UI message when there is a problem with calling other SDK functions.
   /// Default value: This function is disabled by default.
   /// When to call: This function can be called right after [createEngine].
   /// Platform differences: The pop-up alert function only supports Android / iOS / macOS / Windows, and the console log function supports all platforms.
-  /// Caution: Be sure to confirm that this feature is turned off before the app is released to avoid pop-up UI alert when an error occurs in your release version's app. It is recommended to associate the [enable] parameter of this function with the DEBUG variable of the app, that is, only enable the debugg assistant in the DEBUG environment.
+  /// Caution: Be sure to confirm that this feature is turned off before the app is released to avoid pop-up UI alert when an error occurs in your release version's app. It is recommended to associate the [enable] parameter of this function with the DEBUG variable of the app, that is, only enable the debug assistant in the DEBUG environment.
   /// Restrictions: None.
   ///
-  /// - [enable] Whether to enable the debugg assistant.
+  /// - [enable] Whether to enable the debug assistant.
   Future<void> enableDebugAssistant(bool enable) async {
     return await ZegoExpressImpl.instance.enableDebugAssistant(enable);
   }
@@ -1037,7 +1055,7 @@ class ZegoExpressEngine {
   /// Network speed test quality callback.
   ///
   /// Available since: 1.20.0
-  /// Description: Network speed test quality callback.
+  /// Description: Network speed test quality callback when the network can be connected.
   /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
   /// When to Trigger: After call [startNetworkSpeedTest] start network speed test, this callback will be triggered. The trigger period is determined by the parameter value specified by call [startNetworkSpeedTest], default value is 3 seconds
   /// Restrictions: None.
@@ -1248,7 +1266,7 @@ class ZegoExpressEngine {
   static void Function(ZegoCopyrightedMusic copyrightedMusic, String resourceID,
       int currentDuration, int pitchValue)? onCurrentPitchValueUpdate;
 
-  /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK.
+  /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///
   /// Available: 1.1.0 ~ 2.13.1, deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead
   /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
@@ -1259,8 +1277,8 @@ class ZegoExpressEngine {
   /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.
   /// - [appSign] Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
-  /// - [isTestEnv] Choose to use a test environment or a formal commercial environment, the formal environment needs to submit work order configuration in the ZEGO management console. The test environment is for test development, with a limit of 10 rooms and 50 users. Official environment App is officially launched. ZEGO will provide corresponding server resources according to the configuration records submitted by the developer in the management console. The test environment and the official environment are two sets of environments and cannot be interconnected.
-  /// - [scenario] The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
+  /// - [isTestEnv] [Deprecated] For providing better and more standardized services, starting from 2021-11-16, ZEGO no longer classifies environments into production environments and testing environments. f you create your project in ZEGO Admin Console on/before 2021-11-16, refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) to upgrade the SDK and adjust related codes.
+  /// - [scenario] The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940
   /// - [enablePlatformView] Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false. Currently the web platform only supports rendering with Platform View. When using the [createCanvasView] interface, If the preferred render mode is not supported, another render mode is automatically used.
   @Deprecated(
       'Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.')
@@ -1271,23 +1289,10 @@ class ZegoExpressEngine {
         appID, appSign, isTestEnv, scenario,
         enablePlatformView: enablePlatformView);
   }
-
-  /// [Deprecated] The callback triggered when a device exception occurs. Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.
-  ///
-  /// Available: 1.1.0 ~ 2.14.0, deprecated since 2.15.0
-  /// Description: The callback triggered when a device exception occurs.
-  /// Trigger: This callback is triggered when an exception occurs when reading or writing the audio and video device.
-  ///
-  /// @deprecated Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.
-  /// - [errorCode] The error code corresponding to the status change of the playing stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
-  /// - [deviceName] device name
-  @Deprecated(
-      'Deprecated since 2.15.0, please use [onLocalDeviceExceptionOccurred] instead.')
-  static void Function(int errorCode, String deviceName)? onDeviceError;
 }
 
 extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
-  /// Enables or disables the beauty features for the specified publish channel.
+  /// [Deprecated] Enables or disables the beauty features for the specified publish channel. Deprecated since 2.16.0, please use the [enableEffectsBeauty] function instead.
   ///
   /// Available since: 1.1.0
   /// Description: When developers do not have much need for beauty features, they can use this function to set some very simple beauty effects.
@@ -1309,10 +1314,10 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
         .enableBeautify(featureBitmask, channel: channel);
   }
 
-  /// Set beautify option.
+  /// [Deprecated] Set beautify option. Deprecated since 2.16.0, please use the [setEffectsBeautyParam] function instead.
   ///
   /// Available since: 1.1.0
-  /// Description: set beautify option for specified stream publish channel.
+  /// Description: set beautify option for main publish channel.
   /// Use cases: Often used in video call, live broadcasting.
   /// When to call: It needs to be called after [createEngine].
   /// Restrictions: None.
@@ -1328,76 +1333,5 @@ extension ZegoExpressEngineDeprecatedApi on ZegoExpressEngine {
       {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
         .setBeautifyOption(option, channel: channel);
-  }
-
-  /// [Deprecated] Turns on/off verbose debugging and sets up the log language. This function is deprecated in version 2.3.0, please use [enableDebugAssistant] to achieve the original function.
-  ///
-  /// This feature is disabled by default and the language of debug information is English.
-  ///
-  /// @deprecated This function is deprecated in version 2.3.0, please use [enableDebugAssistant] to achieve the original function.
-  /// - [enable] Detailed debugging information switch
-  /// - [language] Debugging information language. Note that Chinese is deprecated, if you need Chinese info, please refer to the document https://docs.zegocloud.com/en/5548.html
-  @Deprecated(
-      'This function is deprecated in version 2.3.0, please use [enableDebugAssistant] to achieve the original function.')
-  Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
-    return await ZegoExpressImpl.instance.setDebugVerbose(enable, language);
-  }
-
-  /// [Deprecated] Logs in multi room. This method has been deprecated after version 2.9.0 If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.
-  ///
-  /// This method has been deprecated after version 2.9.0 If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.
-  /// You must log in the main room with [loginRoom] before invoke this function to logging in to multi room.
-  /// Currently supports logging into 1 main room and 1 multi room at the same time.
-  /// When logging out, you must log out of the multi room before logging out of the main room.
-  /// User can only publish the stream in the main room, but can play the stream in the main room and multi room at the same time, and can receive the signaling and callback in each room.
-  /// The advantage of multi room is that you can login another room without leaving the current room, receive signaling and callback from another room, and play streams from another room.
-  /// To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
-  /// Different users who log in to the same room can get room related notifications in the same room (eg [onRoomUserUpdate], [onRoomStreamUpdate], etc.), and users in one room cannot receive room signaling notifications in another room.
-  /// Messages sent in one room (e.g. [setStreamExtraInfo], [sendBroadcastMessage], [sendBarrageMessage], [sendCustomCommand], etc.) cannot be received callback ((eg [onRoomStreamExtraInfoUpdate], [onIMRecvBroadcastMessage], [onIMRecvBarrageMessage], [onIMRecvCustomCommand], etc) in other rooms. Currently, SDK does not provide the ability to send messages across rooms. Developers can integrate the SDK of third-party IM to achieve.
-  /// SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
-  /// If the network is temporarily interrupted due to network quality reasons, the SDK will automatically reconnect internally. You can get the current connection status of the local room by listening to the [onRoomStateUpdate] callback method, and other users in the same room will receive [onRoomUserUpdate] callback notification.
-  /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
-  ///
-  /// @deprecated This method has been deprecated after version 2.9.0 If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.
-  /// - [roomID] Room ID, a string of up to 128 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  /// - [config] Advanced room configuration.
-  @Deprecated(
-      'This method has been deprecated after version 2.9.0 If you want to access the multi-room feature, Please set [setRoomMode] to select multi-room mode before the engine started, and then call [loginRoom] to use multi-room. If you call [loginRoom] function to log in to multiple rooms, please make sure to pass in the same user information.')
-  Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
-    return await ZegoExpressImpl.instance
-        .loginMultiRoom(roomID, config: config);
-  }
-
-  /// [Deprecated] Set the selected video layer of playing stream. This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
-  ///
-  /// Available: 1.19.0 to 2.3.0, deprecated.
-  /// This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
-  /// When the publisher has set the codecID to SVC through [setVideoConfig], the player can dynamically set whether to use the standard layer or the base layer (the resolution of the base layer is one-half of the standard layer)
-  /// Under normal circumstances, when the network is weak or the rendered UI form is small, you can choose to use the video that plays the base layer to save bandwidth.
-  /// It can be set before and after playing stream.
-  /// Note: This function is only available in ZegoExpressVideo SDK!
-  ///
-  /// @deprecated This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.
-  /// - [streamID] Stream ID.
-  /// - [videoLayer] Video layer of playing stream. AUTO by default.
-  @Deprecated(
-      'This function has been deprecated since version 2.3.0, Please use [setPlayStreamVideoType] instead.')
-  Future<void> setPlayStreamVideoLayer(
-      String streamID, ZegoPlayerVideoLayer videoLayer) async {
-    return await ZegoExpressImpl.instance
-        .setPlayStreamVideoLayer(streamID, videoLayer);
-  }
-
-  /// [Deprecated] Whether to use the built-in speaker to play audio.This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
-  ///
-  /// This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
-  /// When you choose not to use the built-in speaker to play sound, that is, set to false, the SDK will select the currently highest priority audio output device to play the sound according to the system schedule
-  ///
-  /// @deprecated This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.
-  /// - [enable] Whether to use the built-in speaker to play sound, true: use the built-in speaker to play sound, false: use the highest priority audio output device scheduled by the current system to play sound
-  @Deprecated(
-      'This function has been deprecated since version 2.3.0 Please use [setAudioRouteToSpeaker] instead.')
-  Future<void> setBuiltInSpeakerOn(bool enable) async {
-    return await ZegoExpressImpl.instance.setBuiltInSpeakerOn(enable);
   }
 }

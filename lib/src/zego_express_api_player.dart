@@ -17,9 +17,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
-  ///   3.  If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  ///   1. Only support numbers, English characters and '-', ' '.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
   /// - [config] Advanced player configuration.
   Future<void> startPlayingStream(String streamID,
@@ -247,7 +245,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Enables or disables frame order detection.
   ///
   /// Available since: 1.1.0
-  /// Description: Control whether to turn on frame order detection, on to not support B frames, off to support B frames.
+  /// Description: Control whether to turn on frame order detection.
   /// Use cases: Turning on frame order detection when pulling cdn's stream will prevent splash screens.
   /// Default value: Turn on frame order detection by default when this interface is not called.
   /// When to call: This function needs to be called after [createEngine] creates an instance.
@@ -255,7 +253,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Caution: Turn off frame order detection during playing stream may result in a brief splash screen.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
-  /// - [enable] Whether to turn on frame order detection, true: enable check poc,not support B frames, false: disable check poc, support B frames.
+  /// - [enable] Whether to turn on frame order detection, true: enable check poc, false: disable check poc.
   Future<void> enableCheckPoc(bool enable) async {
     return await ZegoExpressImpl.instance.enableCheckPoc(enable);
   }
@@ -268,7 +266,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
   ///
   /// - [codecID] Video codec id.Required: Yes.
-  /// - Returns Whether the specified video decoding format is supported; true means support, you can use this decoding format for playing stream; false means the is not supported, and the decoding format cannot be used for play stream.
+  /// - Returns Whether the specified video decoding format is supported; true means supported, you can use this decoding format for playing stream; false means not supported, and the decoding format cannot be used for play stream.
   Future<bool> isVideoDecoderSupported(ZegoVideoCodecID codecID) async {
     return await ZegoExpressImpl.instance.isVideoDecoderSupported(codecID);
   }

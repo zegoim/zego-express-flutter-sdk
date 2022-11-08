@@ -13,7 +13,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "2.23.0";
+  static String pluginVersion = "3.0.0";
 }
 
 class ZegoExpressImpl {
@@ -138,13 +138,13 @@ class ZegoExpressImpl {
         .invokeMethod('isFeatureSupported', {'featureType': featureType.index});
   }
 
-  Future<void> uploadLog() async {
-    return await _channel.invokeMethod('uploadLog');
+  Future<void> setRoomScenario(ZegoScenario scenario) async {
+    return await _channel
+        .invokeMethod('setRoomScenario', {'scenario': scenario.index});
   }
 
-  Future<void> setDebugVerbose(bool enable, ZegoLanguage language) async {
-    return await _channel.invokeMethod(
-        'setDebugVerbose', {'enable': enable, 'language': language.index});
+  Future<void> uploadLog() async {
+    return await _channel.invokeMethod('uploadLog');
   }
 
   Future<void> enableDebugAssistant(bool enable) async {
@@ -175,11 +175,6 @@ class ZegoExpressImpl {
     Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
     return ZegoRoomLoginResult(
         map['errorCode'], Map<String, dynamic>.from(extendedData));
-  }
-
-  Future<void> loginMultiRoom(String roomID, {ZegoRoomConfig? config}) async {
-    return await _channel.invokeMethod(
-        'loginMultiRoom', {'roomID': roomID, 'config': config?.toMap() ?? {}});
   }
 
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
@@ -613,12 +608,6 @@ class ZegoExpressImpl {
         .invokeMethod('setAllPlayStreamVolume', {'volume': volume});
   }
 
-  Future<void> setPlayStreamVideoLayer(
-      String streamID, ZegoPlayerVideoLayer videoLayer) async {
-    return await _channel.invokeMethod('setPlayStreamVideoLayer',
-        {'streamID': streamID, 'videoLayer': videoLayer.index});
-  }
-
   Future<void> setPlayStreamVideoType(
       String streamID, ZegoVideoStreamType streamType) async {
     return await _channel.invokeMethod('setPlayStreamVideoType',
@@ -875,11 +864,6 @@ class ZegoExpressImpl {
   Future<void> enableAudioCaptureDevice(bool enable) async {
     return await _channel
         .invokeMethod('enableAudioCaptureDevice', {'enable': enable});
-  }
-
-  Future<void> setBuiltInSpeakerOn(bool enable) async {
-    return await _channel
-        .invokeMethod('setBuiltInSpeakerOn', {'enable': enable});
   }
 
   Future<void> setAudioRouteToSpeaker(bool defaultToSpeaker) async {
@@ -2156,12 +2140,6 @@ class ZegoExpressImpl {
             ZegoDeviceExceptionType.values[map['exceptionType']],
             ZegoDeviceType.values[map['deviceType']],
             map['deviceID']);
-        break;
-
-      case 'onDeviceError':
-        if (ZegoExpressEngine.onDeviceError == null) return;
-
-        ZegoExpressEngine.onDeviceError!(map['errorCode'], map['deviceName']);
         break;
 
       case 'onRemoteCameraStateUpdate':

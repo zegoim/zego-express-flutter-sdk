@@ -30,7 +30,8 @@ class ZegoFlutterEngine {
   external stopPreview(int channel);
   external startPublishingStream(String streamID, int? channel);
   external stopPublishingStream(int channel);
-  external startPlayingStream(String streamID, dynamic remoteVideo, String s, dynamic config);
+  external startPlayingStream(
+      String streamID, dynamic remoteVideo, String s, dynamic config);
   external stopPlayingStream(String streamID);
   external sendBroadcastMessage(String roomID, String message);
   external sendBarrageMessage(String roomID, String message);

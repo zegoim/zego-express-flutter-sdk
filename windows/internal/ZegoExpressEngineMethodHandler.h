@@ -48,9 +48,9 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomMode(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void uploadLog(flutter::EncodableMap& argument,
+    void setRoomScenario(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setDebugVerbose(flutter::EncodableMap& argument,
+    void uploadLog(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableDebugAssistant(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -60,8 +60,6 @@ public:
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void loginRoom(flutter::EncodableMap& argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void loginMultiRoom(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void logoutRoom(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -114,8 +112,6 @@ public:
     void setPublishWatermark(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setPlayStreamDecryptionKey(flutter::EncodableMap& argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setPlayStreamVideoLayer(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setPlayStreamVideoType(flutter::EncodableMap& argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

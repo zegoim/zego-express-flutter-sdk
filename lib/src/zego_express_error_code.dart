@@ -29,7 +29,7 @@ class ZegoErrorCode {
   /// Description: The input StreamID is null. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] is null or empty string. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal.
   static const int CommonStreamIdNull = 1000015;
 
-  /// Description: The input streamID contains invalid characters. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] contains invalid characters. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal, only support numbers, english characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', ',', '.', '<', '>', '/', '\'.
+  /// Description: The input streamID contains invalid characters. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] contains invalid characters. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal, only support numbers, English characters and '-', '_'.
   static const int CommonStreamIdInvalidCharacter = 1000016;
 
   /// Illegal param.
@@ -40,6 +40,9 @@ class ZegoErrorCode {
 
   /// Description: The Input CDN auth param is too long. <br>Cause: The length of auth parameter passed in when calling [enablePublishDirectToCDN] or [startPlayingStream] exceeds the limit. <br>Solutions: Auth param length should be less than 1024 bytes.
   static const int CommonCdnAuthParamTooLong = 1000019;
+
+  /// Description: When login room or login scene, userID or user name is different. <br>Cause: Login room, login scene use different user id or user name. <br> Solutions: Use same user id and user name when login room, login scene.
+  static const int CommonUserNotSame = 1000020;
 
   /// Description: This AppID has been removed from production. <br>Solutions: Please check the status of the AppID on the ZEGO official website console or contact ZEGO technical support.
   static const int CommonAppOfflineError = 1000037;
@@ -56,8 +59,11 @@ class ZegoErrorCode {
   /// Server dispatching exception. Please contact ZEGO technical support to solve the problem. This error code is deprecated.
   static const int CommonDispatchError = 1000065;
 
-  /// Description: The engine audio and video module has been activated, and this setting is not supported. <br>Possible reason: Only supports setting before starting the audio and video module of the engine. <br>Processing suggestion: Please set it before calling [startPreviewView] [startPublishingStream] [startPlayingStream] to start the audio and video module.
+  /// Description: The engine audio and video module has been activated, and this setting is not supported. <br>Cause: Only supports setting before starting the audio and video module of the engine. <br>Solutions: Please set it before calling [startPreviewView] [startPublishingStream] [startPlayingStream] to start the audio and video module.
   static const int CommonConfigAfterEngineStarted = 1000066;
+
+  /// Description: The room is logged in, this setting is not supported. <br>Cause: Only supports setting before logging into the room. <br>Solutions: Please set it before calling [loginRoom] or after calling [logoutRoom]. Note that if you log in to multiple rooms, you need to log out of all rooms before setting.
+  static const int CommonConfigAfterRoomLoggedIn = 1000067;
 
   /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Solutions: Please check whether the Android JVM environment is normal or contact ZEGO technical support.
   static const int CommonInnerNullptr = 1000090;
@@ -86,7 +92,7 @@ class ZegoErrorCode {
   /// Description: The log file path is too long. <br>Cause: The length of log file path exceeds limit. <br>Solutions: Please check the length of log file path.
   static const int EngineLogPathTooLong = 1001015;
 
-  /// Description: Set room mode failed. <br>Cause: Set room mode before initialize the SDK. <br>Solutions: Please set room mode after initialize the SDK.
+  /// Description: Set room mode failed. <br>Cause: Set room mode after initialize the SDK. <br>Solutions: Please set room mode before initialize the SDK.
   static const int EngineSetRoomModeErrorTime = 1001020;
 
   /// Description: The experimental API json parameter parsing failed. <br>Cause: Invalid json format; wrong function name or parameter. <br>Solutions: Please check json format is valid or not; check function name or parameter is correct or not, contact ZEGO technical support for specific function name and parameters.
@@ -333,6 +339,21 @@ class ZegoErrorCode {
   /// Description: Play stream authentication is incorrect. <br>Caution: The [Token] error or timeout required to playing stream across APP. <br>Solutions: Playing the stream to pass the correct [Token], or update the [Token] in time.
   static const int PlayerErrorDispatchAuthError = 1004003;
 
+  /// Description: This device does not support super resolution. <br>Caution: The device configured on the server does not support super resolution, or the configuration on the server failed to pull. <br>Solutions: replace the device and try again or contact ZEGO technical support.
+  static const int PlayerSuperResolutionDeviceNotSupport = 1004004;
+
+  /// Description: The number of super resolution streams exceeds the limit.<br>Caution: The number of super resolution streams exceeds the limit.<br>Solutions: Currently, super resolution support up to 1 playing steam at the same time.
+  static const int PlayerSuperResolutionMaxCountExceed = 1004005;
+
+  /// Description: The number of super resolution streams exceeds the limit.<br>Caution: The number of super resolution streams exceeds the limit.<br>Solutions: contact ZEGO technical support.
+  static const int PlayerSuperResolutionVideoSizeNotSupport = 1004006;
+
+  /// Description: The performance of super resolution device is not enough.<br>Caution: The performance of device is not enough.<br>Solutions: Please replace the device.
+  static const int PlayerSuperResolutionDevicePerformanceError = 1004007;
+
+  /// Description: Super resolution is initializing, please try again later.<br>Caution: Super resolution is initializing, please try again later.<br>Solutions: Please try again later.
+  static const int PlayerSuperResolutionInitingBusyError = 1004008;
+
   /// Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
   static const int PlayerCountExceed = 1004010;
 
@@ -385,7 +406,7 @@ class ZegoErrorCode {
   /// Description: Illegal parameters exist in mixing task configuration. <br>Cause: 1. The mixing task ID is empty; 2. The mixing room ID is empty; 3. The mixing custom data length exceeds 1000 bytes; 4. The mixing output target stream is empty. <br>Solutions: Please check the configuration parameters of the mixing task.
   static const int MixerNoOutputTarget = 1005005;
 
-  /// Description: Illegal format of mixed stream output target parameter. <br>Cause: When the target of the mixed stream output target is streamID, an illegal character is passed in. <br>Solutions: Please check whether the target of the mixed stream output target is of streamID type, if so, target only supports numbers, English characters and'~','!','@','$','%','^','&','*','(',')', '_','+','=','-','`',';',''',',','.','<','>','/','\'.
+  /// Description: Illegal format of mixed stream output target parameter. <br>Cause: When the target of the mixed stream output target is streamID, an illegal character is passed in. <br>Solutions: Please check whether the target of the mixed stream output target is of streamID type, if so, target only support numbers, English characters and '-', '_'.
   static const int MixerOutputTargetInvalid = 1005006;
 
   /// Description: Failed to start the stream mixing task. <br>Cause: Requests are too frequent, exceeding the qps limit of the service. <br>Solutions: Please ensure that the qps of the mixing request is less than 100.
@@ -927,4 +948,28 @@ class ZegoErrorCode {
 
   /// Description: The function call failed. <br>Cause: No audio vad instance has been created. <br>Solutions: Create a audio vad instance.
   static const int AudioVADClientNoInstance = 1018001;
+
+  /// Description: Calling function failed. <br>Cause: Illegal parameter or SDK does not contain RangeScene module. <br>Solutions: Please confirm whether the SDK contains the RangeScene module and check the parameters.
+  static const int RangeSceneCallFunctionFailed = 1019000;
+
+  /// Description: The RangeScene instance not created. <br>Cause: The RangeScene instance not created. <br> Solutions: Create a RangeScene instance before using RangeScene [createRangeScene].
+  static const int RangeSceneNoInstance = 1019001;
+
+  /// Description: Not login scene. <br>Cause: Not login scene. <br> Solutions: Please call [loginScene] to login scene.
+  static const int RangeSceneNotLoginScene = 1019002;
+
+  /// Description: Use not support feature. <br>Cause: Use the status synchronization interface when the status synchronization function is not enabled. <br> Solutions: To use the status synchronization interface, please enable the status synchronization function.
+  static const int RangeSceneNotSupport = 1019003;
+
+  /// Description: Scene login retry has exceeded the maximum retry time. <br>Cause: Possibly due to network problems. <br>Solutions: Please check whether the network is working or switch the network environment.
+  static const int RangeSceneRetryTimeout = 1019004;
+
+  /// Description: The number of RangeScene instances exceeds the maximum number allowed. <br>Cause: The number of RangeScene instances exceeds the maximum number allowed. Up to 1 instances can be created. <br> Solutions: RangeScene can create up to 1 instances, and make sure that the number of RangeScene instances is not exceeded the maximum limit.
+  static const int RangeSceneExceedMaxCount = 1019030;
+
+  /// Description: The number of joined RangeScene teams exceeds the maximum number allowed. <br>Cause: The number of joined RangeScene teams exceeds the maximum number allowed. Up to 5 are allowed by default. <br> Solutions: RangeScene teams can joined are up to 5, and make sure that the number of RangeScene teams joned is not exceeded the maximum limit.
+  static const int RangeSceneTeamExceedMaxCount = 1019031;
+
+  /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int RangeSceneInnerError = 1019099;
 }

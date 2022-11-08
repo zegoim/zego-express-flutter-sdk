@@ -282,19 +282,19 @@ void ZegoExpressEngineMethodHandler::setRoomMode(flutter::EncodableMap& argument
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setRoomScenario(flutter::EncodableMap& argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
+{
+    auto scenario = (EXPRESS::ZegoScenario)std::get<int32_t>(argument[FTValue("scenario")]);
+    EXPRESS::ZegoExpressSDK::setRoomScenario(scenario);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::uploadLog(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     EXPRESS::ZegoExpressSDK::getEngine()->uploadLog();
-    result->Success();
-}
-
-void ZegoExpressEngineMethodHandler::setDebugVerbose(flutter::EncodableMap& argument,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
-{
-    auto enable = std::get<bool>(argument[FTValue("enable")]);
-    auto language = (EXPRESS::ZegoLanguage)std::get<int32_t>(argument[FTValue("language")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->setDebugVerbose(enable, language);
     result->Success();
 }
 
@@ -355,27 +355,6 @@ void ZegoExpressEngineMethodHandler::loginRoom(flutter::EncodableMap& argument,
         sharedPtrResult->Success(retMap);
     });
 
-}
-
-void ZegoExpressEngineMethodHandler::loginMultiRoom(flutter::EncodableMap& argument,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
-{
-    auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
-
-    flutter::EncodableMap configMap;
-    if (std::holds_alternative<flutter::EncodableMap>(argument[FTValue("config")])) {
-        configMap = std::get<flutter::EncodableMap>(argument[FTValue("config")]);
-    }
-
-    EXPRESS::ZegoRoomConfig config;
-    if (configMap.size() > 0) {
-        config.maxMemberCount = (unsigned int)std::get<int32_t>(configMap[FTValue("maxMemberCount")]);
-        config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
-        config.token = std::get<std::string>(configMap[FTValue("token")]);  
-    }
-    EXPRESS::ZegoExpressSDK::getEngine()->loginMultiRoom(roomID, &config);
-
-    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::logoutRoom(flutter::EncodableMap& argument,
@@ -3177,17 +3156,6 @@ void ZegoExpressEngineMethodHandler::setPlayStreamDecryptionKey(flutter::Encodab
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->setPlayStreamDecryptionKey(streamID, key);
-
-    result->Success();
-}
-
-void ZegoExpressEngineMethodHandler::setPlayStreamVideoLayer(flutter::EncodableMap& argument,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
-{
-    auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
-    auto videoLayer = std::get<int32_t>(argument[FTValue("videoLayer")]);
-
-    EXPRESS::ZegoExpressSDK::getEngine()->setPlayStreamVideoLayer(streamID, (EXPRESS::ZegoPlayerVideoLayer)videoLayer);
 
     result->Success();
 }

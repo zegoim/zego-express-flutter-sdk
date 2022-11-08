@@ -3,16 +3,40 @@ import 'dart:typed_data';
 
 // ignore_for_file: unnecessary_this, non_constant_identifier_names
 
-/// Application scenario.
+/// Room scenario.
 enum ZegoScenario {
-  /// General scenario
+  /// [Deprecated] Legacy general scenario, this scenario has been deprecated since version 3.0.0, and it is not recommended to use, please migrate to other new scenario as soon as possible.
+  @Deprecated('Legacy general scenario')
   General,
 
-  /// Communication scenario
+  /// [Deprecated] Legacy communication scenario, this scenario has been deprecated since version 3.0.0, and it is not recommended to use, please migrate to other new scenario as soon as possible.
+  @Deprecated('Legacy communication scenario')
   Communication,
 
-  /// Live scenario
-  Live
+  /// [Deprecated] Legacy live broadcast scenario, this scenario has been deprecated since version 3.0.0, and it is not recommended to use, please migrate to other new scenario as soon as possible.
+  @Deprecated('Legacy live broadcast scenario')
+  Live,
+
+  /// Available since: 3.0.0. Description: The default (generic) scenario. If none of the following scenarios conform to your actual application scenario, this default scenario can be used.
+  Default,
+
+  /// Available since: 3.0.0. Description: Standard video call (or voice call) scenario, it is suitable for one-to-one video or voice call scenarios.
+  StandardVideoCall,
+
+  /// Available since: 3.0.0. Description: High quality video call (or voice call) scenario, it is similar to the standard video call scenario, but this scenario uses a higher video frame rate, bit rate, and resolution (540p) by default, which is suitable for video call scenario with high image quality requirements.
+  HighQualityVideoCall,
+
+  /// Available since: 3.0.0. Description: Standard chatroom scenario, suitable for multi-person pure voice calls (low data usage). Note: On the ExpressVideo SDK, the camera is not enabled by default in this scenario.
+  StandardChatroom,
+
+  /// Available since: 3.0.0. Description: High quality chatroom scenario, it is similar to the standard chatroom scenario, but this scenario uses a higher audio bit rate than the standard chatroom scenario by default. It is suitable for multi-person pure voice call scenarios with high requirements on sound quality. Note: On the ExpressVideo SDK, the camera is not enabled by default in this scenario.
+  HighQualityChatroom,
+
+  /// Available since: 3.0.0. Description: Live broadcast scenario, it is suitable for one-to-many live broadcast scenarios such as shows, games, e-commerce, and large educational classes. The audio and video quality, fluency, and compatibility have been optimized. Note: Even in live broadcast scenarios, the SDK has no business "roles" (such as anchors and viewers), and all users in the room can publish and play streams.
+  Broadcast,
+
+  /// Available since: 3.0.0. Description: Karaoke (KTV) scenario, it is suitable for real-time chorus and online karaoke scenarios, and has optimized delay, sound quality, ear return, echo cancellation, etc., and also ensures accurate alignment and ultra-low delay when multiple people chorus.
+  Karaoke
 }
 
 /// SDK feature type.
@@ -395,7 +419,8 @@ enum ZegoAudioCaptureStereoMode {
   /// Always enable stereo capture.
   Always,
 
-  /// [This mode is deprecated] Same as 'Always', that is, always enable stereo capture.
+  /// [Deprecated] Same as [Always], that is, always enable stereo capture, this mode has been deprecated since version 2.16.0.
+  @Deprecated('Same as [Always], that is, always enable stereo capture')
   Adaptive
 }
 
@@ -1256,14 +1281,14 @@ enum ZegoAudioVADStableStateMonitorType {
 
 /// Orientation mode of the video.
 enum ZegoOrientationMode {
-  /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end. For details, please refer to the documentation https://doc-en.zego.im/article/4823.
+  /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
   Custom,
 
-  /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModePlayerSelfAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
-  PlayerSelfAdaption,
+  /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
+  Adaption,
 
   /// Player adapt to pulisher mode.Description: Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
-  PlayerAdaptToPulisher,
+  Alignment,
 
   /// Fixed resolution ratio mode.Description: Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
   FixedResolutionRatio
@@ -1380,7 +1405,7 @@ class ZegoEngineProfile {
   /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
   String? appSign;
 
-  /// The application scenario. Developers can choose one of ZegoScenario based on the scenario of the app they are developing, and the engine will preset a more general setting for specific scenarios based on the set scenario. After setting specific scenarios, developers can still call specific functions to set specific parameters if they have customized parameter settings.
+  /// The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940
   ZegoScenario scenario;
 
   /// Set whether to use Platform View for rendering, true: rendering using Platform View, false: rendering using Texture, default is false. Currently the web platform only supports rendering with Platform View. When using the [createCanvasView] interface, If the preferred render mode is not supported, another render mode is automatically used.
@@ -1646,7 +1671,7 @@ class ZegoStream {
   /// User object instance.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser user;
 
-  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.If you need to communicate with the Web SDK, please do not use '%'. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', ' '.
   String streamID;
 
   /// Stream extra info
@@ -2238,7 +2263,7 @@ class ZegoMixerImageInfo {
 ///
 /// Configure the mix stream input stream ID, type, and the layout
 class ZegoMixerInput {
-  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.If you need to communicate with the Web SDK, please do not use '%'. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', ' '.
   String streamID;
 
   /// Mix stream content type
@@ -3261,9 +3286,7 @@ abstract class ZegoRealTimeSequentialDataManager {
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
   ///   1. Need to be globally unique within the entire AppID (Note that it cannot be the same as the stream ID passed in [startPublishingStream]). If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
-  ///   4. If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  ///   2. Only support numbers, English characters and '-', ' '.
   Future<void> startBroadcasting(String streamID);
 
   /// Stop broadcasting real-time sequential data stream.
@@ -3304,9 +3327,7 @@ abstract class ZegoRealTimeSequentialDataManager {
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
-  ///   2. If you need to communicate with the Web SDK, please do not use '%'.
-  ///   3.  If you need to communicate with the Mini Program SDK, due to the limitations of the Mini Program, the streamID of the zego-pusher and zego-player components only supports numbers, English characters and '_', '-'. If these two components are used, the streamID's naming rules should be aligned with the Mini Program SDK.
+  ///   1. Only support numbers, English characters and '-', ' '.
   Future<void> startSubscribing(String streamID);
 
   /// Stop subscribing real-time sequential data stream.
@@ -3366,8 +3387,9 @@ abstract class ZegoRangeAudio {
   ///
   /// Available since: 2.23.0
   /// Description: Set range voice volume.
-  /// Use case: When a user calls [startPlayingStream] and pulls another stream, the stream has a range speech effect by setting the range of sounds for that stream and calling [updateStreamPosition]. After the call will be the sound source of the sound range of the distance attenuation effect. Note that calling [startPlayingStream] if the stream is pulled by the CDN, enabling the call scope voice for [enableMicrophone] will become pulled from the RTC. To pull the CDN flow, you are advised to use the CDN address to customize the CDN flow.
+  /// Use case: When a user calls [startPlayingStream] and pulls another stream, the stream has a range speech effect by setting the range of sounds for that stream and calling [updateStreamPosition]. After the call will be the sound source of the sound range of the distance attenuation effect.
   /// When to call: After initializing the range audio [createRangeAudio] and after [startPlayingStream].
+  /// Caution:  When calling [enableMicrophone] to enable range speech, the resource of the stream will be switched to RTC, regardless of whether the resource specified when [startPlayingStream] was originally called to pull the stream is RTC. If you really need to specify the resource of the stream as CDN, please configure it to pull a custom CDN stream and specify the CDN address information.
   ///
   /// - [streamID] play stream id
   /// - [vocalRange] Flow sound range.
@@ -3380,7 +3402,7 @@ abstract class ZegoRangeAudio {
   /// Use case: When the user calls [startPlayingStream] to pull another stream, call [setStreamVocalRange] to set the stream's voice position, then call this interface to set the stream's position, so that the stream also has the range voice effect.
   /// When to call: After initializing the range audio [createRangeAudio] and after [startPlayingStream].
   ///
-  /// - [streamID] play stream id
+  /// - [streamID] play stream id.
   /// - [position] The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3. The three values ​​represent the front, right, and top coordinate values ​​in turn.
   Future<void> updateStreamPosition(String streamID, Float32List position);
 
@@ -3463,14 +3485,14 @@ abstract class ZegoRangeAudio {
   /// Set team ID.
   ///
   /// Available: since 2.11.0
-  /// Description: After setting the team ID, you will be able to communicate with other users of the same team, and the sound will not change with the distance.
+  /// Description: After setting the team ID, you will be able to communicate with other users of the same team, and the sound will not change with the distance. It is also possible to exit the team by setting an empty string.
   /// Use case: Users join the team or exit the team.
   /// Default value: When this function is not called, no team will be added by default.
   /// When to call: After initializing the range audio [createRangeAudio].
   /// Caution: There will be no distance limit for the sounds in the team, and there will be no 3D sound effects.
   /// Restrictions: The team ID will only take effect when [setRangeAudioMode] is called and set to `Team` mode.
   ///
-  /// - [teamID] Team ID, a string of up to 64 bytes in length. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [teamID] Team ID, empty to exit the team, a string of up to 64 bytes in length. Support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   Future<void> setTeamID(String teamID);
 
   /// Whether can receive the audio data of the specified user.

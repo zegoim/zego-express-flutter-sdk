@@ -12,14 +12,11 @@ class ZegoConfig {
   // It is required for web and is recommended for native but not required.
   String token = "";
 
-  ZegoScenario scenario = ZegoScenario.General;
+  ZegoScenario scenario = ZegoScenario.Default;
   bool enablePlatformView = false;
 
   String userID = "";
   String userName = "";
-
-  String roomID = "";
-  String streamID = "";
 
   bool isPreviewMirror = true;
   bool isPublishMirror = false;
