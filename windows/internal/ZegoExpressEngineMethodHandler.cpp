@@ -286,7 +286,7 @@ void ZegoExpressEngineMethodHandler::setRoomScenario(flutter::EncodableMap& argu
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
     auto scenario = (EXPRESS::ZegoScenario)std::get<int32_t>(argument[FTValue("scenario")]);
-    EXPRESS::ZegoExpressSDK::setRoomScenario(scenario);
+    EXPRESS::ZegoExpressSDK::getEngine()->setRoomScenario(scenario);
 
     result->Success();
 }
