@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -76,6 +75,8 @@ class ZegoExpressTextureRenderer {
 
   ZegoViewMode? getViewMode(int textureID) => _viewModeMap[textureID];
   Color? getBackgroundColor(int textureID) => _backgroundColorMap[textureID];
+  Size? getSize(int textureID) => _sizeMap[textureID];
+  int? getMirror(int textureID) => _mirrorMap[textureID];
 
   bool removeTexture(int textureID) {
     if (_viewModeMap.containsKey(textureID)) {
@@ -98,21 +99,20 @@ class ZegoExpressTextureRenderer {
   }
 
   static void _textureRendererControllerEventListener(dynamic data) {
-    var func = (data) {
+    func(data) {
       final Map<dynamic, dynamic> map = data;
       switch (map['type']) {
         case 'update':
           int textureID = map['textureID'];
-          _updateController.sink.add({
-            'textureID': textureID,
-            'type': 'resize',
-            'width': double.parse(map['width'].toString()),
-            'height': double.parse(map['height'].toString()),
-            'isMirror': map['isMirror']
-          });
+          _sizeMap[textureID] = Size(double.parse(map['width'].toString()),
+              double.parse(map['height'].toString()));
+          _mirrorMap[textureID] = map['isMirror'];
+          _updateController.sink
+              .add({'textureID': textureID, 'type': 'update'});
       }
-    };
-    Timer(Duration(milliseconds: 10), () => func(data));
+    }
+
+    Timer(const Duration(milliseconds: 10), () => func(data));
   }
 
   ZegoExpressTextureRenderer._();
@@ -121,6 +121,8 @@ class ZegoExpressTextureRenderer {
 
   static final Map<int, ZegoViewMode> _viewModeMap = {};
   static final Map<int, Color> _backgroundColorMap = {};
+  static final Map<int, Size> _sizeMap = {};
+  static final Map<int, int?> _mirrorMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -150,18 +152,11 @@ class ZegoTextureWidget extends StatefulWidget {
 }
 
 class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
-  Size? _size;
-  int? _isMirror;
-
   @override
   void initState() {
     super.initState();
 
     widget.stream.listen((map) {
-      if (map['type'] == 'resize') {
-        _size = Size(map['width'], map['height']);
-        _isMirror = map['isMirror'];
-      }
       setState(() {});
     });
   }
@@ -186,8 +181,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
     final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     var rect = Rect.fromLTWH(0, 0, width, height);
 
-    if (_size != null) {
-      Size size = _size!;
+    Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
+    if (size != null) {
       var viewMode =
           ZegoExpressTextureRenderer().getViewMode(widget.textureID) ??
               ZegoViewMode.AspectFit;
@@ -260,7 +255,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
         textureId: widget.textureID,
       );
       // mirror
-      if (_isMirror != null && _isMirror! == 1) {
+      int? isMirror = ZegoExpressTextureRenderer().getMirror(widget.textureID);
+      if (isMirror != null && isMirror == 1) {
         var matrix4 = Matrix4.rotationY(pi);
         matrix4.setTranslationRaw(textureWidth, 0, 0);
         child = Transform(
