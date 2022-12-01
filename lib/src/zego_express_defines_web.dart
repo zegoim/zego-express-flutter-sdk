@@ -66,6 +66,7 @@ class ZegoFlutterEngine {
       dynamic fail);
   external mediaPlayerEnableAux(bool enable, dynamic MediaPlayer);
   external mediaPlayerSetVolume(int volume, dynamic MediaPlayer);
+  external setRoomScenario(int scenario);
 }
 
 @JS()
@@ -86,6 +87,7 @@ class Profile {
   external factory Profile({
     int appID,
     String server,
+    int scenario
   });
 
   external int get appID;

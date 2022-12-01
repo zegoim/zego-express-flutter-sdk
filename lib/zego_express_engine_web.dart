@@ -185,6 +185,8 @@ class ZegoExpressEngineWeb {
         return mediaPlayerSetVolume(call.arguments['index'], call.arguments['volume']);
       case 'mediaPlayerGetTotalDuration':
         return mediaPlayerGetTotalDuration(call.arguments['index']);
+      case 'setRoomScenario':
+        return setRoomScenario(call.arguments['scenario']);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -546,6 +548,11 @@ class ZegoExpressEngineWeb {
         }
         ZegoExpressEngine.onRoomStreamExtraInfoUpdate!(data['roomID'], streamList);
         break;
+      case 'onDebugError':
+        if (ZegoExpressEngine.onDebugError == null) return;
+        final data = jsonDecode(map["data"]);
+        ZegoExpressEngine.onDebugError!(data['errorCode'], data['funcName'], data['info']);
+        break;
       default:
         break;
     }
@@ -562,7 +569,7 @@ class ZegoExpressEngineWeb {
   static Future<void> createEngineWithProfile(dynamic profile) async {
     final appID = profile["appID"];
     const server = "wss://test.com";
-    Profile engineProfile = Profile(appID: appID, server: server);
+    Profile engineProfile = Profile(appID: appID, server: server, scenario: profile['scenario']);
 
     ZegoFlutterEngine.createEngineWithProfile(engineProfile);
   }
@@ -942,6 +949,9 @@ class ZegoExpressEngineWeb {
   Future<int> mediaPlayerGetTotalDuration(int index) async {
     var duration = MediaPlayers[index].instance.getTotalDuration();
     return Future.value(duration);
+  }
+  void setRoomScenario(int scenario) {
+    return ZegoFlutterEngine.instance.setRoomScenario(scenario);
   }
 }
 
