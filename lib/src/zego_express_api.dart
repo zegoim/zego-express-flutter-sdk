@@ -529,6 +529,19 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRenderVideoFirstFrame;
 
+  /// Calls back when the stream playing end renders the first frame of the video from the remote camera.
+  ///
+  /// Available since: 3.0.0
+  /// Description: After calling the [startPlayingStream] function to pull the stream successfully, the SDK will receive this callback after pulling the stream and rendering the first frame of remote camera video data.
+  /// Use cases: Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
+  /// Trigger: After the remote [enableCamera] enables the camera, or after [mutePublishStreamVideo] is true and starts to send video data, the SDK will receive this callback after playing the stream and rendering the first frame of the remote camera video data.
+  /// Caution: It is only applicable when the remote end uses the camera to push the stream. Only applicable to RTC publishing and playing streaming scenarios.
+  /// Related callbacks: After a successful call to [startPlayingStream], the callback [onPlayerRecvVideoFirstFrame] determines whether the SDK has received the video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [streamID] Stream ID.
+  static void Function(String streamID)? onPlayerRenderCameraVideoFirstFrame;
+
   /// The callback triggered when the stream playback resolution changes.
   ///
   /// Available since: 1.1.0
@@ -593,6 +606,20 @@ class ZegoExpressEngine {
   static void Function(
           ZegoStreamEvent eventID, String streamID, String extraInfo)?
       onPlayerStreamEvent;
+
+  /// Playing stream video super resolution enabled state changes.
+  ///
+  /// Available since: 3.0.0
+  /// Description: Playing stream video super resolution enabled state changes.
+  /// When to trigger: When [enableVideoSuperResolution] enables or disables video super resolution, the developer will be notified whether to enable video super resolution according to the actual situation when playing stream video rendering.
+  /// Caution: None.
+  ///
+  /// - [streamID] Stream ID.
+  /// - [state] Video super resolution state.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(
+          String streamID, ZegoSuperResolutionState state, int errorCode)?
+      onPlayerVideoSuperResolutionUpdate;
 
   /// The callback triggered when the state of relayed streaming of the mixed stream to CDN changes.
   ///

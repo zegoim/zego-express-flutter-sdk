@@ -83,6 +83,7 @@ static const std::map<std::string, std::pair< std::function<void(flutter::Encoda
        EngineMethodHandler(enableCheckPoc), //std::bind(&ZegoExpressEngineMethodHandler::enableCheckPoc, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(isVideoDecoderSupported), //std::bind(&ZegoExpressEngineMethodHandler::isVideoDecoderSupported, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(setPlayStreamsAlignmentProperty), //std::bind(&ZegoExpressEngineMethodHandler::setPlayStreamsAlignmentProperty, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
+       EngineMethodHandler(enableVideoSuperResolution),
        EngineMethodHandler(startAutoMixerTask), //std::bind(&ZegoExpressEngineMethodHandler::startAutoMixerTask, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(stopAutoMixerTask), //std::bind(&ZegoExpressEngineMethodHandler::stopAutoMixerTask, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(setAudioRouteToSpeaker), //std::bind(&ZegoExpressEngineMethodHandler::setAudioRouteToSpeaker, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -259,6 +260,8 @@ static const std::map<std::string, std::pair< std::function<void(flutter::Encoda
        EngineMethodHandler(mediaPlayerSetActiveAudioChannel), //std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetActiveAudioChannel, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(mediaPlayerSetPlayerCanvas), //std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerSetPlayerCanvas, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(mediaPlayerTakeSnapshot), //std::bind(&ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},       
+       EngineMethodHandler(mediaPlayerSetAudioTrackMode), 
+       EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex), 
 
        // Copyrighted Music
        EngineMethodHandler(createCopyrightedMusic), //std::bind(&ZegoExpressEngineMethodHandler::createCopyrightedMusic, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
@@ -286,7 +289,10 @@ static const std::map<std::string, std::pair< std::function<void(flutter::Encoda
        EngineMethodHandler(copyrightedMusicSendExtendedRequest), //std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(copyrightedMusicStartScore), //std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStartScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(copyrightedMusicStopScore), //std::bind(&ZegoExpressEngineMethodHandler::copyrightedMusicStopScore, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
-    
+       EngineMethodHandler(copyrightedMusicGetFullScore),
+       EngineMethodHandler(copyrightedMusicGetSharedResource),
+       EngineMethodHandler(copyrightedMusicRequestResource),
+
         // rangeAudio
        EngineMethodHandler(createRangeAudio), //std::bind(&ZegoExpressEngineMethodHandler::createRangeAudio, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},
        EngineMethodHandler(destroyRangeAudio), //std::bind(&ZegoExpressEngineMethodHandler::destroyRangeAudio, &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1, std::placeholders::_2)},

@@ -641,6 +641,36 @@
     }
 }
 
+- (void)onPlayerRenderCameraVideoFirstFrame:(NSString *) streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerRenderCameraVideoFirstFrame] streamID: %@", streamID);
+
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRenderCameraVideoFirstFrame",
+            @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerVideoSuperResolutionUpdate:(NSString *) streamID state:(ZegoSuperResolutionState) state errorCode:(int) errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerVideoSuperResolutionUpdate] streamID: %@, state: %d, errorCode: %d", streamID, (int)state, errorCode);
+
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerVideoSuperResolutionUpdate",
+            @"streamID": streamID,
+            @"state": @(state),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
 #pragma mark Mixer Callback
 
 - (void)onMixerRelayCDNStateUpdate:(NSArray<ZegoStreamRelayCDNInfo *> *)infoList taskID:(NSString *)taskID {

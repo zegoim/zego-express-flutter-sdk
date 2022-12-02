@@ -55,6 +55,7 @@ import im.zego.zegoexpress.constants.ZegoAudioVADType;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.constants.ZegoDeviceExceptionType;
 import im.zego.zegoexpress.constants.ZegoDeviceType;
+import im.zego.zegoexpress.constants.ZegoSuperResolutionState;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
@@ -673,6 +674,36 @@ public class ZegoExpressEngineEventHandler {
             map.put("eventID", eventID.value());
             map.put("streamID", streamID);
             map.put("extraInfo", extraInfo);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPlayerRenderCameraVideoFirstFrame(String streamID) {
+            super.onPlayerRenderCameraVideoFirstFrame(streamID);
+            ZegoLog.log("[onPlayerRenderCameraVideoFirstFrame] streamID: %s", streamID);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPlayerRenderCameraVideoFirstFrame");
+            map.put("streamID", streamID);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPlayerVideoSuperResolutionUpdate(String streamID,ZegoSuperResolutionState state,int errorCode) {
+            super.onPlayerVideoSuperResolutionUpdate(streamID, state, errorCode);
+            ZegoLog.log("[onPlayerVideoSuperResolutionUpdate] streamID: %s, state: %s, errorCode: %d", streamID, state.name(), errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPlayerVideoSuperResolutionUpdate");
+            map.put("streamID", streamID);
+            map.put("state", state.value());
+            map.put("errorCode", errorCode);
 
             sink.success(map);
         }

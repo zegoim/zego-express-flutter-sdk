@@ -84,6 +84,10 @@ protected:
 
     void onPlayerStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;
 
+    void onPlayerRenderCameraVideoFirstFrame(std::string streamID) override;
+
+    void onPlayerVideoSuperResolutionUpdate(std::string streamID,EXPRESS::ZegoSuperResolutionState state,int errorCode) override;
+
     void onMixerRelayCDNStateUpdate(const std::string& taskID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) override;
 
     void onMixerSoundLevelUpdate(const std::unordered_map<unsigned int, float>& soundLevels) override;

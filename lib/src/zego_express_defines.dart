@@ -303,7 +303,37 @@ enum ZegoVoiceChangerPreset {
   MinorA,
 
   /// Electronic effects in harmonic minor voice effect
-  HarmonicMinor
+  HarmonicMinor,
+
+  /// Female Vitality Sound effect
+  FemaleEnergetic,
+
+  /// Richness effect
+  RichNess,
+
+  /// Muffled effect
+  Muffled,
+
+  /// Roundness effect
+  Roundness,
+
+  /// Falsetto effect
+  Falsetto,
+
+  /// Fullness effect
+  Fullness,
+
+  /// Clear effect
+  Clear,
+
+  /// Hight effect
+  HighlyResonant,
+
+  /// Loud clear effect
+  LoudClear,
+
+  /// Minions effect
+  Minions
 }
 
 /// Reverberation preset value.
@@ -464,6 +494,18 @@ enum ZegoVideoCodecID {
 
   /// Unknown Video Coding
   Unknown
+}
+
+/// Backend implementation of video codec.
+enum ZegoVideoCodecBackend {
+  /// Software or Hardware
+  Any,
+
+  /// Software
+  Software,
+
+  /// Hardware
+  Hardware
 }
 
 /// Player video layer.
@@ -792,10 +834,10 @@ enum ZegoRemoteDeviceState {
   /// System media services stop, such as under the iOS platform, when the system detects that the current pressure is huge (such as playing a lot of animation), it is possible to disable all media related services.
   SystemMediaServicesLost,
 
-  /// Capturing disabled
+  /// The remote user calls [enableCamera] or [muteMicrophone] to disable the camera or microphone.
   Disable,
 
-  /// The remote device is muted
+  /// The remote user actively calls [mutePublishStreamAudio] or [mutePublishStreamVideo] to stop publish the audio or video stream.
   Mute,
 
   /// The device is interrupted, such as a phone call interruption, etc.
@@ -1027,6 +1069,15 @@ enum ZegoMediaPlayerState {
   PlayEnded
 }
 
+/// Player audio track mode.
+enum ZegoMediaPlayerAudioTrackMode {
+  /// Normal audio track mode
+  Normal,
+
+  /// Multiple audio track mode
+  Multiple
+}
+
 /// Player network event.
 enum ZegoMediaPlayerNetworkEvent {
   /// Network resources are not playing well, and start trying to cache data
@@ -1201,7 +1252,7 @@ enum ZegoCopyrightedMusicBillingMode {
   Room
 }
 
-/// The music resource type.
+/// The music resource type. For [querycache] interface.
 enum ZegoCopyrightedMusicType {
   /// Song.
   ZegoCopyrightedMusicSong,
@@ -1217,6 +1268,18 @@ enum ZegoCopyrightedMusicType {
 
   /// Song accompaniment clip.
   ZegoCopyrightedMusicAccompanimentClip
+}
+
+/// The music resource type. For [ZegoCopyrightedMusicRequestConfig] and [ZegoCopyrightedMusicGetSharedConfig].
+enum ZegoCopyrightedMusicResourceType {
+  /// Song.
+  ZegoCopyrightedMusicResourceSong,
+
+  /// Song accompaniment.
+  ZegoCopyrightedMusicResourceAccompaniment,
+
+  /// Song accompaniment clip.
+  ZegoCopyrightedMusicResourceAccompanimentClip
 }
 
 /// Font type.
@@ -1358,6 +1421,15 @@ enum ZegoLowlightEnhancementMode {
 
   /// Automatic low-light enhancement, the brightness enhancement value of the captured picture is dynamically adjusted with the ambient brightness.
   Auto
+}
+
+/// Super resolution mode.
+enum ZegoSuperResolutionState {
+  /// Super resolution turned off.
+  Off,
+
+  /// Super resolution turned on.
+  On
 }
 
 /// Log config.
@@ -1811,10 +1883,16 @@ class ZegoCDNConfig {
   /// CDN URL
   String url;
 
-  /// Auth param of URL
-  String authParam;
+  /// Auth param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+  String? authParam;
 
-  ZegoCDNConfig(this.url, this.authParam);
+  /// URL supported protocols, candidate values are "tcp" and "quic". If there are more than one, separate them with English commas and try them in order. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+  String? protocol;
+
+  /// QUIC version。 If [protocol] has the QUIC protocol, this information needs to be filled in. If there are multiple version numbers, separate them with commas. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+  String? quicVersion;
+
+  ZegoCDNConfig(this.url, {this.authParam, this.protocol, this.quicVersion});
 }
 
 /// Relay to CDN info.
@@ -1839,7 +1917,7 @@ class ZegoStreamRelayCDNInfo {
 
 /// Advanced player configuration.
 ///
-/// Configure playing stream CDN configuration, video layer, room id.
+/// Configure stream resource mode, CDN configuration and other advanced configurations.
 class ZegoPlayerConfig {
   /// Stream resource mode.
   ZegoStreamResourceMode resourceMode;
@@ -1847,21 +1925,22 @@ class ZegoPlayerConfig {
   /// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
   ZegoCDNConfig? cdnConfig;
 
-  /// The Room ID.
+  /// The Room ID. It only needs to be filled in the multi-room mode, which indicates which room this stream needs to be bound to. This parameter is ignored in single room mode.
   String? roomID;
 
-  /// The video encoding type of the stream.
-  ZegoVideoCodecID videoCodecID;
+  /// The video encoding type of the stream, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  ZegoVideoCodecID? videoCodecID;
 
-  /// The resource type of the source stream.
+  /// The resource type of the source stream, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   ZegoResourceType? sourceResourceType;
 
-  /// Preconfigured codec template ID
+  /// Preconfigured codec template ID, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   int? codecTemplateID;
 
-  ZegoPlayerConfig(this.resourceMode, this.videoCodecID,
+  ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
+      this.videoCodecID,
       this.sourceResourceType,
       this.codecTemplateID});
 
@@ -3262,7 +3341,7 @@ class ZegoCopyrightedMusicConfig {
   ZegoCopyrightedMusicConfig(this.user);
 }
 
-/// Request configuration of song or accompaniment.
+/// The configuration of requesting resource.
 class ZegoCopyrightedMusicRequestConfig {
   /// the ID of the song.
   String songID;
@@ -3271,6 +3350,14 @@ class ZegoCopyrightedMusicRequestConfig {
   ZegoCopyrightedMusicBillingMode mode;
 
   ZegoCopyrightedMusicRequestConfig(this.songID, this.mode);
+}
+
+/// The configuration of getting shared resource.
+class ZegoCopyrightedMusicGetSharedConfig {
+  /// the ID of the song.
+  String songID;
+
+  ZegoCopyrightedMusicGetSharedConfig(this.songID);
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -3573,53 +3660,6 @@ abstract class ZegoCopyrightedMusic {
   Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(
       String krcToken);
 
-  /// Request a song.
-  ///
-  /// Available since: 2.13.0
-  /// Description: By requesting a song, you can not only obtain basic information about a song (such as duration, song name, and artist), but also obtain the resource ID for local playback, share_token for sharing with others, and related authentication information. Support by the time, by the user monthly, by the room monthly subscription three ways.
-  /// Use case: Get copyrighted songs for local playback and sharing.
-  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  /// Caution: This interface will trigger billing. A song may have three sound qualities: normal, high-definition, and lossless. Each sound quality has a different resource file, and each resource file has a unique resource ID.
-  ///
-  /// - [config] request configuration.
-  Future<ZegoCopyrightedMusicRequestSongResult> requestSong(
-      ZegoCopyrightedMusicRequestConfig config);
-
-  /// Request accompaniment.
-  ///
-  /// Available since: 2.13.0
-  /// Description: You can get the accompaniment resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports click-by-point accompaniment.
-  /// Use case: Get copyrighted accompaniment for local playback and sharing.
-  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  /// Caution: This interface will trigger billing.
-  ///
-  /// - [config] request configuration.
-  Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(
-      ZegoCopyrightedMusicRequestConfig config);
-
-  /// Request accompaniment clip.
-  ///
-  /// Available since: 2.13.0
-  /// Description: You can get the climax clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports accompaniment climax clips by pay-per-use.
-  /// Use case: Get copyrighted accompaniment clip for local playback and sharing.
-  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  /// Caution: This interface will trigger billing.
-  ///
-  /// - [config] request configuration.
-  Future<ZegoCopyrightedMusicRequestAccompanimentClipResult>
-      requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config);
-
-  /// Get a song or accompaniment.
-  ///
-  /// Available since: 2.13.0
-  /// Description: After the user successfully obtains the song/accompaniment/climax clip resource, he can get the corresponding shareToken, share the shareToken with other users, and other users call this interface to obtain the shared music resources.
-  /// Use case: In the online KTV scene, after receiving the song or accompaniment token shared by the lead singer, the chorus obtains the corresponding song or accompaniment through this interface, and then plays it on the local end.
-  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  ///
-  /// - [shareToken] access the corresponding authorization token for a song or accompaniment.
-  Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
-      String shareToken);
-
   /// Download song or accompaniment.
   ///
   /// Available since: 2.13.0
@@ -3719,7 +3759,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get the average score.
   /// Use case: Can be used to display the average score on the view.
-  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.
+  /// When to call: It can be called after playing the copyright accompaniment and starting to score.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getAverageScore(String resourceID);
@@ -3729,7 +3769,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get the total score.
   /// Use case: Can be used to display the total score on the view.
-  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.
+  /// When to call: It can be called after playing the copyright accompaniment and starting to score.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getTotalScore(String resourceID);
@@ -3754,6 +3794,65 @@ abstract class ZegoCopyrightedMusic {
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getCurrentPitch(String resourceID);
+
+  /// [Deprecated] Request a song. Deprecated since 3.0.2, please use the [requestResource] function instead.
+  ///
+  /// Available since: 2.13.0
+  /// Description: By requesting a song, you can not only obtain basic information about a song (such as duration, song name, and artist), but also obtain the resource ID for local playback, share_token for sharing with others, and related authentication information. Support by the time, by the user monthly, by the room monthly subscription three ways.
+  /// Use case: Get copyrighted songs for local playback and sharing.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: This interface will trigger billing. A song may have three sound qualities: normal, high-definition, and lossless. Each sound quality has a different resource file, and each resource file has a unique resource ID.
+  ///
+  /// @deprecated Deprecated since 3.0.2, please use the [requestResource] function instead.
+  /// - [config] request configuration.
+  @Deprecated(
+      'Deprecated since 3.0.2, please use the [requestResource] function instead.')
+  Future<ZegoCopyrightedMusicRequestSongResult> requestSong(
+      ZegoCopyrightedMusicRequestConfig config);
+
+  /// [Deprecated] Request accompaniment. Deprecated since 3.0.2, please use the [requestResource] function instead.
+  ///
+  /// Available since: 2.13.0
+  /// Description: You can get the accompaniment resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports click-by-point accompaniment.
+  /// Use case: Get copyrighted accompaniment for local playback and sharing.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: This interface will trigger billing.
+  ///
+  /// @deprecated Deprecated since 3.0.2, please use the [requestResource] function instead.
+  /// - [config] request configuration.
+  @Deprecated(
+      'Deprecated since 3.0.2, please use the [requestResource] function instead.')
+  Future<ZegoCopyrightedMusicRequestAccompanimentResult> requestAccompaniment(
+      ZegoCopyrightedMusicRequestConfig config);
+
+  /// [Deprecated] Request accompaniment clip. Deprecated since 3.0.2, please use the [requestResource] function instead.
+  ///
+  /// Available since: 2.13.0
+  /// Description: You can get the climax clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports accompaniment climax clips by pay-per-use.
+  /// Use case: Get copyrighted accompaniment clip for local playback and sharing.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  /// Caution: This interface will trigger billing.
+  ///
+  /// @deprecated Deprecated since 3.0.2, please use the [requestResource] function instead.
+  /// - [config] request configuration.
+  @Deprecated(
+      'Deprecated since 3.0.2, please use the [requestResource] function instead.')
+  Future<ZegoCopyrightedMusicRequestAccompanimentClipResult>
+      requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config);
+
+  /// [Deprecated] Get a song or accompaniment. Deprecated since 3.0.2, please use the [getSharedResource] function instead.
+  ///
+  /// Available since: 2.13.0
+  /// Description: After the user successfully obtains the song/accompaniment/climax clip resource, he can get the corresponding shareToken, share the shareToken with other users, and other users call this interface to obtain the shared music resources.
+  /// Use case: In the online KTV scene, after receiving the song or accompaniment token shared by the lead singer, the chorus obtains the corresponding song or accompaniment through this interface, and then plays it on the local end.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// @deprecated Deprecated since 3.0.2, please use the [getSharedResource] function instead.
+  /// - [shareToken] access the corresponding authorization token for a song or accompaniment.
+  @Deprecated(
+      'Deprecated since 3.0.2, please use the [getSharedResource] function instead.')
+  Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
+      String shareToken);
 }
 
 /// Callback for setting room extra information.

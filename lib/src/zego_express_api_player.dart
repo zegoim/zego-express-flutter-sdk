@@ -260,15 +260,18 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Whether the specified video decoding format is supported.
   ///
-  /// Available since: 2.12.0
+  /// Available since: 3.0.0
   /// Description: Whether the specified video decoding is supported depends on the following aspects: whether the hardware model supports hard decoding, whether the performance of the hardware model supports soft decoding, and whether the SDK includes the decoding module.
   /// When to call: After creating the engine.
   /// Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
   ///
-  /// - [codecID] Video codec id.Required: Yes.
-  /// - Returns Whether the specified video decoding format is supported; true means supported, you can use this decoding format for playing stream; false means not supported, and the decoding format cannot be used for play stream.
-  Future<bool> isVideoDecoderSupported(ZegoVideoCodecID codecID) async {
-    return await ZegoExpressImpl.instance.isVideoDecoderSupported(codecID);
+  /// - [codecID] Video codec id. Required: Yes.
+  /// - [codecBackend] Backend implementation of decoder. Required: Yes.
+  /// - Returns Whether the specified video decoding format is supported; 0 means not supported, and the decoding format cannot be used for play stream; 1 means support, you can use this decoding format for playing stream; 2 means not confirmed, it is recommended to call this interface later.
+  Future<int> isVideoDecoderSupported(ZegoVideoCodecID codecID,
+      {ZegoVideoCodecBackend? codecBackend}) async {
+    return await ZegoExpressImpl.instance
+        .isVideoDecoderSupported(codecID, codecBackend: codecBackend);
   }
 
   /// Set the play stream alignment properties.
@@ -284,5 +287,24 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   Future<void> setPlayStreamsAlignmentProperty(
       ZegoStreamAlignmentMode mode) async {
     return await ZegoExpressImpl.instance.setPlayStreamsAlignmentProperty(mode);
+  }
+
+  /// Enable video super resolution.
+  ///
+  /// Available since: 3.0.0
+  /// Description: Whether to enable video super resolution when playing stream, the resolution of the played video can be doubled at the stream playing end through video super resolution. For example, the original resolution is 640x360, and the super-resolution is 1280x720.
+  /// Use cases: Live streaming scenario.
+  /// When to call: Video super resolution is only valid for playing stream video. Needs to be called after [createEngine].
+  /// Caution:
+  ///  1. This function requires a special package, please contact ZEGO technical support;
+  ///  2. This function will consume extra system resources. In order to ensure user experience, ZEGO can only enable video super resolution for one stream, and the original video resolution is not recommended to exceed 640 × 360;
+  ///  3. This function has certain requirements on user equipment.
+  /// Related callbacks: Developer can use the [onPlayerVideoSuperResolutionUpdate] callback to monitor the video super resolution status change.
+  ///
+  /// - [streamID] The ID of the stream that currently needs to turn on or off overscore.
+  /// - [enable] Whether to enable super resolution, it is not enabled by default.
+  Future<void> enableVideoSuperResolution(String streamID, bool enable) async {
+    return await ZegoExpressImpl.instance
+        .enableVideoSuperResolution(streamID, enable);
   }
 }

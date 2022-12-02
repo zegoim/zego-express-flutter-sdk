@@ -826,6 +826,8 @@
         cdnConfig = [[ZegoCDNConfig alloc] init];
         cdnConfig.url = url;
         cdnConfig.authParam = authParam;
+        cdnConfig.protocol = config[@"protocol"];
+        cdnConfig.quicVersion = config[@"quicVersion"];
     }
 
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
@@ -945,9 +947,16 @@
     if (codecID > 3) {
         codecID = 100;
     }
-    BOOL isSupport = [[ZegoExpressEngine sharedEngine] isVideoEncoderSupported:(ZegoVideoCodecID)codecID];
 
-    result(@(isSupport));
+    int supportRet = 0;
+    if ([ZegoUtils isNullObject:call.arguments[@"codecBackend"]]) {
+        supportRet = [[ZegoExpressEngine sharedEngine] isVideoEncoderSupported:(ZegoVideoCodecID)codecID] ? 1: 0;
+    } else {
+        int codecBackend = [ZegoUtils intValue:call.arguments[@"codecBackend"]];
+        supportRet = [[ZegoExpressEngine sharedEngine] isVideoEncoderSupported:(ZegoVideoCodecID)codecID codecBackend:(ZegoVideoCodecBackend)codecBackend];
+    }
+
+    result(@(supportRet));
 }
 
 - (void)setAppOrientationMode:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1002,6 +1011,8 @@
             ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
             cdnConfig.url = cdnConfigMap[@"url"];
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.protocol = cdnConfigMap[@"protocol"];
+            cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
             playerConfig.cdnConfig = cdnConfig;
         }
     }
@@ -1247,9 +1258,16 @@
     if (codecID > 3) {
         codecID = 100;
     }
-    BOOL isSupport = [[ZegoExpressEngine sharedEngine] isVideoDecoderSupported:(ZegoVideoCodecID)codecID];
 
-    result(@(isSupport));
+    int supportRet = 0;
+    if ([ZegoUtils isNullObject:call.arguments[@"codecBackend"]]) {
+        supportRet = [[ZegoExpressEngine sharedEngine] isVideoDecoderSupported:(ZegoVideoCodecID)codecID] ? 1: 0;
+    } else {
+        int codecBackend = [ZegoUtils intValue:call.arguments[@"codecBackend"]];
+        supportRet = [[ZegoExpressEngine sharedEngine] isVideoDecoderSupported:(ZegoVideoCodecID)codecID codecBackend:(ZegoVideoCodecBackend)codecBackend];
+    }
+
+    result(@(supportRet));
 }
 
 - (void)setPlayStreamsAlignmentProperty:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1260,6 +1278,18 @@
 
     result(nil);
 }
+
+#if TARGET_OS_IPHONE
+- (void)enableVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSString *streamID = call.arguments[@"streamID"];
+
+    [[ZegoExpressEngine sharedEngine] enableVideoSuperResolution:streamID enable:enable];
+
+    result(nil);
+}
+#endif
 
 #pragma mark - Mixer
 
@@ -3101,6 +3131,32 @@
     result(nil);
 }
 
+- (void)mediaPlayerSetAudioTrackMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // NSNumber *index = call.arguments[@"index"];
+    // ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    // if (mediaPlayer) {
+    //     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+    //     [mediaPlayer setAudioTrackMode: mode];
+    // }
+
+    // result(nil);
+}
+
+- (void)mediaPlayerSetAudioTrackPublishIndex:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // NSNumber *index = call.arguments[@"index"];
+    // ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    // if (mediaPlayer) {
+    //     int index_ = [ZegoUtils intValue:call.arguments[@"index_"]];
+    //     [mediaPlayer setAudioTrackPublishIndex: index_];
+    // }
+
+    // result(nil);
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -4195,6 +4251,56 @@
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicStopScore` but can't find specific instance" details:nil]);
     }
+}
+
+- (void)copyrightedMusicGetFullScore:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // if (self.copyrightedMusicInstance) {
+    //     NSString *resourceID = call.arguments[@"resourceID"];
+    //     int stopScore = [self.copyrightedMusicInstance getFullScore: resourceID];
+    //     result(@(stopScore));
+    // } else {
+    //     result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetFullScore` but can't find specific instance" details:nil]);
+    // }
+}
+
+- (void)copyrightedMusicGetSharedResource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // if (self.copyrightedMusicInstance) {
+    //     NSDictionary *configMap = call.arguments[@"config"];
+        
+    //     ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
+    //     config.songID = configMap[@"songID"];
+    //     ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
+    //     [self.copyrightedMusicInstance getSharedResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+    //         NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+    //         resultMap[@"errorCode"] = @(errorCode);
+    //         resultMap[@"resource"] = resource;
+    //         result(resultMap);
+    //     } type: type];
+    // } else {
+    //     result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetSharedResource` but can't find specific instance" details:nil]);
+    // }
+}
+
+- (void)copyrightedMusicRequestResource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    // if (self.copyrightedMusicInstance) {
+    //     NSDictionary *configMap = call.arguments[@"config"];
+        
+    //     ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
+    //     config.songID = configMap[@"songID"];
+    //     config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+    //     ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
+    //     [self.copyrightedMusicInstance requestResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+    //         NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+    //         resultMap[@"errorCode"] = @(errorCode);
+    //         resultMap[@"resource"] = resource;
+    //         result(resultMap);
+    //     } type: type];
+    // } else {
+    //     result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestResource` but can't find specific instance" details:nil]);
+    // }
 }
 
 #pragma mark - PlatformView Utils

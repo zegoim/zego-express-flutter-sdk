@@ -456,7 +456,12 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('enablePublishDirectToCDN', {
       'enable': enable,
       'config': config != null
-          ? {'url': config.url, 'authParam': config.authParam}
+          ? {
+              'url': config.url,
+              'authParam': config.authParam ?? '',
+              'protocol': config.protocol ?? '',
+              'quicVersion': config.quicVersion ?? ''
+            }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
@@ -513,9 +518,10 @@ class ZegoExpressImpl {
         .invokeMethod('enableH265EncodeFallback', {'enable': enable});
   }
 
-  Future<bool> isVideoEncoderSupported(ZegoVideoCodecID codecID) async {
-    return await _channel
-        .invokeMethod('isVideoEncoderSupported', {'codecID': codecID.index});
+  Future<int> isVideoEncoderSupported(ZegoVideoCodecID codecID,
+      {ZegoVideoCodecBackend? codecBackend}) async {
+    return await _channel.invokeMethod('isVideoEncoderSupported',
+        {'codecID': codecID.index, 'codecBackend': codecBackend?.index});
   }
 
   Future<void> setAppOrientationMode(ZegoOrientationMode mode) async {
@@ -558,11 +564,14 @@ class ZegoExpressImpl {
               'cdnConfig': config.cdnConfig != null
                   ? {
                       'url': config.cdnConfig?.url,
-                      'authParam': config.cdnConfig?.authParam
+                      'authParam': config.cdnConfig?.authParam ?? "",
+                      'protocol': config.cdnConfig?.protocol ?? "",
+                      'quicVersion': config.cdnConfig?.quicVersion ?? ""
                     }
                   : {},
               'roomID': config.roomID ?? '',
-              'videoCodecID': config.videoCodecID.index,
+              'videoCodecID':
+                  config.videoCodecID?.index ?? ZegoVideoCodecID.Default.index,
               'sourceResourceType': config.sourceResourceType?.index ??
                   ZegoResourceType.RTC.index,
               'codecTemplateID': config.codecTemplateID ?? 0
@@ -657,15 +666,21 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('enableCheckPoc', {'enable': enable});
   }
 
-  Future<bool> isVideoDecoderSupported(ZegoVideoCodecID codecID) async {
-    return await _channel
-        .invokeMethod('isVideoDecoderSupported', {'codecID': codecID.index});
+  Future<int> isVideoDecoderSupported(ZegoVideoCodecID codecID,
+      {ZegoVideoCodecBackend? codecBackend}) async {
+    return await _channel.invokeMethod('isVideoDecoderSupported',
+        {'codecID': codecID.index, 'codecBackend': codecBackend?.index});
   }
 
   Future<void> setPlayStreamsAlignmentProperty(
       ZegoStreamAlignmentMode mode) async {
     return await _channel
         .invokeMethod('setPlayStreamsAlignmentProperty', {'mode': mode.index});
+  }
+
+  Future<void> enableVideoSuperResolution(String streamID, bool enable) async {
+    return await _channel.invokeMethod(
+        'enableVideoSuperResolution', {'streamID': streamID, 'enable': enable});
   }
 
   /* Mixer */
@@ -2005,6 +2020,21 @@ class ZegoExpressImpl {
             map['extraInfo']);
         break;
 
+      case 'onPlayerRenderCameraVideoFirstFrame':
+        if (ZegoExpressEngine.onPlayerRenderCameraVideoFirstFrame == null)
+          return;
+
+        ZegoExpressEngine.onPlayerRenderCameraVideoFirstFrame!(map['streamID']);
+        break;
+
+      case 'onPlayerVideoSuperResolutionUpdate':
+        if (ZegoExpressEngine.onPlayerVideoSuperResolutionUpdate == null)
+          return;
+
+        ZegoExpressEngine.onPlayerVideoSuperResolutionUpdate!(map['streamID'],
+            ZegoSuperResolutionState.values[map['state']], map['errorCode']);
+        break;
+
       /* Mixer*/
 
       case 'onMixerRelayCDNStateUpdate':
@@ -2857,6 +2887,19 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'mediaPlayerSetActiveAudioChannel',
         {'index': _index, 'audioChannel': audioChannel.index});
   }
+
+  // @override
+  // Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode) {
+  //   return ZegoExpressImpl._channel.invokeMethod(
+  //       'mediaPlayerSetAudioTrackMode', {'index': _index, 'mode': mode.index});
+  // }
+
+  // @override
+  // Future<void> setAudioTrackPublishIndex(int index) {
+  //   return ZegoExpressImpl._channel.invokeMethod(
+  //       'mediaPlayerSetAudioTrackPublishIndex',
+  //       {'index': _index, 'index_': index});
+  // }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
@@ -3308,4 +3351,36 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
     return await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicStopScore', {'resourceID': resourceID});
   }
+
+  // @override
+  // Future<int> getFullScore(String resourceID) async {
+  //   return await ZegoExpressImpl._channel.invokeMethod(
+  //       'copyrightedMusicGetFullScore', {'resourceID': resourceID});
+  // }
+
+  // @override
+  // Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResource(
+  //     ZegoCopyrightedMusicGetSharedConfig config,
+  //     ZegoCopyrightedMusicResourceType type) async {
+  //   var resultMap = await ZegoExpressImpl._channel
+  //       .invokeMethod('copyrightedMusicGetSharedResource', {
+  //     'config': {'songID': config.songID},
+  //     'type': type.index
+  //   });
+  //   return ZegoCopyrightedMusicGetSharedResourceResult(
+  //       resultMap['errorCode'], resultMap['resource']);
+  // }
+
+  // @override
+  // Future<ZegoCopyrightedMusicRequestResourceResult> requestResource(
+  //     ZegoCopyrightedMusicRequestConfig config,
+  //     ZegoCopyrightedMusicResourceType type) async {
+  //   var resultMap = await ZegoExpressImpl._channel
+  //       .invokeMethod('copyrightedMusicRequestResource', {
+  //     'config': {'songID': config.songID, 'mode': config.mode.index},
+  //     'type': type.index
+  //   });
+  //   return ZegoCopyrightedMusicRequestResourceResult(
+  //       resultMap['errorCode'], resultMap['resource']);
+  // }
 }

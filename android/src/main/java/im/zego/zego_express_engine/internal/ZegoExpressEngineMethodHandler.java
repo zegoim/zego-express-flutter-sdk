@@ -73,6 +73,7 @@ import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicBillingMode;
+// import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
@@ -80,6 +81,7 @@ import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
+// import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
@@ -97,6 +99,7 @@ import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
+import im.zego.zegoexpress.constants.ZegoVideoCodecBackend;
 import im.zego.zegoexpress.constants.ZegoOrientationMode;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
@@ -120,6 +123,7 @@ import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicConfig;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicRequestConfig;
+// import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfig;
 import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
@@ -975,6 +979,8 @@ public class ZegoExpressEngineMethodHandler {
             config = new ZegoCDNConfig();
             config.url = configMap.get("url");
             config.authParam = configMap.get("authParam");
+            config.protocol = (String) configMap.get("protocol");
+            config.quicVersion = (String) configMap.get("quicVersion");
         }
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
@@ -1093,9 +1099,16 @@ public class ZegoExpressEngineMethodHandler {
             codecID = ZegoVideoCodecID.UNKNOWN;
         }
 
-        boolean isSupport = ZegoExpressEngine.getEngine().isVideoEncoderSupported(codecID);
+        int supportRet = 0;
+        if (call.argument("codecBackend") == null) {
+            supportRet = ZegoExpressEngine.getEngine().isVideoEncoderSupported(codecID) ? 1: 0;
+        } else {
+            int codecBackendIndex = ZegoUtils.intValue((Number) call.argument("codecBackend"));
+            ZegoVideoCodecBackend codecBackend = ZegoVideoCodecBackend.getZegoVideoCodecBackend(codecBackendIndex);
+            supportRet = ZegoExpressEngine.getEngine().isVideoEncoderSupported(codecID, codecBackend);
+        }
 
-        result.success(isSupport);
+        result.success(supportRet);
     }
 
     @SuppressWarnings("unused")
@@ -1155,6 +1168,8 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoCDNConfig cdnConfig = new ZegoCDNConfig();
                 cdnConfig.url = (String) cdnConfigMap.get("url");
                 cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
+                cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
+                cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
                 playerConfig.cdnConfig = cdnConfig;
             }
         }
@@ -1435,9 +1450,16 @@ public class ZegoExpressEngineMethodHandler {
             codecID = ZegoVideoCodecID.UNKNOWN;
         }
 
-        boolean isSupport = ZegoExpressEngine.getEngine().isVideoDecoderSupported(codecID);
+        int supportRet = 0;
+        if (call.argument("codecBackend") == null) {
+            supportRet = ZegoExpressEngine.getEngine().isVideoDecoderSupported(codecID) ? 1: 0;
+        } else {
+            int codecBackendIndex = ZegoUtils.intValue((Number) call.argument("codecBackend"));
+            ZegoVideoCodecBackend codecBackend = ZegoVideoCodecBackend.getZegoVideoCodecBackend(codecBackendIndex);
+            supportRet = ZegoExpressEngine.getEngine().isVideoDecoderSupported(codecID, codecBackend);
+        }
 
-        result.success(isSupport);
+        result.success(supportRet);
     }
     
     @SuppressWarnings("unused")
@@ -1446,6 +1468,16 @@ public class ZegoExpressEngineMethodHandler {
         ZegoStreamAlignmentMode mode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("mode")));
 
         ZegoExpressEngine.getEngine().setPlayStreamsAlignmentProperty(mode);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableVideoSuperResolution(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        String streamID = call.argument("streamID");
+        ZegoExpressEngine.getEngine().enableVideoSuperResolution(streamID, enable);
 
         result.success(null);
     }
@@ -3343,6 +3375,34 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetAudioTrackMode(MethodCall call, final Result result) {
+
+        // Integer index = call.argument("index");
+        // ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        // if (mediaPlayer != null) {
+        //     ZegoMediaPlayerAudioTrackMode mode = ZegoMediaPlayerAudioTrackMode.getZegoMediaPlayerAudioTrackMode(ZegoUtils.intValue((Number) call.argument("mode")));
+        //     mediaPlayer.setAudioTrackMode(mode);
+        // }
+
+        // result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetAudioTrackPublishIndex(MethodCall call, final Result result) {
+
+        // Integer index = call.argument("index");
+        // ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        // if (mediaPlayer != null) {
+        //     int index_ = ZegoUtils.intValue((Number) call.argument("index_"));
+        //     mediaPlayer.setAudioTrackPublishIndex(index_);
+        // }
+
+        // result.success(null);
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")
@@ -4533,6 +4593,65 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicStopScore` but can't find specific instance", null);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicGetFullScore(MethodCall call, Result result) {
+
+        // if (copyrightedMusicInstance != null) {
+        //     String resourceID = call.argument("resourceID");
+        //     int score = copyrightedMusicInstance.getFullScore(resourceID);
+        //     result.success(score);
+        // } else {
+        //     result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetFullScore` but can't find specific instance", null);
+        // }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicGetSharedResource(MethodCall call,final Result result) {
+
+        // if (copyrightedMusicInstance != null) {
+        //     HashMap<String, Object> configMap = call.argument("config");
+        //     ZegoCopyrightedMusicGetSharedConfig config = new ZegoCopyrightedMusicGetSharedConfig();
+        //     config.songID = configMap.get("songID").toString();
+        //     ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
+        //     copyrightedMusicInstance.getSharedResource(config, type, new IZegoCopyrightedMusicGetSharedResourceCallback() {
+
+        //         @Override
+        //         public onGetSharedResourceCallback(int errorCode,String resource) {
+        //             HashMap<String, Object> resultMap = new HashMap<>();
+        //             resultMap.put("errorCode", errorCode);
+        //             resultMap.put("resource", resource);
+        //             result.success(resultMap);
+        //         }
+        //     });
+        // } else {
+        //     result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetSharedResource` but can't find specific instance", null);
+        // }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicRequestResource(MethodCall call,final Result result) {
+
+        // if (copyrightedMusicInstance != null) {
+        //     HashMap<String, Object> configMap = call.argument("config");
+        //     ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
+        //     config.songID = configMap.get("songID").toString();
+        //     config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+        //     ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
+        //     copyrightedMusicInstance.requestResource(config, type, new IZegoCopyrightedMusicRequestResourceCallback() {
+
+        //         @Override
+        //         public onRequestResourceCallback(int errorCode,String resource) {
+        //             HashMap<String, Object> resultMap = new HashMap<>();
+        //             resultMap.put("errorCode", errorCode);
+        //             resultMap.put("resource", resource);
+        //             result.success(resultMap);
+        //         }
+        //     });
+        // } else {
+        //     result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicRequestResource` but can't find specific instance", null);
+        // }
     }
 
     /* PlatformView Utils */

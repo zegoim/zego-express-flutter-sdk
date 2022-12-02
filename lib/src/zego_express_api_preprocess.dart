@@ -10,9 +10,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio.
   /// Use case: When you need to reduce the echo to improve the call quality and user experience, you can turn on this feature.
-  /// Default value: When this function is not called, iOS turns off echo cancellation by default and other platforms turn on echo cancellation by default
   /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
-  /// Caution: The AEC function only supports the processing of sounds playbacked through the SDK, such as sounds played by the playing stream, media player, audio effect player, etc.
+  /// Caution: The AEC function only supports the processing of sounds playbacked through the SDK, such as sounds played by the playing stream, media player, audio effect player, etc. Before this function is called, the SDK automatically determines whether to use AEC. Once this function is called, the SDK does not automatically determine whether to use AEC.
   /// Restrictions: None.
   /// Related APIs: Developers can use [enableHeadphoneAEC] to set whether to enable AEC when using headphones, and use [setAECMode] to set the echo cancellation mode.
   ///
@@ -57,8 +56,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: After turning on this function, the SDK can automatically adjust the microphone volume to adapt to near and far sound pickups and keep the volume stable.
   /// Use case: When you need to ensure volume stability to improve call quality and user experience, you can turn on this feature.
-  /// Default value: When this function is not called, AGC is enabled by default.
   /// When to call: It needs to be called after [createEngine] and before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager]. Note that the Mac needs to be called after [startPreview] and before [startPublishingStream].
+  /// Caution: Before this function is called, the SDK automatically determines whether to use AGC. Once this function is called, the SDK does not automatically determine whether to use AGC.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable automatic gain control, true: enable, false: disable
@@ -71,9 +70,9 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Enable the noise suppression can reduce the noise in the audio data and make the human voice clearer.
   /// Use case: When you need to suppress noise to improve call quality and user experience, you can turn on this feature.
-  /// Default value: When this function is not called, ANS is enabled by default.
   /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Related APIs: This function has a better suppression effect on continuous noise (such as the sound of rain, white noise). If you need to turn on transient noise suppression, please use [enableTransientANS]. And the noise suppression mode can be set by [setANSMode].
+  /// Caution: Before this function is called, the SDK automatically determines whether to use ANS. Once this function is called, the SDK does not automatically determine whether to use ANS.
   /// Restrictions: None.
   ///
   /// - [enable] Whether to enable noise suppression, true: enable, false: disable

@@ -379,9 +379,31 @@ void ZegoExpressEngineEventHandler::onPlayerStreamEvent(EXPRESS::ZegoStreamEvent
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onPlayerStreamEvent");
         retMap[FTValue("streamID")] = FTValue(streamID);
-        retMap[FTValue("eventID")] = flutter::EncodableValue((int32_t)eventID);
-        retMap[FTValue("streamID")] = flutter::EncodableValue(streamID);
-        retMap[FTValue("extraInfo")] = flutter::EncodableValue(extraInfo);
+        retMap[FTValue("eventID")] = FTValue((int32_t)eventID);
+        retMap[FTValue("extraInfo")] = FTValue(extraInfo);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onPlayerRenderCameraVideoFirstFrame(std::string streamID) {
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPlayerRenderCameraVideoFirstFrame");
+        retMap[FTValue("streamID")] = FTValue(streamID);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onPlayerVideoSuperResolutionUpdate(std::string streamID,EXPRESS::ZegoSuperResolutionState state,int errorCode) {
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPlayerVideoSuperResolutionUpdate");
+        retMap[FTValue("streamID")] = FTValue(streamID);
+        retMap[FTValue("state")] = FTValue((int32_t)state);
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
 
         eventSink_->Success(retMap);
     }
