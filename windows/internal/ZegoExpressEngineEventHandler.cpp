@@ -386,7 +386,7 @@ void ZegoExpressEngineEventHandler::onPlayerStreamEvent(EXPRESS::ZegoStreamEvent
     }
 }
 
-void ZegoExpressEngineEventHandler::onPlayerRenderCameraVideoFirstFrame(std::string streamID) {
+void ZegoExpressEngineEventHandler::onPlayerRenderCameraVideoFirstFrame(const std::string& streamID) {
 
     if (eventSink_) {
         FTMap retMap;
@@ -397,17 +397,17 @@ void ZegoExpressEngineEventHandler::onPlayerRenderCameraVideoFirstFrame(std::str
     }
 }
 
-void ZegoExpressEngineEventHandler::onPlayerVideoSuperResolutionUpdate(std::string streamID,EXPRESS::ZegoSuperResolutionState state,int errorCode) {
-    if (eventSink_) {
-        FTMap retMap;
-        retMap[FTValue("method")] = FTValue("onPlayerVideoSuperResolutionUpdate");
-        retMap[FTValue("streamID")] = FTValue(streamID);
-        retMap[FTValue("state")] = FTValue((int32_t)state);
-        retMap[FTValue("errorCode")] = FTValue(errorCode);
+// void ZegoExpressEngineEventHandler::onPlayerVideoSuperResolutionUpdate(std::string streamID,EXPRESS::ZegoSuperResolutionState state,int errorCode) {
+//     if (eventSink_) {
+//         FTMap retMap;
+//         retMap[FTValue("method")] = FTValue("onPlayerVideoSuperResolutionUpdate");
+//         retMap[FTValue("streamID")] = FTValue(streamID);
+//         retMap[FTValue("state")] = FTValue((int32_t)state);
+//         retMap[FTValue("errorCode")] = FTValue(errorCode);
 
-        eventSink_->Success(retMap);
-    }
-}
+//         eventSink_->Success(retMap);
+//     }
+// }
 
 void ZegoExpressEngineEventHandler::onMixerRelayCDNStateUpdate(const std::string& taskID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo>& infoList) {
     if (eventSink_) {

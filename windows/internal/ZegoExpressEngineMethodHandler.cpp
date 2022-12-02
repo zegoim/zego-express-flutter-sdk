@@ -3356,12 +3356,14 @@ void ZegoExpressEngineMethodHandler::setPlayStreamsAlignmentProperty(flutter::En
 void ZegoExpressEngineMethodHandler::enableVideoSuperResolution(flutter::EncodableMap& argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
 {
-    auto enable = std::get<bool>(argument[FTValue("enable")]);
-    auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+    // auto enable = std::get<bool>(argument[FTValue("enable")]);
+    // auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->enableVideoSuperResolution(streamID, enable);
+    // EXPRESS::ZegoExpressSDK::getEngine()->enableVideoSuperResolution(streamID, enable);
 
-    result->Success();
+    // result->Success();
+
+    result->NotImplemented();
 }
 
 void ZegoExpressEngineMethodHandler::startAutoMixerTask(flutter::EncodableMap& argument,
