@@ -423,36 +423,44 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
   }
 
   Widget selectScenarioWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: const EdgeInsets.only(top: 20.0)),
-        Text('Scenario'),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            ChoiceChip(
-              label: Text('General'),
-              selected: this._scenario.index == 0,
-              onSelected: (value) =>
-                  setState(() => this._scenario = ZegoScenario.General),
-            ),
-            ChoiceChip(
-              label: Text('Communication'),
-              selected: this._scenario.index == 1,
-              onSelected: (value) => setState(() => this._scenario =
-                  value ? ZegoScenario.Communication : ZegoScenario.General),
-            ),
-            ChoiceChip(
-              label: Text('Live'),
-              selected: this._scenario.index == 2,
-              onSelected: (value) => setState(() => this._scenario =
-                  value ? ZegoScenario.Live : ZegoScenario.General),
-            ),
+    return Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Scenario'),
+            DropdownButton(
+                value: _scenario,
+                items: ZegoScenario.values
+                    .where(
+                      (element) {
+                        if (ZegoScenario.values.indexOf(element) >
+                            ZegoScenario.values.indexOf(ZegoScenario.Live)) {
+                          if (kIsWeb &&
+                              (element == ZegoScenario.HighQualityChatroom ||
+                                  element == ZegoScenario.Karaoke)) {
+                            return false;
+                          }
+                          return true;
+                        }
+                        return false;
+                      },
+                    )
+                    .map((value) => DropdownMenuItem<ZegoScenario>(
+                        child: Text(
+                          value.name,
+                        ),
+                        value: value))
+                    .toList(),
+                onChanged: (ZegoScenario? scenario) {
+                  if (scenario != null) {
+                    setState(() {
+                      _scenario = scenario;
+                    });
+                  }
+                })
           ],
-        ),
-      ],
-    );
+        ));
   }
 
   Widget selectRendererWidget() {
