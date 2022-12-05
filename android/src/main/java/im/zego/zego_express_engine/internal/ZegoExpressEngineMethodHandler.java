@@ -613,8 +613,8 @@ public class ZegoExpressEngineMethodHandler {
                     view = textureRenderer.getSurface();
                 } else {
                     // Preview video without creating TextureRenderer in advance
-                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
                     ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
@@ -1211,8 +1211,8 @@ public class ZegoExpressEngineMethodHandler {
                     view = textureRenderer.getSurface();
                 } else {
                     // Play video without creating TextureRenderer in advance
-                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
                     ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
@@ -2963,8 +2963,8 @@ public class ZegoExpressEngineMethodHandler {
                     view = textureRenderer.getSurface();
                 } else {
                     // Media video without creating TextureRenderer in advance
-                    // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createTextureRenderer` first and get the textureID", viewID);
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
                     ZegoLog.error("[mediaPlayerSetPlayerCanvas] %s", errorMessage);
                     result.error("mediaPlayerSetPlayerCanvas_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;

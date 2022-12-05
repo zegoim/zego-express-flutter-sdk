@@ -505,8 +505,8 @@
             // Render with Texture
             if (![[ZegoTextureRendererController sharedInstance] bindCapturedChannel:@(channel) withTexture:viewID]) {
                 // Preview video without creating TextureRenderer in advance
-                // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createCanvasView` first and get the textureID", (long)viewID];
                 ZGError(@"[startPreview] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPreview_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
@@ -1056,8 +1056,8 @@
             // Render with Texture
             if (![[ZegoTextureRendererController sharedInstance] bindRemoteStreamId:streamID withTexture:viewID]) {
                 // Play video without creating TextureRenderer in advance
-                // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createCanvasView` first and get the textureID", (long)viewID];
                 ZGError(@"[startPlayingStream] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
@@ -2797,8 +2797,8 @@
             // Render with Texture
             if (![[ZegoTextureRendererController sharedInstance] bindMediaPlayerIndex:index withTexture:viewID]) {
                 // Media video without creating TextureRenderer in advance
-                // Need to invoke dart `createTextureRenderer` method in advance to create TextureRenderer and get viewID (TextureID)
-                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createTextureRenderer` first and get the textureID", (long)viewID];
+                // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createCanvasView` first and get the textureID", (long)viewID];
                 ZGError(@"[mediaPlayerSetPlayerCanvas] %@", errorMessage);
                 result([FlutterError errorWithCode:[@"mediaPlayerSetPlayerCanvas_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
