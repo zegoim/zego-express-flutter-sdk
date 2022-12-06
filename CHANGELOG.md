@@ -1,10 +1,10 @@
 # Change Log
 
-## 3.0.0
+## 3.0.3
 
 ### **💥 Breaking changes**
 
-This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](./doc/v3.0.0_upgrade_guide.md) for details.
+This version contains breaking changes, please refer to [v3.0.3 Upgrade Guide](./doc/v3.0.3_upgrade_guide.md) for details.
 
 ### **New Features**
 

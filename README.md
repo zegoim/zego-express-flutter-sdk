@@ -28,7 +28,7 @@ Learn more about the solution: [https://www.zegocloud.com](https://www.zegocloud
 
 1. **[v2.23.0 Upgrade Guide](./doc/v2.23.0_upgrade_guide.md)**
 
-2. **[v3.0.0 Upgrade Guide](./doc/v3.0.0_upgrade_guide.md)**
+2. **[v3.0.3 Upgrade Guide](./doc/v3.0.3_upgrade_guide.md)**
 
 ## 🔗 API documentation
 
