@@ -4,7 +4,7 @@
 
 ### **💥 Breaking changes**
 
-This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](./docs/v3.0.0_upgrade_guide.md) for details.
+This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](./doc/v3.0.0_upgrade_guide.md) for details.
 
 ### **New Features**
 
@@ -119,7 +119,7 @@ Discard [General], [Communication] and [Live] three scenarios in the [ZegoScenar
 
 ### **💥 Breaking changes**
 
-This version contains breaking changes, please refer to [v2.23.0 Upgrade Guide](./docs/v2.23.0_upgrade_guide.md) for details.
+This version contains breaking changes, please refer to [v2.23.0 Upgrade Guide](./doc/v2.23.0_upgrade_guide.md) for details.
 
 ### **New Features**
 

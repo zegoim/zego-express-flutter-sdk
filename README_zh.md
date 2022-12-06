@@ -26,7 +26,9 @@
 
 ## 💥 Breaking changes
 
-1. **[v2.23.0 升级指南](./docs/v2.23.0_upgrade_guide_zh.md)**
+1. **[v2.23.0 升级指南](./doc/v2.23.0_upgrade_guide_zh.md)**
+
+2. **[v3.0.0 升级指南](./doc/v3.0.0_upgrade_guide_zh.md)**
 
 ## 🔗 API 文档
 
