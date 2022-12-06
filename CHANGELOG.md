@@ -10,7 +10,7 @@ This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](.
 
 1. New video super-resolution capability
 
-    Note: If you need to use this function, please contact ZEGO technical support. This feature currently only supports iOS and Android platforms.
+    Note: If you need to use this function, please contact ZEGO technical support. This feature currently only supports IOS and Android platforms.
 
     The new [enableVideoSuperResolution] interface supports super-resolution processing of a video stream to achieve better image quality. Super resolution, referred to as super resolution, is a technology that the client multiplies the width and height of the pulled video stream in real time. For example, from 640x360 to 1280x720.
 
@@ -18,7 +18,7 @@ This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](.
 
 2. Scene AI noise reduction adds the ability to reduce noise in music scenes
 
-    Note: If you need to use this function, please contact ZEGO technical support.
+    Note: If you need to use this function, please contact ZEGO technical support. This feature currently only supports IOS，Android，mac and window platforms.
 
     The scene AI noise reduction function, based on the previous noise reduction for all non human voices, supports the noise reduction capability in the music scene, and restores the music sound quality by identifying music and intelligently adjusting the noise reduction effect. The SDK will perform music detection on the microphone input in real time, and automatically adjust the noise reduction level in sound card, playing and singing or near field music scenes to ensure the high fidelity sound quality of music.
 
@@ -32,7 +32,7 @@ This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](.
 
 4. Support for obtaining the codec capability of the specified video codec of the current device
 
-    Note: The interface adds an optional parameter codecBackend. The return value is changed to an int type; 0 means not supported, and this encoding format cannot be used for streaming; 1 means supported, and this encoding format can be used for streaming; 2 means not confirmed, and it is recommended to call this interface later.
+    Note: The interface adds an optional parameter codecBackend. The return value is changed to an int type; 0 means not supported, and this encoding format cannot be used for streaming; 1 means supported, and this encoding format can be used for streaming; 2 means not confirmed, and it is recommended to call this interface later.This feature currently only supports IOS，Android，mac and window platforms.
 
     The SDK supports obtaining the support of the codec mode of the video codec specified by the current device, so as to better help developers choose the encoder and codec mode to use and obtain better results.
 
@@ -46,15 +46,23 @@ This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](.
 
 5. Added switch interface for acquiring GPS information
 
-    Note: This function is enabled by default. If you need to disable this function, please contact ZEGO technical support.  n If the app has access to the geographical location, the developer can choose whether to allow the ZEGO SDK to obtain the GPS information cached by the system, which is obtained by default. When developers want to disable this function, they need to contact ZEGO technical support to set it.
+    Note: This function is enabled by default. If you need to disable this function, please contact ZEGO technical support.  n If the app has access to the geographical location, the developer can choose whether to allow the ZEGO SDK to obtain the GPS information cached by the system, which is obtained by default. When developers want to disable this function, they need to contact ZEGO technical support to set it.This feature currently only supports IOS ， Android，mac and window platforms.
 
 6. New video first frame callback based on camera opening
     
-    Support callback after SDK pulls the stream and renders the first frame of remote camera video data each time the remote camera is turned on. Developers can use this callback to calculate the first frame time consumption, or update the UI components of the playback stream.
+    Support callback after SDK pulls the stream and renders the first frame of remote camera video data each time the remote camera is turned on. Developers can use this callback to calculate the first frame time consumption, or update the UI components of the playback stream.This feature currently only supports IOS，Android，mac and window platforms.
 
     For related API, please refer to [onPlayerRenderCameraVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRenderCameraVideoFirstFrame.html)
+    
+7. Add the CDN Plus playing configuration to the startPlayingStream interface on the web platform.
 
-7. 
+    Note: If you want to control the stream-playing mode from the cloud by more criteria such as region and user, please contact ZEGO technical support for related configuration.
+
+    In the past, the web did not support playing CDN plus.Now, we can play CDN plus on the IOS，Android，mac, window and web platforms.The [startPlayingStream] interface adds CDN_PLUS as a new ZegoResourceType on the web platform. interface. You can enable CDN_PLUS to play stream by yourself based on to the stream critirion. The CDN Plus stream-playing is a cost-effective method, because its quality is higher than CDN stream-playing with similar price.
+
+    For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
+
+
 
 ### **Enhancements**
 
