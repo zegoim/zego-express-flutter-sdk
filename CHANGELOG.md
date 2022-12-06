@@ -1,5 +1,112 @@
 # Change Log
 
+## 3.0.0
+
+### **💥 Breaking changes**
+
+This version contains breaking changes, please refer to [v3.0.0 Upgrade Guide](./docs/v3.0.0_upgrade_guide.md) for details.
+
+### **New Features**
+
+1. New video super-resolution capability
+
+    Note: If you need to use this function, please contact ZEGO technical support. This feature currently only supports iOS and Android platforms.
+
+    The new [enableVideoSuperResolution] interface supports super-resolution processing of a video stream to achieve better image quality. Super resolution, referred to as super resolution, is a technology that the client multiplies the width and height of the pulled video stream in real time. For example, from 640x360 to 1280x720.
+
+    For related API, please refer to [enableVideoSuperResolution](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/enableVideoSuperResolution.html), [onPlayerVideoSuperResolutionUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerVideoSuperResolutionUpdate.html)
+
+2. Scene AI noise reduction adds the ability to reduce noise in music scenes
+
+    Note: If you need to use this function, please contact ZEGO technical support.
+
+    The scene AI noise reduction function, based on the previous noise reduction for all non human voices, supports the noise reduction capability in the music scene, and restores the music sound quality by identifying music and intelligently adjusting the noise reduction effect. The SDK will perform music detection on the microphone input in real time, and automatically adjust the noise reduction level in sound card, playing and singing or near field music scenes to ensure the high fidelity sound quality of music.
+
+3. Scenario of adding room dimensions
+
+    In order to facilitate the rapid access of developers and reduce the access threshold for developers, the SDK provides a variety of preset scenarios. Developers can select the corresponding room mode [ZegoScenario](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScenario.html) according to the desired scenario, and the SDK will automatically apply audio and video codecs, audio and video parameters, flow control strategies and other configurations suitable for the scenario, so as to quickly achieve the best effect in the scenario.
+
+    Currently supported scenarios include live show, KTV, standard 1v1 audio and video calls, high quality 1v1 audio and video calls, standard chat rooms, and high quality chat rooms.
+
+    For related API, please refer to [setRoomScenario](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomScenario.html)
+
+4. Support for obtaining the codec capability of the specified video codec of the current device
+
+    Note: The interface adds an optional parameter codecBackend. The return value is changed to an int type; 0 means not supported, and this encoding format cannot be used for streaming; 1 means supported, and this encoding format can be used for streaming; 2 means not confirmed, and it is recommended to call this interface later.
+
+    The SDK supports obtaining the support of the codec mode of the video codec specified by the current device, so as to better help developers choose the encoder and codec mode to use and obtain better results.
+
+    The hardware or software encoding support of the current encoder can be obtained through the [isVideoEncoderSupported] interface.
+
+    Through the [isVideoDecoderSupported] interface. The hardware or software decoding support of the current decoder can be obtained. The above two interfaces contain three enumerated values:support hardware or software, support hardware, and support software.
+
+    For example, ZegoExpressEngine.instance.isVideoEncoderSupported(ZegoVideoCodecID.H265, codecBackend: ZegoVideoCodecBackend.Hardware)means to check whether the current device supports H265 hardcoding. If yes, return 1.
+
+    For related API, please refer to [isVideoEncoderSupported](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/isVideoEncoderSupported.html), [isVideoDecoderSupported](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/isVideoDecoderSupported.html)
+
+5. Added switch interface for acquiring GPS information
+
+    Note: This function is enabled by default. If you need to disable this function, please contact ZEGO technical support.  n If the app has access to the geographical location, the developer can choose whether to allow the ZEGO SDK to obtain the GPS information cached by the system, which is obtained by default. When developers want to disable this function, they need to contact ZEGO technical support to set it.
+
+6. New video first frame callback based on camera opening
+    
+    Support callback after SDK pulls the stream and renders the first frame of remote camera video data each time the remote camera is turned on. Developers can use this callback to calculate the first frame time consumption, or update the UI components of the playback stream.
+
+    For related API, please refer to [onPlayerRenderCameraVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRenderCameraVideoFirstFrame.html)
+
+7. 
+
+### **Enhancements**
+
+1. Optimized for 1v1 pure RTC call scenarios
+
+    Note: If you need to use this function, please contact ZEGO technical support.
+
+    It is optimized for 1v1 call scenarios and is applicable to pure RTC scenarios.
+
+2. Optimize space audio function
+
+    The space audio capability is optimized, so that users can distinguish the front and rear audio sources, so as to achieve a better sense of immersion.
+
+3. Optimize the situation of broken sound caused by excessive collection volume
+
+    The AGC automatic gain control algorithm is optimized. When the acquisition volume is too large, it will not cause broken sound.
+
+4. Optimize the audio and video experience in extremely weak networks
+
+    The SDK optimizes the internal strategy. In the audio and video scenarios, it supports a minimum downlink of 50 kbps without congestion, ensuring a better experience in extremely weak networks.
+
+### **Bug Fixes**
+
+1. Fixed the problem that under some system versions of Mac M1 chip computers, the Web side enabled hardware encoding streaming, and used multiple SPS (Sequence Parameter Set) and PPS (Picture Parameter Set) output forms.
+
+2. Fixed the problem that the logs currently being uploaded may crash when the network status is switched from having a network to having no network.
+
+3. Fixed GetCallbackController non thread safety issue.
+
+4. Fixed the problem that the SDK did not trigger [onPlayerRenderVideoFirstFrame] without a View.
+
+5. Fixed the SDK crash caused by repeatedly starting and stopping the camera under Android system.
+
+6. Fixed the problem of abnormal screen scaling when iOS, macOS, and windows use texture mode to render the screen.
+
+7. Fixed the problem of iOS hardware decoding failure.
+
+    For related API, please refer to [enableHardwareDecoder](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/enableHardwareDecoder.html)
+
+8. Fixed the problem that when streaming is stopped in the multi room mode, other people in the room cannot receive stream deletion notifications.
+
+9. Fixed the possible crash of hardware decoding on iOS, macOS and Windows platforms.
+
+10. Fixed the Android issue that [onNetworkQuality] not calling back
+
+### **Deleted**
+
+1. Three old versions of [ZegoScenario] scenarios have been abandoned
+Discard [General], [Communication] and [Live] three scenarios in the [ZegoScenario] scenario enumeration.
+
+2. [setDebugVerbose],[setPlayStreamVideoLayer],[setBuiltInSpeakerOn],[onDeviceError],[loginMultiRoom]  are deleted.
+
 ## 2.23.0
 
 ### **💥 Breaking changes**
