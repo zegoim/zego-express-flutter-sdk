@@ -146,8 +146,8 @@
         NSMutableArray *userListArray = [[NSMutableArray alloc] init];
         for (ZegoUser *user in userList) {
             [userListArray addObject:@{
-                @"userID": user.userID,
-                @"userName": user.userName
+                @"userID": user.userID == nil ? @"" : user.userID,
+                @"userName": user.userName == nil ? @"" : user.userName
             }];
         }
 
