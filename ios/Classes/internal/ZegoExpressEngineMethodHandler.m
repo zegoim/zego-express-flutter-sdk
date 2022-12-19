@@ -980,6 +980,85 @@
     result(nil);
 }
 
+- (void)setVideoSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int source = [ZegoUtils intValue:call.arguments[@"source"]];
+    BOOL hasInstanceID = NO;
+    int instanceID = -1;
+    if (![ZegoUtils isNullObject:call.arguments[@"instanceID"]]) {
+        hasInstanceID = YES;
+        instanceID = [ZegoUtils intValue:call.arguments[@"instanceID"]];
+    }
+
+    BOOL hasChannel = NO;
+    int channel = -1;
+    if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
+        hasChannel = YES;
+        channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    }
+
+    int ret = 0;
+    if (!hasChannel && !hasInstanceID) {
+        ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source];
+    } else if (hasChannel && !hasInstanceID) {
+        ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source channel:(ZegoPublishChannel)channel];
+    } else if (!hasChannel && hasInstanceID) {
+        ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID];
+    } else {
+        ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID channel:(ZegoPublishChannel)channel];
+    }
+
+    result(@(ret));
+}
+
+- (void)setAudioSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int source = [ZegoUtils intValue:call.arguments[@"source"]];
+    BOOL hasConfig = NO;
+    ZegoAudioSourceMixConfig *config = [[ZegoAudioSourceMixConfig alloc] init];
+    if (![ZegoUtils isNullObject:call.arguments[@"config"]]) {
+        hasConfig = YES;
+        NSDictionary *configMap = call.arguments[@"config"];
+
+        NSArray<int> *audioEffectPlayerIndexList = configMap[@"audioEffectPlayerIndexList"];
+        config.audioEffectPlayerCount = [audioEffectPlayerIndexList size];
+        for(int index in audioEffectPlayerIndexList) {
+            *config.audioEffectPlayerIndexList = index;
+            config.audioEffectPlayerIndexList += 1;
+        }
+
+        NSArray<int> *mediaPlayerIndexList = configMap[@"mediaPlayerIndexList"];
+        config.mediaPlayerCount = [mediaPlayerIndexList size];
+        for(int index in mediaPlayerIndexList) {
+            *config.mediaPlayerIndexList = index;
+            config.mediaPlayerIndexList += 1;
+        }
+    }
+    }
+
+    BOOL hasChannel = NO;
+    int channel = -1;
+    if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
+        hasChannel = YES;
+        channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    }
+
+    int ret = 0;
+    if (!hasChannel && !hasConfig) {
+        ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source];
+    } else if (hasChannel && !hasConfig) {
+        ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source channel:(ZegoPublishChannel)channel];
+    } else if (!hasChannel && hasConfig) {
+        ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source config:config];
+    } else {
+        if (channel == 0) {
+            ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source config:config];
+        }
+    }
+
+    result(@(ret));
+}
+
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {

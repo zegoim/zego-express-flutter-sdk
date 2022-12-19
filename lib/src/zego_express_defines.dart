@@ -1155,11 +1155,20 @@ enum ZegoAudioSourceType {
   /// Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default)
   Default,
 
-  /// Use custom audio capture, refer to [enableCustomAudioIO]
+  /// Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource]
   Custom,
 
   /// Use media player as audio source, only support aux channel
-  MediaPlayer
+  MediaPlayer,
+
+  /// No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  None,
+
+  /// Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  Microphone,
+
+  /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  MainPublishChannel
 }
 
 /// Record type.
@@ -1366,6 +1375,21 @@ enum ZegoCDNProtocol {
   QUIC
 }
 
+/// Supported httpDNS service types.
+enum ZegoHttpDNSType {
+  /// None.
+  None,
+
+  /// wangsu httpdns.
+  Wangsu,
+
+  /// tencent httpdns.
+  Tencent,
+
+  /// aliyun httpdns.
+  Aliyun
+}
+
 /// Publish or play stream event
 enum ZegoStreamEvent {
   /// Start publishing stream
@@ -1411,6 +1435,18 @@ enum ZegoStreamEvent {
   PlayEnd
 }
 
+/// Type of capture target.
+enum ZegoScreenCaptureSourceType {
+  /// Unknow.
+  Unknow,
+
+  /// The capture target is a certain window.
+  Window,
+
+  /// The capture target is the screen of a certain monitor.
+  Screen
+}
+
 /// Low light enhanced mode.
 enum ZegoLowlightEnhancementMode {
   /// Turn off the low-light enhancement, and the brightness of the captured image remains unchanged.
@@ -1430,6 +1466,42 @@ enum ZegoSuperResolutionState {
 
   /// Super resolution turned on.
   On
+}
+
+/// video capture source.
+enum ZegoVideoSourceType {
+  /// Default capture logic, i.e. if there is a video external capture factory set, external capture is used, otherwise internal capture is used.
+  ZegoVideoSourceDefault,
+
+  /// No capture, i.e. no video data.
+  ZegoVideoSourceNone,
+
+  /// Video source from the camera.
+  ZegoVideoSourceCamera,
+
+  /// The video source is from an external capture . When no external capture factory is set, it will be automatically corrected to Camera.
+  ZegoVideoSourceExternalCapture,
+
+  /// The video source comes from the main publish channel. When publishing the main channel, this value cannot be set.
+  ZegoVideoSourceMainPublishChannel,
+
+  /// Video source from media player.
+  ZegoVideoSourcePlayer,
+
+  /// Video source from screen capture.
+  ZegoVideoSourceScreenCapture
+}
+
+/// Screen capture source exception type.
+enum ZegoScreenCaptureSourceExceptionType {
+  /// Unknown exception type.
+  Unknown,
+
+  /// The capture target fails, such as the monitor is unplugged and the window is closed.
+  Invalid,
+
+  /// Failed to collect target, internal reasons of the system.
+  Failed
 }
 
 /// Log config.
@@ -1498,6 +1570,29 @@ class ZegoEngineConfig {
   Map<String, String>? advancedConfig;
 
   ZegoEngineConfig({this.logConfig, this.advancedConfig});
+}
+
+/// Proxy config.
+///
+/// Set proxy config.
+class ZegoProxyInfo {
+  /// ip.
+  String? ip;
+
+  /// port.
+  int? port;
+
+  /// hostname.
+  String? hostName;
+
+  /// userName.
+  String? userName;
+
+  /// password.
+  String? password;
+
+  ZegoProxyInfo(
+      {this.ip, this.port, this.hostName, this.userName, this.password});
 }
 
 /// Advanced room configuration.
@@ -1892,7 +1987,11 @@ class ZegoCDNConfig {
   /// QUIC version。 If [protocol] has the QUIC protocol, this information needs to be filled in. If there are multiple version numbers, separate them with commas. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
   String? quicVersion;
 
-  ZegoCDNConfig(this.url, {this.authParam, this.protocol, this.quicVersion});
+  /// customized httpdns service. This feature is only supported for playing stream currently.
+  ZegoHttpDNSType httpdns;
+
+  ZegoCDNConfig(this.url, this.httpdns,
+      {this.authParam, this.protocol, this.quicVersion});
 }
 
 /// Relay to CDN info.
@@ -2372,7 +2471,7 @@ class ZegoMixerInput {
   /// User image information.
   ZegoMixerImageInfo? imageInfo;
 
-  /// Video frame corner radius, in px. Required: False. Value range: Does not exceed the width and height of the video screen set by the [layout] parameter. Default value: 0.
+  /// Description: Video frame corner radius, in px. Required: False. Value range: Does not exceed the width and height of the video screen set by the [layout] parameter. Default value: 0.
   int? cornerRadius;
 
   ZegoMixerInput(this.streamID, this.contentType, this.layout,
@@ -3046,6 +3145,29 @@ abstract class ZegoMediaPlayer {
   /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
   Future<void> setAudioTrackIndex(int index);
 
+  /// Set the audio track mode of the player.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Set the audio track mode of the player.
+  /// Use case: Under the real-time chorus (KTV), call the interface enable multi-track mode, call the interface [setAudioTrackIndex] to specify the original track to play, call interface [setAudioTrackPublishIndex] specified need publish of accompaniment tracks.
+  /// When to call: The call takes effect before [start] starts playing
+  /// Related APIs: Call [setAudioTrackIndex] to specified the play track of media file and call [setAudioTrackPublishIndex] to specified the publish track of media file.
+  /// Caution: When multi-track mode is enabled, the resource consumption of the hardware device is increased.
+  ///
+  /// - [mode] Audio track mode.
+  Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode);
+
+  /// Set the audio track for the media file to be publish.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Set the audio track for the media file to be publish.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Related APIs: The number of audio tracks can be obtained through the [getAudioTrackCount] function.
+  /// Caution: This call takes effect only after multitrack mode is enabled by calling the interface [setAudioTrackMode].
+  ///
+  /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
+  Future<void> setAudioTrackPublishIndex(int index);
+
   /// Setting up the specific voice changer parameters.
   ///
   /// - [audioChannel] The audio channel to be voice changed
@@ -3360,6 +3482,50 @@ class ZegoCopyrightedMusicGetSharedConfig {
   ZegoCopyrightedMusicGetSharedConfig(this.songID);
 }
 
+/// The screen captures source information.
+class ZegoScreenCaptureSourceInfo {
+  /// Target type for screen capture. (only for desktop)
+  ZegoScreenCaptureSourceType sourceType;
+
+  /// The ID of the capture source.
+  int sourceID;
+
+  /// Capture source name (in UTF8 encoding).
+  String sourceName;
+
+  /// Thumbnail of the capture window.
+  MemoryImage thumbnailImage;
+
+  /// The image content of the icon.
+  MemoryImage iconImage;
+
+  ZegoScreenCaptureSourceInfo(this.sourceType, this.sourceID, this.sourceName,
+      this.thumbnailImage, this.iconImage);
+}
+
+/// Audio source mix config
+///
+/// Used to config whether mix media player, audio effect player and captured system audio into publish stream or not when set audio source.
+class ZegoAudioSourceMixConfig {
+  /// Media player instance index list.
+  List<int>? mediaPlayerIndexList;
+
+  /// Audio effect player instance index list.
+  List<int>? audioEffectPlayerIndexList;
+
+  /// Enable or disable mix captured system audio into publish stream.
+  bool? enableMixSystemPlayout;
+
+  /// Enable or disable mix SDK playout into publish stream.
+  bool? enableMixEnginePlayout;
+
+  ZegoAudioSourceMixConfig(
+      {this.mediaPlayerIndexList,
+      this.audioEffectPlayerIndexList,
+      this.enableMixSystemPlayout,
+      this.enableMixEnginePlayout});
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -3660,6 +3826,38 @@ abstract class ZegoCopyrightedMusic {
   Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(
       String krcToken);
 
+  /// Request music resource.
+  ///
+  /// Available since: 3.1.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
+  /// Use case: Get copyrighted songs for local playback and sharing.
+  /// Related APIs: After a user in the room successfully calls this interface to request a music resource, other users in the room can call the [getsharedresource] interface to get the music resource for free once.
+  /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
+  /// Restrictions: This interface will trigger billing. Each resource has a unique resource ID.
+  ///
+  /// - [config] The configuration of requesting music resource.
+  /// - [type] The resource type of music.
+  /// - Returns Result of requesting music resource.
+  Future<ZegoCopyrightedMusicRequestResourceResult> requestResource(
+      ZegoCopyrightedMusicRequestConfig config,
+      ZegoCopyrightedMusicResourceType type);
+
+  /// Get shared music resource.
+  ///
+  /// Available since: 3.1.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
+  /// Use case: Get copyrighted songs for local playback.
+  /// Related APIs: After a user in the room calls the [requestresource] interface to request a music resource successfully, other users in the room can call this interface to get the music resource for free once.
+  /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
+  /// Restrictions: Each resource has a unique resource ID.
+  ///
+  /// - [config] The configuration of getting shared music resource.
+  /// - [type] The resource type of music.
+  /// - Returns Result of getting shared music resource.
+  Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResource(
+      ZegoCopyrightedMusicGetSharedConfig config,
+      ZegoCopyrightedMusicResourceType type);
+
   /// Download song or accompaniment.
   ///
   /// Available since: 2.13.0
@@ -3700,7 +3898,7 @@ abstract class ZegoCopyrightedMusic {
   /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.
   /// Restrictions: Only support use this api after [startPublishingStream].
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   /// - [pitchValueInterval] the time interval of real-time pitch line callback, in milliseconds, the default is 50 milliseconds.
   Future<int> startScore(String resourceID, int pitchValueInterval);
 
@@ -3711,7 +3909,7 @@ abstract class ZegoCopyrightedMusic {
   /// Use case: You can call this interface to pause the scoring function while scoring.
   /// When to call: It can be called while grading.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> pauseScore(String resourceID);
 
   /// Resume scoring.
@@ -3721,7 +3919,7 @@ abstract class ZegoCopyrightedMusic {
   /// Use case: When there is currently paused scoring, this interface can be called to resume the scoring function.
   /// When to call: It can be called when there is currently a paused scoring.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> resumeScore(String resourceID);
 
   /// Stop scoring.
@@ -3731,7 +3929,7 @@ abstract class ZegoCopyrightedMusic {
   /// Use case: You can call this interface to end the scoring while scoring.
   /// When to call: It can be called while grading.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> stopScore(String resourceID);
 
   /// Reset scoring.
@@ -3741,7 +3939,7 @@ abstract class ZegoCopyrightedMusic {
   /// Use case: Often used in scenes where the same song is re-sung.
   /// When to call: It can be called after scoring has been performed.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> resetScore(String resourceID);
 
   /// Get the score of the previous sentence.
@@ -3749,9 +3947,9 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get the score of the previous sentence.
   /// Use case: Can be used to display the score of each sentence on the view.
-  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.The user gets it once after singing each sentence.
+  /// When to call: It can be called after playing the copyright accompaniment or accompaniment clip and starting to score.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> getPreviousScore(String resourceID);
 
   /// Get average score.
@@ -3759,9 +3957,9 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get the average score.
   /// Use case: Can be used to display the average score on the view.
-  /// When to call: It can be called after playing the copyright accompaniment and starting to score.
+  /// When to call: It can be called after playing the copyright accompaniment or accompaniment clip and starting to score.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> getAverageScore(String resourceID);
 
   /// Get total score .
@@ -3769,10 +3967,20 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get the total score.
   /// Use case: Can be used to display the total score on the view.
-  /// When to call: It can be called after playing the copyright accompaniment and starting to score.
+  /// When to call: It can be called after playing the copyright accompaniment or accompaniment clip and starting to score.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<int> getTotalScore(String resourceID);
+
+  /// Get full score .
+  ///
+  /// Available since: 3.1.0
+  /// Description: Get the full score.
+  /// Use case: Can be used to display the full score on the view.
+  /// When to call: It can be called after playing the copyright accompaniment or accompaniment clip and starting to score.
+  ///
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
+  Future<int> getFullScore(String resourceID);
 
   /// Get standard pitch data.
   ///
@@ -3781,7 +3989,7 @@ abstract class ZegoCopyrightedMusic {
   /// Use case: Can be used to display standard pitch lines on the view.
   /// Cation: Only accompaniment or climactic clip assets have pitch lines.
   ///
-  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(
       String resourceID);
 
@@ -3790,7 +3998,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get real-time pitch data.
   /// Use case: Can be used to display real-time pitch lines on the view.
-  /// When to call: It can be called after playing the copyright accompaniment and starting to score.
+  /// When to call: It can be called after playing the copyright accompaniment or accompaniment clip and starting to score.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getCurrentPitch(String resourceID);
@@ -3853,6 +4061,72 @@ abstract class ZegoCopyrightedMusic {
       'Deprecated since 3.0.2, please use the [getSharedResource] function instead.')
   Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
       String shareToken);
+}
+
+abstract class ZegoScreenCaptureSource {
+  /// Create the screen capture source
+  ///
+  /// Available: since 3.1.0
+  /// Description: Update a screen capture source object based on the provided source ID and source type.
+  /// Use cases: It is used when you need to record and share the screen or window.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only support in Windows/macOS.
+  ///
+  /// - [sourceId] The specified screen ID or window ID.
+  /// - [sourceType] The specified screen source type.
+  Future<void> updateScreenCaptureSource(
+      int sourceId, ZegoScreenCaptureSourceType sourceType);
+
+  /// Start screen capture.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Start screen capture.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  Future<void> startScreenCapture();
+
+  /// Stop screen capture.
+  Future<void> stopScreenCapture();
+
+  /// Update the area captured by the screen.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Update the area captured by the screen.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  ///
+  /// - [rect] The position of the area to be captured relative to the entire screen or window.
+  Future<void> updateScreenCaptureRegion(Rect rect);
+
+  /// Sets the filtered list of windows.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Specify a list of windows, and filter these windows when capturing the screen, and not display them on the screen.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  ///
+  /// - [list] List of IDs to filter windows.
+  Future<void> setExcludeWindowList(List<int> list);
+
+  /// Whether to activate the promotion of the window to the foreground.
+  ///
+  /// Available since: 3.1.0
+  /// Description: When the capture target is a window, set whether to activate the window to be displayed in the foreground during the first capture.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  ///
+  /// - [active] Whether to activate the window. true to activate the window, false to not activate the window, the default is true.
+  Future<void> enableWindowActivate(bool active);
+
+  /// Set whether to show the cursor
+  ///
+  /// Available since: 3.1.0
+  /// Description: Set whether to show the cursor.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  ///
+  /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
+  Future<void> enableCursorVisible(bool visible);
+
+  /// Get screen capture source index.
+  ///
+  /// - Returns Index of the screen capture source.
+  Future<int> getIndex();
 }
 
 /// Callback for setting room extra information.
@@ -4179,6 +4453,34 @@ class ZegoCopyrightedMusicGetMusicByTokenResult {
   String resource;
 
   ZegoCopyrightedMusicGetMusicByTokenResult(this.errorCode, this.resource);
+}
+
+/// Callback of requesting music resource.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [resource] The JSON string returned by the song ordering service, including music resource information.
+class ZegoCopyrightedMusicRequestResourceResult {
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// The JSON string returned by the song ordering service, including music resource information.
+  String resource;
+
+  ZegoCopyrightedMusicRequestResourceResult(this.errorCode, this.resource);
+}
+
+/// Callback of getting shared music resource.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// - [resource] The JSON string returned by the song ordering service, including music resource information.
+class ZegoCopyrightedMusicGetSharedResourceResult {
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  /// The JSON string returned by the song ordering service, including music resource information.
+  String resource;
+
+  ZegoCopyrightedMusicGetSharedResourceResult(this.errorCode, this.resource);
 }
 
 /// Callback for download song or accompaniment.

@@ -152,7 +152,6 @@ class ZegoTextureWidget extends StatefulWidget {
 }
 
 class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
-
   bool _isInit = false;
 
   @override

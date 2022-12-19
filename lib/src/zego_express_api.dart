@@ -60,6 +60,37 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.setLogConfig(config);
   }
 
+  /// Set local proxy config.
+  ///
+  /// Available since: 3.1.0
+  /// Description: If you need to use the local proxy feature, please call this function to complete the configuration.
+  /// When to call: Must be set before calling [createEngine] to take effect, otherwise it will fail.
+  /// Restrictions: After [createEngine], can not change the proxy.
+  /// Caution: None.
+  ///
+  /// - [proxyList] proxy info.
+  /// - [enable] enable proxy or not.
+  static Future<void> setLocalProxyConfig(
+      List<ZegoProxyInfo> proxyList, bool enable) async {
+    return await ZegoExpressImpl.setLocalProxyConfig(proxyList, enable);
+  }
+
+  /// Set cloud proxy config.
+  ///
+  /// Available since: 3.1.0
+  /// Description: If you need to use the cloud proxy feature, please call this function to complete the configuration.
+  /// When to call: Must be set before calling [createEngine] to take effect, otherwise it will fail.
+  /// Restrictions: After [createEngine], can not change the proxy.
+  /// Caution: None.
+  ///
+  /// - [proxyList] proxy info.
+  /// - [token] token.
+  /// - [enable] enable proxy or not.
+  static Future<void> setCloudProxyConfig(
+      List<ZegoProxyInfo> proxyList, String token, bool enable) async {
+    return await ZegoExpressImpl.setCloudProxyConfig(proxyList, token, enable);
+  }
+
   /// Set room mode.
   ///
   /// Available since: 2.9.0
@@ -837,6 +868,7 @@ class ZegoExpressEngine {
   /// Available since: 1.20.0
   /// Description: Callback for device's audio route changed.
   /// Trigger: This callback will be called when there are changes in audio routing such as earphone plugging, speaker and receiver switching, etc.
+  /// Platform differences: Only supports iOS and Android.
   ///
   /// - [audioRoute] Current audio route.
   static void Function(ZegoAudioRoute audioRoute)? onAudioRouteChange;
@@ -1292,6 +1324,18 @@ class ZegoExpressEngine {
   /// - [pitchValue] Real-time pitch accuracy or value.
   static void Function(ZegoCopyrightedMusic copyrightedMusic, String resourceID,
       int currentDuration, int pitchValue)? onCurrentPitchValueUpdate;
+
+  /// The callback triggered when a screen capture source exception occurred
+  ///
+  /// Available since: 3.1.0
+  /// Description: The callback triggered when a screen capture source exception occurred.
+  /// Trigger: This callback is triggered when an exception occurs after the screen start capture.
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [exceptionType] Capture source exception type.
+  static void Function(ZegoScreenCaptureSource source,
+      ZegoScreenCaptureSourceExceptionType exceptionType)? onExceptionOccurred;
 
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///

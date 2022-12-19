@@ -9,7 +9,6 @@ extension ZegoExpressEngineRecord on ZegoExpressEngine {
   ///
   /// Available since: 1.10.0
   /// Description: Starts to record locally captured audio or video and directly save the data to a file, The recorded data will be the same as the data publishing through the specified channel.
-  /// When to call: This function needs to be called after the success of [startPreview] or [startPublishingStream] to be effective.
   /// Restrictions: None.
   /// Caution: Developers should not [stopPreview] or [stopPublishingStream] during recording, otherwise the SDK will end the current recording task. The data of the media player needs to be mixed into the publishing stream to be recorded.
   /// Related callbacks: Developers will receive the [onCapturedDataRecordStateUpdate] and the [onCapturedDataRecordProgressUpdate] callback after start recording.

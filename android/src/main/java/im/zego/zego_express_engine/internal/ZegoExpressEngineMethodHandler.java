@@ -112,6 +112,8 @@ import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.constants.ZegoEncodeProfile;
 import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
 import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
+import im.zego.zegoexpress.constants.ZegoVideoSourceType;
+import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoAudioDeviceMode;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
@@ -1130,6 +1132,76 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setLowlightEnhancement(mode, channel);
 
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setVideoSource(MethodCall call, Result result) {
+
+        ZegoVideoSourceType source = ZegoVideoSourceType.getZegoVideoSourceType(ZegoUtils.intValue((Number) call.argument("source")));
+        boolean hasChannel = false;
+        ZegoPublishChannel channel = null;
+        if (call.argument("channel") != null) {
+            hasChannel = true;
+            channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+        }
+        boolean hasInstanceID = false;
+        int instanceID = -1;
+        if (call.argument("instanceID") != null) {
+            hasInstanceID = true;
+            instanceID = ZegoUtils.intValue((Number) call.argument("instanceID"));
+        }
+
+        int ret = 0;
+        if (!hasChannel && !hasInstanceID) {
+            ret = ZegoExpressEngine.getEngine().setVideoSource(source);
+        } else if (hasChannel && !hasInstanceID) {
+            ret = ZegoExpressEngine.getEngine().setVideoSource(source, channel);
+        } else if (!hasChannel && hasInstanceID) {
+            ret = ZegoExpressEngine.getEngine().setVideoSource(source, instanceID);
+        } else {
+            ret = ZegoExpressEngine.getEngine().setVideoSource(source, instanceID, channel);
+        }
+
+        result.success(ret);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setAudioSource(MethodCall call, Result result) {
+
+        ZegoAudioSourceType source = ZegoAudioSourceType.getZegoAudioSourceType(ZegoUtils.intValue((Number) call.argument("source")));
+        boolean hasChannel = false;
+        ZegoPublishChannel channel = null;
+        if (call.argument("channel") != null) {
+            hasChannel = true;
+            channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+        }
+        boolean hasConfig = false;
+        ZegoAudioSourceMixConfig config = new ZegoAudioSourceMixConfig();
+        if (call.argument("config") != null) {
+            hasConfig = true;
+            HashMap<String, Object> configMap = call.argument("config");
+
+            ArrayList<HashMap<String, Object>> audioEffectPlayerIndexList = configMap.get("audioEffectPlayerIndexList");
+            ArrayList<HashMap<String, Object>> mediaPlayerIndexList = configMap.get("mediaPlayerIndexList");
+
+            config.audioEffectPlayerIndexList = audioEffectPlayerIndexList;
+            config.mediaPlayerIndexList = mediaPlayerIndexList;
+        }
+
+        int ret = 0;
+        if (!hasChannel && !hasConfig) {
+            ret = ZegoExpressEngine.getEngine().setAudioSource(source);
+        } else if (hasChannel && !hasConfig) {
+            ret = ZegoExpressEngine.getEngine().setAudioSource(source, channel);
+        } else if (!hasChannel && hasConfig) {
+            ret = ZegoExpressEngine.getEngine().setAudioSource(source, config);
+        } else {
+            if (channel == ZegoPublishChannel.MAIN) {
+                ret = ZegoExpressEngine.getEngine().setAudioSource(source, config);
+            }
+        }
+
+        result.success(ret);
     }
 
 

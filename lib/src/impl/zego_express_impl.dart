@@ -537,6 +537,31 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<int> setVideoSource(ZegoVideoSourceType source,
+      {int? instanceID, ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setVideoSource', {
+      'source': source.index,
+      'instanceID': instanceID,
+      'channel': channel?.index,
+    });
+  }
+
+  Future<int> setAudioSource(ZegoAudioSourceType source,
+      {ZegoAudioSourceMixConfig? config, ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setVideoSource', {
+      'source': source.index,
+      'config': config == null
+          ? null
+          : {
+              'audioEffectPlayerIndexList': config.audioEffectPlayerIndexList,
+              'mediaPlayerIndexList': config.mediaPlayerIndexList,
+              'enableMixEnginePlayout': config.enableMixEnginePlayout,
+              'enableMixSystemPlayout': config.enableMixSystemPlayout
+            },
+      'channel': channel?.index,
+    });
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,

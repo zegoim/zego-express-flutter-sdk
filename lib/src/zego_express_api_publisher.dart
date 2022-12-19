@@ -647,4 +647,44 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance
         .setLowlightEnhancement(mode, channel: channel);
   }
+
+  /// Set a video capture instance as video capture source for the specified channel.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Set video capture source for switching between different video capture sources.
+  /// Use cases: Typically used in educational scenarios that require switching between different video capture sources.
+  /// When to call: After the engine is created [createEngine].
+  /// Restrictions: None.
+  /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type.
+  ///  2. When using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [source] Video capture source.
+  /// - [instanceID] Video capture source instance id.
+  /// - [channel] Publish stream channel.
+  Future<int> setVideoSource(ZegoVideoSourceType source,
+      {int? instanceID, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setVideoSource(source, instanceID: instanceID, channel: channel);
+  }
+
+  /// Set audio capture source with audio mix config.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Set audio capture source for switching between different audio capture sources.
+  /// Use cases: Typically used in educational scenarios that require switching between different audio capture sources.
+  /// When to call: After the engine is created [createEngine].
+  /// Restrictions: None.
+  /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type.
+  ///  2. When using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main.
+  ///  3. config applies only to the main channel ZegoPublishChannel.Main, This parameter is invalid when the channel is not the main channel.
+  ///
+  /// - [source] Audio capture source.
+  /// - [config] Audio capture source mix config. This parameter applies only to the Main push channel ZegoPublishChannel. main. This parameter is invalid when channel is not the main push channel.
+  /// - [channel] Publish stream channel.
+  Future<int> setAudioSource(ZegoAudioSourceType source,
+      {ZegoAudioSourceMixConfig? config, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setAudioSource(source, config: config, channel: channel);
+  }
 }
