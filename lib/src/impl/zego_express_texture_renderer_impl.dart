@@ -152,13 +152,24 @@ class ZegoTextureWidget extends StatefulWidget {
 }
 
 class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
+
+  bool _isInit = false;
+
   @override
   void initState() {
     super.initState();
-
     widget.stream.listen((map) {
-      setState(() {});
+      if (_isInit) {
+        setState(() {});
+      }
     });
+    _isInit = true;
+  }
+
+  @override
+  void dispose() {
+    _isInit = false;
+    super.dispose();
   }
 
   Rect _calculateHeight(Size size, double width, double height) {
