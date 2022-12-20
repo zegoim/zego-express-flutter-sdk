@@ -43,6 +43,10 @@ class ZegoExpressEngineMethodHandler {
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setLogConfig(flutter::EncodableMap &argument,
                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setLocalProxyConfig(flutter::EncodableMap &argument,
+                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setCloudProxyConfig(flutter::EncodableMap &argument,
+                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomMode(flutter::EncodableMap &argument,
                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomScenario(flutter::EncodableMap &argument,
@@ -788,6 +792,38 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    // ScreenCapture
+    void getScreenCaptureSources(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void createScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void destroyScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableCursorVisibleScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableWindowActivateScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setExcludeWindowListScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void updateCaptureRegionScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void updateCaptureSourceScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void startCaptureScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopCaptureScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void
     createTextureRenderer(flutter::EncodableMap &argument,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -801,6 +837,7 @@ class ZegoExpressEngineMethodHandler {
   private:
     std::unordered_map<int, EXPRESS::IZegoAudioEffectPlayer *> audioEffectPlayerMap_;
     std::unordered_map<int, EXPRESS::IZegoMediaPlayer *> mediaPlayerMap_;
+    std::unordered_map<int, EXPRESS::IZegoScreenCaptureSource *> screenCaptureSourceMap_;
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;

@@ -1481,4 +1481,24 @@
     }
 }
 
+#if TARGET_OS_OSX
+- (void)screenCapture:(ZegoScreenCaptureSource *)source availableFrame:(const void *)data dataLength:(unsigned int)dataLength param:(ZegoVideoFrameParam *)param {
+    
+}
+
+- (void)screenCapture:(ZegoScreenCaptureSource *)source exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)type {
+    FlutterEventSink sink = _eventSink;
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onExceptionOccurred",
+            @"screenCaptureSourceIndex": [source getIndex],
+            @"exceptionType": @(type)
+        });
+    }
+}
+#endif
+
 @end

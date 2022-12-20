@@ -25,6 +25,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaPlayer *> *mediaPlayerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *,  ZegoScreenCaptureSource *> *screenCaptureSouceMap;
+
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoRealTimeSequentialDataManager *> *realTimeSequentialDataManagerMap;
@@ -245,6 +247,52 @@
     } else {
         result([FlutterError errorWithCode:[@"setLogConfig_null_config" uppercaseString] message:@"Invoke `setLogConfig` with null config" details:nil]);
     }
+}
+
+- (void)setLocalProxyConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSArray<NSDictionary *> *proxyListMap = call.arguments[@"proxyList"];
+
+    NSMutableArray<ZegoProxyInfo *> *proxyList = [[NSMutableArray alloc] init];
+    for(NSDictionary *proxyMap in proxyListMap) {
+        ZegoProxyInfo *proxyObject = [[ZegoProxyInfo alloc] init];
+        proxyObject.ip = proxyMap[@"ip"];
+        proxyObject.port = [ZegoUtils intValue:proxyMap[@"logSize"]];
+        proxyObject.hostName = proxyMap[@"hostName"];
+        proxyObject.userName = proxyMap[@"userName"];
+        proxyObject.password = proxyMap[@"password"];
+        
+        [proxyList addObject:proxyObject];
+    }
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    
+    [ZegoExpressEngine setLocalProxyConfig:proxyList enable:enable];
+    
+    result(nil);
+}
+
+- (void)setCloudProxyConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSArray<NSDictionary *> *proxyListMap = call.arguments[@"proxyList"];
+
+    NSMutableArray<ZegoProxyInfo *> *proxyList = [[NSMutableArray alloc] init];
+    for(NSDictionary *proxyMap in proxyListMap) {
+        ZegoProxyInfo *proxyObject = [[ZegoProxyInfo alloc] init];
+        proxyObject.ip = proxyMap[@"ip"];
+        proxyObject.port = [ZegoUtils intValue:proxyMap[@"logSize"]];
+        proxyObject.hostName = proxyMap[@"hostName"];
+        proxyObject.userName = proxyMap[@"userName"];
+        proxyObject.password = proxyMap[@"password"];
+        
+        [proxyList addObject:proxyObject];
+    }
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    
+    NSString *token = call.arguments[@"token"];
+    
+    [ZegoExpressEngine setCloudProxyConfig:proxyList token:token enable:enable];
+    
+    result(nil);
 }
 
 - (void)setRoomMode:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1020,25 +1068,24 @@
         hasConfig = YES;
         NSDictionary *configMap = call.arguments[@"config"];
 
-        NSArray<int> *audioEffectPlayerIndexList = configMap[@"audioEffectPlayerIndexList"];
-        config.audioEffectPlayerCount = [audioEffectPlayerIndexList size];
-        for(int index in audioEffectPlayerIndexList) {
-            *config.audioEffectPlayerIndexList = index;
+        NSArray<NSNumber *> *audioEffectPlayerIndexList = configMap[@"audioEffectPlayerIndexList"];
+        config.audioEffectPlayerCount = audioEffectPlayerIndexList.count;
+        for(NSNumber* index in audioEffectPlayerIndexList) {
+            *config.audioEffectPlayerIndexList = [index intValue];
             config.audioEffectPlayerIndexList += 1;
         }
 
-        NSArray<int> *mediaPlayerIndexList = configMap[@"mediaPlayerIndexList"];
-        config.mediaPlayerCount = [mediaPlayerIndexList size];
-        for(int index in mediaPlayerIndexList) {
-            *config.mediaPlayerIndexList = index;
+        NSArray<NSNumber *> *mediaPlayerIndexList = configMap[@"mediaPlayerIndexList"];
+        config.mediaPlayerCount = mediaPlayerIndexList.count;
+        for(NSNumber * index in mediaPlayerIndexList) {
+            *config.mediaPlayerIndexList = [index intValue];
             config.mediaPlayerIndexList += 1;
         }
-    }
     }
 
     BOOL hasChannel = NO;
     int channel = -1;
-    if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
+    if (![ZegoUtils isNullObject: call.arguments[@"channel"] ] ) {
         hasChannel = YES;
         channel = [ZegoUtils intValue:call.arguments[@"channel"]];
     }
@@ -3212,28 +3259,28 @@
 
 - (void)mediaPlayerSetAudioTrackMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    // NSNumber *index = call.arguments[@"index"];
-    // ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
-    // if (mediaPlayer) {
-    //     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
-    //     [mediaPlayer setAudioTrackMode: mode];
-    // }
+    if (mediaPlayer) {
+        int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+        [mediaPlayer setAudioTrackMode: mode];
+    }
 
-    // result(nil);
+    result(nil);
 }
 
 - (void)mediaPlayerSetAudioTrackPublishIndex:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    // NSNumber *index = call.arguments[@"index"];
-    // ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
-    // if (mediaPlayer) {
-    //     int index_ = [ZegoUtils intValue:call.arguments[@"index_"]];
-    //     [mediaPlayer setAudioTrackPublishIndex: index_];
-    // }
+    if (mediaPlayer) {
+        int index_ = [ZegoUtils intValue:call.arguments[@"index_"]];
+        [mediaPlayer setAudioTrackPublishIndex: index_];
+    }
 
-    // result(nil);
+    result(nil);
 }
 
 #pragma mark - AudioEffectPlayer
@@ -4334,52 +4381,291 @@
 
 - (void)copyrightedMusicGetFullScore:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    // if (self.copyrightedMusicInstance) {
-    //     NSString *resourceID = call.arguments[@"resourceID"];
-    //     int stopScore = [self.copyrightedMusicInstance getFullScore: resourceID];
-    //     result(@(stopScore));
-    // } else {
-    //     result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetFullScore` but can't find specific instance" details:nil]);
-    // }
+    if (self.copyrightedMusicInstance) {
+        NSString *resourceID = call.arguments[@"resourceID"];
+        int stopScore = [self.copyrightedMusicInstance getFullScore: resourceID];
+        result(@(stopScore));
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetFullScore` but can't find specific instance" details:nil]);
+    }
 }
 
 - (void)copyrightedMusicGetSharedResource:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    // if (self.copyrightedMusicInstance) {
-    //     NSDictionary *configMap = call.arguments[@"config"];
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
         
-    //     ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
-    //     config.songID = configMap[@"songID"];
-    //     ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
-    //     [self.copyrightedMusicInstance getSharedResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
-    //         NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
-    //         resultMap[@"errorCode"] = @(errorCode);
-    //         resultMap[@"resource"] = resource;
-    //         result(resultMap);
-    //     } type: type];
-    // } else {
-    //     result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetSharedResource` but can't find specific instance" details:nil]);
-    // }
+        ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
+        config.songID = configMap[@"songID"];
+        ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
+        [self.copyrightedMusicInstance getSharedResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+            NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+            resultMap[@"errorCode"] = @(errorCode);
+            resultMap[@"resource"] = resource;
+            result(resultMap);
+        } type: type];
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetSharedResource` but can't find specific instance" details:nil]);
+    }
 }
 
 - (void)copyrightedMusicRequestResource:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    // if (self.copyrightedMusicInstance) {
-    //     NSDictionary *configMap = call.arguments[@"config"];
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
         
-    //     ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
-    //     config.songID = configMap[@"songID"];
-    //     config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
-    //     ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
-    //     [self.copyrightedMusicInstance requestResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
-    //         NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
-    //         resultMap[@"errorCode"] = @(errorCode);
-    //         resultMap[@"resource"] = resource;
-    //         result(resultMap);
-    //     } type: type];
-    // } else {
-    //     result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestResource` but can't find specific instance" details:nil]);
-    // }
+        ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
+        config.songID = configMap[@"songID"];
+        config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
+        [self.copyrightedMusicInstance requestResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+            NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+            resultMap[@"errorCode"] = @(errorCode);
+            resultMap[@"resource"] = resource;
+            result(resultMap);
+        } type: type];
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestResource` but can't find specific instance" details:nil]);
+    }
+}
+
+#pragma mark - ScreenCapture
+#if TARGET_OS_OSX
+- (void)getScreenCaptureSources:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int thumbnailWidth = [ZegoUtils intValue: call.arguments[@"thumbnailWidth"]];
+    int thumbnailHeight = [ZegoUtils intValue: call.arguments[@"thumbnailHeight"]];
+    int iconWidth = [ZegoUtils intValue: call.arguments[@"iconWidth"]];
+    int iconHeight = [ZegoUtils intValue: call.arguments[@"iconHeight"]];
+    
+    CGSize thumbnailSize = CGSizeMake((CGFloat)thumbnailWidth, (CGFloat)thumbnailHeight);
+    CGSize iconSize = CGSizeMake((CGFloat)iconWidth, (CGFloat)iconHeight);
+    
+    NSArray<ZegoScreenCaptureSourceInfo *> *infos = [[ZegoExpressEngine sharedEngine] getScreenCaptureSourcesWithThumbnailSize:thumbnailSize iconSize: iconSize];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSMutableArray *resultMap = [[NSMutableArray alloc] init];
+        for (ZegoScreenCaptureSourceInfo *info : infos) {
+            
+            NSData *thumbnailImage = nil;
+            if (info.thumbnailImage) {
+                CGImageRef cgImage = [info.thumbnailImage CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                thumbnailImage = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+            }
+            
+            NSData *iconImage = nil;
+            if (info.iconImage) {
+                CGImageRef cgImage = [info.iconImage CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                iconImage = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+            }
+            
+            [resultMap addObject: @{
+                @"sourceType": @((int)info.sourceType),
+                @"sourceID": @((int)info.sourceID),
+                @"sourceName": @((int)info.sourceName),
+                @"thumbnailImage": thumbnailImage ?: [[NSNull alloc] init],
+                @"iconImage": iconImage ?: [[NSNull alloc] init],
+            }];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            result(resultMap);
+        });
+    });
+}
+
+- (void)createScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.screenCaptureSouceMap) {
+        self.screenCaptureSouceMap = [NSMutableDictionary dictionary];
+    }
+    
+    unsigned int sourceId = [ZegoUtils unsignedLongValue: call.arguments[@"sourceId"]];
+    int sourceType = [ZegoUtils intValue: call.arguments[@"sourceType"]];
+
+    ZegoScreenCaptureSource *screenCaptureSource = [[ZegoExpressEngine sharedEngine] createScreenCaptureSource: sourceId sourceType: (ZegoScreenCaptureSourceType)sourceType];
+
+    if (screenCaptureSource) {
+        NSNumber *index = [screenCaptureSource getIndex];
+
+        [screenCaptureSource setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        self.screenCaptureSouceMap[index] = screenCaptureSource;
+
+        result(index);
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.screenCaptureSouceMap) {
+        self.screenCaptureSouceMap = [NSMutableDictionary dictionary];
+    }
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        [[ZegoExpressEngine sharedEngine] destroyScreenCaptureSource:screenCaptureSource];
+    }
+
+    [self.screenCaptureSouceMap removeObjectForKey:index];
+
+    result(nil);
+}
+
+- (void)enableCursorVisibleScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        BOOL visible = [ZegoUtils boolValue: call.arguments[@"visible"]];
+        [screenCaptureSource enableCursorVisible:visible];
+    }
+
+    result(nil);
+}
+
+- (void)enableWindowActivateScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        BOOL active = [ZegoUtils boolValue: call.arguments[@"active"]];
+        [screenCaptureSource enableWindowActivate:active];
+    }
+
+    result(nil);
+}
+
+- (void)setExcludeWindowListScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        
+        NSArray<NSNumber *> *list = call.arguments[@"list"];
+        
+        [screenCaptureSource setExcludeWindowList:list];
+    }
+
+    result(nil);
+}
+
+- (void)updateCaptureRegionScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        NSDictionary *rectMap = call.arguments[@"rect"];
+        
+        int x = [ZegoUtils intValue:rectMap[@"x"]];
+        int y = [ZegoUtils intValue:rectMap[@"y"]];
+        int width = [ZegoUtils intValue:rectMap[@"width"]];
+        int height = [ZegoUtils intValue:rectMap[@"height"]];
+        
+        CGRect rect = CGRectMake(x, y, width, height);
+        
+        [screenCaptureSource updateCaptureRegion:rect];
+    }
+
+    result(nil);
+}
+
+- (void)updateCaptureSourceScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        unsigned int sourceId = [ZegoUtils unsignedIntValue:call.arguments[@"sourceId"]];
+        int sourceType = [ZegoUtils intValue:call.arguments[@"sourceType"]];
+        
+        [screenCaptureSource updateCaptureSource:sourceId sourceType:(ZegoScreenCaptureSourceType) sourceType];
+    }
+
+    result(nil);
+}
+#elif TARGET_OS_IPHONE
+- (void)updateScreenCaptureConfigScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSDictionary *configMap = call.arguments[@"config"];
+    
+    ZegoScreenCaptureConfig *config = [[ZegoScreenCaptureConfig alloc] init];
+        
+    config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
+    config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
+    config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
+    config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+
+    if (@available(iOS 12.0, *)) {
+        [[ZegoExpressEngine sharedEngine] updateScreenCaptureConfig:config];
+        result(nil);
+    } else {
+        // Fallback on earlier versions
+        result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+    }
+}
+#endif
+
+- (void)startCaptureScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+#if TARGET_OS_IPHONE
+    if (@available(iOS 12.0, *)) {
+        BOOL inApp = NO;
+        if (![ZegoUtils isNullObject:call.arguments[@"inApp"]]) {
+            inApp = [ZegoUtils boolValue:call.arguments[@"inApp"]];
+        }
+        
+        ZegoScreenCaptureConfig *config = [[ZegoScreenCaptureConfig alloc] init];
+        if (![ZegoUtils isNullObject:call.arguments[@"config"]]) {
+            NSDictionary *configMap = call.arguments[@"config"];
+            config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
+            config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
+            config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
+            config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+        }
+        
+        if (inApp) {
+            [[ZegoExpressEngine sharedEngine] startScreenCaptureInApp:config];
+        } else {
+            [[ZegoExpressEngine sharedEngine] startScreenCapture:config];
+        }
+    } else {
+        // Fallback on earlier versions
+        result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+    }
+    
+#elif TARGET_OS_OSX
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        [screenCaptureSource startCapture];
+    }
+#endif
+    result(nil);
+}
+
+- (void)stopCaptureScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+#if TARGET_OS_IPHONE
+    if (@available(iOS 12.0, *)) {
+        [[ZegoExpressEngine sharedEngine] stopScreenCapture];
+    } else {
+        // Fallback on earlier versions
+        result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+    }
+    
+#elif TARGET_OS_OSX
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        [screenCaptureSource stopCapture];
+    }
+#endif
+    result(nil);
 }
 
 #pragma mark - PlatformView Utils
@@ -4418,7 +4704,6 @@
 
     result(@(state));
 }
-
 
 #pragma mark - Assets Utils
 

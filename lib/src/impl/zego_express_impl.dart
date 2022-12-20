@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.0.3";
+  static String pluginVersion = "3.1.0";
 }
 
 class ZegoExpressImpl {
@@ -123,6 +124,38 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('setLogConfig', {
       'config': {'logPath': config.logPath, 'logSize': config.logSize}
     });
+  }
+
+  static Future<void> setLocalProxyConfig(
+      List<ZegoProxyInfo> proxyList, bool enable) async {
+    var proxys = <Map>[];
+    for (var proxy in proxyList) {
+      proxys.add({
+        'ip': proxy.ip ?? '',
+        'port': proxy.port ?? 0,
+        'hostName': proxy.hostName ?? '',
+        'userName': proxy.userName ?? '',
+        'password': proxy.password ?? '',
+      });
+    }
+    return await _channel.invokeMethod(
+        'setLocalProxyConfig', {'proxyList': proxys, 'enable': enable});
+  }
+
+  static Future<void> setCloudProxyConfig(
+      List<ZegoProxyInfo> proxyList, String token, bool enable) async {
+    var proxys = <Map>[];
+    for (var proxy in proxyList) {
+      proxys.add({
+        'ip': proxy.ip ?? '',
+        'port': proxy.port ?? 0,
+        'hostName': proxy.hostName ?? '',
+        'userName': proxy.userName ?? '',
+        'password': proxy.password ?? '',
+      });
+    }
+    return await _channel.invokeMethod('setLocalProxyConfig',
+        {'proxyList': proxys, 'token': token, 'enable': enable});
   }
 
   static Future<void> setRoomMode(ZegoRoomMode mode) async {
@@ -1678,6 +1711,72 @@ class ZegoExpressImpl {
     return;
   }
 
+  /* Screen Capture */
+  static final Map<int, ZegoScreenCaptureSource> screenCaptureSourceMap = {};
+  Future<List<ZegoScreenCaptureSourceInfo>> getScreenCaptureSources(
+      int thumbnailWidth,
+      int thumbnailHeight,
+      int iconWidth,
+      int iconHeight) async {
+    final List<Map> mapList =
+        await _channel.invokeMethod('getScreenCaptureSources', {
+      'thumbnailWidth': thumbnailWidth,
+      'thumbnailHeight': thumbnailHeight,
+      'iconWidth': iconWidth,
+      'iconHeight': iconHeight
+    });
+    var result = <ZegoScreenCaptureSourceInfo>[];
+    for (var info in mapList) {
+      result.add(ZegoScreenCaptureSourceInfo(
+          ZegoScreenCaptureSourceType.values[info['sourceType']],
+          info['sourceID'],
+          info['sourceName'],
+          info['thumbnailImage'] != null
+              ? MemoryImage(info['thumbnailImage'])
+              : null,
+          info['iconImage'] != null ? MemoryImage(info['iconImage']) : null));
+    }
+
+    return result;
+  }
+
+  Future<ZegoScreenCaptureSource?> createScreenCaptureSource(
+      int sourceId, ZegoScreenCaptureSourceType sourceType) async {
+    int index = -1;
+    if (Platform.isAndroid || Platform.isIOS) {
+      index = 0;
+    } else {
+      index = await _channel.invokeMethod('createScreenCaptureSource',
+          {'sourceId': sourceId, 'sourceType': sourceType.index});
+    }
+
+    if (index >= 0) {
+      ZegoScreenCaptureSourceImpl screenCaptureInstance =
+          ZegoScreenCaptureSourceImpl(index);
+      screenCaptureSourceMap[index] = screenCaptureInstance;
+
+      return screenCaptureInstance;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyScreenCaptureSource(
+      ZegoScreenCaptureSource source) async {
+    int index = source.getIndex();
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      index = 0;
+    } else {
+      await _channel
+          .invokeMethod('destroyScreenCaptureSource', {'index': index});
+    }
+
+    screenCaptureSourceMap.remove(index);
+
+    return;
+  }
+
   /* EventHandler */
 
   static void _registerEventHandler() async {
@@ -2623,6 +2722,21 @@ class ZegoExpressImpl {
             map['resourceID'], map['currentDuration'], map['pitchValue']);
         break;
 
+      /* Screen Capture */
+      case 'onExceptionOccurred':
+        if (ZegoExpressEngine.onExceptionOccurred == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onExceptionOccurred!(
+              screenCaptureSource,
+              ZegoScreenCaptureSourceExceptionType
+                  .values[map['exceptionType']]);
+        }
+        break;
+
       default:
         // TODO: Unknown callback
         break;
@@ -2913,18 +3027,18 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         {'index': _index, 'audioChannel': audioChannel.index});
   }
 
-  // @override
-  // Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode) {
-  //   return ZegoExpressImpl._channel.invokeMethod(
-  //       'mediaPlayerSetAudioTrackMode', {'index': _index, 'mode': mode.index});
-  // }
+  @override
+  Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode) {
+    return ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetAudioTrackMode', {'index': _index, 'mode': mode.index});
+  }
 
-  // @override
-  // Future<void> setAudioTrackPublishIndex(int index) {
-  //   return ZegoExpressImpl._channel.invokeMethod(
-  //       'mediaPlayerSetAudioTrackPublishIndex',
-  //       {'index': _index, 'index_': index});
-  // }
+  @override
+  Future<void> setAudioTrackPublishIndex(int index) {
+    return ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetAudioTrackPublishIndex',
+        {'index': _index, 'index_': index});
+  }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
@@ -3377,35 +3491,129 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         .invokeMethod('copyrightedMusicStopScore', {'resourceID': resourceID});
   }
 
-  // @override
-  // Future<int> getFullScore(String resourceID) async {
-  //   return await ZegoExpressImpl._channel.invokeMethod(
-  //       'copyrightedMusicGetFullScore', {'resourceID': resourceID});
-  // }
+  @override
+  Future<int> getFullScore(String resourceID) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicGetFullScore', {'resourceID': resourceID});
+  }
 
-  // @override
-  // Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResource(
-  //     ZegoCopyrightedMusicGetSharedConfig config,
-  //     ZegoCopyrightedMusicResourceType type) async {
-  //   var resultMap = await ZegoExpressImpl._channel
-  //       .invokeMethod('copyrightedMusicGetSharedResource', {
-  //     'config': {'songID': config.songID},
-  //     'type': type.index
-  //   });
-  //   return ZegoCopyrightedMusicGetSharedResourceResult(
-  //       resultMap['errorCode'], resultMap['resource']);
-  // }
+  @override
+  Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResource(
+      ZegoCopyrightedMusicGetSharedConfig config,
+      ZegoCopyrightedMusicResourceType type) async {
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetSharedResource', {
+      'config': {'songID': config.songID},
+      'type': type.index
+    });
+    return ZegoCopyrightedMusicGetSharedResourceResult(
+        resultMap['errorCode'], resultMap['resource']);
+  }
 
-  // @override
-  // Future<ZegoCopyrightedMusicRequestResourceResult> requestResource(
-  //     ZegoCopyrightedMusicRequestConfig config,
-  //     ZegoCopyrightedMusicResourceType type) async {
-  //   var resultMap = await ZegoExpressImpl._channel
-  //       .invokeMethod('copyrightedMusicRequestResource', {
-  //     'config': {'songID': config.songID, 'mode': config.mode.index},
-  //     'type': type.index
-  //   });
-  //   return ZegoCopyrightedMusicRequestResourceResult(
-  //       resultMap['errorCode'], resultMap['resource']);
-  // }
+  @override
+  Future<ZegoCopyrightedMusicRequestResourceResult> requestResource(
+      ZegoCopyrightedMusicRequestConfig config,
+      ZegoCopyrightedMusicResourceType type) async {
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicRequestResource', {
+      'config': {'songID': config.songID, 'mode': config.mode.index},
+      'type': type.index
+    });
+    return ZegoCopyrightedMusicRequestResourceResult(
+        resultMap['errorCode'], resultMap['resource']);
+  }
+}
+
+class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
+  final int _index;
+
+  ZegoScreenCaptureSourceImpl(int index) : _index = index;
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+  @override
+  Future<void> enableCursorVisible(bool visible) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'enableCursorVisibleScreenCaptureSource',
+        {'visible': visible, 'index': _index});
+  }
+
+  @override
+  Future<void> enableWindowActivate(bool active) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'enableWindowActivateScreenCaptureSource',
+        {'active': active, 'index': _index});
+  }
+
+  @override
+  Future<void> setExcludeWindowList(List<int> list) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'setExcludeWindowListScreenCaptureSource',
+        {'list': list, 'index': _index});
+  }
+
+  @override
+  Future<void> startCapture(
+      {ZegoScreenCaptureConfig? config, bool? inApp}) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('startCaptureScreenCaptureSource', {
+      'config': config == null
+          ? null
+          : {
+              'captureAudio': config.captureAudio,
+              'captureVideo': config.captureVideo,
+              'applicationVolume': config.applicationVolume,
+              'microphoneVolume': config.microphoneVolume,
+            },
+      'inApp': inApp
+    });
+  }
+
+  @override
+  Future<void> stopCapture() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('stopCaptureScreenCaptureSource');
+  }
+
+  @override
+  Future<void> updateCaptureRegion(Rect rect) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('updateCaptureRegionScreenCaptureSource', {
+      'rect': {
+        'x': rect.left,
+        'y': rect.top,
+        'width': rect.width,
+        'height': rect.height,
+      },
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> updateCaptureSource(
+      int sourceId, ZegoScreenCaptureSourceType sourceType) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'updateCaptureSourceScreenCaptureSource', {
+      'sourceId': sourceId,
+      'sourceType': sourceType.index,
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('updateScreenCaptureConfigScreenCaptureSource', {
+      'config': {
+        'captureVideo': config.captureVideo,
+        'captureAudio': config.captureAudio,
+        'applicationVolume': config.applicationVolume,
+        'microphoneVolume': config.microphoneVolume
+      },
+      'index': _index
+    });
+  }
 }

@@ -40,10 +40,12 @@ import im.zego.zegoexpress.callback.IZegoCopyrightedMusicDownloadCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicGetKrcLyricByTokenCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicGetLrcLyricCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicGetMusicByTokenCallback;
+import im.zego.zegoexpress.callback.IZegoCopyrightedMusicGetSharedResourceCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicGetStandardPitchCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicInitCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicRequestAccompanimentCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicRequestAccompanimentClipCallback;
+import im.zego.zegoexpress.callback.IZegoCopyrightedMusicRequestResourceCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicRequestSongCallback;
 import im.zego.zegoexpress.callback.IZegoCopyrightedMusicSendExtendedRequestCallback;
 import im.zego.zegoexpress.callback.IZegoIMSendBarrageMessageCallback;
@@ -73,7 +75,7 @@ import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicBillingMode;
-// import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
+import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
@@ -81,7 +83,7 @@ import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
-// import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
+import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
@@ -119,13 +121,14 @@ import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
+import im.zego.zegoexpress.entity.ZegoAudioSourceMixConfig;
 import im.zego.zegoexpress.entity.ZegoAutoMixerTask;
 import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicConfig;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicRequestConfig;
-// import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfig;
+import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfig;
 import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
@@ -148,6 +151,7 @@ import im.zego.zegoexpress.entity.ZegoNetworkProbeResult;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestConfig;
 import im.zego.zegoexpress.entity.ZegoNetworkTimeInfo;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
+import im.zego.zegoexpress.entity.ZegoProxyInfo;
 import im.zego.zegoexpress.entity.ZegoPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
@@ -341,6 +345,50 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             result.error("setLogConfig_null_config".toUpperCase(), "Invoke `setLogConfig` with null config", null);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static void setLocalProxyConfig(MethodCall call, Result result) { 
+        ArrayList<HashMap<String, Object>> proxyArray = call.argument("proxyList");
+
+        ArrayList<ZegoProxyInfo> proxyList = new ArrayList<>();
+
+        for (HashMap<String, Object> proxyMap : proxyArray) {
+            ZegoProxyInfo proxy = new ZegoProxyInfo();
+            proxy.ip = (String) proxyMap.get("ip");
+            proxy.port = (int) proxyMap.get("port");
+            proxy.hostName = (String) proxyMap.get("hostName");
+            proxy.userName = (String) proxyMap.get("userName");
+            proxy.password = (String) proxyMap.get("password");
+
+            proxyList.add(proxy);
+        }
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoExpressEngine.setLocalProxyConfig(proxyList, enable);
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCloudProxyConfig(MethodCall call, Result result) {
+        ArrayList<HashMap<String, Object>> proxyArray = call.argument("proxyList");
+
+        ArrayList<ZegoProxyInfo> proxyList = new ArrayList<>();
+
+        for (HashMap<String, Object> proxyMap : proxyArray) {
+            ZegoProxyInfo proxy = new ZegoProxyInfo();
+            proxy.ip = (String) proxyMap.get("ip");
+            proxy.port = (int) proxyMap.get("port");
+            proxy.hostName = (String) proxyMap.get("hostName");
+            proxy.userName = (String) proxyMap.get("userName");
+            proxy.password = (String) proxyMap.get("password");
+
+            proxyList.add(proxy);
+        }
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        String token = call.argument("token");
+
+        ZegoExpressEngine.setCloudProxyConfig(proxyList, token, enable);
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -1181,11 +1229,19 @@ public class ZegoExpressEngineMethodHandler {
             hasConfig = true;
             HashMap<String, Object> configMap = call.argument("config");
 
-            ArrayList<HashMap<String, Object>> audioEffectPlayerIndexList = configMap.get("audioEffectPlayerIndexList");
-            ArrayList<HashMap<String, Object>> mediaPlayerIndexList = configMap.get("mediaPlayerIndexList");
+            ArrayList<Integer> audioEffectPlayerIndexList = (ArrayList<Integer>)configMap.get("audioEffectPlayerIndexList");
+            ArrayList<Integer> mediaPlayerIndexList = (ArrayList<Integer>)configMap.get("mediaPlayerIndexList");
 
-            config.audioEffectPlayerIndexList = audioEffectPlayerIndexList;
-            config.mediaPlayerIndexList = mediaPlayerIndexList;
+            int[] audioEffectPlayerIndexList_ = new int[audioEffectPlayerIndexList.size()];
+            for (int i = 0; i < audioEffectPlayerIndexList.size(); i++) {
+                audioEffectPlayerIndexList_[i] = audioEffectPlayerIndexList.get(i);
+            }
+            int[] mediaPlayerIndexList_ = new int[mediaPlayerIndexList.size()];
+            for (int i = 0; i < mediaPlayerIndexList.size(); i++) {
+                mediaPlayerIndexList_[i] = mediaPlayerIndexList.get(i);
+            }
+            config.audioEffectPlayerIndexList = audioEffectPlayerIndexList_;
+            config.mediaPlayerIndexList = mediaPlayerIndexList_;
         }
 
         int ret = 0;
@@ -3450,29 +3506,29 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void mediaPlayerSetAudioTrackMode(MethodCall call, final Result result) {
 
-        // Integer index = call.argument("index");
-        // ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
-        // if (mediaPlayer != null) {
-        //     ZegoMediaPlayerAudioTrackMode mode = ZegoMediaPlayerAudioTrackMode.getZegoMediaPlayerAudioTrackMode(ZegoUtils.intValue((Number) call.argument("mode")));
-        //     mediaPlayer.setAudioTrackMode(mode);
-        // }
+        if (mediaPlayer != null) {
+            ZegoMediaPlayerAudioTrackMode mode = ZegoMediaPlayerAudioTrackMode.getZegoMediaPlayerAudioTrackMode(ZegoUtils.intValue((Number) call.argument("mode")));
+            mediaPlayer.setAudioTrackMode(mode);
+        }
 
-        // result.success(null);
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
     public static void mediaPlayerSetAudioTrackPublishIndex(MethodCall call, final Result result) {
 
-        // Integer index = call.argument("index");
-        // ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
-        // if (mediaPlayer != null) {
-        //     int index_ = ZegoUtils.intValue((Number) call.argument("index_"));
-        //     mediaPlayer.setAudioTrackPublishIndex(index_);
-        // }
+        if (mediaPlayer != null) {
+            int index_ = ZegoUtils.intValue((Number) call.argument("index_"));
+            mediaPlayer.setAudioTrackPublishIndex(index_);
+        }
 
-        // result.success(null);
+        result.success(null);
     }
 
     /* AudioEffectPlayer */
@@ -4670,60 +4726,77 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void copyrightedMusicGetFullScore(MethodCall call, Result result) {
 
-        // if (copyrightedMusicInstance != null) {
-        //     String resourceID = call.argument("resourceID");
-        //     int score = copyrightedMusicInstance.getFullScore(resourceID);
-        //     result.success(score);
-        // } else {
-        //     result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetFullScore` but can't find specific instance", null);
-        // }
+        if (copyrightedMusicInstance != null) {
+            String resourceID = call.argument("resourceID");
+            int score = copyrightedMusicInstance.getFullScore(resourceID);
+            result.success(score);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetFullScore` but can't find specific instance", null);
+        }
     }
 
     @SuppressWarnings("unused")
     public static void copyrightedMusicGetSharedResource(MethodCall call,final Result result) {
 
-        // if (copyrightedMusicInstance != null) {
-        //     HashMap<String, Object> configMap = call.argument("config");
-        //     ZegoCopyrightedMusicGetSharedConfig config = new ZegoCopyrightedMusicGetSharedConfig();
-        //     config.songID = configMap.get("songID").toString();
-        //     ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
-        //     copyrightedMusicInstance.getSharedResource(config, type, new IZegoCopyrightedMusicGetSharedResourceCallback() {
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicGetSharedConfig config = new ZegoCopyrightedMusicGetSharedConfig();
+            config.songID = configMap.get("songID").toString();
+            ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
+            copyrightedMusicInstance.getSharedResource(config, type, new IZegoCopyrightedMusicGetSharedResourceCallback() {
 
-        //         @Override
-        //         public onGetSharedResourceCallback(int errorCode,String resource) {
-        //             HashMap<String, Object> resultMap = new HashMap<>();
-        //             resultMap.put("errorCode", errorCode);
-        //             resultMap.put("resource", resource);
-        //             result.success(resultMap);
-        //         }
-        //     });
-        // } else {
-        //     result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetSharedResource` but can't find specific instance", null);
-        // }
+                @Override
+                public void onGetSharedResourceCallback(int errorCode,String resource) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("resource", resource);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetSharedResource` but can't find specific instance", null);
+        }
     }
 
     @SuppressWarnings("unused")
     public static void copyrightedMusicRequestResource(MethodCall call,final Result result) {
 
-        // if (copyrightedMusicInstance != null) {
-        //     HashMap<String, Object> configMap = call.argument("config");
-        //     ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
-        //     config.songID = configMap.get("songID").toString();
-        //     config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
-        //     ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
-        //     copyrightedMusicInstance.requestResource(config, type, new IZegoCopyrightedMusicRequestResourceCallback() {
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
+            config.songID = configMap.get("songID").toString();
+            config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+            ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
+            copyrightedMusicInstance.requestResource(config, type, new IZegoCopyrightedMusicRequestResourceCallback() {
 
-        //         @Override
-        //         public onRequestResourceCallback(int errorCode,String resource) {
-        //             HashMap<String, Object> resultMap = new HashMap<>();
-        //             resultMap.put("errorCode", errorCode);
-        //             resultMap.put("resource", resource);
-        //             result.success(resultMap);
-        //         }
-        //     });
-        // } else {
-        //     result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicRequestResource` but can't find specific instance", null);
-        // }
+                @Override
+                public void onRequestResourceCallback(int errorCode,String resource) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("resource", resource);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicRequestResource` but can't find specific instance", null);
+        }
+    }
+
+    /* Screen Capture */
+    @SuppressWarnings("unused")
+    public static void startCaptureScreenCaptureSource(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().startScreenCapture();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopCaptureScreenCaptureSource(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopScreenCapture();
+
+        result.success(null);
     }
 
     /* PlatformView Utils */

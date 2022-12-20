@@ -101,6 +101,44 @@ std::pair<long, BYTE *> makeBtimap(const std::vector<uint8_t> *frame,
     return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen, buff);
 }
 
+std::pair<long, BYTE *> makeBtimapByBGRABuffer(unsigned char *buffer, unsigned int length,
+                                   std::pair<int32_t, int32_t> size) {
+    auto bufferLen = frame->size();
+    auto width = size.first;
+    auto height = size.second;
+    std::vector<uint8_t> destBuffer_(buffer, buffer + length);
+
+    BITMAPINFO bi;
+    bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
+    bi.bmiHeader.biWidth = width;
+    bi.bmiHeader.biHeight = height;
+    bi.bmiHeader.biPlanes = 1;
+    bi.bmiHeader.biBitCount = 32;
+    bi.bmiHeader.biCompression = BI_RGB;
+    bi.bmiHeader.biSizeImage = 0;
+
+    bi.bmiHeader.biXPelsPerMeter = width;
+    bi.bmiHeader.biYPelsPerMeter = height;
+    bi.bmiHeader.biClrUsed = 0;
+    bi.bmiHeader.biClrImportant = 0;
+    // int bitsize=height*height*3;
+    BYTE *buff = new BYTE[sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen];
+    BYTE *tmpbuff = buff;
+    RtlZeroMemory(buff, sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen);
+    BITMAPFILEHEADER bf;
+    bf.bfType = 0x4d42;
+    bf.bfSize = bufferLen + 14 + sizeof(BITMAPINFOHEADER);
+    bf.bfOffBits = sizeof(bi.bmiHeader) + sizeof(bf);
+    bf.bfReserved1 = 0;
+    bf.bfReserved2 = 0;
+    RtlMoveMemory(tmpbuff, &bf, sizeof(BITMAPFILEHEADER));
+    tmpbuff += sizeof(BITMAPFILEHEADER);
+    RtlMoveMemory(tmpbuff, &bi, sizeof(BITMAPINFO));
+    tmpbuff += sizeof(BITMAPINFO);
+    RtlMoveMemory(tmpbuff, destBuffer_.data(), bufferLen);
+    return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen, buff);
+}
+
 void ZegoExpressEngineMethodHandler::initApiCalledCallback() {
     EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
 }
@@ -269,6 +307,53 @@ void ZegoExpressEngineMethodHandler::setLogConfig(
         config.logSize = std::get<int32_t>(configMap[FTValue("logSize")]);
         EXPRESS::ZegoExpressSDK::setLogConfig(config);
     }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setLocalProxyConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto proxyListArray = std::get<FTArray>(argument[FTValue("proxyList")]);
+    std::vector<EXPRESS::ZegoProxyInfo> proxyList;
+    for (auto proxy_ : proxyListArray) {
+        EXPRESS::ZegoProxyInfo proxy;
+        auto proxyMap = std::get<FTMap>(proxy_);
+        proxy.ip = std::get<std::string>(proxyMap[FTValue("ip")]);
+        proxy.port = std::get<int32_t>(proxyMap[FTValue("port")]);
+        proxy.hostName = std::get<std::string>(proxyMap[FTValue("hostName")]);
+        proxy.userName = std::get<std::string>(proxyMap[FTValue("userName")]);
+        proxy.password = std::get<std::string>(proxyMap[FTValue("password")]);
+        proxyList.push_back(proxy);
+    }
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+
+    EXPRESS::ZegoExpressSDK::setLocalProxyConfig(proxyList, enable);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setCloudProxyConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto proxyListArray = std::get<FTArray>(argument[FTValue("proxyList")]);
+    std::vector<EXPRESS::ZegoProxyInfo> proxyList;
+    for (auto proxy_ : proxyListArray) {
+        EXPRESS::ZegoProxyInfo proxy;
+        auto proxyMap = std::get<FTMap>(proxy_);
+        proxy.ip = std::get<std::string>(proxyMap[FTValue("ip")]);
+        proxy.port = std::get<int32_t>(proxyMap[FTValue("port")]);
+        proxy.hostName = std::get<std::string>(proxyMap[FTValue("hostName")]);
+        proxy.userName = std::get<std::string>(proxyMap[FTValue("userName")]);
+        proxy.password = std::get<std::string>(proxyMap[FTValue("password")]);
+        proxyList.push_back(proxy);
+    }
+    auto token = std::get<std::string>(argument[FTValue("token")]);
+
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+
+
+    EXPRESS::ZegoExpressSDK::setCloudProxyConfig(proxyList, token, enable);
 
     result->Success();
 }
@@ -2351,37 +2436,37 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(
 void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackMode(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    // auto index = std::get<int32_t>(argument[FTValue("index")]);
-    // auto mediaPlayer = mediaPlayerMap_[index];
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
 
-    // if (mediaPlayer) {
-    //     auto mode = std::get<int32_t>(argument[FTValue("mode")]);
-    //     mediaPlayer->setAudioTrackMode((EXPRESS::ZegoMediaPlayerAudioTrackMode)mode);
+    if (mediaPlayer) {
+        auto mode = std::get<int32_t>(argument[FTValue("mode")]);
+        mediaPlayer->setAudioTrackMode((EXPRESS::ZegoMediaPlayerAudioTrackMode)mode);
 
-    //     result->Success();
-    // }
-    // else
-    // {
-    //     result->Error("mediaPlayerSetAudioTrackMode_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackMode` but can't find specific player");
-    // }
+        result->Success();
+    }
+    else
+    {
+        result->Error("mediaPlayerSetAudioTrackMode_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackMode` but can't find specific player");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackPublishIndex(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    // auto index = std::get<int32_t>(argument[FTValue("index")]);
-    // auto mediaPlayer = mediaPlayerMap_[index];
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
 
-    // if (mediaPlayer) {
-    //     auto index_ = std::get<int32_t>(argument[FTValue("index_")]);
-    //     mediaPlayer->setAudioTrackPublishIndex(index_);
+    if (mediaPlayer) {
+        auto index_ = std::get<int32_t>(argument[FTValue("index_")]);
+        mediaPlayer->setAudioTrackPublishIndex(index_);
 
-    //     result->Success();
-    // }
-    // else
-    // {
-    //     result->Error("mediaPlayerSetAudioTrackPublishIndex_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackPublishIndex` but can't find specific player");
-    // }
+        result->Success();
+    }
+    else
+    {
+        result->Error("mediaPlayerSetAudioTrackPublishIndex_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackPublishIndex` but can't find specific player");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::startMixerTask(
@@ -3260,60 +3345,60 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicStopScore(
 void ZegoExpressEngineMethodHandler::copyrightedMusicGetFullScore(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    // if (copyrightedMusic_) {
-    //     auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
-    //     auto ret = copyrightedMusic_->getFullScore(resourceID);
-    //     result->Success(FTValue(ret));
-    // }
-    // else
-    // {
-    //     result->Error("copyrightedMusicGetFullScore_Can_not_find_instance", "Invoke `copyrightedMusicGetFullScore` but can't find specific instance");
-    // }
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        auto ret = copyrightedMusic_->getFullScore(resourceID);
+        result->Success(FTValue(ret));
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetFullScore_Can_not_find_instance", "Invoke `copyrightedMusicGetFullScore` but can't find specific instance");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::copyrightedMusicGetSharedResource(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    // if (copyrightedMusic_) {
-    //     auto configMap = std::get<FTMap>(argument[FTValue("config")]);
-    //     EXPRESS::ZegoCopyrightedMusicGetSharedConfig config;
-    //     config.songID = std::get<std::string>(configMap[FTValue("songID")]);
-    //     auto type = (EXPRESS::ZegoCopyrightedMusicResourceType)std::get<int32_t>(argument[FTValue("type")]);
-    //     auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
-    //     copyrightedMusic_->getSharedResource(config, type, [=](int errorCode, std::string resource) {
-    //         FTMap retMap;
-    //         retMap[FTValue("errorCode")] = FTValue(errorCode);
-    //         retMap[FTValue("resource")] = FTValue(resource);
-    //         sharedPtrResult->Success(retMap);
-    //         });
-    // }
-    // else
-    // {
-    //     result->Error("copyrightedMusicGetSharedResource_Can_not_find_instance", "Invoke `copyrightedMusicGetSharedResource` but can't find specific instance");
-    // }
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicGetSharedConfig config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        auto type = (EXPRESS::ZegoCopyrightedMusicResourceType)std::get<int32_t>(argument[FTValue("type")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getSharedResource(config, type, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicGetSharedResource_Can_not_find_instance", "Invoke `copyrightedMusicGetSharedResource` but can't find specific instance");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::copyrightedMusicRequestResource(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    // if (copyrightedMusic_) {
-    //     auto configMap = std::get<FTMap>(argument[FTValue("config")]);
-    //     EXPRESS::ZegoCopyrightedMusicRequestConfig config;
-    //     config.songID = std::get<std::string>(configMap[FTValue("songID")]);
-    //     config.mode = (EXPRESS::ZegoCopyrightedMusicBillingMode)std::get<int32_t>(configMap[FTValue("mode")]);
-    //     auto type = (EXPRESS::ZegoCopyrightedMusicResourceType)std::get<int32_t>(argument[FTValue("type")]);
-    //     auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
-    //     copyrightedMusic_->requestResource(config, type, [=](int errorCode, std::string resource) {
-    //         FTMap retMap;
-    //         retMap[FTValue("errorCode")] = FTValue(errorCode);
-    //         retMap[FTValue("resource")] = FTValue(resource);
-    //         sharedPtrResult->Success(retMap);
-    //         });
-    // }
-    // else
-    // {
-    //     result->Error("copyrightedMusicRequestResource_Can_not_find_instance", "Invoke `copyrightedMusicRequestResource` but can't find specific instance");
-    // }
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicRequestConfig config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.mode = (EXPRESS::ZegoCopyrightedMusicBillingMode)std::get<int32_t>(configMap[FTValue("mode")]);
+        auto type = (EXPRESS::ZegoCopyrightedMusicResourceType)std::get<int32_t>(argument[FTValue("type")]);
+        auto sharedPtrResult = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->requestResource(config, type, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+            });
+    }
+    else
+    {
+        result->Error("copyrightedMusicRequestResource_Can_not_find_instance", "Invoke `copyrightedMusicRequestResource` but can't find specific instance");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::createTextureRenderer(
@@ -4521,4 +4606,177 @@ void ZegoExpressEngineMethodHandler::dataManagerStopSubscribing(
         result->Error("dataManagerStopSubscribing_Can_not_find_instance",
                       "Invoke `dataManagerStopSubscribing` but can't find specific instance");
     }
+}
+
+void ZegoExpressEngineMethodHandler::getScreenCaptureSources(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto thumbnailWidth = std::get<int32_t>(argument[FTValue("thumbnailWidth")]);
+    auto thumbnailHeight = std::get<int32_t>(argument[FTValue("thumbnailHeight")]);
+    auto iconWidth = std::get<int32_t>(argument[FTValue("iconWidth")]);
+    auto iconHeight = std::get<int32_t>(argument[FTValue("iconHeight")]);
+    
+    auto infos = EXPRESS::ZegoExpressSDK::getEngine()->getScreenCaptureSources(thumbnailWidth, thumbnailHeight, iconWidth, iconHeight);
+    FTArray resultArray;
+    for (auto &info: infos) {
+        FTMap infoMap;
+        infoMap[FTValue("sourceType")] = FTValue(static_cast<int32_t>(info.sourceType));
+        infoMap[FTValue("sourceID")] = FTValue(static_cast<intptr_t>(info.sourceID));
+        infoMap[FTValue("sourceName")] = FTValue(info.sourceName);
+        
+        auto thumbnailImageData = makeBtimapByBGRABuffer(info.thumbnailImage.buffer, info.thumbnailImage.length, std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
+        std::vector<uint8_t> thumbnailImage(thumbnailImageData.second, thumbnailImageData.second + thumbnailImageData.first);
+        delete[] thumbnailImageData.second;
+        infoMap[FTValue("thumbnailImage")] = FTValue(thumbnailImage);
+
+        auto iconImageData = makeBtimapByBGRABuffer(info.iconImage.buffer,info.iconImage.length, std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
+        std::vector<uint8_t> iconImage(iconImageData.second, iconImageData.second + iconImageData.first);
+        delete[] iconImageData.second;
+        infoMap[FTValue("iconImage")] = FTValue(iconImage);
+
+        resultArray.emplace_back(FTValue(infoMap));
+    }
+
+    result->Success(resultArray);
+}
+
+void ZegoExpressEngineMethodHandler::createScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto screenCaptureSource = EXPRESS::ZegoExpressSDK::getEngine()->createScreenCaptureSource();
+    if (screenCaptureSource) {
+        auto index = screenCaptureSource->getIndex();
+
+        screenCaptureSource->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        screenCaptureSourceMap_[index] = screenCaptureSource;
+
+        result->Success(FTValue(index));
+    } else {
+        result->Success(FTValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyScreenCaptureSource(screenCaptureSource);
+    }
+
+    screenCaptureSourceMap_.erase(index);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableCursorVisibleScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto visible = std::get<bool>(argument[FTValue("visible")]);
+        screenCaptureSource->enableCursorVisible(visible);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto active = std::get<bool>(argument[FTValue("active")]);
+        screenCaptureSource->enableWindowActivate(active);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setExcludeWindowListScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto list = std::get<FTArray>(argument[FTValue("list")]);
+        intptr_t *c_list = new intptr_t[list.size()];
+        intptr_t *tmpPtr = c_list;
+        for (FTValue win : list) {
+            *tmpPtr = std::static_cast<void *>(win.LongValue());
+            tmpPtr += sizeof(intptr_t);
+        }
+        
+        screenCaptureSource->setExcludeWindowList(c_list, list.size());
+        delete []c_list;
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::updateCaptureRegionScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto rectMap = std::get<FTMap>(argument[FTValue("rect")]);
+        EXPRESS::ZegoRect rect;
+        rect.x = std::get<int32_t>(rectMap["x"]);
+        rect.y = std::get<int32_t>(rectMap["y"]);
+        rect.width = std::get<int32_t>(rectMap["width"]);
+        rect.height = std::get<int32_t>(rectMap["height"]);
+        screenCaptureSource->updateCaptureRegion(rect);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::updateCaptureSourceScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        void *sourceId = std::static_cast<void *>(argument["sourceId"].LongValue());
+        auto sourceType = std::get<int32_t>(argument["sourceType"]);
+        screenCaptureSource->updateCaptureSource(rect);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::startCaptureScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        screenCaptureSource->startCapture();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::stopCaptureScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        screenCaptureSource->stopCapture();
+    }
+
+    result->Success();
 }

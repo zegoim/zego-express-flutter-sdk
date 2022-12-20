@@ -52,6 +52,8 @@ static const std::map<
         EngineStaticMethodHandler(destroyEngine),
         EngineStaticMethodHandler(setEngineConfig),
         EngineStaticMethodHandler(setLogConfig),
+        EngineStaticMethodHandler(setLocalProxyConfig),
+        EngineStaticMethodHandler(setCloudProxyConfig),
         EngineStaticMethodHandler(setRoomMode),
         EngineMethodHandler(setRoomScenario),
         EngineMethodHandler(uploadLog),
@@ -331,6 +333,18 @@ static const std::map<
         EngineMethodHandler(dataManagerStartSubscribing),
         EngineMethodHandler(dataManagerStopBroadcasting),
         EngineMethodHandler(dataManagerStopSubscribing),
+
+        // ScreenCapture
+        EngineMethodHandler(getScreenCaptureSources),
+        EngineMethodHandler(createScreenCaptureSource),
+        EngineMethodHandler(destroyScreenCaptureSource),
+        EngineMethodHandler(enableCursorVisibleScreenCaptureSource),
+        EngineMethodHandler(enableWindowActivateScreenCaptureSource),
+        EngineMethodHandler(setExcludeWindowListScreenCaptureSource),
+        EngineMethodHandler(updateCaptureRegionScreenCaptureSource),
+        EngineMethodHandler(updateCaptureSourceScreenCaptureSource),
+        EngineMethodHandler(startCaptureScreenCaptureSource),
+        EngineMethodHandler(stopCaptureScreenCaptureSource),
 
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),

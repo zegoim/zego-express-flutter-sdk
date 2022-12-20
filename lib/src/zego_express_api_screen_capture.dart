@@ -36,7 +36,7 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// - [sourceType] The specified screen source type.
   /// - Returns The screen capture instance, null will be returned when the maximum number is exceeded.
   Future<ZegoScreenCaptureSource?> createScreenCaptureSource(
-      void sourceId, ZegoScreenCaptureSourceType sourceType) async {
+      int sourceId, ZegoScreenCaptureSourceType sourceType) async {
     return await ZegoExpressImpl.instance
         .createScreenCaptureSource(sourceId, sourceType);
   }

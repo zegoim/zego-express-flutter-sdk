@@ -3482,6 +3482,24 @@ class ZegoCopyrightedMusicGetSharedConfig {
   ZegoCopyrightedMusicGetSharedConfig(this.songID);
 }
 
+/// Screen capture configuration parameters.
+class ZegoScreenCaptureConfig {
+  /// Whether to capture video when screen capture. The default is true.
+  bool captureVideo;
+
+  /// Whether to capture audio when screen capture. The default is true.
+  bool captureAudio;
+
+  /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
+  int microphoneVolume;
+
+  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
+  int applicationVolume;
+
+  ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
+      this.microphoneVolume, this.applicationVolume);
+}
+
 /// The screen captures source information.
 class ZegoScreenCaptureSourceInfo {
   /// Target type for screen capture. (only for desktop)
@@ -3494,10 +3512,10 @@ class ZegoScreenCaptureSourceInfo {
   String sourceName;
 
   /// Thumbnail of the capture window.
-  MemoryImage thumbnailImage;
+  MemoryImage? thumbnailImage;
 
   /// The image content of the icon.
-  MemoryImage iconImage;
+  MemoryImage? iconImage;
 
   ZegoScreenCaptureSourceInfo(this.sourceType, this.sourceID, this.sourceName,
       this.thumbnailImage, this.iconImage);
@@ -4074,7 +4092,7 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [sourceId] The specified screen ID or window ID.
   /// - [sourceType] The specified screen source type.
-  Future<void> updateScreenCaptureSource(
+  Future<void> updateCaptureSource(
       int sourceId, ZegoScreenCaptureSourceType sourceType);
 
   /// Start screen capture.
@@ -4082,25 +4100,30 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Start screen capture.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-  Future<void> startScreenCapture();
+  ///
+  /// - [config] Screen capture parameter configuration, only available on the iOS platform.
+  /// - [inApp] in-app capture only, only available on the iOS platform.
+  Future<void> startCapture({ZegoScreenCaptureConfig? config, bool? inApp});
 
   /// Stop screen capture.
-  Future<void> stopScreenCapture();
+  Future<void> stopCapture();
 
   /// Update the area captured by the screen.
   ///
   /// Available since: 3.1.0
   /// Description: Update the area captured by the screen.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only support in Windows/macOS.
   ///
   /// - [rect] The position of the area to be captured relative to the entire screen or window.
-  Future<void> updateScreenCaptureRegion(Rect rect);
+  Future<void> updateCaptureRegion(Rect rect);
 
   /// Sets the filtered list of windows.
   ///
   /// Available since: 3.1.0
   /// Description: Specify a list of windows, and filter these windows when capturing the screen, and not display them on the screen.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only support in Windows/macOS.
   ///
   /// - [list] List of IDs to filter windows.
   Future<void> setExcludeWindowList(List<int> list);
@@ -4110,6 +4133,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: When the capture target is a window, set whether to activate the window to be displayed in the foreground during the first capture.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only support in Windows/macOS.
   ///
   /// - [active] Whether to activate the window. true to activate the window, false to not activate the window, the default is true.
   Future<void> enableWindowActivate(bool active);
@@ -4119,6 +4143,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Set whether to show the cursor.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only support in Windows/macOS.
   ///
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
@@ -4126,7 +4151,17 @@ abstract class ZegoScreenCaptureSource {
   /// Get screen capture source index.
   ///
   /// - Returns Index of the screen capture source.
-  Future<int> getIndex();
+  int getIndex();
+
+  /// Update screen capture parameter configuration.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Update screen capture parameter configuration.
+  /// When to call: After calling [startScreenCapture] to start capturing.
+  /// Restrictions: Only support in iOS.
+  ///
+  /// - [config] Screen capture parameter configuration.
+  Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config);
 }
 
 /// Callback for setting room extra information.

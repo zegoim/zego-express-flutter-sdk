@@ -1320,3 +1320,20 @@ void ZegoExpressEngineEventHandler::onProcessPlaybackAudioData(unsigned char * d
         eventSink_->Success(retMap);
     }
 }
+
+void onAvailableFrame(EXPRESS::IZegoScreenCaptureSource* source, const void * data, unsigned int dataLength, EXPRESS::ZegoVideoFrameParam param)
+{
+
+}
+
+void onExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType)
+{
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onExceptionOccurred");
+        retMap[FTValue("screenCaptureSourceIndex")] = FTValue(source->getIndex());
+        retMap[FTValue("exceptionType")] = FTValue(static_cast<int32_t>(exceptionType));
+
+        eventSink_->Success(retMap);
+    }
+}

@@ -21,6 +21,7 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoRealTimeSequentialDataEventHandler
     , public EXPRESS::IZegoRangeAudioEventHandler
     , public EXPRESS::IZegoCustomAudioProcessHandler
+    , public EXPRESS::IZegoScreenCaptureSourceEventHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -214,6 +215,12 @@ protected:
     void onDownloadProgressUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, float progressRate) override;
 
     void onCurrentPitchValueUpdate(EXPRESS::IZegoCopyrightedMusic* copyrightedMusic, const std::string& resourceID, int currentDuration, int pitchValue) override;
+
+// ScreenCapture
+protected:
+    void onAvailableFrame(EXPRESS::IZegoScreenCaptureSource* source, const void * data, unsigned int dataLength, EXPRESS::ZegoVideoFrameParam param) override;
+
+    void onExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType) override;
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
