@@ -80,6 +80,7 @@ import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
+import im.zego.zegoexpress.constants.ZegoHttpDNSType;
 import im.zego.zegoexpress.constants.ZegoLanguage;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
@@ -1022,15 +1023,16 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void enablePublishDirectToCDN(MethodCall call, Result result) {
 
-        HashMap<String, String> configMap = call.argument("config");
+        HashMap<String, Object> configMap = call.argument("config");
 
         ZegoCDNConfig config = null;
         if (configMap != null && !configMap.isEmpty()) {
             config = new ZegoCDNConfig();
-            config.url = configMap.get("url");
-            config.authParam = configMap.get("authParam");
+            config.url = (String) configMap.get("url");
+            config.authParam = (String) configMap.get("authParam");
             config.protocol = (String) configMap.get("protocol");
             config.quicVersion = (String) configMap.get("quicVersion");
+            config.httpdns = ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) configMap.get("httpdns")));
         }
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
@@ -1298,6 +1300,8 @@ public class ZegoExpressEngineMethodHandler {
                 cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
                 cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
                 cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
+                cdnConfig.httpdns =
+                        ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) cdnConfigMap.get("httpdns")));
                 playerConfig.cdnConfig = cdnConfig;
             }
         }

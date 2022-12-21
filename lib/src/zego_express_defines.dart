@@ -1988,10 +1988,10 @@ class ZegoCDNConfig {
   String? quicVersion;
 
   /// customized httpdns service. This feature is only supported for playing stream currently.
-  ZegoHttpDNSType httpdns;
+  ZegoHttpDNSType? httpdns;
 
-  ZegoCDNConfig(this.url, this.httpdns,
-      {this.authParam, this.protocol, this.quicVersion});
+  ZegoCDNConfig(this.url,
+      {this.authParam, this.protocol, this.quicVersion, this.httpdns});
 }
 
 /// Relay to CDN info.
@@ -4158,7 +4158,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Update screen capture parameter configuration.
   /// When to call: After calling [startScreenCapture] to start capturing.
-  /// Restrictions: Only support in iOS.
+  /// Restrictions: Only support in iOS. Only available on iOS 12.0 or newer
   ///
   /// - [config] Screen capture parameter configuration.
   Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config);

@@ -257,7 +257,7 @@
     for(NSDictionary *proxyMap in proxyListMap) {
         ZegoProxyInfo *proxyObject = [[ZegoProxyInfo alloc] init];
         proxyObject.ip = proxyMap[@"ip"];
-        proxyObject.port = [ZegoUtils intValue:proxyMap[@"logSize"]];
+        proxyObject.port = [ZegoUtils intValue:proxyMap[@"port"]];
         proxyObject.hostName = proxyMap[@"hostName"];
         proxyObject.userName = proxyMap[@"userName"];
         proxyObject.password = proxyMap[@"password"];
@@ -279,7 +279,7 @@
     for(NSDictionary *proxyMap in proxyListMap) {
         ZegoProxyInfo *proxyObject = [[ZegoProxyInfo alloc] init];
         proxyObject.ip = proxyMap[@"ip"];
-        proxyObject.port = [ZegoUtils intValue:proxyMap[@"logSize"]];
+        proxyObject.port = [ZegoUtils intValue:proxyMap[@"port"]];
         proxyObject.hostName = proxyMap[@"hostName"];
         proxyObject.userName = proxyMap[@"userName"];
         proxyObject.password = proxyMap[@"password"];
@@ -876,6 +876,9 @@
         cdnConfig.authParam = authParam;
         cdnConfig.protocol = config[@"protocol"];
         cdnConfig.quicVersion = config[@"quicVersion"];
+        
+        int httpdnsIndex = [ZegoUtils intValue:config[@"httpdns"]];
+        cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
     }
 
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
@@ -1070,16 +1073,26 @@
 
         NSArray<NSNumber *> *audioEffectPlayerIndexList = configMap[@"audioEffectPlayerIndexList"];
         config.audioEffectPlayerCount = audioEffectPlayerIndexList.count;
+        int *audioEffectPlayers = NULL;
+        if (config.audioEffectPlayerCount > 0) {
+            audioEffectPlayers = malloc(sizeof(int)*config.audioEffectPlayerCount);
+            config.audioEffectPlayerIndexList = audioEffectPlayers;
+        }
         for(NSNumber* index in audioEffectPlayerIndexList) {
-            *config.audioEffectPlayerIndexList = [index intValue];
-            config.audioEffectPlayerIndexList += 1;
+            *audioEffectPlayers = [index intValue];
+            audioEffectPlayers += 1;
         }
 
         NSArray<NSNumber *> *mediaPlayerIndexList = configMap[@"mediaPlayerIndexList"];
         config.mediaPlayerCount = mediaPlayerIndexList.count;
+        int *mediaPlayers = NULL;
+        if (config.mediaPlayerCount > 0) {
+            mediaPlayers  = malloc(sizeof(int)*config.mediaPlayerCount);
+            config.mediaPlayerIndexList = mediaPlayers;
+        }
         for(NSNumber * index in mediaPlayerIndexList) {
-            *config.mediaPlayerIndexList = [index intValue];
-            config.mediaPlayerIndexList += 1;
+            *mediaPlayers = [index intValue];
+            mediaPlayers += 1;
         }
     }
 
@@ -1090,16 +1103,20 @@
         channel = [ZegoUtils intValue:call.arguments[@"channel"]];
     }
 
-    int ret = 0;
+    int ret = -1;
     if (!hasChannel && !hasConfig) {
         ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source];
     } else if (hasChannel && !hasConfig) {
         ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source channel:(ZegoPublishChannel)channel];
     } else if (!hasChannel && hasConfig) {
         ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source config:config];
+        free(config.mediaPlayerIndexList);
+        free(config.audioEffectPlayerIndexList);
     } else {
         if (channel == 0) {
             ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source config:config];
+            free(config.mediaPlayerIndexList);
+            free(config.audioEffectPlayerIndexList);
         }
     }
 
@@ -1139,6 +1156,10 @@
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
+            
+            int httpdnsIndex = [ZegoUtils intValue:cdnConfigMap[@"httpdns"]];
+            cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
+            
             playerConfig.cdnConfig = cdnConfig;
         }
     }
@@ -4383,8 +4404,8 @@
 
     if (self.copyrightedMusicInstance) {
         NSString *resourceID = call.arguments[@"resourceID"];
-        int stopScore = [self.copyrightedMusicInstance getFullScore: resourceID];
-        result(@(stopScore));
+        int score = [self.copyrightedMusicInstance getFullScore: resourceID];
+        result(@(score));
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetFullScore` but can't find specific instance" details:nil]);
     }
@@ -4397,13 +4418,13 @@
         
         ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
         config.songID = configMap[@"songID"];
-        ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
-        [self.copyrightedMusicInstance getSharedResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+        ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
+        [self.copyrightedMusicInstance getSharedResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
             result(resultMap);
-        } type: type];
+        }];
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetSharedResource` but can't find specific instance" details:nil]);
     }
@@ -4417,13 +4438,13 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
-        ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:configMap[@"type"]];
-        [self.copyrightedMusicInstance requestResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+        ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
+        [self.copyrightedMusicInstance requestResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
             result(resultMap);
-        } type: type];
+        }];
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestResource` but can't find specific instance" details:nil]);
     }
@@ -4445,7 +4466,7 @@
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSMutableArray *resultMap = [[NSMutableArray alloc] init];
-        for (ZegoScreenCaptureSourceInfo *info : infos) {
+        for (ZegoScreenCaptureSourceInfo *info in infos) {
             
             NSData *thumbnailImage = nil;
             if (info.thumbnailImage) {
@@ -4464,7 +4485,7 @@
             [resultMap addObject: @{
                 @"sourceType": @((int)info.sourceType),
                 @"sourceID": @((int)info.sourceID),
-                @"sourceName": @((int)info.sourceName),
+                @"sourceName": info.sourceName,
                 @"thumbnailImage": thumbnailImage ?: [[NSNull alloc] init],
                 @"iconImage": iconImage ?: [[NSNull alloc] init],
             }];
@@ -4482,7 +4503,7 @@
         self.screenCaptureSouceMap = [NSMutableDictionary dictionary];
     }
     
-    unsigned int sourceId = [ZegoUtils unsignedLongValue: call.arguments[@"sourceId"]];
+    unsigned int sourceId = [ZegoUtils unsignedIntValue: call.arguments[@"sourceId"]];
     int sourceType = [ZegoUtils intValue: call.arguments[@"sourceType"]];
 
     ZegoScreenCaptureSource *screenCaptureSource = [[ZegoExpressEngine sharedEngine] createScreenCaptureSource: sourceId sourceType: (ZegoScreenCaptureSourceType)sourceType];

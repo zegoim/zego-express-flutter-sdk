@@ -154,7 +154,7 @@ class ZegoExpressImpl {
         'password': proxy.password ?? '',
       });
     }
-    return await _channel.invokeMethod('setLocalProxyConfig',
+    return await _channel.invokeMethod('setCloudProxyConfig',
         {'proxyList': proxys, 'token': token, 'enable': enable});
   }
 
@@ -493,7 +493,8 @@ class ZegoExpressImpl {
               'url': config.url,
               'authParam': config.authParam ?? '',
               'protocol': config.protocol ?? '',
-              'quicVersion': config.quicVersion ?? ''
+              'quicVersion': config.quicVersion ?? '',
+              'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -581,15 +582,16 @@ class ZegoExpressImpl {
 
   Future<int> setAudioSource(ZegoAudioSourceType source,
       {ZegoAudioSourceMixConfig? config, ZegoPublishChannel? channel}) async {
-    return await _channel.invokeMethod('setVideoSource', {
+    return await _channel.invokeMethod('setAudioSource', {
       'source': source.index,
       'config': config == null
           ? null
           : {
-              'audioEffectPlayerIndexList': config.audioEffectPlayerIndexList,
-              'mediaPlayerIndexList': config.mediaPlayerIndexList,
-              'enableMixEnginePlayout': config.enableMixEnginePlayout,
-              'enableMixSystemPlayout': config.enableMixSystemPlayout
+              'audioEffectPlayerIndexList':
+                  config.audioEffectPlayerIndexList ?? [],
+              'mediaPlayerIndexList': config.mediaPlayerIndexList ?? [],
+              'enableMixEnginePlayout': config.enableMixEnginePlayout ?? false,
+              'enableMixSystemPlayout': config.enableMixSystemPlayout ?? false
             },
       'channel': channel?.index,
     });
@@ -624,7 +626,9 @@ class ZegoExpressImpl {
                       'url': config.cdnConfig?.url,
                       'authParam': config.cdnConfig?.authParam ?? "",
                       'protocol': config.cdnConfig?.protocol ?? "",
-                      'quicVersion': config.cdnConfig?.quicVersion ?? ""
+                      'quicVersion': config.cdnConfig?.quicVersion ?? "",
+                      'httpdns': config.cdnConfig?.httpdns?.index ??
+                          ZegoHttpDNSType.None.index
                     }
                   : {},
               'roomID': config.roomID ?? '',
