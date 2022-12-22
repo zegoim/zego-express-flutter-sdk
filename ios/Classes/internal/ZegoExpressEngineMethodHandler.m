@@ -4471,15 +4471,19 @@
             NSData *thumbnailImage = nil;
             if (info.thumbnailImage) {
                 CGImageRef cgImage = [info.thumbnailImage CGImageForProposedRect:nil context:nil hints:nil];
-                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
-                thumbnailImage = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+                if (cgImage) {
+                    NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                    thumbnailImage = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+                }
             }
             
             NSData *iconImage = nil;
             if (info.iconImage) {
                 CGImageRef cgImage = [info.iconImage CGImageForProposedRect:nil context:nil hints:nil];
-                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
-                iconImage = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+                if (cgImage) {
+                    NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                    iconImage = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+                }
             }
             
             [resultMap addObject: @{
@@ -4656,6 +4660,7 @@
     } else {
         // Fallback on earlier versions
         result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+        return;
     }
     
 #elif TARGET_OS_OSX
@@ -4676,6 +4681,7 @@
     } else {
         // Fallback on earlier versions
         result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+        return;
     }
     
 #elif TARGET_OS_OSX

@@ -1722,7 +1722,7 @@ class ZegoExpressImpl {
       int thumbnailHeight,
       int iconWidth,
       int iconHeight) async {
-    final List<Map> mapList =
+    final List mapList =
         await _channel.invokeMethod('getScreenCaptureSources', {
       'thumbnailWidth': thumbnailWidth,
       'thumbnailHeight': thumbnailHeight,
@@ -1745,11 +1745,14 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoScreenCaptureSource?> createScreenCaptureSource(
-      int sourceId, ZegoScreenCaptureSourceType sourceType) async {
+      {int? sourceId, ZegoScreenCaptureSourceType? sourceType}) async {
     int index = -1;
     if (Platform.isAndroid || Platform.isIOS) {
       index = 0;
     } else {
+      if (sourceId == null || sourceType == null) {
+        return null;
+      }
       index = await _channel.invokeMethod('createScreenCaptureSource',
           {'sourceId': sourceId, 'sourceType': sourceType.index});
     }
@@ -3572,14 +3575,15 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
               'applicationVolume': config.applicationVolume,
               'microphoneVolume': config.microphoneVolume,
             },
-      'inApp': inApp
+      'inApp': inApp,
+      'index': _index
     });
   }
 
   @override
   Future<void> stopCapture() async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('stopCaptureScreenCaptureSource');
+        .invokeMethod('stopCaptureScreenCaptureSource', {'index': _index});
   }
 
   @override

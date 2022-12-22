@@ -20,3 +20,4 @@ export 'src/zego_express_assets_utils.dart';
 export 'src/zego_express_canvas_view_utils.dart';
 export 'src/zego_express_defines.dart';
 export 'src/zego_express_error_code.dart';
+export 'src/zego_express_api_screen_capture.dart';

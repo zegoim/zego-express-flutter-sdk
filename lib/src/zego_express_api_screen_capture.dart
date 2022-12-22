@@ -32,13 +32,13 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// Use cases: It is used when you need to record and share the screen or window.
   /// When to call: It needs to be called after [createEngine].
   ///
-  /// - [sourceId] The specified screen ID or window ID.
-  /// - [sourceType] The specified screen source type.
+  /// - [sourceId] The specified screen ID or window ID. Only macOS and windows platforms need to pass in this parameter.
+  /// - [sourceType] The specified screen source type. Only macOS and windows platforms need to pass in this parameter.
   /// - Returns The screen capture instance, null will be returned when the maximum number is exceeded.
   Future<ZegoScreenCaptureSource?> createScreenCaptureSource(
-      int sourceId, ZegoScreenCaptureSourceType sourceType) async {
+      {int? sourceId, ZegoScreenCaptureSourceType? sourceType}) async {
     return await ZegoExpressImpl.instance
-        .createScreenCaptureSource(sourceId, sourceType);
+        .createScreenCaptureSource(sourceId: sourceId, sourceType: sourceType);
   }
 
   /// Destroy the screen capture source instance
