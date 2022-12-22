@@ -1246,7 +1246,7 @@ public class ZegoExpressEngineMethodHandler {
             config.mediaPlayerIndexList = mediaPlayerIndexList_;
         }
 
-        int ret = 0;
+        int ret = -1;
         if (!hasChannel && !hasConfig) {
             ret = ZegoExpressEngine.getEngine().setAudioSource(source);
         } else if (hasChannel && !hasConfig) {

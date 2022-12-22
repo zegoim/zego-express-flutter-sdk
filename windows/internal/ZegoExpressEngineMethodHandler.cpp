@@ -963,7 +963,7 @@ void ZegoExpressEngineMethodHandler::setAudioSource(
         channel = std::get<int32_t>(argument[FTValue("channel")]);
     }
 
-    int ret = 0;
+    int ret = -1;
     if (!hasChannel && !hasConfig) {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setAudioSource(
             (EXPRESS::ZegoAudioSourceType)source);
