@@ -38,6 +38,8 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin ZegoExpressEngine.lib)
+# /WX- Don't mistake warnings for errors  /bigobj Used to fix this problem (Error: C1128 sections exceed object file format limit)
+target_compile_options(${PLUGIN_NAME} PRIVATE /W4 /WX- /wd"4100" /bigobj)
 
 # List of absolute paths to libraries that should be bundled with the plugin
 set(zego_express_engine_bundled_libraries

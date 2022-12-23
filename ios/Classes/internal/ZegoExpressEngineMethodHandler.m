@@ -1076,8 +1076,8 @@
         int *audioEffectPlayers = NULL;
         if (config.audioEffectPlayerCount > 0) {
             audioEffectPlayers = malloc(sizeof(int)*config.audioEffectPlayerCount);
-            config.audioEffectPlayerIndexList = audioEffectPlayers;
         }
+        config.audioEffectPlayerIndexList = audioEffectPlayers;
         for(NSNumber* index in audioEffectPlayerIndexList) {
             *audioEffectPlayers = [index intValue];
             audioEffectPlayers += 1;
@@ -1088,8 +1088,8 @@
         int *mediaPlayers = NULL;
         if (config.mediaPlayerCount > 0) {
             mediaPlayers  = malloc(sizeof(int)*config.mediaPlayerCount);
-            config.mediaPlayerIndexList = mediaPlayers;
         }
+        config.mediaPlayerIndexList = mediaPlayers;
         for(NSNumber * index in mediaPlayerIndexList) {
             *mediaPlayers = [index intValue];
             mediaPlayers += 1;
@@ -1115,9 +1115,9 @@
     } else {
         if (channel == 0) {
             ret = [[ZegoExpressEngine sharedEngine] setAudioSource:(ZegoAudioSourceType)source config:config];
-            free(config.mediaPlayerIndexList);
-            free(config.audioEffectPlayerIndexList);
         }
+        free(config.mediaPlayerIndexList);
+        free(config.audioEffectPlayerIndexList);
     }
 
     result(@(ret));

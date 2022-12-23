@@ -5,139 +5,11 @@
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <functional>
-#include <variant>
+// #include <variant>
 
-#include <Windows.h>
+// #include <Windows.h>
+#include "DataToImageTools.hpp"
 
-std::pair<long, BYTE *> CreateFromHBITMAP(HBITMAP hBitmap) {
-    HDC hdc = GetDC(NULL);
-    HDC memdc = CreateCompatibleDC(hdc);
-    SelectObject(memdc, hBitmap);
-    BITMAP bm;
-    GetObject(hBitmap, sizeof(BITMAP), &bm);
-    BITMAPINFO bi;
-    bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-    bi.bmiHeader.biWidth = bm.bmWidth;
-    bi.bmiHeader.biHeight = bm.bmHeight;
-    bi.bmiHeader.biPlanes = 1;
-    bi.bmiHeader.biBitCount = 32;
-    bi.bmiHeader.biCompression = BI_RGB;
-    bi.bmiHeader.biSizeImage = 0;
-    bi.bmiHeader.biXPelsPerMeter = bm.bmWidth;
-    bi.bmiHeader.biYPelsPerMeter = bm.bmHeight;
-    bi.bmiHeader.biClrUsed = 0;
-    bi.bmiHeader.biClrImportant = 0;
-    int bitsize = bm.bmWidth * bm.bmHeight * 4;
-    BYTE *buff = new BYTE[sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bitsize];
-    BYTE *tmpbuff = buff;
-    RtlZeroMemory(buff, sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bitsize);
-    BITMAPFILEHEADER bf;
-    bf.bfType = 0x4d42;
-    bf.bfSize = bitsize + 14 + sizeof(BITMAPINFOHEADER);
-    bf.bfOffBits = sizeof(bi.bmiHeader) + sizeof(bf);
-    bf.bfReserved1 = 0;
-    bf.bfReserved2 = 0;
-    RtlMoveMemory(tmpbuff, &bf, sizeof(BITMAPFILEHEADER));
-    tmpbuff += sizeof(BITMAPFILEHEADER);
-    RtlMoveMemory(tmpbuff, &bi, sizeof(BITMAPINFO));
-    tmpbuff += sizeof(BITMAPINFO);
-    GetDIBits(memdc, hBitmap, 0, bm.bmHeight, tmpbuff, &bi, DIB_PAL_COLORS);
-    return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bitsize, buff);
-}
-
-std::pair<long, BYTE *> makeBtimap(const std::vector<uint8_t> *frame,
-                                   std::pair<int32_t, int32_t> size) {
-    auto bufferLen = frame->size();
-    auto width = size.first;
-    auto height = size.second;
-    // rgba -> bgra  视频帧数据格式转换，windows只支持bgra
-    std::vector<uint8_t> destBuffer_;
-    {
-        std::vector<uint8_t> srcBuffer_(*frame);
-        destBuffer_.resize(bufferLen);
-        FlutterDesktopPixel *src = reinterpret_cast<FlutterDesktopPixel *>(srcBuffer_.data());
-        VideoFormatBGRAPixel *dst = reinterpret_cast<VideoFormatBGRAPixel *>(destBuffer_.data());
-
-        for (uint32_t y = 0; y < height; y++) {
-            for (uint32_t x = 0; x < width; x++) {
-                uint32_t sp = (y * width) + x;
-                {
-                    dst[sp].r = src[sp].r;
-                    dst[sp].g = src[sp].g;
-                    dst[sp].b = src[sp].b;
-                    dst[sp].a = 255;
-                }
-            }
-        }
-    }
-    BITMAPINFO bi;
-    bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-    bi.bmiHeader.biWidth = width;
-    bi.bmiHeader.biHeight = height;
-    bi.bmiHeader.biPlanes = 1;
-    bi.bmiHeader.biBitCount = 32;
-    bi.bmiHeader.biCompression = BI_RGB;
-    bi.bmiHeader.biSizeImage = 0;
-
-    bi.bmiHeader.biXPelsPerMeter = width;
-    bi.bmiHeader.biYPelsPerMeter = height;
-    bi.bmiHeader.biClrUsed = 0;
-    bi.bmiHeader.biClrImportant = 0;
-    // int bitsize=height*height*3;
-    BYTE *buff = new BYTE[sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen];
-    BYTE *tmpbuff = buff;
-    RtlZeroMemory(buff, sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen);
-    BITMAPFILEHEADER bf;
-    bf.bfType = 0x4d42;
-    bf.bfSize = bufferLen + 14 + sizeof(BITMAPINFOHEADER);
-    bf.bfOffBits = sizeof(bi.bmiHeader) + sizeof(bf);
-    bf.bfReserved1 = 0;
-    bf.bfReserved2 = 0;
-    RtlMoveMemory(tmpbuff, &bf, sizeof(BITMAPFILEHEADER));
-    tmpbuff += sizeof(BITMAPFILEHEADER);
-    RtlMoveMemory(tmpbuff, &bi, sizeof(BITMAPINFO));
-    tmpbuff += sizeof(BITMAPINFO);
-    RtlMoveMemory(tmpbuff, destBuffer_.data(), bufferLen);
-    return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen, buff);
-}
-
-std::pair<long, BYTE *> makeBtimapByBGRABuffer(unsigned char *buffer, unsigned int length,
-                                   std::pair<int32_t, int32_t> size) {
-    auto bufferLen = frame->size();
-    auto width = size.first;
-    auto height = size.second;
-    std::vector<uint8_t> destBuffer_(buffer, buffer + length);
-
-    BITMAPINFO bi;
-    bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
-    bi.bmiHeader.biWidth = width;
-    bi.bmiHeader.biHeight = height;
-    bi.bmiHeader.biPlanes = 1;
-    bi.bmiHeader.biBitCount = 32;
-    bi.bmiHeader.biCompression = BI_RGB;
-    bi.bmiHeader.biSizeImage = 0;
-
-    bi.bmiHeader.biXPelsPerMeter = width;
-    bi.bmiHeader.biYPelsPerMeter = height;
-    bi.bmiHeader.biClrUsed = 0;
-    bi.bmiHeader.biClrImportant = 0;
-    // int bitsize=height*height*3;
-    BYTE *buff = new BYTE[sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen];
-    BYTE *tmpbuff = buff;
-    RtlZeroMemory(buff, sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen);
-    BITMAPFILEHEADER bf;
-    bf.bfType = 0x4d42;
-    bf.bfSize = bufferLen + 14 + sizeof(BITMAPINFOHEADER);
-    bf.bfOffBits = sizeof(bi.bmiHeader) + sizeof(bf);
-    bf.bfReserved1 = 0;
-    bf.bfReserved2 = 0;
-    RtlMoveMemory(tmpbuff, &bf, sizeof(BITMAPFILEHEADER));
-    tmpbuff += sizeof(BITMAPFILEHEADER);
-    RtlMoveMemory(tmpbuff, &bi, sizeof(BITMAPINFO));
-    tmpbuff += sizeof(BITMAPINFO);
-    RtlMoveMemory(tmpbuff, destBuffer_.data(), bufferLen);
-    return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen, buff);
-}
 
 void ZegoExpressEngineMethodHandler::initApiCalledCallback() {
     EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
@@ -938,16 +810,26 @@ void ZegoExpressEngineMethodHandler::setAudioSource(
         auto audioEffectPlayerIndexList =
             std::get<FTArray>(configMap[FTValue("audioEffectPlayerIndexList")]);
         config.audioEffectPlayerCount = audioEffectPlayerIndexList.size();
+        int *audioEffectPlayers = nullptr;
+        if (config.audioEffectPlayerCount > 0) {
+            audioEffectPlayers = new int[config.audioEffectPlayerCount];
+        }
+        config.audioEffectPlayerIndexList = audioEffectPlayers;
         for (auto audioEffectPlayerIndex : audioEffectPlayerIndexList) {
-            *config.audioEffectPlayerIndexList = std::get<int32_t>(audioEffectPlayerIndex);
-            config.audioEffectPlayerIndexList += 1;
+            *audioEffectPlayers = std::get<int32_t>(audioEffectPlayerIndex);
+            audioEffectPlayers += 1;
         }
 
         auto mediaPlayerIndexList = std::get<FTArray>(configMap[FTValue("mediaPlayerIndexList")]);
         config.mediaPlayerCount = mediaPlayerIndexList.size();
+        int *mediaPlayers = nullptr;
+        if (config.mediaPlayerCount > 0) {
+            mediaPlayers = new int[config.mediaPlayerCount];
+        }
+        config.mediaPlayerIndexList = mediaPlayers;
         for (auto mediaPlayerIndex : mediaPlayerIndexList) {
-            *config.mediaPlayerIndexList = std::get<int32_t>(mediaPlayerIndex);
-            config.mediaPlayerIndexList += 1;
+            *mediaPlayers = std::get<int32_t>(mediaPlayerIndex);
+            mediaPlayers += 1;
         }
 
         config.enableMixEnginePlayout =
@@ -973,11 +855,15 @@ void ZegoExpressEngineMethodHandler::setAudioSource(
     } else if (!hasChannel && hasConfig) {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setAudioSource(
             (EXPRESS::ZegoAudioSourceType)source, config);
+        delete[] config.audioEffectPlayerIndexList;
+        delete[] config.mediaPlayerIndexList;
     } else {
         if (channel == 0) {
             ret = EXPRESS::ZegoExpressSDK::getEngine()->setAudioSource(
                 (EXPRESS::ZegoAudioSourceType)source, config);
         }
+        delete[] config.audioEffectPlayerIndexList;
+        delete[] config.mediaPlayerIndexList;
     }
 
     result->Success(FTValue(ret));
@@ -2438,37 +2324,39 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(
 void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackMode(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    auto index = std::get<int32_t>(argument[FTValue("index")]);
-    auto mediaPlayer = mediaPlayerMap_[index];
+    // auto index = std::get<int32_t>(argument[FTValue("index")]);
+    // auto mediaPlayer = mediaPlayerMap_[index];
 
-    if (mediaPlayer) {
-        auto mode = std::get<int32_t>(argument[FTValue("mode")]);
-        mediaPlayer->setAudioTrackMode((EXPRESS::ZegoMediaPlayerAudioTrackMode)mode);
+    // if (mediaPlayer) {
+    //     auto mode = std::get<int32_t>(argument[FTValue("mode")]);
+    //     mediaPlayer->setAudioTrackMode((EXPRESS::ZegoMediaPlayerAudioTrackMode)mode);
 
-        result->Success();
-    }
-    else
-    {
-        result->Error("mediaPlayerSetAudioTrackMode_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackMode` but can't find specific player");
-    }
+    //     result->Success();
+    // }
+    // else
+    // {
+    //     result->Error("mediaPlayerSetAudioTrackMode_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackMode` but can't find specific player");
+    // }
+    result->Error("not_support_feature", "windows platform not support feature");
 }
 
 void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackPublishIndex(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    auto index = std::get<int32_t>(argument[FTValue("index")]);
-    auto mediaPlayer = mediaPlayerMap_[index];
+    // auto index = std::get<int32_t>(argument[FTValue("index")]);
+    // auto mediaPlayer = mediaPlayerMap_[index];
 
-    if (mediaPlayer) {
-        auto index_ = std::get<int32_t>(argument[FTValue("index_")]);
-        mediaPlayer->setAudioTrackPublishIndex(index_);
+    // if (mediaPlayer) {
+    //     auto index_ = std::get<int32_t>(argument[FTValue("index_")]);
+    //     mediaPlayer->setAudioTrackPublishIndex(index_);
 
-        result->Success();
-    }
-    else
-    {
-        result->Error("mediaPlayerSetAudioTrackPublishIndex_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackPublishIndex` but can't find specific player");
-    }
+    //     result->Success();
+    // }
+    // else
+    // {
+    //     result->Error("mediaPlayerSetAudioTrackPublishIndex_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackPublishIndex` but can't find specific player");
+    // }
+    result->Error("not_support_feature", "windows platform not support feature");
 }
 
 void ZegoExpressEngineMethodHandler::startMixerTask(
@@ -4624,7 +4512,7 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(
     for (auto &info: infos) {
         FTMap infoMap;
         infoMap[FTValue("sourceType")] = FTValue(static_cast<int32_t>(info.sourceType));
-        infoMap[FTValue("sourceID")] = FTValue(static_cast<intptr_t>(info.sourceID));
+        infoMap[FTValue("sourceID")] = FTValue(reinterpret_cast<intptr_t>(info.sourceID));
         infoMap[FTValue("sourceName")] = FTValue(info.sourceName);
         
         auto thumbnailImageData = makeBtimapByBGRABuffer(info.thumbnailImage.buffer, info.thumbnailImage.length, std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
@@ -4646,7 +4534,10 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(
 void ZegoExpressEngineMethodHandler::createScreenCaptureSource(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    auto screenCaptureSource = EXPRESS::ZegoExpressSDK::getEngine()->createScreenCaptureSource();
+    void *sourceId =
+        reinterpret_cast<void *>(static_cast<intptr_t>(argument[FTValue("sourceId")].LongValue()));
+    auto sourceType = std::get<int32_t>(argument[FTValue("sourceType")]);
+    auto screenCaptureSource = EXPRESS::ZegoExpressSDK::getEngine()->createScreenCaptureSource(sourceId, (EXPRESS::ZegoScreenCaptureSourceType)sourceType);
     if (screenCaptureSource) {
         auto index = screenCaptureSource->getIndex();
 
@@ -4712,12 +4603,12 @@ void ZegoExpressEngineMethodHandler::setExcludeWindowListScreenCaptureSource(
         auto list = std::get<FTArray>(argument[FTValue("list")]);
         intptr_t *c_list = new intptr_t[list.size()];
         intptr_t *tmpPtr = c_list;
-        for (FTValue win : list) {
-            *tmpPtr = std::static_cast<void *>(win.LongValue());
-            tmpPtr += sizeof(intptr_t);
+        for (auto win : list) {
+            *tmpPtr = static_cast<intptr_t>(win.LongValue());
+            tmpPtr += 1;
         }
         
-        screenCaptureSource->setExcludeWindowList(c_list, list.size());
+        screenCaptureSource->setExcludeWindowList((void **)c_list, list.size());
         delete []c_list;
     }
 
@@ -4733,10 +4624,10 @@ void ZegoExpressEngineMethodHandler::updateCaptureRegionScreenCaptureSource(
     if (screenCaptureSource) {
         auto rectMap = std::get<FTMap>(argument[FTValue("rect")]);
         EXPRESS::ZegoRect rect;
-        rect.x = std::get<int32_t>(rectMap["x"]);
-        rect.y = std::get<int32_t>(rectMap["y"]);
-        rect.width = std::get<int32_t>(rectMap["width"]);
-        rect.height = std::get<int32_t>(rectMap["height"]);
+        rect.x = std::get<double>(rectMap[FTValue("x")]);
+        rect.y = std::get<double>(rectMap[FTValue("y")]);
+        rect.width = std::get<double>(rectMap[FTValue("width")]);
+        rect.height = std::get<double>(rectMap[FTValue("height")]);
         screenCaptureSource->updateCaptureRegion(rect);
     }
 
@@ -4750,9 +4641,9 @@ void ZegoExpressEngineMethodHandler::updateCaptureSourceScreenCaptureSource(
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
     if (screenCaptureSource) {
-        void *sourceId = std::static_cast<void *>(argument["sourceId"].LongValue());
-        auto sourceType = std::get<int32_t>(argument["sourceType"]);
-        screenCaptureSource->updateCaptureSource(rect);
+        void *sourceId = reinterpret_cast<void *>(static_cast<intptr_t>(argument[FTValue("sourceId")].LongValue()));
+        auto sourceType = std::get<int32_t>(argument[FTValue("sourceType")]);
+        screenCaptureSource->updateCaptureSource(sourceId, (EXPRESS::ZegoScreenCaptureSourceType)sourceType);
     }
 
     result->Success();

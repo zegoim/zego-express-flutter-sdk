@@ -1321,12 +1321,12 @@ void ZegoExpressEngineEventHandler::onProcessPlaybackAudioData(unsigned char * d
     }
 }
 
-void onAvailableFrame(EXPRESS::IZegoScreenCaptureSource* source, const void * data, unsigned int dataLength, EXPRESS::ZegoVideoFrameParam param)
+void ZegoExpressEngineEventHandler::onAvailableFrame(EXPRESS::IZegoScreenCaptureSource* source, const void * data, unsigned int dataLength, EXPRESS::ZegoVideoFrameParam param)
 {
 
 }
 
-void onExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType)
+void ZegoExpressEngineEventHandler::onExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType)
 {
     if (eventSink_) {
         FTMap retMap;
