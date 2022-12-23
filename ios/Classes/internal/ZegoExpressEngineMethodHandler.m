@@ -4656,6 +4656,21 @@
             [[ZegoExpressEngine sharedEngine] startScreenCaptureInApp:config];
         } else {
             [[ZegoExpressEngine sharedEngine] startScreenCapture:config];
+            
+            RPSystemBroadcastPickerView *broadcastPickerView = [[RPSystemBroadcastPickerView alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+            NSArray *bundlePathArray = [[NSBundle mainBundle] pathsForResourcesOfType:@"appex" inDirectory:@"PlugIns"];
+            if (bundlePathArray.firstObject) {
+                NSBundle *bundle = [NSBundle bundleWithPath:bundlePathArray.firstObject];
+                if (bundle) {
+                    broadcastPickerView.preferredExtension = bundle.bundleIdentifier;
+                    for (UIView *subView in broadcastPickerView.subviews) {
+                        if ([subView isMemberOfClass:[UIButton class]]) {
+                            UIButton *button = (UIButton *)subView;
+                            [button sendActionsForControlEvents:UIControlEventAllEvents];
+                        }
+                    }
+                }
+            }
         }
     } else {
         // Fallback on earlier versions
