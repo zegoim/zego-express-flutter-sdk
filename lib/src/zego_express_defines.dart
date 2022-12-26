@@ -3155,7 +3155,7 @@ abstract class ZegoMediaPlayer {
   /// Use case: Under the real-time chorus (KTV), call the interface enable multi-track mode, call the interface [setAudioTrackIndex] to specify the original track to play, call interface [setAudioTrackPublishIndex] specified need publish of accompaniment tracks.
   /// When to call: The call takes effect before [start] starts playing
   /// Related APIs: Call [setAudioTrackIndex] to specified the play track of media file and call [setAudioTrackPublishIndex] to specified the publish track of media file.
-  /// Caution: When multi-track mode is enabled, the resource consumption of the hardware device is increased.
+  /// Caution: When multi-track mode is enabled, the resource consumption of the hardware device is increased. Windows and MacOS platforms are not supported temporarily.
   ///
   /// - [mode] Audio track mode.
   Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode);
@@ -3166,7 +3166,7 @@ abstract class ZegoMediaPlayer {
   /// Description: Set the audio track for the media file to be publish.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Related APIs: The number of audio tracks can be obtained through the [getAudioTrackCount] function.
-  /// Caution: This call takes effect only after multitrack mode is enabled by calling the interface [setAudioTrackMode].
+  /// Caution: This call takes effect only after multitrack mode is enabled by calling the interface [setAudioTrackMode]. Windows and MacOS platforms are not supported temporarily.
   ///
   /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
   Future<void> setAudioTrackPublishIndex(int index);
