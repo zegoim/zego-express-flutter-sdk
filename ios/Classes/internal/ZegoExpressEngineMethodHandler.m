@@ -3278,6 +3278,7 @@
     result(nil);
 }
 
+#if TARGET_OS_IPHONE
 - (void)mediaPlayerSetAudioTrackMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
@@ -3303,6 +3304,7 @@
 
     result(nil);
 }
+#endif
 
 #pragma mark - AudioEffectPlayer
 
@@ -4182,12 +4184,15 @@
 
     if (self.copyrightedMusicInstance) {
         NSString *shareToken = call.arguments[@"shareToken"];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self.copyrightedMusicInstance getMusicByToken:shareToken callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
             result(resultMap);
         }];
+#pragma clang diagnostic pop
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetMusicByToken` but can't find specific instance" details:nil]);
     }
@@ -4285,13 +4290,16 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
-        
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self.copyrightedMusicInstance requestAccompaniment:config callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
             result(resultMap);
         }];
+#pragma clang diagnostic pop
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestAccompaniment` but can't find specific instance" details:nil]);
     }
@@ -4306,12 +4314,16 @@
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
         
+        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self.copyrightedMusicInstance requestAccompanimentClip:config callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
             result(resultMap);
         }];
+#pragma clang diagnostic pop
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestAccompanimentClip` but can't find specific instance" details:nil]);
     }
@@ -4325,13 +4337,16 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
-        
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self.copyrightedMusicInstance requestSong:config callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
             result(resultMap);
         }];
+#pragma clang diagnostic pop
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestSong` but can't find specific instance" details:nil]);
     }
