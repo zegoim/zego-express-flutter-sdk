@@ -12,8 +12,7 @@
 		865607242955600D00F6B7F9 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865607232955600D00F6B7F9 /* ReplayKit.framework */; };
 		865607282955600D00F6B7F9 /* SampleHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 865607272955600D00F6B7F9 /* SampleHandler.m */; };
 		8656072C2955600D00F6B7F9 /* ScreenShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 865607222955600D00F6B7F9 /* ScreenShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		865607332955613900F6B7F9 /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865607322955613900F6B7F9 /* ZegoExpressEngine.xcframework */; };
-		865607342955613900F6B7F9 /* ZegoExpressEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 865607322955613900F6B7F9 /* ZegoExpressEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		866BA7B02959AB0B0032D0CD /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 865607322955613900F6B7F9 /* ZegoExpressEngine.xcframework */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -42,17 +41,6 @@
 				8656072C2955600D00F6B7F9 /* ScreenShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		865607352955613900F6B7F9 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				865607342955613900F6B7F9 /* ZegoExpressEngine.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
@@ -99,8 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				865607332955613900F6B7F9 /* ZegoExpressEngine.xcframework in Frameworks */,
 				865607242955600D00F6B7F9 /* ReplayKit.framework in Frameworks */,
+				866BA7B02959AB0B0032D0CD /* ZegoExpressEngine.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,7 +199,6 @@
 				8656071E2955600D00F6B7F9 /* Sources */,
 				8656071F2955600D00F6B7F9 /* Frameworks */,
 				865607202955600D00F6B7F9 /* Resources */,
-				865607352955613900F6B7F9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
