@@ -1168,7 +1168,10 @@ enum ZegoAudioSourceType {
   Microphone,
 
   /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
-  MainPublishChannel
+  MainPublishChannel,
+
+  /// Using screen capture as audio source. It is only supported for iOS platform. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  ScreenCapture
 }
 
 /// Record type.
