@@ -1,5 +1,47 @@
 # Change Log
 
+## 3.1.0
+
+### **New Features**
+
+1. Support multi-source acquisition capability.
+
+    For a variety of interactive scenarios of audio and video sources such as online KTV, watching movies together, watching competitions, video conferences, and online education, multi-source acquisition provides flexible and easy-to-use audio and video acquisition sources and channel management capabilities, greatly reducing developers' development and maintenance costs.
+
+    Multi source acquisition capability shortens, optimizes and normalizes the implementation path of common capabilities such as screen sharing and mixing. After version 3.1.0, you can no longer implement the above complex capabilities through custom acquisition.
+
+    The main capabilities and characteristics are as follows.
+
+    1. Streaming channel supports setting or switching multiple audio and video sources.
+
+    2. Common capabilities such as screen sharing and mixing are supported.
+
+2. SDK supports setting cloud proxy.
+
+    Note: If you need to use this function, please contact ZEGO technical support.
+
+    By setting the cloud proxy interface of the SDK, all the traffic corresponding to the SDK is transferred through the cloud proxy server to achieve communication with the RTC.
+
+    For related API, please refer to [setCloudProxyConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setCloudProxyConfig.html).
+
+### **Enhancements**
+
+1. Greatly improve the audio and video connectivity in extremely weak network areas, and reduce the connection time.
+
+    The ZEGO self-developed dispatching system has been deeply optimized for areas with poor network quality.
+
+### **Bug Fixes**
+
+1. Fixed the problem that sending room [Logout] signaling may fail.
+
+2. Fixed Android the occasional black screen problem caused by the camera authority occupation.
+
+3. Fixed occasional crash of Android audio player.
+
+4. Fixed iOS the occasional crash of null pointer in restart access after the video hardware failure.
+
+5. Fixed Android the problem of device restart in low latency mode.
+
 ## 3.0.3
 
 ### **💥 Breaking changes**
