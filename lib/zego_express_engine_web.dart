@@ -930,7 +930,7 @@ class ZegoExpressEngineWeb {
     if(MediaPlayers[index] == null) {
       return;
     }
-    return ZegoFlutterEngine.instance.mediaPlayerEnableAux(enable, MediaPlayers[index].instance);
+    ZegoFlutterEngine.instance.mediaPlayerEnableAux(enable, MediaPlayers[index].instance);
   }
   Future<void> destroyMediaPlayer(int index) async {
     if(MediaPlayers[index] == null) {
