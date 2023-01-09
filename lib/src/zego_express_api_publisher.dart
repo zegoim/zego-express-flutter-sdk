@@ -105,7 +105,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
   /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
   /// When to call: After [createEngine].
-  /// Restrictions: It is necessary to set the relevant video configuration before publishing the stream or startPreview, and only support the modification of the encoding resolution and the bit rate after publishing the stream.
+  /// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution and the bit rate after [startPreview].
   /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///

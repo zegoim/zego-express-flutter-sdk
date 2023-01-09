@@ -155,7 +155,7 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
   /// Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
-  /// When to call: After [createEngine].
+  /// When to call: After [loginRoom] or [loginScene].
   /// Restrictions: If you call this interface repeatedly within 10 minutes, only the last call will take effect.
   /// Caution: After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback.
   Future<void> uploadLog() async {
@@ -1253,7 +1253,7 @@ class ZegoExpressEngine {
   /// Available: Since 1.1.0
   /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
   /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
-  /// Restrictions: None.
+  /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback. When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
   ///
   /// - [data] Audio data in PCM format.
@@ -1268,7 +1268,7 @@ class ZegoExpressEngine {
   /// Available: Since 1.1.0
   /// Description: The audio data of all playing data is mixed with the data captured by the local microphone before it is sent to the loudspeaker, and calleback out in this way.
   /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0x04, this callback will be triggered only when it is in the publishing stream state or playing stream state.
-  /// Restrictions: None.
+  /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
   /// - [data] Audio data in PCM format.
