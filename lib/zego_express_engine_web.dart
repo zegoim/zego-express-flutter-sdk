@@ -112,8 +112,8 @@ class ZegoExpressEngineWeb {
       case 'stopPublishingStream':
         return stopPublishingStream(call.arguments["channel"]);
       case 'startPlayingStream':
-        return startPlayingStream(
-            call.arguments["streamID"], call.arguments["canvas"], call.arguments["config"]);
+        return startPlayingStream(call.arguments["streamID"],
+            call.arguments["canvas"], call.arguments["config"]);
       case 'stopPlayingStream':
         return stopPlayingStream(call.arguments["streamID"]);
       case 'destroyPlatformView':
@@ -124,47 +124,61 @@ class ZegoExpressEngineWeb {
         return sendBroadcastMessage(
             call.arguments["roomID"], call.arguments["message"]);
       case 'sendBarrageMessage':
-        return sendBarrageMessage(call.arguments['roomID'], call.arguments['message']);
+        return sendBarrageMessage(
+            call.arguments['roomID'], call.arguments['message']);
       case 'sendCustomCommand':
-        return sendCustomCommand(call.arguments['roomID'], call.arguments['command'], call.arguments['toUserList']);
+        return sendCustomCommand(call.arguments['roomID'],
+            call.arguments['command'], call.arguments['toUserList']);
       case 'setRoomExtraInfo':
-        return setRoomExtraInfo(call.arguments['roomID'], call.arguments['key'], call.arguments['value']);
+        return setRoomExtraInfo(call.arguments['roomID'], call.arguments['key'],
+            call.arguments['value']);
       case 'setSEIConfig':
         return setSEIConfig(call.arguments['config']);
       case 'sendSEI':
-        return sendSEI(call.arguments['data'], call.arguments['dataLength'], call.arguments['channel']);
+        return sendSEI(call.arguments['data'], call.arguments['dataLength'],
+            call.arguments['channel']);
       case 'renewToken':
         return renewToken(call.arguments['roomID'], call.arguments['token']);
       case 'mutePlayStreamAudio':
-        return mutePlayStreamAudio(call.arguments['streamID'], call.arguments['mute']);
+        return mutePlayStreamAudio(
+            call.arguments['streamID'], call.arguments['mute']);
       case 'mutePlayStreamVideo':
-        return mutePlayStreamVideo(call.arguments['streamID'], call.arguments['mute']);
+        return mutePlayStreamVideo(
+            call.arguments['streamID'], call.arguments['mute']);
       case 'getAudioDeviceList':
         return getAudioDeviceList(call.arguments['type']);
       case 'getVideoDeviceList':
         return getVideoDeviceList();
       case 'useVideoDevice':
-        return useVideoDevice(call.arguments['deviceID'], call.arguments['channel']);
+        return useVideoDevice(
+            call.arguments['deviceID'], call.arguments['channel']);
       case 'useAudioDevice':
-        return useAudioDevice(call.arguments['type'], call.arguments['deviceID']);
+        return useAudioDevice(
+            call.arguments['type'], call.arguments['deviceID']);
       case 'useAudioOutputDevice':
-        return useAudioOutputDevice(call.arguments['mediaID'], call.arguments['deviceID']);
+        return useAudioOutputDevice(
+            call.arguments['mediaID'], call.arguments['deviceID']);
       case 'setEngineConfig':
         return setEngineConfig(call.arguments['config']);
       case 'setStreamExtraInfo':
-        return setStreamExtraInfo(call.arguments['extraInfo'], call.arguments['channel']);
+        return setStreamExtraInfo(
+            call.arguments['extraInfo'], call.arguments['channel']);
       case 'setPluginVersion':
         return;
       case 'createMediaPlayer':
         return createMediaPlayer();
       case 'mediaPlayerSetPlayerCanvas':
-        return mediaPlayerSetPlayerCanvas(call.arguments['index'], call.arguments['canvas']);
+        return mediaPlayerSetPlayerCanvas(
+            call.arguments['index'], call.arguments['canvas']);
       case 'mediaPlayerLoadResource':
-        return mediaPlayerLoadResource(call.arguments['index'], call.arguments['path']);
+        return mediaPlayerLoadResource(
+            call.arguments['index'], call.arguments['path']);
       case 'mediaPlayerLoadResourceFromMediaData':
-        return mediaPlayerLoadResourceFromMediaData(call.arguments['index'], call.arguments['mediaData'], call.arguments['startPosition']);
+        return mediaPlayerLoadResourceFromMediaData(call.arguments['index'],
+            call.arguments['mediaData'], call.arguments['startPosition']);
       case 'mediaPlayerEnableRepeat':
-        return mediaPlayerEnableRepeat(call.arguments['index'], call.arguments['enable']);
+        return mediaPlayerEnableRepeat(
+            call.arguments['index'], call.arguments['enable']);
       case 'mediaPlayerStart':
         return mediaPlayerStart(call.arguments['index']);
       case 'mediaPlayerPause':
@@ -174,15 +188,19 @@ class ZegoExpressEngineWeb {
       case 'mediaPlayerResume':
         return mediaPlayerResume(call.arguments['index']);
       case 'mediaPlayerSetPlaySpeed':
-        return mediaPlayerSetPlaySpeed(call.arguments['index'], call.arguments['speed']);
+        return mediaPlayerSetPlaySpeed(
+            call.arguments['index'], call.arguments['speed']);
       case 'mediaPlayerMuteLocal':
-        return mediaPlayerMuteLocal(call.arguments['index'], call.arguments['mute']);
+        return mediaPlayerMuteLocal(
+            call.arguments['index'], call.arguments['mute']);
       case 'mediaPlayerEnableAux':
-        return mediaPlayerEnableAux(call.arguments['index'], call.arguments['enable']);
+        return mediaPlayerEnableAux(
+            call.arguments['index'], call.arguments['enable']);
       case 'destroyMediaPlayer':
         return destroyMediaPlayer(call.arguments['index']);
       case 'mediaPlayerSetVolume':
-        return mediaPlayerSetVolume(call.arguments['index'], call.arguments['volume']);
+        return mediaPlayerSetVolume(
+            call.arguments['index'], call.arguments['volume']);
       case 'mediaPlayerGetTotalDuration':
         return mediaPlayerGetTotalDuration(call.arguments['index']);
       case 'setRoomScenario':
@@ -200,18 +218,20 @@ class ZegoExpressEngineWeb {
   Future<String> getVersion() {
     return Future.value(ZegoFlutterEngine.getVersion());
   }
+
   static createCompleter() {
     Completer completer = Completer();
     return {
       'completer': completer,
-      "success": allowInterop((res){
+      "success": allowInterop((res) {
         completer.complete(res);
       }),
-      "fail":allowInterop((err){
+      "fail": allowInterop((err) {
         completer.completeError(err);
       })
     };
   }
+
   static void _eventListener(dynamic event) {
     final Map<dynamic, dynamic> map = event;
     var methodName = map["methodName"];
@@ -315,7 +335,8 @@ class ZegoExpressEngineWeb {
 
         final data = jsonDecode(map["data"]);
         // 过期前30s 执行回调
-        ZegoExpressEngine.onRoomTokenWillExpire!(data['roomID'],data['remainTimeInSecond']);
+        ZegoExpressEngine.onRoomTokenWillExpire!(
+            data['roomID'], data['remainTimeInSecond']);
         break;
       case "onPublisherStateUpdate":
         if (ZegoExpressEngine.onPublisherStateUpdate == null) return;
@@ -350,26 +371,25 @@ class ZegoExpressEngineWeb {
       case "onPublisherQualityUpdate":
         if (ZegoExpressEngine.onPublisherQualityUpdate == null) return;
         var data = jsonDecode(map["data"]);
-        var quality = jsonDecode(data["quality"]); 
+        var quality = jsonDecode(data["quality"]);
         ZegoExpressEngine.onPublisherQualityUpdate!(
             data['streamID'],
             ZegoPublishStreamQuality(
-              quality['videoCaptureFPS'],
-              quality['videoEncodeFPS'],
-              quality['videoSendFPS'],
-              quality['videoKBPS'],
-              quality['audioCaptureFPS'],
-              quality['audioSendFPS'],
-              quality['audioKBPS'],
-              quality['rtt'],
-              quality['packetLostRate'],
-              ZegoStreamQualityLevel.values[quality['level']],
-              false,
-              ZegoVideoCodecID.values[quality['videoCodecID']],
-              0,
-              0,
-              0
-            ));
+                quality['videoCaptureFPS'],
+                quality['videoEncodeFPS'],
+                quality['videoSendFPS'],
+                quality['videoKBPS'],
+                quality['audioCaptureFPS'],
+                quality['audioSendFPS'],
+                quality['audioKBPS'],
+                quality['rtt'],
+                quality['packetLostRate'],
+                ZegoStreamQualityLevel.values[quality['level']],
+                false,
+                ZegoVideoCodecID.values[quality['videoCodecID']],
+                0,
+                0,
+                0));
         break;
       case "onPlayerStateUpdate":
         if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
@@ -440,67 +460,74 @@ class ZegoExpressEngineWeb {
         if (ZegoExpressEngine.onRemoteMicStateUpdate == null) return;
 
         final data = jsonDecode(map["data"]);
-        var  state = 10;
-        if(data["state"] == 'OPEN') {
+        var state = 10;
+        if (data["state"] == 'OPEN') {
           state = 0;
         }
         ZegoExpressEngine.onRemoteMicStateUpdate!(
-            data['streamID'], ZegoRemoteDeviceState.values[state]);;
+            data['streamID'], ZegoRemoteDeviceState.values[state]);
+        ;
         break;
       case "onRemoteCameraStateUpdate":
         if (ZegoExpressEngine.onRemoteCameraStateUpdate == null) return;
         final data = jsonDecode(map["data"]);
-        var  state = 10;
-        if(data["state"] == 'OPEN') {
+        var state = 10;
+        if (data["state"] == 'OPEN') {
           state = 0;
         }
         ZegoExpressEngine.onRemoteCameraStateUpdate!(
-            data['streamID'], ZegoRemoteDeviceState.values[state]);;
+            data['streamID'], ZegoRemoteDeviceState.values[state]);
+        ;
         break;
       case "onRemoteSoundLevelUpdate":
-        if(ZegoExpressEngine.onRemoteSoundLevelUpdate == null) return;
+        if (ZegoExpressEngine.onRemoteSoundLevelUpdate == null) return;
         var soundLevels = <dynamic, dynamic>{};
         final data = jsonDecode(map["data"]);
         if (data['soundLevels'] != null) {
           soundLevels = data['soundLevels'];
         }
-        ZegoExpressEngine.onRemoteSoundLevelUpdate!(Map<String, double>.from(soundLevels));
+        ZegoExpressEngine
+            .onRemoteSoundLevelUpdate!(Map<String, double>.from(soundLevels));
         break;
       case 'onCapturedSoundLevelUpdate':
-        if(ZegoExpressEngine.onCapturedSoundLevelUpdate == null) return;
+        if (ZegoExpressEngine.onCapturedSoundLevelUpdate == null) return;
         final data = jsonDecode(map["data"]);
-        ZegoExpressEngine.onCapturedSoundLevelUpdate!(data['soundLevel']);break;
+        ZegoExpressEngine.onCapturedSoundLevelUpdate!(data['soundLevel']);
+        break;
       case 'onPlayerVideoSizeChanged':
-        if(ZegoExpressEngine.onPlayerVideoSizeChanged == null) return;
+        if (ZegoExpressEngine.onPlayerVideoSizeChanged == null) return;
         final data = jsonDecode(map["data"]);
         ZegoExpressEngine.onPlayerVideoSizeChanged!(
             data['streamID'], data['width'], data['height']);
-        
+
         break;
       case 'onIMRecvBroadcastMessage':
-      if (ZegoExpressEngine.onIMRecvBroadcastMessage == null) return;
+        if (ZegoExpressEngine.onIMRecvBroadcastMessage == null) return;
         final data = jsonDecode(map["data"]);
-        List<ZegoBroadcastMessageInfo> messageList= [];
+        List<ZegoBroadcastMessageInfo> messageList = [];
         for (Map<dynamic, dynamic> info in data['messageList']) {
           ZegoBroadcastMessageInfo msg = ZegoBroadcastMessageInfo(
               info['message'],
               info['messageID'],
               info['sendTime'],
-              ZegoUser(info['fromUser']['userID'], info['fromUser']['userName']));
+              ZegoUser(
+                  info['fromUser']['userID'], info['fromUser']['userName']));
           messageList.add(msg);
         }
-        ZegoExpressEngine.onIMRecvBroadcastMessage!(data['roomID'], messageList);
+        ZegoExpressEngine.onIMRecvBroadcastMessage!(
+            data['roomID'], messageList);
         break;
       case 'onIMRecvBarrageMessage':
         if (ZegoExpressEngine.onIMRecvBarrageMessage == null) return;
         final data = jsonDecode(map["data"]);
-        List<ZegoBarrageMessageInfo> messageList= [];
+        List<ZegoBarrageMessageInfo> messageList = [];
         for (Map<dynamic, dynamic> info in data['messageList']) {
           ZegoBarrageMessageInfo msg = ZegoBarrageMessageInfo(
               info['message'],
               info['messageID'],
               info['sendTime'],
-              ZegoUser(info['fromUser']['userID'], info['fromUser']['userName']));
+              ZegoUser(
+                  info['fromUser']['userID'], info['fromUser']['userName']));
           messageList.add(msg);
         }
         ZegoExpressEngine.onIMRecvBarrageMessage!(data['roomID'], messageList);
@@ -509,22 +536,26 @@ class ZegoExpressEngineWeb {
         if (ZegoExpressEngine.onIMRecvCustomCommand == null) return;
         final data = jsonDecode(map["data"]);
 
-        ZegoUser fromUser = ZegoUser(data['fromUser']['userID'], data['fromUser']['userName']);
-        ZegoExpressEngine.onIMRecvCustomCommand!(data['roomID'],fromUser, data['command']);
+        ZegoUser fromUser =
+            ZegoUser(data['fromUser']['userID'], data['fromUser']['userName']);
+        ZegoExpressEngine.onIMRecvCustomCommand!(
+            data['roomID'], fromUser, data['command']);
         break;
       case 'onRoomExtraInfoUpdate':
         if (ZegoExpressEngine.onRoomExtraInfoUpdate == null) return;
         final data = jsonDecode(map["data"]);
-        List<ZegoRoomExtraInfo> roomExtraInfoList= [];
+        List<ZegoRoomExtraInfo> roomExtraInfoList = [];
         for (Map<dynamic, dynamic> info in data['roomExtraInfoList']) {
           ZegoRoomExtraInfo msg = ZegoRoomExtraInfo(
               info['key'],
               info['value'],
-              ZegoUser(info['updateUser']['userID'], info['updateUser']['userName']),
+              ZegoUser(
+                  info['updateUser']['userID'], info['updateUser']['userName']),
               info['updateTime']);
           roomExtraInfoList.add(msg);
         }
-        ZegoExpressEngine.onRoomExtraInfoUpdate!(data['roomID'], roomExtraInfoList);
+        ZegoExpressEngine.onRoomExtraInfoUpdate!(
+            data['roomID'], roomExtraInfoList);
         break;
       case 'onPlayerRecvSEI':
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
@@ -546,12 +577,14 @@ class ZegoExpressEngineWeb {
               streamMap['extraInfo'] ?? "");
           streamList.add(stream);
         }
-        ZegoExpressEngine.onRoomStreamExtraInfoUpdate!(data['roomID'], streamList);
+        ZegoExpressEngine.onRoomStreamExtraInfoUpdate!(
+            data['roomID'], streamList);
         break;
       case 'onDebugError':
         if (ZegoExpressEngine.onDebugError == null) return;
         final data = jsonDecode(map["data"]);
-        ZegoExpressEngine.onDebugError!(data['errorCode'], data['funcName'], data['info']);
+        ZegoExpressEngine.onDebugError!(
+            data['errorCode'], data['funcName'], data['info']);
         break;
       default:
         break;
@@ -569,7 +602,8 @@ class ZegoExpressEngineWeb {
   static Future<void> createEngineWithProfile(dynamic profile) async {
     final appID = profile["appID"];
     const server = "wss://test.com";
-    Profile engineProfile = Profile(appID: appID, server: server, scenario: profile['scenario']);
+    Profile engineProfile =
+        Profile(appID: appID, server: server, scenario: profile['scenario']);
 
     ZegoFlutterEngine.createEngineWithProfile(engineProfile);
   }
@@ -590,16 +624,17 @@ class ZegoExpressEngineWeb {
         isUserStatusNotify: config["isUserStatusNotify"]);
     print('login');
     var result;
-    result = await ((){
+    result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance?.loginRoom(roomID, webUser, webConfig, completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance?.loginRoom(roomID, webUser, webConfig,
+          completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     print('loginend');
     final map = {};
     map["errorCode"] = 0;
     map["extendedData"] = "{}";
-    if(result == false) {
+    if (result == false) {
       map["errorCode"] = 1;
     }
     return Future.value(map);
@@ -669,10 +704,12 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<void> startPlayingStream(String streamID, dynamic canvas, dynamic config) {
+  Future<void> startPlayingStream(
+      String streamID, dynamic canvas, dynamic config) {
     final playView = document.getElementById('zego-view-${canvas["view"]}');
     ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
-    ZegoFlutterEngine.instance.startPlayingStream(streamID, playView, "", jsonEncode(config));
+    ZegoFlutterEngine.instance
+        .startPlayingStream(streamID, playView, "", jsonEncode(config));
     return Future.value();
   }
 
@@ -699,18 +736,22 @@ class ZegoExpressEngineWeb {
 
     return Future.value(map);
   }
-  Future<void> sendCustomCommand(String roomID, String message, List toUserList) async {
+
+  Future<void> sendCustomCommand(
+      String roomID, String message, List toUserList) async {
     List useridList = [];
     toUserList.forEach((item) {
       useridList.add(item["userID"]);
     });
-    await ZegoFlutterEngine.instance.sendCustomCommand(roomID, message, useridList);
+    await ZegoFlutterEngine.instance
+        .sendCustomCommand(roomID, message, useridList);
     final Map<dynamic, dynamic> map = {};
     map["errorCode"] = 0;
     map["messageID"] = 0;
 
     return Future.value(map);
   }
+
   Future<void> setRoomExtraInfo(String roomID, String key, String value) async {
     await ZegoFlutterEngine.instance.sendReliableMessage(roomID, key, value);
     final Map<dynamic, dynamic> map = {};
@@ -718,11 +759,14 @@ class ZegoExpressEngineWeb {
 
     return Future.value(map);
   }
+
   Future<void> setSEIConfig(Map<dynamic, dynamic> config) async {
     return await ZegoFlutterEngine.instance.setSEIConfig(config['type']);
   }
+
   Future<void> sendSEI(dynamic data, int dataLength, int channel) async {
-    return await ZegoFlutterEngine.instance.sendSEI(Utf8Decoder().convert(data), dataLength, channel);
+    return await ZegoFlutterEngine.instance
+        .sendSEI(Utf8Decoder().convert(data), dataLength, channel);
   }
 
   Future<void> mutePublishStreamVideo(bool mute, int channel) async {
@@ -762,37 +806,44 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> enableCamera(bool enable, int channel) async {
-    return await ZegoFlutterEngine.instance.enableCamera(enable, getPublishChannel(channel));
+    return await ZegoFlutterEngine.instance
+        .enableCamera(enable, getPublishChannel(channel));
   }
+
   Future<void> useFrontCamera(bool enable, int channel) async {
-    return await ZegoFlutterEngine.instance.useFrontCamera(enable, getPublishChannel(channel));
+    return await ZegoFlutterEngine.instance
+        .useFrontCamera(enable, getPublishChannel(channel));
   }
 
   Future<void> renewToken(String roomID, String token) async {
     return Future.value(ZegoFlutterEngine.instance.renewToken(roomID, token));
   }
-  
+
   Future<void> mutePlayStreamAudio(String streamID, bool mute) async {
     await ZegoFlutterEngine.instance.mutePlayStreamAudio(streamID, mute);
   }
+
   Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
     await ZegoFlutterEngine.instance.mutePlayStreamVideo(streamID, mute);
   }
+
   // type 0 为input, 1 为output
   Future<List> getAudioDeviceList(int type) async {
-    var result = await ((){
+    var result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.getAudioDeviceList(type, completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.getAudioDeviceList(
+          type, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     return formatDeviceList(jsonDecode(result));
   }
-  static formatDeviceList(list){
+
+  static formatDeviceList(list) {
     var newList = [];
-    if(list == null || !(list is List)) return newList;
-    list.forEach((item) { 
+    if (list == null || !(list is List)) return newList;
+    list.forEach((item) {
       Map<String, dynamic> info = {};
-      info["deviceID"] = item["deviceID"]; 
+      info["deviceID"] = item["deviceID"];
       info["deviceName"] = item["deviceName"];
       print(item["deviceID"]);
       print(item["deviceName"]);
@@ -800,140 +851,171 @@ class ZegoExpressEngineWeb {
     });
     return newList;
   }
+
   Future<List> getVideoDeviceList() async {
-    var result = await ((){
+    var result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.getVideoDeviceList(completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance
+          .getVideoDeviceList(completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     return formatDeviceList(jsonDecode(result));
   }
+
   Future<void> useVideoDevice(String deviceID, int channel) async {
-    if(deviceID == null) {
+    if (deviceID == null) {
       throw PlatformException(
-            code: 'Unimplemented',
-            details:
-                'the type in useVideoDevice is required');
+          code: 'Unimplemented',
+          details: 'the type in useVideoDevice is required');
     }
     return await ZegoFlutterEngine.instance.useVideoDevice(deviceID, channel);
   }
+
   // type：input 0, output 1
   Future<void> useAudioDevice(int type, String deviceID) async {
     return ZegoFlutterEngine.instance.useAudioDevice(type, deviceID);
   }
+
   Future<void> useAudioOutputDevice(String viewID, String deviceID) async {
-    return await ZegoFlutterEngine.instance.useAudioOutputDevice(document.querySelector('#zego-view-'+viewID), deviceID);
+    return await ZegoFlutterEngine.instance.useAudioOutputDevice(
+        document.querySelector('#zego-view-' + viewID), deviceID);
   }
+
   Future<void> setEngineConfig(dynamic config) async {
     return await ZegoFlutterEngine.setEngineConfig(config);
   }
+
   Future<void> setStreamExtraInfo(String extraInfo, int channel) async {
     await ZegoFlutterEngine.instance.setStreamExtraInfo(extraInfo, channel);
     final map = {};
     map["errorCode"] = 0;
     return Future.value(map);
   }
+
   Future<int> createMediaPlayer() async {
     var instance = await ZegoFlutterEngine.instance.createMediaPlayer();
     var i = _index;
-    var mediaPlayer = new MediaPlayer();
+    var mediaPlayer = MediaPlayer();
     mediaPlayer.instance = instance;
     MediaPlayers[i] = mediaPlayer;
     _index++;
     return i;
   }
-  Future<void> mediaPlayerSetPlayerCanvas(int index, Map<dynamic, dynamic> canvas) async{
+
+  Future<void> mediaPlayerSetPlayerCanvas(
+      int index, Map<dynamic, dynamic> canvas) async {
     var viewElem = document.getElementById("zego-view-${canvas["view"]}");
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return Future.value();
     }
     ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
-    var result = await ((){
+    var result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.mediaPlayerSetPlayerCanvas(viewElem, canvas, MediaPlayers[index].instance, completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.mediaPlayerSetPlayerCanvas(
+          viewElem,
+          canvas,
+          MediaPlayers[index].instance,
+          completerMap["success"],
+          completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     return Future.value();
   }
-  Future<Map<dynamic, dynamic>> mediaPlayerLoadResource(int index, String path) async {
+
+  Future<Map<dynamic, dynamic>> mediaPlayerLoadResource(
+      int index, String path) async {
     final map = {};
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       map["errorCode"] = 1;
       return Future.value(map);
     }
-    var result = await ((){
+    var result = await (() {
       Map completerMap = createCompleter();
-      MediaPlayers[index].instance.loadResource(path, completerMap["success"], completerMap["fail"]);
+      MediaPlayers[index]
+          .instance
+          .loadResource(path, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     map["errorCode"] = 0;
     return Future.value(map);
   }
-  Future<Map<dynamic, dynamic>> mediaPlayerLoadResourceFromMediaData(int index, dynamic mediaData, int startPosition) async {
+
+  Future<Map<dynamic, dynamic>> mediaPlayerLoadResourceFromMediaData(
+      int index, dynamic mediaData, int startPosition) async {
     final map = {};
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       map["errorCode"] = 1;
       return Future.value(map);
     }
-    var result = await ((){
+    var result = await (() {
       Map completerMap = createCompleter();
-      MediaPlayers[index].instance.loadResourceFromMediaData(mediaData, startPosition, completerMap["success"], completerMap["fail"]);
+      MediaPlayers[index].instance.loadResourceFromMediaData(mediaData,
+          startPosition, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     map["errorCode"] = 0;
     return Future.value(map);
   }
-  
+
   Future<void> mediaPlayerEnableRepeat(int index, bool enable) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.enableRepeat(enable);
   }
+
   Future<void> mediaPlayerStart(int index) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.start();
   }
+
   Future<void> mediaPlayerPause(int index) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.pause();
   }
+
   Future<void> mediaPlayerStop(int index) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.stop();
   }
+
   Future<void> mediaPlayerResume(int index) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.resume();
   }
+
   Future<void> mediaPlayerSetPlaySpeed(int index, double speed) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.setPlaySpeed(speed);
   }
+
   Future<void> mediaPlayerMuteLocal(int index, bool enable) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     return MediaPlayers[index].instance.muteLocal(enable);
   }
+
   Future<void> mediaPlayerEnableAux(int index, bool enable) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
-    ZegoFlutterEngine.instance.mediaPlayerEnableAux(enable, MediaPlayers[index].instance);
+    ZegoFlutterEngine.instance
+        .mediaPlayerEnableAux(enable, MediaPlayers[index].instance);
   }
+
   Future<void> destroyMediaPlayer(int index) async {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return;
     }
     MediaPlayers[index].instance.destroy();
@@ -941,21 +1023,19 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> mediaPlayerSetVolume(int index, int volume) {
-    if(MediaPlayers[index] == null) {
+    if (MediaPlayers[index] == null) {
       return Future.value();
     }
-    return Future.value(ZegoFlutterEngine.instance.mediaPlayerSetVolume(volume, MediaPlayers[index].instance));
+    return Future.value(ZegoFlutterEngine.instance
+        .mediaPlayerSetVolume(volume, MediaPlayers[index].instance));
   }
+
   Future<int> mediaPlayerGetTotalDuration(int index) async {
     var duration = MediaPlayers[index].instance.getTotalDuration();
     return Future.value(duration);
   }
+
   void setRoomScenario(int scenario) {
     return ZegoFlutterEngine.instance.setRoomScenario(scenario);
   }
 }
-
-
-
-
-

@@ -84,11 +84,7 @@ class StreamListInfo {
 @JS()
 @anonymous
 class Profile {
-  external factory Profile({
-    int appID,
-    String server,
-    int scenario
-  });
+  external factory Profile({int appID, String server, int scenario});
 
   external int get appID;
   external String get server;
