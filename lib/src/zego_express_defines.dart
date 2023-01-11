@@ -3284,7 +3284,170 @@ class ZegoNetWorkResourceCache {
   ZegoNetWorkResourceCache(this.time, this.size);
 }
 
-/// Audio effect player.
+/// CopyrightedMusic play configuration.
+class ZegoCopyrightedMusicConfig {
+  /// User object instance, configure userID, userName. Note that the user ID set here needs to be consistent with the user ID set when logging in to the room, otherwise the request for the copyright music background service will fail.
+  ZegoUser user;
+
+  ZegoCopyrightedMusicConfig(this.user);
+}
+
+/// The configuration of requesting resource.
+class ZegoCopyrightedMusicRequestConfig {
+  /// the ID of the song.
+  String songID;
+
+  /// VOD billing mode.
+  ZegoCopyrightedMusicBillingMode mode;
+
+  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode);
+}
+
+/// The configuration of getting shared resource.
+class ZegoCopyrightedMusicGetSharedConfig {
+  /// the ID of the song.
+  String songID;
+
+  ZegoCopyrightedMusicGetSharedConfig(this.songID);
+}
+
+/// Screen capture configuration parameters.
+class ZegoScreenCaptureConfig {
+  /// Whether to capture video when screen capture. The default is true.
+  bool captureVideo;
+
+  /// Whether to capture audio when screen capture. The default is true.
+  bool captureAudio;
+
+  /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
+  int microphoneVolume;
+
+  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
+  int applicationVolume;
+
+  ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
+      this.microphoneVolume, this.applicationVolume);
+}
+
+/// The screen captures source information.
+class ZegoScreenCaptureSourceInfo {
+  /// Target type for screen capture. (only for desktop)
+  ZegoScreenCaptureSourceType sourceType;
+
+  /// The ID of the capture source.
+  int sourceID;
+
+  /// Capture source name (in UTF8 encoding).
+  String sourceName;
+
+  /// Thumbnail of the capture window.
+  MemoryImage? thumbnailImage;
+
+  /// The image content of the icon.
+  MemoryImage? iconImage;
+
+  ZegoScreenCaptureSourceInfo(this.sourceType, this.sourceID, this.sourceName,
+      this.thumbnailImage, this.iconImage);
+}
+
+/// Audio source mix config
+///
+/// Used to config whether mix media player, audio effect player and captured system audio into publish stream or not when set audio source.
+class ZegoAudioSourceMixConfig {
+  /// Media player instance index list.
+  List<int>? mediaPlayerIndexList;
+
+  /// Audio effect player instance index list.
+  List<int>? audioEffectPlayerIndexList;
+
+  /// Enable or disable mix captured system audio into publish stream.
+  bool? enableMixSystemPlayout;
+
+  /// Enable or disable mix SDK playout into publish stream.
+  bool? enableMixEnginePlayout;
+
+  ZegoAudioSourceMixConfig(
+      {this.mediaPlayerIndexList,
+      this.audioEffectPlayerIndexList,
+      this.enableMixSystemPlayout,
+      this.enableMixEnginePlayout});
+}
+
+abstract class ZegoRealTimeSequentialDataManager {
+  /// Start broadcasting real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function allows users to broadcast their local real-time sequential data stream to the ZEGO RTC server, and other users in the same room can subscribe to the real-time sequential data stream for intercommunication through "streamID".
+  /// Use cases: Before sending real-time sequential data, you need to call this function to start broadcasting.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPublisherStateUpdate] callback to tell you the broadcast state (publish state) of this stream. After the broadcast is successful, other users in the same room will receive the [onRoomStreamUpdate] callback to tell them this stream has been added to the room.
+  ///
+  /// - [streamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   1. Need to be globally unique within the entire AppID (Note that it cannot be the same as the stream ID passed in [startPublishingStream]). If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
+  ///   2. Only support numbers, English characters and '-', ' '.
+  Future<void> startBroadcasting(String streamID);
+
+  /// Stop broadcasting real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function allows users to stop broadcasting their local real-time sequential data stream.
+  /// Use cases: When you no longer need to send real-time sequential data, you need to call this function to stop broadcasting.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPublisherStateUpdate] callback to tell you the broadcast state (publish state) of this stream. After stopping the broadcast, other users in the same room will receive the [onRoomStreamUpdate] callback to tell them this stream has been deleted from the room.
+  ///
+  /// - [streamID] The ID of the stream that needs to stop broadcasting.
+  Future<void> stopBroadcasting(String streamID);
+
+  /// Send real-time sequential data to the broadcasting stream ID.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function can be used to send real-time sequential data on the stream currently being broadcast.
+  /// Use cases: You need to call this function when you need to send real-time sequential data.
+  /// When to call: After calling [startBroadcasting].
+  /// Restrictions: None.
+  /// Caution: None.
+  ///
+  /// - [data] The real-time sequential data to be sent.
+  /// - [streamID] The stream ID to which the real-time sequential data is sent.
+  /// - Returns Send real-time sequential data result notification.
+  Future<ZegoRealTimeSequentialDataSentResult> sendRealTimeSequentialData(
+      Uint8List data, String streamID);
+
+  /// Start subscribing real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function allows users to subscribe to the real-time sequential data stream of remote users from the ZEGO RTC server.
+  /// Use cases: When you need to receive real-time sequential data sent from other remote users, you need to call this function to start subscribing to the stream broadcasted by other remote users.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPlayerStateUpdate] callback to tell you the subscribe state (play state) of this stream.
+  ///
+  /// - [streamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   1. Only support numbers, English characters and '-', ' '.
+  Future<void> startSubscribing(String streamID);
+
+  /// Stop subscribing real-time sequential data stream.
+  ///
+  /// Available since: 2.14.0
+  /// Description: This function can be used to stop subscribing to the real-time sequential data stream.
+  /// Use cases: When you no longer need to receive real-time sequential data sent by other users, you need to call this function to stop subscribing to the other user's stream.
+  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
+  /// Restrictions: None.
+  /// Caution: After calling this function, you will receive the [onPlayerStateUpdate] callback to tell you the subscribe state (play state) of this stream.
+  ///
+  /// - [streamID] The ID of the stream that needs to stop subscribing.
+  Future<void> stopSubscribing(String streamID);
+
+  /// Get real-time sequential data manager index.
+  ///
+  /// - Returns Index of the real-time sequential data manager.
+  int getIndex();
+}
+
 abstract class ZegoAudioEffectPlayer {
   /// Start playing audio effect.
   ///
@@ -3455,170 +3618,6 @@ abstract class ZegoAudioEffectPlayer {
   /// Restrictions: None.
   ///
   /// - Returns Audio effect player index.
-  int getIndex();
-}
-
-/// CopyrightedMusic play configuration.
-class ZegoCopyrightedMusicConfig {
-  /// User object instance, configure userID, userName. Note that the user ID set here needs to be consistent with the user ID set when logging in to the room, otherwise the request for the copyright music background service will fail.
-  ZegoUser user;
-
-  ZegoCopyrightedMusicConfig(this.user);
-}
-
-/// The configuration of requesting resource.
-class ZegoCopyrightedMusicRequestConfig {
-  /// the ID of the song.
-  String songID;
-
-  /// VOD billing mode.
-  ZegoCopyrightedMusicBillingMode mode;
-
-  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode);
-}
-
-/// The configuration of getting shared resource.
-class ZegoCopyrightedMusicGetSharedConfig {
-  /// the ID of the song.
-  String songID;
-
-  ZegoCopyrightedMusicGetSharedConfig(this.songID);
-}
-
-/// Screen capture configuration parameters.
-class ZegoScreenCaptureConfig {
-  /// Whether to capture video when screen capture. The default is true.
-  bool captureVideo;
-
-  /// Whether to capture audio when screen capture. The default is true.
-  bool captureAudio;
-
-  /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
-  int microphoneVolume;
-
-  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
-  int applicationVolume;
-
-  ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
-      this.microphoneVolume, this.applicationVolume);
-}
-
-/// The screen captures source information.
-class ZegoScreenCaptureSourceInfo {
-  /// Target type for screen capture. (only for desktop)
-  ZegoScreenCaptureSourceType sourceType;
-
-  /// The ID of the capture source.
-  int sourceID;
-
-  /// Capture source name (in UTF8 encoding).
-  String sourceName;
-
-  /// Thumbnail of the capture window.
-  MemoryImage? thumbnailImage;
-
-  /// The image content of the icon.
-  MemoryImage? iconImage;
-
-  ZegoScreenCaptureSourceInfo(this.sourceType, this.sourceID, this.sourceName,
-      this.thumbnailImage, this.iconImage);
-}
-
-/// Audio source mix config
-///
-/// Used to config whether mix media player, audio effect player and captured system audio into publish stream or not when set audio source.
-class ZegoAudioSourceMixConfig {
-  /// Media player instance index list.
-  List<int>? mediaPlayerIndexList;
-
-  /// Audio effect player instance index list.
-  List<int>? audioEffectPlayerIndexList;
-
-  /// Enable or disable mix captured system audio into publish stream.
-  bool? enableMixSystemPlayout;
-
-  /// Enable or disable mix SDK playout into publish stream.
-  bool? enableMixEnginePlayout;
-
-  ZegoAudioSourceMixConfig(
-      {this.mediaPlayerIndexList,
-      this.audioEffectPlayerIndexList,
-      this.enableMixSystemPlayout,
-      this.enableMixEnginePlayout});
-}
-
-abstract class ZegoRealTimeSequentialDataManager {
-  /// Start broadcasting real-time sequential data stream.
-  ///
-  /// Available since: 2.14.0
-  /// Description: This function allows users to broadcast their local real-time sequential data stream to the ZEGO RTC server, and other users in the same room can subscribe to the real-time sequential data stream for intercommunication through "streamID".
-  /// Use cases: Before sending real-time sequential data, you need to call this function to start broadcasting.
-  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
-  /// Restrictions: None.
-  /// Caution: After calling this function, you will receive the [onPublisherStateUpdate] callback to tell you the broadcast state (publish state) of this stream. After the broadcast is successful, other users in the same room will receive the [onRoomStreamUpdate] callback to tell them this stream has been added to the room.
-  ///
-  /// - [streamID] Stream ID, a string of up to 256 characters.
-  ///   Caution:
-  ///   1. Need to be globally unique within the entire AppID (Note that it cannot be the same as the stream ID passed in [startPublishingStream]). If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
-  ///   2. Only support numbers, English characters and '-', ' '.
-  Future<void> startBroadcasting(String streamID);
-
-  /// Stop broadcasting real-time sequential data stream.
-  ///
-  /// Available since: 2.14.0
-  /// Description: This function allows users to stop broadcasting their local real-time sequential data stream.
-  /// Use cases: When you no longer need to send real-time sequential data, you need to call this function to stop broadcasting.
-  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
-  /// Restrictions: None.
-  /// Caution: After calling this function, you will receive the [onPublisherStateUpdate] callback to tell you the broadcast state (publish state) of this stream. After stopping the broadcast, other users in the same room will receive the [onRoomStreamUpdate] callback to tell them this stream has been deleted from the room.
-  ///
-  /// - [streamID] The ID of the stream that needs to stop broadcasting.
-  Future<void> stopBroadcasting(String streamID);
-
-  /// Send real-time sequential data to the broadcasting stream ID.
-  ///
-  /// Available since: 2.14.0
-  /// Description: This function can be used to send real-time sequential data on the stream currently being broadcast.
-  /// Use cases: You need to call this function when you need to send real-time sequential data.
-  /// When to call: After calling [startBroadcasting].
-  /// Restrictions: None.
-  /// Caution: None.
-  ///
-  /// - [data] The real-time sequential data to be sent.
-  /// - [streamID] The stream ID to which the real-time sequential data is sent.
-  /// - Returns Send real-time sequential data result notification.
-  Future<ZegoRealTimeSequentialDataSentResult> sendRealTimeSequentialData(
-      Uint8List data, String streamID);
-
-  /// Start subscribing real-time sequential data stream.
-  ///
-  /// Available since: 2.14.0
-  /// Description: This function allows users to subscribe to the real-time sequential data stream of remote users from the ZEGO RTC server.
-  /// Use cases: When you need to receive real-time sequential data sent from other remote users, you need to call this function to start subscribing to the stream broadcasted by other remote users.
-  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
-  /// Restrictions: None.
-  /// Caution: After calling this function, you will receive the [onPlayerStateUpdate] callback to tell you the subscribe state (play state) of this stream.
-  ///
-  /// - [streamID] Stream ID, a string of up to 256 characters.
-  ///   Caution:
-  ///   1. Only support numbers, English characters and '-', ' '.
-  Future<void> startSubscribing(String streamID);
-
-  /// Stop subscribing real-time sequential data stream.
-  ///
-  /// Available since: 2.14.0
-  /// Description: This function can be used to stop subscribing to the real-time sequential data stream.
-  /// Use cases: When you no longer need to receive real-time sequential data sent by other users, you need to call this function to stop subscribing to the other user's stream.
-  /// When to call: After creating the [ZegoRealTimeSequentialDataManager] instance.
-  /// Restrictions: None.
-  /// Caution: After calling this function, you will receive the [onPlayerStateUpdate] callback to tell you the subscribe state (play state) of this stream.
-  ///
-  /// - [streamID] The ID of the stream that needs to stop subscribing.
-  Future<void> stopSubscribing(String streamID);
-
-  /// Get real-time sequential data manager index.
-  ///
-  /// - Returns Index of the real-time sequential data manager.
   int getIndex();
 }
 
