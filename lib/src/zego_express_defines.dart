@@ -2980,9 +2980,6 @@ class ZegoAudioEffectPlayConfig {
   ZegoAudioEffectPlayConfig(this.playCount, this.isPublishOut);
 }
 
-/// Zego MediaPlayer.
-///
-/// Yon can use ZegoMediaPlayer to play media resource files on the local or remote server, and can mix the sound of the media resource files that are played into the publish stream to achieve the effect of background music.
 abstract class ZegoMediaPlayer {
   /// Load media resource.
   ///
@@ -2992,7 +2989,7 @@ abstract class ZegoMediaPlayer {
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Related APIs: Resources can be loaded through the [loadResourceWithPosition] or [loadResourceFromMediaData] function.
   ///
-  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "".
+  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
@@ -3005,7 +3002,7 @@ abstract class ZegoMediaPlayer {
   /// Related APIs: Resources can be loaded through the [loadResource] or [loadResourceFromMediaData] function.
   /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
   ///
-  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "".
+  /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
   /// - [startPosition] The progress at which the playback started.
   /// - Returns Notification of resource loading results
   Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithPosition(
@@ -3052,7 +3049,7 @@ abstract class ZegoMediaPlayer {
   /// Pause playing.
   Future<void> pause();
 
-  /// resume playing.
+  /// Resume playing.
   Future<void> resume();
 
   /// Set the specified playback progress.
@@ -3079,7 +3076,9 @@ abstract class ZegoMediaPlayer {
   /// - [speed] The speed of play. The range is 0.5 ~ 2.0. The default is 1.0.
   Future<void> setPlaySpeed(double speed);
 
-  /// Whether to mix the player's sound into the main stream channel being published.
+  /// Whether to mix the player's sound into the stream being published.
+  ///
+  /// This interface will only mix the media player sound into the main channel
   ///
   /// - [enable] Aux audio flag. The default is false.
   Future<void> enableAux(bool enable);
@@ -3092,8 +3091,6 @@ abstract class ZegoMediaPlayer {
   Future<void> muteLocal(bool mute);
 
   /// Set the view of the player playing video.
-  ///
-  /// Only support platform view.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [canvas] Video rendered canvas object
@@ -3104,7 +3101,7 @@ abstract class ZegoMediaPlayer {
   /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setVolume(int volume);
 
-  /// Set mediaplayer local play volume.
+  /// Set mediaplayer local playback volume.
   ///
   /// - [volume] The range is 0 ~ 200. The default is 60.
   Future<void> setPlayVolume(int volume);
@@ -3123,9 +3120,13 @@ abstract class ZegoMediaPlayer {
   Future<void> setProgressInterval(int millisecond);
 
   /// Gets the current local playback volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60.
+  ///
+  /// - Returns current volume
   Future<int> getPlayVolume();
 
   /// Gets the current publish volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60.
+  ///
+  /// - Returns current volume
   Future<int> getPublishVolume();
 
   /// Get the total progress of your media resources.
@@ -3138,9 +3139,13 @@ abstract class ZegoMediaPlayer {
   /// Get current playing progress.
   ///
   /// You should load resource before invoking this function, otherwise the return value is 0
+  ///
+  /// - Returns current progress
   Future<int> getCurrentProgress();
 
   /// Get the number of audio tracks of the playback file.
+  ///
+  /// - Returns Number of audio tracks
   Future<int> getAudioTrackCount();
 
   /// Set the audio track of the playback file.
@@ -3155,7 +3160,7 @@ abstract class ZegoMediaPlayer {
   /// Use case: Under the real-time chorus (KTV), call the interface enable multi-track mode, call the interface [setAudioTrackIndex] to specify the original track to play, call interface [setAudioTrackPublishIndex] specified need publish of accompaniment tracks.
   /// When to call: The call takes effect before [start] starts playing
   /// Related APIs: Call [setAudioTrackIndex] to specified the play track of media file and call [setAudioTrackPublishIndex] to specified the publish track of media file.
-  /// Caution: When multi-track mode is enabled, the resource consumption of the hardware device is increased. Windows and MacOS platforms are not supported temporarily.
+  /// Caution: When multi-track mode is enabled, the resource consumption of the hardware device is increased.
   ///
   /// - [mode] Audio track mode.
   Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode);
@@ -3166,7 +3171,7 @@ abstract class ZegoMediaPlayer {
   /// Description: Set the audio track for the media file to be publish.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Related APIs: The number of audio tracks can be obtained through the [getAudioTrackCount] function.
-  /// Caution: This call takes effect only after multitrack mode is enabled by calling the interface [setAudioTrackMode]. Windows and MacOS platforms are not supported temporarily.
+  /// Caution: This call takes effect only after multitrack mode is enabled by calling the interface [setAudioTrackMode].
   ///
   /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
   Future<void> setAudioTrackPublishIndex(int index);
@@ -3179,9 +3184,17 @@ abstract class ZegoMediaPlayer {
       ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param);
 
   /// Get the current playback status.
+  ///
+  /// - Returns current state
   Future<ZegoMediaPlayerState> getCurrentState();
 
   /// Get media player index.
+  ///
+  /// Description: Get media player index.
+  /// When to call: It can be called after [createMediaPlayer].
+  /// Restrictions: None.
+  ///
+  /// - Returns Media player index.
   int getIndex();
 
   /// Take a screenshot of the current playing screen of the media player.
@@ -3216,6 +3229,10 @@ abstract class ZegoMediaPlayer {
   Future<ZegoNetWorkResourceCache> getNetWorkResourceCache();
 
   /// Use this interface to set the cache threshold that the media player needs to resume playback. The SDK default value is 5000ms，The valid value is greater than or equal to 1000ms
+  ///
+  /// The setting must be called before loading the resource, and it will take effect during the entire life cycle of the media player.
+  /// When the network status is poor and the media player has finished playing the cached network resources, it will stop playing, and notify the user through the `ZegoMediaPlayerNetworkEvent.BUFFER_BEGIN` state of the callback interface `onMediaPlayerNetworkEvent` that the network resources are being recached.
+  /// Only when the cached network resources are greater than the set threshold, the media player will automatically resume playback at the original paused position, and notify the user through the `ZegoMediaPlayerNetworkEvent.BUFFER_ENDED` of the callback interface `onMediaPlayerNetworkEvent` that the user has cached the network resources The threshold was reached and playback resumed.
   ///
   /// - [threshold] Threshold that needs to be reached to resume playback, unit ms.
   Future<void> setNetWorkBufferThreshold(int threshold);
