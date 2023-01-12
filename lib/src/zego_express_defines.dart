@@ -3175,7 +3175,7 @@ abstract class ZegoMediaPlayer {
   /// Related APIs: Resources can be loaded through the [loadResourceWithPosition] or [loadResourceFromMediaData] function.
   ///
   /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
-  /// - Returns Notification of resource loading results
+  /// - Returns Callback result of loading media resource.
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
   /// Load media resource.
@@ -3189,7 +3189,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
   /// - [startPosition] The progress at which the playback started.
-  /// - Returns Notification of resource loading results
+  /// - Returns Callback result of loading media resource.
   Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithPosition(
       String path, int startPosition);
 
@@ -3204,7 +3204,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [mediaData] Binary audio data.
   /// - [startPosition] Position of starting playback, in milliseconds.
-  /// - Returns Notification of resource loading results
+  /// - Returns Callback result of loading media resource.
   Future<ZegoMediaPlayerLoadResourceResult> loadResourceFromMediaData(
       Uint8List mediaData, int startPosition);
 
@@ -3218,7 +3218,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [resourceID] The resource ID obtained from the copyrighted music module.
   /// - [startPosition] The progress at which the playback started.
-  /// - Returns Notification of resource loading results
+  /// - Returns Callback result of loading media resource.
   Future<ZegoMediaPlayerLoadResourceResult>
       loadCopyrightedMusicResourceWithPosition(
           String resourceID, int startPosition);
@@ -3242,7 +3242,7 @@ abstract class ZegoMediaPlayer {
   /// Unit is millisecond
   ///
   /// - [millisecond] Point in time of specified playback progress
-  /// - Returns the result notification of set the specified playback progress
+  /// - Returns The result notification of set the specified playback progress
   Future<ZegoMediaPlayerSeekToResult> seekTo(int millisecond);
 
   /// Whether to repeat playback.
