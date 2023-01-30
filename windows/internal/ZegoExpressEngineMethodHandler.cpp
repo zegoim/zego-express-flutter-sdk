@@ -2460,7 +2460,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
             output.videoConfig.encodeLatency = std::get<int32_t>(videoConfigMap[FTValue("encodeLatency")]);
             output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)std::get<int32_t>(videoConfigMap[FTValue("encodeProfile")]);
             
-            auto codecID = std::get<int32_t>(videoConfigMap[FTValue("codecID")]);
+            auto codecID = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
             if (codecID > 4) {
                 codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
             }
@@ -2538,7 +2538,7 @@ void ZegoExpressEngineMethodHandler::stopMixerTask(
             output.videoConfig.encodeLatency = std::get<int32_t>(videoConfigMap[FTValue("encodeLatency")]);
             output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)std::get<int32_t>(videoConfigMap[FTValue("encodeProfile")]);
             
-            auto codecID = std::get<int32_t>(videoConfigMap[FTValue("codecID")]);
+            auto codecID = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
             if (codecID > 4) {
                 codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
             }
