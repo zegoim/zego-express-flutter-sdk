@@ -602,7 +602,7 @@
     configObject.encodeResolution = CGSizeMake(encWidth, encHeight);
     configObject.bitrate = bitrate;
     configObject.fps = fps;
-    if (codecID > 3) {
+    if (codecID > 4) {
         codecID = 100;
     }
     configObject.codecID = (ZegoVideoCodecID)codecID;
@@ -995,7 +995,7 @@
 - (void)isVideoEncoderSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int codecID = [ZegoUtils intValue:call.arguments[@"codecID"]];
-    if (codecID > 3) {
+    if (codecID > 4) {
         codecID = 100;
     }
 
@@ -1144,7 +1144,7 @@
         playerConfig.codecTemplateID = [ZegoUtils intValue:playerConfigMap[@"codecTemplateID"]];
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
-        if (videoCodecIDIndex > 3) {
+        if (videoCodecIDIndex > 4) {
             playerConfig.videoCodecID = ZegoVideoCodecIDUnknown;
         }
         playerConfig.roomID = playerConfigMap[@"roomID"];
@@ -1402,7 +1402,7 @@
 - (void)isVideoDecoderSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int codecID = [ZegoUtils intValue:call.arguments[@"codecID"]];
-    if (codecID > 3) {
+    if (codecID > 4) {
         codecID = 100;
     }
 
@@ -1517,7 +1517,7 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 3) {
+                if (codecID > 4) {
                     codecID = 100;
                 }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
@@ -1650,7 +1650,7 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 3) {
+                if (codecID > 4) {
                     codecID = 100;
                 }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
@@ -1700,7 +1700,7 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 3) {
+                if (codecID > 4) {
                     codecID = 100;
                 }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
@@ -1773,7 +1773,7 @@
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
                 int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 3) {
+                if (codecID > 4) {
                     codecID = 100;
                 }
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];

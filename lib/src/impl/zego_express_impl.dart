@@ -14,7 +14,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.1.0";
+  static String pluginVersion = "3.2.0";
 }
 
 class ZegoExpressImpl {
@@ -332,7 +332,9 @@ class ZegoExpressImpl {
         map['encodeHeight'],
         map['fps'],
         map['bitrate'],
-        ZegoVideoCodecID.values[map['codecID']],
+        ZegoVideoCodecID.values[map['codecID'] >= ZegoVideoCodecID.values.length
+            ? ZegoVideoCodecID.values.length - 1
+            : map['codecID']],
         keyFrameInterval: map['keyFrameInterval'] ?? 2);
 
     return config;
@@ -1971,7 +1973,10 @@ class ZegoExpressImpl {
               map['quality']['packetLostRate'],
               ZegoStreamQualityLevel.values[map['quality']['level']],
               map['quality']['isHardwareEncode'],
-              ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+              ZegoVideoCodecID.values[map['quality']['videoCodecID'] >=
+                      ZegoVideoCodecID.values.length
+                  ? ZegoVideoCodecID.values.length - 1
+                  : map['quality']['videoCodecID']],
               map['quality']['totalSendBytes'],
               map['quality']['audioSendBytes'],
               map['quality']['videoSendBytes'],
@@ -2029,8 +2034,14 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPublisherVideoEncoderChanged == null) return;
 
         ZegoExpressEngine.onPublisherVideoEncoderChanged!(
-            ZegoVideoCodecID.values[map['fromCodecID']],
-            ZegoVideoCodecID.values[map['toCodecID']],
+            ZegoVideoCodecID.values[
+                map['fromCodecID'] >= ZegoVideoCodecID.values.length
+                    ? ZegoVideoCodecID.values.length - 1
+                    : map['fromCodecID']],
+            ZegoVideoCodecID.values[
+                map['toCodecID'] >= ZegoVideoCodecID.values.length
+                    ? ZegoVideoCodecID.values.length - 1
+                    : map['toCodecID']],
             ZegoPublishChannel.values[map['channel']]);
         break;
 
@@ -2084,7 +2095,10 @@ class ZegoExpressImpl {
                 map['quality']['delay'],
                 map['quality']['avTimestampDiff'],
                 map['quality']['isHardwareDecode'],
-                ZegoVideoCodecID.values[map['quality']['videoCodecID']],
+                ZegoVideoCodecID.values[map['quality']['videoCodecID'] >=
+                        ZegoVideoCodecID.values.length
+                    ? ZegoVideoCodecID.values.length - 1
+                    : map['quality']['videoCodecID']],
                 map['quality']['totalRecvBytes'],
                 map['quality']['audioRecvBytes'],
                 map['quality']['videoRecvBytes']));
@@ -2139,7 +2153,11 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerLowFpsWarning == null) return;
 
         ZegoExpressEngine.onPlayerLowFpsWarning!(
-            ZegoVideoCodecID.values[map['codecID']], map['streamID']);
+            ZegoVideoCodecID.values[
+                map['codecID'] >= ZegoVideoCodecID.values.length
+                    ? ZegoVideoCodecID.values.length - 1
+                    : map['codecID']],
+            map['streamID']);
         break;
 
       case 'onPlayerStreamEvent':

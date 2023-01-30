@@ -508,7 +508,7 @@ void ZegoExpressEngineMethodHandler::setVideoConfig(
     config.captureWidth = std::get<int32_t>(configMap[FTValue("captureWidth")]);
     auto codecIDIndex = std::get<int32_t>(configMap[FTValue("codecID")]);
     config.codecID = (EXPRESS::ZegoVideoCodecID)(
-        codecIDIndex > 3 ? EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN : codecIDIndex);
+        codecIDIndex > 4 ? EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN : codecIDIndex);
     config.encodeHeight = std::get<int32_t>(configMap[FTValue("encodeHeight")]);
     config.encodeWidth = std::get<int32_t>(configMap[FTValue("encodeWidth")]);
     config.fps = std::get<int32_t>(configMap[FTValue("fps")]);
@@ -531,10 +531,7 @@ void ZegoExpressEngineMethodHandler::getVideoConfig(
     configMap[FTValue("bitrate")] = FTValue(config.bitrate);
     configMap[FTValue("captureHeight")] = FTValue(config.captureHeight);
     configMap[FTValue("captureWidth")] = FTValue(config.captureWidth);
-    configMap[FTValue("codecID")] =
-        FTValue(config.codecID == EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN
-                    ? 4
-                    : (int32_t)config.codecID);
+    configMap[FTValue("codecID")] = FTValue((int32_t)config.codecID);
     configMap[FTValue("encodeHeight")] = FTValue(config.encodeHeight);
     configMap[FTValue("encodeWidth")] = FTValue(config.encodeWidth);
     configMap[FTValue("fps")] = FTValue(config.fps);
@@ -728,7 +725,7 @@ void ZegoExpressEngineMethodHandler::isVideoEncoderSupported(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto codecID = std::get<int32_t>(argument[FTValue("codecID")]);
-    if (codecID > 3) {
+    if (codecID > 4) {
         codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
     }
 
@@ -897,7 +894,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
         config.resourceMode =
             (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(configMap[FTValue("resourceMode")]);
         auto videoCodecIDIndex = std::get<int32_t>(configMap[FTValue("videoCodecID")]);
-        if (videoCodecIDIndex > 3) {
+        if (videoCodecIDIndex > 4) {
             config.videoCodecID = EXPRESS::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
         } else {
             config.videoCodecID = (EXPRESS::ZegoVideoCodecID)videoCodecIDIndex;
@@ -2457,6 +2454,19 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         FTMap outputMap = std::get<FTMap>(outputIter);
         output.target = std::get<std::string>(outputMap[FTValue("target")]);
 
+        if (!outputMap[FTValue("videoConfig")].IsNull()) {
+            auto videoConfigMap = std::get<flutter::EncodableMap>(outputMap[FTValue("videoConfig")]);
+            output.videoConfig.bitrate = std::get<int32_t>(videoConfigMap[FTValue("bitrate")]);
+            output.videoConfig.encodeLatency = std::get<int32_t>(videoConfigMap[FTValue("encodeLatency")]);
+            output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)std::get<int32_t>(videoConfigMap[FTValue("encodeProfile")]);
+            
+            auto codecID = std::get<int32_t>(videoConfigMap[FTValue("codecID")]);
+            if (codecID > 4) {
+                codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
+            }
+            output.videoConfig.videoCodecID = (EXPRESS::ZegoVideoCodecID)codecID;
+        }
+
         task.outputList.push_back(output);
     }
 
@@ -2521,6 +2531,19 @@ void ZegoExpressEngineMethodHandler::stopMixerTask(
         EXPRESS::ZegoMixerOutput output;
         FTMap outputMap = std::get<FTMap>(outputIter);
         output.target = std::get<std::string>(outputMap[FTValue("target")]);
+
+        if (!outputMap[FTValue("videoConfig")].IsNull()) {
+            auto videoConfigMap = std::get<flutter::EncodableMap>(outputMap[FTValue("videoConfig")]);
+            output.videoConfig.bitrate = std::get<int32_t>(videoConfigMap[FTValue("bitrate")]);
+            output.videoConfig.encodeLatency = std::get<int32_t>(videoConfigMap[FTValue("encodeLatency")]);
+            output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)std::get<int32_t>(videoConfigMap[FTValue("encodeProfile")]);
+            
+            auto codecID = std::get<int32_t>(videoConfigMap[FTValue("codecID")]);
+            if (codecID > 4) {
+                codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
+            }
+            output.videoConfig.videoCodecID = (EXPRESS::ZegoVideoCodecID)codecID;
+        }
 
         task.outputList.push_back(output);
     }
@@ -3540,7 +3563,7 @@ void ZegoExpressEngineMethodHandler::isVideoDecoderSupported(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto codecID = std::get<int32_t>(argument[FTValue("codecID")]);
-    if (codecID > 3) {
+    if (codecID > 4) {
         codecID = 100;
     }
 
@@ -3601,7 +3624,7 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(
                 auto videoConfigMap = std::get<FTMap>(outputMap[FTValue("videoConfig")]);
 
                 auto codecIDIndex = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
-                if (codecIDIndex > 3) {
+                if (codecIDIndex > 4) {
                     codecIDIndex = EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
                 }
                 output.videoConfig.videoCodecID = (EXPRESS::ZegoVideoCodecID)codecIDIndex;
@@ -3657,7 +3680,7 @@ void ZegoExpressEngineMethodHandler::stopAutoMixerTask(
                 auto videoConfigMap = std::get<FTMap>(outputMap[FTValue("videoConfig")]);
 
                 auto codecIDIndex = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
-                if (codecIDIndex > 3) {
+                if (codecIDIndex > 4) {
                     codecIDIndex = EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
                 }
                 output.videoConfig.videoCodecID = (EXPRESS::ZegoVideoCodecID)codecIDIndex;

@@ -1,5 +1,5 @@
 group 'im.zego.zego_express_engine'
-version '3.1.0'
+version '3.2.0'
 
 buildscript {
     repositories {
@@ -15,7 +15,7 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
-        maven { url 'https://www.jitpack.io' }
+        maven { url 'https://storage.zego.im/maven' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/public' }
         google()
@@ -39,5 +39,5 @@ android {
 
 dependencies {
     // for other module visit
-    api 'com.github.zegolibrary:express-video:3.1.1'
+    api 'im.zego:express-video:3.2.0'
 }

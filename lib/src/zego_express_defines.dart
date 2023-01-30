@@ -492,6 +492,9 @@ enum ZegoVideoCodecID {
   /// H.265
   H265,
 
+  /// Dualstream Scalable Video Coding
+  H264DualStream,
+
   /// Unknown Video Coding
   Unknown
 }
@@ -1473,25 +1476,52 @@ enum ZegoSuperResolutionState {
 
 /// video capture source.
 enum ZegoVideoSourceType {
-  /// Default capture logic, i.e. if there is a video external capture factory set, external capture is used, otherwise internal capture is used.
-  ZegoVideoSourceDefault,
-
   /// No capture, i.e. no video data.
-  ZegoVideoSourceNone,
+  None,
 
-  /// Video source from the camera.
-  ZegoVideoSourceCamera,
+  /// Video source from camera.
+  Camera,
 
-  /// The video source is from an external capture . When no external capture factory is set, it will be automatically corrected to Camera.
-  ZegoVideoSourceExternalCapture,
+  /// Video source from custom capture.
+  Custom,
 
-  /// The video source comes from the main publish channel. When publishing the main channel, this value cannot be set.
-  ZegoVideoSourceMainPublishChannel,
+  /// Video source from the main publish channel. When publishing the main channel, this value cannot be set.
+  MainPublishChannel,
 
   /// Video source from media player.
-  ZegoVideoSourcePlayer,
+  Player,
 
   /// Video source from screen capture.
+  ScreenCapture,
+
+  /// [Deprecated] this video source type has been deprecated since version 3.2.0.
+  @Deprecated('Which video source to be used will determined by SDK')
+  ZegoVideoSourceDefault,
+
+  /// [Deprecated] Same as [Camera], that is, no capture, this video source type has been deprecated since version 3.2.0.
+  @Deprecated('Same as [None], that is, no capture')
+  ZegoVideoSourceNone,
+
+  /// [Deprecated] Same as [Camera], that is, video source from camera, this video source type has been deprecated since version 3.2.0.
+  @Deprecated('Same as [Camera], that is, video source from camera')
+  ZegoVideoSourceCamera,
+
+  /// [Deprecated] Same as [Custom], that is, video source from custom capture, this video source type has been deprecated since version 3.2.0.
+  @Deprecated('Same as [Custom], that is, video source from custom capture')
+  ZegoVideoSourceExternalCapture,
+
+  /// [Deprecated] Same as [MainPublishChannel], that is, video source from the main publish channel, this video source type has been deprecated since version 3.2.0.
+  @Deprecated(
+      'Same as [MainPublishChannel], that is, video source from the main publish channel')
+  ZegoVideoSourceMainPublishChannel,
+
+  /// [Deprecated] Same as [Player], that is, video source from media player, this video source type has been deprecated since version 3.2.0.
+  @Deprecated('Same as [Player], that is, video source from media player')
+  ZegoVideoSourcePlayer,
+
+  /// [Deprecated] Same as [ScreenCapture], that is, video source from screen capture, this video source type has been deprecated since version 3.2.0.
+  @Deprecated(
+      'Same as [ScreenCapture], that is, video source from screen capture')
   ZegoVideoSourceScreenCapture
 }
 

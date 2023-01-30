@@ -734,7 +734,7 @@ public class ZegoExpressEngineMethodHandler {
         config.setVideoFPS(fps);
         config.setVideoBitrate(bitrate);
         
-        if (codecID > 3) {
+        if (codecID == ZegoVideoCodecID.values().length - 1) {
             config.setCodecID(ZegoVideoCodecID.UNKNOWN);
         } else {
             config.setCodecID(ZegoVideoCodecID.getZegoVideoCodecID(codecID));
@@ -1147,7 +1147,7 @@ public class ZegoExpressEngineMethodHandler {
 
         int codecIDIndex = ZegoUtils.intValue((Number) call.argument("codecID"));
         ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
-        if (codecIDIndex > 3) {
+        if (codecIDIndex == ZegoVideoCodecID.values().length - 1) {
             codecID = ZegoVideoCodecID.UNKNOWN;
         }
 
@@ -1283,7 +1283,7 @@ public class ZegoExpressEngineMethodHandler {
             playerConfig.resourceMode = ZegoStreamResourceMode.getZegoStreamResourceMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceMode")));
             
             int videoCodecIDIndex = ZegoUtils.intValue((Number) playerConfigMap.get("videoCodecID"));
-            if (videoCodecIDIndex > 3) {
+            if (videoCodecIDIndex == ZegoVideoCodecID.values().length - 1) {
                 playerConfig.videoCodecID = ZegoVideoCodecID.UNKNOWN;
             } else {
                 playerConfig.videoCodecID = ZegoVideoCodecID.getZegoVideoCodecID(videoCodecIDIndex);
@@ -1578,7 +1578,7 @@ public class ZegoExpressEngineMethodHandler {
 
         int videoCodecIDIndex = ZegoUtils.intValue((Number) call.argument("codecID"));
         ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(videoCodecIDIndex);
-        if (videoCodecIDIndex > 3) {
+        if (videoCodecIDIndex == ZegoVideoCodecID.values().length - 1) {
             codecID = ZegoVideoCodecID.UNKNOWN;
         }
 
@@ -1694,7 +1694,7 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
-                    if (codecIDIndex > 3) {
+                    if (codecIDIndex == ZegoVideoCodecID.values().length - 1) {
                         codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
@@ -1815,7 +1815,7 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
-                    if (codecIDIndex > 3) {
+                    if (codecIDIndex == ZegoVideoCodecID.values().length -1) {
                         codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
@@ -1869,7 +1869,7 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
-                    if (codecIDIndex > 3) {
+                    if (codecIDIndex == ZegoVideoCodecID.values().length - 1) {
                         codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
@@ -1932,7 +1932,7 @@ public class ZegoExpressEngineMethodHandler {
                     HashMap<String, Object> videoConfigMap = (HashMap<String, Object>) outputMap.get("videoConfig");
                     int codecIDIndex = ZegoUtils.intValue((Number) videoConfigMap.get("videoCodecID"));
                     ZegoVideoCodecID codecID = ZegoVideoCodecID.getZegoVideoCodecID(codecIDIndex);
-                    if (codecIDIndex > 3) {
+                    if (codecIDIndex == ZegoVideoCodecID.values().length - 1) {
                         codecID = ZegoVideoCodecID.UNKNOWN;
                     }
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
