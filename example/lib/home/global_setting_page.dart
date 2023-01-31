@@ -448,7 +448,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
                     )
                     .map((value) => DropdownMenuItem<ZegoScenario>(
                         child: Text(
-                          value.name,
+                          value.toString(),
                         ),
                         value: value))
                     .toList(),
