@@ -626,7 +626,7 @@ class ZegoExpressEngineWeb {
     var result;
     result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance?.loginRoom(roomID, webUser, webConfig,
+      ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig,
           completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
