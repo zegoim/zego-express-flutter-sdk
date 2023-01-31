@@ -1,5 +1,27 @@
 # Change Log
 
+## 3.2.0
+
+### **New Features**
+
+1. Support video DualStream.
+
+    When video streams are layered through video DualStream coding (H.264 DualStream), Compared to Layered Video Coding (H.264 SVC), Video DualStream encoding (H.264 DualStream) supports hardware encoding, that is, [ZegoVideoCodecID] adds [H264DualStream] field.
+
+    For related API, please refer to [ZegoVideoCodecID.H264DualStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoVideoCodecID.html).
+
+### **Enhancements**
+
+1. CustomCommand configuration support extended to 4KB.
+
+    Note: The default size of the CustomCommand configuration is 1KB, if it needs to be extended to 4KB, please contact ZEGO technical support for processing.
+
+### **Bug Fixes**
+
+1. Fix hardware coded access to null pointer crash.
+
+2. Fix the problem that the network time module fails to retry.
+
 ## 3.1.0
 
 ### **New Features**
