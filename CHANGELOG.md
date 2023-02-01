@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.2.0+1
+
+### **Bug Fixes**
+
+1. Fix the problem that the ZegoVideoSourceType value does not match the actual effect.
+
 ## 3.2.0
 
 ### **New Features**
