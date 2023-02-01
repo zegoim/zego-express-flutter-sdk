@@ -576,7 +576,7 @@ class ZegoExpressImpl {
   Future<int> setVideoSource(ZegoVideoSourceType source,
       {int? instanceID, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoSource', {
-      'source': source.index,
+      'source': source.value,
       'instanceID': instanceID,
       'channel': channel?.index,
     });

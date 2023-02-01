@@ -165,3 +165,69 @@ extension ZegoAudioDeviceModeExtension on ZegoAudioDeviceMode {
     }
   }
 }
+
+extension ZegoVideoSourceTypeExtension on ZegoVideoSourceType {
+  int get value {
+    switch (this) {
+      case ZegoVideoSourceType.None:
+        return 1;
+      case ZegoVideoSourceType.Camera:
+        return 2;
+      case ZegoVideoSourceType.Custom:
+        return 3;
+      case ZegoVideoSourceType.MainPublishChannel:
+        return 4;
+      case ZegoVideoSourceType.Player:
+        return 5;
+      case ZegoVideoSourceType.ScreenCapture:
+        return 6;
+      case ZegoVideoSourceType.ZegoVideoSourceDefault:
+        return 7;
+      case ZegoVideoSourceType.ZegoVideoSourceNone:
+        return 8;
+      case ZegoVideoSourceType.ZegoVideoSourceCamera:
+        return 9;
+      case ZegoVideoSourceType.ZegoVideoSourceExternalCapture:
+        return 10;
+      case ZegoVideoSourceType.ZegoVideoSourceMainPublishChannel:
+        return 11;
+      case ZegoVideoSourceType.ZegoVideoSourcePlayer:
+        return 12;
+      case ZegoVideoSourceType.ZegoVideoSourceScreenCapture:
+        return 13;
+    }
+  }
+
+  static ZegoVideoSourceType fromValue(int value) {
+    switch (value) {
+      case 1:
+        return ZegoVideoSourceType.None;
+      case 2:
+        return ZegoVideoSourceType.Camera;
+      case 3:
+        return ZegoVideoSourceType.Custom;
+      case 4:
+        return ZegoVideoSourceType.MainPublishChannel;
+      case 5:
+        return ZegoVideoSourceType.Player;
+      case 6:
+        return ZegoVideoSourceType.ScreenCapture;
+      case 7:
+        return ZegoVideoSourceType.ZegoVideoSourceDefault;
+      case 8:
+        return ZegoVideoSourceType.ZegoVideoSourceNone;
+      case 9:
+        return ZegoVideoSourceType.ZegoVideoSourceCamera;
+      case 10:
+        return ZegoVideoSourceType.ZegoVideoSourceExternalCapture;
+      case 11:
+        return ZegoVideoSourceType.ZegoVideoSourceMainPublishChannel;
+      case 12:
+        return ZegoVideoSourceType.ZegoVideoSourcePlayer;
+      case 13:
+        return ZegoVideoSourceType.ZegoVideoSourceScreenCapture;
+      default:
+        return ZegoVideoSourceType.ZegoVideoSourceDefault;
+    }
+  }
+}
