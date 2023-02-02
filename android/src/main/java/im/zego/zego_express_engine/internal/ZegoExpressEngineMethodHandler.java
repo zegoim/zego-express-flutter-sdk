@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
+import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
+import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoExpressEngine;
@@ -104,6 +106,7 @@ import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoCodecBackend;
 import im.zego.zegoexpress.constants.ZegoOrientationMode;
+import im.zego.zegoexpress.constants.ZegoVideoFrameFormatSeries;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.constants.ZegoVideoStreamType;
@@ -134,6 +137,8 @@ import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
+import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
+import im.zego.zegoexpress.entity.ZegoCustomVideoRenderConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
@@ -2616,6 +2621,29 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     /* CustomVideoCapture */
+    @SuppressWarnings("unused")
+    public static void enableCustomVideoRender(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Object> configMap = call.argument("config");
+
+        ZegoCustomVideoRenderConfig config = new ZegoCustomVideoRenderConfig();
+        int bufferType = ZegoUtils.intValue((Number) configMap.get("bufferType"));
+        config.bufferType = ZegoVideoBufferType.getZegoVideoBufferType(bufferType);
+        int frameFormatSeries = ZegoUtils.intValue((Number) configMap.get("frameFormatSeries"));
+        config.frameFormatSeries = ZegoVideoFrameFormatSeries.getZegoVideoFrameFormatSeries(frameFormatSeries);
+        config.enableEngineRender = ZegoUtils.boolValue((Boolean) configMap.get("enableEngineRender"));
+
+        if (enable) {
+            ZegoExpressEngine.getEngine().setCustomVideoRenderHandler(ZegoCustomVideoRenderManager.getInstance());
+        } else {
+            ZegoExpressEngine.getEngine().setCustomVideoRenderHandler(null);
+        }
+        
+        ZegoExpressEngine.getEngine().enableCustomVideoRender(enable, config);
+
+        result.success(null);
+    }
 
     @SuppressWarnings("unused")
     public static void enableCustomVideoCapture(MethodCall call, Result result) {
@@ -2634,7 +2662,12 @@ public class ZegoExpressEngineMethodHandler {
             config.bufferType = ZegoVideoBufferType.RAW_DATA;
         }
 
-        ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
+        if (enable) {
+            ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager.getInstance());
+        } else {
+            ZegoExpressEngine.getEngine().setCustomVideoCaptureHandler(null);
+        }
+        
         ZegoExpressEngine.getEngine().enableCustomVideoCapture(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
 
         // When using custom video capture, turn off preview mirroring
@@ -2643,6 +2676,29 @@ public class ZegoExpressEngineMethodHandler {
         } else {
             ZegoExpressEngine.getEngine().setVideoMirrorMode(ZegoVideoMirrorMode.ONLY_PREVIEW_MIRROR, ZegoPublishChannel.getZegoPublishChannel(channel));
         }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableCustomVideoProcessing(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Double> configMap = call.argument("config");
+        int channel = ZegoUtils.intValue((Number) call.argument("channel"));
+
+        ZegoCustomVideoProcessConfig config = new ZegoCustomVideoProcessConfig();
+
+        int bufferType = ZegoUtils.intValue(configMap.get("bufferType"));
+        config.bufferType = ZegoVideoBufferType.getZegoVideoBufferType(bufferType);
+
+        if (enable) {
+            ZegoExpressEngine.getEngine().setCustomVideoProcessHandler(ZegoCustomVideoProcessManager.getInstance());
+        } else {
+            ZegoExpressEngine.getEngine().setCustomVideoProcessHandler(null);
+        }
+        
+        ZegoExpressEngine.getEngine().enableCustomVideoProcessing(enable, config, ZegoPublishChannel.getZegoPublishChannel(channel));
 
         result.success(null);
     }

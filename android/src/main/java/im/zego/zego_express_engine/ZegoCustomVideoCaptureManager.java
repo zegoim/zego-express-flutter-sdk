@@ -11,104 +11,10 @@ import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormat;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
+import im.zego.zegoexpress.entity.ZegoTrafficControlInfo;
 import im.zego.zegoexpress.entity.ZegoVideoFrameParam;
 
 public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandler {
-
-    public enum VideoFrameFormat {
-        /** Unknown format, will take platform default */
-        Unknown(0),
-        /** I420 (YUV420Planar) format */
-        I420(1),
-        /** NV12 (YUV420SemiPlanar) format */
-        NV12(2),
-        /** NV21 (YUV420SemiPlanar) format */
-        NV21(3),
-        /** BGRA32 format */
-        BGRA32(4),
-        /** RGBA32 format */
-        RGBA32(5),
-        /** ARGB32 format */
-        ARGB32(6),
-        /** ABGR32 format */
-        ABGR32(7),
-        /** I422 (YUV422Planar) format */
-        I422(8);
-
-        private int value;
-
-        private VideoFrameFormat(int value) {
-            this.value = value;
-        }
-
-        public int value() {
-            return this.value;
-        }
-
-        public static ZegoCustomVideoCaptureManager.VideoFrameFormat getVideoFrameFormat(int value) {
-            try {
-
-                if (Unknown.value == value) {
-                    return Unknown;
-                }
-
-                if (I420.value == value) {
-                    return I420;
-                }
-
-                if (NV12.value == value) {
-                    return NV12;
-                }
-
-                if (NV21.value == value) {
-                    return NV21;
-                }
-
-                if (BGRA32.value == value) {
-                    return BGRA32;
-                }
-
-                if (RGBA32.value == value) {
-                    return RGBA32;
-                }
-
-                if (ARGB32.value == value) {
-                    return ARGB32;
-                }
-
-                if (ABGR32.value == value) {
-                    return ABGR32;
-                }
-
-                if (I422.value == value) {
-                    return I422;
-                }
-
-            } catch (Exception e) {
-                throw new RuntimeException("The enumeration cannot be found");
-            }
-            return null;
-        }
-    }
-
-    public static class VideoFrameParam {
-
-        /** Video frame format */
-        public ZegoCustomVideoCaptureManager.VideoFrameFormat format;
-
-        /** Number of bytes per line (for example: RGBA only needs to consider strides [0], I420 needs to consider strides [0,1,2]) */
-        final public int[] strides = new int[4];
-
-        /** Video frame width */
-        public int width;
-
-        /** Video frame height */
-        public int height;
-
-        /** Video frame rotation */
-        public int rotation;
-
-    }
 
     private volatile static ZegoCustomVideoCaptureManager singleton;
 
@@ -167,7 +73,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
      * @param channel publish channel, It is consistent with Dart API
      */
-    public void sendRawData(ByteBuffer data, int dataLength, ZegoCustomVideoCaptureManager.VideoFrameParam param, long referenceTimeMillisecond, int channel) {
+    public void sendRawData(ByteBuffer data, int dataLength, VideoFrameParam param, long referenceTimeMillisecond, PublishChannel channel) {
         if(mParam == null) {
             mParam = new ZegoVideoFrameParam();
         }
@@ -180,7 +86,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
         mParam.strides[2] = param.strides[2];
         mParam.strides[3] = param.strides[3];
 
-        ZegoExpressEngine.getEngine().sendCustomVideoCaptureRawData(data, dataLength, mParam, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel));
+        ZegoExpressEngine.getEngine().sendCustomVideoCaptureRawData(data, dataLength, mParam, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
 
         // Android 使用 Texture Renderer 和 PlatformView 行为一致
     }
@@ -191,8 +97,8 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param channel publish channel, It is consistent with Dart API
      * @return SurfaceTexture instance
      */
-    public SurfaceTexture getSurfaceTexture(int channel) {
-        return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(ZegoPublishChannel.getZegoPublishChannel(channel));
+    public SurfaceTexture getSurfaceTexture(PublishChannel channel) {
+        return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     /**
@@ -206,33 +112,45 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param referenceTimeMillisecond Timestamp of this video frame
      * @param channel publish channel, It is consistent with Dart API
      */
-    public void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond, int channel) {
-        ZegoExpressEngine.getEngine().sendCustomVideoCaptureTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel));
+    public void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond, PublishChannel channel) {
+        ZegoExpressEngine.getEngine().sendCustomVideoCaptureTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     /**
      * Internal function. Ignore this.
      */
+    @Override
     public void onStart(ZegoPublishChannel channel) {
         //ZegoCustomVideoCaptureClient client = new ZegoCustomVideoCaptureClientImpl(channel);
         //mClients.put(channel.value(), client);
 
         //IZegoCustomVideoCaptureCallback callback = mHandlers.get(channel.value());
         if(mHander != null) {
-            mHander.onStart(channel.value());
+            mHander.onStart(PublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
     /**
      * Internal function. Ignore this.
      */
+    @Override
     public void onStop(ZegoPublishChannel channel) {
         //mClients.remove(channel.value());
         //IZegoCustomVideoCaptureCallback callback = mHandlers.get(channel.value());
         if(mHander != null) {
-            mHander.onStop(channel.value());
+            mHander.onStop(PublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
-
+    @Override
+    public void onEncodedDataTrafficControl(ZegoTrafficControlInfo trafficControlInfo, ZegoPublishChannel channel) {
+        if(mHander != null) {
+            TrafficControlInfo trafficControlInfo1 = new TrafficControlInfo();
+            trafficControlInfo1.bitrate = trafficControlInfo.bitrate;
+            trafficControlInfo1.fps = trafficControlInfo.fps;
+            trafficControlInfo1.height = trafficControlInfo.height;
+            trafficControlInfo1.width = trafficControlInfo.width;
+            mHander.onEncodedDataTrafficControl(trafficControlInfo1, PublishChannel.getZegoPublishChannel(channel.value()));
+        }
+    }
 }

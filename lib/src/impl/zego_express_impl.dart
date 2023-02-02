@@ -1457,12 +1457,34 @@ class ZegoExpressImpl {
 
   /* Custom Video Capture */
 
+  Future<void> enableCustomVideoRender(
+      bool enable, ZegoCustomVideoRenderConfig config) async {
+    return await _channel.invokeMethod('enableCustomVideoRender', {
+      'enable': enable,
+      'config': {
+        'bufferType': config.bufferType.index,
+        'frameFormatSeries': config.frameFormatSeries.index,
+        'enableEngineRender': config.enableEngineRender
+      }
+    });
+  }
+
   Future<void> enableCustomVideoCapture(bool enable,
       {ZegoCustomVideoCaptureConfig? config,
       ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('enableCustomVideoCapture', {
       'enable': enable,
       'config': config != null ? {'bufferType': config.bufferType.index} : {},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> enableCustomVideoProcessing(
+      bool enable, ZegoCustomVideoProcessConfig config,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableCustomVideoProcessing', {
+      'enable': enable,
+      'config': {'bufferType': config.bufferType.index},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }

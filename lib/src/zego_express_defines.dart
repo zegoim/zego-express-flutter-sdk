@@ -1564,6 +1564,31 @@ class ZegoCustomVideoCaptureConfig {
   ZegoCustomVideoCaptureConfig(this.bufferType);
 }
 
+/// Custom video process configuration.
+class ZegoCustomVideoProcessConfig {
+  /// Custom video process video frame data type
+  ZegoVideoBufferType bufferType;
+
+  ZegoCustomVideoProcessConfig(this.bufferType);
+}
+
+/// Custom video render configuration.
+///
+/// When you need to use the custom video render function, you need to set an instance of this class as a parameter to the [enableCustomVideoRender] function.
+class ZegoCustomVideoRenderConfig {
+  /// Custom video capture video frame data type
+  ZegoVideoBufferType bufferType;
+
+  /// Custom video rendering video frame data format。Useless when set bufferType as [EncodedData]
+  ZegoVideoFrameFormatSeries frameFormatSeries;
+
+  /// Whether the engine also renders while customizing video rendering. The default value is [false]. Useless when set bufferType as [EncodedData]
+  bool enableEngineRender;
+
+  ZegoCustomVideoRenderConfig(
+      this.bufferType, this.frameFormatSeries, this.enableEngineRender);
+}
+
 /// Custom audio configuration.
 class ZegoCustomAudioConfig {
   /// Audio capture source type
