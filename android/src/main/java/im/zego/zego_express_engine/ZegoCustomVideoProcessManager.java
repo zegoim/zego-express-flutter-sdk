@@ -57,7 +57,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
      * @param height Texture height.
      * @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
      */
-    public void sendCustomVideoProcessedTextureData(int textureID, int width, int height,
+    public void sendProcessedTextureData(int textureID, int width, int height,
                                                              long referenceTimeMillisecond, PublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             ZegoExpressEngine.getEngine().sendCustomVideoProcessedTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
@@ -81,7 +81,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
      * @return SurfaceTexture instance.
      */
     public SurfaceTexture
-    getCustomVideoProcessOutputSurfaceTexture(int width, int height, PublishChannel channel) {
+    getProcessOutputSurfaceTexture(int width, int height, PublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             return ZegoExpressEngine.getEngine().getCustomVideoProcessOutputSurfaceTexture(width, height, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
         }

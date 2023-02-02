@@ -24,6 +24,8 @@
 
 @property (nonatomic, assign) BOOL isAppEnterBackground;
 
+@property (nonatomic, weak) id<ZegoFlutterCustomVideoRenderHandler> renderHandler;
+
 @end
 
 @implementation ZegoTextureRendererController
@@ -45,6 +47,7 @@
         _capturedTextureIdMap = [NSMutableDictionary dictionary];
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
         _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
+        _renderHandler = nil;
         
 #if TARGET_OS_IPHONE
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -288,6 +291,20 @@
                                     param:(ZegoVideoFrameParam *)param
                                  flipMode:(ZegoVideoFlipMode)flipMode
                                   channel:(ZegoPublishChannel)channel {
+    if ([self.renderHandler respondsToSelector:@selector(onCapturedVideoFrameCVPixelBuffer:param:flipMode:channel:)]) {
+        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        videoFrameParam.size = param.size;
+        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.rotation = param.rotation;
+        videoFrameParam.strides = malloc(sizeof(int)*4);
+        for (int i = 0; i < 4; i++) {
+            videoFrameParam.strides[i] = param.strides[i];
+        }
+        
+        [self.renderHandler onCapturedVideoFrameCVPixelBuffer:buffer param:videoFrameParam flipMode:(VideoFlipMode)flipMode channel:(PublishChannel)channel];
+        free(videoFrameParam.strides);
+    }
+    
     NSNumber *textureID = nil;
     ZegoTextureRenderer *renderer = nil;
 
@@ -308,6 +325,20 @@
 - (void)onRemoteVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                   param:(ZegoVideoFrameParam *)param
                                streamID:(NSString *)streamID {
+    if ([self.renderHandler respondsToSelector:@selector(onRemoteVideoFrameCVPixelBuffer:param:streamID:)]) {
+        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        videoFrameParam.size = param.size;
+        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.rotation = param.rotation;
+        videoFrameParam.strides = malloc(sizeof(int)*4);
+        for (int i = 0; i < 4; i++) {
+            videoFrameParam.strides[i] = param.strides[i];
+        }
+        
+        [self.renderHandler onRemoteVideoFrameCVPixelBuffer:buffer param:videoFrameParam streamID:streamID];
+        free(videoFrameParam.strides);
+    }
+    
     NSNumber *textureID = nil;
     ZegoTextureRenderer *renderer = nil;
 
@@ -341,6 +372,10 @@
     }
     
     [self updateRenderer:renderer withBuffer:buffer param:param flipMode:ZegoVideoFlipModeNone];
+}
+
+- (void)setCustomVideoRenderHandler: (id<ZegoFlutterCustomVideoRenderHandler> _Nullable) handler {
+    self.renderHandler = handler;
 }
 
 #pragma mark - FlutterStreamHandler

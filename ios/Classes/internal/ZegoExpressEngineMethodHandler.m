@@ -14,6 +14,8 @@
 #import "ZegoPlatformViewFactory.h"
 #import "ZegoTextureRendererController.h"
 #import "ZegoCustomVideoCaptureManager.h"
+#import "ZegoCustomVideoRenderManager.h"
+#import "ZegoCustomVideoProcessManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -2695,6 +2697,35 @@
 
 #pragma mark - CustomVideoCapture
 
+- (void)enableCustomVideoRender:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+
+    ZegoCustomVideoRenderConfig *config = [[ZegoCustomVideoRenderConfig alloc] init];
+
+    ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
+    config.bufferType = bufferType;
+    config.frameFormatSeries = (ZegoVideoFrameFormatSeries)[ZegoUtils intValue:configMap[@"frameFormatSeries"]];
+    config.enableEngineRender = [ZegoUtils boolValue:configMap[@"enableEngineRender"]];
+    
+    if (config.enableEngineRender && !self.enablePlatformView) {
+        if (enable) {
+            [[ZegoTextureRendererController sharedInstance] setCustomVideoRenderHandler:[[ZegoCustomVideoRenderManager sharedInstance] getCustomVideoRenderHandler]];
+        } else {
+            [[ZegoTextureRendererController sharedInstance] setCustomVideoRenderHandler:nil];
+        }
+    } else {
+        if (enable) {
+            [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:(id<ZegoCustomVideoRenderHandler>)[ZegoCustomVideoRenderManager sharedInstance]];
+        } else {
+            [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:nil];
+        }
+        
+        [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:enable config: config];
+    }
+}
+
 - (void)enableCustomVideoCapture:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
@@ -2710,8 +2741,14 @@
         // If `config` is empty, set the default configuration (pixel buffer for iOS)
         config.bufferType = ZegoVideoBufferTypeCVPixelBuffer;
     }
+    
+    if (enable) {
+        [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:(id<ZegoCustomVideoCaptureHandler>)[ZegoCustomVideoCaptureManager sharedInstance]];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:nil];
+    }
 
-    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureHandler:(id<ZegoCustomVideoCaptureHandler>)[ZegoCustomVideoCaptureManager sharedInstance]];
+    
     [[ZegoExpressEngine sharedEngine] enableCustomVideoCapture:enable config:config channel:(ZegoPublishChannel)channel];
 
     // When using custom video capture, turn off preview mirroring
@@ -2722,6 +2759,26 @@
     }
 }
 
+- (void)enableCustomVideoProcessing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    ZegoCustomVideoProcessConfig *config = [[ZegoCustomVideoProcessConfig alloc] init];
+
+    ZegoVideoBufferType bufferType = (ZegoVideoBufferType)[ZegoUtils intValue:configMap[@"bufferType"]];
+    config.bufferType = bufferType;
+
+    if (enable) {
+        [[ZegoExpressEngine sharedEngine] setCustomVideoProcessHandler:(id<ZegoCustomVideoProcessHandler>)[ZegoCustomVideoProcessManager sharedInstance]];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setCustomVideoProcessHandler:nil];
+    }
+    
+    [[ZegoExpressEngine sharedEngine] enableCustomVideoProcessing:(BOOL)enable config:config channel:(ZegoPublishChannel)channel];
+
+}
 
 #pragma mark - MediaPlayer
 
