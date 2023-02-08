@@ -3086,6 +3086,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'mediaPlayerSetAudioTrackPublishIndex',
         {'index': _index, 'index_': index});
   }
+
+  @override
+  Future<void> setVideoHandler(ZegoVideoFrameFormat format) {
+    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetVideoHandler',
+        {'index': _index, 'format': format.index});
+  }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {

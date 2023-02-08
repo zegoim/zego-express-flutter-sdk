@@ -26,6 +26,8 @@
 
 @property (nonatomic, weak) id<ZegoFlutterCustomVideoRenderHandler> renderHandler;
 
+@property (nonatomic, weak) id<ZegoFlutterMediaPlayerVideoHandler> mediaPlayerVideoHandler;
+
 @end
 
 @implementation ZegoTextureRendererController
@@ -360,6 +362,21 @@
     NSNumber *textureID = nil;
     ZegoTextureRenderer *renderer = nil;
 
+    if ([self.mediaPlayerVideoHandler respondsToSelector:@selector(mediaPlayer:videoFramePixelBuffer:param:extraInfo:)]) {
+        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        videoFrameParam.size = param.size;
+        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.rotation = param.rotation;
+        videoFrameParam.strides = malloc(sizeof(int)*4);
+        for (int i = 0; i < 4; i++) {
+            videoFrameParam.strides[i] = param.strides[i];
+        }
+        
+        [self.mediaPlayerVideoHandler mediaPlayer:[mediaPlayer.index intValue] videoFramePixelBuffer:buffer param:videoFrameParam extraInfo:extraInfo];
+        free(videoFrameParam.strides);
+    }
+    
+    
     @synchronized (self) {
         textureID = [self.mediaPlayerTextureIdMap objectForKey:mediaPlayer.index];
         if (!textureID) {
@@ -376,6 +393,10 @@
 
 - (void)setCustomVideoRenderHandler: (id<ZegoFlutterCustomVideoRenderHandler> _Nullable) handler {
     self.renderHandler = handler;
+}
+
+-(void)setMediaPlayerVideoHandle: (id<ZegoFlutterMediaPlayerVideoHandler> _Nullable) handler {
+    self.mediaPlayerVideoHandler = handler;
 }
 
 #pragma mark - FlutterStreamHandler

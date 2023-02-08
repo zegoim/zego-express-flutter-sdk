@@ -30,6 +30,7 @@ import java.util.Locale;
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
 import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
 import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
+import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoExpressEngine;
@@ -106,6 +107,7 @@ import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoCodecBackend;
 import im.zego.zegoexpress.constants.ZegoOrientationMode;
+import im.zego.zegoexpress.constants.ZegoVideoFrameFormat;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormatSeries;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
@@ -3586,6 +3588,20 @@ public class ZegoExpressEngineMethodHandler {
         if (mediaPlayer != null) {
             int index_ = ZegoUtils.intValue((Number) call.argument("index_"));
             mediaPlayer.setAudioTrackPublishIndex(index_);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetVideoHandler(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            ZegoVideoFrameFormat format = ZegoVideoFrameFormat.getZegoVideoFrameFormat(ZegoUtils.intValue((Number) call.argument("format")));
+            mediaPlayer.setVideoHandler(ZegoMediaPlayerVideoManager.getInstance(), format);
         }
 
         result.success(null);

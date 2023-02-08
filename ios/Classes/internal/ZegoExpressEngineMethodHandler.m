@@ -16,6 +16,7 @@
 #import "ZegoCustomVideoCaptureManager.h"
 #import "ZegoCustomVideoRenderManager.h"
 #import "ZegoCustomVideoProcessManager.h"
+#import "ZegoMediaPlayerVideoManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -2794,7 +2795,9 @@
         NSNumber *index = mediaPlayer.index;
 
         [mediaPlayer setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-        [mediaPlayer setVideoHandler:[ZegoTextureRendererController sharedInstance] format:ZegoVideoFrameFormatBGRA32 type:ZegoVideoBufferTypeCVPixelBuffer];
+        if (!self.enablePlatformView) {
+            [mediaPlayer setVideoHandler:[ZegoTextureRendererController sharedInstance] format:ZegoVideoFrameFormatBGRA32 type:ZegoVideoBufferTypeCVPixelBuffer];
+        }
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);
@@ -3335,6 +3338,26 @@
     result(nil);
 }
 
+- (void)mediaPlayerSetVideoHandler:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        
+        if (!self.enablePlatformView) {
+            [[ZegoTextureRendererController sharedInstance] setMediaPlayerVideoHandle:[[ZegoMediaPlayerVideoManager sharedInstance] getMediaPlayerVideoHandler]];
+        } else {
+            int format = [ZegoUtils intValue:call.arguments[@"format"]];
+            [mediaPlayer setVideoHandler:(id<ZegoMediaPlayerVideoHandler>)[ZegoMediaPlayerVideoManager sharedInstance] format:(ZegoVideoFrameFormat)format type:ZegoVideoBufferTypeCVPixelBuffer];
+        }
+    }
+
+    result(nil);
+}
+
+
+
 #if TARGET_OS_IPHONE
 - (void)mediaPlayerSetAudioTrackMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -3361,6 +3384,7 @@
 
     result(nil);
 }
+
 #endif
 
 #pragma mark - AudioEffectPlayer

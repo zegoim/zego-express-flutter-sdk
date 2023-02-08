@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 #import "ZegoCustomVideoRenderManager.h"
+#import "ZegoMediaPlayerVideoManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -59,6 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Called when dart invoke `enableCustomVideoRender`
 - (void)setCustomVideoRenderHandler: (id<ZegoFlutterCustomVideoRenderHandler> _Nullable) handler;
+
+-(void)setMediaPlayerVideoHandle: (id<ZegoFlutterMediaPlayerVideoHandler> _Nullable) handler;
 
 #pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
