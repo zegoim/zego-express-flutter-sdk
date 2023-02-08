@@ -43,7 +43,7 @@ public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler {
      *
      * @param handler Video data callback handler for media player
      */
-    public void setCustomVideoCaptureHandler(IZegoFlutterMediaPlayerVideoHandler handler) {
+    public void setVideoHandler(IZegoFlutterMediaPlayerVideoHandler handler) {
         mHander = handler;
     }
 
