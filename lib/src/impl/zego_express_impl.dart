@@ -2279,7 +2279,8 @@ class ZegoExpressImpl {
       case 'onCapturedSoundLevelUpdate':
         if (ZegoExpressEngine.onCapturedSoundLevelUpdate == null) return;
 
-        ZegoExpressEngine.onCapturedSoundLevelUpdate!(map['soundLevel']);
+        ZegoExpressEngine.onCapturedSoundLevelUpdate!(
+            map['soundLevel'] < 0.000001 ? 0.0 : map['soundLevel']);
         break;
 
       case 'onCapturedSoundLevelInfoUpdate':
@@ -2287,7 +2288,10 @@ class ZegoExpressImpl {
 
         Map<dynamic, dynamic> soundLevelInfo = map['soundLevelInfo'];
         ZegoExpressEngine.onCapturedSoundLevelInfoUpdate!(ZegoSoundLevelInfo(
-            soundLevelInfo['soundLevel'], soundLevelInfo['vad']));
+            soundLevelInfo['soundLevel'] < 0.000001
+                ? 0.0
+                : soundLevelInfo['soundLevel'],
+            soundLevelInfo['vad']));
         break;
 
       case 'onRemoteSoundLevelUpdate':
@@ -2295,7 +2299,7 @@ class ZegoExpressImpl {
 
         var soundLevels = <dynamic, dynamic>{};
         if (map['soundLevels'] != null) {
-          soundLevels = map['soundLevels'];
+          soundLevels = map['soundLevels'] < 0.000001 ? 0.0 : map['soundLevel'];
         }
 
         ZegoExpressEngine
@@ -2307,8 +2311,8 @@ class ZegoExpressImpl {
 
         Map<String, ZegoSoundLevelInfo> resultMap = {};
         Map<dynamic, dynamic> soundLevelInfos = map['soundLevelInfos'];
-        soundLevelInfos.forEach((k, v) =>
-            resultMap[k] = ZegoSoundLevelInfo(v['soundLevel'], v['vad']));
+        soundLevelInfos.forEach((k, v) => resultMap[k] = ZegoSoundLevelInfo(
+            v['soundLevel'] < 0.000001 ? 0.0 : v['soundLevel'], v['vad']));
         ZegoExpressEngine.onRemoteSoundLevelInfoUpdate!(resultMap);
         break;
 
