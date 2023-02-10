@@ -3221,17 +3221,6 @@ abstract class ZegoRealTimeSequentialDataManager {
 }
 
 abstract class ZegoMediaPlayer {
-  /// Set video data callback handler of the media player.
-  ///
-  /// Available since: 2.1.0
-  /// Description: By setting this callback, the video data of the media resource file played by the media player can be called back.
-  /// When to call: After the [ZegoMediaPlayer] instance created.
-  /// Restrictions: None.
-  /// Caution: When you no longer need to get the video frame data, please call this function again to clear the handler to stop the video frame data callback.
-  ///
-  /// - [format] Video frame format for video data
-  Future<void> setVideoHandler(ZegoVideoFrameFormat format);
-
   /// Load media resource.
   ///
   /// Available: since 1.3.4
@@ -3447,6 +3436,18 @@ abstract class ZegoMediaPlayer {
   ///
   /// - Returns Media player index.
   int getIndex();
+
+  /// Whether to video data playback.
+  ///
+  /// Available since: 2.1.0
+  /// Description: Whether to throw out the video data of the media resource file played by the media player.
+  /// When to call: After the [ZegoMediaPlayer] instance created.
+  /// Restrictions: None.
+  /// Caution: When you no longer need to get the video frame data, please call this function again to clear the handler to stop the video frame data callback.
+  ///
+  /// - [enable] Video data playback flag. The default is false.
+  /// - [format] Video frame format for video data
+  Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format);
 
   /// Take a screenshot of the current playing screen of the media player.
   ///

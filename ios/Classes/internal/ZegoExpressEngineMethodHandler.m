@@ -3338,18 +3338,27 @@
     result(nil);
 }
 
-- (void)mediaPlayerSetVideoHandler:(FlutterMethodCall *)call result:(FlutterResult)result {
+- (void)mediaPlayerEnableVideoData:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
-        
-        if (!self.enablePlatformView) {
-            [[ZegoTextureRendererController sharedInstance] setMediaPlayerVideoHandle:[[ZegoMediaPlayerVideoManager sharedInstance] getMediaPlayerVideoHandler]];
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        if (enable) {
+            if (!self.enablePlatformView) {
+                [[ZegoTextureRendererController sharedInstance] setMediaPlayerVideoHandle:[[ZegoMediaPlayerVideoManager sharedInstance] getMediaPlayerVideoHandler]];
+            } else {
+                int format = [ZegoUtils intValue:call.arguments[@"format"]];
+                [mediaPlayer setVideoHandler:(id<ZegoMediaPlayerVideoHandler>)[ZegoMediaPlayerVideoManager sharedInstance] format:(ZegoVideoFrameFormat)format type:ZegoVideoBufferTypeCVPixelBuffer];
+            }
         } else {
-            int format = [ZegoUtils intValue:call.arguments[@"format"]];
-            [mediaPlayer setVideoHandler:(id<ZegoMediaPlayerVideoHandler>)[ZegoMediaPlayerVideoManager sharedInstance] format:(ZegoVideoFrameFormat)format type:ZegoVideoBufferTypeCVPixelBuffer];
+            if (!self.enablePlatformView) {
+                [[ZegoTextureRendererController sharedInstance] setMediaPlayerVideoHandle: nil];
+            } else {
+                int format = [ZegoUtils intValue:call.arguments[@"format"]];
+                [mediaPlayer setVideoHandler:nil format:(ZegoVideoFrameFormat)format type:ZegoVideoBufferTypeCVPixelBuffer];
+            }
         }
     }
 

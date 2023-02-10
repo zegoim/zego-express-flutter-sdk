@@ -3092,9 +3092,9 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
-  Future<void> setVideoHandler(ZegoVideoFrameFormat format) {
-    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerSetVideoHandler',
-        {'index': _index, 'format': format.index});
+  Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format) {
+    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableVideoData',
+        {'index': _index, 'enable': enable, 'format': format.index});
   }
 }
 

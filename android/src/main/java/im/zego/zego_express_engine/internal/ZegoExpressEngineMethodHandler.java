@@ -3594,14 +3594,19 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void mediaPlayerSetVideoHandler(MethodCall call, final Result result) {
+    public static void mediaPlayerEnableVideoData(MethodCall call, final Result result) {
 
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
         if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
             ZegoVideoFrameFormat format = ZegoVideoFrameFormat.getZegoVideoFrameFormat(ZegoUtils.intValue((Number) call.argument("format")));
-            mediaPlayer.setVideoHandler(ZegoMediaPlayerVideoManager.getInstance(), format);
+            if (enable) {
+                mediaPlayer.setVideoHandler(ZegoMediaPlayerVideoManager.getInstance(), format);
+            } else {
+                mediaPlayer.setVideoHandler(null, format);
+            }
         }
 
         result.success(null);
