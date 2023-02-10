@@ -87,12 +87,12 @@
         self.videoParam.format = [self osTypeToZegoVideoFrameFormat: CVPixelBufferGetPixelFormatType(buffer)];
         int tempStrides[4] = {0};
         self.videoParam.strides = tempStrides;
-        if (self.videoParam.format != ZegoVideoFrameFormatI420) {
-            self.videoParam.strides[0] = (int32_t)CVPixelBufferGetBytesPerRow(buffer);
-        } else {
-            for (int i = 0; i < CVPixelBufferGetPlaneCount(buffer) && i < 4; i++) {
+        if (self.videoParam.format == ZegoVideoFrameFormatI420 || self.videoParam.format == ZegoVideoFrameFormatNV12) {
+            for (int i = 0; i < CVPixelBufferGetPlaneCount(buffer); i++) {
                 self.videoParam.strides[i] = (int)CVPixelBufferGetWidthOfPlane(buffer, i);
             }
+        } else {
+            self.videoParam.strides[0] = (int32_t)CVPixelBufferGetBytesPerRow(buffer);
         }
         
         [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:buffer param:self.videoParam flipMode:(_mirrorMode == ZegoVideoMirrorModeOnlyPreviewMirror || _mirrorMode == ZegoVideoMirrorModeBothMirror) channel:(ZegoPublishChannel)channel];
