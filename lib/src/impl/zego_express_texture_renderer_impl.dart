@@ -192,7 +192,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
     var rect = Rect.fromLTWH(0, 0, width, height);
 
     Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
-    if (size != null) {
+    if (size != null && size.width > 0.0 && size.height > 0.0) {
       var viewMode =
           ZegoExpressTextureRenderer().getViewMode(widget.textureID) ??
               ZegoViewMode.AspectFit;

@@ -79,6 +79,12 @@
     
     // 使用 Texture 方式渲染时，还需要将数据传给 TextureRednerer
     if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
+        if (self.videoParam == nil) {
+            self.videoParam = [[ZegoVideoFrameParam alloc] init];
+        }
+        self.videoParam.size = CGSizeMake(CVPixelBufferGetWidth(buffer), CVPixelBufferGetHeight(buffer));
+        
+        
         [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:buffer param:self.videoParam flipMode:(_mirrorMode == ZegoVideoMirrorModeOnlyPreviewMirror || _mirrorMode == ZegoVideoMirrorModeBothMirror) channel:(ZegoPublishChannel)channel];
     }
 }
