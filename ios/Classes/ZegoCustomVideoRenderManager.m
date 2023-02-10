@@ -46,14 +46,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.handler onCapturedVideoFrameRawData:data dataLength:dataLength param:videoFrameParam flipMode:(ZGFlutterVideoFlipMode)flipMode channel:(ZGFlutterPublishChannel)channel];
-        
-        free(videoFrameParam.strides);
     }
 }
 
@@ -66,14 +65,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.handler onRemoteVideoFrameRawData:data dataLength:dataLength param:videoFrameParam streamID:streamID];
-        
-        free(videoFrameParam.strides);
     }
 }
 
@@ -86,14 +84,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.handler onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:videoFrameParam flipMode:(ZGFlutterVideoFlipMode)flipMode channel:(ZGFlutterPublishChannel)channel];
-        
-        free(videoFrameParam.strides);
     }
 }
 
@@ -105,14 +102,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.handler onRemoteVideoFrameCVPixelBuffer:buffer param:videoFrameParam streamID:streamID];
-        
-        free(videoFrameParam.strides);
     }
 }
 

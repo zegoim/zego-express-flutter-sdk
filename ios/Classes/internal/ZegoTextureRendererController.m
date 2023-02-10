@@ -298,13 +298,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.renderHandler onCapturedVideoFrameCVPixelBuffer:buffer param:videoFrameParam flipMode:(ZGFlutterVideoFlipMode)flipMode channel:(ZGFlutterPublishChannel)channel];
-        free(videoFrameParam.strides);
     }
     
     NSNumber *textureID = nil;
@@ -332,13 +332,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.renderHandler onRemoteVideoFrameCVPixelBuffer:buffer param:videoFrameParam streamID:streamID];
-        free(videoFrameParam.strides);
     }
     
     NSNumber *textureID = nil;
@@ -367,13 +367,13 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
         [self.mediaPlayerVideoHandler mediaPlayer:[mediaPlayer.index intValue] videoFramePixelBuffer:buffer param:videoFrameParam extraInfo:extraInfo];
-        free(videoFrameParam.strides);
     }
     
     

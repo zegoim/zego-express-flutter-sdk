@@ -45,7 +45,8 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
@@ -63,7 +64,8 @@
         videoFrameParam.size = param.size;
         videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
-        videoFrameParam.strides = malloc(sizeof(int)*4);
+        int tempStrides[4] = {0};
+        videoFrameParam.strides = tempStrides;
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }

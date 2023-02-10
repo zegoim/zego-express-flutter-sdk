@@ -38,36 +38,20 @@
 - (void)setVideoMirrorMode:(int)mode channel:(ZGFlutterPublishChannel)channel{
     _mirrorMode = mode;
     if([ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
-        if ([ZegoExpressEngine sharedEngine] != nil) {
-            [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode channel:(ZegoPublishChannel)channel];
-        } else {
-            
-        }
+        [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:_mirrorMode channel:(ZegoPublishChannel)channel];
     }
 }
 
 - (void)setFillMode:(ZGFlutterViewMode)mode channel:(ZGFlutterPublishChannel)channel {
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureFillMode:(ZegoViewMode)mode channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureFillMode:(ZegoViewMode)mode channel:(ZegoPublishChannel)channel];
 }
 
 - (void)setFlipMode:(ZGFlutterVideoFlipMode)mode channel:(ZGFlutterPublishChannel)channel {
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureFlipMode:(ZegoVideoFlipMode)mode channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureFlipMode:(ZegoVideoFlipMode)mode channel:(ZegoPublishChannel)channel];
 }
 
 - (void)setRotation:(int)rotation channel:(ZGFlutterPublishChannel)channel {
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureRotation:rotation channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureRotation:rotation channel:(ZegoPublishChannel)channel];
 }
 
 -(ZegoVideoFrameFormat)osTypeToZegoVideoFrameFormat:(OSType) type {
@@ -92,23 +76,17 @@
 }
 
 - (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel{
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        [[ZegoExpressEngine sharedEngine] sendCustomVideoCapturePixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoCapturePixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
     
     // 使用 Texture 方式渲染时，还需要将数据传给 TextureRednerer
     if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
         if (self.videoParam == nil) {
             self.videoParam = [[ZegoVideoFrameParam alloc] init];
-            self.videoParam.strides = malloc(sizeof(int)*4);
-            for (int i = 0; i < 4; i++) {
-                self.videoParam.strides[i] = 0;
-            }
         }
         self.videoParam.size = CGSizeMake(CVPixelBufferGetWidth(buffer), CVPixelBufferGetHeight(buffer));
         self.videoParam.format = [self osTypeToZegoVideoFrameFormat: CVPixelBufferGetPixelFormatType(buffer)];
+        int tempStrides[4] = {0};
+        self.videoParam.strides = tempStrides;
         if (self.videoParam.format != ZegoVideoFrameFormatI420) {
             self.videoParam.strides[0] = (int32_t)CVPixelBufferGetBytesPerRow(buffer);
         } else {
@@ -122,11 +100,7 @@
 }
 
 - (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel {
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureTextureData:textureID size:size timestamp:timestamp channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureTextureData:textureID size:size timestamp:timestamp channel:(ZegoPublishChannel)channel];
     
     // 使用 Texture 方式渲染时，此方法无法直接渲染
     // TODO: 考虑使用 gltexture -> cvpixelbuffer 的转换
@@ -136,17 +110,13 @@
                                    params:(ZGFlutterVideoEncodedFrameParam *)params
                                 timestamp:(CMTime)timestamp
                                   channel:(ZGFlutterPublishChannel)channel {
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        ZegoVideoEncodedFrameParam *frameParam = [[ZegoVideoEncodedFrameParam alloc] init];
-        frameParam.size = params.size;
-        frameParam.format = (ZegoVideoEncodedFrameFormat)params.format;
-        frameParam.rotation = params.rotation;
-        frameParam.SEIData = params.SEIData;
-        frameParam.isKeyFrame = params.isKeyFrame;
-        [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureEncodedData:data params:frameParam timestamp:timestamp channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    ZegoVideoEncodedFrameParam *frameParam = [[ZegoVideoEncodedFrameParam alloc] init];
+    frameParam.size = params.size;
+    frameParam.format = (ZegoVideoEncodedFrameFormat)params.format;
+    frameParam.rotation = params.rotation;
+    frameParam.SEIData = params.SEIData;
+    frameParam.isKeyFrame = params.isKeyFrame;
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureEncodedData:data params:frameParam timestamp:timestamp channel:(ZegoPublishChannel)channel];
 }
 
 # pragma mark ZegoCustomVideoCaptureHandler

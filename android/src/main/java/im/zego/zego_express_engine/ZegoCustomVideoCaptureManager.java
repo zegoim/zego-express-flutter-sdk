@@ -58,12 +58,8 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param channel publish channel, It is consistent with Dart API
      */
     public void setVideoMirrorMode(int mode, int channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            mMirrorMode = ZegoVideoMirrorMode.getZegoVideoMirrorMode(mode);
-            ZegoExpressEngine.getEngine().setVideoMirrorMode(mMirrorMode, ZegoPublishChannel.getZegoPublishChannel(channel));
-        } else {
-
-        }
+        mMirrorMode = ZegoVideoMirrorMode.getZegoVideoMirrorMode(mode);
+        ZegoExpressEngine.getEngine().setVideoMirrorMode(mMirrorMode, ZegoPublishChannel.getZegoPublishChannel(channel));
     }
 
     /**
@@ -78,23 +74,19 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param channel publish channel, It is consistent with Dart API
      */
     public void sendRawData(ByteBuffer data, int dataLength, ZGFlutterVideoFrameParam param, long referenceTimeMillisecond, ZGFlutterPublishChannel channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            if(mParam == null) {
-                mParam = new ZegoVideoFrameParam();
-            }
-            mParam.format = ZegoVideoFrameFormat.getZegoVideoFrameFormat(param.format.value());
-            mParam.width = param.width;
-            mParam.height = param.height;
-            mParam.rotation = param.rotation;
-            mParam.strides[0] = param.strides[0];
-            mParam.strides[1] = param.strides[1];
-            mParam.strides[2] = param.strides[2];
-            mParam.strides[3] = param.strides[3];
-
-            ZegoExpressEngine.getEngine().sendCustomVideoCaptureRawData(data, dataLength, mParam, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
-        } else {
-
+        if(mParam == null) {
+            mParam = new ZegoVideoFrameParam();
         }
+        mParam.format = ZegoVideoFrameFormat.getZegoVideoFrameFormat(param.format.value());
+        mParam.width = param.width;
+        mParam.height = param.height;
+        mParam.rotation = param.rotation;
+        mParam.strides[0] = param.strides[0];
+        mParam.strides[1] = param.strides[1];
+        mParam.strides[2] = param.strides[2];
+        mParam.strides[3] = param.strides[3];
+
+        ZegoExpressEngine.getEngine().sendCustomVideoCaptureRawData(data, dataLength, mParam, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
 
         // Android 使用 Texture Renderer 和 PlatformView 行为一致
     }
@@ -106,11 +98,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @return SurfaceTexture instance
      */
     public SurfaceTexture getSurfaceTexture(ZGFlutterPublishChannel channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(ZegoPublishChannel.getZegoPublishChannel(channel.value()));
-        } else {
-            return null;
-        }
+        return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     /**
@@ -125,11 +113,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param channel publish channel, It is consistent with Dart API
      */
     public void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond, ZGFlutterPublishChannel channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            ZegoExpressEngine.getEngine().sendCustomVideoCaptureTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
-        } else {
-
-        }
+        ZegoExpressEngine.getEngine().sendCustomVideoCaptureTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     /**
@@ -152,19 +136,15 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
                                                            ZGFlutterVideoEncodedFrameParam params,
                                                            long referenceTimeMillisecond,
                                                            ZGFlutterPublishChannel channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            ZegoVideoEncodedFrameParam frameParam = new ZegoVideoEncodedFrameParam();
-            frameParam.format = ZegoVideoEncodedFrameFormat.getZegoVideoEncodedFrameFormat(params.format.value());
-            frameParam.height = params.height;
-            frameParam.width = params.width;
-            frameParam.rotation = params.rotation;
-            frameParam.isKeyFrame = params.isKeyFrame;
-            frameParam.SEIData = params.SEIData;
-            frameParam.SEIDataLength = params.SEIDataLength;
-            ZegoExpressEngine.getEngine().sendCustomVideoCaptureEncodedData(data, dataLength, frameParam, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
-        } else {
-
-        }
+        ZegoVideoEncodedFrameParam frameParam = new ZegoVideoEncodedFrameParam();
+        frameParam.format = ZegoVideoEncodedFrameFormat.getZegoVideoEncodedFrameFormat(params.format.value());
+        frameParam.height = params.height;
+        frameParam.width = params.width;
+        frameParam.rotation = params.rotation;
+        frameParam.isKeyFrame = params.isKeyFrame;
+        frameParam.SEIData = params.SEIData;
+        frameParam.SEIDataLength = params.SEIDataLength;
+        ZegoExpressEngine.getEngine().sendCustomVideoCaptureEncodedData(data, dataLength, frameParam, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     /**

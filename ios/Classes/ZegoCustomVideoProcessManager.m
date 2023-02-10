@@ -33,11 +33,7 @@
 
 
 - (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel {
-    if ([ZegoExpressEngine sharedEngine] != nil) {
-        [[ZegoExpressEngine sharedEngine] sendCustomVideoProcessedCVPixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
-    } else {
-        
-    }
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoProcessedCVPixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
 }
 
 # pragma mark ZegoCustomVideoProcessHandler

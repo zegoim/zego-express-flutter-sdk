@@ -59,9 +59,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
      */
     public void sendProcessedTextureData(int textureID, int width, int height,
                                                              long referenceTimeMillisecond, ZGFlutterPublishChannel channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            ZegoExpressEngine.getEngine().sendCustomVideoProcessedTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
-        }
+        ZegoExpressEngine.getEngine().sendCustomVideoProcessedTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     /**
@@ -82,10 +80,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
      */
     public SurfaceTexture
     getProcessOutputSurfaceTexture(int width, int height, ZGFlutterPublishChannel channel) {
-        if (ZegoExpressEngine.getEngine() != null) {
-            return ZegoExpressEngine.getEngine().getCustomVideoProcessOutputSurfaceTexture(width, height, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
-        }
-        return  null;
+        return ZegoExpressEngine.getEngine().getCustomVideoProcessOutputSurfaceTexture(width, height, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
     }
 
     @Override
