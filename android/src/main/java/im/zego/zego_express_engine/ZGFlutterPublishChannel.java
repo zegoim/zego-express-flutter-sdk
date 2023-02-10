@@ -1,6 +1,6 @@
 package im.zego.zego_express_engine;
 
-public enum PublishChannel {
+public enum ZGFlutterPublishChannel {
     /** The main (default/first) publish channel. */
     MAIN(0),
     /** The auxiliary (second) publish channel */
@@ -12,11 +12,11 @@ public enum PublishChannel {
 
     private int value;
 
-    private PublishChannel(int value) { this.value = value; }
+    private ZGFlutterPublishChannel(int value) { this.value = value; }
 
     public int value() { return this.value; }
 
-    public static PublishChannel getZegoPublishChannel(int value) {
+    public static ZGFlutterPublishChannel getZegoPublishChannel(int value) {
         try {
 
             if (MAIN.value == value) {

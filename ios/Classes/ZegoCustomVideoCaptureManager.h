@@ -20,13 +20,13 @@
 /// The callback triggered when the SDK is ready to receive captured video data. Only those video data that are sent to the SDK after this callback is received are valid.
 ///
 /// @param channel publish channel, It is consistent with Dart API
-- (void)onStart:(PublishChannel)channel;
+- (void)onStart:(ZGFlutterPublishChannel)channel;
 
 /// The callback triggered when SDK stops receiving captured video data.
 ///
 /// After receiving this callback, the developer is advised to set the saved client object to nil, otherwise the memory occupied by the client object will always exist
 /// @param channel publish channel, It is consistent with Dart API
-- (void)onStop:(PublishChannel)channel;
+- (void)onStop:(ZGFlutterPublishChannel)channel;
 
 /// When network changes are detected during custom video capture, the developer is notified that traffic control is required, and the encoding configuration is adjusted according to the recommended parameters of the SDK.
 ///
@@ -39,8 +39,8 @@
 ///
 /// @param trafficControlInfo traffic control info.
 /// @param channel Publishing stream channel.
-- (void)onEncodedDataTrafficControl:(TrafficControlInfo *)trafficControlInfo
-                            channel:(PublishChannel)channel;
+- (void)onEncodedDataTrafficControl:(ZGFlutterTrafficControlInfo *)trafficControlInfo
+                            channel:(ZGFlutterPublishChannel)channel;
 
 @end
 
@@ -64,7 +64,7 @@
 ///
 /// @param mode Mirror mode for previewing or publishing the stream. 0: Only preview mirror. 1: Both preview and publish mirror. 2: No Mirror. 3. Only publish mirror. No mirror by default.
 /// @param channel publish channel, It is consistent with Dart API
-- (void)setVideoMirrorMode:(int)mode channel:(PublishChannel)channel;
+- (void)setVideoMirrorMode:(int)mode channel:(ZGFlutterPublishChannel)channel;
 
 /// Sets the video fill mode of custom video capture (for the specified channel).
 ///
@@ -76,7 +76,7 @@
 ///
 /// @param mode View mode
 /// @param channel Publishing stream channel
-- (void)setFillMode:(ViewMode)mode channel:(PublishChannel)channel;
+- (void)setFillMode:(ZGFlutterViewMode)mode channel:(ZGFlutterPublishChannel)channel;
 
 /// Sets the video flip mode of custom video capture (for the specified channel). This function takes effect only if the custom video buffer type is Texture2D.
 ///
@@ -88,7 +88,7 @@
 ///
 /// @param mode Flip mode
 /// @param channel Publishing stream channel
-- (void)setFlipMode:(VideoFlipMode)mode channel:(PublishChannel)channel;
+- (void)setFlipMode:(ZGFlutterVideoFlipMode)mode channel:(ZGFlutterPublishChannel)channel;
 
 /// Sets the video rotation of custom video capture (for the specified channel).
 ///
@@ -100,7 +100,7 @@
 ///
 /// @param rotation Clockwise angle.
 /// @param channel Publishing stream channel
-- (void)setRotation:(int)rotation channel:(PublishChannel)channel;
+- (void)setRotation:(int)rotation channel:(ZGFlutterPublishChannel)channel;
 
 /// Sends the video frames (CVPixelBuffer) produced by custom video capture to the SDK.
 ///
@@ -109,7 +109,7 @@
 /// @param buffer Video frame data to send to the SDK
 /// @param timestamp Timestamp of this video frame
 /// @param channel publish channel, It is consistent with Dart API
-- (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(PublishChannel)channel;
+- (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel;
 
 /// Sends the video frames (Texture Data) produced by custom video capture to the SDK.
 ///
@@ -119,7 +119,7 @@
 /// @param size Video frame width and height
 /// @param timestamp Timestamp of this video frame
 /// @param channel publish channel, It is consistent with Dart API
-- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp channel:(PublishChannel)channel;
+- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel;
 
 /// Sends the video frames (Encoded Data) produced by custom video capture to the SDK (for the specified channel).
 ///
@@ -135,9 +135,9 @@
 /// @param timestamp video frame reference time, UNIX timestamp.
 /// @param channel Publishing stream channel
 - (void)sendEncodedData:(NSData *)data
-                                   params:(VideoEncodedFrameParam *)params
+                                   params:(ZGFlutterVideoEncodedFrameParam *)params
                                 timestamp:(CMTime)timestamp
-                                  channel:(PublishChannel)channel;
+                                  channel:(ZGFlutterPublishChannel)channel;
 
 @end
 

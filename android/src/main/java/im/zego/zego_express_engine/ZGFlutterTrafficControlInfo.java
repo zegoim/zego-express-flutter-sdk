@@ -1,6 +1,6 @@
 package im.zego.zego_express_engine;
 
-public class TrafficControlInfo {
+public class ZGFlutterTrafficControlInfo {
     /** Video resolution width to be adjusted */
     public int width;
 

@@ -42,16 +42,16 @@
                            flipMode:(ZegoVideoFlipMode)flipMode
                             channel:(ZegoPublishChannel)channel {
     if([self.handler respondsToSelector:@selector(onCapturedVideoFrameRawData:dataLength:param:flipMode:channel:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
-        [self.handler onCapturedVideoFrameRawData:data dataLength:dataLength param:videoFrameParam flipMode:(VideoFlipMode)flipMode channel:(PublishChannel)channel];
+        [self.handler onCapturedVideoFrameRawData:data dataLength:dataLength param:videoFrameParam flipMode:(ZGFlutterVideoFlipMode)flipMode channel:(ZGFlutterPublishChannel)channel];
         
         free(videoFrameParam.strides);
     }
@@ -62,9 +62,9 @@
                             param:(ZegoVideoFrameParam *)param
                          streamID:(NSString *)streamID {
     if([self.handler respondsToSelector:@selector(onRemoteVideoFrameRawData:dataLength:param:streamID:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
@@ -82,16 +82,16 @@
                                  flipMode:(ZegoVideoFlipMode)flipMode
                                   channel:(ZegoPublishChannel)channel {
     if([self.handler respondsToSelector:@selector(onCapturedVideoFrameCVPixelBuffer:param:flipMode:channel:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
-        [self.handler onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:videoFrameParam flipMode:(VideoFlipMode)flipMode channel:(PublishChannel)channel];
+        [self.handler onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer param:videoFrameParam flipMode:(ZGFlutterVideoFlipMode)flipMode channel:(ZGFlutterPublishChannel)channel];
         
         free(videoFrameParam.strides);
     }
@@ -101,9 +101,9 @@
                                   param:(ZegoVideoFrameParam *)param
                                streamID:(NSString *)streamID {
     if([self.handler respondsToSelector:@selector(onRemoteVideoFrameCVPixelBuffer:param:streamID:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
@@ -122,9 +122,9 @@
              referenceTimeMillisecond:(unsigned long long)referenceTimeMillisecond
                              streamID:(NSString *)streamID {
     if([self.handler respondsToSelector:@selector(onRemoteVideoFrameEncodedData:dataLength:param:referenceTimeMillisecond:streamID:)]) {
-        VideoEncodedFrameParam *videoFrameParam = [[VideoEncodedFrameParam alloc] init];
+        ZGFlutterVideoEncodedFrameParam *videoFrameParam = [[ZGFlutterVideoEncodedFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoEncodedFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoEncodedFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.isKeyFrame = param.isKeyFrame;
         videoFrameParam.SEIData = param.SEIData;

@@ -2,9 +2,9 @@ package im.zego.zego_express_engine;
 
 import java.nio.*;
 
-public class VideoEncodedFrameParam {
+public class ZGFlutterVideoEncodedFrameParam {
     /** Video encoded frame format */
-    public VideoEncodedFrameFormat format;
+    public ZGFlutterVideoEncodedFrameFormat format;
 
     /** Whether it is a keyframe */
     public boolean isKeyFrame;

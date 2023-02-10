@@ -20,7 +20,7 @@ public interface IZegoFlutterMediaPlayerVideoHandler {
      * @param param Video frame flip mode.
      */
     void onVideoFrame(int mediaPlayerIndex, ByteBuffer[] data, int[] dataLength,
-                             VideoFrameParam param);
+                             ZGFlutterVideoFrameParam param);
 
     /**
      * The callback triggered when the media player throws out video frame data.
@@ -38,5 +38,5 @@ public interface IZegoFlutterMediaPlayerVideoHandler {
      * @param extraInfo Video frame extra info.
      */
     void onVideoFrame(int mediaPlayerIndex, ByteBuffer[] data, int[] dataLength,
-                             VideoFrameParam param, JSONObject extraInfo);
+                      ZGFlutterVideoFrameParam param, JSONObject extraInfo);
 }

@@ -32,7 +32,7 @@
 }
 
 
-- (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(PublishChannel)channel {
+- (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel {
     if ([ZegoExpressEngine sharedEngine] != nil) {
         [[ZegoExpressEngine sharedEngine] sendCustomVideoProcessedCVPixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
     } else {
@@ -45,7 +45,7 @@
     ZGLog(@"[CustomVideoProcess] onStart");
 
     if([self.handler respondsToSelector:@selector(onStart:)]) {
-        [self.handler onStart:(PublishChannel)channel];
+        [self.handler onStart:(ZGFlutterPublishChannel)channel];
     }
 }
 
@@ -54,7 +54,7 @@
     ZGLog(@"[CustomVideoProcess] onStop");
     
     if([self.handler respondsToSelector:@selector(onStop:)]) {
-        [self.handler onStop:(PublishChannel)channel];
+        [self.handler onStop:(ZGFlutterPublishChannel)channel];
     }
 }
 
@@ -62,7 +62,7 @@
                                  timestamp:(CMTime)timestamp
                                    channel:(ZegoPublishChannel)channel {
     if([self.handler respondsToSelector:@selector(onCapturedUnprocessedCVPixelBuffer:timestamp:channel:)]) {
-        [self.handler onCapturedUnprocessedCVPixelBuffer:buffer timestamp:timestamp channel:(PublishChannel)channel];
+        [self.handler onCapturedUnprocessedCVPixelBuffer:buffer timestamp:timestamp channel:(ZGFlutterPublishChannel)channel];
     }
 }
 

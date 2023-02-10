@@ -32,9 +32,9 @@
 /// @param channel Publishing stream channel.
 - (void)onCapturedVideoFrameRawData:(unsigned char *_Nonnull *_Nonnull)data
                          dataLength:(unsigned int *)dataLength
-                              param:(VideoFrameParam *)param
-                           flipMode:(VideoFlipMode)flipMode
-                            channel:(PublishChannel)channel;
+                              param:(ZGFlutterVideoFrameParam *)param
+                           flipMode:(ZGFlutterVideoFlipMode)flipMode
+                            channel:(ZGFlutterPublishChannel)channel;
 
 /// When custom video rendering is enabled, the remote end pulls the original video frame data to call back, and distinguishes different streams by streamID.
 ///
@@ -50,7 +50,7 @@
 /// @param streamID Stream ID.
 - (void)onRemoteVideoFrameRawData:(unsigned char *_Nonnull *_Nonnull)data
                        dataLength:(unsigned int *)dataLength
-                            param:(VideoFrameParam *)param
+                            param:(ZGFlutterVideoFrameParam *)param
                          streamID:(NSString *)streamID;
 
 /// Custom video rendering local preview video frame CVPixelBuffer data callback.
@@ -67,9 +67,9 @@
 /// @param flipMode video flip mode.
 /// @param channel Publishing stream channel.
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
-                                    param:(VideoFrameParam *)param
-                                 flipMode:(VideoFlipMode)flipMode
-                                  channel:(PublishChannel)channel;
+                                    param:(ZGFlutterVideoFrameParam *)param
+                                 flipMode:(ZGFlutterVideoFlipMode)flipMode
+                                  channel:(ZGFlutterPublishChannel)channel;
 
 /// Custom video rendering remote playing stream video frame CVPixelBuffer data callback.
 ///
@@ -84,7 +84,7 @@
 /// @param param Video frame param.
 /// @param streamID Stream ID.
 - (void)onRemoteVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
-                                  param:(VideoFrameParam *)param
+                                  param:(ZGFlutterVideoFrameParam *)param
                                streamID:(NSString *)streamID;
 
 /// Custom video rendering remote playing stream video frame undecoded data callback.
@@ -101,7 +101,7 @@
 /// @param streamID Stream ID.
 - (void)onRemoteVideoFrameEncodedData:(unsigned char *_Nonnull)data
                            dataLength:(unsigned int)dataLength
-                                param:(VideoEncodedFrameParam *)param
+                                param:(ZGFlutterVideoEncodedFrameParam *)param
              referenceTimeMillisecond:(unsigned long long)referenceTimeMillisecond
                              streamID:(NSString *)streamID;
 

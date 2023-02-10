@@ -1,6 +1,6 @@
 package im.zego.zego_express_engine;
 
-public enum VideoEncodedFrameFormat {
+public enum ZGFlutterVideoEncodedFrameFormat {
     /** AVC AVCC format */
     AVCC(0),
     /** AVC Annex-B format */
@@ -14,11 +14,11 @@ public enum VideoEncodedFrameFormat {
 
     private int value;
 
-    private VideoEncodedFrameFormat(int value) { this.value = value; }
+    private ZGFlutterVideoEncodedFrameFormat(int value) { this.value = value; }
 
     public int value() { return this.value; }
 
-    public static VideoEncodedFrameFormat getZegoVideoEncodedFrameFormat(int value) {
+    public static ZGFlutterVideoEncodedFrameFormat getZegoVideoEncodedFrameFormat(int value) {
         try {
 
             if (AVCC.value == value) {

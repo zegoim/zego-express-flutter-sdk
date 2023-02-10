@@ -6,7 +6,7 @@ public interface IZegoFlutterCustomVideoCaptureHandler {
      * 
      * @param channel publish channel, It is consistent with Dart API
      */
-    void onStart(PublishChannel channel);
+    void onStart(ZGFlutterPublishChannel channel);
 
     /**
      * The callback triggered when SDK stops receiving captured video data.
@@ -14,7 +14,7 @@ public interface IZegoFlutterCustomVideoCaptureHandler {
      * After receiving this callback, the developer is advised to set the saved client object to nil, otherwise the memory occupied by the client object will always exist
      * @param channel publish channel, It is consistent with Dart API
      */
-    void onStop(PublishChannel channel);
+    void onStop(ZGFlutterPublishChannel channel);
 
     /**
      * When network changes are detected during custom video capture, the developer is notified that traffic control is required, and the encoding configuration is adjusted according to the recommended parameters of the SDK.
@@ -29,6 +29,6 @@ public interface IZegoFlutterCustomVideoCaptureHandler {
      * @param trafficControlInfo traffic control info.
      * @param channel Publishing stream channel.
      */
-    void onEncodedDataTrafficControl(TrafficControlInfo trafficControlInfo,
-                                            PublishChannel channel);
+    void onEncodedDataTrafficControl(ZGFlutterTrafficControlInfo trafficControlInfo,
+                                     ZGFlutterPublishChannel channel);
 }

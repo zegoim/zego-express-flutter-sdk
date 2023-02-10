@@ -3,8 +3,6 @@ package im.zego.zego_express_engine;
 import android.graphics.SurfaceTexture;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.logging.Handler;
 
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
@@ -79,7 +77,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
      * @param channel publish channel, It is consistent with Dart API
      */
-    public void sendRawData(ByteBuffer data, int dataLength, VideoFrameParam param, long referenceTimeMillisecond, PublishChannel channel) {
+    public void sendRawData(ByteBuffer data, int dataLength, ZGFlutterVideoFrameParam param, long referenceTimeMillisecond, ZGFlutterPublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             if(mParam == null) {
                 mParam = new ZegoVideoFrameParam();
@@ -107,7 +105,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param channel publish channel, It is consistent with Dart API
      * @return SurfaceTexture instance
      */
-    public SurfaceTexture getSurfaceTexture(PublishChannel channel) {
+    public SurfaceTexture getSurfaceTexture(ZGFlutterPublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             return ZegoExpressEngine.getEngine().getCustomVideoCaptureSurfaceTexture(ZegoPublishChannel.getZegoPublishChannel(channel.value()));
         } else {
@@ -126,7 +124,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param referenceTimeMillisecond Timestamp of this video frame
      * @param channel publish channel, It is consistent with Dart API
      */
-    public void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond, PublishChannel channel) {
+    public void sendGLTextureData(int textureID, int width, int height, long referenceTimeMillisecond, ZGFlutterPublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             ZegoExpressEngine.getEngine().sendCustomVideoCaptureTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
         } else {
@@ -151,9 +149,9 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
      * @param channel Publishing stream channel
      */
     public void sendEncodedData(ByteBuffer data, int dataLength,
-                                                           VideoEncodedFrameParam params,
+                                                           ZGFlutterVideoEncodedFrameParam params,
                                                            long referenceTimeMillisecond,
-                                                           PublishChannel channel) {
+                                                           ZGFlutterPublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             ZegoVideoEncodedFrameParam frameParam = new ZegoVideoEncodedFrameParam();
             frameParam.format = ZegoVideoEncodedFrameFormat.getZegoVideoEncodedFrameFormat(params.format.value());
@@ -179,7 +177,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
 
         //IZegoCustomVideoCaptureCallback callback = mHandlers.get(channel.value());
         if(mHander != null) {
-            mHander.onStart(PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onStart(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
@@ -191,19 +189,19 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
         //mClients.remove(channel.value());
         //IZegoCustomVideoCaptureCallback callback = mHandlers.get(channel.value());
         if(mHander != null) {
-            mHander.onStop(PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onStop(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
     @Override
     public void onEncodedDataTrafficControl(ZegoTrafficControlInfo trafficControlInfo, ZegoPublishChannel channel) {
         if(mHander != null) {
-            TrafficControlInfo trafficControlInfo1 = new TrafficControlInfo();
+            ZGFlutterTrafficControlInfo trafficControlInfo1 = new ZGFlutterTrafficControlInfo();
             trafficControlInfo1.bitrate = trafficControlInfo.bitrate;
             trafficControlInfo1.fps = trafficControlInfo.fps;
             trafficControlInfo1.height = trafficControlInfo.height;
             trafficControlInfo1.width = trafficControlInfo.width;
-            mHander.onEncodedDataTrafficControl(trafficControlInfo1, PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onEncodedDataTrafficControl(trafficControlInfo1, ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 }

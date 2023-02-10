@@ -7,14 +7,14 @@
 
 #import "ZegoCustomVideoDefine.h"
 
-@implementation TrafficControlInfo
+@implementation ZGFlutterTrafficControlInfo
 // 回调对象
 @end
 
-@implementation VideoEncodedFrameParam
+@implementation ZGFlutterVideoEncodedFrameParam
 
 @end
 
-@implementation VideoFrameParam
+@implementation ZGFlutterVideoFrameParam
 // 回调对象
 @end

@@ -27,7 +27,7 @@
 /// Related APIs: Call [setCustomVideoProcessHandler] function to set custom video pre-processing callback.
 ///
 /// @param channel Publishing stream channel.
-- (void)onStart:(PublishChannel)channel;
+- (void)onStart:(ZGFlutterPublishChannel)channel;
 
 /// The SDK informs the developer to stop custom video processing.
 ///
@@ -39,7 +39,7 @@
 /// Related APIs: Call [setCustomVideoProcessHandler] function to set custom video pre-processing callback.
 ///
 /// @param channel Publishing stream channel.
-- (void)onStop:(PublishChannel)channel;
+- (void)onStop:(ZGFlutterPublishChannel)channel;
 
 /// Call back when the original video data of type [CVPixelBuffer] is obtained.
 ///
@@ -55,7 +55,7 @@
 /// @param channel Publishing stream channel.
 - (void)onCapturedUnprocessedCVPixelBuffer:(CVPixelBufferRef)buffer
                                  timestamp:(CMTime)timestamp
-                                   channel:(PublishChannel)channel;
+                                   channel:(ZGFlutterPublishChannel)channel;
 
 @end
 
@@ -90,7 +90,7 @@
 ///
 /// @param buffer CVPixelBuffer type video frame data to be sent to the SDK.Required: Yes.
 /// @param timestamp Timestamp of this video frame.Required: Yes.
-- (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(PublishChannel)channel;
+- (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel;
 
 @end
 

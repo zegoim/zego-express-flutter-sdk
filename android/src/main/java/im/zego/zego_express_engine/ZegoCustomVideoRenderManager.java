@@ -45,8 +45,8 @@ public class ZegoCustomVideoRenderManager extends IZegoCustomVideoRenderHandler 
     @Override
     public void onCapturedVideoFrameRawData(ByteBuffer[] data, int[] dataLength, ZegoVideoFrameParam param, ZegoVideoFlipMode flipMode, ZegoPublishChannel channel) {
         if (mHander != null) {
-            VideoFrameParam videoFrameParam = new VideoFrameParam();
-            videoFrameParam.format = VideoFrameFormat.getVideoFrameFormat(param.format.value());
+            ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();
+            videoFrameParam.format = ZGFlutterVideoFrameFormat.getVideoFrameFormat(param.format.value());
             videoFrameParam.height = param.height;
             videoFrameParam.width = param.width;
             videoFrameParam.rotation = param.rotation;
@@ -54,15 +54,15 @@ public class ZegoCustomVideoRenderManager extends IZegoCustomVideoRenderHandler 
                 videoFrameParam.strides[i] = param.strides[i];
             }
 
-            mHander.onCapturedVideoFrameRawData(data, dataLength, videoFrameParam, VideoFlipMode.getZegoVideoFlipMode(flipMode.value()), PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onCapturedVideoFrameRawData(data, dataLength, videoFrameParam, ZGFlutterVideoFlipMode.getZegoVideoFlipMode(flipMode.value()), ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
     @Override
     public void onRemoteVideoFrameRawData(ByteBuffer[] data, int[] dataLength, ZegoVideoFrameParam param, String streamID) {
         if (mHander != null) {
-            VideoFrameParam videoFrameParam = new VideoFrameParam();
-            videoFrameParam.format = VideoFrameFormat.getVideoFrameFormat(param.format.value());
+            ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();
+            videoFrameParam.format = ZGFlutterVideoFrameFormat.getVideoFrameFormat(param.format.value());
             videoFrameParam.height = param.height;
             videoFrameParam.width = param.width;
             videoFrameParam.rotation = param.rotation;
@@ -77,11 +77,11 @@ public class ZegoCustomVideoRenderManager extends IZegoCustomVideoRenderHandler 
     @Override
     public void onRemoteVideoFrameEncodedData(ByteBuffer data, int dataLength, ZegoVideoEncodedFrameParam param, long referenceTimeMillisecond, String streamID) {
         if (mHander != null) {
-            VideoEncodedFrameParam videoEncodedFrameParam = new VideoEncodedFrameParam();
+            ZGFlutterVideoEncodedFrameParam videoEncodedFrameParam = new ZGFlutterVideoEncodedFrameParam();
             videoEncodedFrameParam.isKeyFrame = param.isKeyFrame;
             videoEncodedFrameParam.SEIData = param.SEIData;
             videoEncodedFrameParam.SEIDataLength = param.SEIDataLength;
-            videoEncodedFrameParam.format = VideoEncodedFrameFormat.getZegoVideoEncodedFrameFormat(param.format.value());
+            videoEncodedFrameParam.format = ZGFlutterVideoEncodedFrameFormat.getZegoVideoEncodedFrameFormat(param.format.value());
             videoEncodedFrameParam.height = param.height;
             videoEncodedFrameParam.width = param.width;
             videoEncodedFrameParam.rotation = param.rotation;

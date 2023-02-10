@@ -35,7 +35,7 @@
     self.handler = handler;
 }
 
-- (void)setVideoMirrorMode:(int)mode channel:(PublishChannel)channel{
+- (void)setVideoMirrorMode:(int)mode channel:(ZGFlutterPublishChannel)channel{
     _mirrorMode = mode;
     if([ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
         if ([ZegoExpressEngine sharedEngine] != nil) {
@@ -46,7 +46,7 @@
     }
 }
 
-- (void)setFillMode:(ViewMode)mode channel:(PublishChannel)channel {
+- (void)setFillMode:(ZGFlutterViewMode)mode channel:(ZGFlutterPublishChannel)channel {
     if ([ZegoExpressEngine sharedEngine] != nil) {
         [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureFillMode:(ZegoViewMode)mode channel:(ZegoPublishChannel)channel];
     } else {
@@ -54,7 +54,7 @@
     }
 }
 
-- (void)setFlipMode:(VideoFlipMode)mode channel:(PublishChannel)channel {
+- (void)setFlipMode:(ZGFlutterVideoFlipMode)mode channel:(ZGFlutterPublishChannel)channel {
     if ([ZegoExpressEngine sharedEngine] != nil) {
         [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureFlipMode:(ZegoVideoFlipMode)mode channel:(ZegoPublishChannel)channel];
     } else {
@@ -62,7 +62,7 @@
     }
 }
 
-- (void)setRotation:(int)rotation channel:(PublishChannel)channel {
+- (void)setRotation:(int)rotation channel:(ZGFlutterPublishChannel)channel {
     if ([ZegoExpressEngine sharedEngine] != nil) {
         [[ZegoExpressEngine sharedEngine] setCustomVideoCaptureRotation:rotation channel:(ZegoPublishChannel)channel];
     } else {
@@ -70,7 +70,28 @@
     }
 }
 
-- (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(PublishChannel)channel{
+-(ZegoVideoFrameFormat)osTypeToZegoVideoFrameFormat:(OSType) type {
+    ZegoVideoFrameFormat format = ZegoVideoFrameFormatUnknown;
+    switch(type) {
+        case kCVPixelFormatType_420YpCbCr8Planar:
+        case kCVPixelFormatType_420YpCbCr8PlanarFullRange:
+            format = ZegoVideoFrameFormatI420;
+            break;
+        case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
+        case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:
+            format = ZegoVideoFrameFormatNV12;
+            break;
+        case kCVPixelFormatType_32BGRA:
+            format = ZegoVideoFrameFormatBGRA32;
+            break;
+        case kCVPixelFormatType_32ARGB:
+            format = ZegoVideoFrameFormatARGB32;
+            break;
+    }
+    return format;
+}
+
+- (void)sendCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel{
     if ([ZegoExpressEngine sharedEngine] != nil) {
         [[ZegoExpressEngine sharedEngine] sendCustomVideoCapturePixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
     } else {
@@ -81,15 +102,26 @@
     if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
         if (self.videoParam == nil) {
             self.videoParam = [[ZegoVideoFrameParam alloc] init];
+            self.videoParam.strides = malloc(sizeof(int)*4);
+            for (int i = 0; i < 4; i++) {
+                self.videoParam.strides[i] = 0;
+            }
         }
         self.videoParam.size = CGSizeMake(CVPixelBufferGetWidth(buffer), CVPixelBufferGetHeight(buffer));
-        
+        self.videoParam.format = [self osTypeToZegoVideoFrameFormat: CVPixelBufferGetPixelFormatType(buffer)];
+        if (self.videoParam.format != ZegoVideoFrameFormatI420) {
+            self.videoParam.strides[0] = (int32_t)CVPixelBufferGetBytesPerRow(buffer);
+        } else {
+            for (int i = 0; i < CVPixelBufferGetPlaneCount(buffer) && i < 4; i++) {
+                self.videoParam.strides[i] = (int)CVPixelBufferGetWidthOfPlane(buffer, i);
+            }
+        }
         
         [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:buffer param:self.videoParam flipMode:(_mirrorMode == ZegoVideoMirrorModeOnlyPreviewMirror || _mirrorMode == ZegoVideoMirrorModeBothMirror) channel:(ZegoPublishChannel)channel];
     }
 }
 
-- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp channel:(PublishChannel)channel {
+- (void)sendGLTextureData:(GLuint)textureID size:(CGSize)size timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel {
     if ([ZegoExpressEngine sharedEngine] != nil) {
         [[ZegoExpressEngine sharedEngine] sendCustomVideoCaptureTextureData:textureID size:size timestamp:timestamp channel:(ZegoPublishChannel)channel];
     } else {
@@ -101,9 +133,9 @@
 }
 
 - (void)sendEncodedData:(NSData *)data
-                                   params:(VideoEncodedFrameParam *)params
+                                   params:(ZGFlutterVideoEncodedFrameParam *)params
                                 timestamp:(CMTime)timestamp
-                                  channel:(PublishChannel)channel {
+                                  channel:(ZGFlutterPublishChannel)channel {
     if ([ZegoExpressEngine sharedEngine] != nil) {
         ZegoVideoEncodedFrameParam *frameParam = [[ZegoVideoEncodedFrameParam alloc] init];
         frameParam.size = params.size;
@@ -122,7 +154,7 @@
     ZGLog(@"[CustomVideoCapture] onStart");
 
     if([self.handler respondsToSelector:@selector(onStart:)]) {
-        [self.handler onStart:(PublishChannel)channel];
+        [self.handler onStart:(ZGFlutterPublishChannel)channel];
     }
 }
 
@@ -131,7 +163,7 @@
     ZGLog(@"[CustomVideoCapture] onStop");
     
     if([self.handler respondsToSelector:@selector(onStop:)]) {
-        [self.handler onStop:(PublishChannel)channel];
+        [self.handler onStop:(ZGFlutterPublishChannel)channel];
     }
 }
 
@@ -139,11 +171,11 @@
                             channel:(ZegoPublishChannel)channel {
     ZGLog(@"[CustomVideoCapture] onEncodedDataTrafficControl");
     if([self.handler respondsToSelector:@selector(onEncodedDataTrafficControl:channel:)]) {
-        TrafficControlInfo *info = [[TrafficControlInfo alloc] init];
+        ZGFlutterTrafficControlInfo *info = [[ZGFlutterTrafficControlInfo alloc] init];
         info.fps = trafficControlInfo.fps;
         info.bitrate = trafficControlInfo.bitrate;
         info.resolution = trafficControlInfo.resolution;
-        [self.handler onEncodedDataTrafficControl:info channel:(PublishChannel)channel];
+        [self.handler onEncodedDataTrafficControl:info channel:(ZGFlutterPublishChannel)channel];
     }
 }
 

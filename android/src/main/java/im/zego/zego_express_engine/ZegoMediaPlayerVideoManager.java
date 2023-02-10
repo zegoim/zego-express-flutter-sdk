@@ -51,11 +51,11 @@ public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler {
     public void onVideoFrame(ZegoMediaPlayer mediaPlayer, ByteBuffer[] data, int[] dataLength,
                              ZegoVideoFrameParam param) {
         if (mHander != null) {
-            VideoFrameParam videoFrameParam = new VideoFrameParam();
+            ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();
             videoFrameParam.width = param.width;
             videoFrameParam.height = param.height;
             videoFrameParam.rotation = param.rotation;
-            videoFrameParam.format = VideoFrameFormat.getVideoFrameFormat(param.format.value());
+            videoFrameParam.format = ZGFlutterVideoFrameFormat.getVideoFrameFormat(param.format.value());
             for (int i = 0; i < 4; i++) {
                 videoFrameParam.strides[i] = param.strides[i];
             }
@@ -67,11 +67,11 @@ public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler {
     public void onVideoFrame(ZegoMediaPlayer mediaPlayer, ByteBuffer[] data, int[] dataLength,
                              ZegoVideoFrameParam param, JSONObject extraInfo) {
         if (mHander != null) {
-            VideoFrameParam videoFrameParam = new VideoFrameParam();
+            ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();
             videoFrameParam.width = param.width;
             videoFrameParam.height = param.height;
             videoFrameParam.rotation = param.rotation;
-            videoFrameParam.format = VideoFrameFormat.getVideoFrameFormat(param.format.value());
+            videoFrameParam.format = ZGFlutterVideoFrameFormat.getVideoFrameFormat(param.format.value());
             for (int i = 0; i < 4; i++) {
                 videoFrameParam.strides[i] = param.strides[i];
             }

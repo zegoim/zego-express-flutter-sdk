@@ -15,7 +15,7 @@ public interface IZegoFlutterCustomVideoProcessHandler {
      *
      * @param channel Publishing stream channel.
      */
-    public void onStart(PublishChannel channel);
+    public void onStart(ZGFlutterPublishChannel channel);
 
     /**
      * The SDK informs the developer to stop custom video processing.
@@ -29,7 +29,7 @@ public interface IZegoFlutterCustomVideoProcessHandler {
      *
      * @param channel Publishing stream channel.
      */
-    public void onStop(PublishChannel channel);
+    public void onStop(ZGFlutterPublishChannel channel);
 
     /**
      * Call back when the original video data of type [Texture] is obtained.
@@ -49,7 +49,7 @@ public interface IZegoFlutterCustomVideoProcessHandler {
      */
     public void onCapturedUnprocessedTextureData(int textureID, int width, int height,
                                                  long referenceTimeMillisecond,
-                                                 PublishChannel channel);
+                                                 ZGFlutterPublishChannel channel);
 
     /**
      * When the developer chooses the SurfaceTexture video pre-processing type, the SurfaceTexture used to input the original video data is obtained through this interface and passed to the SDK.
@@ -66,5 +66,5 @@ public interface IZegoFlutterCustomVideoProcessHandler {
      * @return SurfaceTexture instance.
      */
     public SurfaceTexture getCustomVideoProcessInputSurfaceTexture(int width, int height,
-                                                                   PublishChannel channel);
+                                                                   ZGFlutterPublishChannel channel);
 }

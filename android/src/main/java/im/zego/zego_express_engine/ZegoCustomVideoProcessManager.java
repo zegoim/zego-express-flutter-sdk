@@ -58,7 +58,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
      * @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
      */
     public void sendProcessedTextureData(int textureID, int width, int height,
-                                                             long referenceTimeMillisecond, PublishChannel channel) {
+                                                             long referenceTimeMillisecond, ZGFlutterPublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             ZegoExpressEngine.getEngine().sendCustomVideoProcessedTextureData(textureID, width, height, referenceTimeMillisecond, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
         }
@@ -81,7 +81,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
      * @return SurfaceTexture instance.
      */
     public SurfaceTexture
-    getProcessOutputSurfaceTexture(int width, int height, PublishChannel channel) {
+    getProcessOutputSurfaceTexture(int width, int height, ZGFlutterPublishChannel channel) {
         if (ZegoExpressEngine.getEngine() != null) {
             return ZegoExpressEngine.getEngine().getCustomVideoProcessOutputSurfaceTexture(width, height, ZegoPublishChannel.getZegoPublishChannel(channel.value()));
         }
@@ -91,28 +91,28 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
     @Override
     public void onStart(ZegoPublishChannel channel) {
         if (mHander != null) {
-            mHander.onStart(PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onStart(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
     @Override
     public void onStop(ZegoPublishChannel channel) {
         if (mHander != null) {
-            mHander.onStop(PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onStop(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
     @Override
     public void onCapturedUnprocessedTextureData(int textureID, int width, int height, long referenceTimeMillisecond, ZegoPublishChannel channel) {
         if (mHander != null) {
-            mHander.onCapturedUnprocessedTextureData(textureID, width, height, referenceTimeMillisecond, PublishChannel.getZegoPublishChannel(channel.value()));
+            mHander.onCapturedUnprocessedTextureData(textureID, width, height, referenceTimeMillisecond, ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 
     @Override
     public SurfaceTexture getCustomVideoProcessInputSurfaceTexture(int width, int height, ZegoPublishChannel channel) {
         if (mHander != null) {
-            return mHander.getCustomVideoProcessInputSurfaceTexture(width, height, PublishChannel.getZegoPublishChannel(channel.value()));
+            return mHander.getCustomVideoProcessInputSurfaceTexture(width, height, ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
         return null;
     }

@@ -1,6 +1,6 @@
 package im.zego.zego_express_engine;
 
-public enum VideoFlipMode {
+public enum ZGFlutterVideoFlipMode {
     /** No flip */
     NONE(0),
     /** X-axis flip */
@@ -12,11 +12,11 @@ public enum VideoFlipMode {
 
     private int value;
 
-    private VideoFlipMode(int value) { this.value = value; }
+    private ZGFlutterVideoFlipMode(int value) { this.value = value; }
 
     public int value() { return this.value; }
 
-    public static VideoFlipMode getZegoVideoFlipMode(int value) {
+    public static ZGFlutterVideoFlipMode getZegoVideoFlipMode(int value) {
         try {
 
             if (NONE.value == value) {

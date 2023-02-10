@@ -294,16 +294,16 @@
                                  flipMode:(ZegoVideoFlipMode)flipMode
                                   channel:(ZegoPublishChannel)channel {
     if ([self.renderHandler respondsToSelector:@selector(onCapturedVideoFrameCVPixelBuffer:param:flipMode:channel:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
             videoFrameParam.strides[i] = param.strides[i];
         }
         
-        [self.renderHandler onCapturedVideoFrameCVPixelBuffer:buffer param:videoFrameParam flipMode:(VideoFlipMode)flipMode channel:(PublishChannel)channel];
+        [self.renderHandler onCapturedVideoFrameCVPixelBuffer:buffer param:videoFrameParam flipMode:(ZGFlutterVideoFlipMode)flipMode channel:(ZGFlutterPublishChannel)channel];
         free(videoFrameParam.strides);
     }
     
@@ -328,9 +328,9 @@
                                   param:(ZegoVideoFrameParam *)param
                                streamID:(NSString *)streamID {
     if ([self.renderHandler respondsToSelector:@selector(onRemoteVideoFrameCVPixelBuffer:param:streamID:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
@@ -363,9 +363,9 @@
     ZegoTextureRenderer *renderer = nil;
 
     if ([self.mediaPlayerVideoHandler respondsToSelector:@selector(mediaPlayer:videoFramePixelBuffer:param:extraInfo:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {

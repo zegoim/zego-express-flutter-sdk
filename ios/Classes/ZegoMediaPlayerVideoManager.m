@@ -41,9 +41,9 @@
     videoFramePixelBuffer:(CVPixelBufferRef)buffer
               param:(ZegoVideoFrameParam *)param {
     if([self.handler respondsToSelector:@selector(mediaPlayer:videoFramePixelBuffer:param:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {
@@ -59,9 +59,9 @@
                     param:(ZegoVideoFrameParam *)param
           extraInfo:(NSDictionary *)extraInfo {
     if([self.handler respondsToSelector:@selector(mediaPlayer:videoFramePixelBuffer:param:extraInfo:)]) {
-        VideoFrameParam *videoFrameParam = [[VideoFrameParam alloc] init];
+        ZGFlutterVideoFrameParam *videoFrameParam = [[ZGFlutterVideoFrameParam alloc] init];
         videoFrameParam.size = param.size;
-        videoFrameParam.format = (VideoFrameFormat)param.format;
+        videoFrameParam.format = (ZGFlutterVideoFrameFormat)param.format;
         videoFrameParam.rotation = param.rotation;
         videoFrameParam.strides = malloc(sizeof(int)*4);
         for (int i = 0; i < 4; i++) {

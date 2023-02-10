@@ -19,8 +19,8 @@ public interface IZegoFlutterCustomVideoRenderHandler {
      * @param channel    Publishing stream channel.
      */
     public void onCapturedVideoFrameRawData(ByteBuffer[] data, int[] dataLength,
-                                            VideoFrameParam param, VideoFlipMode flipMode,
-                                            PublishChannel channel);
+                                            ZGFlutterVideoFrameParam param, ZGFlutterVideoFlipMode flipMode,
+                                            ZGFlutterPublishChannel channel);
 
     /**
      * When custom video rendering is enabled, the remote end pulls the original video frame data to call back, and distinguishes different streams by streamID.
@@ -37,7 +37,7 @@ public interface IZegoFlutterCustomVideoRenderHandler {
      * @param streamID   Stream ID.
      */
     public void onRemoteVideoFrameRawData(ByteBuffer[] data, int[] dataLength,
-                                          VideoFrameParam param, String streamID);
+                                          ZGFlutterVideoFrameParam param, String streamID);
 
     /**
      * Custom video rendering remote playing stream video frame undecoded data callback.
@@ -54,6 +54,6 @@ public interface IZegoFlutterCustomVideoRenderHandler {
      * @param streamID                 Stream ID.
      */
     public void onRemoteVideoFrameEncodedData(ByteBuffer data, int dataLength,
-                                              VideoEncodedFrameParam param,
+                                              ZGFlutterVideoEncodedFrameParam param,
                                               long referenceTimeMillisecond, String streamID);
 }

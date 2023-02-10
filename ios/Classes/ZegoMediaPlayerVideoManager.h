@@ -25,7 +25,7 @@
 /// @param param video data frame param
 - (void)mediaPlayer:(int)mediaPlayerIndex
     videoFramePixelBuffer:(CVPixelBufferRef)buffer
-                    param:(VideoFrameParam *)param;
+                    param:(ZGFlutterVideoFrameParam *)param;
 
 /// The callback triggered when the media player throws out video frame data (in CVPixelBuffer format).
 /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -36,7 +36,7 @@
 /// @param extraInfo video data frame extra info.
 - (void)mediaPlayer:(int)mediaPlayerIndex
     videoFramePixelBuffer:(CVPixelBufferRef)buffer
-                    param:(VideoFrameParam *)param
+                    param:(ZGFlutterVideoFrameParam *)param
                 extraInfo:(NSDictionary *)extraInfo;
 
 @end

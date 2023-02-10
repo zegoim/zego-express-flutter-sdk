@@ -1,6 +1,6 @@
 package im.zego.zego_express_engine;
 
-public enum VideoFrameFormat {
+public enum ZGFlutterVideoFrameFormat {
     /** Unknown format, will take platform default */
     Unknown(0),
     /** I420 (YUV420Planar) format */
@@ -22,7 +22,7 @@ public enum VideoFrameFormat {
 
     private int value;
 
-    private VideoFrameFormat(int value) {
+    private ZGFlutterVideoFrameFormat(int value) {
         this.value = value;
     }
 
@@ -30,7 +30,7 @@ public enum VideoFrameFormat {
         return this.value;
     }
 
-    public static VideoFrameFormat getVideoFrameFormat(int value) {
+    public static ZGFlutterVideoFrameFormat getVideoFrameFormat(int value) {
         try {
 
             if (Unknown.value == value) {
