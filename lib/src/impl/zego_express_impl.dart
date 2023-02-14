@@ -2299,7 +2299,8 @@ class ZegoExpressImpl {
 
         var soundLevels = <dynamic, dynamic>{};
         if (map['soundLevels'] != null) {
-          soundLevels = map['soundLevels'] < 0.000001 ? 0.0 : map['soundLevel'];
+          soundLevels = (map['soundLevels'] as Map).map(
+              (key, value) => MapEntry(key, value < 0.000001 ? 0.0 : value));
         }
 
         ZegoExpressEngine
