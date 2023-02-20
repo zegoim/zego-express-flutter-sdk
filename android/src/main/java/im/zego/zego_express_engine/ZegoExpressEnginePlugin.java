@@ -180,6 +180,10 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             Throwable t = e.getTargetException();
             ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s | %s", call.method, t.getCause(), t.getMessage(), getStackTrace(t));
             result.error("InvocationTargetException", String.format("[%s] %s", call.method, t.getMessage()), null);
+        } catch (IllegalStateException e) {
+            // exception: Reply already submitted
+            Throwable t = e.getTargetException();
+            ZegoLog.log("[DartCall] [IllegalStateException] [%s] %s | %s | %s", call.method, t.getCause(), t.getMessage(), getStackTrace(t));
         }
     }
 
