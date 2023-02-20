@@ -102,6 +102,7 @@ class ZegoExpressImpl {
     await _channel.invokeMethod('destroyEngine');
 
     _unregisterEventHandler();
+    ZegoExpressTextureRenderer().uninit();
 
     isEngineCreated = false;
   }

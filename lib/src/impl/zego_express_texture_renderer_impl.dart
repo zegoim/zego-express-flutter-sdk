@@ -22,7 +22,11 @@ class ZegoExpressTextureRenderer {
   }
 
   void uninit() async {
-    if (_viewModeMap.isEmpty && !kIsWeb && !kIsAndroid) {
+    _backgroundColorMap.clear();
+    _mirrorMap.clear();
+    _sizeMap.clear();
+    _viewModeMap.clear();
+    if (!kIsWeb && !kIsAndroid) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
     }
@@ -81,7 +85,6 @@ class ZegoExpressTextureRenderer {
   bool removeTexture(int textureID) {
     if (_viewModeMap.containsKey(textureID)) {
       _viewModeMap.remove(textureID);
-      uninit();
       return true;
     } else {
       return false;
