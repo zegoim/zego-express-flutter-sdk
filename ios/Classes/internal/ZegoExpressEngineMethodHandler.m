@@ -935,7 +935,7 @@
 
 - (void)setSEIConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    NSDictionary *configMap = call.arguments[@"watermark"];
+    NSDictionary *configMap = call.arguments[@"config"];
 
     ZegoSEIConfig *config = [ZegoSEIConfig defaultConfig]; // Use default config
     if (configMap && configMap.count > 0) {
