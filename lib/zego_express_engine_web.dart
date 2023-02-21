@@ -227,7 +227,7 @@ class ZegoExpressEngineWeb {
       case 'setAudioSource':
         return setAudioSource(call.arguments['source'], call.arguments['channel']);
       case 'startCaptureScreenCaptureSource':
-        return startCaptureScreen(call.arguments['index']);
+        return startCaptureScreen(call.arguments['index'], call.arguments['config']);
       case 'stopCaptureScreenCaptureSource':
         return stopCaptureScreen(call.arguments['index']);
       default:
@@ -1107,10 +1107,10 @@ class ZegoExpressEngineWeb {
   Future<int> setAudioSource(int source, int? channel) async {
     return ZegoFlutterEngine.instance.setAudioSource(source, getPublishChannel(channel));
   }
-  Future<void> startCaptureScreen(int index) async {
-    return MediaSources[index].instance.startCapture(index);
+  Future<void> startCaptureScreen(int index, dynamic config) async {
+    return MediaSources[index].instance.startCapture(config);
   }
   Future<void> stopCaptureScreen(int index) async {
-    return MediaSources[index].instance.stopCapture(index);
+    return MediaSources[index].instance.stopCapture();
   }
 }
