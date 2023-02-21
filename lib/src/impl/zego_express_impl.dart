@@ -3108,6 +3108,17 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   @override
   Future<void> start(int audioEffectID,
       {String? path, ZegoAudioEffectPlayConfig? config}) async {
+    if (path != null && path.contains('assets://')) {
+      var assetPath = path.replaceAll('assets://', '');
+      path = Directory.systemTemp.absolute.path + '/' + assetPath;
+      var file = File(path);
+      if (!file.existsSync()) {
+        file.createSync(recursive: true);
+        var data = await rootBundle.load(assetPath);
+        file = await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
+      }
+    }
+
     return await ZegoExpressImpl._channel
         .invokeMethod('audioEffectPlayerStart', {
       'index': _index,
@@ -3203,6 +3214,17 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   @override
   Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(
       int audioEffectID, String path) async {
+    if (path.contains('assets://')) {
+      var assetPath = path.replaceAll('assets://', '');
+      path = Directory.systemTemp.absolute.path + '/' + assetPath;
+      var file = File(path);
+      if (!file.existsSync()) {
+        file.createSync(recursive: true);
+        var data = await rootBundle.load(assetPath);
+        file = await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
+      }
+    }
+
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('audioEffectPlayerLoadResource',
             {'index': _index, 'audioEffectID': audioEffectID, 'path': path});
