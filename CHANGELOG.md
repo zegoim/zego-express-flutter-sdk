@@ -21,6 +21,7 @@
 ### **Bug Fixes**
 
 1. Fixed an exception caused by the [onRemoteSoundLevelUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRemoteSoundLevelUpdate.html) callback.
+
 2. Fixed an issue with setting SEIType for the [setSEIConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setSEIConfig.html) interface on iOS that did not work.
 
 ## 3.2.0+1
