@@ -8,6 +8,8 @@
 
 package im.zego.zego_express_engine.internal;
 
+import static im.zego.zego_express_engine.internal.ZegoUtils.getStackTrace;
+
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -1848,9 +1850,14 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().stopMixerTask(taskObject, new IZegoMixerStopCallback() {
             @Override
             public void onMixerStopResult(int errorCode) {
-                HashMap<String, Object> resultMap = new HashMap<>();
-                resultMap.put("errorCode", errorCode);
-                result.success(resultMap);
+                try {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    result.success(resultMap);
+                }  catch (IllegalStateException e) {
+                    // exception: Reply already submitted
+                    ZegoLog.log("[DartCall] [IllegalStateException] [%s] %s | %s | %s", call.method, e.getCause(), e.getMessage(), getStackTrace(e));
+                }
             }
         });
     }
