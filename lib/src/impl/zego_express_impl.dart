@@ -1775,7 +1775,7 @@ class ZegoExpressImpl {
     if (kIsAndroid || kIsIOS) {
       index = 0;
     } else {
-      if(kIsWeb) {
+      if (kIsWeb) {
         sourceType = ZegoScreenCaptureSourceType.Screen;
       } else if (sourceId == null || sourceType == null) {
         return null;

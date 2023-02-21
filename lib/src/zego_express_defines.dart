@@ -1158,10 +1158,10 @@ enum ZegoAudioSourceType {
   /// Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default)
   Default,
 
-  /// Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource]
+  /// Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource]. The web platform does not currently support.
   Custom,
 
-  /// Use media player as audio source, only support aux channel
+  /// Use media player as audio source, only support aux channel. The web platform does not currently support.
   MediaPlayer,
 
   /// No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
@@ -1170,7 +1170,7 @@ enum ZegoAudioSourceType {
   /// Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
   Microphone,
 
-  /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. The web platform does not currently support.
   MainPublishChannel,
 
   /// Using screen capture as audio source. It is only supported for iOS platform. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
@@ -1482,13 +1482,13 @@ enum ZegoVideoSourceType {
   /// Video source from camera.
   Camera,
 
-  /// Video source from custom capture.
+  /// Video source from custom capture. The web platform does not currently support.
   Custom,
 
-  /// Video source from the main publish channel. When publishing the main channel, this value cannot be set.
+  /// Video source from the main publish channel. When publishing the main channel, this value cannot be set. The web platform does not currently support.
   MainPublishChannel,
 
-  /// Video source from media player.
+  /// Video source from media player. The web platform does not currently support.
   Player,
 
   /// Video source from screen capture.
@@ -3542,7 +3542,7 @@ abstract class ZegoAudioEffectPlayer {
   /// Restrictions: None.
   ///
   /// - [audioEffectID] Description: ID for the audio effect. The SDK uses audioEffectID to control the playback of sound effects. The SDK does not force the user to pass in this parameter as a fixed value. It is best to ensure that each sound effect can have a unique ID. The recommended methods are static self-incrementing ID or the hash of the incoming sound effect file path.
-  /// - [path] The absolute path of the local resource. <br>Value range: "assets://"、"ipod-library://" and network url are not supported. Set path as null or "" if resource is loaded already using [loadResource].
+  /// - [path] The absolute path of the local resource or "assets://" . <br>Value range: "ipod-library://" and network url are not supported. Set path as null or "" if resource is loaded already using [loadResource].
   /// - [config] Audio effect playback configuration. <br>Default value: Set null will only be played once, and will not be mixed into the publishing stream.
   Future<void> start(int audioEffectID,
       {String? path, ZegoAudioEffectPlayConfig? config});
@@ -3678,7 +3678,7 @@ abstract class ZegoAudioEffectPlayer {
   /// Restrictions: Preloading supports loading up to 15 sound effect files at the same time, and the duration of the sound effect files cannot exceed 30s, otherwise an error will be reported when loading.
   ///
   /// - [audioEffectID] ID for the audio effect.
-  /// - [path] the absolute path of the audio effect resource and cannot be null or "". <br>Value range: "assets://"、"ipod-library://" and network url are not supported.
+  /// - [path] the absolute path or "assets://" of the audio effect resource and cannot be null or "". <br>Value range: "ipod-library://" and network url are not supported.
   /// - Returns Result for audio effect player loads resources
   Future<ZegoAudioEffectPlayerLoadResourceResult> loadResource(
       int audioEffectID, String path);
