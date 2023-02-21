@@ -28,7 +28,7 @@ class ZegoFlutterEngine {
   external getVideoConfig(int channel);
   external startPreview(dynamic canvas, int channel);
   external stopPreview(int channel);
-  external startPublishingStream(String streamID, int? channel);
+  external startPublishingStream(String streamID, int? channel, dynamic? config);
   external stopPublishingStream(int channel);
   external startPlayingStream(
       String streamID, dynamic remoteVideo, String s, dynamic config);
@@ -67,6 +67,15 @@ class ZegoFlutterEngine {
   external mediaPlayerEnableAux(bool enable, dynamic MediaPlayer);
   external mediaPlayerSetVolume(int volume, dynamic MediaPlayer);
   external setRoomScenario(int scenario);
+  external static setRoomMode(int mode);
+  external enableEffectsBeauty(bool enable);
+  external stopEffectsEnv();
+  external setEffectsBeautyParam(dynamic param);
+  external createScreenCaptureSource(int? sourceId);
+  external startCaptureScreen(int index, dynamic? config);
+  external setVideoSource(int source, int? instanceID, int? channel);
+  external setAudioSource(int source, int? channel);
+  external stopCaptureScreen(int index);
 }
 
 @JS()
@@ -152,3 +161,34 @@ class MediaPlayer {
   external getTotalDuration();
   external destroy();
 }
+
+@JS("ScreenCaptureSource")
+@anonymous
+class ScreenCaptureSource {
+  external ScreenCaptureSource instance;
+  external dynamic engine;
+  external int sourceId;
+  external dynamic stream;
+  external String sourceType;
+  external dynamic config;
+  external List channels;
+  external stopCapture();
+  external startCapture(dynamic config);  
+}
+
+@JS("PublishConfig")
+@anonymous
+class PublishConfig{
+  external factory PublishConfig({String roomID});
+  external String get roomID;
+}
+@JS("EffectsBeautyParam")
+@anonymous
+class EffectsBeautyParam {
+  external factory EffectsBeautyParam({int? whitenIntensity, int? osyIntensity, int? smoothIntensity, int? sharpenIntensity});
+  external int whitenIntensity;
+  external int osyIntensity;
+  external int smoothIntensity;
+  external int sharpenIntensity;
+}
+

@@ -22,7 +22,8 @@ class ZegoExpressEngineWeb {
   static final StreamController _evenController = StreamController();
 
   static dynamic MediaPlayers = {}; // 存储媒体流实例
-  static int _index = 0;
+  static dynamic MediaSources = {}; // 存储屏幕采集实例
+  static int _index = 1;
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
       'plugins.zego.im/zego_express_engine',
@@ -205,6 +206,30 @@ class ZegoExpressEngineWeb {
         return mediaPlayerGetTotalDuration(call.arguments['index']);
       case 'setRoomScenario':
         return setRoomScenario(call.arguments['scenario']);
+      case 'setRoomMode':
+        return setRoomMode(call.arguments['mode']);
+      case 'enableEffectsBeauty':
+        return enableEffectsBeauty(call.arguments['enable']);
+      case 'setEffectsBeautyParam':
+        return setEffectsBeautyParam(call.arguments['param']);
+      case 'startEffectsEnv':
+        return;
+      case 'getScreenCaptureSources':
+        return;
+      case 'createScreenCaptureSource':
+        return createScreenCaptureSource(call.arguments['sourceId'], call.arguments['sourceType']);
+      case 'destroyScreenCaptureSource':
+        return destroyScreenCaptureSource(call.arguments['index']);
+      case 'stopEffectsEnv':
+        return stopEffectsEnv();
+      case 'setVideoSource':
+        return setVideoSource(call.arguments['source'], call.arguments['instanceID'], call.arguments['channel']);
+      case 'setAudioSource':
+        return setAudioSource(call.arguments['source'], call.arguments['channel']);
+      case 'startCaptureScreenCaptureSource':
+        return startCaptureScreen(call.arguments['index']);
+      case 'stopCaptureScreenCaptureSource':
+        return stopCaptureScreen(call.arguments['index']);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -622,7 +647,6 @@ class ZegoExpressEngineWeb {
         maxMemberCount: config["maxMemberCount"],
         token: config["token"],
         isUserStatusNotify: config["isUserStatusNotify"]);
-    print('login');
     var result;
     result = await (() {
       Map completerMap = createCompleter();
@@ -630,7 +654,6 @@ class ZegoExpressEngineWeb {
           completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
-    print('loginend');
     final map = {};
     map["errorCode"] = 0;
     map["extendedData"] = "{}";
@@ -694,8 +717,13 @@ class ZegoExpressEngineWeb {
 
   Future<void> startPublishingStream(
       String streamID, dynamic? config, int? channel) {
+    String roomID = "";
+    if(config["roomID"] != null) {
+      roomID = config["roomID"];
+    }
+    PublishConfig options = PublishConfig(roomID: roomID);
     ZegoFlutterEngine.instance
-        .startPublishingStream(streamID, getPublishChannel(channel));
+      .startPublishingStream(streamID, getPublishChannel(channel), options);
     return Future.value();
   }
 
@@ -1037,5 +1065,52 @@ class ZegoExpressEngineWeb {
 
   void setRoomScenario(int scenario) {
     return ZegoFlutterEngine.instance.setRoomScenario(scenario);
+  }
+  
+  Future<void> setRoomMode(int mode) async {
+    return ZegoFlutterEngine.setRoomMode(mode);
+  }
+
+  Future<void> enableEffectsBeauty(bool enable) async {
+    return ZegoFlutterEngine.instance.enableEffectsBeauty(enable);
+  }
+  Future<void> stopEffectsEnv() async {
+    return ZegoFlutterEngine.instance.stopEffectsEnv();
+  }
+  Future<void> setEffectsBeautyParam(dynamic param) async {
+    EffectsBeautyParam options = EffectsBeautyParam(whitenIntensity: param["whitenIntensity"], osyIntensity: param["osyIntensity"], smoothIntensity: param["smoothIntensity"], sharpenIntensity: param["sharpenIntensity"]);
+    return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);
+  }
+  // Future<List<ZegoScreenCaptureSourceInfo>> getScreenCaptureSources() async{
+  //   List<ZegoScreenCaptureSourceInfo> list = [];
+  //   list.add(ZegoScreenCaptureSourceInfo(ZegoScreenCaptureSourceType.Screen, _index, "web", null, null));
+  //   return list;
+  // }
+  Future<int> createScreenCaptureSource(int? sourceId, int? sourceType) async {
+    if(sourceId == null) sourceId = _index;
+    var instance = await ZegoFlutterEngine.instance.createScreenCaptureSource(sourceId);
+    var i = _index;
+    var capureSource = ScreenCaptureSource();
+    capureSource.instance = instance;
+    MediaSources[i] = capureSource;
+    _index++;
+    return i;
+  }
+  Future<void> destroyScreenCaptureSource (int index) async {
+    if(MediaSources[index] == null) return;
+    MediaSources[index].instance.stopCapture(index);
+    MediaSources.remove(index);
+  }
+  Future<int> setVideoSource(int source, int? instanceID, int? channel) async {
+    return ZegoFlutterEngine.instance.setVideoSource(source, instanceID, getPublishChannel(channel));
+  }
+  Future<int> setAudioSource(int source, int? channel) async {
+    return ZegoFlutterEngine.instance.setAudioSource(source, getPublishChannel(channel));
+  }
+  Future<void> startCaptureScreen(int index) async {
+    return MediaSources[index].instance.startCapture(index);
+  }
+  Future<void> stopCaptureScreen(int index) async {
+    return MediaSources[index].instance.stopCapture(index);
   }
 }

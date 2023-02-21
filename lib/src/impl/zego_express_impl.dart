@@ -1771,10 +1771,12 @@ class ZegoExpressImpl {
   Future<ZegoScreenCaptureSource?> createScreenCaptureSource(
       {int? sourceId, ZegoScreenCaptureSourceType? sourceType}) async {
     int index = -1;
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (kIsAndroid || kIsIOS) {
       index = 0;
     } else {
-      if (sourceId == null || sourceType == null) {
+      if(kIsWeb) {
+        sourceType = ZegoScreenCaptureSourceType.Screen;
+      } else if (sourceId == null || sourceType == null) {
         return null;
       }
       index = await _channel.invokeMethod('createScreenCaptureSource',
@@ -1796,7 +1798,7 @@ class ZegoExpressImpl {
       ZegoScreenCaptureSource source) async {
     int index = source.getIndex();
 
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (kIsAndroid || kIsIOS) {
       index = 0;
     } else {
       await _channel
