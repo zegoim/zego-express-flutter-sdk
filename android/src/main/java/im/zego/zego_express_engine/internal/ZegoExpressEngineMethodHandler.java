@@ -1788,7 +1788,7 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void stopMixerTask(MethodCall call, final Result result) {
+    public static void stopMixerTask(final MethodCall call, final Result result) {
 
         String taskID = call.argument("taskID");
         ZegoMixerTask taskObject = new ZegoMixerTask(taskID);
