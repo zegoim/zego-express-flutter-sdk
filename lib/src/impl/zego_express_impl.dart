@@ -14,7 +14,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.2.0";
+  static String pluginVersion = "3.2.1";
 }
 
 class ZegoExpressImpl {

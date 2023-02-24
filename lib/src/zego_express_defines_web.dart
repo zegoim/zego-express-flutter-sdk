@@ -28,7 +28,8 @@ class ZegoFlutterEngine {
   external getVideoConfig(int channel);
   external startPreview(dynamic canvas, int channel);
   external stopPreview(int channel);
-  external startPublishingStream(String streamID, int? channel, dynamic? config);
+  external startPublishingStream(
+      String streamID, int? channel, dynamic? config);
   external stopPublishingStream(int channel);
   external startPlayingStream(
       String streamID, dynamic remoteVideo, String s, dynamic config);
@@ -173,22 +174,26 @@ class ScreenCaptureSource {
   external dynamic config;
   external List channels;
   external stopCapture();
-  external startCapture(dynamic config);  
+  external startCapture(dynamic config);
 }
 
 @JS("PublishConfig")
 @anonymous
-class PublishConfig{
+class PublishConfig {
   external factory PublishConfig({String roomID});
   external String get roomID;
 }
+
 @JS("EffectsBeautyParam")
 @anonymous
 class EffectsBeautyParam {
-  external factory EffectsBeautyParam({int? whitenIntensity, int? osyIntensity, int? smoothIntensity, int? sharpenIntensity});
+  external factory EffectsBeautyParam(
+      {int? whitenIntensity,
+      int? osyIntensity,
+      int? smoothIntensity,
+      int? sharpenIntensity});
   external int whitenIntensity;
   external int osyIntensity;
   external int smoothIntensity;
   external int sharpenIntensity;
 }
-

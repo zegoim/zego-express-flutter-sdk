@@ -1,4 +1,32 @@
 # Change Log
+
+## 3.2.1
+
+### **New Features**
+
+1. Add screen capture stream function of web platform;
+
+    Note: Firstly, getting screen capture instance by calling the [createScreenCaptureSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineScreenCapture/createScreenCaptureSource.html).Sencondly, setting the video soure are "screen" by calling [setVideoSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoSource.html) function.Now, you can call [startCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/startCapture.html) for the screen capture instance.
+
+
+2. Add login multi-room function of web platform;
+
+    Note: On the web platform, [setRoomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomMode.html) now allows users to log into multiple rooms if they want.
+
+
+3. Add basic beauty function of web platform;
+    
+    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
+
+
+### **Bug Fixes**
+
+1. Fixed the problem that the customized audio acquisition and audio acquisition source need to be reset to take effect after logging in to the room again in some scenarios.
+
+2. Fixed an exception caused by the [onRemoteSoundLevelUpdate](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRemoteSoundLevelUpdate.html) callback.
+
+3. Fixed an issue with setting SEIType for the [setSEIConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setSEIConfig.html) interface on iOS that did not work.
+
 ## 3.3.0-prerelease.1
 
 ### **New Features**
