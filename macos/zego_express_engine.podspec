@@ -22,7 +22,7 @@ ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZEGO Express 
   s.prepare_command = 'sh setup.sh'
   s.script_phases = [
     { :name => 'Precompile',
-      :script => '${PODS_TARGET_SRCROOT}/setup.sh',
+      :script => 'chmod +x ${PODS_TARGET_SRCROOT}/setup.sh && ${PODS_TARGET_SRCROOT}/setup.sh',
       :execution_position => :before_compile,
       :input_files => [ '${PODS_TARGET_SRCROOT}/../ios/Classes/internal/**/*' ],
       :output_files => [ '${PODS_TARGET_SRCROOT}/Classes/internal/**/*' ]
