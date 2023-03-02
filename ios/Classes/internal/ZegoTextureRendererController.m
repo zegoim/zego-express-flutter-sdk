@@ -273,7 +273,9 @@
             @"isMirror": @(flipMode == ZegoVideoFlipModeX ? 1 : 0),
             // TODO: Rotation & FlipModeY
         };
-        self.eventSink(map);
+        if (self && self.eventSink != nil) {
+            self.eventSink(map);
+        }
     }
     
     renderer.imageSize = param.size;
