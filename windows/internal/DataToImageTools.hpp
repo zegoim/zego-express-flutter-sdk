@@ -105,7 +105,7 @@ std::pair<long, BYTE *> makeBtimapByBGRABuffer(unsigned char *buffer, unsigned i
     BITMAPINFO bi;
     bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
     bi.bmiHeader.biWidth = width;
-    bi.bmiHeader.biHeight = height;
+    bi.bmiHeader.biHeight = -height;
     bi.bmiHeader.biPlanes = 1;
     bi.bmiHeader.biBitCount = 32;
     bi.bmiHeader.biCompression = BI_RGB;

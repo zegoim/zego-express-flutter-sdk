@@ -4543,7 +4543,7 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(
         delete[] thumbnailImageData.second;
         infoMap[FTValue("thumbnailImage")] = FTValue(thumbnailImage);
 
-        auto iconImageData = makeBtimapByBGRABuffer(info.iconImage.buffer,info.iconImage.length, std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
+        auto iconImageData = makeBtimapByBGRABuffer(info.iconImage.buffer,info.iconImage.length, std::pair(info.iconImage.width, info.iconImage.height));
         std::vector<uint8_t> iconImage(iconImageData.second, iconImageData.second + iconImageData.first);
         delete[] iconImageData.second;
         infoMap[FTValue("iconImage")] = FTValue(iconImage);
