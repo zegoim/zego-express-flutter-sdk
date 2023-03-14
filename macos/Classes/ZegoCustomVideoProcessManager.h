@@ -13,6 +13,8 @@
 #import <CoreMedia/CoreMedia.h>
 #import "ZegoCustomVideoDefine.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ZegoFlutterCustomVideoProcessHandler <NSObject>
 
 @optional
@@ -93,5 +95,7 @@
 - (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* ZegoCustomVideoProcessManager_h */

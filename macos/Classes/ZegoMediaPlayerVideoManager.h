@@ -13,6 +13,8 @@
 #import <CoreMedia/CoreMedia.h>
 #import "ZegoCustomVideoDefine.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ZegoFlutterMediaPlayerVideoHandler <NSObject>
 
 @optional
@@ -60,5 +62,7 @@
 -(id<ZegoFlutterMediaPlayerVideoHandler>_Nullable)getMediaPlayerVideoHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* ZegoMediaPlayerVideoManager_h */
