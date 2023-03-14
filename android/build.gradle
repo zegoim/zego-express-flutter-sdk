@@ -39,5 +39,5 @@ android {
 
 dependencies {
     // for other module visit
-    api 'im.zego:express-video:3.2.1'
+    api 'im.zego:express-private:3.2.1.27332'
 }
