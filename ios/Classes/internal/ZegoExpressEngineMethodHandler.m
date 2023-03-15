@@ -1075,7 +1075,7 @@
         NSDictionary *configMap = call.arguments[@"config"];
 
         NSArray<NSNumber *> *audioEffectPlayerIndexList = configMap[@"audioEffectPlayerIndexList"];
-        config.audioEffectPlayerCount = audioEffectPlayerIndexList.count;
+        config.audioEffectPlayerCount = (int)audioEffectPlayerIndexList.count;
         int *audioEffectPlayers = NULL;
         if (config.audioEffectPlayerCount > 0) {
             audioEffectPlayers = malloc(sizeof(int)*config.audioEffectPlayerCount);
@@ -1087,7 +1087,7 @@
         }
 
         NSArray<NSNumber *> *mediaPlayerIndexList = configMap[@"mediaPlayerIndexList"];
-        config.mediaPlayerCount = mediaPlayerIndexList.count;
+        config.mediaPlayerCount = (int)mediaPlayerIndexList.count;
         int *mediaPlayers = NULL;
         if (config.mediaPlayerCount > 0) {
             mediaPlayers  = malloc(sizeof(int)*config.mediaPlayerCount);
