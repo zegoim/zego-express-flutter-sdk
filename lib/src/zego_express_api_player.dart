@@ -186,7 +186,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Whether the pull stream can receive the specified video data.
   ///
   /// Available since: 1.1.0
-  /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed. When the developer does not receive the video data, the hardware and network overhead can be reduced.
   /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
   /// When to call: This function can be called after calling [createEngine].
   /// Caution: This function is valid only when the [muteAllPlayStreamVideo] function is set to `false`. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
@@ -215,7 +215,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Can the pull stream receive all video data.
   ///
   /// Available since: 2.4.0
-  /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
   /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
   /// When to call: This function can be called after calling [createEngine].
   /// Caution: When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
@@ -294,11 +294,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Available since: 3.0.0
   /// Description: Whether to enable video super resolution when playing stream, the resolution of the played video can be doubled at the stream playing end through video super resolution. For example, the original resolution is 640x360, and the super-resolution is 1280x720.
   /// Use cases: Live streaming scenario.
-  /// When to call: Video super resolution is only valid for playing stream video. Needs to be called after [createEngine].
+  /// When to call: Video super resolution is only valid for playing stream video. Needs to be called after [initVideoSuperResolution].
   /// Caution:
   ///  1. This function requires a special package, please contact ZEGO technical support;
-  ///  2. This function will consume extra system resources. In order to ensure user experience, ZEGO can only enable video super resolution for one stream, and the original video resolution is not recommended to exceed 640 × 360;
-  ///  3. This function has certain requirements on user equipment.
+  ///  2. This function will consume extra system resources. In order to ensure user experience, ZEGO can only enable video super resolution for one stream, and the original video resolution is not recommended to exceed 640 × 360.
   /// Related callbacks: Developer can use the [onPlayerVideoSuperResolutionUpdate] callback to monitor the video super resolution status change.
   ///
   /// - [streamID] The ID of the stream that currently needs to turn on or off overscore.

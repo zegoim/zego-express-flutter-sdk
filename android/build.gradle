@@ -1,5 +1,5 @@
 group 'im.zego.zego_express_engine'
-version '3.2.1'
+version '3.3.0'
 
 buildscript {
     repositories {
@@ -39,5 +39,5 @@ android {
 
 dependencies {
     // for other module visit
-    api 'im.zego:express-video:3.2.1'
+    api 'im.zego:express-video:3.3.0'
 }

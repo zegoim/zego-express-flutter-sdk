@@ -35,7 +35,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Mutes or unmutes the audio output speaker.
   ///
   /// Available since: 1.1.0
-  /// Description: After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc. But the SDK will still occupy the output device.
+  /// Description: After mute speaker, all the SDK sounds will not play, including playing stream, mediaplayer, etc.
   /// Default value: The default is `false`, which means no muting.
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.
@@ -150,7 +150,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
-  /// - [mute] Whether to mute the audio device; true means to mute the audio device; false means to unmute the audio device.
+  /// - [mute] Whether to mute the audio device; `true` means to mute the audio device; `false` means to unmute the audio device.
   Future<void> muteAudioDevice(
       ZegoAudioDeviceType deviceType, String deviceID, bool mute) async {
     return await ZegoExpressImpl.instance
@@ -176,7 +176,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
-  /// - Returns Whether the audio device is muted; true means the audio device is muted; false means the audio device is not muted.
+  /// - Returns Whether the audio device is muted; `true` means the audio device is muted; `false` means the audio device is not muted.
   Future<bool> isAudioDeviceMuted(
       ZegoAudioDeviceType deviceType, String deviceID) async {
     return await ZegoExpressImpl.instance
@@ -590,7 +590,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Related APIs: [stopAudioVADStableStateMonitor].
   ///
   /// - [type] audio VAD monitor type.
-  /// - [millisecond] monitoring period
+  /// - [millisecond] monitoring period default 3000. value of [200, 10000]
   Future<void> startAudioVADStableStateMonitor(
       ZegoAudioVADStableStateMonitorType type,
       {int? millisecond}) async {

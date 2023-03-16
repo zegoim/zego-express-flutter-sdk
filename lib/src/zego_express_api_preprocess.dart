@@ -191,7 +191,6 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Call this function to use preset voice changer effect.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
-  /// Restrictions: Voice changer effect is only effective for SDK captured sound.
   /// Related APIs:
   /// If you need advanced voice changer effect, please use [setVoiceChangerParam].
   /// The effect of using this function together with [setReverbPreset] may be different from what is expected. If you need to use it at the same time, it is recommended to enable the voice changer first, and then enable the reverb.
@@ -209,7 +208,6 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Call this function to set custom voice changer effect.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
-  /// Restrictions: Voice changer effect is only effective for SDK captured sound.
   /// Related APIs:
   /// [setVoiceChangerPreset] provide a set of preset voice changer effects.
   /// If you need advanced reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
@@ -225,7 +223,6 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Call this function to set preset reverb effect.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine]. Support call this function to change preset reverb effect during publishing stream.
-  /// Restrictions: Reverb effect is only effective for SDK captured sound.
   /// Related APIs:
   /// If you need advanced reverb effect, please use [setReverbAdvancedParam].
   /// The effect of using this function together with [setVoiceChangerPreset] may be different from what is expected. If you need to use it at the same time, it is recommended to enable the voice changer first, and then enable the reverb.
@@ -242,7 +239,6 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Call this function to set preset reverb effect.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
-  /// Restrictions: Reverb effect is only effective for SDK captured sound.
   /// Caution: Different values dynamically set during publishing stream will take effect. When all parameters are set to 0, the reverberation is turned off.
   /// Related APIs:
   /// [setReverbPreset] provide a set of preset reverb effects.
@@ -259,7 +255,6 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Call this function to set reverb echo effect. This function can be used with voice changer and reverb to achieve a variety of custom sound effects.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
-  /// Restrictions: Reverb echo effect is only effective for SDK captured sound.
   /// Related APIs: If you need advanced reverb/echo/voice changer effect, please use [setReverbAdvancedParam], [setReverbEchoParam], [setVoiceChangerParam] together.
   ///
   /// - [param] The reverberation echo parameter.
@@ -273,7 +268,6 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Call this function to enable / disable the virtual stereo effect when publishing stream.
   /// Use cases: Often used in live broadcasting, voice chatroom and KTV.
   /// When to call: It needs to be called after [createEngine].
-  /// Restrictions: Virtual stereo effect is only effective for SDK captured sound.
   /// Caution: You need to set up a dual channel with [setAudioConfig] for the virtual stereo to take effect.
   ///
   /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo.

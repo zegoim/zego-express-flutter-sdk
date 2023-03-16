@@ -75,6 +75,7 @@ import im.zego.zegoexpress.constants.ZegoANSMode;
 import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
 import im.zego.zegoexpress.constants.ZegoAudioChannel;
 import im.zego.zegoexpress.constants.ZegoAudioCodecID;
+import im.zego.zegoexpress.constants.ZegoAudioMixMode;
 import im.zego.zegoexpress.constants.ZegoAudioRoute;
 import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoAudioSourceType;
@@ -86,7 +87,6 @@ import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
-import im.zego.zegoexpress.constants.ZegoLanguage;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
@@ -94,7 +94,6 @@ import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
 import im.zego.zegoexpress.constants.ZegoOrientation;
-import im.zego.zegoexpress.constants.ZegoPlayerVideoLayer;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoRangeAudioMode;
 import im.zego.zegoexpress.constants.ZegoResourceType;
@@ -112,6 +111,7 @@ import im.zego.zegoexpress.constants.ZegoOrientationMode;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormat;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormatSeries;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
+import im.zego.zegoexpress.constants.ZegoVideoRateControlMode;
 import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.constants.ZegoVideoStreamType;
 import im.zego.zegoexpress.constants.ZegoVoiceChangerPreset;
@@ -123,8 +123,8 @@ import im.zego.zegoexpress.constants.ZegoEncodeProfile;
 import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
 import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
 import im.zego.zegoexpress.constants.ZegoVideoSourceType;
-import im.zego.zegoexpress.constants.ZegoAudioSourceType;
 import im.zego.zegoexpress.constants.ZegoAudioDeviceMode;
+import im.zego.zegoexpress.constants.ZegoCopyrightedMusicVendorID;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -172,6 +172,7 @@ import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
+import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
@@ -1722,11 +1723,12 @@ public class ZegoExpressEngineMethodHandler {
             int bitrate = ZegoUtils.intValue((Number) audioConfigMap.get("bitrate"));
             int channel = ZegoUtils.intValue((Number) audioConfigMap.get("channel"));
             int codecID = ZegoUtils.intValue((Number) audioConfigMap.get("codecID"));
+            int mixMode = ZegoUtils.intValue((Number) audioConfigMap.get("mixMode"));
             ZegoMixerAudioConfig audioConfigObject = new ZegoMixerAudioConfig();
             audioConfigObject.bitrate = bitrate;
             audioConfigObject.channel = ZegoAudioChannel.getZegoAudioChannel(channel);
             audioConfigObject.codecID = ZegoAudioCodecID.getZegoAudioCodecID(codecID);
-
+            audioConfigObject.mixMode = ZegoAudioMixMode.getZegoAudioMixMode(mixMode);
             taskObject.setAudioConfig(audioConfigObject);
         }
 
@@ -1738,6 +1740,8 @@ public class ZegoExpressEngineMethodHandler {
             int fps = ZegoUtils.intValue((Number) videoConfigMap.get("fps"));
             int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
             ZegoMixerVideoConfig videoConfigObject = new ZegoMixerVideoConfig(width, height, fps, bitrate);
+            videoConfigObject.quality = ZegoUtils.intValue((Number) videoConfigMap.get("quality"));
+            videoConfigObject.rateControlMode = ZegoVideoRateControlMode.getZegoVideoRateControlMode(ZegoUtils.intValue((Number) videoConfigMap.get("rateControlMode")));
 
             taskObject.setVideoConfig(videoConfigObject);
         }
@@ -1758,6 +1762,31 @@ public class ZegoExpressEngineMethodHandler {
             }
         }
 
+        // whiteboard
+        HashMap<String, Object> whiteboardMap = call.argument("whiteboard");
+        if (whiteboardMap != null && !whiteboardMap.isEmpty()) {
+            int whiteboardID = ZegoUtils.intValue((Number) whiteboardMap.get("whiteboardID"));
+            if (whiteboardID != 0) {
+                ZegoMixerWhiteboard whiteboard = new ZegoMixerWhiteboard();
+                whiteboard.whiteboardID = whiteboardID;
+                whiteboard.horizontalRatio = ZegoUtils.intValue((Number) whiteboardMap.get("horizontalRatio"));
+                whiteboard.verticalRatio = ZegoUtils.intValue((Number) whiteboardMap.get("verticalRatio"));
+                whiteboard.isPPTAnimation = ZegoUtils.boolValue((Boolean) whiteboardMap.get("isPPTAnimation"));
+                whiteboard.zOrder = ZegoUtils.intValue((Number) whiteboardMap.get("zOrder"));
+                HashMap<String, Object> layoutMap = (HashMap<String, Object>)whiteboardMap.get("layout");
+                if (layoutMap != null && !layoutMap.isEmpty()) {
+                    whiteboard.layout = new Rect();
+                    whiteboard.layout.top = ZegoUtils.intValue((Number) layoutMap.get("top"));
+                    whiteboard.layout.left = ZegoUtils.intValue((Number) layoutMap.get("left"));
+                    whiteboard.layout.right = ZegoUtils.intValue((Number) layoutMap.get("right"));
+                    whiteboard.layout.bottom = ZegoUtils.intValue((Number) layoutMap.get("bottom"));
+                }
+                taskObject.setWhiteboard(whiteboard);
+            }
+        }
+
+        taskObject.backgroundColor = ZegoUtils.intValue((Number) call.argument("backgroundColor"));
+
         // Background Image
         String backgroundImageURL = call.argument("backgroundImageURL");
         if (backgroundImageURL != null && backgroundImageURL.length() > 0) {
@@ -1767,6 +1796,12 @@ public class ZegoExpressEngineMethodHandler {
         // Enable SoundLevel
         boolean enableSoundLevel = ZegoUtils.boolValue((Boolean) call.argument("enableSoundLevel"));
         taskObject.enableSoundLevel(enableSoundLevel);
+
+        ZegoStreamAlignmentMode streamAlignmentMode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("streamAlignmentMode")));
+        taskObject.setStreamAlignmentMode(streamAlignmentMode);
+
+        byte[] userData = call.argument("userData");
+        taskObject.setUserData(ByteBuffer.wrap(userData), userData.length);
 
         // minPlayStreamBufferLength
         int minPlayStreamBufferLength = ZegoUtils.intValue((Number) call.argument("minPlayStreamBufferLength"));
@@ -4541,16 +4576,31 @@ public class ZegoExpressEngineMethodHandler {
 
         if (copyrightedMusicInstance != null) {
             String songID = call.argument("songID");
-            copyrightedMusicInstance.getLrcLyric(songID, new IZegoCopyrightedMusicGetLrcLyricCallback() {
 
-                @Override
-                public void onGetLrcLyricCallback(int errorCode, String lyrics) {
-                    HashMap<String, Object> resultMap = new HashMap<>();
-                    resultMap.put("errorCode", errorCode);
-                    resultMap.put("lyrics", lyrics);
-                    result.success(resultMap);
-                }
-            });
+            if (call.argument("vendorID") == null) {
+                copyrightedMusicInstance.getLrcLyric(songID, new IZegoCopyrightedMusicGetLrcLyricCallback() {
+
+                    @Override
+                    public void onGetLrcLyricCallback(int errorCode, String lyrics) {
+                        HashMap<String, Object> resultMap = new HashMap<>();
+                        resultMap.put("errorCode", errorCode);
+                        resultMap.put("lyrics", lyrics);
+                        result.success(resultMap);
+                    }
+                });
+            } else {
+                int vendorID = ZegoUtils.intValue((Number) call.argument("vendorID"));
+                copyrightedMusicInstance.getLrcLyric(songID, ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(vendorID),  new IZegoCopyrightedMusicGetLrcLyricCallback() {
+
+                    @Override
+                    public void onGetLrcLyricCallback(int errorCode, String lyrics) {
+                        HashMap<String, Object> resultMap = new HashMap<>();
+                        resultMap.put("errorCode", errorCode);
+                        resultMap.put("lyrics", lyrics);
+                        result.success(resultMap);
+                    }
+                });
+            }
         } else {
             result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetLrcLyric` but can't find specific instance", null);
         }
@@ -4664,7 +4714,15 @@ public class ZegoExpressEngineMethodHandler {
         if (copyrightedMusicInstance != null) {
             String songID = call.argument("songID");
             ZegoCopyrightedMusicType type = ZegoCopyrightedMusicType.getZegoCopyrightedMusicType(ZegoUtils.intValue((Number) call.argument("type")));
-            boolean isCache = copyrightedMusicInstance.queryCache(songID, type);
+
+            boolean isCache = false;
+            if (call.argument("vendorID") == null) {
+                isCache = copyrightedMusicInstance.queryCache(songID, type);
+            } else {
+                int vendorID = ZegoUtils.intValue((Number) call.argument("vendorID"));
+                isCache = copyrightedMusicInstance.queryCache(songID, type, ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(vendorID));
+            }
+
             result.success(isCache);
         } else {
             result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicQueryCache` but can't find specific instance", null);
@@ -4679,6 +4737,7 @@ public class ZegoExpressEngineMethodHandler {
             ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+            config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
             copyrightedMusicInstance.requestAccompaniment(config, new IZegoCopyrightedMusicRequestAccompanimentCallback() {
 
                 @Override
@@ -4702,6 +4761,7 @@ public class ZegoExpressEngineMethodHandler {
             ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+            config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
             copyrightedMusicInstance.requestAccompanimentClip(config, new IZegoCopyrightedMusicRequestAccompanimentClipCallback() {
 
                 @Override
@@ -4725,6 +4785,7 @@ public class ZegoExpressEngineMethodHandler {
             ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+            config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
             copyrightedMusicInstance.requestSong(config, new IZegoCopyrightedMusicRequestSongCallback() {
 
                 @Override
@@ -4830,6 +4891,7 @@ public class ZegoExpressEngineMethodHandler {
             HashMap<String, Object> configMap = call.argument("config");
             ZegoCopyrightedMusicGetSharedConfig config = new ZegoCopyrightedMusicGetSharedConfig();
             config.songID = configMap.get("songID").toString();
+            config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
             ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
             copyrightedMusicInstance.getSharedResource(config, type, new IZegoCopyrightedMusicGetSharedResourceCallback() {
 
@@ -4854,6 +4916,7 @@ public class ZegoExpressEngineMethodHandler {
             ZegoCopyrightedMusicRequestConfig config = new ZegoCopyrightedMusicRequestConfig();
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+            config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
             ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
             copyrightedMusicInstance.requestResource(config, type, new IZegoCopyrightedMusicRequestResourceCallback() {
 

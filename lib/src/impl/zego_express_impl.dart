@@ -14,7 +14,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.2.1";
+  static String pluginVersion = "3.3.0";
 }
 
 class ZegoExpressImpl {
@@ -3442,10 +3442,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
-  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(
-      String songID) async {
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID,
+      {ZegoCopyrightedMusicVendorID? vendorID}) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetLrcLyric', {'songID': songID});
+        .invokeMethod('copyrightedMusicGetLrcLyric',
+            {'songID': songID, 'vendorID': vendorID?.index});
     return ZegoCopyrightedMusicGetLrcLyricResult(
         map['errorCode'], map['lyrics']);
   }
@@ -3501,9 +3502,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
-  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type) async {
+  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type,
+      {ZegoCopyrightedMusicVendorID? vendorID}) async {
     return await ZegoExpressImpl._channel.invokeMethod(
-        'copyrightedMusicQueryCache', {'songID': songID, 'type': type.index});
+        'copyrightedMusicQueryCache',
+        {'songID': songID, 'type': type.index, 'vendorID': vendorID?.index});
   }
 
   @override
@@ -3511,7 +3514,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       ZegoCopyrightedMusicRequestConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicRequestAccompaniment', {
-      'config': {'songID': config.songID, 'mode': config.mode.index}
+      'config': {
+        'songID': config.songID,
+        'mode': config.mode.index,
+        'vendorID': config.vendorID?.index ??
+            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+      }
     });
     return ZegoCopyrightedMusicRequestAccompanimentResult(
         map['errorCode'], map['resource']);
@@ -3522,7 +3530,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       requestAccompanimentClip(ZegoCopyrightedMusicRequestConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicRequestAccompanimentClip', {
-      'config': {'songID': config.songID, 'mode': config.mode.index}
+      'config': {
+        'songID': config.songID,
+        'mode': config.mode.index,
+        'vendorID': config.vendorID?.index ??
+            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+      }
     });
     return ZegoCopyrightedMusicRequestAccompanimentClipResult(
         map['errorCode'], map['resource']);
@@ -3533,7 +3546,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       ZegoCopyrightedMusicRequestConfig config) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicRequestSong', {
-      'config': {'songID': config.songID, 'mode': config.mode.index}
+      'config': {
+        'songID': config.songID,
+        'mode': config.mode.index,
+        'vendorID': config.vendorID?.index ??
+            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+      }
     });
     return ZegoCopyrightedMusicRequestSongResult(
         map['errorCode'], map['resource']);
@@ -3586,7 +3604,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       ZegoCopyrightedMusicResourceType type) async {
     var resultMap = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicGetSharedResource', {
-      'config': {'songID': config.songID},
+      'config': {
+        'songID': config.songID,
+        'vendorID': config.vendorID?.index ??
+            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+      },
       'type': type.index
     });
     return ZegoCopyrightedMusicGetSharedResourceResult(
@@ -3599,7 +3621,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       ZegoCopyrightedMusicResourceType type) async {
     var resultMap = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicRequestResource', {
-      'config': {'songID': config.songID, 'mode': config.mode.index},
+      'config': {
+        'songID': config.songID,
+        'mode': config.mode.index,
+        'vendorID': config.vendorID?.index ??
+            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+      },
       'type': type.index
     });
     return ZegoCopyrightedMusicRequestResourceResult(

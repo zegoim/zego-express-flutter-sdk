@@ -354,8 +354,8 @@ class ZegoErrorCode {
   /// Description: The performance of super resolution device is not enough.<br>Caution: The performance of device is not enough.<br>Solutions: Please replace the device.
   static const int PlayerSuperResolutionDevicePerformanceError = 1004007;
 
-  /// Description: Super resolution is initializing, please try again later.<br>Caution: Super resolution is initializing, please try again later.<br>Solutions: Please try again later.
-  static const int PlayerSuperResolutionInitingBusyError = 1004008;
+  /// Description: Super resolution uninitialized.<br>Caution: Super resolution uninitialized.<br>Solutions: Please initialize super resolution.
+  static const int PlayerSuperResolutionNotInitError = 1004008;
 
   /// Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
   static const int PlayerCountExceed = 1004010;
@@ -594,6 +594,9 @@ class ZegoErrorCode {
 
   /// Description: Effects Beauty does not support the currently set video data type. <br>Cause: [enableCustomVideoProcessing] interface, Windows platform only supports raw_data, Apple device only supports cv_pixel_buffer, Android platform supports gl_texture_2d. <br>Solutions: select the correct video data type.
   static const int PreprocessNotSupportEffectsBufferType = 1007023;
+
+  /// Description: Failed to enable speech enhancement. <br>Cause: speech enhancement level parameter is invalid. <br>Solutions: speech enhancement level ranges from 0 to 10. Use the correct parameter value.
+  static const int PreprocessEnableSpeechEnhanceParamInvalid = 1007024;
 
   /// Description: The MediaPlayer failed to play the media. <br>Cause: The resource file is not loaded. <br> Solutions: Create a media player instance before using media players [createMediaPlayer].
   static const int MediaPlayerNoInstance = 1008001;
@@ -934,8 +937,14 @@ class ZegoErrorCode {
   /// Description: This resource is not shared in the room. <br>Cause: No users in the room share this resource. <br>Solutions: Please any one user in the room to call the [requestresource] function to request resources and share them.
   static const int CopyrightedMusicNotSharedResource = 1017050;
 
-  /// Description: The number of times the resource is free in the room is exhausted. <br>Cause: 1. The shared resources cannot be obtained again; 2. Shared resources have been obtained. <br>Solutions: Please use the acquired resources, or use [requestResource] to share resources again
+  /// Description: The number of times the resource is free in the room is exhausted. <br>Cause: 1. The shared resources cannot be obtained again; 2. Shared resources have been obtained. <br>Solutions: Please use the acquired resources, or use [requestResource] to share resources again.
   static const int CopyrightedMusicGetSharedResourceTimesOver = 1017051;
+
+  /// Description: The vendor is unavailable. <br>Cause: The vendor ID is passed in incorrectly or the corresponding copyright vendor is not activated. <br>Solutions: Please pass in the correct vendor ID.
+  static const int CopyrightedMusicVendorIdNotAvaliable = 1017052;
+
+  /// Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
+  static const int CopyrightedMusicVendorNotSupportFunction = 1017053;
 
   /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicNotSupportMethod = 1017095;

@@ -1541,10 +1541,12 @@
         int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
         int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
         int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
+        int mixMode = [ZegoUtils intValue:audioConfigMap[@"mixMode"]];
         ZegoMixerAudioConfig *audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
         audioConfigObject.bitrate = bitrate;
         audioConfigObject.channel = (ZegoAudioChannel)channel;
         audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
+        audioConfigObject.mixMode  = (ZegoAudioMixMode)mixMode;
 
         [taskObject setAudioConfig:audioConfigObject];
     }
@@ -1560,6 +1562,8 @@
         videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
         videoConfigObject.bitrate = bitrate;
         videoConfigObject.fps = fps;
+        videoConfigObject.quality = [ZegoUtils intValue:videoConfigMap[@"quality"]];
+        videoConfigObject.rateControlMode = (ZegoVideoRateControlMode)[ZegoUtils intValue:videoConfigMap[@"rateControlMode"]];
 
         [taskObject setVideoConfig:videoConfigObject];
     }
@@ -1579,6 +1583,35 @@
             [taskObject setWatermark:watermarkObject];
         }
     }
+    
+    // whiteboard
+    NSDictionary *whiteboardMap = call.arguments[@"whiteboard"];
+    if (whiteboardMap && whiteboardMap.count > 0) {
+        int whiteboardID = [ZegoUtils intValue:whiteboardMap[@"whiteboardID"]];
+        if (whiteboardID != 0) {
+            ZegoMixerWhiteboard *whiteboard = [[ZegoMixerWhiteboard alloc] init];
+            whiteboard.whiteboardID = whiteboardID;
+            whiteboard.horizontalRatio = [ZegoUtils intValue:whiteboardMap[@"horizontalRatio"]];
+            whiteboard.verticalRatio = [ZegoUtils intValue:whiteboardMap[@"verticalRatio"]];
+            whiteboard.isPPTAnimation = [ZegoUtils boolValue:whiteboardMap[@"isPPTAnimation"]];
+            whiteboard.zOrder = [ZegoUtils intValue:whiteboardMap[@"zOrder"]];
+            
+            NSDictionary *layoutMap = whiteboardMap[@"layout"];
+            if (layoutMap && layoutMap.count > 0) {
+                int top = [ZegoUtils intValue:layoutMap[@"top"]];
+                int left = [ZegoUtils intValue:layoutMap[@"left"]];
+                int right = [ZegoUtils intValue:layoutMap[@"right"]];
+                int bottom = [ZegoUtils intValue:layoutMap[@"bottom"]];
+                whiteboard.layout = CGRectMake(left, top, right - left, bottom - top);
+            }
+            
+            [taskObject setWhiteboard:whiteboard];
+        }
+    }
+    
+    // Background Color
+    int backgroundColor = [ZegoUtils intValue:call.arguments[@"backgroundColor"]];
+    [taskObject setBackgroundColor: backgroundColor];
 
     // Background Image
     NSString *backgroundImageURL = call.arguments[@"backgroundImageURL"];
@@ -1589,6 +1622,14 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     [taskObject enableSoundLevel:enableSoundLevel];
+    
+    // Stream AlignmentMode
+    int streamAlignmentMode = [ZegoUtils intValue:call.arguments[@"streamAlignmentMode"]];
+    [taskObject setStreamAlignmentMode:(ZegoStreamAlignmentMode)streamAlignmentMode];
+    
+    // User Data
+    FlutterStandardTypedData *userData = call.arguments[@"userData"];
+    [taskObject setUserData:userData.data length:(int)userData.data.length];
 
     // minPlayStreamBufferLength
     int minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
@@ -4259,12 +4300,22 @@
 
     if (self.copyrightedMusicInstance) {
         NSString *songID = call.arguments[@"songID"];
-        [self.copyrightedMusicInstance getLrcLyric:songID callback:^(int errorCode, NSString *_Nonnull lyrics) {
-            NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
-            resultMap[@"errorCode"] = @(errorCode);
-            resultMap[@"lyrics"] = lyrics;
-            result(resultMap);
-        }];
+        if ([ZegoUtils isNullObject:call.arguments[@"vendorID"]]) {
+            [self.copyrightedMusicInstance getLrcLyric:songID callback:^(int errorCode, NSString *_Nonnull lyrics) {
+                NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+                resultMap[@"errorCode"] = @(errorCode);
+                resultMap[@"lyrics"] = lyrics;
+                result(resultMap);
+            }];
+        } else {
+            int vendorID = [ZegoUtils intValue:call.arguments[@"vendorID"]];
+            [self.copyrightedMusicInstance getLrcLyric:songID vendorID:(ZegoCopyrightedMusicVendorID)vendorID callback:^(int errorCode, NSString *_Nonnull lyrics) {
+                NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+                resultMap[@"errorCode"] = @(errorCode);
+                resultMap[@"lyrics"] = lyrics;
+                result(resultMap);
+            }];
+        }
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetLrcLyric` but can't find specific instance" details:nil]);
     }
@@ -4365,7 +4416,13 @@
     if (self.copyrightedMusicInstance) {
         NSString *songID = call.arguments[@"songID"];
         int type = [ZegoUtils intValue:call.arguments[@"type"]];
-        BOOL isQueryCache = [self.copyrightedMusicInstance queryCache: songID type:(ZegoCopyrightedMusicType)type];
+        BOOL isQueryCache = false;
+        if ([ZegoUtils isNullObject:call.arguments[@"vendorID"]]) {
+            isQueryCache = [self.copyrightedMusicInstance queryCache: songID type:(ZegoCopyrightedMusicType)type];
+        } else {
+            int vendorID = [ZegoUtils intValue:call.arguments[@"vendorID"]];
+            isQueryCache = [self.copyrightedMusicInstance queryCache:songID type:(ZegoCopyrightedMusicType)type vendorID:(ZegoCopyrightedMusicVendorID)vendorID];
+        }
         result(@(isQueryCache));
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicQueryCache` but can't find specific instance" details:nil]);
@@ -4380,6 +4437,7 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4403,7 +4461,7 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
-        
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
         
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4427,6 +4485,7 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4523,6 +4582,8 @@
         
         ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
         config.songID = configMap[@"songID"];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance getSharedResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
@@ -4543,6 +4604,8 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance requestResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];

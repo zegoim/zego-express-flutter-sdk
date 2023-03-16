@@ -20,10 +20,10 @@ enum ZegoScenario {
   /// Available since: 3.0.0. Description: The default (generic) scenario. If none of the following scenarios conform to your actual application scenario, this default scenario can be used.
   Default,
 
-  /// Available since: 3.0.0. Description: Standard video call (or voice call) scenario, it is suitable for one-to-one video or voice call scenarios.
+  /// Available since: 3.0.0. Description: Standard video call scenario, it is suitable for one-to-one video call scenarios.
   StandardVideoCall,
 
-  /// Available since: 3.0.0. Description: High quality video call (or voice call) scenario, it is similar to the standard video call scenario, but this scenario uses a higher video frame rate, bit rate, and resolution (540p) by default, which is suitable for video call scenario with high image quality requirements.
+  /// Available since: 3.0.0. Description: High quality video call scenario, it is similar to the standard video call scenario, but this scenario uses a higher video frame rate, bit rate, and resolution (540p) by default, which is suitable for video call scenario with high image quality requirements.
   HighQualityVideoCall,
 
   /// Available since: 3.0.0. Description: Standard chatroom scenario, suitable for multi-person pure voice calls (low data usage). Note: On the ExpressVideo SDK, the camera is not enabled by default in this scenario.
@@ -36,7 +36,10 @@ enum ZegoScenario {
   Broadcast,
 
   /// Available since: 3.0.0. Description: Karaoke (KTV) scenario, it is suitable for real-time chorus and online karaoke scenarios, and has optimized delay, sound quality, ear return, echo cancellation, etc., and also ensures accurate alignment and ultra-low delay when multiple people chorus. The web platform does not currently support this scenario.
-  Karaoke
+  Karaoke,
+
+  /// Available since: 3.3.0. Description: Standard voice call scenario, it is suitable for one-to-one video or voice call scenarios. Note: On the ExpressVideo SDK, the camera is not enabled by default in this scenario. The web platform does not currently support this scenario.
+  StandardVoiceCall
 }
 
 /// SDK feature type.
@@ -454,6 +457,15 @@ enum ZegoAudioCaptureStereoMode {
   Adaptive
 }
 
+/// Audio mix mode.
+enum ZegoAudioMixMode {
+  /// Default mode, no special behavior
+  Raw,
+
+  /// Audio focus mode, which can highlight the sound of a certain stream in multiple audio streams
+  Focused
+}
+
 /// Audio codec ID.
 enum ZegoAudioCodecID {
   /// Default, determined by the [scenario] when calling [createEngine].
@@ -511,18 +523,6 @@ enum ZegoVideoCodecBackend {
   Hardware
 }
 
-/// Player video layer.
-enum ZegoPlayerVideoLayer {
-  /// The layer to be played depends on the network status
-  Auto,
-
-  /// Play the base layer (small resolution)
-  Base,
-
-  /// Play the extend layer (big resolution)
-  BaseExtend
-}
-
 /// Video stream type
 enum ZegoVideoStreamType {
   /// The type to be played depends on the network status
@@ -575,6 +575,15 @@ enum ZegoEncodeProfile {
 
   /// High-level video encode specifications, decoding consumption is higher than Main, the picture effect is better, generally used for broadcasting and video disc storage, high-definition TV.
   High
+}
+
+/// Video rate control mode, the default mode is constant video rate.
+enum ZegoVideoRateControlMode {
+  /// Constant rate.
+  ConstantRate,
+
+  /// Constant quality, if this mode is used, the video rate fluctuates according to the network speed. For example, in the live broadcast of games, the constant quality mode will be used to improve the video quality in order to let the audience see smooth operation pictures.
+  ConstantQuality
 }
 
 /// Stream alignment mode.
@@ -1155,7 +1164,7 @@ enum ZegoAudioSampleRate {
 
 /// Audio capture source type.
 enum ZegoAudioSourceType {
-  /// Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default)
+  /// Default audio capture source (the main channel uses custom audio capture by default; the aux channel uses the same sound as main channel by default).
   Default,
 
   /// Use custom audio capture, refer to [enableCustomAudioIO] or [setAudioSource]. The web platform does not currently support.
@@ -1164,10 +1173,10 @@ enum ZegoAudioSourceType {
   /// Use media player as audio source, only support aux channel. The web platform does not currently support.
   MediaPlayer,
 
-  /// No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  /// No audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface.
   None,
 
-  /// Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  /// Using microphone as audio source. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface.
   Microphone,
 
   /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. The web platform does not currently support.
@@ -1295,6 +1304,18 @@ enum ZegoCopyrightedMusicResourceType {
 
   /// Song accompaniment clip.
   ZegoCopyrightedMusicResourceAccompanimentClip
+}
+
+/// Copyright music resource song copyright provider. For more information about the copyright owner, please contact ZEGO business personnel.
+enum ZegoCopyrightedMusicVendorID {
+  /// Default copyright provider.
+  ZegoCopyrightedMusicVendorDefault,
+
+  /// First copyright provider.
+  ZegoCopyrightedMusicVendor1,
+
+  /// Second copyright provider.
+  ZegoCopyrightedMusicVendor2
 }
 
 /// Font type.
@@ -2323,19 +2344,24 @@ class ZegoMixerAudioConfig {
   /// codec ID, default is ZegoAudioCodecIDDefault
   ZegoAudioCodecID codecID;
 
-  ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID);
+  /// Multi-channel audio stream mixing mode. If [ZegoAudioMixMode] is selected as [Focused], the SDK will select 4 input streams with [isAudioFocus] set as the focus voice highlight. If it is not selected or less than 4 channels are selected, it will automatically fill in 4 channels
+  ZegoAudioMixMode mixMode;
+
+  ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID, this.mixMode);
 
   /// Create a default mix stream audio configuration
   ZegoMixerAudioConfig.defaultConfig()
       : bitrate = 48,
         channel = ZegoAudioChannel.Mono,
-        codecID = ZegoAudioCodecID.Normal;
+        codecID = ZegoAudioCodecID.Normal,
+        mixMode = ZegoAudioMixMode.Raw;
 
   Map<String, dynamic> toMap() {
     return {
       'bitrate': this.bitrate,
       'channel': this.channel.index,
-      'codecID': this.codecID.index
+      'codecID': this.codecID.index,
+      'mixMode': this.mixMode.index
     };
   }
 }
@@ -2356,21 +2382,32 @@ class ZegoMixerVideoConfig {
   /// Video bitrate in kbps
   int bitrate;
 
-  ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate);
+  /// Video quality, this value is valid when the video rate control mode parameter is set to constant quality. The valid value ranges from 0 to 51. The default value is 23. If you want better video quality, lower the quality value based on 23 to test the adjustment. If you want a smaller file size, test the adjustment by increasing the high quality value at the base of 23. Take the file size under the value x as an example. The file size under the value x + 6 is half the size of the file size under the value x, and the file size under the value x-6 is twice the size of the file size under the value x.
+  int quality;
+
+  /// Video bitrate control mode
+  ZegoVideoRateControlMode rateControlMode;
+
+  ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate,
+      this.quality, this.rateControlMode);
 
   /// Create a default mixer video configuration
   ZegoMixerVideoConfig.defaultConfig()
       : width = 360,
         height = 640,
         fps = 15,
-        bitrate = 600;
+        bitrate = 600,
+        quality = 32,
+        rateControlMode = ZegoVideoRateControlMode.ConstantRate;
 
   Map<String, dynamic> toMap() {
     return {
       'width': this.width,
       'height': this.height,
       'fps': this.fps,
-      'bitrate': this.bitrate
+      'bitrate': this.bitrate,
+      'quality': this.quality,
+      'rateControlMode': this.rateControlMode.index
     };
   }
 }
@@ -2605,6 +2642,57 @@ class ZegoWatermark {
   }
 }
 
+/// Mixer whiteboard object.
+///
+/// Configure the mix whiteboard ID, aspect ratio and the layout.
+class ZegoMixerWhiteboard {
+  /// Whiteboard ID.
+  int whiteboardID;
+
+  /// Whiteboard aspect ratio(width), the default aspect ratio is 16:9.
+  int horizontalRatio;
+
+  /// Whiteboard aspect ratio(height), the default aspect ratio is 16:9.
+  int verticalRatio;
+
+  /// Whether the whiteboard will load dynamic PPT files or not, default value is false.
+  bool isPPTAnimation;
+
+  /// Whiteboard layout.
+  Rect layout;
+
+  /// Whiteboard z-order.
+  int zOrder;
+
+  ZegoMixerWhiteboard(this.whiteboardID, this.horizontalRatio,
+      this.verticalRatio, this.isPPTAnimation, this.layout, this.zOrder);
+
+  /// Create a mixer whiteboard object
+  ZegoMixerWhiteboard.defaultConfig()
+      : whiteboardID = 0,
+        horizontalRatio = 16,
+        verticalRatio = 9,
+        isPPTAnimation = false,
+        layout = Rect.zero,
+        zOrder = 0;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'whiteboardID': this.whiteboardID,
+      'horizontalRatio': this.horizontalRatio,
+      'verticalRatio': this.verticalRatio,
+      'isPPTAnimation': this.isPPTAnimation,
+      'layout': {
+        'top': this.layout.top.toInt(),
+        'left': this.layout.left.toInt(),
+        'right': this.layout.right.toInt(),
+        'bottom': this.layout.bottom.toInt()
+      },
+      'zOrder': this.zOrder
+    };
+  }
+}
+
 /// Mix stream task object.
 ///
 /// This class is the configuration class of the stream mixing task. When a stream mixing task is requested to the ZEGO RTC server, the configuration of the stream mixing task is required.
@@ -2628,11 +2716,23 @@ class ZegoMixerTask {
   /// The watermark of the task
   ZegoWatermark watermark;
 
+  /// Mix stream whiteboard
+  ZegoMixerWhiteboard whiteboard;
+
+  /// Mix stream background color, The color value corresponding to RGBA is 0xRRGGBBAA, and setting the transparency of the background color is currently not supported. The AA in 0xRRGGBBAA is 00. For example, select RGB as \#87CEFA as the background color, this parameter passes 0x87CEFA00.
+  int backgroundColor;
+
   /// The background image URL of the task
   String backgroundImageURL;
 
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback.
   bool enableSoundLevel;
+
+  /// The stream mixing alignment mode
+  ZegoStreamAlignmentMode streamAlignmentMode;
+
+  /// User data, the length of user data should not be more than 1000 bytes,After setting, the streaming party can obtain the SEI content by listening to the callback of [onPlayerRecvSEI].
+  Uint8List userData;
 
   /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.
   Map<String, String> advancedConfig;
@@ -2647,8 +2747,12 @@ class ZegoMixerTask {
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
         videoConfig = ZegoMixerVideoConfig.defaultConfig(),
         watermark = ZegoWatermark('', const Rect.fromLTRB(0, 0, 0, 0)),
+        whiteboard = ZegoMixerWhiteboard.defaultConfig(),
+        backgroundColor = 0,
         backgroundImageURL = "",
         enableSoundLevel = false,
+        streamAlignmentMode = ZegoStreamAlignmentMode.None,
+        userData = Uint8List.fromList([]),
         advancedConfig = {},
         minPlayStreamBufferLength = -1;
 
@@ -2660,8 +2764,12 @@ class ZegoMixerTask {
       'inputList': this.inputList,
       'outputList': this.outputList,
       'watermark': this.watermark.toMap(),
+      'whiteboard': this.whiteboard.toMap(),
+      'backgroundColor': this.backgroundColor,
       'backgroundImageURL': this.backgroundImageURL,
       'enableSoundLevel': this.enableSoundLevel,
+      'streamAlignmentMode': this.streamAlignmentMode.index,
+      'userData': this.userData,
       'advancedConfig': this.advancedConfig,
       'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
@@ -3072,7 +3180,10 @@ class ZegoCopyrightedMusicRequestConfig {
   /// VOD billing mode.
   ZegoCopyrightedMusicBillingMode mode;
 
-  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode);
+  /// Copyright music resource song copyright provider.
+  ZegoCopyrightedMusicVendorID? vendorID;
+
+  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode, {this.vendorID});
 }
 
 /// The configuration of getting shared resource.
@@ -3080,7 +3191,10 @@ class ZegoCopyrightedMusicGetSharedConfig {
   /// the ID of the song.
   String songID;
 
-  ZegoCopyrightedMusicGetSharedConfig(this.songID);
+  /// Copyright music resource song copyright provider.
+  ZegoCopyrightedMusicVendorID? vendorID;
+
+  ZegoCopyrightedMusicGetSharedConfig(this.songID, {this.vendorID});
 }
 
 /// Screen capture configuration parameters.
@@ -3847,7 +3961,6 @@ abstract class ZegoRangeAudio {
   /// Default value: When this function is not called, no team will be added by default.
   /// When to call: After initializing the range audio [createRangeAudio].
   /// Caution: There will be no distance limit for the sounds in the team, and there will be no 3D sound effects.
-  /// Restrictions: The team ID will only take effect when [setRangeAudioMode] is called and set to `Team` mode.
   ///
   /// - [teamID] Team ID, empty to exit the team, a string of up to 64 bytes in length. Support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   Future<void> setTeamID(String teamID);
@@ -3911,13 +4024,15 @@ abstract class ZegoCopyrightedMusic {
 
   /// Get lyrics in lrc format.
   ///
-  /// Available since: 2.13.0
+  /// Available since: 3.2.1
   /// Description: Get lyrics in lrc format, support parsing lyrics line by line.
   /// Use case: Used to display lyrics line by line.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
-  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID);
+  /// - [vendorID] Copyright music resource song copyright provider.
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID,
+      {ZegoCopyrightedMusicVendorID? vendorID});
 
   /// Get lyrics in krc format.
   ///
@@ -3975,14 +4090,16 @@ abstract class ZegoCopyrightedMusic {
 
   /// Query the resource's cache is existed or not.
   ///
-  /// Available since: 2.13.0
-  /// Description: Query the resource is existed or not.
+  /// Available since: 3.2.1
+  /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
   /// Use case: Can be used to check the resource's cache is existed or not
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
   /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
   /// - [type] the song resource type.
-  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type);
+  /// - [vendorID] Copyright music resource song copyright provider.
+  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type,
+      {ZegoCopyrightedMusicVendorID? vendorID});
 
   /// Get the playing time of a song or accompaniment file.
   ///
@@ -4244,7 +4361,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Update screen capture parameter configuration.
   /// When to call: After calling [startScreenCapture] to start capturing.
-  /// Restrictions: Only support in iOS. Only available on iOS 12.0 or newer
+  /// Restrictions: Only valid for iOS system. Only available on iOS 12.0 or newer
   ///
   /// - [config] Screen capture parameter configuration.
   Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config);
