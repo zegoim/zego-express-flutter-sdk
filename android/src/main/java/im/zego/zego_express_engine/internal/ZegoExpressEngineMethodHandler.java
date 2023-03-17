@@ -125,6 +125,10 @@ import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
 import im.zego.zegoexpress.constants.ZegoVideoSourceType;
 import im.zego.zegoexpress.constants.ZegoAudioDeviceMode;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicVendorID;
+import im.zego.zegoexpress.constants.ZegoMultimediaLoadType;
+import im.zego.zegoexpress.constants.ZegoAlphaLayoutType;
+import im.zego.zegoexpress.constants.ZegoRangeAudioSpeakMode;
+import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -173,6 +177,7 @@ import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
 import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
+import im.zego.zegoexpress.entity.ZegoMediaPlayerResource;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
@@ -1624,6 +1629,22 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void initVideoSuperResolution(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().initVideoSuperResolution();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void uninitVideoSuperResolution(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().uninitVideoSuperResolution();
+
+        result.success(null);
+    }
+
     /* Mixer */
 
     @SuppressWarnings("unused")
@@ -1801,7 +1822,10 @@ public class ZegoExpressEngineMethodHandler {
         taskObject.setStreamAlignmentMode(streamAlignmentMode);
 
         byte[] userData = call.argument("userData");
-        taskObject.setUserData(ByteBuffer.wrap(userData), userData.length);
+        ByteBuffer userDataByteBuffer =  ByteBuffer.allocateDirect(userData.length);
+        userDataByteBuffer = userDataByteBuffer.put(userData);
+        userDataByteBuffer.flip();
+        taskObject.setUserData(userDataByteBuffer, userData.length);
 
         // minPlayStreamBufferLength
         int minPlayStreamBufferLength = ZegoUtils.intValue((Number) call.argument("minPlayStreamBufferLength"));
@@ -2382,6 +2406,17 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void enableSpeechEnhance(MethodCall call, Result result) {
+
+        Boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        int level = ZegoUtils.intValue((Number) call.argument("level"));
+
+        ZegoExpressEngine.getEngine().enableSpeechEnhance(enable, level);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void startEffectsEnv(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().startEffectsEnv();
@@ -2868,6 +2903,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void sendCustomAudioCaptureAACData(MethodCall call, Result result) {
         
         byte[] data = call.argument("data");
+        ByteBuffer dataByteBuffer =  ByteBuffer.allocateDirect(data.length);
+        dataByteBuffer = dataByteBuffer.put(data);
+        dataByteBuffer.flip();
         int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
         int configLength = ZegoUtils.intValue((Number) call.argument("configLength"));
         int referenceTimeMillisecond = ZegoUtils.intValue((Number) call.argument("referenceTimeMillisecond"));
@@ -2880,7 +2918,7 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(ByteBuffer.wrap(data), dataLength, configLength, referenceTimeMillisecond, samples, param, channel);
+        ZegoExpressEngine.getEngine().sendCustomAudioCaptureAACData(dataByteBuffer, dataLength, configLength, referenceTimeMillisecond, samples, param, channel);
 
         result.success(null);
     }
@@ -2889,6 +2927,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void sendCustomAudioCapturePCMData(MethodCall call, Result result) {
         
         byte[] data = call.argument("data");
+        ByteBuffer dataByteBuffer =  ByteBuffer.allocateDirect(data.length);
+        dataByteBuffer = dataByteBuffer.put(data);
+        dataByteBuffer.flip();
         int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
         HashMap<String, Object> paramMap = call.argument("param");
 
@@ -2897,7 +2938,7 @@ public class ZegoExpressEngineMethodHandler {
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().sendCustomAudioCapturePCMData(ByteBuffer.wrap(data), dataLength, param, channel);
+        ZegoExpressEngine.getEngine().sendCustomAudioCapturePCMData(dataByteBuffer, dataLength, param, channel);
 
         result.success(null);
     }
@@ -2906,6 +2947,9 @@ public class ZegoExpressEngineMethodHandler {
     public static void fetchCustomAudioRenderPCMData(MethodCall call, Result result) {
         
         byte[] data = call.argument("data");
+        ByteBuffer dataByteBuffer =  ByteBuffer.allocateDirect(data.length);
+        dataByteBuffer = dataByteBuffer.put(data);
+        dataByteBuffer.flip();
         int dataLength = ZegoUtils.intValue((Number) call.argument("dataLength"));
         HashMap<String, Object> paramMap = call.argument("param");
 
@@ -2913,7 +2957,7 @@ public class ZegoExpressEngineMethodHandler {
         param.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) paramMap.get("sampleRate")));
         param.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) paramMap.get("channel")));
 
-        ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(ByteBuffer.wrap(data), dataLength, param);
+        ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(dataByteBuffer, dataLength, param);
 
         result.success(null);
     }
@@ -3654,6 +3698,44 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerLoadResourceWithConfig(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            HashMap<String, Object> resourceMap = call.argument("resource");
+
+            ZegoMediaPlayerResource resource = new ZegoMediaPlayerResource();
+            resource.resourceID = (String)resourceMap.get("resourceID");
+            resource.startPosition = ZegoUtils.longValue((Number) resourceMap.get("startPosition"));
+            resource.loadType = ZegoMultimediaLoadType.getZegoMultimediaLoadType(ZegoUtils.intValue((Number) resourceMap.get("loadType")));
+            resource.filePath = (String)resourceMap.get("filePath");
+            resource.alphaLayout = ZegoAlphaLayoutType.getZegoAlphaLayoutType(ZegoUtils.intValue((Number) resourceMap.get("alphaLayout")));
+            byte[] memory = (byte[]) resourceMap.get("memory");
+            ByteBuffer memoryByteBuffer =  ByteBuffer.allocateDirect(memory.length);
+            resource.memory = memoryByteBuffer.put(memory);
+            resource.memory.flip();
+            resource.memoryLength = memory.length;
+
+            mediaPlayer.loadResourceWithConfig(resource, new IZegoMediaPlayerLoadResourceCallback() {
+                @Override
+                public void onLoadResourceCallback(int errorCode) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    try {
+                        result.success(resultMap);
+                    } catch (Exception e) {
+                        ZegoLog.error("[onLoadResourceCallback] Receive multiple callbacks");
+                    }
+                }
+            });
+        } else {
+            result.error("loadResourceWithConfig_Can_not_find_player".toUpperCase(), "Invoke `loadResourceWithConfig` but can't find specific player", null);
+        }
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")
@@ -4202,6 +4284,21 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioUpdateStreamPosition` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void rangeAudioSetRangeAudioCustomMode(MethodCall call, Result result) {
+
+        if (rangeAudioInstance != null) {
+            ZegoRangeAudioSpeakMode speakMode = ZegoRangeAudioSpeakMode.getZegoRangeAudioSpeakMode(ZegoUtils.intValue((Number) call.argument("speakMode")));
+            ZegoRangeAudioListenMode listenMode = ZegoRangeAudioListenMode.getZegoRangeAudioListenMode(ZegoUtils.intValue((Number) call.argument("listenMode")));
+            rangeAudioInstance.setRangeAudioCustomMode(speakMode, listenMode);
+
+            result.success(null);
+
+        } else {
+            result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance", null);
         }
     }
 

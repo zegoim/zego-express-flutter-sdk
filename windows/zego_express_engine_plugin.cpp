@@ -97,6 +97,8 @@ static const std::map<
         EngineMethodHandler(isVideoDecoderSupported),
         EngineMethodHandler(setPlayStreamsAlignmentProperty),
         EngineMethodHandler(enableVideoSuperResolution),
+        EngineMethodHandler(initVideoSuperResolution),
+        EngineMethodHandler(uninitVideoSuperResolution),
         EngineMethodHandler(startAutoMixerTask),
         EngineMethodHandler(stopAutoMixerTask),
         EngineMethodHandler(setAudioRouteToSpeaker),
@@ -186,6 +188,7 @@ static const std::map<
         EngineMethodHandler(enableANS),
         EngineMethodHandler(enableTransientANS),
         EngineMethodHandler(setANSMode),
+        EngineMethodHandler(enableSpeechEnhance),
         EngineMethodHandler(setAudioEqualizerGain),
         EngineMethodHandler(setVoiceChangerPreset),
         EngineMethodHandler(setVoiceChangerParam),
@@ -199,6 +202,8 @@ static const std::map<
         EngineMethodHandler(stopMixerTask),
         EngineMethodHandler(setSEIConfig),
         EngineMethodHandler(setAudioDeviceVolume),
+        EngineMethodHandler(setSpeakerVolumeInAPP),
+        EngineMethodHandler(getSpeakerVolumeInAPP),
         EngineMethodHandler(startAudioDeviceVolumeMonitor),
         EngineMethodHandler(stopAudioDeviceVolumeMonitor),
         EngineMethodHandler(muteAudioDevice),
@@ -277,6 +282,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerTakeSnapshot),
         EngineMethodHandler(mediaPlayerSetAudioTrackMode),
         EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex),
+        EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
 
         // Copyrighted Music
         EngineMethodHandler(createCopyrightedMusic),
@@ -324,6 +330,7 @@ static const std::map<
         EngineMethodHandler(rangeAudioSetRangeAudioVolume),
         EngineMethodHandler(rangeAudioSetStreamVocalRange),
         EngineMethodHandler(rangeAudioUpdateStreamPosition),
+        EngineMethodHandler(rangeAudioSetRangeAudioCustomMode),
 
         // RealTimeSequentialDataManager
         EngineMethodHandler(createRealTimeSequentialDataManager),

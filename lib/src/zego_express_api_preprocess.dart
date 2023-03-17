@@ -109,6 +109,23 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setANSMode(mode);
   }
 
+  /// Enables or disables speech enhancement.
+  ///
+  /// Available since: 3.3.0.
+  /// Description: Enable the speech enhancement function.
+  /// Use case: In the KTV external playback scene, due to 3A damage and distance, the voice is weak or empty or unclear, so it is necessary to enhance the external playback experience through the voice enhancement technology.
+  /// Default value: When this function is not called, this is disabled by default.
+  /// When to call: It needs to be called after [createEngine] and it Supports dynamic change.
+  /// Caution: 1. If this interface is called repeatedly, the settings of the last call are used;
+  ///  2. After call [DestroyEngine], the Settings fail.
+  /// Restrictions: None.
+  ///
+  /// - [enable] Whether to enable speech enhancement, true: enable, false: disable
+  /// - [level] Enhancement level; The value range is [0, 10]
+  Future<void> enableSpeechEnhance(bool enable, int level) async {
+    return await ZegoExpressImpl.instance.enableSpeechEnhance(enable, level);
+  }
+
   /// Enable the Effects beauty environment.
   ///
   /// Available since: 2.16.0

@@ -1208,6 +1208,18 @@ void ZegoExpressEngineMethodHandler::setANSMode(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::enableSpeechEnhance(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    int level = std::get<int32_t>(argument[FTValue("level")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableSpeechEnhance(enable, level);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::setAudioEqualizerGain(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -2356,6 +2368,12 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackPublishIndex(
     result->Error("not_support_feature", "windows platform not support feature");
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    result->Error("not_support_feature", "windows platform not support feature");
+}
+
 void ZegoExpressEngineMethodHandler::startMixerTask(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -2646,6 +2664,27 @@ void ZegoExpressEngineMethodHandler::setAudioDeviceVolume(
         (EXPRESS::ZegoAudioDeviceType)deviceType, deviceID.c_str(), volume);
 
     result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setSpeakerVolumeInAPP(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+    auto volume = std::get<int32_t>(argument[FTValue("volume")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setSpeakerVolumeInAPP(deviceID, volume);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::getSpeakerVolumeInAPP(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto deviceID = std::get<std::string>(argument[FTValue("deviceID")]);
+
+    int volume = EXPRESS::ZegoExpressSDK::getEngine()->getSpeakerVolumeInAPP(deviceID.c_str());
+
+    result->Success(FTValue(volume));
 }
 
 void ZegoExpressEngineMethodHandler::startAudioDeviceVolumeMonitor(
@@ -3686,6 +3725,20 @@ void ZegoExpressEngineMethodHandler::enableVideoSuperResolution(
     result->NotImplemented();
 }
 
+void ZegoExpressEngineMethodHandler::initVideoSuperResolution(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    result->NotImplemented();
+}
+
+void ZegoExpressEngineMethodHandler::uninitVideoSuperResolution(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    result->NotImplemented();
+}
+
 void ZegoExpressEngineMethodHandler::startAutoMixerTask(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -4483,6 +4536,23 @@ void ZegoExpressEngineMethodHandler::rangeAudioUpdateStreamPosition(
     } else {
         result->Error("rangeAudioUpdateStreamPosition_Can_not_find_instance",
                       "Invoke `rangeAudioUpdateStreamPosition` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::rangeAudioSetRangeAudioCustomMode(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (rangeAudio_) {
+        auto speakMode = (EXPRESS::ZegoRangeAudioSpeakMode)std::get<int>(argument[FTValue("speakMode")]);
+
+        auto listenMode = (EXPRESS::ZegoRangeAudioListenMode)std::get<int>(argument[FTValue("listenMode")]);
+
+        rangeAudio_->setRangeAudioCustomMode(speakMode, listenMode);
+
+        result->Success();
+    } else {
+        result->Error("rangeAudioSetRangeAudioCustomMode_Can_not_find_instance",
+                      "Invoke `rangeAudioSetRangeAudioCustomMode` but can't find specific instance");
     }
 }
 

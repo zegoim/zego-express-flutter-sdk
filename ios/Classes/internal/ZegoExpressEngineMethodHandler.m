@@ -1439,6 +1439,20 @@
 
     result(nil);
 }
+
+- (void)initVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] initVideoSuperResolution];
+
+    result(nil);
+}
+
+- (void)uninitVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] uninitVideoSuperResolution];
+
+    result(nil);
+}
 #endif
 
 #pragma mark - Mixer
@@ -2334,6 +2348,16 @@
     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
 
     [[ZegoExpressEngine sharedEngine] setANSMode:(ZegoANSMode)mode];
+
+    result(nil);
+}
+
+- (void)enableSpeechEnhance:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    int level = [ZegoUtils intValue:call.arguments[@"level"]];
+
+    [[ZegoExpressEngine sharedEngine] enableSpeechEnhance:enable level:level];
 
     result(nil);
 }
@@ -3406,8 +3430,6 @@
     result(nil);
 }
 
-
-
 #if TARGET_OS_IPHONE
 - (void)mediaPlayerSetAudioTrackMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -3433,6 +3455,35 @@
     }
 
     result(nil);
+}
+
+- (void)mediaPlayerLoadResourceWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+
+        NSDictionary *resourceMap = call.arguments[@"resource"];
+        ZegoMediaPlayerResource *resource = [[ZegoMediaPlayerResource alloc] init];
+        resource.resourceID =  resourceMap[@"resourceID"];
+        resource.startPosition = [ZegoUtils longLongValue:resourceMap[@"startPosition"]];
+        resource.loadType = (ZegoMultimediaLoadType)[ZegoUtils intValue:resourceMap[@"loadType"]];
+        resource.alphaLayout = (ZegoAlphaLayoutType)[ZegoUtils intValue:resourceMap[@"alphaLayout"]];
+        resource.filePath =  resourceMap[@"filePath"];
+        
+        FlutterStandardTypedData *memory = resourceMap[@"memory"];
+        resource.memory = memory.data;
+        resource.memoryLength = (int)memory.data.length;
+
+        [mediaPlayer loadResourceWithConfig:resource callback:^(int errorCode) {
+            result(@{
+                @"errorCode": @(errorCode)
+            });
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"loadResourceWithConfig_Can_not_find_player" uppercaseString] message:@"Invoke `loadResourceWithConfig` but can't find specific player" details:nil]);
+    }
 }
 
 #endif
@@ -3952,6 +4003,19 @@
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioUpdateStreamPosition` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)rangeAudioSetRangeAudioCustomMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        int speakMode = [ZegoUtils intValue:call.arguments[@"speakMode"]];
+        int listenMode = [ZegoUtils intValue:call.arguments[@"listenMode"]];
+        [self.rangeAudioInstance setRangeAudioCustomMode:(ZegoRangeAudioSpeakMode)speakMode listenMode:(ZegoRangeAudioListenMode)listenMode];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetRangeAudioCustomMode` but can't find specific instance" details:nil]);
     }
 }
 
@@ -4795,6 +4859,18 @@
 
     if (@available(iOS 12.0, *)) {
         [[ZegoExpressEngine sharedEngine] updateScreenCaptureConfig:config];
+        result(nil);
+    } else {
+        // Fallback on earlier versions
+        result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+    }
+}
+
+- (void)setAppGroupIDScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    if (@available(iOS 12.0, *)) {
+        NSString *groupID = call.arguments[@"groupID"];
+        [[ZegoExpressEngine sharedEngine] setAppGroupID:groupID];
         result(nil);
     } else {
         // Fallback on earlier versions

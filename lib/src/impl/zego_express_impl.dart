@@ -748,6 +748,14 @@ class ZegoExpressImpl {
         'enableVideoSuperResolution', {'streamID': streamID, 'enable': enable});
   }
 
+  Future<void> initVideoSuperResolution() async {
+    return await _channel.invokeMethod('initVideoSuperResolution', {});
+  }
+
+  Future<void> uninitVideoSuperResolution() async {
+    return await _channel.invokeMethod('uninitVideoSuperResolution', {});
+  }
+
   /* Mixer */
 
   Future<ZegoMixerStartResult> startMixerTask(ZegoMixerTask task) async {
@@ -908,6 +916,16 @@ class ZegoExpressImpl {
       'deviceID': deviceID,
       'volume': volume
     });
+  }
+
+  Future<void> setSpeakerVolumeInAPP(String deviceID, int volume) async {
+    return await _channel.invokeMethod(
+        'setSpeakerVolumeInAPP', {'deviceID': deviceID, 'volume': volume});
+  }
+
+  Future<int> getSpeakerVolumeInAPP(String deviceID) async {
+    return await _channel
+        .invokeMethod('getSpeakerVolumeInAPP', {'deviceID': deviceID});
   }
 
   Future<void> startAudioDeviceVolumeMonitor(
@@ -1207,6 +1225,11 @@ class ZegoExpressImpl {
 
   Future<void> setANSMode(ZegoANSMode mode) async {
     return await _channel.invokeMethod('setANSMode', {'mode': mode.index});
+  }
+
+  Future<void> enableSpeechEnhance(bool enable, int level) async {
+    return await _channel.invokeMethod(
+        'enableSpeechEnhance', {'enable': enable, 'level': level});
   }
 
   Future<void> startEffectsEnv() async {
@@ -3069,36 +3092,56 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
-  Future<void> clearView() {
-    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerClearView', {
+  Future<void> clearView() async {
+    return await ZegoExpressImpl._channel.invokeMethod('mediaPlayerClearView', {
       'index': _index,
     });
   }
 
   @override
-  Future<void> setActiveAudioChannel(ZegoMediaPlayerAudioChannel audioChannel) {
-    return ZegoExpressImpl._channel.invokeMethod(
+  Future<void> setActiveAudioChannel(
+      ZegoMediaPlayerAudioChannel audioChannel) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetActiveAudioChannel',
         {'index': _index, 'audioChannel': audioChannel.index});
   }
 
   @override
-  Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode) {
-    return ZegoExpressImpl._channel.invokeMethod(
+  Future<void> setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetAudioTrackMode', {'index': _index, 'mode': mode.index});
   }
 
   @override
-  Future<void> setAudioTrackPublishIndex(int index) {
-    return ZegoExpressImpl._channel.invokeMethod(
+  Future<void> setAudioTrackPublishIndex(int index) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetAudioTrackPublishIndex',
         {'index': _index, 'index_': index});
   }
 
   @override
-  Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format) {
-    return ZegoExpressImpl._channel.invokeMethod('mediaPlayerEnableVideoData',
+  Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableVideoData',
         {'index': _index, 'enable': enable, 'format': format.index});
+  }
+
+  @override
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+      ZegoMediaPlayerResource resource) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerLoadResourceWithConfig', {
+      'index': _index,
+      'resource': {
+        'resourceID': resource.resourceID,
+        'startPosition': resource.startPosition,
+        'loadType': resource.loadType.index,
+        'filePath': resource.filePath,
+        'alphaLayout': resource.alphaLayout.index,
+        'memory': resource.memory,
+      }
+    });
+    return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
 }
 
@@ -3343,6 +3386,14 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
     return await ZegoExpressImpl._channel.invokeMethod(
         'rangeAudioUpdateStreamPosition',
         {'streamID': streamID, 'position': position});
+  }
+
+  @override
+  Future<void> setRangeAudioCustomMode(ZegoRangeAudioSpeakMode speakMode,
+      ZegoRangeAudioListenMode listenMode) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'rangeAudioSetRangeAudioCustomMode',
+        {'speakMode': speakMode.index, 'listenMode': listenMode.index});
   }
 }
 
@@ -3726,5 +3777,12 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
       },
       'index': _index
     });
+  }
+
+  @override
+  Future<void> setAppGroupID(String groupID) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'setAppGroupIDScreenCaptureSource',
+        {'groupID': groupID, 'index': _index});
   }
 }

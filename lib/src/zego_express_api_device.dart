@@ -120,6 +120,36 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
         .setAudioDeviceVolume(deviceType, deviceID, volume);
   }
 
+  /// Set the volume of the speaker in the App.
+  ///
+  /// Available since: 3.3.0
+  /// Description: Set the volume of the speaker in the App.
+  /// Use cases: You need to adjust only the playback volume of the app, and do not adjust the playback volume of the system.
+  /// When to call: After creating the engine [createEngine].
+  /// Caution: This interface triggers startup switchover of the device. You are advised not to invoke this interface frequently to avoid unnecessary overhead and hardware problems. This interface may cause the volume mode to switch between call and media. If the media volume is inconsistent with the call volume, the volume may change.
+  /// Restrictions: Only for Windows.
+  ///
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList].
+  /// - [volume] Device volume.
+  Future<void> setSpeakerVolumeInAPP(String deviceID, int volume) async {
+    return await ZegoExpressImpl.instance
+        .setSpeakerVolumeInAPP(deviceID, volume);
+  }
+
+  /// Get the volume of the speaker in the App, only support Windows.
+  ///
+  /// Available since: 3.3.0.
+  /// Description: Get the volume of the speaker in the App, only support Windows.
+  /// When to call: After creating the engine [createEngine].
+  /// Restrictions: Only for Windows.
+  /// Related APIs: Set the volume of the speaker in the App [setSpeakerVolumeInAPP].
+  ///
+  /// - [deviceID] ID of a device obtained by [getAudioDeviceList].
+  /// - Returns Device volume.
+  Future<int> getSpeakerVolumeInAPP(String deviceID) async {
+    return await ZegoExpressImpl.instance.getSpeakerVolumeInAPP(deviceID);
+  }
+
   /// Turn on audio device volume monitoring.
   ///
   /// Only for Windows / macOS / Linux

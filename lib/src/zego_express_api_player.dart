@@ -306,4 +306,28 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance
         .enableVideoSuperResolution(streamID, enable);
   }
+
+  /// Init video super resolution.
+  ///
+  /// Available since: 3.3.0
+  /// Description: After the super resolution is initialized, the super resolution function can be used normally
+  /// Use cases: Live streaming scenario.
+  /// When to call: Video super resolution is only valid for playing stream video. Needs to be called after [createEngine].
+  /// Caution:
+  ///  1. Initializing the video screen is divided into time-consuming operations, and frequent initialization and de-initialization are not recommended;
+  ///  2. This function requires a special package, please contact ZEGO technical support.
+  Future<void> initVideoSuperResolution() async {
+    return await ZegoExpressImpl.instance.initVideoSuperResolution();
+  }
+
+  /// Uninit video super resolution.
+  ///
+  /// Available since: 3.3.0
+  /// Description: After deinitializing the super resolution, the SDK will release the resources occupied by the super resolution and make the super resolution function unavailable.
+  /// Use cases: Live streaming scenario.
+  /// When to call: Needs to be called after [initVideoSuperResolution].
+  /// Caution: Initializing the video screen is divided into time-consuming operations, and frequent initialization and de-initialization are not recommended.
+  Future<void> uninitVideoSuperResolution() async {
+    return await ZegoExpressImpl.instance.uninitVideoSuperResolution();
+  }
 }

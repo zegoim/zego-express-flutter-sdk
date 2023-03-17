@@ -1054,6 +1054,30 @@ enum ZegoRangeAudioMode {
   SecretTeam
 }
 
+/// Range audio speak mode
+enum ZegoRangeAudioSpeakMode {
+  /// All mode, everyone in the room can hear his voice.
+  All,
+
+  /// Only world mode, only those within range can hear his voice.
+  World,
+
+  /// Only team mode, only members of the team can hear his voice (not restricted by range).
+  Team
+}
+
+/// Range audio listening mode
+enum ZegoRangeAudioListenMode {
+  /// All mode, can hear everyone in the room.
+  All,
+
+  /// Only world mode, only listen to people within range.
+  World,
+
+  /// Only team mode, only listen to the voices of members of the team you belong to (not restricted by range).
+  Team
+}
+
 /// Range audio microphone state.
 enum ZegoRangeAudioMicrophoneState {
   /// The range audio microphone is off.
@@ -1556,6 +1580,33 @@ enum ZegoScreenCaptureSourceExceptionType {
 
   /// Failed to collect target, internal reasons of the system.
   Failed
+}
+
+/// Multimedia load type.
+enum ZegoMultimediaLoadType {
+  /// Load by file path.
+  FilePath,
+
+  /// Load by memory.
+  Memory,
+
+  /// Load by copyrighted music resource ID.
+  ResourceID
+}
+
+/// Alpha channel data layout.
+enum ZegoAlphaLayoutType {
+  /// There is no alpha data.
+  None,
+
+  /// Alpha channel data is to the left of RGB/YUV data.
+  Left,
+
+  /// Alpha channel data is to the right of RGB/YUV data.
+  Right,
+
+  /// Alpha channel data is to the bottom of RGB/YUV data.
+  Bottom
 }
 
 /// Log config.
@@ -3259,6 +3310,52 @@ class ZegoAudioSourceMixConfig {
       this.enableMixEnginePlayout});
 }
 
+/// Multimedia resource for ZEGO media player.
+///
+/// Used to configure loading parameters when loading multimedia resources.
+class ZegoMediaPlayerResource {
+  /// Used to specify the loading type of multimedia resources.
+  ZegoMultimediaLoadType loadType;
+
+  /// The progress at which the plaback started.
+  int startPosition;
+
+  /// If the specified resource has a transparent effect, you need to specify the layout position of the alpha data.
+  ZegoAlphaLayoutType alphaLayout;
+
+  /// Common resource path.The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
+  String filePath;
+
+  /// binary data memory.
+  Uint8List memory;
+
+  /// The resource ID obtained from the copyrighted music module.
+  String resourceID;
+
+  ZegoMediaPlayerResource(this.loadType, this.startPosition, this.alphaLayout,
+      this.filePath, this.memory, this.resourceID);
+
+  /// Create a mix stream task object with TaskID
+  ZegoMediaPlayerResource.defaultConfig()
+      : loadType = ZegoMultimediaLoadType.FilePath,
+        startPosition = 0,
+        alphaLayout = ZegoAlphaLayoutType.None,
+        filePath = '',
+        memory = Uint8List.fromList([]),
+        resourceID = '';
+
+  Map<String, dynamic> toMap() {
+    return {
+      'loadType': this.loadType.index,
+      'startPosition': this.startPosition,
+      'alphaLayout': this.alphaLayout.index,
+      'filePath': this.filePath,
+      'memory': this.memory,
+      'resourceID': this.resourceID
+    };
+  }
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -3391,6 +3488,19 @@ abstract class ZegoMediaPlayer {
   Future<ZegoMediaPlayerLoadResourceResult>
       loadCopyrightedMusicResourceWithPosition(
           String resourceID, int startPosition);
+
+  /// Load media resource.
+  ///
+  /// Available: since 3.3.0
+  /// Description: Load media resources.
+  /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
+  /// When to call: Called after the engine [createEngine] has been initialized and the media player [createMediaPlayer] has been created.
+  /// Related APIs: Support for loading resources through the [loadResourceWithPosition] or [loadResourceFromMediaData] interface.
+  ///
+  /// - [resource] Multimedia resources that need to be loaded.
+  /// - Returns Callback result of loading media resource.
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+      ZegoMediaPlayerResource resource);
 
   /// Start playing.
   ///
@@ -3953,6 +4063,22 @@ abstract class ZegoRangeAudio {
   /// - [mode] The range audio mode.
   Future<void> setRangeAudioMode(ZegoRangeAudioMode mode);
 
+  /// Set range audio custom mode.
+  ///
+  /// Available since: 3.3.0
+  /// Description: Can set the speak mode and listening mode respectively to control the speak and listening behavior in the world and team.
+  /// Use case: The user can decide who can listen to his voice by selecting the speak mode, and can also decide whose voice to listen to by selecting the listening mode.
+  /// Default value: If this interface is not called, the ZegoRangeAudioSpeakModeAll mode and ZegoRangeAudioListenModeAll mode is used by default.
+  /// When to call: After initializing the range audio [createRangeAudio].
+  /// Related APIs: When you want to listen to sounds from the world, you need to set the sound reception range [setAudioReceiveRange]. When you want to sound and listen in the squad, you need to set [setTeamID] to join the corresponding squad.
+  /// Restrictions: 1. Cannot be called with [setRangeAudioMode];
+  ///  2. Not compatible with versions prior to 3.3.0.
+  ///
+  /// - [speakMode] The range audio speak mode.
+  /// - [listenMode] The range audio listening mode.
+  Future<void> setRangeAudioCustomMode(
+      ZegoRangeAudioSpeakMode speakMode, ZegoRangeAudioListenMode listenMode);
+
   /// Set team ID.
   ///
   /// Available: since 2.11.0
@@ -4355,6 +4481,16 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - Returns Index of the screen capture source.
   int getIndex();
+
+  /// Set the App Group configuration item.
+  ///
+  /// Available since: 3.3.0
+  /// Use cases: You need to use the iOS cross-process screen sharing function, and you need to start the App Group, which can provide better performance and stability. Must be used with [setupWithAppGroupID:] in the `ZegoReplayKit` extension class.
+  /// When to call: Called after [createEngine], before calling [startScreenCapture].
+  /// Restrictions: Only available on iOS platform.
+  ///
+  /// - [groupID] The host app and the extension app should belong to the same App Group, and the AppGroupID needs to be passed in here.
+  Future<void> setAppGroupID(String groupID);
 
   /// Update screen capture parameter configuration.
   ///

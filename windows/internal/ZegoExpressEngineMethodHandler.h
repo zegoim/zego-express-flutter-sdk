@@ -155,6 +155,12 @@ class ZegoExpressEngineMethodHandler {
     void enableVideoSuperResolution(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void initVideoSuperResolution(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void uninitVideoSuperResolution(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void startAutoMixerTask(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopAutoMixerTask(flutter::EncodableMap &argument,
@@ -371,6 +377,8 @@ class ZegoExpressEngineMethodHandler {
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setANSMode(flutter::EncodableMap &argument,
                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableSpeechEnhance(flutter::EncodableMap &argument,
+                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void
     setAudioEqualizerGain(flutter::EncodableMap &argument,
@@ -570,6 +578,9 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerSetAudioTrackPublishIndex(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerLoadResourceWithConfig(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void startMixerTask(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -579,6 +590,12 @@ class ZegoExpressEngineMethodHandler {
                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     setAudioDeviceVolume(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    setSpeakerVolumeInAPP(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    getSpeakerVolumeInAPP(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void startAudioDeviceVolumeMonitor(
         flutter::EncodableMap &argument,
@@ -766,6 +783,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void rangeAudioUpdateStreamPosition(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void rangeAudioSetRangeAudioCustomMode(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
