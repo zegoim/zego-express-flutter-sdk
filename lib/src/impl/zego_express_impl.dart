@@ -3126,23 +3126,23 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         {'index': _index, 'enable': enable, 'format': format.index});
   }
 
-  @override
-  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
-      ZegoMediaPlayerResource resource) async {
-    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('mediaPlayerLoadResourceWithConfig', {
-      'index': _index,
-      'resource': {
-        'resourceID': resource.resourceID,
-        'startPosition': resource.startPosition,
-        'loadType': resource.loadType.index,
-        'filePath': resource.filePath,
-        'alphaLayout': resource.alphaLayout.index,
-        'memory': resource.memory,
-      }
-    });
-    return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
-  }
+  // @override
+  // Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+  //     ZegoMediaPlayerResource resource) async {
+  //   final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+  //       .invokeMethod('mediaPlayerLoadResourceWithConfig', {
+  //     'index': _index,
+  //     'resource': {
+  //       'resourceID': resource.resourceID,
+  //       'startPosition': resource.startPosition,
+  //       'loadType': resource.loadType.index,
+  //       'filePath': resource.filePath,
+  //       'alphaLayout': resource.alphaLayout.index,
+  //       'memory': resource.memory,
+  //     }
+  //   });
+  //   return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
+  // }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {

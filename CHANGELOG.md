@@ -12,29 +12,23 @@
 
     For related API, please refer to [enableSpeechEnhance](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableSpeechEnhance.html)
 
-2. Android and iOS platform media players support playback of transparency effects.
-
-    Android and iOS platform media player supports the function of playing transparent special effect files through rendering alpha channel.
-
-    For related API, please refer to [loadResourceWithConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/loadResourceWithConfig.html)
-
-3. Game voice supports customized voice mode and listening mode.
+2. Game voice supports customized voice mode and listening mode.
 
     The game voice supports the customized setting of voice mode and listening mode, which can be used to shield the scene of the same team of players outside the range after joining the team.
 
     For related API, please refer to [setRangeAudioCustomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setRangeAudioCustomMode.html)
 
-4. Express SDK iOS streaming function supports picture-in-picture capability.
+3. Express SDK iOS streaming function supports picture-in-picture capability.
 
     Note: To use this function, please contact ZEGO technical support.
 
-5. The single-stream transcoding function supports L3 or CDN streaming.
+4. The single-stream transcoding function supports L3 or CDN streaming.
 
     Note: When pulling the transcoding stream through CDN, you must use the push CDN. To use this function, please contact ZEGO technical support.
 
     Single-stream transcoding refers to converting each original stream into transcoding streams with different encoding formats and different resolutions in the cloud. The transcoding template ID needs to be passed in to pull the transcoding stream. In live broadcast and other scenes, viewers can choose streams of different resolutions to watch based on the quality of the access network, terminal equipment, etc., to ensure the smoothness of playback.
 
-6. The same mixed-stream task supports the output of multiple resolution video streams.
+5. The same mixed-stream task supports the output of multiple resolution video streams.
 
     Note:
 
@@ -45,7 +39,7 @@
 
     The same mixing task supports the output of multiple resolution video streams, which can be used to meet the transcoding requirements in the mixing scenario.
 
-7. Mixed flow task supports input of super whiteboard information.
+6. Mixed flow task supports input of super whiteboard information.
 
     In the mixed-stream function, the operation content in the whiteboard can be converted into real-time video, and the whiteboard configuration information can be set, for example, the whiteboard ID, the whiteboard aspect ratio, and whether dynamic PPT loading is supported.
 
@@ -53,19 +47,19 @@
 
     For related API, please refer to [ZegoMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMixerTask-class.html), [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
 
-8. Scenario-based audio and video configuration adds [ZegoScenario.StandardVoiceCall] standard voice call scenario.
+7. Scenario-based audio and video configuration adds [ZegoScenario.StandardVoiceCall] standard voice call scenario.
 
     StandardVoiceCall standard voice call scenario is added for scenario-based audio and video configuration, which is applicable to 1v1 pure voice call scenario.
 
     For related API, please refer to [setRoomScenario](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomScenario.html)
 
-9. Android support adaptive device acquisition rendering delay and echo cancellation (AEC) in customized audio acquisition and SDK internal rendering mode.
+8. Android support adaptive device acquisition rendering delay and echo cancellation (AEC) in customized audio acquisition and SDK internal rendering mode.
 
     Note: To use this function, please contact ZEGO technical support.
 
     In the customized audio acquisition and SDK internal rendering mode, the AUX adaptive alignment and AEC functions are supported, which can achieve better results when performing chorus in KTV scenes.
 
-10. Added a new copyright content center, and some interfaces support the query of distinguishing copyright parties.
+9. Added a new copyright content center, and some interfaces support the query of distinguishing copyright parties.
 
     According to the copyright owner, it supports ordering songs, obtaining line-by-line analysis of lyrics, and querying whether resources are cached.
 
@@ -73,7 +67,7 @@
 
     For related API, please refer to [requestResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/requestResource.html), [getLrcLyric](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getLrcLyric.html), [queryCache](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/queryCache.html), [getSharedResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getSharedResource.html)
 
-11. When sending an extended request, it is supported to obtain a list of tags, get songs based on tags, query song information in batches, and search for songs according to the copyright owner.
+10. When sending an extended request, it is supported to obtain a list of tags, get songs based on tags, query song information in batches, and search for songs according to the copyright owner.
 
     For related API, please refer to [sendExtendedRequest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/sendExtendedRequest.html)
 
