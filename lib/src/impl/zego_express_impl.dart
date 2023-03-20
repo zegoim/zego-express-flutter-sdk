@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1071,10 +1070,8 @@ class ZegoExpressImpl {
 
   Future<List<ZegoDeviceInfo>> getVideoDeviceList() async {
     var resultList = await _channel.invokeMethod('getVideoDeviceList', {});
-    print(resultList);
     var retList = <ZegoDeviceInfo>[];
     for (dynamic info in resultList) {
-      print(info['deviceID']);
       retList.add(ZegoDeviceInfo(info['deviceID'], info['deviceName']));
     }
     return retList;

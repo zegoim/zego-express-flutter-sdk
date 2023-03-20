@@ -961,7 +961,7 @@ class ZegoExpressEngineWeb {
       map["errorCode"] = 1;
       return Future.value(map);
     }
-    var result = await (() {
+    await (() {
       Map completerMap = createCompleter();
       MediaPlayers[index]
           .instance
