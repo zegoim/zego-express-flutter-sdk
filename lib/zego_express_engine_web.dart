@@ -1067,7 +1067,7 @@ class ZegoExpressEngineWeb {
     return Future.value(duration);
   }
 
-  void setRoomScenario(int scenario) {
+  Future<void> setRoomScenario(int scenario) async {
     return ZegoFlutterEngine.instance.setRoomScenario(scenario);
   }
 
@@ -1098,7 +1098,7 @@ class ZegoExpressEngineWeb {
   //   return list;
   // }
   Future<int> createScreenCaptureSource(int? sourceId, int? sourceType) async {
-    if (sourceId == null) sourceId = _index;
+    sourceId ??= _index;
     var instance =
         await ZegoFlutterEngine.instance.createScreenCaptureSource(sourceId);
     var i = _index;
