@@ -5,7 +5,7 @@
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <functional>
-// #include <variant>
+#include <variant>
 
 // #include <Windows.h>
 #include "DataToImageTools.hpp"
@@ -4688,16 +4688,24 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(
         infoMap[FTValue("sourceID")] = FTValue(reinterpret_cast<intptr_t>(info.sourceID));
         infoMap[FTValue("sourceName")] = FTValue(info.sourceName);
         
-        auto thumbnailImageData = makeBtimapByBGRABuffer(info.thumbnailImage.buffer, info.thumbnailImage.length, std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
-        std::vector<uint8_t> thumbnailImage(thumbnailImageData.second, thumbnailImageData.second + thumbnailImageData.first);
-        delete[] thumbnailImageData.second;
-        infoMap[FTValue("thumbnailImage")] = FTValue(thumbnailImage);
-
-        auto iconImageData = makeBtimapByBGRABuffer(info.iconImage.buffer,info.iconImage.length, std::pair(info.iconImage.width, info.iconImage.height));
-        std::vector<uint8_t> iconImage(iconImageData.second, iconImageData.second + iconImageData.first);
-        delete[] iconImageData.second;
-        infoMap[FTValue("iconImage")] = FTValue(iconImage);
-
+        if (info.thumbnailImage.length <= 0 || info.thumbnailImage.buffer == nullptr ) {
+            infoMap[FTValue("thumbnailImage")] = FTValue(std::monostate());
+        } else {
+            auto thumbnailImageData = makeBtimapByBGRABuffer(info.thumbnailImage.buffer, info.thumbnailImage.length, std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
+            std::vector<uint8_t> thumbnailImage(thumbnailImageData.second, thumbnailImageData.second + thumbnailImageData.first);
+            delete[] thumbnailImageData.second;
+            infoMap[FTValue("thumbnailImage")] = FTValue(thumbnailImage);
+        }
+        
+        if (info.iconImage.length <= 0 || info.iconImage.buffer == nullptr) {
+            infoMap[FTValue("iconImage")] = FTValue(std::monostate());
+        } else {
+            auto iconImageData = makeBtimapByBGRABuffer(info.iconImage.buffer,info.iconImage.length, std::pair(info.iconImage.width, info.iconImage.height));
+            std::vector<uint8_t> iconImage(iconImageData.second, iconImageData.second + iconImageData.first);
+            delete[] iconImageData.second;
+            infoMap[FTValue("iconImage")] = FTValue(iconImage);
+        }
+        
         resultArray.emplace_back(FTValue(infoMap));
     }
 
