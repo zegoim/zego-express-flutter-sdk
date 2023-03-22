@@ -470,6 +470,11 @@ public class ZegoExpressEngineMethodHandler {
     public static void setDummyCaptureImagePath(MethodCall call, Result result) {
 
         String filePath = call.argument("filePath");
+        if (filePath != null && filePath.startsWith("flutter-asset://")) {
+            String processedURL = filePath.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[setDummyCaptureImagePath] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", filePath, processedURL);
+            filePath = processedURL;
+        }
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setDummyCaptureImagePath(filePath, channel);
