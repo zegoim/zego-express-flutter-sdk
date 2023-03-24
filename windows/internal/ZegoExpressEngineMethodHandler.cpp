@@ -275,6 +275,23 @@ void ZegoExpressEngineMethodHandler::setDummyCaptureImagePath(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto filePath = std::get<std::string>(argument[FTValue("filePath")]);
+    const std::string flutterAssertTaget = "flutter-asset://";
+    if (filePath.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+        filePath.replace(0, flutterAssertTaget.size(), "");
+        wchar_t exePath[MAX_PATH] = {0};
+        ::GetModuleFileName(NULL, exePath, MAX_PATH);
+        std::wstring exePathStrW{exePath};
+        std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
+        exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
+        if (!exePathStr.empty()) {
+            filePath =
+                exePathStr + "\\data\\flutter_assets\\" + filePath;
+        } else {
+            result->Error("setDummyCaptureImagePath_get_exe_path_fail",
+                          "Failed to get the directory where the application is located");
+            return;
+        }
+    }
     auto channel = (EXPRESS::ZegoPublishChannel)std::get<int32_t>(argument[FTValue("channel")]);
     EXPRESS::ZegoExpressSDK::getEngine()->setDummyCaptureImagePath(filePath, channel);
     result->Success();

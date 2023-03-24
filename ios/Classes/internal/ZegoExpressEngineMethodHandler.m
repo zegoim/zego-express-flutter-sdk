@@ -336,6 +336,24 @@
 - (void)setDummyCaptureImagePath:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *filePath = call.arguments[@"filePath"];
+    NSString *flutterAssetPrefix = @"flutter-asset://";
+    if ([filePath hasPrefix:flutterAssetPrefix]) {
+        NSString *assetName = [filePath substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
+        NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+        NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+        NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+        NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
+        NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+        ZGLog(@"[setDummyCaptureImagePath] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", filePath, processedURL);
+        if (!assetRealPath) {
+            ZGLog(@"[setDummyCaptureImagePath] Can not get real path for flutter asset: '%@', please check if the asset is correctly declared in flutter project's pubspec.yaml", assetName);
+        } else {
+            filePath = processedURL;
+        }
+    }
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setDummyCaptureImagePath:filePath channel:(ZegoPublishChannel)channel];
