@@ -1,5 +1,13 @@
 # Change Log
 
+## 3.3.1
+
+### **Bug Fixes**
+
+1. Fixed the failure of Android hardware ear feedback in some scenarios.
+
+2. Fixed H265 decoding failure in Android  some scenarios.
+
 ## 3.3.0
 
 ### **New Features**
@@ -35,7 +43,6 @@
     - At present, one mixing task can output up to four video streams with different resolutions, and only server mixing is supported.
 
     - To use this function, please contact ZEGO technical support.
-
 
     The same mixing task supports the output of multiple resolution video streams, which can be used to meet the transcoding requirements in the mixing scenario.
 
@@ -119,16 +126,13 @@
 
     Note: Firstly, getting screen capture instance by calling the [createScreenCaptureSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineScreenCapture/createScreenCaptureSource.html).Sencondly, setting the video soure are "screen" by calling [setVideoSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoSource.html) function.Now, you can call [startCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/startCapture.html) for the screen capture instance.
 
-
 2. Add login multi-room function of web platform;
 
     Note: On the web platform, [setRoomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomMode.html) now allows users to log into multiple rooms if they want.
 
-
 3. Add basic beauty function of web platform;
-    
-    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
+    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
 ### **Bug Fixes**
 
@@ -146,16 +150,13 @@
 
     Note: Firstly, getting screen capture instance by calling the [createScreenCaptureSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineScreenCapture/createScreenCaptureSource.html).Sencondly, setting the video soure are "screen" by calling [setVideoSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoSource.html) function.Now, you can call [startCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/startCapture.html) for the screen capture instance.
 
-
 2. Add login multi-room function of web platform;
 
     Note: On the web platform, [setRoomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomMode.html) now allows users to log into multiple rooms if they want.
 
-
 3. Add basic beauty function of web platform;
-    
-    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
+    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
 ### **Bug Fixes**
 
@@ -282,11 +283,11 @@ This version contains breaking changes, please refer to [v3.0.3 Upgrade Guide](.
     Note: This function is enabled by default. If you need to disable this function, please contact ZEGO technical support.  n If the app has access to the geographical location, the developer can choose whether to allow the ZEGO SDK to obtain the GPS information cached by the system, which is obtained by default. When developers want to disable this function, they need to contact ZEGO technical support to set it.This feature currently only supports IOS ， Android，mac and window platforms.
 
 6. New video first frame callback based on camera opening
-    
+
     Support callback after SDK pulls the stream and renders the first frame of remote camera video data each time the remote camera is turned on. Developers can use this callback to calculate the first frame time consumption, or update the UI components of the playback stream.This feature currently only supports IOS，Android，mac and window platforms.
 
     For related API, please refer to [onPlayerRenderCameraVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRenderCameraVideoFirstFrame.html)
-    
+
 7. Add the CDN Plus playing configuration to the startPlayingStream interface on the web platform.
 
     Note: If you want to control the stream-playing mode from the cloud by more criteria such as region and user, please contact ZEGO technical support for related configuration.
@@ -294,8 +295,6 @@ This version contains breaking changes, please refer to [v3.0.3 Upgrade Guide](.
     In the past, the web did not support playing CDN plus.Now, we can play CDN plus on the IOS，Android，mac, window and web platforms.The [startPlayingStream] interface adds CDN_PLUS as a new ZegoResourceType on the web platform. interface. You can enable CDN_PLUS to play stream by yourself based on to the stream critirion. The CDN Plus stream-playing is a cost-effective method, because its quality is higher than CDN stream-playing with similar price.
 
     For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
-
-
 
 ### **Enhancements**
 

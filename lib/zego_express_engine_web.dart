@@ -8,7 +8,6 @@ import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:js';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -21,8 +20,8 @@ class ZegoExpressEngineWeb {
   dynamic previewView;
   static final StreamController _evenController = StreamController();
 
-  static dynamic MediaPlayers = {}; // 存储媒体流实例
-  static dynamic MediaSources = {}; // 存储屏幕采集实例
+  static final dynamic _mediaPlayers = {}; // 存储媒体流实例
+  static final dynamic _mediaSources = {}; // 存储屏幕采集实例
   static int _index = 1;
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
@@ -378,7 +377,6 @@ class ZegoExpressEngineWeb {
         //   extendedData = jsonDecode(data['extendedData']);
         // }
         extendedData = {};
-        print(data);
         switch (data["state"]) {
           case "PUBLISHING":
             state = 2;
@@ -495,7 +493,6 @@ class ZegoExpressEngineWeb {
         }
         ZegoExpressEngine.onRemoteMicStateUpdate!(
             data['streamID'], ZegoRemoteDeviceState.values[state]);
-        ;
         break;
       case "onRemoteCameraStateUpdate":
         if (ZegoExpressEngine.onRemoteCameraStateUpdate == null) return;
@@ -506,7 +503,6 @@ class ZegoExpressEngineWeb {
         }
         ZegoExpressEngine.onRemoteCameraStateUpdate!(
             data['streamID'], ZegoRemoteDeviceState.values[state]);
-        ;
         break;
       case "onRemoteSoundLevelUpdate":
         if (ZegoExpressEngine.onRemoteSoundLevelUpdate == null) return;
@@ -589,7 +585,6 @@ class ZegoExpressEngineWeb {
       case 'onPlayerRecvSEI':
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
         final data = jsonDecode(map["data"]);
-        print(data["data"]);
         var bytes = Uint8List.fromList(utf8.encode(data["data"]));
         ZegoExpressEngine.onPlayerRecvSEI!(data['streamID'], bytes);
         break;
@@ -667,7 +662,7 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> logoutRoom(String roomID) {
+  Future<Map<dynamic, dynamic>> logoutRoom(String roomID) {
     ZegoFlutterEngine.instance.logoutRoom(roomID);
     final map = {};
     map["errorCode"] = 0;
@@ -720,7 +715,7 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> startPublishingStream(
-      String streamID, dynamic? config, int? channel) {
+      String streamID, dynamic config, int? channel) {
     String roomID = "";
     if (config["roomID"] != null) {
       roomID = config["roomID"];
@@ -760,7 +755,8 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> sendBarrageMessage(String roomID, String message) async {
+  Future<Map<dynamic, dynamic>> sendBarrageMessage(
+      String roomID, String message) async {
     await ZegoFlutterEngine.instance.sendBarrageMessage(roomID, message);
     final Map<dynamic, dynamic> map = {};
     map["errorCode"] = 0;
@@ -769,12 +765,12 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> sendCustomCommand(
+  Future<Map<dynamic, dynamic>> sendCustomCommand(
       String roomID, String message, List toUserList) async {
     List useridList = [];
-    toUserList.forEach((item) {
+    for (var item in toUserList) {
       useridList.add(item["userID"]);
-    });
+    }
     await ZegoFlutterEngine.instance
         .sendCustomCommand(roomID, message, useridList);
     final Map<dynamic, dynamic> map = {};
@@ -784,7 +780,8 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> setRoomExtraInfo(String roomID, String key, String value) async {
+  Future<Map<dynamic, dynamic>> setRoomExtraInfo(
+      String roomID, String key, String value) async {
     await ZegoFlutterEngine.instance.sendReliableMessage(roomID, key, value);
     final Map<dynamic, dynamic> map = {};
     map["errorCode"] = 0;
@@ -798,7 +795,7 @@ class ZegoExpressEngineWeb {
 
   Future<void> sendSEI(dynamic data, int dataLength, int channel) async {
     return await ZegoFlutterEngine.instance
-        .sendSEI(Utf8Decoder().convert(data), dataLength, channel);
+        .sendSEI(const Utf8Decoder().convert(data), dataLength, channel);
   }
 
   Future<void> mutePublishStreamVideo(bool mute, int channel) async {
@@ -872,15 +869,13 @@ class ZegoExpressEngineWeb {
 
   static formatDeviceList(list) {
     var newList = [];
-    if (list == null || !(list is List)) return newList;
-    list.forEach((item) {
+    if (list == null || list is! List) return newList;
+    for (var item in list) {
       Map<String, dynamic> info = {};
       info["deviceID"] = item["deviceID"];
       info["deviceName"] = item["deviceName"];
-      print(item["deviceID"]);
-      print(item["deviceName"]);
       newList.add(info);
-    });
+    }
     return newList;
   }
 
@@ -895,11 +890,6 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> useVideoDevice(String deviceID, int channel) async {
-    if (deviceID == null) {
-      throw PlatformException(
-          code: 'Unimplemented',
-          details: 'the type in useVideoDevice is required');
-    }
     return await ZegoFlutterEngine.instance.useVideoDevice(deviceID, channel);
   }
 
@@ -917,7 +907,8 @@ class ZegoExpressEngineWeb {
     return await ZegoFlutterEngine.setEngineConfig(config);
   }
 
-  Future<void> setStreamExtraInfo(String extraInfo, int channel) async {
+  Future<Map<dynamic, dynamic>> setStreamExtraInfo(
+      String extraInfo, int channel) async {
     await ZegoFlutterEngine.instance.setStreamExtraInfo(extraInfo, channel);
     final map = {};
     map["errorCode"] = 0;
@@ -929,7 +920,7 @@ class ZegoExpressEngineWeb {
     var i = _index;
     var mediaPlayer = MediaPlayer();
     mediaPlayer.instance = instance;
-    MediaPlayers[i] = mediaPlayer;
+    _mediaPlayers[i] = mediaPlayer;
     _index++;
     return i;
   }
@@ -937,16 +928,16 @@ class ZegoExpressEngineWeb {
   Future<void> mediaPlayerSetPlayerCanvas(
       int index, Map<dynamic, dynamic> canvas) async {
     var viewElem = document.getElementById("zego-view-${canvas["view"]}");
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return Future.value();
     }
     ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
-    var result = await (() {
+    await (() {
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.mediaPlayerSetPlayerCanvas(
           viewElem,
           canvas,
-          MediaPlayers[index].instance,
+          _mediaPlayers[index].instance,
           completerMap["success"],
           completerMap["fail"]);
       return completerMap["completer"].future;
@@ -957,13 +948,13 @@ class ZegoExpressEngineWeb {
   Future<Map<dynamic, dynamic>> mediaPlayerLoadResource(
       int index, String path) async {
     final map = {};
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       map["errorCode"] = 1;
       return Future.value(map);
     }
     await (() {
       Map completerMap = createCompleter();
-      MediaPlayers[index]
+      _mediaPlayers[index]
           .instance
           .loadResource(path, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
@@ -975,13 +966,13 @@ class ZegoExpressEngineWeb {
   Future<Map<dynamic, dynamic>> mediaPlayerLoadResourceFromMediaData(
       int index, dynamic mediaData, int startPosition) async {
     final map = {};
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       map["errorCode"] = 1;
       return Future.value(map);
     }
-    var result = await (() {
+    await (() {
       Map completerMap = createCompleter();
-      MediaPlayers[index].instance.loadResourceFromMediaData(mediaData,
+      _mediaPlayers[index].instance.loadResourceFromMediaData(mediaData,
           startPosition, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
@@ -990,80 +981,80 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> mediaPlayerEnableRepeat(int index, bool enable) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.enableRepeat(enable);
+    return _mediaPlayers[index].instance.enableRepeat(enable);
   }
 
   Future<void> mediaPlayerStart(int index) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.start();
+    return _mediaPlayers[index].instance.start();
   }
 
   Future<void> mediaPlayerPause(int index) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.pause();
+    return _mediaPlayers[index].instance.pause();
   }
 
   Future<void> mediaPlayerStop(int index) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.stop();
+    return _mediaPlayers[index].instance.stop();
   }
 
   Future<void> mediaPlayerResume(int index) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.resume();
+    return _mediaPlayers[index].instance.resume();
   }
 
   Future<void> mediaPlayerSetPlaySpeed(int index, double speed) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.setPlaySpeed(speed);
+    return _mediaPlayers[index].instance.setPlaySpeed(speed);
   }
 
   Future<void> mediaPlayerMuteLocal(int index, bool enable) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    return MediaPlayers[index].instance.muteLocal(enable);
+    return _mediaPlayers[index].instance.muteLocal(enable);
   }
 
   Future<void> mediaPlayerEnableAux(int index, bool enable) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
     ZegoFlutterEngine.instance
-        .mediaPlayerEnableAux(enable, MediaPlayers[index].instance);
+        .mediaPlayerEnableAux(enable, _mediaPlayers[index].instance);
   }
 
   Future<void> destroyMediaPlayer(int index) async {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return;
     }
-    MediaPlayers[index].instance.destroy();
-    MediaPlayers.remove(index);
+    _mediaPlayers[index].instance.destroy();
+    _mediaPlayers.remove(index);
   }
 
   Future<void> mediaPlayerSetVolume(int index, int volume) {
-    if (MediaPlayers[index] == null) {
+    if (_mediaPlayers[index] == null) {
       return Future.value();
     }
     return Future.value(ZegoFlutterEngine.instance
-        .mediaPlayerSetVolume(volume, MediaPlayers[index].instance));
+        .mediaPlayerSetVolume(volume, _mediaPlayers[index].instance));
   }
 
   Future<int> mediaPlayerGetTotalDuration(int index) async {
-    var duration = MediaPlayers[index].instance.getTotalDuration();
+    var duration = _mediaPlayers[index].instance.getTotalDuration();
     return Future.value(duration);
   }
 
@@ -1104,15 +1095,15 @@ class ZegoExpressEngineWeb {
     var i = _index;
     var capureSource = ScreenCaptureSource();
     capureSource.instance = instance;
-    MediaSources[i] = capureSource;
+    _mediaSources[i] = capureSource;
     _index++;
     return i;
   }
 
   Future<void> destroyScreenCaptureSource(int index) async {
-    if (MediaSources[index] == null) return;
-    MediaSources[index].instance.stopCapture(index);
-    MediaSources.remove(index);
+    if (_mediaSources[index] == null) return;
+    _mediaSources[index].instance.stopCapture(index);
+    _mediaSources.remove(index);
   }
 
   Future<int> setVideoSource(int source, int? instanceID, int? channel) async {
@@ -1126,10 +1117,10 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> startCaptureScreen(int index, dynamic config) async {
-    return MediaSources[index].instance.startCapture(config);
+    return _mediaSources[index].instance.startCapture(config);
   }
 
   Future<void> stopCaptureScreen(int index) async {
-    return MediaSources[index].instance.stopCapture();
+    return _mediaSources[index].instance.stopCapture();
   }
 }

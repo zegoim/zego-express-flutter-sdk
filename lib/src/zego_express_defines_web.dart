@@ -28,8 +28,7 @@ class ZegoFlutterEngine {
   external getVideoConfig(int channel);
   external startPreview(dynamic canvas, int channel);
   external stopPreview(int channel);
-  external startPublishingStream(
-      String streamID, int? channel, dynamic? config);
+  external startPublishingStream(String streamID, int? channel, dynamic config);
   external stopPublishingStream(int channel);
   external startPlayingStream(
       String streamID, dynamic remoteVideo, String s, dynamic config);
@@ -62,18 +61,18 @@ class ZegoFlutterEngine {
   external mediaPlayerSetPlayerCanvas(
       dynamic viewElem,
       Map<dynamic, dynamic> canvas,
-      dynamic MediaPlayer,
+      dynamic mediaPlayer,
       dynamic success,
       dynamic fail);
-  external mediaPlayerEnableAux(bool enable, dynamic MediaPlayer);
-  external mediaPlayerSetVolume(int volume, dynamic MediaPlayer);
+  external mediaPlayerEnableAux(bool enable, dynamic mediaPlayer);
+  external mediaPlayerSetVolume(int volume, dynamic mediaPlayer);
   external setRoomScenario(int scenario);
   external static setRoomMode(int mode);
   external enableEffectsBeauty(bool enable);
   external stopEffectsEnv();
   external setEffectsBeautyParam(dynamic param);
   external createScreenCaptureSource(int? sourceId);
-  external startCaptureScreen(int index, dynamic? config);
+  external startCaptureScreen(int index, dynamic config);
   external setVideoSource(int source, int? instanceID, int? channel);
   external setAudioSource(int source, int? channel);
   external stopCaptureScreen(int index);
