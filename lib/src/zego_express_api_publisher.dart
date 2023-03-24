@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
