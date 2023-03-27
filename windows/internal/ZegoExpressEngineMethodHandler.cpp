@@ -9,6 +9,10 @@
 
 // #include <Windows.h>
 #include "DataToImageTools.hpp"
+#include "zego_express_engine/ZegoCustomVideoCaptureManager.h"
+#include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
+#include "zego_express_engine/ZegoCustomVideoProcessManager.h"
+#include "zego_express_engine/ZegoCustomVideoRenderManager.h"
 
 
 void ZegoExpressEngineMethodHandler::initApiCalledCallback() {
@@ -1732,6 +1736,7 @@ void ZegoExpressEngineMethodHandler::destroyMediaPlayer(
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
+        mediaPlayer->setEventHandler(nullptr);
         ZegoTextureRendererController::getInstance()->removeMediaPlayerRenderer(mediaPlayer);
         EXPRESS::ZegoExpressSDK::getEngine()->destroyMediaPlayer(mediaPlayer);
     }
@@ -2383,6 +2388,27 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackPublishIndex(
     //     result->Error("mediaPlayerSetAudioTrackPublishIndex_Can_not_find_player", "Invoke `mediaPlayerSetAudioTrackPublishIndex` but can't find specific player");
     // }
     result->Error("not_support_feature", "windows platform not support feature");
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        if (enable) {
+            ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(ZegoMediaPlayerVideoManager::getInstance()->getHandler());
+        } else {
+            ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
+        }
+        result->Success();
+    } else {
+        result->Error("mediaPlayerTakeSnapshot_Can_not_find_player",
+                      "Invoke `mediaPlayerTakeSnapshot` but can't find specific player");
+    }
 }
 
 void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithConfig(
@@ -4075,8 +4101,73 @@ void ZegoExpressEngineMethodHandler::enableCustomVideoCapture(
 
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
+    if (enable) {
+        EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoCaptureHandler(ZegoCustomVideoCaptureManager::getInstance()->getHandler());
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoCaptureHandler(nullptr);
+    }
+
     EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoCapture(
         enable, &config, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableCustomVideoProcessing(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+    EXPRESS::ZegoCustomVideoProcessConfig config;
+    if (configMap.size() > 0) {
+        config.bufferType =
+            (EXPRESS::ZegoVideoBufferType)std::get<int32_t>(configMap[FTValue("bufferType")]);
+    }
+
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    if (enable) {
+        EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoProcessHandler(ZegoCustomVideoProcessManager::getInstance()->getHandler());
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoProcessHandler(nullptr);
+    }
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoProcessing(
+        enable, &config, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableCustomVideoRender(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+
+    auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+    EXPRESS::ZegoCustomVideoRenderConfig config;
+    if (configMap.size() > 0) {
+        config.bufferType =
+            (EXPRESS::ZegoVideoBufferType)std::get<int32_t>(configMap[FTValue("bufferType")]);
+        config.frameFormatSeries = (EXPRESS::ZegoVideoFrameFormatSeries)std::get<int32_t>(configMap[FTValue("frameFormatSeries")]);
+        config.enableEngineRender = std::get<bool>(configMap[FTValue("enableEngineRender")]);
+    }
+
+    if (enable) {
+        if (config.enableEngineRender) {
+            config.bufferType = EXPRESS::ZEGO_VIDEO_BUFFER_TYPE_RAW_DATA;
+            config.frameFormatSeries = EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
+            EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(true, &config);
+
+            EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(ZegoTextureRendererController::getInstance());
+            ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(ZegoCustomVideoRenderManager::getInstance()->getHandler());
+        } else {
+            EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(true, &config);
+            EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(ZegoCustomVideoRenderManager::getInstance()->getHandler());
+        }
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(false, &config);
+        ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(nullptr);
+    }
 
     result->Success();
 }

@@ -63,6 +63,12 @@ public:
     /// For video preview/play
     void stopRendering();
 
+    // set mediaplayer video handler
+    void setMediaPlayerVideoHandler(std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> handler);
+
+    // set custom video render handler
+    void setCustomVideoRenderHandler(std::shared_ptr<ZEGO::EXPRESS::IZegoCustomVideoRenderHandler> handler);
+
 protected:
     // When custom video rendering is enabled, the original video frame data collected by the local preview is called back.
     virtual void onCapturedVideoFrameRawData(unsigned char ** data,
@@ -76,9 +82,19 @@ protected:
                                            ZEGO::EXPRESS::ZegoVideoFrameParam param,
                                            const std::string & streamID) override;
 
+    virtual void onRemoteVideoFrameEncodedData(const unsigned char * data,
+                                               unsigned int dataLength,
+                                               ZEGO::EXPRESS::ZegoVideoEncodedFrameParam param,
+                                               unsigned long long referenceTimeMillisecond,
+                                               const std::string & streamID) override;
+
     // The callback triggered when the media player throws out video frame data.
     virtual void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
                               unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param) override;
+                            
+    virtual void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
+                              unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param,
+                              const char * extraInfo) override;
 private:
     std::unordered_map<int64_t , std::shared_ptr<ZegoTextureRenderer> > renderers_;
     std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel , std::shared_ptr<ZegoTextureRenderer> > capturedRenderers_;
@@ -86,6 +102,9 @@ private:
     std::unordered_map<ZEGO::EXPRESS::IZegoMediaPlayer * , std::shared_ptr<ZegoTextureRenderer> > mediaPlayerRenderers_;
 
     std::atomic_bool isInit = false;
+
+    std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> mediaPlayerHandler_ = nullptr;
+    std::shared_ptr<ZEGO::EXPRESS::IZegoCustomVideoRenderHandler> videoRenderHandler_ = nullptr;
 
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 };

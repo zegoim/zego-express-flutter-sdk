@@ -127,6 +127,8 @@ static const std::map<
         EngineMethodHandler(sendBarrageMessage),
         EngineMethodHandler(sendCustomCommand),
         EngineMethodHandler(enableCustomVideoCapture),
+        EngineMethodHandler(enableCustomVideoProcessing),
+        EngineMethodHandler(enableCustomVideoRender),
         EngineMethodHandler(enableCustomAudioCaptureProcessing),
         EngineMethodHandler(enableCustomAudioCaptureProcessingAfterHeadphoneMonitor),
         EngineMethodHandler(enableAlignedAudioAuxData),
@@ -282,6 +284,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerTakeSnapshot),
         EngineMethodHandler(mediaPlayerSetAudioTrackMode),
         EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex),
+        EngineMethodHandler(mediaPlayerEnableVideoData),
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
 
         // Copyrighted Music
