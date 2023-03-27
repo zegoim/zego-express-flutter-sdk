@@ -13,11 +13,17 @@ execute_process(COMMAND python ${CMAKE_CURRENT_LIST_DIR}/download_native_sdk.py)
 # Setup deps: native SDK header and link search path
 include_directories(${CMAKE_CURRENT_LIST_DIR}/deps/release/Library/x64/include)
 
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
+
 # It seems that flutter doesn't support windows on x86
 link_directories(${CMAKE_CURRENT_LIST_DIR}/deps/release/Library/x64/)
 
 add_library(${PLUGIN_NAME} SHARED
   ${CMAKE_CURRENT_LIST_DIR}/zego_express_engine_plugin.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoCaptureManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerVideoManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoProcessManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoRenderManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineMethodHandler.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineMethodHandler.h
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.cpp
