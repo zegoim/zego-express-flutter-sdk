@@ -40,6 +40,8 @@ class ZegoFlutterEngine {
   external setSEIConfig(int config);
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
+  external muteMicrophone(bool mute);
+  external isMicrophoneMuted();
   external enableAEC(bool enable);
   external enableAGC(bool enable);
   external enableANS(bool enable);
