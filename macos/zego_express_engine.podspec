@@ -15,14 +15,22 @@ ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZEGO Express 
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
   s.dependency 'FlutterMacOS'
-  s.dependency 'ZegoExpressEngine-macOS', '3.3.0'
+  s.vendored_frameworks = 'libs/ZegoExpressEngine.xcframework'
   s.platform = :osx, '10.11'
+
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
-  s.prepare_command = 'sh setup.sh'
+
+  s.prepare_command = 'sh setup.sh && sh download.sh'
   s.script_phases = [
-    { :name => 'Precompile',
-      :script => 'chmod +x ${PODS_TARGET_SRCROOT}/setup.sh && ${PODS_TARGET_SRCROOT}/setup.sh',
+    { :name => 'Download native dependency',
+      :script => 'sh ${PODS_TARGET_SRCROOT}/download.sh',
+      :execution_position => :before_compile,
+      :input_files => [ '${PODS_TARGET_SRCROOT}/DEPS' ],
+      :output_files => [ '${PODS_TARGET_SRCROOT}/libs/*' ]
+    },
+    { :name => 'Copy internal shared code from iOS',
+      :script => 'sh ${PODS_TARGET_SRCROOT}/setup.sh',
       :execution_position => :before_compile,
       :input_files => [ '${PODS_TARGET_SRCROOT}/../ios/Classes/internal/**/*' ],
       :output_files => [ '${PODS_TARGET_SRCROOT}/Classes/internal/**/*' ]
