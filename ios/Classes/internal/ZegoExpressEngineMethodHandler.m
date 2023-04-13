@@ -60,6 +60,16 @@
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 }
 
+- (void)unInit {
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = nil;
+    [ZegoExpressEngine destroyEngine:nil];
+
+    // Uninit texture renderer
+    if (!self.enablePlatformView) {
+        [[ZegoTextureRendererController sharedInstance] uninitController];
+    }
+}
+
 - (void)initApiCalledCallback {
     [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
 }
