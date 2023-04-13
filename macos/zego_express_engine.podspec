@@ -2,14 +2,17 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint zego_express_engine.podspec` to validate before publishing.
 #
+
+require 'yaml'
+require 'ostruct'
+pubspec = OpenStruct.new YAML.load_file('../pubspec.yaml')
+
 Pod::Spec.new do |s|
-  s.name             = 'zego_express_engine'
-  s.version          = '3.3.0'
-  s.summary          = 'Zego Express Audio/Video Live SDK for Flutter'
-  s.description      = <<-DESC
-ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZEGO Express RTC SDK (Native & Web), providing live video and real-time audio/video services.
-                       DESC
-  s.homepage         = 'https://zego.im'
+  s.name             = pubspec.name
+  s.version          = pubspec.version
+  s.summary          = pubspec.summary
+  s.description      = pubspec.description
+  s.homepage         = pubspec.homepage
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'ZEGO' => 'developer@zego.im' }
   s.source           = { :path => '.' }
