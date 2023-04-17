@@ -36,7 +36,7 @@ android {
     }
 
     task downloadNativeDependency {
-        logger.quiet "[ZEGO] Download native dependency"
+        logger.quiet "[ZEGO][PLUGIN] Download native dependency"
         def depsUrl = file("$projectDir.absolutePath/DEPS").text.trim()
         def depsVer = depsUrl.tokenize('?')[1].tokenize('=')[1]
         def libsDir = file("$projectDir.absolutePath/libs")
@@ -44,10 +44,10 @@ android {
             file("$libsDir/ZegoExpressEngine.jar").exists()) {
             def version = file("$libsDir/VERSION.txt").readLines().first().trim()
             if (version == depsVer) {
-                logger.quiet "[ZEGO] The specified version SDK ($version) already exists!"
+                logger.quiet "[ZEGO][PLUGIN] The specified version SDK ($version) already exists!"
                 return
             } else {
-                logger.quiet "[ZEGO] SDK was found in cache, but the version ($version) does not match the version specified in DEPS ($depsVer), overwrite!"
+                logger.quiet "[ZEGO][PLUGIN] SDK was found in cache, but the version ($version) does not match the version specified in DEPS ($depsVer), overwrite!"
             }
         }
         delete libsDir
@@ -62,7 +62,7 @@ android {
         ant.move(file: "$libsDir/release/VERSION.txt", todir: libsDir, overwrite: true)
         delete "$libsDir/release"
         delete "$libsDir/sdk.zip"
-        logger.quiet "[ZEGO] Done!"
+        logger.quiet "[ZEGO][PLUGIN] Done!"
     }
 
     tasks.withType(JavaCompile) {

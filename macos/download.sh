@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "[*] Downloading native dependency"
+echo "[ZEGO][PLUGIN] Download native dependency"
 
 WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $WORKSPACE
@@ -14,10 +14,10 @@ mkdir -p $LIBSDIR
 if [ -f $LIBSDIR/VERSION.txt ] && [ -f $LIBSDIR/ZegoExpressEngine.xcframework/Info.plist ]; then
   VERSION=$(head -n 1 "$LIBSDIR/VERSION.txt" | tr -d '\n')
   if [ "$VERSION" = "$DEPSVER" ]; then
-    echo "[*] The specific version SDK exists, no need to download it again, exit!"
+    echo "[ZEGO][PLUGIN] The specified version SDK ($VERSION) already exists!"
     exit 0
   else
-    echo "[*] SDK found, but the version $VERSION does not match the DEPS $DEPSVER, overwrite it!"
+    echo "[ZEGO][PLUGIN] SDK was found in cache, but the version ($VERSION) does not match the version specified in DEPS ($DEPSVER), overwrite!"
   fi
 fi
 
@@ -31,5 +31,5 @@ mv -f $LIBSDIR/release/VERSION.txt $LIBSDIR
 rm -rf $LIBSDIR/release
 rm -f $LIBSDIR/sdk.zip
 
-echo "[*] Done!"
+echo "[ZEGO][PLUGIN] Done!"
 exit 0

@@ -1,6 +1,6 @@
 # Define a custom function to download and extract the native SDK
 function(download_native_sdk DEPSURL LIBSDIR)
-  message(NOTICE "[ZEGO] Download native dependency")
+  message(NOTICE "[ZEGO][PLUGIN] Download native dependency")
 
   # Get the version number from the DEPSURL
   string(REGEX MATCH "version=[0-9\.]+$" DEPSVER ${DEPSURL})
@@ -13,10 +13,10 @@ function(download_native_sdk DEPSURL LIBSDIR)
     string(STRIP ${VERSION} VERSION)
 
     if(VERSION STREQUAL DEPSVER)
-      message(NOTICE "[ZEGO] The specified version SDK (${VERSION}) already exists, no need to download, skip!")
+      message(NOTICE "[ZEGO][PLUGIN] The specified version SDK (${VERSION}) already exists!")
       return()
     else()
-      message(NOTICE "[ZEGO] SDK was found in cache, but the version (${VERSION}) does not match the version specified in DEPS (${DEPSVER}), overwrite!")
+      message(NOTICE "[ZEGO][PLUGIN] SDK was found in cache, but the version (${VERSION}) does not match the version specified in DEPS (${DEPSVER}), overwrite!")
     endif()
   endif()
 
@@ -28,5 +28,5 @@ function(download_native_sdk DEPSURL LIBSDIR)
   file(REMOVE_RECURSE "${LIBSDIR}/release")
   file(REMOVE "${LIBSDIR}/sdk.zip")
 
-  message(NOTICE "[ZEGO] Done!")
+  message(NOTICE "[ZEGO][PLUGIN] Done!")
 endfunction()
