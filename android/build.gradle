@@ -38,16 +38,18 @@ android {
     task downloadNativeDependency {
         logger.quiet "[ZEGO][PLUGIN] Download native dependency"
 
-        def depsUrl = ""
+        def depsUrl, depsVer = ""
         if (project.hasProperty('DEPS') && project.property('DEPS').startsWith('http')) {
             depsUrl = project.property('DEPS')
+            depsVer = depsUrl.tokenize('?')[1].tokenize('=')[1]
             logger.quiet "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: $depsUrl"
         } else {
-            depsUrl = file("$projectDir.absolutePath/DEPS").text.trim()
+            depsVer = (file("$projectDir.absolutePath/../DEPS.yaml").text =~ /android:\s*(.*)/)[0][1]
+            depsUrl = "https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/android/ZegoExpressVideo-android-shared-java.zip?version=$depsVer"
         }
 
-        def depsVer = depsUrl.tokenize('?')[1].tokenize('=')[1]
         logger.quiet "[ZEGO][PLUGIN] Native version: $depsVer"
+
         def libsDir = file("$projectDir.absolutePath/libs")
         if (file("$libsDir/VERSION.txt").exists() &&
             file("$libsDir/ZegoExpressEngine.jar").exists()) {

@@ -4,18 +4,20 @@ function(download_native_sdk WORKSPACE)
 
   if($ENV{DEPS} MATCHES "^http.+")
     set(DEPSURL $ENV{DEPS})
+    string(REGEX MATCH "version=[0-9\.]+$" DEPSVER ${DEPSURL})
+    string(REGEX REPLACE "version=" "" DEPSVER ${DEPSVER})
     message(NOTICE "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: ${DEPSURL}")
   else()
-    file(STRINGS "${WORKSPACE}/DEPS" DEPSURL)
+    file(STRINGS "${WORKSPACE}/../DEPS.yaml" DEPSYAML)
+    string(REGEX MATCH "windows: [0-9\.]+" DEPSVER ${DEPSYAML})
+    string(REGEX REPLACE "windows: " "" DEPSVER ${DEPSVER})
+    set(DEPSURL "https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/win/ZegoExpressVideo-win-shared-cpp.zip?version=${DEPSVER}")
   endif()
+
+  message(NOTICE "[ZEGO][PLUGIN] Native version: ${DEPSVER}")
 
   set(LIBSDIR "${WORKSPACE}/libs")
   file(MAKE_DIRECTORY "${LIBSDIR}")
-
-  # Get the version number from the DEPSURL
-  string(REGEX MATCH "version=[0-9\.]+$" DEPSVER ${DEPSURL})
-  string(REGEX REPLACE "version=" "" DEPSVER ${DEPSVER})
-  message(NOTICE "[ZEGO][PLUGIN] Native version: ${DEPSVER}")
 
   # Check if the specific version SDK exists
   if(EXISTS "${LIBSDIR}/VERSION.txt" AND EXISTS "${LIBSDIR}/x64/ZegoExpressEngine.dll")
