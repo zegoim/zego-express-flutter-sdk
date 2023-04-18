@@ -13,11 +13,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(PLUGIN_NAME "zego_express_engine_plugin")
 
 # Download native SDK
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/libs")
-file(STRINGS "${CMAKE_CURRENT_LIST_DIR}/DEPS" DEPSURL)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-include(download)
-download_native_sdk("${DEPSURL}" "${CMAKE_CURRENT_LIST_DIR}/libs")
+include(${CMAKE_CURRENT_LIST_DIR}/download.cmake)
+download_native_sdk("${CMAKE_CURRENT_LIST_DIR}")
 
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES

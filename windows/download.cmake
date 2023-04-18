@@ -1,10 +1,21 @@
 # Define a custom function to download and extract the native SDK
-function(download_native_sdk DEPSURL LIBSDIR)
+function(download_native_sdk WORKSPACE)
   message(NOTICE "[ZEGO][PLUGIN] Download native dependency")
+
+  if($ENV{DEPS} MATCHES "^http.+")
+    set(DEPSURL $ENV{DEPS})
+    message(NOTICE "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: ${DEPSURL}")
+  else()
+    file(STRINGS "${WORKSPACE}/DEPS" DEPSURL)
+  endif()
+
+  set(LIBSDIR "${WORKSPACE}/libs")
+  file(MAKE_DIRECTORY "${LIBSDIR}")
 
   # Get the version number from the DEPSURL
   string(REGEX MATCH "version=[0-9\.]+$" DEPSVER ${DEPSURL})
   string(REGEX REPLACE "version=" "" DEPSVER ${DEPSVER})
+  message(NOTICE "[ZEGO][PLUGIN] Native version: ${DEPSVER}")
 
   # Check if the specific version SDK exists
   if(EXISTS "${LIBSDIR}/VERSION.txt" AND EXISTS "${LIBSDIR}/x64/ZegoExpressEngine.dll")

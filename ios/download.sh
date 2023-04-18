@@ -5,8 +5,15 @@ echo "[ZEGO][PLUGIN] Download native dependency"
 WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $WORKSPACE
 
-DEPSURL=$(<$WORKSPACE/DEPS)
+if [[ $DEPS == http* ]]; then
+  DEPSURL=$DEPS
+  echo "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: $DEPSURL"
+else
+  DEPSURL=$(<$WORKSPACE/DEPS)
+fi
+
 DEPSVER=$(echo $DEPSURL | cut -d'?' -f2 | cut -d'=' -f2)
+echo "[ZEGO][PLUGIN] Native version: $DEPSVER"
 
 LIBSDIR=$WORKSPACE/libs
 mkdir -p $LIBSDIR
@@ -14,10 +21,10 @@ mkdir -p $LIBSDIR
 if [ -f $LIBSDIR/VERSION.txt ] && [ -f $LIBSDIR/ZegoExpressEngine.xcframework/Info.plist ]; then
   VERSION=$(head -n 1 "$LIBSDIR/VERSION.txt" | tr -d '\n')
   if [ "$VERSION" = "$DEPSVER" ]; then
-    echo "[ZEGO][PLUGIN] The specified version SDK ($VERSION) already exists!"
+    echo "[ZEGO][PLUGIN] The specified version SDK already exists!"
     exit 0
   else
-    echo "[ZEGO][PLUGIN] SDK was found in cache, but the version ($VERSION) does not match the version specified in DEPS ($DEPSVER), overwrite!"
+    echo "[ZEGO][PLUGIN] SDK was found in cache, but the version ($VERSION) does not match the version specified in DEPS, overwrite!"
   fi
 fi
 
