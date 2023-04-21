@@ -20,12 +20,12 @@ void ZegoTextureRendererController::init(flutter::BinaryMessenger *message)
 {
     if (!isInit)
     {
-        auto eventChannel = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>
+        eventChannel_ = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>
             (message, "plugins.zego.im/zego_texture_renderer_controller_event_handler", &flutter::StandardMethodCodec::GetInstance());
-        eventChannel->SetStreamHandler(std::make_unique<ZegoTextureRendererControllerEventChannel>());
+        eventChannel_->SetStreamHandler(std::make_unique<ZegoTextureRendererControllerEventChannel>());
 
         isInit = true;
-        ZegoCustomVideoRenderConfig config;
+        ZegoCustomVideoRenderConfig config{};
         config.bufferType = ZEGO_VIDEO_BUFFER_TYPE_RAW_DATA;
         config.frameFormatSeries = ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
         ZegoExpressSDK::getEngine()->enableCustomVideoRender(true, &config);
