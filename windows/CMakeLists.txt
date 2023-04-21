@@ -81,10 +81,3 @@ set(zego_express_engine_bundled_libraries
   ${CMAKE_CURRENT_LIST_DIR}/libs/x64/ZegoExpressEngine.dll
   PARENT_SCOPE
 )
-
-if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/libs/x64/clang_rt.asan_dynamic-x86_64.dll)
-  set(zego_express_engine_bundled_libraries
-    ${zego_express_engine_bundled_libraries}
-    ${CMAKE_CURRENT_LIST_DIR}/libs/x64/clang_rt.asan_dynamic-x86_64.dll
-    PARENT_SCOPE)
-endif()
