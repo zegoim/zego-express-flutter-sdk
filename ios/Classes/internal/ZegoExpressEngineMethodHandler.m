@@ -317,6 +317,16 @@
     result(nil);
 }
 
+- (void)setGeoFence:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+    
+    NSArray<NSNumber *> *areaList = call.arguments[@"areaList"];
+    
+    [ZegoExpressEngine setGeoFence:(ZegoGeoFenceType)type area:areaList];
+
+    result(nil);
+}
 
 - (void)uploadLog:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -560,15 +570,22 @@
         int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+        BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+#if TARGET_OS_IPHONE
+            if (alphaBlend) {
+                [platformView.view setBackgroundColor:UIColor.clearColor];
+            }
+#endif
 
             if (platformView) {
                 ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
 
                 [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
             } else {
@@ -1154,6 +1171,28 @@
     result(@(ret));
 }
 
+- (void)enableVideoObjectSegmentation:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+    int type = [ZegoUtils intValue:call.arguments[@"type"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableVideoObjectSegmentation:enable type:(ZegoObjectSegmentationType)type channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)enableAlphaChannelVideoEncoder:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+    int alphaLayout = [ZegoUtils intValue:call.arguments[@"alphaLayout"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableAlphaChannelVideoEncoder:enable alphaLayout:(ZegoAlphaLayoutType)alphaLayout channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -1206,15 +1245,22 @@
         int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+        BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+#if TARGET_OS_IPHONE
+            if (alphaBlend) {
+                [platformView.view setBackgroundColor:UIColor.clearColor];
+            }
+#endif
 
             if (platformView) {
                 ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
 
                 if (playerConfig) {
                     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
@@ -1457,6 +1503,65 @@
     result(nil);
 }
 
+- (void)updatePlayingCanvas:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *streamID = call.arguments[@"streamID"];
+    
+    // Handle ZegoCanvas
+
+    NSDictionary *canvasMap = call.arguments[@"canvas"];
+
+    if (canvasMap && canvasMap.count > 0) {
+        // Play video
+
+        // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+        int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+        int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+        int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+        BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+
+        if (self.enablePlatformView) {
+            // Render with PlatformView
+            ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+#if TARGET_OS_IPHONE
+            if (alphaBlend) {
+                [platformView.view setBackgroundColor:UIColor.clearColor];
+            }
+#endif
+
+            if (platformView) {
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
+                canvas.viewMode = (ZegoViewMode)viewMode;
+                canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
+
+                [[ZegoExpressEngine sharedEngine] updatePlayingCanvas:streamID canvas:canvas];
+            } else {
+                // Play video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGError(@"[startPlayingStream] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPlayingStream_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
+            }
+
+        } else {
+            // Render with Texture
+            if (![[ZegoTextureRendererController sharedInstance] bindRemoteStreamId:streamID withTexture:viewID]) {
+                // Play video without creating TextureRenderer in advance
+                // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createCanvasView` first and get the textureID", (long)viewID];
+                ZGError(@"[startPlayingStream] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                return;
+            }
+        }
+
+    }
+
+    result(nil);
+}
+
 #if TARGET_OS_IPHONE
 - (void)enableVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -1481,6 +1586,7 @@
 
     result(nil);
 }
+
 #endif
 
 #pragma mark - Mixer
@@ -3074,15 +3180,22 @@
         int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+        BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+#if TARGET_OS_IPHONE
+            if (alphaBlend) {
+                [platformView.view setBackgroundColor:UIColor.clearColor];
+            }
+#endif
             
             if (platformView) {
                 ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
                 
                 [mediaPlayer setPlayerCanvas:canvas];
             } else {
@@ -3452,6 +3565,24 @@
                 int format = [ZegoUtils intValue:call.arguments[@"format"]];
                 [mediaPlayer setVideoHandler:nil format:(ZegoVideoFrameFormat)format type:ZegoVideoBufferTypeCVPixelBuffer];
             }
+        }
+    }
+
+    result(nil);
+}
+
+- (void)mediaPlayerEnableBlockData:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
+        if (enable) {
+            [mediaPlayer setBlockDataHandler:(id<ZegoMediaPlayerBlockDataHandler>)[ZegoMediaPlayerVideoManager sharedInstance] blockSize:blockSize];
+        } else {
+            [mediaPlayer setBlockDataHandler:nil blockSize:blockSize];
         }
     }
 
@@ -4530,6 +4661,8 @@
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
+        config.masterID = configMap[@"masterID"];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4554,6 +4687,8 @@
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
+        config.masterID = configMap[@"masterID"];
         
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4578,6 +4713,8 @@
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
+        config.masterID = configMap[@"masterID"];
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4675,6 +4812,7 @@
         ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
         
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance getSharedResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
@@ -4697,6 +4835,8 @@
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
+        config.masterID = configMap[@"masterID"];
         
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance requestResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {

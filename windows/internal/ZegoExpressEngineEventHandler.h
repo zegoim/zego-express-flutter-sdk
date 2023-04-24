@@ -71,6 +71,8 @@ protected:
     
     void onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;
 
+    void onVideoObjectSegmentationStateChanged(EXPRESS::ZegoObjectSegmentationState state, EXPRESS::ZegoPublishChannel channel, int errorCode) override;
+
     void onPlayerStateUpdate(const std::string& streamID, EXPRESS::ZegoPlayerState state, int errorCode, const std::string& extendedData) override;
 
     void onPlayerQualityUpdate(const std::string& streamID, const EXPRESS::ZegoPlayStreamQuality& quality) override;
@@ -80,6 +82,8 @@ protected:
     void onPlayerRecvAudioFirstFrame(const std::string& streamID) override;
 
     void onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
+
+    void onPlayerSyncRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
     void onPlayerRecvAudioSideInfo(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
@@ -222,6 +226,7 @@ protected:
 
     void onExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType) override;
 
+    void onWindowStateChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureWindowState windowState, EXPRESS::ZegoRect windowRect) override;
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 

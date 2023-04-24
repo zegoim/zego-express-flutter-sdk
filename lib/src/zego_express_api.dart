@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
+import 'package:flutter/material.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
 
@@ -102,6 +103,21 @@ class ZegoExpressEngine {
   /// - [mode] Room mode. Description: Used to set the room mode. Use cases: If you need to enter multiple rooms at the same time for publish-play stream, please turn on the multi-room mode through this interface. Required: True. Default value: ZEGO_ROOM_MODE_SINGLE_ROOM.
   static Future<void> setRoomMode(ZegoRoomMode mode) async {
     return await ZegoExpressImpl.setRoomMode(mode);
+  }
+
+  /// Set Geo Fence.
+  ///
+  /// Available since: 3.4.0
+  /// Description: If you need to use the geo fence feature, please call this function to complete the configuration.
+  /// When to call: Must be set before calling [createEngine] to take effect, otherwise it will fail.
+  /// Restrictions: If you need to use the geo fence feature, please contact ZEGO Technical Support.
+  /// Caution: None.
+  ///
+  /// - [type] Geo fence type. Description: Used to set the geo fence type.
+  /// - [areaList] Geo fence area. Description: Used to describe the range of geo fence.
+  static Future<void> setGeoFence(
+      ZegoGeoFenceType type, List<int> areaList) async {
+    return await ZegoExpressImpl.setGeoFence(type, areaList);
   }
 
   /// Gets the SDK's version number.
@@ -298,7 +314,7 @@ class ZegoExpressEngine {
   /// The callback triggered every 30 seconds to report the current number of online users.
   ///
   /// Available since: 1.7.0
-  /// Description: This method will notify the user of the current number of online users in the room..
+  /// Description: This method will notify the user of the current number of online users in the room.
   /// Use cases: Developers can use this callback to show the number of user online in the current room.
   /// When to call /Trigger: After successfully logging in to the room.
   /// Restrictions: None.
@@ -486,6 +502,21 @@ class ZegoExpressEngine {
           ZegoStreamEvent eventID, String streamID, String extraInfo)?
       onPublisherStreamEvent;
 
+  /// The video object segmentation state changed.
+  ///
+  /// Available since: 3.4.0
+  /// Description: The object segmentation state of the stream publishing end changes.
+  /// When to trigger: When [enableObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
+  /// Caution: This callback depends on enabling preview or stream publishing.
+  ///
+  /// - [state] Object segmentation state.
+  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  /// - [errorCode] The error code corresponding to the status change of the object segmentation, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(
+      ZegoObjectSegmentationState state,
+      ZegoPublishChannel channel,
+      int errorCode)? onVideoObjectSegmentationStateChanged;
+
   /// The callback triggered when the state of stream playing changes.
   ///
   /// Available since: 1.1.0
@@ -595,9 +626,23 @@ class ZegoExpressEngine {
   /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
   /// Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
   ///
+  /// @deprecated This function will switch the ui thread callback data, which may cause sei data exceptions. It will be deprecated in version 3.4.0 and above. Please use the [onPlayerSyncRecvSEI] function instead.
   /// - [streamID] Stream ID.
   /// - [data] SEI content.
+  @Deprecated(
+      'This function will switch the ui thread callback data, which may cause sei data exceptions. It will be deprecated in version 3.4.0 and above. Please use the [onPlayerSyncRecvSEI] function instead.')
   static void Function(String streamID, Uint8List data)? onPlayerRecvSEI;
+
+  /// The callback triggered when Supplemental Enhancement Information is received synchronously.
+  ///
+  /// Available since: 3.4.0
+  /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
+  /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
+  /// Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
+  ///
+  /// - [streamID] Stream ID.
+  /// - [data] SEI content.
+  static void Function(String streamID, Uint8List data)? onPlayerSyncRecvSEI;
 
   /// Receive the audio side information content of the remote stream.
   ///
@@ -1147,7 +1192,7 @@ class ZegoExpressEngine {
   static void Function(String userID, ZegoStreamQualityLevel upstreamQuality,
       ZegoStreamQualityLevel downstreamQuality)? onNetworkQuality;
 
-  /// Successful callback of network time synchronization..
+  /// Successful callback of network time synchronization.
   ///
   /// Available since: 2.12.0
   /// This callback is triggered when internal network time synchronization completes after a developer calls [createEngine].
@@ -1254,7 +1299,7 @@ class ZegoExpressEngine {
   /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
   /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
   /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
-  /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback. When the engine is started in the non-playing stream state or the media player is not used to play the media file, the audio data to be called back is muted audio data.
+  /// Caution: This callback is a high-frequency callback. Please do not perform time-consuming operations in this callback. When the engine is not in the stream publishing state and the media player is not used to play media files, the audio data in the callback is muted audio data.
   ///
   /// - [data] Audio data in PCM format.
   /// - [dataLength] Length of the data.
@@ -1263,10 +1308,10 @@ class ZegoExpressEngine {
           Uint8List data, int dataLength, ZegoAudioFrameParam param)?
       onPlaybackAudioData;
 
-  /// The callback for obtaining the mixed audio data. Such mixed auido data are generated by the SDK by mixing the audio data of all the remote playing streams and the auido data captured locally.
+  /// Callback to get the audio data played by the SDK and the audio data captured by the local microphone. The audio data is the data mixed by the SDK.
   ///
   /// Available: Since 1.1.0
-  /// Description: The audio data of all playing data is mixed with the data captured by the local microphone before it is sent to the loudspeaker, and calleback out in this way.
+  /// Description: The audio data played by the SDK is mixed with the data captured by the local microphone before being sent to the speaker, and is called back through this function.
   /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0x04, this callback will be triggered only when it is in the publishing stream state or playing stream state.
   /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
@@ -1336,6 +1381,20 @@ class ZegoExpressEngine {
   /// - [exceptionType] Capture source exception type.
   static void Function(ZegoScreenCaptureSource source,
       ZegoScreenCaptureSourceExceptionType exceptionType)? onExceptionOccurred;
+
+  /// The callback will be triggered when the state of the capture target window change.
+  ///
+  /// Available since: 3.4.0
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [windowState] Capture window state.
+  /// - [windowRect] Capture window rect.
+  static void Function(
+      ZegoScreenCaptureSource source,
+      ZegoScreenCaptureWindowState windowState,
+      Rect windowRect)? onWindowStateChanged;
 
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///

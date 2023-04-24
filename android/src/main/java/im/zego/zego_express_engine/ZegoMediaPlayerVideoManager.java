@@ -5,11 +5,12 @@ import org.json.JSONObject;
 import java.nio.ByteBuffer;
 
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.callback.IZegoMediaPlayerBlockDataHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerVideoHandler;
 import im.zego.zegoexpress.constants.ZegoVideoMirrorMode;
 import im.zego.zegoexpress.entity.ZegoVideoFrameParam;
 
-public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler {
+public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler implements IZegoMediaPlayerBlockDataHandler {
 
     private volatile static ZegoMediaPlayerVideoManager singleton;
 
@@ -77,5 +78,17 @@ public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler {
             }
             mHander.onVideoFrame(mediaPlayer.getIndex(), data, dataLength, videoFrameParam, extraInfo);
         }
+    }
+
+    @Override
+    public void onBlockBegin(ZegoMediaPlayer mediaPlayer, String path) {
+        if (mHander != null) {
+            mHander.onBlockBegin(mediaPlayer.getIndex(), path);
+        }
+    }
+
+    @Override
+    public int onBlockData(ZegoMediaPlayer mediaPlayer, ByteBuffer buffer) {
+        return mHander.onBlockData(mediaPlayer.getIndex(), buffer);
     }
 }

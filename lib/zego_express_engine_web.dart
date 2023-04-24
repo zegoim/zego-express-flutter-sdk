@@ -107,8 +107,7 @@ class ZegoExpressEngineWeb {
         return mutePublishStreamAudio(
             call.arguments["mute"], call.arguments["channel"]);
       case 'muteMicrophone':
-        return muteMicrophone(
-            call.arguments["mute"]);
+        return muteMicrophone(call.arguments["mute"]);
       case 'isMicrophoneMuted':
         return isMicrophoneMuted();
       case 'startPublishingStream':
@@ -812,13 +811,13 @@ class ZegoExpressEngineWeb {
     return await ZegoFlutterEngine.instance
         .mutePublishStreamAudio(mute, getPublishChannel(channel));
   }
+
   Future<void> muteMicrophone(bool mute) async {
-    return await ZegoFlutterEngine.instance
-        .muteMicrophone(mute);
+    return await ZegoFlutterEngine.instance.muteMicrophone(mute);
   }
+
   Future<void> isMicrophoneMuted() async {
-    return await ZegoFlutterEngine.instance
-        .isMicrophoneMuted();
+    return await ZegoFlutterEngine.instance.isMicrophoneMuted();
   }
 
   Future<void> enableAEC(bool enable) async {

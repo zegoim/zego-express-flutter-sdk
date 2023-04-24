@@ -12,10 +12,12 @@ import static im.zego.zego_express_engine.internal.ZegoUtils.getStackTrace;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.SurfaceView;
 
 import org.json.JSONObject;
 
@@ -86,6 +88,7 @@ import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
+import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
@@ -93,6 +96,7 @@ import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
+import im.zego.zegoexpress.constants.ZegoObjectSegmentationType;
 import im.zego.zegoexpress.constants.ZegoOrientation;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.constants.ZegoRangeAudioMode;
@@ -418,6 +422,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setGeoFence(MethodCall call, Result result) {
+
+        ZegoGeoFenceType type = ZegoGeoFenceType.getZegoGeoFenceType(ZegoUtils.intValue((Number)call.argument("type")));
+        ArrayList<Integer> areaList = (ArrayList<Integer>)call.argument("areaList");
+        ZegoExpressEngine.setGeoFence(type, areaList);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void getVersion(MethodCall call, Result result) {
 
         result.success(ZegoExpressEngine.getVersion());
@@ -658,6 +672,7 @@ public class ZegoExpressEngineMethodHandler {
             int viewID = ZegoUtils.intValue((Number) canvasMap.get("view"));
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
+            boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
 
             Object view;
 
@@ -667,6 +682,10 @@ public class ZegoExpressEngineMethodHandler {
 
                 if (platformView != null) {
                     view = platformView.getSurfaceView();
+                    if (alphaBlend) {
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
+                    }
                 } else {
                     // Preview video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
@@ -698,6 +717,7 @@ public class ZegoExpressEngineMethodHandler {
                 canvas = new ZegoCanvas(view);
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
 
                 // Mark the canvas is in use
                 if (!enablePlatformView) {
@@ -1282,6 +1302,29 @@ public class ZegoExpressEngineMethodHandler {
         result.success(ret);
     }
 
+    @SuppressWarnings("unused")
+    public static void enableVideoObjectSegmentation(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoObjectSegmentationType type = ZegoObjectSegmentationType.getZegoObjectSegmentationType(ZegoUtils.intValue((Number) call.argument("type")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableVideoObjectSegmentation(enable, type, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableAlphaChannelVideoEncoder(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoAlphaLayoutType alphaLayout = ZegoAlphaLayoutType.getZegoAlphaLayoutType(ZegoUtils.intValue((Number) call.argument("alphaLayout")));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableAlphaChannelVideoEncoder(enable, alphaLayout, channel);
+
+        result.success(null);
+    }
 
     /* Player */
 
@@ -1337,6 +1380,7 @@ public class ZegoExpressEngineMethodHandler {
             int viewID = ZegoUtils.intValue((Number) canvasMap.get("view"));
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
+            boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
 
             Object view;
 
@@ -1346,6 +1390,10 @@ public class ZegoExpressEngineMethodHandler {
 
                 if (platformView != null) {
                     view = platformView.getSurfaceView();
+                    if (alphaBlend) {
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
+                    }
                 } else {
                     // Play video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
@@ -1377,6 +1425,7 @@ public class ZegoExpressEngineMethodHandler {
                 canvas = new ZegoCanvas(view);
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
             }
 
             // Mark the canvas is in use
@@ -1646,6 +1695,77 @@ public class ZegoExpressEngineMethodHandler {
     public static void uninitVideoSuperResolution(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().uninitVideoSuperResolution();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void updatePlayingCanvas(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        // Handle ZegoCanvas
+
+        HashMap<String, Object> canvasMap = call.argument("canvas");
+        ZegoCanvas canvas = null;
+        if (canvasMap != null && !canvasMap.isEmpty()) {
+            // Play video
+
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int viewID = ZegoUtils.intValue((Number) canvasMap.get("view"));
+            ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
+            int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
+            boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
+
+            Object view;
+
+            if (enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+
+                if (platformView != null) {
+                    view = platformView.getSurfaceView();
+                    if (alphaBlend) {
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
+                    }
+                } else {
+                    // Play video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
+                    result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
+                }
+
+            } else {
+                // Render with Texture
+                ZegoTextureRenderer textureRenderer = ZegoTextureRendererController.getInstance().getTextureRenderer((long) viewID);
+
+                if (textureRenderer != null) {
+                    view = textureRenderer.getSurface();
+                } else {
+                    // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
+                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
+                    result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
+                }
+            }
+
+            if (view != null) {
+                canvas = new ZegoCanvas(view);
+                canvas.viewMode = viewMode;
+                canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
+            }
+
+            // Mark the canvas is in use
+            if (!enablePlatformView) {
+                ZegoTextureRendererController.getInstance().playerCanvasInUse.put(streamID, canvas);
+            }
+        }
+        ZegoExpressEngine.getEngine().updatePlayingCanvas(streamID, canvas);
 
         result.success(null);
     }
@@ -3218,6 +3338,7 @@ public class ZegoExpressEngineMethodHandler {
             int viewID = ZegoUtils.intValue((Number) canvasMap.get("view"));
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
+            boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
 
             Object view;
 
@@ -3228,6 +3349,10 @@ public class ZegoExpressEngineMethodHandler {
 
                 if (platformView != null) {
                     view  = platformView.getSurfaceView();
+                    if (alphaBlend) {
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
+                    }
                 } else {
                     // Media video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
@@ -3258,6 +3383,7 @@ public class ZegoExpressEngineMethodHandler {
                 canvas = new ZegoCanvas(view);
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
 
                 // Mark the canvas is in use
                 if (!enablePlatformView) {
@@ -3697,6 +3823,25 @@ public class ZegoExpressEngineMethodHandler {
                 mediaPlayer.setVideoHandler(ZegoMediaPlayerVideoManager.getInstance(), format);
             } else {
                 mediaPlayer.setVideoHandler(null, format);
+            }
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableBlockData(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            int blockSize = ZegoUtils.intValue((Number) call.argument("blockSize"));
+            if (enable) {
+                mediaPlayer.setBlockDataHandler(ZegoMediaPlayerVideoManager.getInstance(), blockSize);
+            } else {
+                mediaPlayer.setBlockDataHandler(null, blockSize);
             }
         }
 
@@ -4840,6 +4985,8 @@ public class ZegoExpressEngineMethodHandler {
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
             config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
+            config.roomID = configMap.get("roomID").toString();
+            config.masterID = configMap.get("masterID").toString();
             copyrightedMusicInstance.requestAccompaniment(config, new IZegoCopyrightedMusicRequestAccompanimentCallback() {
 
                 @Override
@@ -4864,6 +5011,8 @@ public class ZegoExpressEngineMethodHandler {
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
             config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
+            config.roomID = configMap.get("roomID").toString();
+            config.masterID = configMap.get("masterID").toString();
             copyrightedMusicInstance.requestAccompanimentClip(config, new IZegoCopyrightedMusicRequestAccompanimentClipCallback() {
 
                 @Override
@@ -4888,6 +5037,8 @@ public class ZegoExpressEngineMethodHandler {
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
             config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
+            config.roomID = configMap.get("roomID").toString();
+            config.masterID = configMap.get("masterID").toString();
             copyrightedMusicInstance.requestSong(config, new IZegoCopyrightedMusicRequestSongCallback() {
 
                 @Override
@@ -4994,6 +5145,7 @@ public class ZegoExpressEngineMethodHandler {
             ZegoCopyrightedMusicGetSharedConfig config = new ZegoCopyrightedMusicGetSharedConfig();
             config.songID = configMap.get("songID").toString();
             config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
+            config.roomID = configMap.get("roomID").toString();
             ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
             copyrightedMusicInstance.getSharedResource(config, type, new IZegoCopyrightedMusicGetSharedResourceCallback() {
 
@@ -5019,6 +5171,9 @@ public class ZegoExpressEngineMethodHandler {
             config.songID = configMap.get("songID").toString();
             config.mode = ZegoCopyrightedMusicBillingMode.getZegoCopyrightedMusicBillingMode(ZegoUtils.intValue((Number) configMap.get("mode")));
             config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
+            config.roomID = configMap.get("roomID").toString();
+            config.masterID = configMap.get("masterID").toString();
+
             ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
             copyrightedMusicInstance.requestResource(config, type, new IZegoCopyrightedMusicRequestResourceCallback() {
 

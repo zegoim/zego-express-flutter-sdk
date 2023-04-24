@@ -264,6 +264,20 @@ void ZegoExpressEngineEventHandler::onPublisherStreamEvent(EXPRESS::ZegoStreamEv
     }
 }
 
+void ZegoExpressEngineEventHandler::onVideoObjectSegmentationStateChanged(EXPRESS::ZegoObjectSegmentationState state, EXPRESS::ZegoPublishChannel channel, int errorCode) {
+    
+    if (eventSink_) {
+        FTMap retMap;
+        
+        retMap[FTValue("method")] = FTValue("onVideoObjectSegmentationStateChanged");
+        retMap[FTValue("state")] = FTValue((int32_t)state);
+        retMap[FTValue("channel")] = FTValue((int32_t)channel);
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string& streamID, EXPRESS::ZegoPlayerState state, int errorCode, const std::string& extendedData) {
 
     if (eventSink_) {
@@ -346,6 +360,22 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string& streamID,
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onPlayerRecvSEI");
+        retMap[FTValue("streamID")] = FTValue(streamID);
+
+        auto nonConstData = const_cast<unsigned char*>(data);
+        std::vector<uint8_t> dataArray(nonConstData, nonConstData + dataLength);
+
+        retMap[FTValue("data")] = FTValue(dataArray);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onPlayerSyncRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) {
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPlayerSyncRecvSEI");
         retMap[FTValue("streamID")] = FTValue(streamID);
 
         auto nonConstData = const_cast<unsigned char*>(data);
@@ -1333,6 +1363,26 @@ void ZegoExpressEngineEventHandler::onExceptionOccurred(EXPRESS::IZegoScreenCapt
         retMap[FTValue("method")] = FTValue("onExceptionOccurred");
         retMap[FTValue("screenCaptureSourceIndex")] = FTValue(source->getIndex());
         retMap[FTValue("exceptionType")] = FTValue(static_cast<int32_t>(exceptionType));
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onWindowStateChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureWindowState windowState, EXPRESS::ZegoRect windowRect)
+{
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onWindowStateChanged");
+        retMap[FTValue("screenCaptureSourceIndex")] = FTValue(source->getIndex());
+        retMap[FTValue("windowState")] = FTValue(static_cast<int32_t>(windowState));
+
+        FTMap rectMap;
+        retMap[FTValue("x")] = FTValue(windowRect.x);
+        retMap[FTValue("y")] = FTValue(windowRect.y);
+        retMap[FTValue("width")] = FTValue(windowRect.width);
+        retMap[FTValue("height")] = FTValue(windowRect.height);
+
+        retMap[FTValue("windowRect")] = rectMap;
 
         eventSink_->Success(retMap);
     }

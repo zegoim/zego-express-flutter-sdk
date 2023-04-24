@@ -135,6 +135,18 @@ enum ZegoRoomMode {
   MultiRoom
 }
 
+/// Geo fence type.
+enum ZegoGeoFenceType {
+  /// Not use geo fence.
+  None,
+
+  /// Include the specified geo fence areas.
+  Include,
+
+  /// Exclude the specified geo fence areas.
+  Exclude
+}
+
 /// engine state.
 enum ZegoEngineState {
   /// The engine has started
@@ -1297,7 +1309,10 @@ enum ZegoCopyrightedMusicBillingMode {
   User,
 
   /// Monthly billing by room.The room users are billed on a monthly basis, that is, statistical calls to obtain song resources (such as [requestSong], [requestAccompaniment], etc.) are passed as Roomid for a monthly subscription of the room, and fees are charged on a monthly basis.
-  Room
+  Room,
+
+  /// Monthly billing by master. Every time a user obtains a resource, it is counted as the owner’s acquisition of resources, that is, according to the actual call to obtain the song resource interface (such as [requestSong], [requestAccompaniment], etc.), the parameters are passed as the Roomid of the room and the Masterid of the owner, and the fee is charged according to the owner.
+  Master
 }
 
 /// The music resource type. For [querycache] interface.
@@ -1315,7 +1330,10 @@ enum ZegoCopyrightedMusicType {
   ZegoCopyrightedMusicAccompaniment,
 
   /// Song accompaniment clip.
-  ZegoCopyrightedMusicAccompanimentClip
+  ZegoCopyrightedMusicAccompanimentClip,
+
+  /// Song accompaniment segment.
+  ZegoCopyrightedMusicAccompanimentSegment
 }
 
 /// The music resource type. For [ZegoCopyrightedMusicRequestConfig] and [ZegoCopyrightedMusicGetSharedConfig].
@@ -1327,7 +1345,10 @@ enum ZegoCopyrightedMusicResourceType {
   ZegoCopyrightedMusicResourceAccompaniment,
 
   /// Song accompaniment clip.
-  ZegoCopyrightedMusicResourceAccompanimentClip
+  ZegoCopyrightedMusicResourceAccompanimentClip,
+
+  /// Song accompaniment segment.
+  ZegoCopyrightedMusicResourceAccompanimentSegment
 }
 
 /// Copyright music resource song copyright provider. For more information about the copyright owner, please contact ZEGO business personnel.
@@ -1339,7 +1360,10 @@ enum ZegoCopyrightedMusicVendorID {
   ZegoCopyrightedMusicVendor1,
 
   /// Second copyright provider.
-  ZegoCopyrightedMusicVendor2
+  ZegoCopyrightedMusicVendor2,
+
+  /// Third copyright provider.
+  ZegoCopyrightedMusicVendor3
 }
 
 /// Font type.
@@ -1582,6 +1606,18 @@ enum ZegoScreenCaptureSourceExceptionType {
   Failed
 }
 
+/// The state of the screen capture source window changes.
+enum ZegoScreenCaptureWindowState {
+  /// The window is on the current screen, and the coordinate area changes.
+  OnScreen,
+
+  /// The window leaves the current screen and pauses the capture.
+  OffScreen,
+
+  /// The window is destroy.
+  Destroy
+}
+
 /// Multimedia load type.
 enum ZegoMultimediaLoadType {
   /// Load by file path.
@@ -1607,6 +1643,24 @@ enum ZegoAlphaLayoutType {
 
   /// Alpha channel data is to the bottom of RGB/YUV data.
   Bottom
+}
+
+/// Object segmentation type.
+enum ZegoObjectSegmentationType {
+  /// Any background object segmentation.
+  AnyBackground,
+
+  /// Green screen background object segmentation.
+  GreenScreenBackground
+}
+
+/// Object segmentation state.
+enum ZegoObjectSegmentationState {
+  /// Object segmentation turned off.
+  Off,
+
+  /// Object segmentation turned on.
+  On
 }
 
 /// Log config.
@@ -2007,12 +2061,16 @@ class ZegoCanvas {
   /// Background color, the format is 0xRRGGBB, default is black, which is 0x000000
   int? backgroundColor;
 
-  ZegoCanvas(this.view, {this.viewMode, this.backgroundColor});
+  /// If enable alpha blend render, default is false.
+  bool? alphaBlend;
+
+  ZegoCanvas(this.view, {this.viewMode, this.backgroundColor, this.alphaBlend});
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
   ZegoCanvas.view(this.view)
       : this.viewMode = ZegoViewMode.AspectFit,
-        this.backgroundColor = 0x000000;
+        this.backgroundColor = 0x000000,
+        this.alphaBlend = false;
 }
 
 /// Advanced publisher configuration.
@@ -2593,7 +2651,7 @@ class ZegoMixerInput {
   /// Mix stream content type
   ZegoMixerInputContentType contentType;
 
-  /// Stream layout. When the mixed stream is an audio stream (that is, the ContentType parameter is set to the audio mixed stream type), the layout field is not processed inside the SDK, and there is no need to pay attention to this parameter.
+  /// Stream layout. When the mixed stream is an audio stream (that is, the ContentType parameter is set to the audio mixed stream type). Developers do not need to assign a value to this field, just use the SDK default.
   Rect layout;
 
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
@@ -2657,7 +2715,7 @@ class ZegoMixerInput {
         this.cornerRadius = 0;
 }
 
-/// Mixer output object.
+/// Mixer output object, currently, a mixed-stream task only supports a maximum of four video streams with different resolutions.
 ///
 /// Configure mix stream output target URL or stream ID
 class ZegoMixerOutput {
@@ -3234,7 +3292,14 @@ class ZegoCopyrightedMusicRequestConfig {
   /// Copyright music resource song copyright provider.
   ZegoCopyrightedMusicVendorID? vendorID;
 
-  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode, {this.vendorID});
+  /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicate in which room to order song/accompaniment/accompaniment clip/accompaniment segment.
+  String? roomID;
+
+  /// The master ID, which must be passed when the billing mode is billed by host. Indicate which homeowner to order song/accompaniment/accompaniment clip/accompaniment segment.
+  String? masterID;
+
+  ZegoCopyrightedMusicRequestConfig(this.songID, this.mode,
+      {this.vendorID, this.roomID, this.masterID});
 }
 
 /// The configuration of getting shared resource.
@@ -3245,7 +3310,11 @@ class ZegoCopyrightedMusicGetSharedConfig {
   /// Copyright music resource song copyright provider.
   ZegoCopyrightedMusicVendorID? vendorID;
 
-  ZegoCopyrightedMusicGetSharedConfig(this.songID, {this.vendorID});
+  /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
+  String? roomID;
+
+  ZegoCopyrightedMusicGetSharedConfig(this.songID,
+      {this.vendorID, this.roomID});
 }
 
 /// Screen capture configuration parameters.
@@ -3318,22 +3387,26 @@ class ZegoMediaPlayerResource {
   ZegoMultimediaLoadType loadType;
 
   /// The progress at which the plaback started.
-  int startPosition;
+  int? startPosition;
 
   /// If the specified resource has a transparent effect, you need to specify the layout position of the alpha data.
-  ZegoAlphaLayoutType alphaLayout;
+  ZegoAlphaLayoutType? alphaLayout;
 
   /// Common resource path.The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
-  String filePath;
+  String? filePath;
 
   /// binary data memory.
-  Uint8List memory;
+  Uint8List? memory;
 
   /// The resource ID obtained from the copyrighted music module.
-  String resourceID;
+  String? resourceID;
 
-  ZegoMediaPlayerResource(this.loadType, this.startPosition, this.alphaLayout,
-      this.filePath, this.memory, this.resourceID);
+  ZegoMediaPlayerResource(this.loadType,
+      {this.startPosition,
+      this.alphaLayout,
+      this.filePath,
+      this.memory,
+      this.resourceID});
 
   /// Create a mix stream task object with TaskID
   ZegoMediaPlayerResource.defaultConfig()
@@ -3343,17 +3416,6 @@ class ZegoMediaPlayerResource {
         filePath = '',
         memory = Uint8List.fromList([]),
         resourceID = '';
-
-  Map<String, dynamic> toMap() {
-    return {
-      'loadType': this.loadType.index,
-      'startPosition': this.startPosition,
-      'alphaLayout': this.alphaLayout.index,
-      'filePath': this.filePath,
-      'memory': this.memory,
-      'resourceID': this.resourceID
-    };
-  }
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -3410,7 +3472,7 @@ abstract class ZegoRealTimeSequentialDataManager {
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '-', ' '.
+  ///   Only support numbers, English characters and '-', ' '.
   Future<void> startSubscribing(String streamID);
 
   /// Stop subscribing real-time sequential data stream.
@@ -3488,6 +3550,19 @@ abstract class ZegoMediaPlayer {
   Future<ZegoMediaPlayerLoadResourceResult>
       loadCopyrightedMusicResourceWithPosition(
           String resourceID, int startPosition);
+
+  /// Load media resource.
+  ///
+  /// Available: since 3.3.0
+  /// Description: Load media resources.
+  /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
+  /// When to call: Called after the engine [createEngine] has been initialized and the media player [createMediaPlayer] has been created.
+  /// Related APIs: Support for loading resources through the [loadResourceWithPosition] or [loadResourceFromMediaData] interface.
+  ///
+  /// - [resource] Multimedia resources that need to be loaded.
+  /// - Returns Callback result of loading media resource.
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+      ZegoMediaPlayerResource resource);
 
   /// Start playing.
   ///
@@ -3659,6 +3734,18 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Video data playback flag. The default is false.
   /// - [format] Video frame format for video data
   Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format);
+
+  /// Whether to throw block data of the media resource.
+  ///
+  /// Available since: 3.4.0
+  /// Description: Whether to throw block data of the media resource.
+  /// When to call: After the [ZegoMediaPlayer] instance created, before playing media resources.
+  /// Restrictions: None.
+  /// Caution: When it is no longer necessary to listen to the callback for data decryption, please call this function again to clear the handler.
+  ///
+  /// - [enable] Throw out the media resource block data tag, which is false by default.
+  /// - [blockSize] The size of the encrypted data block. The bufferSize in the OnBlockData callback is an integer multiple of blockSize.
+  Future<void> enableBlockData(bool enable, int blockSize);
 
   /// Take a screenshot of the current playing screen of the media player.
   ///
@@ -3922,7 +4009,7 @@ abstract class ZegoRangeAudio {
   /// Available since: 2.11.0
   /// Description: Set the audio receiving range, the audio source sound beyond this range will not be received.
   /// Use case: Set the receiver's receiving range in the `World` mode.
-  /// Default value: When this function is not called, there is no distance limit, and everyone in the room can be received.
+  /// Default value: When this function is not called, only the voices of the members in the team can be received, and all voices outside the team cannot be received.
   /// When to call: After initializing the range audio [createRangeAudio].
   /// Restrictions: This range only takes effect for people outside the team.
   ///
@@ -4160,12 +4247,15 @@ abstract class ZegoCopyrightedMusic {
 
   /// Request music resource.
   ///
-  /// Available since: 3.1.0
+  /// Available since: 3.0.2
   /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
   /// Use case: Get copyrighted songs for local playback and sharing.
   /// Related APIs: After a user in the room successfully calls this interface to request a music resource, other users in the room can call the [getsharedresource] interface to get the music resource for free once.
   /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
-  /// Restrictions: This interface will trigger billing. Each resource has a unique resource ID.
+  /// Note:
+  ///   1. Each resource has a unique resource ID.
+  ///   2. Every time this API is called, it will be billed once, please consult ZEGO business personnel for details.
+  ///   3. Each resource has a unique resource ID. The resources obtained by calling this API are time-sensitive, the valid duration is the minimum value between the SDK life cycle and 24-hour.
   ///
   /// - [config] The configuration of requesting music resource.
   /// - [type] The resource type of music.
@@ -4176,12 +4266,12 @@ abstract class ZegoCopyrightedMusic {
 
   /// Get shared music resource.
   ///
-  /// Available since: 3.1.0
+  /// Available since: 3.0.2
   /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
   /// Use case: Get copyrighted songs for local playback.
   /// Related APIs: After a user in the room calls the [requestresource] interface to request a music resource successfully, other users in the room can call this interface to get the music resource for free once.
   /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
-  /// Restrictions: Each resource has a unique resource ID.
+  /// Note: Each resource has a unique resource ID. The resources obtained by calling this API are time-sensitive, the valid duration is the minimum value between the SDK life cycle and 24-hour.
   ///
   /// - [config] The configuration of getting shared music resource.
   /// - [type] The resource type of music.
@@ -4308,7 +4398,7 @@ abstract class ZegoCopyrightedMusic {
 
   /// Get full score .
   ///
-  /// Available since: 3.1.0
+  /// Available since: 3.0.2
   /// Description: Get the full score.
   /// Use case: Can be used to display the full score on the view.
   /// When to call: It can be called after playing the copyright accompaniment or accompaniment clip and starting to score.
@@ -4370,7 +4460,7 @@ abstract class ZegoCopyrightedMusic {
   /// [Deprecated] Request accompaniment clip. Deprecated since 3.0.2, please use the [requestResource] function instead.
   ///
   /// Available since: 2.13.0
-  /// Description: You can get the climax clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports accompaniment climax clips by pay-per-use.
+  /// Description: You can get the accompaniment clip resources of the song corresponding to the songID, including resource_id, krc_token, share_token, etc. Supports accompaniment clips by pay-per-use.
   /// Use case: Get copyrighted accompaniment clip for local playback and sharing.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   /// Caution: This interface will trigger billing.
@@ -4385,7 +4475,7 @@ abstract class ZegoCopyrightedMusic {
   /// [Deprecated] Get a song or accompaniment. Deprecated since 3.0.2, please use the [getSharedResource] function instead.
   ///
   /// Available since: 2.13.0
-  /// Description: After the user successfully obtains the song/accompaniment/climax clip resource, he can get the corresponding shareToken, share the shareToken with other users, and other users call this interface to obtain the shared music resources.
+  /// Description: After the user successfully obtains the song/accompaniment/accompaniment clip resource, he can get the corresponding shareToken, share the shareToken with other users, and other users call this interface to obtain the shared music resources.
   /// Use case: In the online KTV scene, after receiving the song or accompaniment token shared by the lead singer, the chorus obtains the corresponding song or accompaniment through this interface, and then plays it on the local end.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
@@ -4404,7 +4494,7 @@ abstract class ZegoScreenCaptureSource {
   /// Description: Update a screen capture source object based on the provided source ID and source type.
   /// Use cases: It is used when you need to record and share the screen or window.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-  /// Restrictions: Only support in Windows/macOS.
+  /// Restrictions: Only available on Windows/macOS.
   ///
   /// - [sourceId] The specified screen ID or window ID.
   /// - [sourceType] The specified screen source type.
@@ -4422,6 +4512,9 @@ abstract class ZegoScreenCaptureSource {
   Future<void> startCapture({ZegoScreenCaptureConfig? config, bool? inApp});
 
   /// Stop screen capture.
+  ///
+  /// Available since: 3.1.0
+  /// Description: Stop screen capture.
   Future<void> stopCapture();
 
   /// Update the area captured by the screen.
@@ -4439,7 +4532,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Specify a list of windows, and filter these windows when capturing the screen, and not display them on the screen.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-  /// Restrictions: Only support in Windows/macOS.
+  /// Restrictions: Only available on Windows/macOS.
   ///
   /// - [list] List of IDs to filter windows.
   Future<void> setExcludeWindowList(List<int> list);
@@ -4449,7 +4542,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: When the capture target is a window, set whether to activate the window to be displayed in the foreground during the first capture.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-  /// Restrictions: Only support in Windows/macOS.
+  /// Restrictions: Only available on Windows/macOS.
   ///
   /// - [active] Whether to activate the window. true to activate the window, false to not activate the window, the default is true.
   Future<void> enableWindowActivate(bool active);
@@ -4459,7 +4552,7 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Set whether to show the cursor.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-  /// Restrictions: Only support in Windows/macOS.
+  /// Restrictions: Only available on Windows/macOS.
   ///
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
@@ -4712,7 +4805,7 @@ class ZegoCopyrightedMusicInitResult {
   ZegoCopyrightedMusicInitResult(this.errorCode);
 }
 
-/// Callback for copyrighted music init.
+/// Callback of sending extended feature request.
 ///
 /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// - [command] request command.

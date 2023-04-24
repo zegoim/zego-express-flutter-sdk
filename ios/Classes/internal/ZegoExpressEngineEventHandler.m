@@ -446,6 +446,23 @@
     }
 }
 
+- (void)onVideoObjectSegmentationStateChanged:(ZegoObjectSegmentationState)state
+                                      channel:(ZegoPublishChannel)channel
+                                    errorCode:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onVideoObjectSegmentationStateChanged] state: %d, channel: %d, errorCode: %d", (int)state, (int)channel, errorCode);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onVideoObjectSegmentationStateChanged",
+            @"state": @((int)state),
+            @"channel": @((int)channel),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -583,6 +600,8 @@
     }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)onPlayerRecvSEI:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPlayerRecvSEI] streamID: %@", streamID);
@@ -591,6 +610,21 @@
     if (sink) {
         sink(@{
             @"method": @"onPlayerRecvSEI",
+            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
+            @"streamID": streamID
+        });
+    }
+}
+#pragma clang diagnostic pop
+
+- (void)onPlayerSyncRecvSEI:(NSData *)data streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerSyncRecvSEI] streamID: %@", streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerSyncRecvSEI",
             @"data": [FlutterStandardTypedData typedDataWithBytes:data],
             @"streamID": streamID
         });
@@ -1496,6 +1530,26 @@
             @"method": @"onExceptionOccurred",
             @"screenCaptureSourceIndex": [source getIndex],
             @"exceptionType": @(type)
+        });
+    }
+}
+
+- (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
+    FlutterEventSink sink = _eventSink;
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onWindowStateChanged",
+            @"screenCaptureSourceIndex": [source getIndex],
+            @"windowState": @(state),
+            @"windowRect": @{
+                @"x": @(rect.origin.x),
+                @"y": @(rect.origin.y),
+                @"width": @(rect.size.width),
+                @"height": @(rect.size.height)
+            }
         });
     }
 }

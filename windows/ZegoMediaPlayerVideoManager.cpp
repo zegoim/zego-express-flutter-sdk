@@ -5,7 +5,7 @@
 static std::shared_ptr<ZegoMediaPlayerVideoManager> instance_ = nullptr;
 static std::once_flag singletonFlag;
 
-class ZegoMediaPlayerVideoHandler : public ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler {
+class ZegoMediaPlayerVideoHandler : public ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler, public ZEGO::EXPRESS::IZegoMediaPlayerBlockDataHandler {
 public:
     void setVideoHandler(std::shared_ptr<IZegoFlutterMediaPlayerVideoHandler> handler) {
         handler_ = handler;
@@ -46,6 +46,20 @@ private:
              
             handler_->onVideoFrame(mediaPlayer->getIndex(), data, dataLength, frameParam, extraInfo);
         }
+    }
+
+    void onBlockBegin(IZegoMediaPlayer *mediaPlayer, const std::string &path) override {
+        if (handler_) {
+            handler_->onBlockBegin(mediaPlayer->getIndex(), path);
+        }
+    }
+
+    unsigned int onBlockData(IZegoMediaPlayer *mediaPlayer, unsigned char *const buffer,
+                                     unsigned int bufferSize) override {
+        if (handler_) {
+            return handler_->onBlockData(mediaPlayer->getIndex(), buffer, bufferSize);
+        }
+        return -1;                                 
     }
 };
 

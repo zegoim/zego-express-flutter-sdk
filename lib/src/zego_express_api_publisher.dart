@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
@@ -686,5 +687,44 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
       {ZegoAudioSourceMixConfig? config, ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
         .setAudioSource(source, config: config, channel: channel);
+  }
+
+  /// Enable video object segmentation.
+  ///
+  /// Available since: 3.4.0
+  /// Description: Video object segmentation and transmission is a technology that separates the video object (in most cases, a person) in a rectangular video through an AI algorithm at the push end, transmits it in the RTC network, and renders it at the stream playing end.
+  /// Use cases: Scenes where the object in the video needs to be separated from the background, such as mixed reality, multi-person interaction scenes, and so on.
+  /// When to call: After the engine is created [createEngine].
+  /// Restrictions: Enabling object segmentation is a time-consuming operation, and it is not necessary to turn it on and off frequently.
+  /// Caution: This feature requires special braiding, please contact ZEGO Technical Support
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [enable] Whether to enable video object segmentation, off by default.
+  /// - [type] The type of object segmentation.
+  /// - [channel] Publish stream channel.
+  Future<void> enableVideoObjectSegmentation(
+      bool enable, ZegoObjectSegmentationType type,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableVideoObjectSegmentation(enable, type, channel: channel);
+  }
+
+  /// Enable video encoder alpha channel support.
+  ///
+  /// Available since: 3.4.0
+  /// Description: Enable the alpha channel support of the video encoder on the stream publishing end, and encode the split video body for streaming.
+  /// Use cases: Scenes where the object in the video needs to be separated from the background, such as mixed reality, multi-person interaction scenes, and so on.
+  /// When to call: After creating the engine, before calling the [startPublishingStream] function publishing stream.
+  /// Caution: This feature requires special braiding, please contact ZEGO Technical Support
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [enable] Enable video encoder alpha channel support, off by default.
+  /// - [alphaLayout] Specify the layout position of the alpha channel data.
+  /// - [channel] Publish stream channel.
+  Future<void> enableAlphaChannelVideoEncoder(
+      bool enable, ZegoAlphaLayoutType alphaLayout,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableAlphaChannelVideoEncoder(enable, alphaLayout, channel: channel);
   }
 }
