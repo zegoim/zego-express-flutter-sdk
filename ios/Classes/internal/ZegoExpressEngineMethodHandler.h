@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initApiCalledCallback;
 
+- (void)unInit;
+
 @end
 
 NS_ASSUME_NONNULL_END

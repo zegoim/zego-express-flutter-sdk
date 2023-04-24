@@ -60,6 +60,16 @@
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = sink;
 }
 
+- (void)unInit {
+    [ZegoExpressEngineEventHandler sharedInstance].eventSink = nil;
+    [ZegoExpressEngine destroyEngine:nil];
+
+    // Uninit texture renderer
+    if (!self.enablePlatformView) {
+        [[ZegoTextureRendererController sharedInstance] uninitController];
+    }
+}
+
 - (void)initApiCalledCallback {
     [ZegoExpressEngine setApiCalledCallback:[ZegoExpressEngineEventHandler sharedInstance]];
 }
@@ -336,6 +346,24 @@
 - (void)setDummyCaptureImagePath:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *filePath = call.arguments[@"filePath"];
+    NSString *flutterAssetPrefix = @"flutter-asset://";
+    if ([filePath hasPrefix:flutterAssetPrefix]) {
+        NSString *assetName = [filePath substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
+        NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+        NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+        NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+        NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
+        NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+        ZGLog(@"[setDummyCaptureImagePath] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", filePath, processedURL);
+        if (!assetRealPath) {
+            ZGLog(@"[setDummyCaptureImagePath] Can not get real path for flutter asset: '%@', please check if the asset is correctly declared in flutter project's pubspec.yaml", assetName);
+        } else {
+            filePath = processedURL;
+        }
+    }
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setDummyCaptureImagePath:filePath channel:(ZegoPublishChannel)channel];
@@ -1075,7 +1103,7 @@
         NSDictionary *configMap = call.arguments[@"config"];
 
         NSArray<NSNumber *> *audioEffectPlayerIndexList = configMap[@"audioEffectPlayerIndexList"];
-        config.audioEffectPlayerCount = audioEffectPlayerIndexList.count;
+        config.audioEffectPlayerCount = (int)audioEffectPlayerIndexList.count;
         int *audioEffectPlayers = NULL;
         if (config.audioEffectPlayerCount > 0) {
             audioEffectPlayers = malloc(sizeof(int)*config.audioEffectPlayerCount);
@@ -1087,7 +1115,7 @@
         }
 
         NSArray<NSNumber *> *mediaPlayerIndexList = configMap[@"mediaPlayerIndexList"];
-        config.mediaPlayerCount = mediaPlayerIndexList.count;
+        config.mediaPlayerCount = (int)mediaPlayerIndexList.count;
         int *mediaPlayers = NULL;
         if (config.mediaPlayerCount > 0) {
             mediaPlayers  = malloc(sizeof(int)*config.mediaPlayerCount);
@@ -1439,6 +1467,20 @@
 
     result(nil);
 }
+
+- (void)initVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] initVideoSuperResolution];
+
+    result(nil);
+}
+
+- (void)uninitVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [[ZegoExpressEngine sharedEngine] uninitVideoSuperResolution];
+
+    result(nil);
+}
 #endif
 
 #pragma mark - Mixer
@@ -1541,10 +1583,12 @@
         int bitrate = [ZegoUtils intValue:audioConfigMap[@"bitrate"]];
         int channel = [ZegoUtils intValue:audioConfigMap[@"channel"]];
         int codecID = [ZegoUtils intValue:audioConfigMap[@"codecID"]];
+        int mixMode = [ZegoUtils intValue:audioConfigMap[@"mixMode"]];
         ZegoMixerAudioConfig *audioConfigObject = [[ZegoMixerAudioConfig alloc] init];
         audioConfigObject.bitrate = bitrate;
         audioConfigObject.channel = (ZegoAudioChannel)channel;
         audioConfigObject.codecID = (ZegoAudioCodecID)codecID;
+        audioConfigObject.mixMode  = (ZegoAudioMixMode)mixMode;
 
         [taskObject setAudioConfig:audioConfigObject];
     }
@@ -1560,6 +1604,8 @@
         videoConfigObject.resolution = CGSizeMake((CGFloat)width, (CGFloat)height);
         videoConfigObject.bitrate = bitrate;
         videoConfigObject.fps = fps;
+        videoConfigObject.quality = [ZegoUtils intValue:videoConfigMap[@"quality"]];
+        videoConfigObject.rateControlMode = (ZegoVideoRateControlMode)[ZegoUtils intValue:videoConfigMap[@"rateControlMode"]];
 
         [taskObject setVideoConfig:videoConfigObject];
     }
@@ -1579,6 +1625,35 @@
             [taskObject setWatermark:watermarkObject];
         }
     }
+    
+    // whiteboard
+    NSDictionary *whiteboardMap = call.arguments[@"whiteboard"];
+    if (whiteboardMap && whiteboardMap.count > 0) {
+        int whiteboardID = [ZegoUtils intValue:whiteboardMap[@"whiteboardID"]];
+        if (whiteboardID != 0) {
+            ZegoMixerWhiteboard *whiteboard = [[ZegoMixerWhiteboard alloc] init];
+            whiteboard.whiteboardID = whiteboardID;
+            whiteboard.horizontalRatio = [ZegoUtils intValue:whiteboardMap[@"horizontalRatio"]];
+            whiteboard.verticalRatio = [ZegoUtils intValue:whiteboardMap[@"verticalRatio"]];
+            whiteboard.isPPTAnimation = [ZegoUtils boolValue:whiteboardMap[@"isPPTAnimation"]];
+            whiteboard.zOrder = [ZegoUtils intValue:whiteboardMap[@"zOrder"]];
+            
+            NSDictionary *layoutMap = whiteboardMap[@"layout"];
+            if (layoutMap && layoutMap.count > 0) {
+                int top = [ZegoUtils intValue:layoutMap[@"top"]];
+                int left = [ZegoUtils intValue:layoutMap[@"left"]];
+                int right = [ZegoUtils intValue:layoutMap[@"right"]];
+                int bottom = [ZegoUtils intValue:layoutMap[@"bottom"]];
+                whiteboard.layout = CGRectMake(left, top, right - left, bottom - top);
+            }
+            
+            [taskObject setWhiteboard:whiteboard];
+        }
+    }
+    
+    // Background Color
+    int backgroundColor = [ZegoUtils intValue:call.arguments[@"backgroundColor"]];
+    [taskObject setBackgroundColor: backgroundColor];
 
     // Background Image
     NSString *backgroundImageURL = call.arguments[@"backgroundImageURL"];
@@ -1589,6 +1664,14 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     [taskObject enableSoundLevel:enableSoundLevel];
+    
+    // Stream AlignmentMode
+    int streamAlignmentMode = [ZegoUtils intValue:call.arguments[@"streamAlignmentMode"]];
+    [taskObject setStreamAlignmentMode:(ZegoStreamAlignmentMode)streamAlignmentMode];
+    
+    // User Data
+    FlutterStandardTypedData *userData = call.arguments[@"userData"];
+    [taskObject setUserData:userData.data length:(int)userData.data.length];
 
     // minPlayStreamBufferLength
     int minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
@@ -2293,6 +2376,16 @@
     int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
 
     [[ZegoExpressEngine sharedEngine] setANSMode:(ZegoANSMode)mode];
+
+    result(nil);
+}
+
+- (void)enableSpeechEnhance:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    int level = [ZegoUtils intValue:call.arguments[@"level"]];
+
+    [[ZegoExpressEngine sharedEngine] enableSpeechEnhance:enable level:level];
 
     result(nil);
 }
@@ -3365,8 +3458,6 @@
     result(nil);
 }
 
-
-
 #if TARGET_OS_IPHONE
 - (void)mediaPlayerSetAudioTrackMode:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -3392,6 +3483,35 @@
     }
 
     result(nil);
+}
+
+- (void)mediaPlayerLoadResourceWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+
+        NSDictionary *resourceMap = call.arguments[@"resource"];
+        ZegoMediaPlayerResource *resource = [[ZegoMediaPlayerResource alloc] init];
+        resource.resourceID =  resourceMap[@"resourceID"];
+        resource.startPosition = [ZegoUtils longLongValue:resourceMap[@"startPosition"]];
+        resource.loadType = (ZegoMultimediaLoadType)[ZegoUtils intValue:resourceMap[@"loadType"]];
+        resource.alphaLayout = (ZegoAlphaLayoutType)[ZegoUtils intValue:resourceMap[@"alphaLayout"]];
+        resource.filePath =  resourceMap[@"filePath"];
+        
+        FlutterStandardTypedData *memory = resourceMap[@"memory"];
+        resource.memory = memory.data;
+        resource.memoryLength = (int)memory.data.length;
+
+        [mediaPlayer loadResourceWithConfig:resource callback:^(int errorCode) {
+            result(@{
+                @"errorCode": @(errorCode)
+            });
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"loadResourceWithConfig_Can_not_find_player" uppercaseString] message:@"Invoke `loadResourceWithConfig` but can't find specific player" details:nil]);
+    }
 }
 
 #endif
@@ -3914,6 +4034,19 @@
     }
 }
 
+- (void)rangeAudioSetRangeAudioCustomMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.rangeAudioInstance) {
+        int speakMode = [ZegoUtils intValue:call.arguments[@"speakMode"]];
+        int listenMode = [ZegoUtils intValue:call.arguments[@"listenMode"]];
+        [self.rangeAudioInstance setRangeAudioCustomMode:(ZegoRangeAudioSpeakMode)speakMode listenMode:(ZegoRangeAudioListenMode)listenMode];
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetRangeAudioCustomMode` but can't find specific instance" details:nil]);
+    }
+}
+
 #pragma mark - real time sequential data manager
 
 - (void)createRealTimeSequentialDataManager:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -4259,12 +4392,22 @@
 
     if (self.copyrightedMusicInstance) {
         NSString *songID = call.arguments[@"songID"];
-        [self.copyrightedMusicInstance getLrcLyric:songID callback:^(int errorCode, NSString *_Nonnull lyrics) {
-            NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
-            resultMap[@"errorCode"] = @(errorCode);
-            resultMap[@"lyrics"] = lyrics;
-            result(resultMap);
-        }];
+        if ([ZegoUtils isNullObject:call.arguments[@"vendorID"]]) {
+            [self.copyrightedMusicInstance getLrcLyric:songID callback:^(int errorCode, NSString *_Nonnull lyrics) {
+                NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+                resultMap[@"errorCode"] = @(errorCode);
+                resultMap[@"lyrics"] = lyrics;
+                result(resultMap);
+            }];
+        } else {
+            int vendorID = [ZegoUtils intValue:call.arguments[@"vendorID"]];
+            [self.copyrightedMusicInstance getLrcLyric:songID vendorID:(ZegoCopyrightedMusicVendorID)vendorID callback:^(int errorCode, NSString *_Nonnull lyrics) {
+                NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+                resultMap[@"errorCode"] = @(errorCode);
+                resultMap[@"lyrics"] = lyrics;
+                result(resultMap);
+            }];
+        }
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetLrcLyric` but can't find specific instance" details:nil]);
     }
@@ -4365,7 +4508,13 @@
     if (self.copyrightedMusicInstance) {
         NSString *songID = call.arguments[@"songID"];
         int type = [ZegoUtils intValue:call.arguments[@"type"]];
-        BOOL isQueryCache = [self.copyrightedMusicInstance queryCache: songID type:(ZegoCopyrightedMusicType)type];
+        BOOL isQueryCache = false;
+        if ([ZegoUtils isNullObject:call.arguments[@"vendorID"]]) {
+            isQueryCache = [self.copyrightedMusicInstance queryCache: songID type:(ZegoCopyrightedMusicType)type];
+        } else {
+            int vendorID = [ZegoUtils intValue:call.arguments[@"vendorID"]];
+            isQueryCache = [self.copyrightedMusicInstance queryCache:songID type:(ZegoCopyrightedMusicType)type vendorID:(ZegoCopyrightedMusicVendorID)vendorID];
+        }
         result(@(isQueryCache));
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicQueryCache` but can't find specific instance" details:nil]);
@@ -4380,6 +4529,7 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4403,7 +4553,7 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
-        
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
         
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4427,6 +4577,7 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4523,6 +4674,8 @@
         
         ZegoCopyrightedMusicGetSharedConfig *config = [[ZegoCopyrightedMusicGetSharedConfig alloc] init];
         config.songID = configMap[@"songID"];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance getSharedResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
@@ -4543,6 +4696,8 @@
         ZegoCopyrightedMusicRequestConfig *config = [[ZegoCopyrightedMusicRequestConfig alloc] init];
         config.songID = configMap[@"songID"];
         config.mode = (ZegoCopyrightedMusicBillingMode)[ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
+        
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance requestResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
@@ -4732,6 +4887,18 @@
 
     if (@available(iOS 12.0, *)) {
         [[ZegoExpressEngine sharedEngine] updateScreenCaptureConfig:config];
+        result(nil);
+    } else {
+        // Fallback on earlier versions
+        result([FlutterError errorWithCode:[@"System_Version_Is_Too_Low" uppercaseString] message:@"Only available on iOS 12.0 or newer" details:nil]);
+    }
+}
+
+- (void)setAppGroupIDScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    if (@available(iOS 12.0, *)) {
+        NSString *groupID = call.arguments[@"groupID"];
+        [[ZegoExpressEngine sharedEngine] setAppGroupID:groupID];
         result(nil);
     } else {
         // Fallback on earlier versions

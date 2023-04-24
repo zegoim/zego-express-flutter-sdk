@@ -1,5 +1,123 @@
 # Change Log
 
+## 3.3.1
+
+### **Bug Fixes**
+
+1. Fixed the failure of Android hardware ear feedback in some scenarios.
+
+2. Fixed H265 decoding failure in Android  some scenarios.
+
+## 3.3.0
+
+### **New Features**
+
+1. Support for voice enhancement effect in external scenes.
+
+    In the external scene, the microphone of the device is too close to the speaker, which may easily lead to blurred or dull voice. In this scenario, voice enhancement can effectively improve the clarity of voice and improve the sense of boredom. Therefore, it is recommended to enable this function in an external scenario.
+
+    In order to achieve the voice enhancement effect in the external broadcast scene, the voice enhancement effect can be turned on and the enhancement level can be set. It can be used in the KTV external broadcast scene to fine control the voice effect. The recommended enhancement level is 4.
+
+    For related API, please refer to [enableSpeechEnhance](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableSpeechEnhance.html)
+
+2. Game voice supports customized voice mode and listening mode.
+
+    The game voice supports the customized setting of voice mode and listening mode, which can be used to shield the scene of the same team of players outside the range after joining the team.
+
+    For related API, please refer to [setRangeAudioCustomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setRangeAudioCustomMode.html)
+
+3. Express SDK iOS streaming function supports picture-in-picture capability.
+
+    Note: To use this function, please contact ZEGO technical support.
+
+4. The single-stream transcoding function supports L3 or CDN streaming.
+
+    Note: When pulling the transcoding stream through CDN, you must use the push CDN. To use this function, please contact ZEGO technical support.
+
+    Single-stream transcoding refers to converting each original stream into transcoding streams with different encoding formats and different resolutions in the cloud. The transcoding template ID needs to be passed in to pull the transcoding stream. In live broadcast and other scenes, viewers can choose streams of different resolutions to watch based on the quality of the access network, terminal equipment, etc., to ensure the smoothness of playback.
+
+5. The same mixed-stream task supports the output of multiple resolution video streams.
+
+    Note:
+
+    - At present, one mixing task can output up to four video streams with different resolutions, and only server mixing is supported.
+
+    - To use this function, please contact ZEGO technical support.
+
+    The same mixing task supports the output of multiple resolution video streams, which can be used to meet the transcoding requirements in the mixing scenario.
+
+6. Mixed flow task supports input of super whiteboard information.
+
+    In the mixed-stream function, the operation content in the whiteboard can be converted into real-time video, and the whiteboard configuration information can be set, for example, the whiteboard ID, the whiteboard aspect ratio, and whether dynamic PPT loading is supported.
+
+    Note: Currently the super whiteboard flutter SDK is under development.
+
+    For related API, please refer to [ZegoMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMixerTask-class.html), [startMixerTask](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineMixer/startMixerTask.html)
+
+7. Scenario-based audio and video configuration adds [ZegoScenario.StandardVoiceCall] standard voice call scenario.
+
+    StandardVoiceCall standard voice call scenario is added for scenario-based audio and video configuration, which is applicable to 1v1 pure voice call scenario.
+
+    For related API, please refer to [setRoomScenario](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomScenario.html)
+
+8. Android support adaptive device acquisition rendering delay and echo cancellation (AEC) in customized audio acquisition and SDK internal rendering mode.
+
+    Note: To use this function, please contact ZEGO technical support.
+
+    In the customized audio acquisition and SDK internal rendering mode, the AUX adaptive alignment and AEC functions are supported, which can achieve better results when performing chorus in KTV scenes.
+
+9. Added a new copyright content center, and some interfaces support the query of distinguishing copyright parties.
+
+    According to the copyright owner, it supports ordering songs, obtaining line-by-line analysis of lyrics, and querying whether resources are cached.
+
+    Note: For detailed information about the copyright owner, please contact ZEGO technical support for processing.
+
+    For related API, please refer to [requestResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/requestResource.html), [getLrcLyric](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getLrcLyric.html), [queryCache](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/queryCache.html), [getSharedResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getSharedResource.html)
+
+10. When sending an extended request, it is supported to obtain a list of tags, get songs based on tags, query song information in batches, and search for songs according to the copyright owner.
+
+    For related API, please refer to [sendExtendedRequest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/sendExtendedRequest.html)
+
+### **Enhancements**
+
+1. Optimize the supersection algorithm to greatly improve the coverage of aircraft models.
+
+    Note:
+    - [enableVideoSuperResolution] modifies the call time, and can only be called after [initVideoSuperResolution].
+    - Video super resolution currently only supports Android and iOS
+
+    For related API, please refer to [enableVideoSuperResolution](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/enableVideoSuperResolution.html), [initVideoSuperResolution](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/initVideoSuperResolution.html)
+
+2. Optimize the over-division logic and add initialization and de-initialization interfaces.
+
+    Note:
+    - [enableVideoSuperResolution] modifies the call time, and can only be called after [initVideoSuperResolution].
+    - Video super resolution currently only supports Android and iOS
+
+    For related API, please refer to [initVideoSuperResolution](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/initVideoSuperResolution.html), [uninitVideoSuperResolution](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/uninitVideoSuperResolution.html)
+
+3. Optimize the deep echo cancellation (AEC) effect of KTV scenes.
+
+    The deep AEC optimization for KTV scenes has achieved:
+
+    - The sound quality of the human voice in the external scene is greatly improved to make the human voice more fidelity.
+
+    - While eliminating the echo, effectively avoid the occasional swallowing of words or the fluctuation of voice.
+
+4. Optimize the inter-process communication performance of screen sharing on the iOS side of the Express SDK.
+
+    In the application project, developers can start AppGroup configuration through the new [ZegoExpressEngine>setAppGroupID] and [ZegoReplayKitExt>setupWithDelegate:appGroup] interfaces to obtain better performance and stability.
+
+    For related API, please refer to [setAppGroupID](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/setAppGroupID.html)
+
+### **Bug Fixes**
+
+1. Fixed the problem that the Android player has no sound after plugging the headset.
+
+2. Fixed the problem of Android screen collection failure when the main process does not start the screen sharing service.
+
+3. Fixed the problem that immediately getting the pitch line would fail when getting song accompaniment resources or climax clip resources
+
 ## 3.2.1
 
 ### **New Features**
@@ -8,16 +126,13 @@
 
     Note: Firstly, getting screen capture instance by calling the [createScreenCaptureSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineScreenCapture/createScreenCaptureSource.html).Sencondly, setting the video soure are "screen" by calling [setVideoSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoSource.html) function.Now, you can call [startCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/startCapture.html) for the screen capture instance.
 
-
 2. Add login multi-room function of web platform;
 
     Note: On the web platform, [setRoomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomMode.html) now allows users to log into multiple rooms if they want.
 
-
 3. Add basic beauty function of web platform;
-    
-    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
+    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
 ### **Bug Fixes**
 
@@ -35,16 +150,13 @@
 
     Note: Firstly, getting screen capture instance by calling the [createScreenCaptureSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineScreenCapture/createScreenCaptureSource.html).Sencondly, setting the video soure are "screen" by calling [setVideoSource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoSource.html) function.Now, you can call [startCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/startCapture.html) for the screen capture instance.
 
-
 2. Add login multi-room function of web platform;
 
     Note: On the web platform, [setRoomMode](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setRoomMode.html) now allows users to log into multiple rooms if they want.
 
-
 3. Add basic beauty function of web platform;
-    
-    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
+    Note: On the web platform, support users to use the beauty function by calling [enableEffectsBeauty](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/enableEffectsBeauty.html) and [setEffectsBeautyParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setEffectsBeautyParam.html) support .
 
 ### **Bug Fixes**
 
@@ -171,11 +283,11 @@ This version contains breaking changes, please refer to [v3.0.3 Upgrade Guide](.
     Note: This function is enabled by default. If you need to disable this function, please contact ZEGO technical support.  n If the app has access to the geographical location, the developer can choose whether to allow the ZEGO SDK to obtain the GPS information cached by the system, which is obtained by default. When developers want to disable this function, they need to contact ZEGO technical support to set it.This feature currently only supports IOS ， Android，mac and window platforms.
 
 6. New video first frame callback based on camera opening
-    
+
     Support callback after SDK pulls the stream and renders the first frame of remote camera video data each time the remote camera is turned on. Developers can use this callback to calculate the first frame time consumption, or update the UI components of the playback stream.This feature currently only supports IOS，Android，mac and window platforms.
 
     For related API, please refer to [onPlayerRenderCameraVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRenderCameraVideoFirstFrame.html)
-    
+
 7. Add the CDN Plus playing configuration to the startPlayingStream interface on the web platform.
 
     Note: If you want to control the stream-playing mode from the cloud by more criteria such as region and user, please contact ZEGO technical support for related configuration.
@@ -183,8 +295,6 @@ This version contains breaking changes, please refer to [v3.0.3 Upgrade Guide](.
     In the past, the web did not support playing CDN plus.Now, we can play CDN plus on the IOS，Android，mac, window and web platforms.The [startPlayingStream] interface adds CDN_PLUS as a new ZegoResourceType on the web platform. interface. You can enable CDN_PLUS to play stream by yourself based on to the stream critirion. The CDN Plus stream-playing is a cost-effective method, because its quality is higher than CDN stream-playing with similar price.
 
     For related API, please refer to [startPlayingStream](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/startPlayingStream.html)
-
-
 
 ### **Enhancements**
 

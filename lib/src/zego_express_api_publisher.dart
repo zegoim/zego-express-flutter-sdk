@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
@@ -76,7 +75,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: It can be used for local preview in real-time connecting wheat, live broadcast and other scenarios.
   /// When to call: After [createEngine].
   /// Restrictions: None.
-  /// Caution: 1. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default. 2. Local view and preview modes can be updated by calling this function again. The user can only preview on one view. If you call [startPreview] again to pass in a new view, the preview screen will only be displayed in the new view. 3. You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored. 4. When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video..
+  /// Caution: 1. The preview function does not require you to log in to the room or publish the stream first. But after exiting the room, SDK internally actively stops previewing by default. 2. Local view and preview modes can be updated by calling this function again. The user can only preview on one view. If you call [startPreview] again to pass in a new view, the preview screen will only be displayed in the new view. 3. You can set the mirror mode of the preview by calling the [setVideoMirrorMode] function. The default preview setting is image mirrored. 4. When this function is called, the audio and video engine module inside SDK will start really, and it will start to try to collect audio and video.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
@@ -574,6 +573,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
   ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
   ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+  ///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
   ///
   /// - [filePath] Picture file path
   /// - [channel] Publish channel.

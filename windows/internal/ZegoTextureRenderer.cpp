@@ -125,30 +125,36 @@ const FlutterDesktopPixelBuffer* ZegoTextureRenderer::ConvertPixelBufferForFlutt
           };
     }
 
+    if (srcVideoFrameFormat_ == ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32) {
+      flutterDesktopPixelBuffer_->buffer = srcBuffer_.data();
+    } else {
       // Map buffers to structs for easier conversion.
-    switch (srcVideoFrameFormat_)
-    {
-    case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32:
-        // srcFrameFormatToFlutterFormat<VideoFormatBGRAPixel>();
-        // flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
-        break;
-    case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32:
-        {
-          // std::copy(srcBuffer_.data(), srcBuffer_.data() + srcBuffer_.size(), destBuffer_.data());
-          flutterDesktopPixelBuffer_->buffer = srcBuffer_.data();
-        }
-        break;
-    case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_ARGB32:
-        // srcFrameFormatToFlutterFormat<VideoFormatARGBPixel>();
-        // flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
-        break;
-    case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_ABGR32:
-        // srcFrameFormatToFlutterFormat<VideoFormatABGRPixel>();
-        // flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
-        break;   
-    default:
-        break;
+      switch (srcVideoFrameFormat_)
+      {
+      case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_BGRA32:
+          srcFrameFormatToFlutterFormat<VideoFormatBGRAPixel>();
+          flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
+          break;
+      // case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32:
+      //     {
+      //       // std::copy(srcBuffer_.data(), srcBuffer_.data() + srcBuffer_.size(), destBuffer_.data());
+      //       flutterDesktopPixelBuffer_->buffer = srcBuffer_.data();
+      //     }
+      //     break;
+      case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_ARGB32:
+          srcFrameFormatToFlutterFormat<VideoFormatARGBPixel>();
+          flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
+          break;
+      case ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_ABGR32:
+          srcFrameFormatToFlutterFormat<VideoFormatABGRPixel>();
+          flutterDesktopPixelBuffer_->buffer = destBuffer_.data();
+          break;   
+      default:
+          break;
+      }
     }
+
+    
 
     flutterDesktopPixelBuffer_->width = width_;
     flutterDesktopPixelBuffer_->height = height_;

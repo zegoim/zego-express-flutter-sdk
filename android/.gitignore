@@ -10,5 +10,6 @@
 /build
 /bin
 /captures
+.cxx
 /.project
 /libs

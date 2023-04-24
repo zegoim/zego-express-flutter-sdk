@@ -9,7 +9,7 @@
 
 #import "ZegoLog.h"
 
-@interface ZegoExpressEnginePlugin() <FlutterStreamHandler>
+@interface ZegoExpressEnginePlugin() <FlutterStreamHandler, UIApplicationDelegate>
 
 @property (nonatomic, strong) id<FlutterPluginRegistrar> registrar;
 
@@ -43,6 +43,17 @@
 
     // init api called callback
     [[ZegoExpressEngineMethodHandler sharedInstance] initApiCalledCallback];
+    
+    // registrar add ApplicationDelegate
+    [registrar addApplicationDelegate:instance];
+}
+
+- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+    [[ZegoExpressEngineMethodHandler sharedInstance] unInit];
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [[ZegoExpressEngineMethodHandler sharedInstance] unInit];
 }
 
 #pragma mark - Handle Event Sink

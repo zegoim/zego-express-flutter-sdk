@@ -87,7 +87,7 @@ typedef NS_ENUM(NSUInteger, ZGFlutterViewMode) {
 @property (nonatomic, assign) ZGFlutterVideoFrameFormat format;
 
 /// Number of bytes per line (for example: BGRA only needs to consider strides [0], I420 needs to consider strides [0,1,2])
-@property (nonatomic, assign) int *strides;
+@property (nonatomic, assign, nonnull) int *strides;
 
 /// The rotation direction of the video frame, the SDK rotates clockwise
 @property (nonatomic, assign) int rotation;

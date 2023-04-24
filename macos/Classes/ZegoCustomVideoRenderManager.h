@@ -13,6 +13,8 @@
 #import <CoreMedia/CoreMedia.h>
 #import "ZegoCustomVideoDefine.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ZegoFlutterCustomVideoRenderHandler <NSObject>
 
 @optional
@@ -127,5 +129,7 @@
 -(id<ZegoFlutterCustomVideoRenderHandler>_Nullable)getCustomVideoRenderHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* ZegoCustomVideoRenderManager_h */

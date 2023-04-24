@@ -13,6 +13,8 @@
 #import <CoreMedia/CoreMedia.h>
 #import "ZegoCustomVideoDefine.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ZegoFlutterCustomVideoCaptureHandler <NSObject>
 
 @required
@@ -140,5 +142,7 @@
                                   channel:(ZGFlutterPublishChannel)channel;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* ZegoCustomVideoCaptureManager_h */

@@ -132,3 +132,82 @@ std::pair<long, BYTE *> makeBtimapByBGRABuffer(unsigned char *buffer, unsigned i
     RtlMoveMemory(tmpbuff, destBuffer_.data(), bufferLen);
     return std::pair(sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO) + bufferLen, buff);
 }
+
+std::pair<long, BYTE *> makeBtimapInfoByBGRABuffer(unsigned char *buffer, unsigned int length,
+                                   std::pair<int32_t, int32_t> size) {
+    auto bufferLen = length;
+    auto width = size.first;
+    auto height = size.second;
+    std::vector<uint8_t> destBuffer_(buffer, buffer + length);
+
+    BITMAPINFOHEADER bmiHeader = {0};
+    bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmiHeader.biWidth = width;
+    bmiHeader.biHeight = -height*2;
+    bmiHeader.biPlanes = 1;
+    bmiHeader.biBitCount = 32;
+    bmiHeader.biCompression = BI_RGB;
+
+    bmiHeader.biSizeImage = width*height*4;
+
+    BYTE *buff = new BYTE[sizeof(BITMAPINFOHEADER) + bufferLen];
+    BYTE *tmpbuff = buff;
+    RtlZeroMemory(buff, sizeof(BITMAPINFOHEADER) + bufferLen);
+
+    RtlMoveMemory(tmpbuff, &bmiHeader, sizeof(BITMAPINFOHEADER));
+    tmpbuff += sizeof(BITMAPINFOHEADER);
+    RtlMoveMemory(tmpbuff, destBuffer_.data(), bufferLen);
+    return std::pair(sizeof(BITMAPINFOHEADER) + bufferLen, buff);
+}
+
+#pragma pack(push, 1)
+struct ICONHEADER {
+    WORD idReserved;
+    WORD idType;
+    WORD idCount;
+};
+
+struct ICONDIRENTRY {
+    BYTE bWidth;
+    BYTE bHeight;
+    BYTE bColorCount;
+    BYTE bReserved;
+    WORD wPlanes;
+    WORD wBitCount;
+    DWORD dwBytesInRes;
+    DWORD dwImageOffset;
+};
+
+#pragma pack(pop)
+
+std::pair<long, BYTE *> makeIconByBGRABuffer(unsigned char *buffer, unsigned int length,
+                                   std::pair<int32_t, int32_t> size) {
+
+    auto bitmap = makeBtimapInfoByBGRABuffer(buffer, length, size);
+
+    ICONHEADER iconHeader;
+    iconHeader.idReserved = 0;
+    iconHeader.idType = 1;
+    iconHeader.idCount = 1;
+
+    ICONDIRENTRY iconDirentry;
+    iconDirentry.bWidth = size.first;
+    iconDirentry.bHeight = size.second;
+    iconDirentry.bColorCount = 0;
+    iconDirentry.bReserved = 0;
+    iconDirentry.wPlanes = 1;
+    iconDirentry.wBitCount = 32;
+    iconDirentry.dwBytesInRes = bitmap.first;
+    iconDirentry.dwImageOffset = sizeof(ICONHEADER) + sizeof(ICONDIRENTRY);
+
+    BYTE *buff = new BYTE[sizeof(ICONHEADER) + sizeof(ICONDIRENTRY) + bitmap.first];
+    BYTE *tmpbuff = buff;
+    RtlZeroMemory(buff, sizeof(ICONHEADER) + sizeof(ICONDIRENTRY) + bitmap.first);
+
+    RtlMoveMemory(tmpbuff, &iconHeader, sizeof(ICONHEADER));
+    tmpbuff += sizeof(ICONHEADER);
+    RtlMoveMemory(tmpbuff, &iconDirentry, sizeof(ICONDIRENTRY));
+    tmpbuff += sizeof(ICONDIRENTRY);
+    RtlMoveMemory(tmpbuff, bitmap.second, bitmap.first);
+    return std::pair(sizeof(ICONHEADER) + sizeof(ICONDIRENTRY) + bitmap.first, buff);
+}

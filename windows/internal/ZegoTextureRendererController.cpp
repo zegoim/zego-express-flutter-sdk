@@ -136,6 +136,16 @@ void ZegoTextureRendererController::stopRendering()
 
 }
 
+void ZegoTextureRendererController::setMediaPlayerVideoHandler(std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> handler) 
+{
+    mediaPlayerHandler_ = handler;
+}
+
+void ZegoTextureRendererController::setCustomVideoRenderHandler(std::shared_ptr<ZEGO::EXPRESS::IZegoCustomVideoRenderHandler> handler) 
+{
+    videoRenderHandler_ = handler;
+}
+
 void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char ** data,
                                              unsigned int * dataLength,
                                              ZegoVideoFrameParam param,
@@ -161,6 +171,10 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
         renderer->second->setUseMirrorEffect(isMirror);
         renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
     }
+
+    if (videoRenderHandler_) {
+        videoRenderHandler_->onCapturedVideoFrameRawData(data, dataLength, param, flipMode, channel);
+    }
 }
 
 void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** data, unsigned int * dataLength,
@@ -182,6 +196,21 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** d
         }
         renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
     }
+
+    if (videoRenderHandler_) {
+        videoRenderHandler_->onRemoteVideoFrameRawData(data, dataLength, param, streamID);
+    }
+}
+
+void ZegoTextureRendererController::onRemoteVideoFrameEncodedData(const unsigned char * data,
+                                               unsigned int dataLength,
+                                               ZEGO::EXPRESS::ZegoVideoEncodedFrameParam param,
+                                               unsigned long long referenceTimeMillisecond,
+                                               const std::string & streamID)
+{
+    if (videoRenderHandler_) {
+        videoRenderHandler_->onRemoteVideoFrameEncodedData(data, dataLength, param, referenceTimeMillisecond, streamID);
+    }
 }
 
 void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
@@ -201,6 +230,17 @@ void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer
             }
         }
         renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
+    }
+    if (mediaPlayerHandler_) {
+        mediaPlayerHandler_->onVideoFrame(mediaPlayer, data, dataLength, param);
+    }
+}
+
+void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
+                              unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param,
+                              const char * extraInfo) {
+    if (mediaPlayerHandler_) {
+        mediaPlayerHandler_->onVideoFrame(mediaPlayer, data, dataLength, param, extraInfo);
     }
 }
 
