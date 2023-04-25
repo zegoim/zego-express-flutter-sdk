@@ -233,3 +233,34 @@ extension ZegoVideoSourceTypeExtension on ZegoVideoSourceType {
     }
   }
 }
+
+extension ZegoCopyrightedMusicVendorIDExtension
+    on ZegoCopyrightedMusicVendorID {
+  int get value {
+    switch (this) {
+      case ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault:
+        return 0;
+      case ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendor1:
+        return 1;
+      case ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendor2:
+        return 2;
+      case ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendor3:
+        return 4;
+    }
+  }
+
+  static ZegoCopyrightedMusicVendorID fromValue(int value) {
+    switch (value) {
+      case 0:
+        return ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault;
+      case 1:
+        return ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendor1;
+      case 2:
+        return ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendor2;
+      case 4:
+        return ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendor3;
+      default:
+        return ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault;
+    }
+  }
+}

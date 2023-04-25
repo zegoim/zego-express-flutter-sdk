@@ -1511,6 +1511,7 @@
 
     NSDictionary *canvasMap = call.arguments[@"canvas"];
 
+    int errorCode = 0;
     if (canvasMap && canvasMap.count > 0) {
         // Play video
 
@@ -1535,13 +1536,13 @@
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
 
-                [[ZegoExpressEngine sharedEngine] updatePlayingCanvas:streamID canvas:canvas];
+                errorCode = [[ZegoExpressEngine sharedEngine] updatePlayingCanvas:streamID canvas:canvas];
             } else {
                 // Play video without creating the PlatformView in advance
                 // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
-                ZGError(@"[startPlayingStream] %@", errorMessage);
-                result([FlutterError errorWithCode:[@"startPlayingStream_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                ZGError(@"[updatePlayingCanvas] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"updatePlayingCanvas_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
 
@@ -1551,15 +1552,15 @@
                 // Play video without creating TextureRenderer in advance
                 // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
                 NSString *errorMessage = [NSString stringWithFormat:@"The TextureRenderer for textureID:%ld cannot be found, developer should call `createCanvasView` first and get the textureID", (long)viewID];
-                ZGError(@"[startPlayingStream] %@", errorMessage);
-                result([FlutterError errorWithCode:[@"startPlayingStream_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
+                ZGError(@"[updatePlayingCanvas] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"updatePlayingCanvas_No_TextureRenderer" uppercaseString] message:errorMessage details:nil]);
                 return;
             }
         }
 
     }
 
-    result(nil);
+    result(@(errorCode));
 }
 
 #if TARGET_OS_IPHONE

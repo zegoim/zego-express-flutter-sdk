@@ -288,13 +288,12 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
       int backgroundColor = 0x000000;
-      if (canvas.alphaBlend != null && canvas.alphaBlend!) {
-        backgroundColor = 0x00000000;
-      } else if (canvas.backgroundColor != null) {
+      if (canvas.backgroundColor != null) {
         backgroundColor = canvas.backgroundColor!;
       }
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, backgroundColor);
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
 
     return await _channel.invokeMethod('startPreview', {
@@ -640,13 +639,12 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
       int backgroundColor = 0x000000;
-      if (canvas.alphaBlend != null && canvas.alphaBlend!) {
-        backgroundColor = 0x00000000;
-      } else if (canvas.backgroundColor != null) {
+      if (canvas.backgroundColor != null) {
         backgroundColor = canvas.backgroundColor!;
       }
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, backgroundColor);
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
 
     return await _channel.invokeMethod('startPlayingStream', {
@@ -800,13 +798,12 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
       int backgroundColor = 0x000000;
-      if (canvas.alphaBlend != null && canvas.alphaBlend!) {
-        backgroundColor = 0x00000000;
-      } else if (canvas.backgroundColor != null) {
+      if (canvas.backgroundColor != null) {
         backgroundColor = canvas.backgroundColor!;
       }
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, backgroundColor);
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
     return await _channel.invokeMethod('updatePlayingCanvas', {
       'streamID': streamID,
@@ -2260,12 +2257,6 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onPlayerRecvSEI!(map['streamID'], map['data']);
         break;
 
-      case 'onPlayerSyncRecvSEI':
-        if (ZegoExpressEngine.onPlayerSyncRecvSEI == null) return;
-
-        ZegoExpressEngine.onPlayerSyncRecvSEI!(map['streamID'], map['data']);
-        break;
-
       case 'onPlayerRecvAudioSideInfo':
         if (ZegoExpressEngine.onPlayerRecvAudioSideInfo == null) return;
 
@@ -3006,13 +2997,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
       int backgroundColor = 0x000000;
-      if (canvas.alphaBlend != null && canvas.alphaBlend!) {
-        backgroundColor = 0x00000000;
-      } else if (canvas.backgroundColor != null) {
+      if (canvas.backgroundColor != null) {
         backgroundColor = canvas.backgroundColor!;
       }
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, backgroundColor);
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
 
     return await ZegoExpressImpl._channel
@@ -3603,7 +3593,7 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       {ZegoCopyrightedMusicVendorID? vendorID}) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicGetLrcLyric',
-            {'songID': songID, 'vendorID': vendorID?.index});
+            {'songID': songID, 'vendorID': vendorID?.value});
     return ZegoCopyrightedMusicGetLrcLyricResult(
         map['errorCode'], map['lyrics']);
   }
@@ -3663,7 +3653,7 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       {ZegoCopyrightedMusicVendorID? vendorID}) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'copyrightedMusicQueryCache',
-        {'songID': songID, 'type': type.index, 'vendorID': vendorID?.index});
+        {'songID': songID, 'type': type.index, 'vendorID': vendorID?.value});
   }
 
   @override
@@ -3674,9 +3664,9 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
+        'vendorID': config.vendorID?.value ??
             ZegoCopyrightedMusicVendorID
-                .ZegoCopyrightedMusicVendorDefault.index,
+                .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
         'masterID': config.masterID ?? ''
       }
@@ -3693,9 +3683,9 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
+        'vendorID': config.vendorID?.value ??
             ZegoCopyrightedMusicVendorID
-                .ZegoCopyrightedMusicVendorDefault.index,
+                .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
         'masterID': config.masterID ?? ''
       }
@@ -3712,9 +3702,9 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
+        'vendorID': config.vendorID?.value ??
             ZegoCopyrightedMusicVendorID
-                .ZegoCopyrightedMusicVendorDefault.index,
+                .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
         'masterID': config.masterID ?? ''
       }
@@ -3772,9 +3762,9 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         .invokeMethod('copyrightedMusicGetSharedResource', {
       'config': {
         'songID': config.songID,
-        'vendorID': config.vendorID?.index ??
+        'vendorID': config.vendorID?.value ??
             ZegoCopyrightedMusicVendorID
-                .ZegoCopyrightedMusicVendorDefault.index,
+                .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? ''
       },
       'type': type.index
@@ -3792,9 +3782,9 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
+        'vendorID': config.vendorID?.value ??
             ZegoCopyrightedMusicVendorID
-                .ZegoCopyrightedMusicVendorDefault.index,
+                .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
         'masterID': config.masterID ?? ''
       },

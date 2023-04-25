@@ -1732,8 +1732,8 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating the PlatformView in advance
                     // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
-                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
-                    result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
+                    ZegoLog.error("[updatePlayingCanvas] %s", errorMessage);
+                    result.error("updatePlayingCanvas_No_PlatformView".toUpperCase(), errorMessage, null);
                     return;
                 }
 
@@ -1747,8 +1747,8 @@ public class ZegoExpressEngineMethodHandler {
                     // Play video without creating TextureRenderer in advance
                     // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
-                    ZegoLog.error("[startPlayingStream] %s", errorMessage);
-                    result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    ZegoLog.error("[updatePlayingCanvas] %s", errorMessage);
+                    result.error("updatePlayingCanvas_No_TextureRenderer".toUpperCase(), errorMessage, null);
                     return;
                 }
             }
@@ -1765,9 +1765,9 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoTextureRendererController.getInstance().playerCanvasInUse.put(streamID, canvas);
             }
         }
-        ZegoExpressEngine.getEngine().updatePlayingCanvas(streamID, canvas);
+        int errorCode = ZegoExpressEngine.getEngine().updatePlayingCanvas(streamID, canvas);
 
-        result.success(null);
+        result.success(errorCode);
     }
 
     /* Mixer */

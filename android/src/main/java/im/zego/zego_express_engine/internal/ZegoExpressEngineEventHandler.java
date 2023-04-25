@@ -648,22 +648,6 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
-        public void onPlayerSyncRecvSEI(String streamID, byte[] data) {
-            super.onPlayerSyncRecvSEI(streamID, data);
-            ZegoLog.log("[onPlayerSyncRecvSEI] streamID: %s", streamID);
-
-            if (guardSink()) { return; }
-
-            HashMap<String, Object> map = new HashMap<>();
-
-            map.put("method", "onPlayerSyncRecvSEI");
-            map.put("streamID", streamID);
-            map.put("data", data);
-
-            sink.success(map);
-        }
-
-        @Override
         public void onPlayerRecvAudioSideInfo(String streamID, byte[] data) {
             super.onPlayerRecvAudioSideInfo(streamID, data);
             ZegoLog.log("[onPlayerRecvAudioSideInfo] streamID: %s", streamID);

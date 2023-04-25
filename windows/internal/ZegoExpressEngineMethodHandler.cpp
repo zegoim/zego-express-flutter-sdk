@@ -3888,13 +3888,21 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(
     }
 
     EXPRESS::ZegoCanvas canvas;
+    bool isSuccess = false;
+    int64_t viewID = 0;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
         auto viewMode = (EXPRESS::ZegoViewMode)std::get<int32_t>(canvasMap[FTValue("viewMode")]);
-        auto viewID = canvasMap[FTValue("view")].LongValue();
-        ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
+        viewID = canvasMap[FTValue("view")].LongValue();
+        isSuccess = ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
     }
 
-    result->Success();
+    if (isSuccess) {
+        result->Success(FTValue(0));
+    } else {
+        std::ostringstream oss;
+        oss << "The TextureRenderer for textureID: " << viewID << "cannot be found, developer should call `createCanvasView` first and get the textureID";
+        result->Error("updatePlayingCanvas_No_TextureRenderer", oss.str());
+    }
 }
 
 void ZegoExpressEngineMethodHandler::startAutoMixerTask(

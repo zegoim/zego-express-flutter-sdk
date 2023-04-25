@@ -83,8 +83,6 @@ protected:
 
     void onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
-    void onPlayerSyncRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
-
     void onPlayerRecvAudioSideInfo(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
     void onPlayerStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;

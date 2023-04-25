@@ -617,20 +617,6 @@
 }
 #pragma clang diagnostic pop
 
-- (void)onPlayerSyncRecvSEI:(NSData *)data streamID:(NSString *)streamID {
-    FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPlayerSyncRecvSEI] streamID: %@", streamID);
-
-    GUARD_SINK
-    if (sink) {
-        sink(@{
-            @"method": @"onPlayerSyncRecvSEI",
-            @"data": [FlutterStandardTypedData typedDataWithBytes:data],
-            @"streamID": streamID
-        });
-    }
-}
-
 - (void)onPlayerRecvAudioSideInfo:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPlayerRecvAudioSideInfo] streamID: %@", streamID);

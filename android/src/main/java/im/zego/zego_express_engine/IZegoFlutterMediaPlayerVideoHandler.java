@@ -54,7 +54,7 @@ public abstract class IZegoFlutterMediaPlayerVideoHandler {
      * @param mediaPlayerIndex Callback player index.
      * @param path The path of the media resource.
      */
-    void onBlockBegin(int mediaPlayerIndex, String path) {}
+    public void onBlockBegin(int mediaPlayerIndex, String path) {}
 
     /**
      * The callback triggered when the media player throws the block data of the media resource.
@@ -69,7 +69,7 @@ public abstract class IZegoFlutterMediaPlayerVideoHandler {
      * @param buffer The block data of the media resource.
      * @return The size of the buffer, -1 is returned for failure.
      */
-    int onBlockData(int mediaPlayerIndex, ByteBuffer buffer) {
+    public int onBlockData(int mediaPlayerIndex, ByteBuffer buffer) {
         return -1;
     }
 }

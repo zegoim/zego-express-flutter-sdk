@@ -371,22 +371,6 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string& streamID,
     }
 }
 
-void ZegoExpressEngineEventHandler::onPlayerSyncRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) {
-
-    if (eventSink_) {
-        FTMap retMap;
-        retMap[FTValue("method")] = FTValue("onPlayerSyncRecvSEI");
-        retMap[FTValue("streamID")] = FTValue(streamID);
-
-        auto nonConstData = const_cast<unsigned char*>(data);
-        std::vector<uint8_t> dataArray(nonConstData, nonConstData + dataLength);
-
-        retMap[FTValue("data")] = FTValue(dataArray);
-
-        eventSink_->Success(retMap);
-    }
-}
-
 void ZegoExpressEngineEventHandler::onPlayerRecvAudioSideInfo(const std::string& streamID, const unsigned char* data, unsigned int dataLength) {
 
     if (eventSink_) {
