@@ -598,6 +598,7 @@
             }
 
         } else {
+            [[ZegoTextureRendererController sharedInstance] enableTextureAlpha:alphaBlend withTexture:viewID];
             // Render with Texture
             if (![[ZegoTextureRendererController sharedInstance] bindCapturedChannel:@(channel) withTexture:viewID]) {
                 // Preview video without creating TextureRenderer in advance
@@ -1277,6 +1278,7 @@
             }
 
         } else {
+            [[ZegoTextureRendererController sharedInstance] enableTextureAlpha:alphaBlend withTexture:viewID];
             // Render with Texture
             if (![[ZegoTextureRendererController sharedInstance] bindRemoteStreamId:streamID withTexture:viewID]) {
                 // Play video without creating TextureRenderer in advance
@@ -1547,6 +1549,7 @@
             }
 
         } else {
+            [[ZegoTextureRendererController sharedInstance] enableTextureAlpha:alphaBlend withTexture:viewID];
             // Render with Texture
             if (![[ZegoTextureRendererController sharedInstance] bindRemoteStreamId:streamID withTexture:viewID]) {
                 // Play video without creating TextureRenderer in advance

@@ -8,6 +8,7 @@
 
 #import "ZegoTextureRendererController.h"
 #import "ZegoLog.h"
+#import <Accelerate/Accelerate.h>
 
 @interface ZegoTextureRendererController () <FlutterStreamHandler>
 
@@ -17,6 +18,8 @@
 @property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *capturedTextureIdMap;
 @property (strong) NSMutableDictionary<NSString *, NSNumber *> *remoteTextureIdMap;
 @property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *mediaPlayerTextureIdMap;
+
+@property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *alphaTextureIdMap;
 
 @property (nonatomic, assign) BOOL isInited;
 
@@ -49,6 +52,7 @@
         _capturedTextureIdMap = [NSMutableDictionary dictionary];
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
         _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
+        _alphaTextureIdMap = [NSMutableDictionary dictionary];
         _renderHandler = nil;
         
 #if TARGET_OS_IPHONE
@@ -312,6 +316,7 @@
     NSNumber *textureID = nil;
     ZegoTextureRenderer *renderer = nil;
 
+    NSNumber* needAplha = nil;
     @synchronized (self) {
         textureID = [self.capturedTextureIdMap objectForKey:@(channel)];
         if (!textureID) {
@@ -321,8 +326,24 @@
         if (!renderer) {
             return;
         }
+        
+        needAplha = [self.alphaTextureIdMap objectForKey:textureID];
+        
     }
-    
+    if ([needAplha isEqual:@(1)]) {
+        CVPixelBufferLockBaseAddress(buffer, 0);
+        void *baseAddress = CVPixelBufferGetBaseAddress(buffer);
+        size_t width = CVPixelBufferGetWidth(buffer);
+        size_t height = CVPixelBufferGetHeight(buffer);
+        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer);
+        vImage_Buffer srcBuffer = { baseAddress, height, width, bytesPerRow };
+        
+        vImage_Error error = vImagePremultiplyData_RGBA8888(&srcBuffer, &srcBuffer, kvImageNoFlags);
+        if (error != kvImageNoError) {
+            
+        }
+        CVPixelBufferUnlockBaseAddress(buffer, 0);
+    }
     [self updateRenderer:renderer withBuffer:buffer param:param flipMode:flipMode];
 }
 
@@ -346,6 +367,7 @@
     NSNumber *textureID = nil;
     ZegoTextureRenderer *renderer = nil;
 
+    NSNumber* needAplha = nil;
     @synchronized (self) {
         textureID = [self.remoteTextureIdMap objectForKey:streamID];
         if (!textureID) {
@@ -355,6 +377,23 @@
         if (!renderer) {
             return;
         }
+        
+        needAplha = [self.alphaTextureIdMap objectForKey:textureID];
+    }
+    
+    if ([needAplha isEqual:@(1)]) {
+        CVPixelBufferLockBaseAddress(buffer, 0);
+        void *baseAddress = CVPixelBufferGetBaseAddress(buffer);
+        size_t width = CVPixelBufferGetWidth(buffer);
+        size_t height = CVPixelBufferGetHeight(buffer);
+        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer);
+        vImage_Buffer srcBuffer = { baseAddress, height, width, bytesPerRow };
+        
+        vImage_Error error = vImagePremultiplyData_RGBA8888(&srcBuffer, &srcBuffer, kvImageNoFlags);
+        if (error != kvImageNoError) {
+            
+        }
+        CVPixelBufferUnlockBaseAddress(buffer, 0);
     }
     
     [self updateRenderer:renderer withBuffer:buffer param:param flipMode:ZegoVideoFlipModeNone];
@@ -399,6 +438,27 @@
 
 -(void)setMediaPlayerVideoHandle: (id<ZegoFlutterMediaPlayerVideoHandler> _Nullable) handler {
     self.mediaPlayerVideoHandler = handler;
+}
+
+-(BOOL)enableTextureAlpha:(BOOL) enable withTexture:(int64_t)textureID {
+    ZegoTextureRenderer *renderer = [self.renderers objectForKey:@(textureID)];
+
+    if (!renderer) {
+        ZGLog(@"[bindMediaPlayerIndex] renderer for textureID:%ld not exists", (long)textureID);
+        [self logCurrentRenderers];
+        return NO;
+    }
+
+    ZGLog(@"[enableTextureAlpha] textureID:%ld, renderer:%p, enable:%d",
+          (long)textureID, renderer, enable);
+
+    @synchronized (self) {
+        [self.alphaTextureIdMap setObject:enable?@1:@0 forKey:@(textureID)];
+    }
+
+    [self logCurrentRenderers];
+
+    return YES;
 }
 
 #pragma mark - FlutterStreamHandler

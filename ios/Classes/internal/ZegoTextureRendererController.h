@@ -63,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)setMediaPlayerVideoHandle: (id<ZegoFlutterMediaPlayerVideoHandler> _Nullable) handler;
 
+-(BOOL)enableTextureAlpha:(BOOL) enable withTexture:(int64_t)textureID;
+
 #pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                     param:(ZegoVideoFrameParam *)param
