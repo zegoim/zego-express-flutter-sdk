@@ -11,7 +11,7 @@
 #import "ZegoLog.h"
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
-@interface ZegoMediaPlayerVideoManager()<ZegoMediaPlayerVideoHandler, ZegoMediaPlayerBlockDataHandler>
+@interface ZegoMediaPlayerVideoManager()<ZegoMediaPlayerVideoHandler>
 
 @property (nonatomic, weak) id<ZegoFlutterMediaPlayerVideoHandler> handler;
 
@@ -73,20 +73,4 @@
         [self.handler mediaPlayer:[mediaPlayer.index intValue] videoFramePixelBuffer:buffer param:videoFrameParam extraInfo:extraInfo];
     }
 }
-
-- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer blockBegin:(NSString *)path {
-    if([self.handler respondsToSelector:@selector(mediaPlayer:blockBegin:)]) {
-        [self.handler mediaPlayer:[mediaPlayer.index intValue] blockBegin:path];
-    }
-}
-
-- (int)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer
-         blockData:(unsigned char *const)buffer
-        bufferSize:(unsigned int)bufferSize {
-    if ([self.handler respondsToSelector:@selector(mediaPlayer:blockData:bufferSize:)]) {
-        return [self.handler mediaPlayer:[mediaPlayer.index intValue] blockData:buffer bufferSize:bufferSize];
-    }
-    return -1;
-}
-
 @end

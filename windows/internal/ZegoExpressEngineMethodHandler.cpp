@@ -2455,22 +2455,22 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableBlockData(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
 
-    auto index = std::get<int32_t>(argument[FTValue("index")]);
-    auto mediaPlayer = mediaPlayerMap_[index];
+    // auto index = std::get<int32_t>(argument[FTValue("index")]);
+    // auto mediaPlayer = mediaPlayerMap_[index];
 
-    if (mediaPlayer) {
-        auto enable = std::get<bool>(argument[FTValue("enable")]);
-        unsigned int blockSize = argument[FTValue("blockSize")].LongValue();
-        if (enable) {
-            mediaPlayer->setBlockDataHandler(ZegoMediaPlayerVideoManager::getInstance(), blockSize);
-        } else {
-            mediaPlayer->setBlockDataHandler(nullptr, blockSize);
-        }
-        result->Success();
-    } else {
-        result->Error("mediaPlayerEnableBlockData_Can_not_find_player",
-                      "Invoke `mediaPlayerEnableBlockData` but can't find specific player");
-    }
+    // if (mediaPlayer) {
+    //     auto enable = std::get<bool>(argument[FTValue("enable")]);
+    //     unsigned int blockSize = argument[FTValue("blockSize")].LongValue();
+    //     if (enable) {
+    //         mediaPlayer->setBlockDataHandler(ZegoMediaPlayerVideoManager::getInstance(), blockSize);
+    //     } else {
+    //         mediaPlayer->setBlockDataHandler(nullptr, blockSize);
+    //     }
+    //     result->Success();
+    // } else {
+    result->Error("mediaPlayerEnableBlockData_Can_not_find_player",
+                "Invoke `mediaPlayerEnableBlockData` but can't find specific player");
+    // }
 }
 
 void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithConfig(

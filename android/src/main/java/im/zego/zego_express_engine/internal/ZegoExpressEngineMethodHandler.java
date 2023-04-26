@@ -3832,18 +3832,18 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void mediaPlayerEnableBlockData(MethodCall call, final Result result) {
 
-        Integer index = call.argument("index");
-        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+        // Integer index = call.argument("index");
+        // ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
-        if (mediaPlayer != null) {
-            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
-            int blockSize = ZegoUtils.intValue((Number) call.argument("blockSize"));
-            if (enable) {
-                mediaPlayer.setBlockDataHandler(ZegoMediaPlayerVideoManager.getInstance(), blockSize);
-            } else {
-                mediaPlayer.setBlockDataHandler(null, blockSize);
-            }
-        }
+        // if (mediaPlayer != null) {
+        //     boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        //     int blockSize = ZegoUtils.intValue((Number) call.argument("blockSize"));
+        //     if (enable) {
+        //         mediaPlayer.setBlockDataHandler(ZegoMediaPlayerVideoManager.getInstance(), blockSize);
+        //     } else {
+        //         mediaPlayer.setBlockDataHandler(null, blockSize);
+        //     }
+        // }
 
         result.success(null);
     }

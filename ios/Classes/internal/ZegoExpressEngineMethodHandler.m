@@ -3576,18 +3576,18 @@
 
 - (void)mediaPlayerEnableBlockData:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    NSNumber *index = call.arguments[@"index"];
-    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+    // NSNumber *index = call.arguments[@"index"];
+    // ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
-    if (mediaPlayer) {
-        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-        unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
-        if (enable) {
-            [mediaPlayer setBlockDataHandler:(id<ZegoMediaPlayerBlockDataHandler>)[ZegoMediaPlayerVideoManager sharedInstance] blockSize:blockSize];
-        } else {
-            [mediaPlayer setBlockDataHandler:nil blockSize:blockSize];
-        }
-    }
+    // if (mediaPlayer) {
+    //     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    //     unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
+    //     if (enable) {
+    //         [mediaPlayer setBlockDataHandler:(id<ZegoMediaPlayerBlockDataHandler>)[ZegoMediaPlayerVideoManager sharedInstance] blockSize:blockSize];
+    //     } else {
+    //         [mediaPlayer setBlockDataHandler:nil blockSize:blockSize];
+    //     }
+    // }
 
     result(nil);
 }

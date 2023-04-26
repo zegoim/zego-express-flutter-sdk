@@ -2,7 +2,6 @@
 #define ZEGO_MEDIA_PLAYER_VIDEO_MANAGER_H_
 
 #include "ZegoCustomVideoDefine.h"
-#include <ZegoExpressSDK.h>
 
 class FLUTTER_PLUGIN_EXPORT IZegoFlutterMediaPlayerVideoHandler {
 protected:
@@ -40,41 +39,18 @@ public:
     virtual void onVideoFrame(int /*mediaPlayerIndex*/, const unsigned char ** /*data*/,
                               unsigned int * /*dataLength*/, ZGFlutterVideoFrameParam /*param*/,
                               const char * /*extraInfo*/) {}
-
-    /// The callback triggered when the media player is about to throw the block data of the media resource.
-    ///
-    /// Available since: 3.4.0
-    /// Description: The callback triggered when the media player is about to throw the block data of the media resource.
-    /// Trigger: The callback is generated when the media player starts playing.
-    /// Caution: The callback does not actually take effect until call [setBlockDataHandler] to set.
-    /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
-    ///
-    /// @param mediaPlayerIndex Callback player index.
-    /// @param path The path of the media resource.
-    virtual void onBlockBegin(int mediaPlayerIndex, const std::string &path) {}
-
-    /// The callback triggered when the media player throws the block data of the media resource.
-    ///
-    /// Available since: 3.4.0
-    /// Description: The callback triggered when the media player throws the block data of the media resource.
-    /// Trigger: This callback will be generated after receiving the [onBlockBegin] callback.
-    /// Caution: The callback does not actually take effect until call [setBlockDataHandler] to set. The buffer size before and after decryption should be consistent.
-    /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
-    ///
-    /// @param mediaPlayerIndex Callback player index.
-    /// @param buffer The block data of the media resource.
-    /// @param bufferSize Length of media resource block data.
-    /// @return The size of the buffer, -1 is returned for failure.
-    virtual unsigned int onBlockData(int mediaPlayerIndex, unsigned char *const buffer, unsigned int bufferSize) { return -1; }
 };
 
+namespace ZEGO::EXPRESS {
+    class IZegoMediaPlayerVideoHandler;
+};
 class ZegoMediaPlayerVideoHandler;
 
-class FLUTTER_PLUGIN_EXPORT ZegoMediaPlayerVideoManager
-    : public ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler,
-      public ZEGO::EXPRESS::IZegoMediaPlayerBlockDataHandler {
-  public:
+class FLUTTER_PLUGIN_EXPORT ZegoMediaPlayerVideoManager{
+public:
     static std::shared_ptr<ZegoMediaPlayerVideoManager> getInstance();
+
+    std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> getHandler();
     
     /// Set video data callback handler of the media player.
     ///
@@ -89,18 +65,7 @@ class FLUTTER_PLUGIN_EXPORT ZegoMediaPlayerVideoManager
 private:
     friend class ZegoMediaPlayerVideoHandler;
     std::shared_ptr<IZegoFlutterMediaPlayerVideoHandler> handler_ = nullptr;
-
-    void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, const unsigned char **data,
-                      unsigned int *dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param) override;
-
-    void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, const unsigned char **data,
-                      unsigned int *dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param,
-                      const char *extraInfo) override;
-
-    void onBlockBegin(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer,
-                      const std::string &path) override;
-
-    unsigned int onBlockData(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer,
-                             unsigned char *const buffer, unsigned int bufferSize) override;
+    std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> zegoHandler_ = nullptr;
 };
+
 #endif  // ZEGO_MEDIA_PLAYER_VIDEO_MANAGER_H_

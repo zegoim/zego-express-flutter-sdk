@@ -3218,12 +3218,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         {'index': _index, 'enable': enable, 'format': format.index});
   }
 
-  @override
-  Future<void> enableBlockData(bool enable, int blockSize) async {
-    return await ZegoExpressImpl._channel.invokeMethod(
-        'mediaPlayerEnableBlockData',
-        {'index': _index, 'enable': enable, 'blockSize': blockSize});
-  }
+  // @override
+  // Future<void> enableBlockData(bool enable, int blockSize) async {
+  //   return await ZegoExpressImpl._channel.invokeMethod(
+  //       'mediaPlayerEnableBlockData',
+  //       {'index': _index, 'enable': enable, 'blockSize': blockSize});
+  // }
 
   // @override
   // Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(

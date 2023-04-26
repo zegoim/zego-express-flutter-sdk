@@ -3740,18 +3740,6 @@ abstract class ZegoMediaPlayer {
   /// - [format] Video frame format for video data
   Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format);
 
-  /// Whether to throw block data of the media resource.
-  ///
-  /// Available since: 3.4.0
-  /// Description: Whether to throw block data of the media resource.
-  /// When to call: After the [ZegoMediaPlayer] instance created, before playing media resources.
-  /// Restrictions: None.
-  /// Caution: When it is no longer necessary to listen to the callback for data decryption, please call this function again to clear the handler.
-  ///
-  /// - [enable] Throw out the media resource block data tag, which is false by default.
-  /// - [blockSize] The size of the encrypted data block. The bufferSize in the OnBlockData callback is an integer multiple of blockSize.
-  Future<void> enableBlockData(bool enable, int blockSize);
-
   /// Take a screenshot of the current playing screen of the media player.
   ///
   /// Only in the case of calling [setPlayerCanvas] to set the display controls and the playback state, can the screenshot be taken normally
