@@ -3569,19 +3569,6 @@ abstract class ZegoMediaPlayer {
       loadCopyrightedMusicResourceWithPosition(
           String resourceID, int startPosition);
 
-  /// Load media resource.
-  ///
-  /// Available: since 3.3.0
-  /// Description: Load media resources.
-  /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
-  /// When to call: Called after the engine [createEngine] has been initialized and the media player [createMediaPlayer] has been created.
-  /// Related APIs: Support for loading resources through the [loadResourceWithPosition] or [loadResourceFromMediaData] interface.
-  ///
-  /// - [resource] Multimedia resources that need to be loaded.
-  /// - Returns Callback result of loading media resource.
-  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
-      ZegoMediaPlayerResource resource);
-
   /// Start playing.
   ///
   /// You need to load resources before playing

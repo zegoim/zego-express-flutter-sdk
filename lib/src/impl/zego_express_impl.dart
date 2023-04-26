@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +14,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.3.1";
+  static String pluginVersion = "3.4.2";
 }
 
 class ZegoExpressImpl {
@@ -2159,15 +2160,15 @@ class ZegoExpressImpl {
             map['streamID'],
             map['extraInfo']);
         break;
-      case 'onVideoObjectSegmentationStateChanged':
-        if (ZegoExpressEngine.onVideoObjectSegmentationStateChanged == null)
-          return;
+      // case 'onVideoObjectSegmentationStateChanged':
+      //   if (ZegoExpressEngine.onVideoObjectSegmentationStateChanged == null)
+      //     return;
 
-        ZegoExpressEngine.onVideoObjectSegmentationStateChanged!(
-            ZegoObjectSegmentationState.values[map['state']],
-            ZegoPublishChannel.values[map['channel']],
-            map['errorCode']);
-        break;
+      //   ZegoExpressEngine.onVideoObjectSegmentationStateChanged!(
+      //       ZegoObjectSegmentationState.values[map['state']],
+      //       ZegoPublishChannel.values[map['channel']],
+      //       map['errorCode']);
+      //   break;
 
       /* Player */
 
@@ -3224,24 +3225,24 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         {'index': _index, 'enable': enable, 'blockSize': blockSize});
   }
 
-  @override
-  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
-      ZegoMediaPlayerResource resource) async {
-    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-        .invokeMethod('mediaPlayerLoadResourceWithConfig', {
-      'index': _index,
-      'resource': {
-        'resourceID': resource.resourceID ?? '',
-        'startPosition': resource.startPosition ?? 0,
-        'loadType': resource.loadType.index,
-        'filePath': resource.filePath ?? '',
-        'alphaLayout':
-            resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
-        'memory': resource.memory ?? Uint8List.fromList([]),
-      }
-    });
-    return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
-  }
+  // @override
+  // Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+  //     ZegoMediaPlayerResource resource) async {
+  //   final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+  //       .invokeMethod('mediaPlayerLoadResourceWithConfig', {
+  //     'index': _index,
+  //     'resource': {
+  //       'resourceID': resource.resourceID ?? '',
+  //       'startPosition': resource.startPosition ?? 0,
+  //       'loadType': resource.loadType.index,
+  //       'filePath': resource.filePath ?? '',
+  //       'alphaLayout':
+  //           resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
+  //       'memory': resource.memory ?? Uint8List.fromList([]),
+  //     }
+  //   });
+  //   return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
+  // }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {

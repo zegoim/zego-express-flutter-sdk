@@ -502,21 +502,6 @@ class ZegoExpressEngine {
           ZegoStreamEvent eventID, String streamID, String extraInfo)?
       onPublisherStreamEvent;
 
-  /// The video object segmentation state changed.
-  ///
-  /// Available since: 3.4.0
-  /// Description: The object segmentation state of the stream publishing end changes.
-  /// When to trigger: When [enableObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
-  /// Caution: This callback depends on enabling preview or stream publishing.
-  ///
-  /// - [state] Object segmentation state.
-  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
-  /// - [errorCode] The error code corresponding to the status change of the object segmentation, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
-  static void Function(
-      ZegoObjectSegmentationState state,
-      ZegoPublishChannel channel,
-      int errorCode)? onVideoObjectSegmentationStateChanged;
-
   /// The callback triggered when the state of stream playing changes.
   ///
   /// Available since: 1.1.0

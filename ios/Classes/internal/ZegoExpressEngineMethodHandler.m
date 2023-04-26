@@ -1403,12 +1403,11 @@
 
 - (void)setPlayStreamBufferIntervalRange:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    int minBufferInterval = [ZegoUtils intValue:call.arguments[@"minBufferInterval"]];
-    int maxBufferInterval = [ZegoUtils intValue:call.arguments[@"maxBufferInterval"]];
+    unsigned int minBufferInterval = [ZegoUtils unsignedIntValue:call.arguments[@"minBufferInterval"]];
+    unsigned int maxBufferInterval = [ZegoUtils unsignedIntValue:call.arguments[@"maxBufferInterval"]];
     NSString *streamID = call.arguments[@"streamID"];
-    NSRange range = NSMakeRange(minBufferInterval, maxBufferInterval - minBufferInterval);
 
-    [[ZegoExpressEngine sharedEngine] setPlayStreamBufferIntervalRange:range streamID:streamID];
+    [[ZegoExpressEngine sharedEngine] setPlayStreamBufferIntervalRange:streamID min:minBufferInterval max:maxBufferInterval];
 
     result(nil);
 }
