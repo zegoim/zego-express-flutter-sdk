@@ -17,7 +17,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '-', ' '.
+  ///   Only support numbers, English characters and '-', ' '.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
   /// - [config] Advanced player configuration.
   Future<void> startPlayingStream(String streamID,
@@ -194,7 +194,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.
-  /// - [mute] Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
+  /// - [mute] Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false". The default value for automatically played streams within the SDK is false.
   Future<void> mutePlayStreamVideo(String streamID, bool mute) async {
     return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
   }
@@ -329,5 +329,24 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Caution: Initializing the video screen is divided into time-consuming operations, and frequent initialization and de-initialization are not recommended.
   Future<void> uninitVideoSuperResolution() async {
     return await ZegoExpressImpl.instance.uninitVideoSuperResolution();
+  }
+
+  /// Update playing canvas.
+  ///
+  /// Available: since 3.4.0
+  /// Description: This interface will update playing view.
+  /// Use case: The user can call this function to update canvas display video.
+  /// When to call: After receiving a successful playing stream from the [onPlayerStateUpdate] or [onUserStreamStateUpdate] callback.
+  /// Restrictions: None.
+  /// Caution: None.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [streamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   Only support numbers, English characters and '-', ' '.
+  /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
+  /// - Returns Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  Future<int> updatePlayingCanvas(String streamID, ZegoCanvas canvas) async {
+    return await ZegoExpressImpl.instance.updatePlayingCanvas(streamID, canvas);
   }
 }

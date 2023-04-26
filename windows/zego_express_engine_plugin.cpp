@@ -55,6 +55,7 @@ static const std::map<
         EngineStaticMethodHandler(setLocalProxyConfig),
         EngineStaticMethodHandler(setCloudProxyConfig),
         EngineStaticMethodHandler(setRoomMode),
+        EngineStaticMethodHandler(setGeoFence),
         EngineMethodHandler(setRoomScenario),
         EngineMethodHandler(uploadLog),
         EngineMethodHandler(enableDebugAssistant),
@@ -99,6 +100,8 @@ static const std::map<
         EngineMethodHandler(enableVideoSuperResolution),
         EngineMethodHandler(initVideoSuperResolution),
         EngineMethodHandler(uninitVideoSuperResolution),
+        EngineMethodHandler(updatePlayingCanvas),
+
         EngineMethodHandler(startAutoMixerTask),
         EngineMethodHandler(stopAutoMixerTask),
         EngineMethodHandler(setAudioRouteToSpeaker),
@@ -161,6 +164,8 @@ static const std::map<
         EngineMethodHandler(setLowlightEnhancement),
         EngineMethodHandler(setVideoSource),
         EngineMethodHandler(setAudioSource),
+        EngineMethodHandler(enableVideoObjectSegmentation),
+        EngineMethodHandler(enableAlphaChannelVideoEncoder),
 
         EngineMethodHandler(startPlayingStream),
         EngineMethodHandler(stopPlayingStream),
@@ -285,6 +290,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerSetAudioTrackMode),
         EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex),
         EngineMethodHandler(mediaPlayerEnableVideoData),
+        EngineMethodHandler(mediaPlayerEnableBlockData),
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
 
         // Copyrighted Music

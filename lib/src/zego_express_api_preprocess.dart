@@ -279,7 +279,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.setReverbEchoParam(param);
   }
 
-  /// Enable or disable the virtual stereo effect when publishing stream..
+  /// Enable or disable the virtual stereo effect when publishing stream.
   ///
   /// Available since: 1.10.0; Note: Starting from 2.15.0, the angle parameter supports setting -1 to present a all round virtual stereo effect.
   /// Description: Call this function to enable / disable the virtual stereo effect when publishing stream.

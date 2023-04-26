@@ -95,6 +95,9 @@ class ZegoErrorCode {
   /// Description: Set room mode failed. <br>Cause: Set room mode after initialize the SDK. <br>Solutions: Please set room mode before initialize the SDK.
   static const int EngineSetRoomModeErrorTime = 1001020;
 
+  /// Description: Set geo fence failed. <br>Cause: Set geo fence after initialize the SDK. <br>Solutions: Please set geo fence before initialize the SDK.
+  static const int EngineSetGeoFenceErrorTime = 1001021;
+
   /// Description: The experimental API json parameter parsing failed. <br>Cause: Invalid json format; wrong function name or parameter. <br>Solutions: Please check json format is valid or not; check function name or parameter is correct or not, contact ZEGO technical support for specific function name and parameters.
   static const int EngineExperimentalJsonStrInvalid = 1001091;
 
@@ -185,6 +188,12 @@ class ZegoErrorCode {
   /// Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room. <br>Solutions: Contact the business server for processing.
   static const int RoomManualKickedOut = 1002055;
 
+  /// Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room because the token expired. <br>Solutions: Please update the token in time after receiving the callback notification that the token is about to expire.
+  static const int RoomTokenExpiredKickedOut = 1002056;
+
+  /// Description: The business server has sent a signal to kick the user out of the room. <br>Cause: The business server has sent a signal to kick the user out of the room because the internal session was abnormal. <br>Solutions: Contact the business server for processing.
+  static const int RoomSessionExceptionKickedOut = 1002057;
+
   /// Description: Wrong order of login rooms. <br>Cause: Log in multi room without log in the main room. <br>Solutions: Please log in to the main room with `loginRoom` before logging in to multi room.
   static const int RoomWrongLoginSequence = 1002061;
 
@@ -253,6 +262,12 @@ class ZegoErrorCode {
 
   /// Description: Streaming failed, H.265 encoding is not supported.<br>Cause: The hardware device does not support H.265 encoding, or the SDK does not include H.265 encoding module.<br>Solutions: Contact ZEGO technical support to confirm whether the SDK contains the H.265 encoding module, if the hardware device does not support it, it is recommended to upgrade the hardware.
   static const int PublisherErrorH265EncoderNotSupported = 1003010;
+
+  /// Description: The performance of object segmentation device is not enough.<br>Caution: The performance of device is not enough.<br>Solutions: Please replace the device.
+  static const int PublisherObjectSegmentationPerformanceWarning = 1003011;
+
+  /// Description: This device does not support object segmentation.<br>Caution: The device is not supported.<br>Solutions, or the object segmentation of multiple channels is enabled: Please change the device or only open the object segmentation of one channel.
+  static const int PublisherObjectSegmentationDeviceNotSupport = 1003012;
 
   /// Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal.
   static const int PublisherErrorNetworkInterrupt = 1003020;
@@ -359,6 +374,9 @@ class ZegoErrorCode {
 
   /// Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary.
   static const int PlayerCountExceed = 1004010;
+
+  /// Description: The stream was not played.<br>Caution: The stream was not played.<br>Solutions: Please confirm that the stream has been played through the [onPlayerStateUpdate] or [onUserStreamStateUpdate] callback.
+  static const int PlayerStreamWasNotPlayed = 1004011;
 
   /// Description: Stream playing is temporarily interrupted.<br>Caution: Network exception.<br>Solutions: Please wait or check whether the network is normal.
   static const int PlayerErrorNetworkInterrupt = 1004020;
@@ -621,6 +639,9 @@ class ZegoErrorCode {
 
   /// Description: The MediaPlayer failed to load the file. <br>Cause: There was an error during file resolution. <br> Solutions: Try again or contact ZEGO technical support.
   static const int MediaPlayerDemuxError = 1008010;
+
+  /// Description: The copyrighted music resource has expired. <br>Cause: The copyrighted music resource has expired. <br>Solutions: Please request the copyrighted music resource again.
+  static const int MediaPlayerResourceExpired = 1008011;
 
   /// Description: The MediaPlayer failed to seek. <br>Cause: The file hasn't been loaded yet. <br> Solutions: The media player loads the media resource [loadResource] before seeking [seekTo].
   static const int MediaPlayerSeekError = 1008016;
@@ -886,8 +907,14 @@ class ZegoErrorCode {
   /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid = 1017015;
 
-  /// Description: The resource_id unauthorized. <br>Cause: When [download] is called to download resources, the resource_id is unauthorization. <br>Solutions: Please call the [requestSong] [requestAccompaniment] [requestAccompanimentClip] [getMusicByToken] function before call [load] function to load resource.
+  /// Description: The resource_id unauthorized. <br>Cause: The resource ID is not obtained through [requestResource] [getSharedResource] function. <br>Solutions: Please call the [requestResource] [getSharedResource] function to get valid resource ID.
   static const int CopyrightedMusicResourceIdUnauthorized = 1017018;
+
+  /// Description: The copyrighted resource has expired. <br>Cause: The copyrighted resource has expired. <br>Solutions: Please request the copyrighted resource again.
+  static const int CopyrightedMusicResourceExpired = 1017019;
+
+  /// Description: The resource does not support this method. <br>Cause: Wrong resource ID selection. <br>Solutions: Please pass in the correct resource ID.
+  static const int CopyrightedMusicResourceNotSupportFunction = 1017020;
 
   /// Description: No copyright, unable to listen to and sing songs. <br>Cause: No copyright. <br>Solutions: Please select another music.
   static const int CopyrightedMusicNoCopyright = 1017030;

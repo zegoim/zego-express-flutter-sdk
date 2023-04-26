@@ -72,9 +72,14 @@ class ZegoExpressTextureRenderer {
     _viewModeMap[textureID] = viewMode;
   }
 
-  void setBackgroundColor(int textureID, int backgroundColor) {
+  void setBackgroundColor(int textureID, int backgroundColor,
+      {bool hasAlpha = false}) {
+    if (hasAlpha) {
+      _backgroundColorMap[textureID] = Color(backgroundColor);
+    } else {
+      _backgroundColorMap[textureID] = Color(backgroundColor | 0xff000000);
+    }
     _updateController.sink.add({'textureID': textureID, 'type': 'update'});
-    _backgroundColorMap[textureID] = Color(backgroundColor | 0xff000000);
   }
 
   ZegoViewMode? getViewMode(int textureID) => _viewModeMap[textureID];

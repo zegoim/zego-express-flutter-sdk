@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +14,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.3.1";
+  static String pluginVersion = "3.4.2";
 }
 
 class ZegoExpressImpl {
@@ -162,6 +163,12 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('setRoomMode', {'mode': mode.index});
   }
 
+  static Future<void> setGeoFence(
+      ZegoGeoFenceType type, List<int> areaList) async {
+    return await _channel.invokeMethod(
+        'setGeoFence', {'type': type.index, 'areaList': areaList});
+  }
+
   static Future<String> getVersion() async {
     return await _channel.invokeMethod('getVersion');
   }
@@ -281,8 +288,13 @@ class ZegoExpressImpl {
     if (canvas != null && !shouldUsePlatformView()) {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
 
     return await _channel.invokeMethod('startPreview', {
@@ -291,7 +303,8 @@ class ZegoExpressImpl {
               'view': canvas.view,
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
-              'backgroundColor': canvas.backgroundColor ?? 0x000000
+              'backgroundColor': canvas.backgroundColor ?? 0x000000,
+              'alphaBlend': canvas.alphaBlend ?? false
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -599,6 +612,26 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> enableVideoObjectSegmentation(
+      bool enable, ZegoObjectSegmentationType type,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableVideoObjectSegmentation', {
+      'enable': enable,
+      'type': type.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> enableAlphaChannelVideoEncoder(
+      bool enable, ZegoAlphaLayoutType alphaLayout,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableAlphaChannelVideoEncoder', {
+      'enable': enable,
+      'alphaLayout': alphaLayout.index,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,
@@ -606,8 +639,13 @@ class ZegoExpressImpl {
     if (canvas != null && !shouldUsePlatformView()) {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
 
     return await _channel.invokeMethod('startPlayingStream', {
@@ -617,7 +655,8 @@ class ZegoExpressImpl {
               'view': canvas.view,
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
-              'backgroundColor': canvas.backgroundColor ?? 0x000000
+              'backgroundColor': canvas.backgroundColor ?? 0x000000,
+              'alphaBlend': canvas.alphaBlend ?? false
             }
           : {},
       'config': config != null
@@ -753,6 +792,29 @@ class ZegoExpressImpl {
 
   Future<void> uninitVideoSuperResolution() async {
     return await _channel.invokeMethod('uninitVideoSuperResolution', {});
+  }
+
+  Future<int> updatePlayingCanvas(String streamID, ZegoCanvas canvas) async {
+    if (!shouldUsePlatformView()) {
+      ZegoExpressTextureRenderer()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
+    }
+    return await _channel.invokeMethod('updatePlayingCanvas', {
+      'streamID': streamID,
+      'canvas': {
+        'view': canvas.view,
+        'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
+        'backgroundColor': canvas.backgroundColor ?? 0x000000,
+        'alphaBlend': canvas.alphaBlend ?? false
+      }
+    });
   }
 
   /* Mixer */
@@ -2098,6 +2160,15 @@ class ZegoExpressImpl {
             map['streamID'],
             map['extraInfo']);
         break;
+      // case 'onVideoObjectSegmentationStateChanged':
+      //   if (ZegoExpressEngine.onVideoObjectSegmentationStateChanged == null)
+      //     return;
+
+      //   ZegoExpressEngine.onVideoObjectSegmentationStateChanged!(
+      //       ZegoObjectSegmentationState.values[map['state']],
+      //       ZegoPublishChannel.values[map['channel']],
+      //       map['errorCode']);
+      //   break;
 
       /* Player */
 
@@ -2812,6 +2883,24 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onWindowStateChanged':
+        if (ZegoExpressEngine.onWindowStateChanged == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onWindowStateChanged!(
+              screenCaptureSource,
+              ZegoScreenCaptureWindowState.values[map['windowState']],
+              Rect.fromLTWH(
+                  double.parse(map['windowRect']['x'].toString()),
+                  double.parse(map['windowRect']['y'].toString()),
+                  double.parse(map['windowRect']['width'].toString()),
+                  double.parse(map['windowRect']['height'].toString())));
+        }
+        break;
+
       default:
         // TODO: Unknown callback
         break;
@@ -2911,8 +3000,13 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     if (!ZegoExpressImpl.shouldUsePlatformView()) {
       ZegoExpressTextureRenderer()
           .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
-      ZegoExpressTextureRenderer()
-          .setBackgroundColor(canvas.view, canvas.backgroundColor ?? 0x000000);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
     }
 
     return await ZegoExpressImpl._channel
@@ -2921,7 +3015,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
       'canvas': {
         'view': canvas.view,
         'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
-        'backgroundColor': canvas.backgroundColor ?? 0x000000
+        'backgroundColor': canvas.backgroundColor ?? 0x000000,
+        'alphaBlend': canvas.alphaBlend ?? false
       }
     });
   }
@@ -3124,18 +3219,26 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   // @override
+  // Future<void> enableBlockData(bool enable, int blockSize) async {
+  //   return await ZegoExpressImpl._channel.invokeMethod(
+  //       'mediaPlayerEnableBlockData',
+  //       {'index': _index, 'enable': enable, 'blockSize': blockSize});
+  // }
+
+  // @override
   // Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
   //     ZegoMediaPlayerResource resource) async {
   //   final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
   //       .invokeMethod('mediaPlayerLoadResourceWithConfig', {
   //     'index': _index,
   //     'resource': {
-  //       'resourceID': resource.resourceID,
-  //       'startPosition': resource.startPosition,
+  //       'resourceID': resource.resourceID ?? '',
+  //       'startPosition': resource.startPosition ?? 0,
   //       'loadType': resource.loadType.index,
-  //       'filePath': resource.filePath,
-  //       'alphaLayout': resource.alphaLayout.index,
-  //       'memory': resource.memory,
+  //       'filePath': resource.filePath ?? '',
+  //       'alphaLayout':
+  //           resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
+  //       'memory': resource.memory ?? Uint8List.fromList([]),
   //     }
   //   });
   //   return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
@@ -3494,7 +3597,7 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       {ZegoCopyrightedMusicVendorID? vendorID}) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicGetLrcLyric',
-            {'songID': songID, 'vendorID': vendorID?.index});
+            {'songID': songID, 'vendorID': vendorID?.value});
     return ZegoCopyrightedMusicGetLrcLyricResult(
         map['errorCode'], map['lyrics']);
   }
@@ -3554,7 +3657,7 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       {ZegoCopyrightedMusicVendorID? vendorID}) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'copyrightedMusicQueryCache',
-        {'songID': songID, 'type': type.index, 'vendorID': vendorID?.index});
+        {'songID': songID, 'type': type.index, 'vendorID': vendorID?.value});
   }
 
   @override
@@ -3565,8 +3668,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
-            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+        'vendorID': config.vendorID?.value ??
+            ZegoCopyrightedMusicVendorID
+                .ZegoCopyrightedMusicVendorDefault.value,
+        'roomID': config.roomID ?? '',
+        'masterID': config.masterID ?? ''
       }
     });
     return ZegoCopyrightedMusicRequestAccompanimentResult(
@@ -3581,8 +3687,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
-            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+        'vendorID': config.vendorID?.value ??
+            ZegoCopyrightedMusicVendorID
+                .ZegoCopyrightedMusicVendorDefault.value,
+        'roomID': config.roomID ?? '',
+        'masterID': config.masterID ?? ''
       }
     });
     return ZegoCopyrightedMusicRequestAccompanimentClipResult(
@@ -3597,8 +3706,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
-            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+        'vendorID': config.vendorID?.value ??
+            ZegoCopyrightedMusicVendorID
+                .ZegoCopyrightedMusicVendorDefault.value,
+        'roomID': config.roomID ?? '',
+        'masterID': config.masterID ?? ''
       }
     });
     return ZegoCopyrightedMusicRequestSongResult(
@@ -3654,8 +3766,10 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         .invokeMethod('copyrightedMusicGetSharedResource', {
       'config': {
         'songID': config.songID,
-        'vendorID': config.vendorID?.index ??
-            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+        'vendorID': config.vendorID?.value ??
+            ZegoCopyrightedMusicVendorID
+                .ZegoCopyrightedMusicVendorDefault.value,
+        'roomID': config.roomID ?? ''
       },
       'type': type.index
     });
@@ -3672,8 +3786,11 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
       'config': {
         'songID': config.songID,
         'mode': config.mode.index,
-        'vendorID': config.vendorID?.index ??
-            ZegoCopyrightedMusicVendorID.ZegoCopyrightedMusicVendorDefault.index
+        'vendorID': config.vendorID?.value ??
+            ZegoCopyrightedMusicVendorID
+                .ZegoCopyrightedMusicVendorDefault.value,
+        'roomID': config.roomID ?? '',
+        'masterID': config.masterID ?? ''
       },
       'type': type.index
     });

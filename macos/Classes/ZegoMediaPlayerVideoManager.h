@@ -40,7 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
     videoFramePixelBuffer:(CVPixelBufferRef)buffer
                     param:(ZGFlutterVideoFrameParam *)param
                 extraInfo:(NSDictionary *)extraInfo;
-
 @end
 
 @interface ZegoMediaPlayerVideoManager : NSObject

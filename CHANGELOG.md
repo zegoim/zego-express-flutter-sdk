@@ -1,5 +1,103 @@
 # Change Log
 
+## 3.4.2
+
+1. Support for Geofencing Function.
+
+    Note:
+
+    - To use this feature, please contact ZEGO technical support.
+
+    - Please configure geofencing information before creating the engine.
+
+    Restrict access to audio, video, and signaling data to a specific area to meet regional data privacy and security regulations, which restrict users' access to audio and video services in a specific area.
+
+    For related API, please refer to [setGeoFence](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setGeoFence.html)
+
+2. The media player supports functions such as downloading, retrieving data decryption, and playing at the same time.
+
+    For copyright music protection in online players, the media player supports downloading while recalling unencrypted binary data, which is decrypted by the developer and then returned to the media player for playback. During the process, no files or cache files are generated.
+
+    For related API, please refer to [enableBlockData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableBlockData.html)
+
+3. Support dynamic switching of flow control strategies
+
+    Supports dynamic switch flow control function, as well as setting flow control attributes.
+
+    For related API, please refer to [enableTrafficControl](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableTrafficControl.html), [setMinVideoBitrateForTrafficControl](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setMinVideoBitrateForTrafficControl.html), [setMinVideoFpsForTrafficControl](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setMinVideoFpsForTrafficControl.html), [setMinVideoResolutionForTrafficControl](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setMinVideoResolutionForTrafficControl.html)
+
+4. Expand the acquired song resource information.
+
+    Support acquiring the start and end time information of the "snatch singing segment" of the song corresponding to the songID through the requestResource interface. Other users can obtain the shared information through the getSharedResource interface.
+
+    Note: This feature is only supported for use by some copyright holders. Please contact ZEGO technical support.
+
+    For related API, please refer to [requestResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/requestResource.html), [getSharedResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getSharedResource.html)
+
+5. Copyrighted music adds a new billing model.
+
+    A new billing model has been added, which charges monthly based on the host. Please contact ZEGO technical support.
+
+6. The copyright content center has added song resources from music copyright holders.
+
+    It is supported to pass different values of copyright holders in the parameter "vendorID" of the relevant interface to perform operations such as song request and obtaining lyrics.
+
+    Note: Detailed information about the copyright holder. Please contact ZEGO technical support.
+
+    For related API, please refer to [requestResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/requestResource.html), [getSharedResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getSharedResource.html) 
+
+7. Expand the range of supported song rating capabilities.
+
+    Support the ability to rate and display pitch lines for multiple copyrighted songs, with detailed information.  Please contact ZEGO technical support.
+
+8. Support the use of copyrighted music in multi-room mode.
+
+    By adding the roomID parameter to the "request song" and "get shared resources" interfaces, the use of copyrighted music in multi-room mode is enabled.
+
+    For related API, please refer to [requestResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/requestResource.html), [getSharedResource](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/getSharedResource.html) 
+
+9. Copyrighted music support song aggregation search.
+
+    Support searching and querying through multiple copyright music libraries by inputting keywords such as singer or song title. The search results can be filtered, sorted, and customized for display.
+
+    For related API, please refer to [sendExtendedRequest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/sendExtendedRequest.html)
+
+## **Enhancements**
+
+1. Optimize SDK memory usage
+
+    Delete some unnecessary memory applications within the SDK and optimize the SDK's memory usage. Compared to the previous version, the memory usage has decreased by about 10%.
+
+2. Optimize the rotation logic of iOS screen sharing to avoid crashes caused by memory usage exceeding the 50MB limit caused by rotation during the screen recording process.
+
+3. Optimize error code prompts.
+
+    Due to the expiration limit of song resources, the API for obtaining song resources has added a new error code 1008011, indicating that the song resource has expired.
+
+    For related API, please refer to [loadCopyrightedMusicResourceWithPosition](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/loadCopyrightedMusicResourceWithPosition.html)
+
+4. To add a new enumeration value for a music copyright holder.
+
+    To add a new enumeration value for a music copyright holder. Please contact ZEGO technical support.
+
+    For related API, please refer to [ZegoCopyrightedMusicVendorID](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusicVendorID.html)
+
+## **Bug Fixes**
+
+1. Fixed the issue of macOS platform screen sharing where the actual collection frame rate is lower than the set frame rate.
+
+2. Fixed the problem of iOS blurred video picture caused by uncontrolled video hard coding rate when hard coding streaming is performed on iOS 16.4.1 devices.
+
+3. Fixed the issue of abnormal listening of game voice in certain situations.
+
+## **Deleted**
+
+1. Starting from version 3.4.1, support for iOS 11.0 and below has been discontinued, and the iOS Deployment Target (minimum supported version) has been upgraded to iOS 11.0.
+For specific instructions, Please refer to [App Store submission requirement starts April 25](https://developer.apple.com/news/?id=jd9wcyov) and [Xcode 14 Release Notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-14-release-notes#Build-System).
+
+2. Starting from version 3.4.1, the iOS SDK no longer supports the 32-bit armv7 architecture.
+For specific instructions, Please refer to [Xcode 14 Release Notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-14-release-notes#Build-System).
+
 ## 3.3.1
 
 ### **Bug Fixes**
