@@ -2892,8 +2892,11 @@ class ZegoExpressImpl {
           ZegoExpressEngine.onWindowStateChanged!(
               screenCaptureSource,
               ZegoScreenCaptureWindowState.values[map['windowState']],
-              Rect.fromLTWH(map['windowRect']['x'], map['windowRect']['y'],
-                  map['windowRect']['width'], map['windowRect']['height']));
+              Rect.fromLTWH(
+                  double.parse(map['windowRect']['x'].toString()),
+                  double.parse(map['windowRect']['y'].toString()),
+                  double.parse(map['windowRect']['width'].toString()),
+                  double.parse(map['windowRect']['height'].toString())));
         }
         break;
 

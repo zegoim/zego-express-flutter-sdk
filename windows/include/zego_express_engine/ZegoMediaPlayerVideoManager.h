@@ -2,6 +2,7 @@
 #define ZEGO_MEDIA_PLAYER_VIDEO_MANAGER_H_
 
 #include "ZegoCustomVideoDefine.h"
+#include <ZegoExpressSDK.h>
 
 class FLUTTER_PLUGIN_EXPORT IZegoFlutterMediaPlayerVideoHandler {
 protected:
@@ -67,16 +68,13 @@ public:
     virtual unsigned int onBlockData(int mediaPlayerIndex, unsigned char *const buffer, unsigned int bufferSize) { return -1; }
 };
 
-namespace ZEGO::EXPRESS {
-    class IZegoMediaPlayerVideoHandler;
-};
 class ZegoMediaPlayerVideoHandler;
 
-class FLUTTER_PLUGIN_EXPORT ZegoMediaPlayerVideoManager{
-public:
+class FLUTTER_PLUGIN_EXPORT ZegoMediaPlayerVideoManager
+    : public ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler,
+      public ZEGO::EXPRESS::IZegoMediaPlayerBlockDataHandler {
+  public:
     static std::shared_ptr<ZegoMediaPlayerVideoManager> getInstance();
-
-    std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> getHandler();
     
     /// Set video data callback handler of the media player.
     ///
@@ -91,7 +89,18 @@ public:
 private:
     friend class ZegoMediaPlayerVideoHandler;
     std::shared_ptr<IZegoFlutterMediaPlayerVideoHandler> handler_ = nullptr;
-    std::shared_ptr<ZEGO::EXPRESS::IZegoMediaPlayerVideoHandler> zegoHandler_ = nullptr;
-};
 
+    void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, const unsigned char **data,
+                      unsigned int *dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param) override;
+
+    void onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, const unsigned char **data,
+                      unsigned int *dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param,
+                      const char *extraInfo) override;
+
+    void onBlockBegin(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer,
+                      const std::string &path) override;
+
+    unsigned int onBlockData(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer,
+                             unsigned char *const buffer, unsigned int bufferSize) override;
+};
 #endif  // ZEGO_MEDIA_PLAYER_VIDEO_MANAGER_H_
