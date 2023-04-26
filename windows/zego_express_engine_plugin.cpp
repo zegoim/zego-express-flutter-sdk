@@ -18,7 +18,7 @@
 
 #define EngineMethodHandler(funcName)                                                              \
     {                                                                                              \
-#funcName, {                                                                               \
+        #funcName, {                                                                               \
             std::bind(&ZegoExpressEngineMethodHandler::funcName,                                   \
                       &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1,       \
                       std::placeholders::_2),                                                      \
@@ -28,7 +28,7 @@
 
 #define EngineStaticMethodHandler(funcName)                                                        \
     {                                                                                              \
-#funcName, {                                                                               \
+        #funcName, {                                                                               \
             std::bind(&ZegoExpressEngineMethodHandler::funcName,                                   \
                       &ZegoExpressEngineMethodHandler::getInstance(), std::placeholders::_1,       \
                       std::placeholders::_2),                                                      \
@@ -55,6 +55,7 @@ static const std::map<
         EngineStaticMethodHandler(setLocalProxyConfig),
         EngineStaticMethodHandler(setCloudProxyConfig),
         EngineStaticMethodHandler(setRoomMode),
+        EngineStaticMethodHandler(setGeoFence),
         EngineMethodHandler(setRoomScenario),
         EngineMethodHandler(uploadLog),
         EngineMethodHandler(enableDebugAssistant),
@@ -99,6 +100,8 @@ static const std::map<
         EngineMethodHandler(enableVideoSuperResolution),
         EngineMethodHandler(initVideoSuperResolution),
         EngineMethodHandler(uninitVideoSuperResolution),
+        EngineMethodHandler(updatePlayingCanvas),
+
         EngineMethodHandler(startAutoMixerTask),
         EngineMethodHandler(stopAutoMixerTask),
         EngineMethodHandler(setAudioRouteToSpeaker),
@@ -161,6 +164,8 @@ static const std::map<
         EngineMethodHandler(setLowlightEnhancement),
         EngineMethodHandler(setVideoSource),
         EngineMethodHandler(setAudioSource),
+        EngineMethodHandler(enableVideoObjectSegmentation),
+        EngineMethodHandler(enableAlphaChannelVideoEncoder),
 
         EngineMethodHandler(startPlayingStream),
         EngineMethodHandler(stopPlayingStream),
@@ -285,6 +290,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerSetAudioTrackMode),
         EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex),
         EngineMethodHandler(mediaPlayerEnableVideoData),
+        EngineMethodHandler(mediaPlayerEnableBlockData),
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
 
         // Copyrighted Music
@@ -384,7 +390,10 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
     void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-  private:
+  public:
+    std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> methodChannel_;
+    std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> eventChannel_;
+
   private:
     std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
 };
@@ -393,22 +402,22 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
 void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
     ZegoExpressEngineMethodHandler::getInstance().setPluginRegistrar(registrar);
 
-    auto methodChannel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+    auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
+
+    plugin->methodChannel_ = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
         registrar->messenger(), "plugins.zego.im/zego_express_engine",
         &flutter::StandardMethodCodec::GetInstance());
 
-    auto eventChannel = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>(
+    plugin->eventChannel_ = std::make_unique<flutter::EventChannel<flutter::EncodableValue>>(
         registrar->messenger(), "plugins.zego.im/zego_express_event_handler",
         &flutter::StandardMethodCodec::GetInstance());
 
-    auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
-
-    eventChannel->SetStreamHandler(std::move(plugin));
-
-    methodChannel->SetMethodCallHandler(
+    plugin->methodChannel_->SetMethodCallHandler(
         [plugin_pointer = plugin.get()](const auto &call, auto result) {
             plugin_pointer->HandleMethodCall(call, std::move(result));
         });
+
+    plugin->eventChannel_->SetStreamHandler(std::move(plugin));
 
     ZegoExpressEngineMethodHandler::getInstance().initApiCalledCallback();
 

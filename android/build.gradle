@@ -1,43 +1,93 @@
 group 'im.zego.zego_express_engine'
-version '3.3.1'
+version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/public' }
         google()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:7.2.0'
     }
 }
 
 rootProject.allprojects {
     repositories {
-        maven { url 'https://storage.zego.im/maven' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/public' }
         google()
+        mavenCentral()
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         minSdkVersion 16
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    lintOptions {
-        disable 'InvalidPackage'
+
+    task downloadNativeDependency {
+        logger.quiet "[ZEGO][PLUGIN] Download native dependency"
+
+        def depsUrl, depsVer = ""
+        if (project.hasProperty('DEPS') && project.property('DEPS').startsWith('http')) {
+            depsUrl = project.property('DEPS')
+            depsVer = depsUrl.tokenize('?')[1].tokenize('=')[1]
+            logger.quiet "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: $depsUrl"
+        } else {
+            depsVer = (file("$projectDir.absolutePath/../DEPS.yaml").text =~ /android:\s*(.*)/)[0][1]
+            depsUrl = "https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/android/ZegoExpressVideo-android-shared-java.zip?version=$depsVer"
+        }
+
+        logger.quiet "[ZEGO][PLUGIN] Native version: $depsVer"
+
+        def libsDir = file("$projectDir.absolutePath/libs")
+        if (file("$libsDir/VERSION.txt").exists() &&
+            file("$libsDir/ZegoExpressEngine.jar").exists()) {
+            def version = file("$libsDir/VERSION.txt").readLines().first().trim()
+            if (version == depsVer) {
+                logger.quiet "[ZEGO][PLUGIN] The specified version SDK already exists!"
+                return
+            } else {
+                logger.quiet "[ZEGO][PLUGIN] SDK was found in cache, but the version ($version) does not match the version specified in DEPS, overwrite!"
+            }
+        }
+        delete libsDir
+        libsDir.mkdir()
+        ant.get(src: depsUrl, dest: "$libsDir/sdk.zip")
+        ant.unzip(src: "$libsDir/sdk.zip", dest: libsDir)
+        ant.move(file: "$libsDir/release/Library/armeabi-v7a", todir: libsDir, overwrite: true, failonerror: false)
+        ant.move(file: "$libsDir/release/Library/arm64-v8a", todir: libsDir, overwrite: true, failonerror: false)
+        ant.move(file: "$libsDir/release/Library/x86", todir: libsDir, overwrite: true, failonerror: false)
+        ant.move(file: "$libsDir/release/Library/x86_64", todir: libsDir, overwrite: true, failonerror: false)
+        ant.move(file: "$libsDir/release/Library/ZegoExpressEngine.jar", todir: libsDir, overwrite: true)
+        ant.move(file: "$libsDir/release/VERSION.txt", todir: libsDir, overwrite: true)
+        delete "$libsDir/release"
+        delete "$libsDir/sdk.zip"
+        logger.quiet "[ZEGO][PLUGIN] Done!"
     }
-    // tag-add-jni-dir: do not remove me
+
+    tasks.withType(JavaCompile) {
+        preBuild.dependsOn 'downloadNativeDependency'
+    }
+
+    sourceSets {
+        main {
+            jniLibs {
+                srcDirs = ['libs']
+            }
+        }
+    }
 }
 
 dependencies {
     // for other module visit
-    api 'im.zego:express-private:3.3.1.27636'
+    api fileTree(dir: 'libs', include: ['*.jar'])
 }

@@ -38,6 +38,7 @@ import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoNetworkMode;
 import im.zego.zegoexpress.constants.ZegoNetworkSpeedTestType;
+import im.zego.zegoexpress.constants.ZegoObjectSegmentationState;
 import im.zego.zegoexpress.constants.ZegoPlayerMediaEvent;
 import im.zego.zegoexpress.constants.ZegoPlayerState;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -469,6 +470,22 @@ public class ZegoExpressEngineEventHandler {
             map.put("eventID", eventID.value());
             map.put("streamID", streamID);
             map.put("extraInfo", extraInfo);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onVideoObjectSegmentationStateChanged(ZegoObjectSegmentationState state, ZegoPublishChannel channel, int errorCode) {
+            super.onVideoObjectSegmentationStateChanged(state, channel, errorCode);
+            ZegoLog.log("[onVideoObjectSegmentationStateChanged] state: %s, channel: %s, errorCode: %d", state.name(), channel.name(), errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onVideoObjectSegmentationStateChanged");
+            map.put("state", state.value());
+            map.put("channel", channel.value());
+            map.put("errorCode", errorCode);
 
             sink.success(map);
         }

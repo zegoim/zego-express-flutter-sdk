@@ -73,5 +73,4 @@
         [self.handler mediaPlayer:[mediaPlayer.index intValue] videoFramePixelBuffer:buffer param:videoFrameParam extraInfo:extraInfo];
     }
 }
-
 @end

@@ -49,6 +49,8 @@ class ZegoExpressEngineMethodHandler {
                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomMode(flutter::EncodableMap &argument,
                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setGeoFence(flutter::EncodableMap &argument,
+                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomScenario(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void uploadLog(flutter::EncodableMap &argument,
@@ -161,6 +163,10 @@ class ZegoExpressEngineMethodHandler {
     void uninitVideoSuperResolution(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void updatePlayingCanvas(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void startAutoMixerTask(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopAutoMixerTask(flutter::EncodableMap &argument,
@@ -314,6 +320,10 @@ class ZegoExpressEngineMethodHandler {
     void setVideoSource(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setAudioSource(flutter::EncodableMap &argument,
+                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableVideoObjectSegmentation(flutter::EncodableMap &argument,
+                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAlphaChannelVideoEncoder(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void startPlayingStream(flutter::EncodableMap &argument,
@@ -585,6 +595,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerEnableVideoData(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableBlockData(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerLoadResourceWithConfig(
