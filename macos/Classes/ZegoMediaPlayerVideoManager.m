@@ -11,7 +11,7 @@
 #import "ZegoLog.h"
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 
-@interface ZegoMediaPlayerVideoManager()<ZegoMediaPlayerVideoHandler, ZegoMediaPlayerBlockDataHandler>
+@interface ZegoMediaPlayerVideoManager()<ZegoMediaPlayerVideoHandler>
 
 @property (nonatomic, weak) id<ZegoFlutterMediaPlayerVideoHandler> handler;
 

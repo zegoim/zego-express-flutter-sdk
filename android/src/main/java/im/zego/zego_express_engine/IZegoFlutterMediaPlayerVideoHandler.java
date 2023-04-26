@@ -4,8 +4,6 @@ import org.json.JSONObject;
 
 import java.nio.*;
 
-import im.zego.zegoexpress.ZegoMediaPlayer;
-
 public abstract class IZegoFlutterMediaPlayerVideoHandler {
     /**
      * The callback triggered when the media player throws out video frame data.
