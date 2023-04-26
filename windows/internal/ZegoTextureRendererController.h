@@ -107,6 +107,7 @@ private:
     std::shared_ptr<ZEGO::EXPRESS::IZegoCustomVideoRenderHandler> videoRenderHandler_ = nullptr;
 
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
+    std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> eventChannel_;
 };
 
 class ZegoTextureRendererControllerEventChannel : public flutter::StreamHandler<flutter::EncodableValue> {
