@@ -49,22 +49,6 @@ public class ZegoMediaPlayerVideoManager extends IZegoMediaPlayerVideoHandler {
 
     @Override
     public void onVideoFrame(ZegoMediaPlayer mediaPlayer, ByteBuffer[] data, int[] dataLength,
-                             ZegoVideoFrameParam param) {
-        if (mHander != null) {
-            ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();
-            videoFrameParam.width = param.width;
-            videoFrameParam.height = param.height;
-            videoFrameParam.rotation = param.rotation;
-            videoFrameParam.format = ZGFlutterVideoFrameFormat.getVideoFrameFormat(param.format.value());
-            for (int i = 0; i < 4; i++) {
-                videoFrameParam.strides[i] = param.strides[i];
-            }
-            mHander.onVideoFrame(mediaPlayer.getIndex(), data, dataLength, videoFrameParam);
-        }
-    }
-
-    @Override
-    public void onVideoFrame(ZegoMediaPlayer mediaPlayer, ByteBuffer[] data, int[] dataLength,
                              ZegoVideoFrameParam param, JSONObject extraInfo) {
         if (mHander != null) {
             ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();

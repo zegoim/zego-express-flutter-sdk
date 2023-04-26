@@ -2440,7 +2440,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(
         auto enable = std::get<bool>(argument[FTValue("enable")]);
         if (enable) {
             ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(
-                ZegoMediaPlayerVideoManager::getInstance());
+                ZegoMediaPlayerVideoManager::getInstance()->getHandler());
         } else {
             ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
         }
