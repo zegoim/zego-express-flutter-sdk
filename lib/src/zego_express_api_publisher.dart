@@ -1,3 +1,4 @@
+
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
@@ -7,6 +8,7 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEnginePublisher on ZegoExpressEngine {
+
   /// Starts publishing a stream. Support multi-room mode.
   ///
   /// Available since: 1.1.0
@@ -27,10 +29,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   3. Only support numbers, English characters and '-', ' '.
   /// - [config] Advanced publish configuration.
   /// - [channel] Publish stream channel.
-  Future<void> startPublishingStream(String streamID,
-      {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .startPublishingStream(streamID, config: config, channel: channel);
+  Future<void> startPublishingStream(String streamID, {ZegoPublisherConfig? config, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.startPublishingStream(streamID, config: config, channel: channel);
   }
 
   /// Stops publishing a stream (for the specified channel).
@@ -47,8 +47,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [channel] Publish stream channel.
   Future<void> stopPublishingStream({ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .stopPublishingStream(channel: channel);
+    return await ZegoExpressImpl.instance.stopPublishingStream(channel: channel);
   }
 
   /// Sets the extra information of the stream being published for the specified publish channel.
@@ -62,11 +61,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [extraInfo] Stream extra information, a string of up to 1024 characters.
   /// - [channel] Publish stream channel.
   /// - Returns Set stream extra information execution result notification.
-  Future<ZegoPublisherSetStreamExtraInfoResult> setStreamExtraInfo(
-      String extraInfo,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setStreamExtraInfo(extraInfo, channel: channel);
+  Future<ZegoPublisherSetStreamExtraInfoResult> setStreamExtraInfo(String extraInfo, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setStreamExtraInfo(extraInfo, channel: channel);
   }
 
   /// Starts/Updates the local video preview (for the specified channel).
@@ -81,10 +77,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [canvas] The view used to display the preview image. If the view is set to null, no preview will be made.
   /// - [channel] Publish stream channel
-  Future<void> startPreview(
-      {ZegoCanvas? canvas, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .startPreview(canvas: canvas, channel: channel);
+  Future<void> startPreview({ZegoCanvas? canvas, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.startPreview(canvas: canvas, channel: channel);
   }
 
   /// Stops the local preview (for the specified channel).
@@ -111,10 +105,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [config] Video configuration, the SDK provides a common setting combination of resolution, frame rate and bit rate, they also can be customized.
   /// - [channel] Publish stream channel.
-  Future<void> setVideoConfig(ZegoVideoConfig config,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setVideoConfig(config, channel: channel);
+  Future<void> setVideoConfig(ZegoVideoConfig config, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setVideoConfig(config, channel: channel);
   }
 
   /// Gets the current video configurations (for the specified channel).
@@ -138,10 +130,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [mirrorMode] Mirror mode for previewing or publishing the stream.
   /// - [channel] Publish stream channel.
-  Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setVideoMirrorMode(mirrorMode, channel: channel);
+  Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setVideoMirrorMode(mirrorMode, channel: channel);
   }
 
   /// Sets the video orientation (for the specified channel).
@@ -155,27 +145,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [orientation] Video orientation.
   /// - [channel] Publish stream channel.
-  Future<void> setAppOrientation(DeviceOrientation orientation,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setAppOrientation(orientation, channel: channel);
+  Future<void> setAppOrientation(DeviceOrientation orientation, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setAppOrientation(orientation, channel: channel);
   }
 
   /// Sets up the audio configurations for the specified publish channel.
   ///
   /// Available since: 1.3.4
   /// Description: You can set the combined value of the audio codec, bit rate, and audio channel through this function. If the preset value cannot meet the developer's scenario, the developer can set the parameters according to the business requirements.
-  /// Default value: The default audio config refers to the default value of [ZegoAudioConfig].
+  /// Default value: The default audio config refers to the default value of [ZegoAudioConfig]. 
   /// When to call: After the engine is created [createEngine], and before publishing [startPublishingStream].
   /// Restrictions: None.
   /// Related APIs: [getAudioConfig].
   ///
   /// - [config] Audio config.
   /// - [channel] Publish stream channel.
-  Future<void> setAudioConfig(ZegoAudioConfig config,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setAudioConfig(config, channel: channel);
+  Future<void> setAudioConfig(ZegoAudioConfig config, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setAudioConfig(config, channel: channel);
   }
 
   /// Gets the current audio configurations.
@@ -198,15 +184,13 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Support calling this function to update the encryption key while publishing stream.
   /// When to call: After the engine is created [createEngine], Called before and after [startPublishingStream] can both take effect.
   /// Restrictions: This function is only valid when publishing stream to the Zego RTC server.
-  /// Caution: Note that developers need to update the player's decryption key before updating the publisher's encryption key.
+  /// Caution: Note that developers need to update the player's decryption key before updating the publisher's encryption key. 
   /// Related APIs: Calling [stopPublishingStream] or [logoutRoom] will clear the encryption key.
   ///
   /// - [key] The encryption key, note that the key length only supports 16/24/32 bytes.
   /// - [channel] Publish stream channel.
-  Future<void> setPublishStreamEncryptionKey(String key,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setPublishStreamEncryptionKey(key, channel: channel);
+  Future<void> setPublishStreamEncryptionKey(String key, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setPublishStreamEncryptionKey(key, channel: channel);
   }
 
   /// Take a snapshot of the publishing stream for the specified publish channel.
@@ -222,10 +206,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [channel] Publish stream channel.
   /// - Returns Results of take publish stream snapshot.
-  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshot(
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .takePublishStreamSnapshot(channel: channel);
+  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshot({ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.takePublishStreamSnapshot(channel: channel);
   }
 
   /// Stops or resumes sending the audio part of a stream for the specified channel.
@@ -239,10 +221,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [mute] Whether to stop sending audio streams, true means not to send audio stream, and false means sending audio stream. The default is false.
   /// - [channel] Publish stream channel.
-  Future<void> mutePublishStreamAudio(bool mute,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .mutePublishStreamAudio(mute, channel: channel);
+  Future<void> mutePublishStreamAudio(bool mute, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.mutePublishStreamAudio(mute, channel: channel);
   }
 
   /// Stops or resumes sending the video part of a stream for the specified channel.
@@ -257,10 +237,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [mute] Whether to stop sending video streams, true means not to send video stream, and false means sending video stream. The default is false.
   /// - [channel] Publish stream channel.
-  Future<void> mutePublishStreamVideo(bool mute,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .mutePublishStreamVideo(mute, channel: channel);
+  Future<void> mutePublishStreamVideo(bool mute, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.mutePublishStreamVideo(mute, channel: channel);
   }
 
   /// Enable or disable the stream mixing precision alignment function.
@@ -274,10 +252,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [alignment] Whether to enable the stream mixing precision alignment function.
   /// - [channel] Publish stream channel
-  Future<void> setStreamAlignmentProperty(
-      int alignment, ZegoPublishChannel channel) async {
-    return await ZegoExpressImpl.instance
-        .setStreamAlignmentProperty(alignment, channel);
+  Future<void> setStreamAlignmentProperty(int alignment, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance.setStreamAlignmentProperty(alignment, channel);
   }
 
   /// Enables or disables traffic control.
@@ -292,8 +268,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [enable] Whether to enable traffic control. The default is ture.
   /// - [property] Adjustable property of traffic control, bitmask OR format. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
   Future<void> enableTrafficControl(bool enable, int property) async {
-    return await ZegoExpressImpl.instance
-        .enableTrafficControl(enable, property);
+    return await ZegoExpressImpl.instance.enableTrafficControl(enable, property);
   }
 
   /// Sets the minimum video bitrate for traffic control for the specified publish channel.
@@ -309,11 +284,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [bitrate] Minimum video bitrate (kbps).
   /// - [mode] Video sending mode below the minimum bitrate.
   /// - [channel] Publish stream channel.
-  Future<void> setMinVideoBitrateForTrafficControl(
-      int bitrate, ZegoTrafficControlMinVideoBitrateMode mode,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setMinVideoBitrateForTrafficControl(bitrate, mode, channel: channel);
+  Future<void> setMinVideoBitrateForTrafficControl(int bitrate, ZegoTrafficControlMinVideoBitrateMode mode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setMinVideoBitrateForTrafficControl(bitrate, mode, channel: channel);
   }
 
   /// Sets the minimum video frame rate threshold for traffic control.
@@ -329,10 +301,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [fps] The minimum video frame rate threshold for traffic control(fps).
   /// - [channel] Publish stream channel.
-  Future<void> setMinVideoFpsForTrafficControl(int fps,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setMinVideoFpsForTrafficControl(fps, channel: channel);
+  Future<void> setMinVideoFpsForTrafficControl(int fps, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setMinVideoFpsForTrafficControl(fps, channel: channel);
   }
 
   /// Sets the minimum video resolution threshold for traffic control.
@@ -349,11 +319,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [width] The flow controls the width of the lowest video resolution.
   /// - [height] The flow controls the height of the lowest video resolution.
   /// - [channel] Publish stream channel.
-  Future<void> setMinVideoResolutionForTrafficControl(int width, int height,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setMinVideoResolutionForTrafficControl(width, height,
-            channel: channel);
+  Future<void> setMinVideoResolutionForTrafficControl(int width, int height, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setMinVideoResolutionForTrafficControl(width, height, channel: channel);
   }
 
   /// Set the factors of concern that trigger traffic control for the specified publish channel.
@@ -367,10 +334,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [mode] When LOCAL_ONLY is selected, only the local network status is concerned. When choosing REMOTE, also take into account the remote network.
   /// - [channel] Publish stream channel.
-  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setTrafficControlFocusOn(mode, channel: channel);
+  Future<void> setTrafficControlFocusOn(ZegoTrafficControlFocusOnMode mode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setTrafficControlFocusOn(mode, channel: channel);
   }
 
   /// Sets the audio recording volume for stream publishing.
@@ -398,8 +363,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Related APIs: When streaming, you need to enable the stereo audio encoding function through the [setAudioConfig] interface at the same time.
   ///
   /// - [mode] Audio stereo capture mode.
-  Future<void> setAudioCaptureStereoMode(
-      ZegoAudioCaptureStereoMode mode) async {
+  Future<void> setAudioCaptureStereoMode(ZegoAudioCaptureStereoMode mode) async {
     return await ZegoExpressImpl.instance.setAudioCaptureStereoMode(mode);
   }
 
@@ -416,8 +380,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [targetURL] CDN relay address, supported address format is rtmp, rtmps.
   /// - Returns The execution result of update the relay CDN operation.
-  Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(
-      String streamID, String targetURL) async {
+  Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(String streamID, String targetURL) async {
     return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
   }
 
@@ -433,10 +396,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [targetURL] CDN relay address, supported address format rtmp.
   /// - Returns The execution result of update the relay CDN operation.
-  Future<ZegoPublisherUpdateCdnUrlResult> removePublishCdnUrl(
-      String streamID, String targetURL) async {
-    return await ZegoExpressImpl.instance
-        .removePublishCdnUrl(streamID, targetURL);
+  Future<ZegoPublisherUpdateCdnUrlResult> removePublishCdnUrl(String streamID, String targetURL) async {
+    return await ZegoExpressImpl.instance.removePublishCdnUrl(streamID, targetURL);
   }
 
   /// Whether to directly push to CDN (without going through the ZEGO RTC server), for the specified channel.
@@ -452,10 +413,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [enable] Whether to enable direct publish CDN, true: enable direct publish CDN, false: disable direct publish CDN.
   /// - [config] CDN configuration, if null, use Zego's background default configuration.
   /// - [channel] Publish stream channel.
-  Future<void> enablePublishDirectToCDN(bool enable,
-      {ZegoCDNConfig? config, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .enablePublishDirectToCDN(enable, config: config, channel: channel);
+  Future<void> enablePublishDirectToCDN(bool enable, {ZegoCDNConfig? config, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.enablePublishDirectToCDN(enable, config: config, channel: channel);
   }
 
   /// Sets up the stream watermark before stream publishing (for the specified channel).
@@ -470,14 +429,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [watermark] The upper left corner of the watermark layout is the origin of the coordinate system, and the area cannot exceed the size set by the encoding resolution. If it is null, the watermark is cancelled. It supports Flutter assets resources, just set the 'imageURL' parameter of the watermark object to the prefix of 'flutter-asset://' and append the relative path of the resource file declared in 'pubspec.yaml'. For example, assuming that 'assets: - images/logo.png' is declared in 'pubspec.yaml', then set 'imageURL' parameter to 'flutter-asset://images/logo.png'.
   /// - [isPreviewVisible] the watermark is visible on local preview
   /// - [channel] Publish stream channel.
-  Future<void> setPublishWatermark(
-      {ZegoWatermark? watermark,
-      bool? isPreviewVisible,
-      ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.setPublishWatermark(
-        watermark: watermark,
-        isPreviewVisible: isPreviewVisible,
-        channel: channel);
+  Future<void> setPublishWatermark({ZegoWatermark? watermark, bool? isPreviewVisible, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setPublishWatermark(watermark: watermark, isPreviewVisible: isPreviewVisible, channel: channel);
   }
 
   /// Set the Supplemental Enhancement Information type.
@@ -506,10 +459,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [data] SEI data.
   /// - [dataLength] SEI data length.
   /// - [channel] Publish stream channel.
-  Future<void> sendSEI(Uint8List data, int dataLength,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .sendSEI(data, dataLength, channel: channel);
+  Future<void> sendSEI(Uint8List data, int dataLength, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.sendSEI(data, dataLength, channel: channel);
   }
 
   /// Send audio side information.
@@ -525,10 +476,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [data] Audio side info data.
   /// - [timeStampMs] timeStampMs, derived from custom audio processing, in milliseconds. If you fill in 0, it is sent along with the frame that is currently ready to be sent.
   /// - [channel] Publish stream channel.
-  Future<void> sendAudioSideInfo(Uint8List data, double timeStampMs,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .sendAudioSideInfo(data, timeStampMs, channel: channel);
+  Future<void> sendAudioSideInfo(Uint8List data, double timeStampMs, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.sendAudioSideInfo(data, timeStampMs, channel: channel);
   }
 
   /// Enables or disables hardware encoding.
@@ -551,8 +500,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mode] The capture scale timing mode.
-  Future<void> setCapturePipelineScaleMode(
-      ZegoCapturePipelineScaleMode mode) async {
+  Future<void> setCapturePipelineScaleMode(ZegoCapturePipelineScaleMode mode) async {
     return await ZegoExpressImpl.instance.setCapturePipelineScaleMode(mode);
   }
 
@@ -578,10 +526,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [filePath] Picture file path
   /// - [channel] Publish channel.
-  Future<void> setDummyCaptureImagePath(
-      String filePath, ZegoPublishChannel channel) async {
-    return await ZegoExpressImpl.instance
-        .setDummyCaptureImagePath(filePath, channel);
+  Future<void> setDummyCaptureImagePath(String filePath, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance.setDummyCaptureImagePath(filePath, channel);
   }
 
   /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
@@ -609,10 +555,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// - [codecID] Video codec id. Required: Yes.
   /// - [codecBackend] Backend implementation of encoder. Required: Yes.
   /// - Returns Whether the specified video encoding format is supported; 0 means not supported, and the encoding format cannot be used for publish stream; 1 means support, you can use this encoding format for publish stream; 2 means not confirmed, it is recommended to call this interface later.
-  Future<int> isVideoEncoderSupported(ZegoVideoCodecID codecID,
-      {ZegoVideoCodecBackend? codecBackend}) async {
-    return await ZegoExpressImpl.instance
-        .isVideoEncoderSupported(codecID, codecBackend: codecBackend);
+  Future<int> isVideoEncoderSupported(ZegoVideoCodecID codecID, {ZegoVideoCodecBackend? codecBackend}) async {
+    return await ZegoExpressImpl.instance.isVideoEncoderSupported(codecID, codecBackend: codecBackend);
   }
 
   /// Set the orientation mode of the video.
@@ -622,8 +566,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: Scenarios for live streaming or video calls using mobile devices.
   /// Default value: Custom mode.
   /// When to call: This function needs to be valid after calling [createEngine] and before calling preview [startPreview] or push stream [startPublishingStream].
-  /// Caution:
-  ///   1. It is valid for all channels.
+  /// Caution: 
+  ///   1. It is valid for all channels. 
   ///   2. The adaptive mode takes effect in preview, streaming, and mixed streaming scenarios. It does not support external video capture, media player, cloud recording, local recording, or publishing/playing stream through CDN.
   /// Related APIs: You can call the [setAppOrientation] function to set the orientation of the App in custom mode.
   ///
@@ -643,10 +587,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [mode] Low light enhancement mode.
   /// - [channel] Publish stream channel.
-  Future<void> setLowlightEnhancement(ZegoLowlightEnhancementMode mode,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setLowlightEnhancement(mode, channel: channel);
+  Future<void> setLowlightEnhancement(ZegoLowlightEnhancementMode mode, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setLowlightEnhancement(mode, channel: channel);
   }
 
   /// Set a video capture instance as video capture source for the specified channel.
@@ -656,17 +598,15 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: Typically used in educational scenarios that require switching between different video capture sources.
   /// When to call: After the engine is created [createEngine].
   /// Restrictions: Calling in publishing or preview is invalid when using the web platform.
-  /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type.
+  /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type. 
   ///  2. When using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [source] Video capture source.
   /// - [instanceID] Video capture source instance id.
   /// - [channel] Publish stream channel.
-  Future<int> setVideoSource(ZegoVideoSourceType source,
-      {int? instanceID, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setVideoSource(source, instanceID: instanceID, channel: channel);
+  Future<int> setVideoSource(ZegoVideoSourceType source, {int? instanceID, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setVideoSource(source, instanceID: instanceID, channel: channel);
   }
 
   /// Set audio capture source with audio mix config.
@@ -676,16 +616,15 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Use cases: Typically used in educational scenarios that require switching between different audio capture sources.
   /// When to call: After the engine is created [createEngine].
   /// Restrictions: Calling in publishing or preview is invalid when using the web platform.
-  /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type.
-  ///  2. When using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main.
+  /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type. 
+  ///  2. When using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main. 
   ///  3. config applies only to the main channel ZegoPublishChannel.Main, This parameter is invalid when the channel is not the main channel.
   ///
   /// - [source] Audio capture source.
   /// - [config] Audio capture source mix config. This parameter applies only to the Main push channel ZegoPublishChannel. main. This parameter is invalid when channel is not the main push channel.
   /// - [channel] Publish stream channel.
-  Future<int> setAudioSource(ZegoAudioSourceType source,
-      {ZegoAudioSourceMixConfig? config, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setAudioSource(source, config: config, channel: channel);
+  Future<int> setAudioSource(ZegoAudioSourceType source, {ZegoAudioSourceMixConfig? config, ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.setAudioSource(source, config: config, channel: channel);
   }
+
 }
