@@ -1,7 +1,9 @@
 #pragma once
 
+#include <mutex>
 #include <unordered_map>
 #include <flutter/event_channel.h>
+
 
 #include "ZegoTextureRenderer.h"
 
@@ -108,6 +110,8 @@ private:
 
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
     std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> eventChannel_;
+
+    mutable std::mutex rendersMutex_;
 };
 
 class ZegoTextureRendererControllerEventChannel : public flutter::StreamHandler<flutter::EncodableValue> {

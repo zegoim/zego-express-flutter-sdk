@@ -10,8 +10,13 @@ ZegoTextureRendererController::ZegoTextureRendererController(/* args */)
 
 ZegoTextureRendererController::~ZegoTextureRendererController()
 {
-    capturedRenderers_.clear();
-    remoteRenderers_.clear();
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        capturedRenderers_.clear();
+        remoteRenderers_.clear();
+        mediaPlayerRenderers_.clear();
+    }
+    
     renderers_.clear();
     isInit = false;
 }
@@ -36,8 +41,13 @@ void ZegoTextureRendererController::init(flutter::BinaryMessenger *message)
 
 void ZegoTextureRendererController::uninit()
 {
-    capturedRenderers_.clear();
-    remoteRenderers_.clear();
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        capturedRenderers_.clear();
+        remoteRenderers_.clear();
+        mediaPlayerRenderers_.clear();
+    }
+    
     renderers_.clear();
     isInit = false;
 }
@@ -73,13 +83,17 @@ bool ZegoTextureRendererController::addCapturedRenderer(int64_t textureID, ZEGO:
 
     renderer->second->setViewMode(viewMode);
 
-    capturedRenderers_.insert(std::pair(channel, renderer->second));
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        capturedRenderers_.insert(std::pair(channel, renderer->second));
+    }
 
     return true;
 }
 /// Called when dart invoke `stopPreview`
 void ZegoTextureRendererController::removeCapturedRenderer(ZEGO::EXPRESS::ZegoPublishChannel channel)
 {
+    std::lock_guard<std::mutex> lock(rendersMutex_);
     capturedRenderers_.erase(channel);
 }
 /// Called when dart invoke `startPlayingStream`
@@ -93,13 +107,17 @@ bool ZegoTextureRendererController::addRemoteRenderer(int64_t textureID, std::st
 
     renderer->second->setViewMode(viewMode);
 
-    remoteRenderers_.insert(std::pair(streamID, renderer->second));
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        remoteRenderers_.insert(std::pair(streamID, renderer->second));
+    }
 
     return true;
 }
 /// Called when dart invoke `stopPlayingStream`
 void ZegoTextureRendererController::removeRemoteRenderer(std::string streamID)
 {
+    std::lock_guard<std::mutex> lock(rendersMutex_);
     remoteRenderers_.erase(streamID);
 }
 
@@ -114,7 +132,10 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
 
     renderer->second->setViewMode(viewMode);
 
-    mediaPlayerRenderers_.insert(std::pair(mediaPlayer, renderer->second));
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        mediaPlayerRenderers_.insert(std::pair(mediaPlayer, renderer->second));
+    }
 
     return true;
 }
@@ -122,6 +143,8 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
 void ZegoTextureRendererController::removeMediaPlayerRenderer(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
 {
     mediaPlayer->setVideoHandler(nullptr, ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
+    
+    std::lock_guard<std::mutex> lock(rendersMutex_);
     mediaPlayerRenderers_.erase(mediaPlayer);
 }
 
@@ -152,24 +175,27 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
                                              ZegoVideoFlipMode flipMode,
                                              ZegoPublishChannel channel)
 {
-    auto renderer = capturedRenderers_.find(channel);
-    if (renderer != capturedRenderers_.end()) {
-        bool isMirror = flipMode == ZEGO_VIDEO_FLIP_MODE_X;
-        if (eventSink_) {
-            auto size = renderer->second->getSize();
-            
-            if (size.first != param.width || size.second != param.height || renderer->second->getUseMirrorEffect() != isMirror) {
-                flutter::EncodableMap map;
-                map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
-                map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
-                map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
-                map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
-                map[flutter::EncodableValue("isMirror")] =  flutter::EncodableValue(isMirror ? 1 : 0);
-                eventSink_->Success(map);
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        auto renderer = capturedRenderers_.find(channel);
+        if (renderer != capturedRenderers_.end()) {
+            bool isMirror = flipMode == ZEGO_VIDEO_FLIP_MODE_X;
+            if (eventSink_) {
+                auto size = renderer->second->getSize();
+                
+                if (size.first != param.width || size.second != param.height || renderer->second->getUseMirrorEffect() != isMirror) {
+                    flutter::EncodableMap map;
+                    map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
+                    map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
+                    map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
+                    map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
+                    map[flutter::EncodableValue("isMirror")] =  flutter::EncodableValue(isMirror ? 1 : 0);
+                    eventSink_->Success(map);
+                }
             }
+            renderer->second->setUseMirrorEffect(isMirror);
+            renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
         }
-        renderer->second->setUseMirrorEffect(isMirror);
-        renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
     }
 
     if (videoRenderHandler_) {
@@ -181,20 +207,23 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** d
                                            ZegoVideoFrameParam param,
                                            const std::string & streamID)
 {
-    auto renderer = remoteRenderers_.find(streamID);
-    if (renderer != remoteRenderers_.end()) {
-        if (eventSink_) {
-            auto size = renderer->second->getSize();
-            if (size.first != param.width || size.second != param.height) {
-                flutter::EncodableMap map;
-                map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
-                map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
-                map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
-                map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
-                eventSink_->Success(map);
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        auto renderer = remoteRenderers_.find(streamID);
+        if (renderer != remoteRenderers_.end()) {
+            if (eventSink_) {
+                auto size = renderer->second->getSize();
+                if (size.first != param.width || size.second != param.height) {
+                    flutter::EncodableMap map;
+                    map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
+                    map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
+                    map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
+                    map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
+                    eventSink_->Success(map);
+                }
             }
+            renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
         }
-        renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
     }
 
     if (videoRenderHandler_) {
@@ -216,20 +245,23 @@ void ZegoTextureRendererController::onRemoteVideoFrameEncodedData(const unsigned
 void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
                               unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param)
 {
-    auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
-    if (renderer != mediaPlayerRenderers_.end()) {
-        if (eventSink_) {
-            auto size = renderer->second->getSize();
-            if (size.first != param.width || size.second != param.height) {
-                flutter::EncodableMap map;
-                map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
-                map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
-                map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
-                map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
-                eventSink_->Success(map);
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
+        if (renderer != mediaPlayerRenderers_.end()) {
+            if (eventSink_) {
+                auto size = renderer->second->getSize();
+                if (size.first != param.width || size.second != param.height) {
+                    flutter::EncodableMap map;
+                    map[flutter::EncodableValue("type")] =  flutter::EncodableValue("update");
+                    map[flutter::EncodableValue("textureID")] =  flutter::EncodableValue(renderer->second->getTextureID());
+                    map[flutter::EncodableValue("width")] =  flutter::EncodableValue(param.width);
+                    map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
+                    eventSink_->Success(map);
+                }
             }
+            renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
         }
-        renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
     }
     if (mediaPlayerHandler_) {
         mediaPlayerHandler_->onVideoFrame(mediaPlayer, data, dataLength, param);
@@ -247,6 +279,7 @@ void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer
 /// Called when dart invoke `mediaPlayerTakeSnapshot`
 std::pair<int32_t, int32_t> ZegoTextureRendererController::getMediaPlayerSize(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
 {
+    std::lock_guard<std::mutex> lock(rendersMutex_);
     auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
     if (renderer != mediaPlayerRenderers_.end()) {
         return renderer->second->getSize();
@@ -256,6 +289,7 @@ std::pair<int32_t, int32_t> ZegoTextureRendererController::getMediaPlayerSize(ZE
 
 const std::vector<uint8_t> *ZegoTextureRendererController::getMediaPlayerFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
 {
+    std::lock_guard<std::mutex> lock(rendersMutex_);
     auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
     if (renderer != mediaPlayerRenderers_.end()) {
         return renderer->second->getFrame();
