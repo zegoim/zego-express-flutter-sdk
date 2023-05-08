@@ -2643,11 +2643,11 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
     }
 
     // Water mark
+    EXPRESS::ZegoWatermark watermark;
     if (!argument[FTValue("watermark")].IsNull()) {
         auto watermarkMap = std::get<flutter::EncodableMap>(argument[FTValue("watermark")]);
         std::string imageURL = std::get<std::string>(watermarkMap[FTValue("imageURL")]);
-        if (!imageURL.empty()) {
-            EXPRESS::ZegoWatermark watermark;
+        if (!imageURL.empty()) {    
             watermark.imageURL = imageURL;
             watermark.layout.x = std::get<int32_t>(watermarkMap[FTValue("left")]);
             watermark.layout.y = std::get<int32_t>(watermarkMap[FTValue("top")]);
@@ -2661,11 +2661,11 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
     }
 
     // whiteboard
+    EXPRESS::ZegoMixerWhiteboard whiteboard;
     if (!argument[FTValue("whiteboard")].IsNull()) {
         auto whiteboardMap = std::get<flutter::EncodableMap>(argument[FTValue("whiteboard")]);
         int64_t whiteboardID = whiteboardMap[FTValue("whiteboardID")].LongValue();
         if (whiteboardID != 0) {
-            EXPRESS::ZegoMixerWhiteboard whiteboard;
             whiteboard.whiteboardID = whiteboardID;
             whiteboard.horizontalRatio =
                 std::get<int32_t>(whiteboardMap[FTValue("horizontalRatio")]);
