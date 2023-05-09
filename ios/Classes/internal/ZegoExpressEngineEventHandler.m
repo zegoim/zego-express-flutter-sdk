@@ -182,10 +182,18 @@
     if (sink) {
         NSMutableArray *streamListArray = [[NSMutableArray alloc] init];
         for (ZegoStream *stream in streamList) {
+            NSString *userID = @"";
+            NSString *userName = @"";
+            if (stream.user != nil && stream.user.userID != nil) {
+                userID = stream.user.userID;
+            }
+            if (stream.user != nil && stream.user.userName != nil) {
+                userName = stream.user.userName;
+            }
             [streamListArray addObject:@{
                 @"user": @{
-                    @"userID": stream.user.userID,
-                    @"userName": stream.user.userName
+                    @"userID": userID,
+                    @"userName": userName
                 },
                 @"streamID": stream.streamID,
                 @"extraInfo": stream.extraInfo
