@@ -49,6 +49,8 @@ class ZegoExpressEngineMethodHandler {
                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomMode(flutter::EncodableMap &argument,
                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setLicense(flutter::EncodableMap &argument,
+                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);                     
     void setGeoFence(flutter::EncodableMap &argument,
                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomScenario(flutter::EncodableMap &argument,

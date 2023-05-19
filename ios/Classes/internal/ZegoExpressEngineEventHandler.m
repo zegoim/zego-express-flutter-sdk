@@ -372,6 +372,31 @@
     }
 }
 
+- (void)onPublisherSendAudioFirstFrame {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherSendAudioFirstFrame]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherSendAudioFirstFrame",
+        });
+    }
+}
+
+- (void)onPublisherSendVideoFirstFrame:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherSendVideoFirstFrame] channel: %d", (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherSendVideoFirstFrame",
+            @"channel": @(channel)
+        });
+    }
+}
+
 - (void)onPublisherRenderVideoFirstFrame:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPublisherRenderVideoFirstFrame] channel: %d", (int)channel);
@@ -1176,6 +1201,21 @@
         });
     }
 }
+
+- (void)mediaPlayer:(ZegoMediaPlayer *) mediaPlayer firstFrameEvent:(ZegoMediaPlayerFirstFrameEvent)event {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerFirstFrameEvent",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"event": @(event),
+        });
+    }
+}
+
 
 # pragma mark - ZegoAudioEffectPlayerEventHandler
 

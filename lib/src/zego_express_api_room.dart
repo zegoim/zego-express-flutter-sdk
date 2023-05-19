@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineRoom on ZegoExpressEngine {
-
   /// Log in to the room by configuring advanced properties, and return the login result through the callback parameter. You must log in to the room before pushing or pulling the stream.
   ///
   /// Available since: 2.18.0
@@ -39,8 +37,10 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
   /// - Returns The result of this login room
-  Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig? config}) async {
-    return await ZegoExpressImpl.instance.loginRoom(roomID, user, config: config);
+  Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user,
+      {ZegoRoomConfig? config}) async {
+    return await ZegoExpressImpl.instance
+        .loginRoom(roomID, user, config: config);
   }
 
   /// Logs out of a room.
@@ -72,7 +72,9 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Restrictions: None.
   /// Caution:
   ///   1. When this function is called, all streams currently publishing or playing will stop (but the local preview will not stop).
-  ///   2. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over. 3. Multi-room mode is supported in version 3.5.0 (use the function [setRoomMode] to set ZegoRoomMode to ZEGO_ROOM_MODE_MULTI_ROOM).
+  ///   2. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter. This parameter configuration affects the room to be switched over.
+  ///   3. Multi-room mode is supported in version 3.5.0 (use the function [setRoomMode] to set ZegoRoomMode to ZEGO_ROOM_MODE_MULTI_ROOM).
+  ///   4. If a Token is passed in for login when logging into the room [loginRoom], the [switchroom] interface must be used with the config parameter and the corresponding Token value passed in when switching rooms.
   /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   /// Related callbacks: When the user call the [switchRoom] function, the [onRoomStateChanged] (Not supported before 2.18.0, please use [onRoomStateUpdate]) callback will be triggered to notify the developer of the status of the current user connected to the room.
   /// Related APIs: Users can use the [logoutRoom] function to log out of the room.
@@ -80,8 +82,10 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [fromRoomID] Current roomID.
   /// - [toRoomID] The next roomID.
   /// - [config] Advanced room configuration.
-  Future<void> switchRoom(String fromRoomID, String toRoomID, {ZegoRoomConfig? config}) async {
-    return await ZegoExpressImpl.instance.switchRoom(fromRoomID, toRoomID, config: config);
+  Future<void> switchRoom(String fromRoomID, String toRoomID,
+      {ZegoRoomConfig? config}) async {
+    return await ZegoExpressImpl.instance
+        .switchRoom(fromRoomID, toRoomID, config: config);
   }
 
   /// Renew token.
@@ -116,8 +120,8 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [key] key of the extra info.
   /// - [value] value if the extra info.
   /// - Returns Set room extra info execution result notification
-  Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(String roomID, String key, String value) async {
+  Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(
+      String roomID, String key, String value) async {
     return await ZegoExpressImpl.instance.setRoomExtraInfo(roomID, key, value);
   }
-
 }

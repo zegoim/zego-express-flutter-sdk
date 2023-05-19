@@ -163,6 +163,10 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('setRoomMode', {'mode': mode.index});
   }
 
+  static Future<void> setLicense(String license) async {
+    return await _channel.invokeMethod('setLicense', {'license': license});
+  }
+
   static Future<void> setGeoFence(
       ZegoGeoFenceType type, List<int> areaList) async {
     return await _channel.invokeMethod(
@@ -2097,11 +2101,26 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onPublisherCapturedAudioFirstFrame!();
         break;
 
+      case 'onPublisherSendAudioFirstFrame':
+        if (ZegoExpressEngine.onPublisherSendAudioFirstFrame == null)
+          return;
+
+        ZegoExpressEngine.onPublisherSendAudioFirstFrame!();
+        break;
+
       case 'onPublisherCapturedVideoFirstFrame':
         if (ZegoExpressEngine.onPublisherCapturedVideoFirstFrame == null)
           return;
 
         ZegoExpressEngine.onPublisherCapturedVideoFirstFrame!(
+            ZegoPublishChannel.values[map['channel']]);
+        break;
+
+      case 'onPublisherSendVideoFirstFrame':
+        if (ZegoExpressEngine.onPublisherSendVideoFirstFrame == null)
+          return;
+
+        ZegoExpressEngine.onPublisherSendVideoFirstFrame!(
             ZegoPublishChannel.values[map['channel']]);
         break;
 
@@ -2724,6 +2743,19 @@ class ZegoExpressImpl {
           List<double> spectrumList = List<double>.from(map['spectrumList']);
           ZegoExpressEngine.onMediaPlayerFrequencySpectrumUpdate!(
               mediaPlayer, spectrumList);
+        }
+        break;
+      case 'onMediaPlayerFirstFrameEvent':
+        if (ZegoExpressEngine.onMediaPlayerFirstFrameEvent == null)
+          return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerFirstFrameEvent!(
+              mediaPlayer, 
+              ZegoMediaPlayerFirstFrameEvent.values[map['event']]);
         }
         break;
       /* AudioEffectPlayer */
