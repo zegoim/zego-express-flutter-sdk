@@ -422,6 +422,16 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setLicense(MethodCall call, Result result) {
+
+        String license = call.argument("license");
+
+        ZegoExpressEngine.setLicense(license);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setGeoFence(MethodCall call, Result result) {
 
         ZegoGeoFenceType type = ZegoGeoFenceType.getZegoGeoFenceType(ZegoUtils.intValue((Number)call.argument("type")));

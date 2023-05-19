@@ -317,6 +317,15 @@
     result(nil);
 }
 
+- (void)setLicense:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *license = call.arguments[@"license"];
+    
+    [ZegoExpressEngine setLicense:license];
+
+    result(nil);
+}
+
 - (void)setGeoFence:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int type = [ZegoUtils intValue:call.arguments[@"type"]];

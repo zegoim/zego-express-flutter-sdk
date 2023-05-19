@@ -241,6 +241,15 @@ void ZegoExpressEngineMethodHandler::setRoomMode(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setLicense(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto license = std::get<std::string>(argument[FTValue("license")]);
+    EXPRESS::ZegoExpressSDK::setLicense(license);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::setGeoFence(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

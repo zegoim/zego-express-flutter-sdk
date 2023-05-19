@@ -68,6 +68,8 @@ protected:
     void onPublisherQualityUpdate(const std::string& streamID, const EXPRESS::ZegoPublishStreamQuality& quality) override;
 
     void onPublisherCapturedAudioFirstFrame() override;
+
+    void onPublisherSendAudioFirstFrame() override;
     
     void onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;
 
@@ -111,6 +113,8 @@ protected:
     void onRoomTokenWillExpire(const std::string & roomID, int remainTimeInSecond) override;
 
     void onPublisherCapturedVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
+
+    void onPublisherSendVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
     void onPublisherRenderVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
@@ -189,6 +193,8 @@ protected:
     void onMediaPlayerSoundLevelUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, float soundLevel) override;
 
     void onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList) override;
+
+    void onMediaPlayerFirstFrameEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) override;
 protected:
     void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 
