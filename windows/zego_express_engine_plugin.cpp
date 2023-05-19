@@ -55,6 +55,7 @@ static const std::map<
         EngineStaticMethodHandler(setLocalProxyConfig),
         EngineStaticMethodHandler(setCloudProxyConfig),
         EngineStaticMethodHandler(setRoomMode),
+        EngineStaticMethodHandler(setLicense),
         EngineStaticMethodHandler(setGeoFence),
         EngineMethodHandler(setRoomScenario),
         EngineMethodHandler(uploadLog),

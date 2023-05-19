@@ -34,6 +34,7 @@ import im.zego.zegoexpress.constants.ZegoAudioEffectPlayState;
 import im.zego.zegoexpress.constants.ZegoAudioRoute;
 import im.zego.zegoexpress.constants.ZegoDataRecordState;
 import im.zego.zegoexpress.constants.ZegoEngineState;
+import im.zego.zegoexpress.constants.ZegoMediaPlayerFirstFrameEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerNetworkEvent;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
 import im.zego.zegoexpress.constants.ZegoNetworkMode;
@@ -388,6 +389,35 @@ public class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onPublisherCapturedVideoFirstFrame");
+            map.put("channel", channel.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPublisherSendAudioFirstFrame() {
+            super.onPublisherSendAudioFirstFrame();
+            ZegoLog.log("[onPublisherSendAudioFirstFrame]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPublisherSendAudioFirstFrame");
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPublisherSendVideoFirstFrame(ZegoPublishChannel channel) {
+            super.onPublisherSendVideoFirstFrame(channel);
+            ZegoLog.log("[onPublisherSendVideoFirstFrame] channel: %s", channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPublisherSendVideoFirstFrame");
             map.put("channel", channel.value());
 
             sink.success(map);
@@ -1350,6 +1380,22 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerFrequencySpectrumUpdate");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("spectrumList", spectrumArray);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaPlayerFirstFrameEvent (ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerFirstFrameEvent event){
+            super.onMediaPlayerFirstFrameEvent(mediaPlayer, event);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerFirstFrameEvent");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("event", event.value());
 
             sink.success(map);
         }

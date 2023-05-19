@@ -264,6 +264,16 @@ void ZegoExpressEngineEventHandler::onPublisherCapturedAudioFirstFrame() {
     }
 }
 
+void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame() {
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPublisherSendAudioFirstFrame");
+
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID,
                                                            const std::string &streamID,
                                                            const std::string &extraInfo) {
@@ -673,6 +683,20 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFrequencySpectrumUpdate(
     }
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
+    EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) {
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerFirstFrameEvent");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("event")] = FTValue(event);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+
 void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char *data,
                                                         unsigned int dataLength,
                                                         EXPRESS::ZegoAudioFrameParam param) {
@@ -845,6 +869,18 @@ void ZegoExpressEngineEventHandler::onPublisherCapturedVideoFirstFrame(
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onPublisherCapturedVideoFirstFrame");
+
+        retMap[FTValue("channel")] = FTValue((int)channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onPublisherSendVideoFirstFrame(
+    EXPRESS::ZegoPublishChannel channel) {
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPublisherSendVideoFirstFrame");
 
         retMap[FTValue("channel")] = FTValue((int)channel);
 

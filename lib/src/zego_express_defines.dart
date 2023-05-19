@@ -1165,6 +1165,15 @@ enum ZegoMediaPlayerAudioChannel {
   All
 }
 
+/// Media player first frame event type.
+enum ZegoMediaPlayerFirstFrameEvent {
+  /// The first video frame is rendered event.
+  VideoRendered,
+
+  /// The first audio frame is rendered event.
+  AudioRendered
+}
+
 /// AudioEffectPlayer state.
 enum ZegoAudioEffectPlayState {
   /// Not playing
@@ -1236,7 +1245,7 @@ enum ZegoAudioSourceType {
   /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. The web platform does not currently support.
   MainPublishChannel,
 
-  /// Using screen capture as audio source. It is only supported for iOS platform. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface
+  /// Using screen capture as audio source. Typically used in mobile screen sharing scenarios, and this attribute is only supported on the iOS platform. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface.
   ScreenCapture
 }
 

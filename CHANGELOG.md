@@ -1,5 +1,55 @@
 # Change Log
 
+## 3.5.0
+
+### **New Features**
+
+1. Support the first frame callback for audio and video streaming.
+
+    When publishing audio and video stream, monitor the release timing of the "first frame of audio" or "first frame of video" through [onPublisherSendAudioFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendAudioFirstFrame.html) and [onPublisherSendVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendVideoFirstFrame.html) callbacks. This function can be used to count the time consumption of audio and video streaming, or update UI performance, etc.
+
+    For related API, please refer to [onPublisherSendAudioFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendAudioFirstFrame.html), [onPublisherSendVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendVideoFirstFrame.html)
+
+2. The media player supports the first frame callback after the audio and video rendering is completed.
+
+    When rendering audio and video through the media player, use the [onMediaPlayerFirstFrameEvent](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onMediaPlayerFirstFrameEvent.html) callback to monitor the release timing of the "first frame of audio" or "first frame of video" after rendering. This function can be used to count the time consumption of audio and video rendering, or update UI performance, etc.
+
+    For related API, please refer to [onMediaPlayerFirstFrameEvent](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onMediaPlayerFirstFrameEvent.html)
+
+3. External collection supports active offset NTP timestamps.
+
+    Note: If you need to use this function, please contact ZEGOCLOUD technical support. 
+
+    When using the external acquisition function, support actively offsetting the NTP timestamp through the experimental API interface. This function can be used in KTV chorus, accompaniment, lyrics alignment and other scenarios.
+
+4. Support for fast switching rooms in multi-room mode.
+
+    In the multi-room mode, the [switchRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/switchRoom.html) interface is supported to quickly and conveniently realize the function of switching rooms.
+
+    For related API, please refer to [switchRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/switchRoom.html)
+
+## **Enhancements**
+
+1. Significantly reduce the time-consuming time spent on video hard decoding of Huawei models.
+
+    Note: If you need to use this function, please contact ZEGO technical support. 
+
+    For HUAWEI devices, the SDK supports relevant configurations to reduce the time spent on video hardware decoding by 80%.
+
+2. Drastically reduces SDK memory consumption on iOS device.
+
+    This optimization takes effect from version 3.5.0 and does not require additional interfaces.
+
+## **Bug Fixes**
+
+1. Fix the problem that the media player cannot make the playback progress jump to 0 through the seekTo interface in some m3u8 file formats.
+
+2. Fix the occasional problem that the video on the streaming side freezes after re-pushing the stream.
+
+3. Fix the problem that Android memory usage information is not updated.
+
+4. Fix the occasional problem that when the iOS media player loads a file for the first time, there will be no picture for the first few seconds.
+
 ## 3.4.2
 
 1. Support for Geofencing Function.

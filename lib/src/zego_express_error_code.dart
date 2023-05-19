@@ -86,6 +86,9 @@ class ZegoErrorCode {
   /// Description: Authentication failed. <br>Cause: Incorrect AppSign. <br>Solutions: Please check AppSign is correct or not on ZEGO manage console.
   static const int EngineAppsignIncorrect = 1001005;
 
+  /// The input License is empty.
+  static const int EngineLicenseNull = 1001006;
+
   /// Description: No write permission to the log file. <br>Cause: App has no write permission to log file folder. <br>Solutions: Please check has grant write permission to App or not; check log folder is protected or not.
   static const int EngineLogNoWritePermission = 1001014;
 
@@ -247,6 +250,18 @@ class ZegoErrorCode {
 
   /// Description: Multi-room mode required. <br>Cause: Wrong room mode been used, e.g. single-room. <br>Solutions: Please use [setRoomMode] to select multi-room mode before the engine started.
   static const int RoomMultiRoomRequired = 1002081;
+
+  /// Description: Update room Token has no push permission. <br>Cause: Token Does not have the push permission. <br>Solutions: Pass in the Token with the push permission.
+  static const int RoomRenewTokenNoPublishAuthError = 1002082;
+
+  /// Description: The length of the custom data attached during login exceeded the limit. Procedure. <br>Cause: The login custom callback data is too long. <br>Solutions: The length of user-defined login data cannot exceed 128 bytes.
+  static const int RoomRoomLoginCustomDataLengthError = 1002083;
+
+  /// Description: login room used license auth, but can't find the license on zego server. <br>Cause: input wrong license. <br>Solutions: used the right license.
+  static const int RoomRoomLoginLicenseNotFound = 1002084;
+
+  /// Description: login room used license auth, but the license is expired.  <br>Solutions:  Contact ZEGO technical support to deal with it.
+  static const int RoomRoomLoginLicenseExpired = 1002085;
 
   /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError = 1002099;
@@ -868,10 +883,10 @@ class ZegoErrorCode {
   /// Description: The song_id invalid. <br>Cause: The song_id entered is empty. <br>Solutions: Please check the song_id entered when calling the function to make sure it is not empty.
   static const int CopyrightedMusicSongIdInvalid = 1017002;
 
-  /// Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [requestAccompaniment]
+  /// Description: The share_token invalid. <br>Cause: The share_token entered is empty. <br>Solutions: Please check the share_token entered when calling the function to make sure it is not empty.share_token can be obtained by call [requestResource]
   static const int CopyrightedMusicShareTokenInvalid = 1017003;
 
-  /// Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [requestSong] [requestAccompaniment] [getMusicByToken]
+  /// Description: The resource_id invalid. <br>Cause: The resource_id entered is empty. <br>Solutions: Please check the resource_id entered when calling the function to make sure it is not empty.resource_id can be obtained by call [requestResource] [getSharedResource] [getMusicByToken]
   static const int CopyrightedMusicResourceIdInvalid = 1017004;
 
   /// Description: The start_position invalid. <br>Cause: The start_position entered by the fuction [loadCopyrightedMusicResourceWithPosition] is invalid. <br>Solutions: Please check the start_position entered when calling the function [loadCopyrightedMusicResourceWithPosition] to make sure it is in 0 ~ song duration.
@@ -883,7 +898,7 @@ class ZegoErrorCode {
   /// Description: The volume invalid.. <br>Cause: The Volume entered by the fuction [setPlayVolume] is invalid. <br>Solutions: Please check the Volume entered when calling the function [setPlayVolume] to make sure it is in 0 ~ 200.
   static const int CopyrightedMusicVolumeInvalid = 1017007;
 
-  /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [requestAccompaniment]
+  /// Description: The krcToken invalid. <br>Cause: The krcToken entered is empty. <br>Solutions: Please check the krcToken entered when calling the function to make sure it is not empty.krcToken can be obtained by call [requestResource] [getSharedResource]
   static const int CopyrightedMusicKrcTokenInvalid = 1017008;
 
   /// Description: Copyright music init authentication failed. <br>Cause: Appsign or token is not set. <br>Solutions: When using token authentication, call [loginRoom] before calling [initCopyrightedMusic] or use appsign authentication.

@@ -92,6 +92,19 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.setCloudProxyConfig(proxyList, token, enable);
   }
 
+  /// Set license auth.
+  ///
+  /// Available since: 3.5.0
+  /// Description: This function needs to be called to complete the configuration when using License authentication charges.
+  /// When to call: Must be set before calling [createEngine] to take effect, otherwise it will fail.
+  /// Restrictions: Does not support midway changes.
+  /// Caution: None.
+  ///
+  /// - [license] license.
+  static Future<void> setLicense(String license) async {
+    return await ZegoExpressImpl.setLicense(license);
+  }
+
   /// Set room mode.
   ///
   /// Available since: 2.9.0
@@ -436,6 +449,26 @@ class ZegoExpressEngine {
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
   static void Function(ZegoPublishChannel channel)?
       onPublisherCapturedVideoFirstFrame;
+
+  /// The callback triggered when the first audio frame is sent.
+  ///
+  /// Available since: 3.5.0
+  /// Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data. Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
+  /// Trigger: In the case of no startPublishingStream audio stream, the first startPublishingStream audio stream, it will receive this callback.
+  /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
+  static void Function()? onPublisherSendAudioFirstFrame;
+
+  /// The callback triggered when the first video frame is sent.
+  ///
+  /// Available since: 3.5.0
+  /// Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of video data. Developers can use this callback to determine whether SDK has actually collected video data. If the callback is not received, the video capture device is occupied or abnormal.
+  /// Trigger: In the case of no startPublishingStream video stream, the first startPublishingStream video stream, it will receive this callback.
+  /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  static void Function(ZegoPublishChannel channel)?
+      onPublisherSendVideoFirstFrame;
 
   /// The callback triggered when the first video frame is rendered.
   ///
@@ -1041,6 +1074,20 @@ class ZegoExpressEngine {
   /// - [spectrumList] Locally captured frequency spectrum value list. Spectrum value range is [0-2^30].
   static void Function(ZegoMediaPlayer mediaPlayer, List<double> spectrumList)?
       onMediaPlayerFrequencySpectrumUpdate;
+
+  /// The callback triggered when the media player plays the first frame.
+  ///
+  /// Available since: 3.5.0
+  /// Description: The callback triggered when the media player plays the first frame.
+  /// Trigger: This callback is generated when the media player starts playing.
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Related APIs: You need to call the [setPlayerCanvas] interface to set the view for the media player in order to receive the video first frame event callback.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [event] The first frame callback event type.
+  static void Function(
+          ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerFirstFrameEvent event)?
+      onMediaPlayerFirstFrameEvent;
 
   /// Audio effect playback state callback.
   ///
