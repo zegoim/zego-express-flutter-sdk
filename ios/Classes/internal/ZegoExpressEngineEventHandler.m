@@ -637,7 +637,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)onPlayerRecvSEI:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPlayerRecvSEI] streamID: %@", streamID);
+    // Do not log high frequency callback
 
     GUARD_SINK
     if (sink) {
@@ -652,7 +652,7 @@
 
 - (void)onPlayerRecvAudioSideInfo:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPlayerRecvAudioSideInfo] streamID: %@", streamID);
+    // Do not log high frequency callback
 
     GUARD_SINK
     if (sink) {

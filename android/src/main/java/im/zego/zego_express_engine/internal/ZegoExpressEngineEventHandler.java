@@ -664,8 +664,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerRecvSEI(String streamID, byte[] data) {
             super.onPlayerRecvSEI(streamID, data);
-            ZegoLog.log("[onPlayerRecvSEI] streamID: %s", streamID);
-
+            // Do not log high frequency callback
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
@@ -680,8 +679,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onPlayerRecvAudioSideInfo(String streamID, byte[] data) {
             super.onPlayerRecvAudioSideInfo(streamID, data);
-            ZegoLog.log("[onPlayerRecvAudioSideInfo] streamID: %s", streamID);
-
+            // Do not log high frequency callback
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
