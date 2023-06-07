@@ -2936,6 +2936,8 @@
         
         [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:enable config: config];
     }
+
+    result(nil);
 }
 
 - (void)enableCustomVideoCapture:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2969,6 +2971,8 @@
     } else {
         [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:ZegoVideoMirrorModeOnlyPreviewMirror channel:(ZegoPublishChannel)channel];
     }
+
+    result(nil);
 }
 
 - (void)enableCustomVideoProcessing:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2990,6 +2994,7 @@
     
     [[ZegoExpressEngine sharedEngine] enableCustomVideoProcessing:(BOOL)enable config:config channel:(ZegoPublishChannel)channel];
 
+    result(nil);
 }
 
 #pragma mark - MediaPlayer
