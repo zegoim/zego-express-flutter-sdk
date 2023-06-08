@@ -2,6 +2,11 @@
 function(download_native_sdk WORKSPACE)
   message(NOTICE "[ZEGO][PLUGIN] Download native dependency")
 
+  if(EXISTS "${WORKSPACE}/../.debugging")
+    message(NOTICE "[ZEGO][PLUGIN] Found the .debugging file in the project root, no need to download dependency, exit!")
+    return()
+  endif()
+
   if($ENV{DEPS} MATCHES "^http.+")
     set(DEPSURL $ENV{DEPS})
     string(REGEX MATCH "version=[0-9\.]+$" DEPSVER ${DEPSURL})

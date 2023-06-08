@@ -5,6 +5,11 @@ echo "[ZEGO][PLUGIN] Download native dependency"
 WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $WORKSPACE
 
+if [ -f $WORKSPACE/../.debugging ]; then
+  echo "[ZEGO][PLUGIN] Found the .debugging file in the project root, no need to download dependency, exit!"
+  exit 0
+fi
+
 if [[ $DEPS == http* ]]; then
   DEPSURL=$DEPS
   DEPSVER=$(echo $DEPSURL | cut -d'?' -f2 | cut -d'=' -f2)

@@ -1,5 +1,6 @@
 # common
 .vscode
+.debugging
 
 # pub
 .dart_tool/

@@ -36,6 +36,11 @@ android {
     task downloadNativeDependency {
         logger.quiet "[ZEGO][PLUGIN] Download native dependency"
 
+        if (file("$projectDir.absolutePath/../.debugging").exists()) {
+            logger.quiet "[ZEGO][PLUGIN] Found the .debugging file in the project root, no need to download dependency, exit!"
+            return
+        }
+
         def depsUrl, depsVer = ""
         if (project.hasProperty('DEPS') && project.property('DEPS').startsWith('http')) {
             depsUrl = project.property('DEPS')
