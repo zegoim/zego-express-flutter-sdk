@@ -1,4 +1,4 @@
-android: 3.5.0.28788
-ios: 3.5.0.28788
-macos: 3.5.0.28788
-windows: 3.5.0.28788
+android: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/android/ZegoExpressVideo-android-shared-java.zip?version=3.5.0.28788
+ios: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/ios/ZegoExpressVideo-ios-shared-objc.zip?version=3.5.0.28788
+macos: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/mac/ZegoExpressVideo-mac-shared-objc.zip?version=3.5.0.28788
+windows: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/win/ZegoExpressVideo-win-shared-cpp.zip?version=3.5.0.28788

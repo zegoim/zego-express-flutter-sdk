@@ -41,16 +41,15 @@ android {
             return
         }
 
-        def depsUrl, depsVer = ""
+        def depsUrl = ""
         if (project.hasProperty('DEPS') && project.property('DEPS').startsWith('http')) {
             depsUrl = project.property('DEPS')
-            depsVer = depsUrl.tokenize('?')[1].tokenize('=')[1]
             logger.quiet "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: $depsUrl"
         } else {
-            depsVer = (file("$projectDir.absolutePath/../DEPS.yaml").text =~ /android:\s*(.*)/)[0][1]
-            depsUrl = "https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/android/ZegoExpressVideo-android-shared-java.zip?version=$depsVer"
+            depsUrl = (file("$projectDir.absolutePath/../DEPS.yaml").text =~ /android:\s*(.*)/)[0][1]
         }
 
+        def depsVer = depsUrl.tokenize('?')[1].tokenize('=')[1]
         logger.quiet "[ZEGO][PLUGIN] Native version: $depsVer"
 
         def libsDir = file("$projectDir.absolutePath/libs")
