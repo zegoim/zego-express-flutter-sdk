@@ -5,15 +5,19 @@ echo "[ZEGO][PLUGIN] Download native dependency"
 WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $WORKSPACE
 
-if [[ $DEPS == http* ]]; then
-  DEPSURL=$DEPS
-  DEPSVER=$(echo $DEPSURL | cut -d'?' -f2 | cut -d'=' -f2)
-  echo "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: $DEPSURL"
-else
-  DEPSVER=$(grep 'ios:' $WORKSPACE/../DEPS.yaml | cut -d ' ' -f 2)
-  DEPSURL=https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/ios/ZegoExpressVideo-ios-shared-objc.zip?version=$DEPSVER
+if [ -f $WORKSPACE/../.debugging ]; then
+  echo "[ZEGO][PLUGIN] Found the .debugging file in the project root, no need to download dependency, exit!"
+  exit 0
 fi
 
+if [[ $DEPS == http* ]]; then
+  DEPSURL=$DEPS
+  echo "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: $DEPSURL"
+else
+  DEPSURL=$(grep 'ios:' $WORKSPACE/../DEPS.yaml | cut -d ' ' -f 2)
+fi
+
+DEPSVER=$(echo $DEPSURL | cut -d'?' -f2 | cut -d'=' -f2)
 echo "[ZEGO][PLUGIN] Native version: $DEPSVER"
 
 LIBSDIR=$WORKSPACE/libs
