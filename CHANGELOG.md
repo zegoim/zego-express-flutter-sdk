@@ -1,5 +1,63 @@
 # Change Log
 
+## 3.6.0
+
+### New Features
+
+1. Added support for background blur and virtual background functions. (The window platform is not currently supported.)
+
+    Note: The current official website SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support.
+
+    In real scene or greenscreen scenes, developers can use this function to blur the user's background, or replace it with a custom picture background.
+
+    This function can be used in video conferences, 1v1 audio and video calls and other scenarios to help users better protect personal privacy and improve the fun of calls.
+
+    For related API, please refer to [enableVideoObjectSegmentation](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableVideoObjectSegmentation.html)
+
+2. The screen capture function supports the capture of system audio.
+
+    The screen capture function adds the ability to capture system audio on the basis of only supporting image capture, so as to share the music being played while sharing the demo courseware screen. This function can be used in scenarios such as online teaching and game live broadcasting.
+
+    For related API, please refer to [startScreenCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/startScreenCapture.html)
+
+3. Added Enhanced KTV reverb effect.
+
+    Added an enhanced KTV reverb effect to achieve a more concentrated and brighter KTV vocal effect. Compared with the previous KTV reverb sound effect, the Enhanced KTV reverb effect shortens the reverb duration and improves the dry-wet ratio.
+
+    The original KTV reverb effect is only suitable for users with obvious vocal defects, and the enhanced KTV reverb effect is suitable for most professional users and ordinary users.
+
+    For related API, please refer to [setReverbPreset](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePreprocess/setReverbPreset.html)
+
+4. Game voice function supports media player and audio player to use 3D sound effects.
+
+    Developers can realize 3D sound effects of local audio and online audio resources by setting the position and orientation of media players and sound effect players. This function can be used to set the sound effect of the item in the virtual scene, as well as the background music of the specified location, etc.
+
+    For related API, please refer to [ZegoMediaPlayer > updatePosition](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/updatePosition.html), ZegoAudioEffectPlayer > [updatePosition](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoAudioEffectPlayer/updatePosition.html)
+
+5. The media player supports obtaining media stream video information
+
+    For the video file being played by the media player, the developer can actively obtain information such as the resolution and frame rate of the video.
+
+    For related API, please refer to [ZegoMediaPlayer > getMediaInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/getMediaInfo.html).
+
+6. Media player double speed function supports up to 4x
+
+    The maximum speed of the media player has been increased to 4x. For example, when the user is playing an audio and video file, if it has been set to play at 2x, it can be accelerated to 4x when long pressing the screen.
+
+    For related API, please refer to [ZegoMediaPlayer > setPlaySpeed](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlaySpeed.html)
+
+7. The media player supports functions such as downloading, retrieving data decryption, and playing at the same time.
+
+    For copyright music protection in online players, the media player supports downloading while recalling unencrypted binary data, which is decrypted by the developer and then returned to the media player for playback. During the process, no files or cache files are generated.
+
+    For related API, please refer to [ZegoMediaPlayer > enableBlockData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableBlockData.html)
+
+### Bug Fixes
+
+1. Fixed an issue that could cause a memory leak when using the media player.
+
+2. Fixed an issue that [enableCustomVideoCapture](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineCustomVideoIO/enableCustomVideoCapture.html)/[enableCustomVideoProcessing](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineCustomVideoIO/enableCustomVideoProcessing.html)/[enableCustomVideoRender](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineCustomVideoIO/enableCustomVideoRender.html) not result called.
+
 ## 3.5.0
 
 ### **New Features**

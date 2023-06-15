@@ -71,6 +71,9 @@ public:
     // set custom video render handler
     void setCustomVideoRenderHandler(std::shared_ptr<ZEGO::EXPRESS::IZegoCustomVideoRenderHandler> handler);
 
+    /// Called when dart invoke `startPreview/startPlayingStream/updatePlayingCanvas`
+    void enableTextureAlpha(bool enable, int64_t textureID);
+
 protected:
     // When custom video rendering is enabled, the original video frame data collected by the local preview is called back.
     virtual void onCapturedVideoFrameRawData(unsigned char ** data,
@@ -98,6 +101,7 @@ protected:
                               unsigned int * dataLength, ZEGO::EXPRESS::ZegoVideoFrameParam param,
                               const char * extraInfo) override;
 private:
+    std::unordered_map<int64_t , bool> alphaRenders_;
     std::unordered_map<int64_t , std::shared_ptr<ZegoTextureRenderer> > renderers_;
     std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel , std::shared_ptr<ZegoTextureRenderer> > capturedRenderers_;
     std::unordered_map<std::string , std::shared_ptr<ZegoTextureRenderer> > remoteRenderers_;

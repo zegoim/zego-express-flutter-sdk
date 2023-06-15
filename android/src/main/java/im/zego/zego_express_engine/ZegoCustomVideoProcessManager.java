@@ -2,6 +2,7 @@ package im.zego.zego_express_engine;
 
 import android.graphics.SurfaceTexture;
 
+import im.zego.zego_express_engine.internal.ZegoLog;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -85,6 +86,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
 
     @Override
     public void onStart(ZegoPublishChannel channel) {
+        ZegoLog.log("[CustomVideoProcess] [onStart] channel:%s", channel);
         if (mHander != null) {
             mHander.onStart(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
@@ -92,6 +94,7 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
 
     @Override
     public void onStop(ZegoPublishChannel channel) {
+        ZegoLog.log("[CustomVideoProcess] [onStop] channel:%s", channel);
         if (mHander != null) {
             mHander.onStop(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }

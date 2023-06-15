@@ -43,7 +43,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
         .loginRoom(roomID, user, config: config);
   }
 
-  /// Logs out of a room.
+  /// Exit the room of the specified room ID with callback.
   ///
   /// Available since: 1.1.0
   /// Description: This API will log out the room named roomID.

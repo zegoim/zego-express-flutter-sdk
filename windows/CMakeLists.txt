@@ -25,10 +25,14 @@ list(APPEND PLUGIN_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoCustomVideoProcessManager.h
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoCustomVideoRenderManager.h
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoMediaPlayerVideoManager.h
+  ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoMediaPlayerBlockDataManager.h
   ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoCaptureManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoProcessManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoRenderManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerVideoManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerBlockDataManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.h
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/DataToImageTools.hpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoExpressEngineEventHandler.h
@@ -67,6 +71,7 @@ target_compile_options(${PLUGIN_NAME} PRIVATE /W4 /WX- /wd4100 /bigobj /utf-8)
 target_include_directories(${PLUGIN_NAME} PUBLIC
   "${CMAKE_CURRENT_LIST_DIR}/include"
   "${CMAKE_CURRENT_LIST_DIR}/libs/x64/include"
+  "${CMAKE_CURRENT_LIST_DIR}/libs/x64/include/internal"
 )
 target_link_libraries(${PLUGIN_NAME} PRIVATE
   flutter

@@ -56,6 +56,19 @@
     }
 }
 
+- (void)onFatalError:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onFatalError] errorCode: %d", errorCode);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onFatalError",
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
 - (void)onEngineStateUpdate:(ZegoEngineState)state {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onEngineStateUpdate] state: %d", (int)state);
@@ -946,6 +959,61 @@
     }
 }
 
+- (void)onAudioDeviceVolumeChanged:(int)volume
+                        deviceType:(ZegoAudioDeviceType)deviceType
+                          deviceID:(NSString *)deviceID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAudioDeviceVolumeChanged] volume: %d, deviceType: %d, deviceID: %@", volume, (int)deviceType, deviceID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onAudioDeviceVolumeChanged",
+            @"volume": @(volume),
+            @"deviceType": @(deviceType),
+            @"deviceID": deviceID,
+        });
+    }
+}
+
+- (void)onAudioDeviceStateChanged:(ZegoDeviceInfo *)deviceInfo
+                       updateType:(ZegoUpdateType)updateType
+                       deviceType:(ZegoAudioDeviceType)deviceType {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAudioDeviceStateChanged] deviceID: %@, deviceName: %@, deviceType: %td, updateType: %td", deviceInfo.deviceID, deviceInfo.deviceName, deviceType, updateType);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onAudioDeviceStateChanged",
+            @"deviceInfo": @{
+                @"deviceID": deviceInfo.deviceID,
+                @"deviceName": deviceInfo.deviceName
+            },
+            @"deviceType": @(deviceType),
+            @"updateType": @(updateType),
+        });
+    }
+}
+
+- (void)onVideoDeviceStateChanged:(ZegoDeviceInfo *)deviceInfo
+                       updateType:(ZegoUpdateType)updateType {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onVideoDeviceStateChanged] deviceID: %@, deviceName: %@, updateType: %td", deviceInfo.deviceID, deviceInfo.deviceName, updateType);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onVideoDeviceStateChanged",
+            @"deviceInfo": @{
+                @"deviceID": deviceInfo.deviceID,
+                @"deviceName": deviceInfo.deviceName
+            },
+            @"updateType": @(updateType),
+        });
+    }
+}
+
 #pragma mark IM Callback
 
 - (void)onIMRecvBroadcastMessage:(NSArray<ZegoBroadcastMessageInfo *> *)messageList roomID:(NSString *)roomID {
@@ -1089,6 +1157,7 @@
 
 - (void)onRecvExperimentalAPI:(NSString *)content {
     FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRecvExperimentalAPI] content: %@", content);
 
     GUARD_SINK
     if (sink) {
@@ -1204,7 +1273,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *) mediaPlayer firstFrameEvent:(ZegoMediaPlayerFirstFrameEvent)event {
     FlutterEventSink sink = _eventSink;
-    // High frequency callbacks do not log
+    ZGLog(@"[onMediaPlayerFirstFrameEvent] idx: %d, event: %td", mediaPlayer.index.intValue, event);
 
     GUARD_SINK
     if (sink) {
@@ -1255,7 +1324,7 @@
 #pragma mark - Real Time Sequential Data callback
 - (void)manager:(ZegoRealTimeSequentialDataManager *) manager receiveRealTimeSequentialData:(NSData *) data streamID:(NSString *) streamID {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onReceiveRealTimeSequentialData] idx: %d, streamID: %@", [manager getIndex].intValue, streamID);
+    // High frequency callbacks do not log
     
     GUARD_SINK
     if (sink) {
@@ -1556,7 +1625,8 @@
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)type {
     FlutterEventSink sink = _eventSink;
-    
+    ZGLog(@"[screenCapture:exceptionOccurred:] type: %d", type);
+
     GUARD_SINK
     
     if (sink) {
@@ -1570,6 +1640,7 @@
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
+    ZGLog(@"[screenCapture:windowState:windowRect:] state: %d, rect: %@", state, NSStringFromCGRect(rect));
     
     GUARD_SINK
     

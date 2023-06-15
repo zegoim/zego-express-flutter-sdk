@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineUtilities on ZegoExpressEngine {
-
   /// Start system performance monitoring.
   ///
   /// Available since: 1.19.0
@@ -19,7 +17,8 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   ///
   /// - [millisecond] Monitoring time period(in milliseconds), the value range is [1000, 10000]. Default value is 2000 ms.
   Future<void> startPerformanceMonitor({int? millisecond}) async {
-    return await ZegoExpressImpl.instance.startPerformanceMonitor(millisecond: millisecond);
+    return await ZegoExpressImpl.instance
+        .startPerformanceMonitor(millisecond: millisecond);
   }
 
   /// Stop system performance monitoring.
@@ -45,7 +44,8 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// Related APIs: Call [stopNetworkProbe] to stop network probe.
   ///
   /// - [config] network probe config.
-  Future<ZegoNetworkProbeResult> startNetworkProbe(ZegoNetworkProbeConfig config) async {
+  Future<ZegoNetworkProbeResult> startNetworkProbe(
+      ZegoNetworkProbeConfig config) async {
     return await ZegoExpressImpl.instance.startNetworkProbe(config);
   }
 
@@ -67,14 +67,16 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// Description: This function supports uplink/downlink network speed test when the network can be connected.
   /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
   /// When to call: It needs to be called after [loginRoom], and before [startPublishingStream]. If you call [startPublishingStream] while speed testing, the speed test will automatically stop.
-  /// Restrictions: The maximum allowable test time for a single network speed test is 3 minutes.
+  /// Restrictions: The default maximum allowable test time for a single network speed test is 30 seconds.
   /// Caution: Developers can register [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be triggered every 3 seconds. If an error occurs during the speed test process, [onNetworkSpeedTestError] callback will be triggered. If this function is repeatedly called multiple times, the last functioh call's configuration will be used.
   /// Related APIs: Call [stopNetworkSpeedTest] to stop network speed test.
   ///
   /// - [config] Network speed test configuration.
   /// - [interval] Interval of network speed test. In milliseconds, default is 3000 ms.
-  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config, {int? interval}) async {
-    return await ZegoExpressImpl.instance.startNetworkSpeedTest(config, interval: interval);
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config,
+      {int? interval}) async {
+    return await ZegoExpressImpl.instance
+        .startNetworkSpeedTest(config, interval: interval);
   }
 
   /// Stop network speed test.
@@ -100,5 +102,4 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   Future<ZegoNetworkTimeInfo> getNetworkTimeInfo() async {
     return await ZegoExpressImpl.instance.getNetworkTimeInfo();
   }
-
 }

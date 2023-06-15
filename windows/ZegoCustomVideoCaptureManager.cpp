@@ -1,4 +1,5 @@
 #include "include/zego_express_engine/ZegoCustomVideoCaptureManager.h"
+#include "ZegoLog.h"
 #include <ZegoExpressSDK.h>
 
 static std::shared_ptr<ZegoCustomVideoCaptureManager> instance_ = nullptr;
@@ -12,12 +13,16 @@ public:
 private:
     std::shared_ptr<IZegoFlutterCustomVideoCaptureHandler> handler_ = nullptr;
     void onStart(ZEGO::EXPRESS::ZegoPublishChannel channel) override {
+        ZF::logInfo("[CustomVideoCapture][onStart] channel: %d", channel);
+
         if (handler_) {
             handler_->onStart((ZGFlutterPublishChannel)channel);
         }
     }
 
     void onStop(ZEGO::EXPRESS::ZegoPublishChannel channel) override {
+        ZF::logInfo("[CustomVideoCapture][onStop] channel: %d", channel);
+
         if (handler_) {
             handler_->onStop((ZGFlutterPublishChannel)channel);
         }
@@ -25,6 +30,8 @@ private:
 
     void onEncodedDataTrafficControl(ZEGO::EXPRESS::ZegoTrafficControlInfo trafficControlInfo,
                                              ZEGO::EXPRESS::ZegoPublishChannel channel) override {
+        ZF::logInfo("[CustomVideoCapture][onEncodedDataTrafficControl] channel:%d", channel);
+
         if (handler_) {
             ZGFlutterTrafficControlInfo info;
             info.bitrate = trafficControlInfo.bitrate;

@@ -61,9 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when dart invoke `enableCustomVideoRender`
 - (void)setCustomVideoRenderHandler: (id<ZegoFlutterCustomVideoRenderHandler> _Nullable) handler;
 
--(void)setMediaPlayerVideoHandle: (id<ZegoFlutterMediaPlayerVideoHandler> _Nullable) handler;
+/// Called when dart invoke `MediaPlayer.enableVideoData`
+- (void)setMediaPlayerVideoHandle: (id<ZegoFlutterMediaPlayerVideoHandler> _Nullable) handler;
 
--(BOOL)enableTextureAlpha:(BOOL) enable withTexture:(int64_t)textureID;
+/// Called when dart invoke `startPreview/startPlayingStream/updatePlayingCanvas`
+- (BOOL)enableTextureAlpha:(BOOL) enable withTexture:(int64_t)textureID;
 
 #pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer

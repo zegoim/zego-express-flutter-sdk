@@ -1,5 +1,5 @@
 #include "ZegoTextureRendererController.h"
-
+#include "../ZegoLog.h"
 #include <flutter/standard_method_codec.h>
 
 using namespace ZEGO::EXPRESS;
@@ -15,6 +15,7 @@ ZegoTextureRendererController::~ZegoTextureRendererController()
         capturedRenderers_.clear();
         remoteRenderers_.clear();
         mediaPlayerRenderers_.clear();
+        alphaRenders_.clear();
     }
     
     renderers_.clear();
@@ -46,6 +47,7 @@ void ZegoTextureRendererController::uninit()
         capturedRenderers_.clear();
         remoteRenderers_.clear();
         mediaPlayerRenderers_.clear();
+        alphaRenders_.clear();
     }
     
     renderers_.clear();
@@ -56,6 +58,8 @@ int64_t ZegoTextureRendererController::createTextureRenderer(flutter::TextureReg
 {
     auto textureRenderer = std::make_shared<ZegoTextureRenderer>(texture_registrar, width, height);
 
+    ZF::logInfo("[createTextureRenderer] textureID: %d, width: %d, height: %d", textureRenderer->getTextureID(), width, height);
+
     renderers_.insert(std::pair<int64_t , std::shared_ptr<ZegoTextureRenderer> >(textureRenderer->getTextureID(), textureRenderer));
 
     return textureRenderer->getTextureID();
@@ -63,6 +67,8 @@ int64_t ZegoTextureRendererController::createTextureRenderer(flutter::TextureReg
 
 bool ZegoTextureRendererController::destroyTextureRenderer(int64_t textureID)
 {
+    ZF::logInfo("[destroyTextureRenderer] textureID: %d", textureID);
+
     auto renderer = renderers_.find(textureID);
     if (renderer != renderers_.end()) {
         renderer->second.reset();
@@ -75,6 +81,8 @@ bool ZegoTextureRendererController::destroyTextureRenderer(int64_t textureID)
 /// Called when dart invoke `startPreview`
 bool ZegoTextureRendererController::addCapturedRenderer(int64_t textureID, ZEGO::EXPRESS::ZegoPublishChannel channel, ZEGO::EXPRESS::ZegoViewMode viewMode)
 {
+    ZF::logInfo("[addCapturedRenderer] textureID: %d, channel: %d, viewMode: %d", textureID, channel, viewMode);
+
     auto renderer = renderers_.find(textureID);
 
     if (renderer == renderers_.end()) {
@@ -93,13 +101,17 @@ bool ZegoTextureRendererController::addCapturedRenderer(int64_t textureID, ZEGO:
 /// Called when dart invoke `stopPreview`
 void ZegoTextureRendererController::removeCapturedRenderer(ZEGO::EXPRESS::ZegoPublishChannel channel)
 {
+    ZF::logInfo("[removeCapturedRenderer] channel: %d", channel);
+
     std::lock_guard<std::mutex> lock(rendersMutex_);
     capturedRenderers_.erase(channel);
 }
 /// Called when dart invoke `startPlayingStream`
 bool ZegoTextureRendererController::addRemoteRenderer(int64_t textureID, std::string streamID, ZEGO::EXPRESS::ZegoViewMode viewMode)
 {
-     auto renderer = renderers_.find(textureID);
+    ZF::logInfo("[addRemoteRenderer] textureID: %d, streamID: %s, viewMode: %d", textureID, streamID.c_str(), viewMode);
+
+    auto renderer = renderers_.find(textureID);
 
     if (renderer == renderers_.end()) {
         return false;
@@ -117,6 +129,8 @@ bool ZegoTextureRendererController::addRemoteRenderer(int64_t textureID, std::st
 /// Called when dart invoke `stopPlayingStream`
 void ZegoTextureRendererController::removeRemoteRenderer(std::string streamID)
 {
+    ZF::logInfo("[removeRemoteRenderer] streamID: %s", streamID.c_str());
+
     std::lock_guard<std::mutex> lock(rendersMutex_);
     remoteRenderers_.erase(streamID);
 }
@@ -124,7 +138,9 @@ void ZegoTextureRendererController::removeRemoteRenderer(std::string streamID)
 /// Called when dart invoke `mediaPlayer.setPlayerCanvas`
 bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, ZEGO::EXPRESS::ZegoViewMode viewMode)
 {
-     auto renderer = renderers_.find(textureID);
+    ZF::logInfo("[addMediaPlayerRenderer] textureID: %d, index: %d, viewMode: %d", textureID, mediaPlayer->getIndex(), viewMode);
+
+    auto renderer = renderers_.find(textureID);
 
     if (renderer == renderers_.end()) {
         return false;
@@ -142,6 +158,8 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
 /// Called when dart invoke `destroyMediaPlayer`
 void ZegoTextureRendererController::removeMediaPlayerRenderer(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
 {
+    ZF::logInfo("[removeMediaPlayerRenderer] index: %d", mediaPlayer->getIndex());
+
     mediaPlayer->setVideoHandler(nullptr, ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
     
     std::lock_guard<std::mutex> lock(rendersMutex_);
@@ -169,6 +187,21 @@ void ZegoTextureRendererController::setCustomVideoRenderHandler(std::shared_ptr<
     videoRenderHandler_ = handler;
 }
 
+void ZegoTextureRendererController::enableTextureAlpha(bool enable, int64_t textureID) {
+    ZF::logInfo("[enableTextureAlpha] textureID: %d, enable: %d", textureID, enable);
+
+    auto renderer = renderers_.find(textureID);
+
+    if (renderer == renderers_.end()) {
+        return;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        alphaRenders_.insert(std::pair<int64_t , bool>(textureID, enable));
+    }
+}
+
 void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char ** data,
                                              unsigned int * dataLength,
                                              ZegoVideoFrameParam param,
@@ -193,6 +226,25 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
                     eventSink_->Success(map);
                 }
             }
+
+            /// alpha premultiply
+            auto alphaBlend = alphaRenders_.find(renderer->second->getTextureID());
+            if (alphaBlend != alphaRenders_.end() && alphaBlend->second) {
+                UINT cbStride = param.width * 4;
+                UINT cbBufferSize = cbStride * param.height;
+
+                for (UINT y = 0; y < param.height; y++) {
+                    BYTE* pRow = *data + y * cbStride;
+                    for (UINT x = 0; x < param.width; x++) {
+                        BYTE* pPixel = pRow + x * 4;
+                        BYTE alpha = pPixel[3];
+                        pPixel[0] = static_cast<BYTE>((pPixel[0] * alpha + 127) / 255);
+                        pPixel[1] = static_cast<BYTE>((pPixel[1] * alpha + 127) / 255);
+                        pPixel[2] = static_cast<BYTE>((pPixel[2] * alpha + 127) / 255);
+                    }
+                }
+            }
+
             renderer->second->setUseMirrorEffect(isMirror);
             renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
         }
@@ -222,6 +274,25 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** d
                     eventSink_->Success(map);
                 }
             }
+
+            /// alpha premultiply
+            auto alphaBlend = alphaRenders_.find(renderer->second->getTextureID());
+            if (alphaBlend != alphaRenders_.end() && alphaBlend->second) {
+                UINT cbStride = param.width * 4;
+                UINT cbBufferSize = cbStride * param.height;
+
+                for (UINT y = 0; y < param.height; y++) {
+                    BYTE* pRow = *data + y * cbStride;
+                    for (UINT x = 0; x < param.width; x++) {
+                        BYTE* pPixel = pRow + x * 4;
+                        BYTE alpha = pPixel[3];
+                        pPixel[0] = static_cast<BYTE>((pPixel[0] * alpha + 127) / 255);
+                        pPixel[1] = static_cast<BYTE>((pPixel[1] * alpha + 127) / 255);
+                        pPixel[2] = static_cast<BYTE>((pPixel[2] * alpha + 127) / 255);
+                    }
+                }
+            }
+
             renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
         }
     }

@@ -483,6 +483,9 @@ class ZegoExpressEngineMethodHandler {
     void audioEffectPlayerSetPlaySpeed(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerUpdatePosition(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     /* Media Player */
     void createMediaPlayer(flutter::EncodableMap &argument,
@@ -603,6 +606,12 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerLoadResourceWithConfig(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerUpdatePosition(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerGetMediaInfo(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
@@ -865,6 +874,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopCaptureScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void getCaptureSourceRectScreenCaptureSource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 

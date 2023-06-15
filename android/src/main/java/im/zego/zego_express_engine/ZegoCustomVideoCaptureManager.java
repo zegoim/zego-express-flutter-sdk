@@ -4,6 +4,7 @@ import android.graphics.SurfaceTexture;
 
 import java.nio.ByteBuffer;
 
+import im.zego.zego_express_engine.internal.ZegoLog;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.callback.IZegoCustomVideoCaptureHandler;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
@@ -156,6 +157,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
         //mClients.put(channel.value(), client);
 
         //IZegoCustomVideoCaptureCallback callback = mHandlers.get(channel.value());
+        ZegoLog.log("[CustomVideoCapture] [onStart] channel:%s", channel);
         if(mHander != null) {
             mHander.onStart(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
@@ -168,6 +170,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
     public void onStop(ZegoPublishChannel channel) {
         //mClients.remove(channel.value());
         //IZegoCustomVideoCaptureCallback callback = mHandlers.get(channel.value());
+        ZegoLog.log("[CustomVideoCapture] [onStop] channel:%s", channel);
         if(mHander != null) {
             mHander.onStop(ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
@@ -175,6 +178,7 @@ public class ZegoCustomVideoCaptureManager extends IZegoCustomVideoCaptureHandle
 
     @Override
     public void onEncodedDataTrafficControl(ZegoTrafficControlInfo trafficControlInfo, ZegoPublishChannel channel) {
+        ZegoLog.log("[CustomVideoCapture] [onEncodedDataTrafficControl] channel:%s", channel);
         if(mHander != null) {
             ZGFlutterTrafficControlInfo trafficControlInfo1 = new ZGFlutterTrafficControlInfo();
             trafficControlInfo1.bitrate = trafficControlInfo.bitrate;
