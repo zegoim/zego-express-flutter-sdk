@@ -8,7 +8,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
 ### New Features
 
-1. Added support for background blur and virtual background functions. (The window platform is not currently supported.)
+1. Added support for background blur and virtual background functions.
 
     Note: The current official website SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support.
 
