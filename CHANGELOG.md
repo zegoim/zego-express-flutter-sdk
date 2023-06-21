@@ -2,6 +2,10 @@
 
 ## 3.6.0
 
+### **💥 Breaking changes**
+
+The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureConfig-class.html) class become optional fields.
+
 ### New Features
 
 1. Added support for background blur and virtual background functions. (The window platform is not currently supported.)
