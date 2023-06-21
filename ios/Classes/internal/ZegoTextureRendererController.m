@@ -269,6 +269,9 @@
         (int)param.size.height != (int)renderer.imageSize.height ||
         param.rotation != renderer.rotation ||
         flipMode != renderer.flipMode) {
+        
+        ZGLog(@"[updateRenderer] textureID:%lld, width:%.2f, height: %.2f, isMirror: %d", renderer.textureID, param.size.width, param.size.height, flipMode == ZegoVideoFlipModeX);
+        
         NSDictionary *map = @{
             @"type": @"update",
             @"textureID": @(renderer.textureID),

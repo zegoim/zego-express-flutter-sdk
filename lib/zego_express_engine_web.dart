@@ -666,7 +666,8 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<Map<dynamic, dynamic>> logoutRoom(String roomID) {
+  Future<Map<dynamic, dynamic>> logoutRoom(String? roomID) {
+    roomID ??= "";
     ZegoFlutterEngine.instance.logoutRoom(roomID);
     final map = {};
     map["errorCode"] = 0;

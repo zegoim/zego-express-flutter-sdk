@@ -48,6 +48,7 @@ import im.zego.zegoexpress.constants.ZegoRangeAudioMicrophoneState;
 import im.zego.zegoexpress.constants.ZegoRemoteDeviceState;
 import im.zego.zegoexpress.constants.ZegoRoomState;
 import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason;
+import im.zego.zegoexpress.constants.ZegoScreenCaptureExceptionType;
 import im.zego.zegoexpress.constants.ZegoStreamEvent;
 import im.zego.zegoexpress.constants.ZegoStreamQualityLevel;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
@@ -143,6 +144,21 @@ public class ZegoExpressEngineEventHandler {
             map.put("errorCode", errorCode);
             map.put("funcName", funcName);
             map.put("info", info);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onFatalError(int errorCode) {
+            super.onFatalError(errorCode);
+            ZegoLog.log("[onFatalError] errorCode: %d", errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onFatalError");
+            map.put("errorCode", errorCode);
 
             sink.success(map);
         }
@@ -1153,7 +1169,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onNetworkSpeedTestQualityUpdate(ZegoNetworkSpeedTestQuality quality, ZegoNetworkSpeedTestType type) {
             super.onNetworkSpeedTestQualityUpdate(quality, type);
-            ZegoLog.log("[onNetworkSpeedTestQualityUpdate] cost: %d, rtt: %d, plr: %.2f, type: %s", quality.connectCost, quality.rtt, quality.packetLostRate, type.name());
+            
+            // High frequency callbacks do not log
 
             if (guardSink()) { return; }
 
@@ -1188,7 +1205,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onNetworkQuality(String userID, ZegoStreamQualityLevel upstreamQuality, ZegoStreamQualityLevel downstreamQuality) {
             super.onNetworkQuality(userID, upstreamQuality, downstreamQuality);
-//            ZegoLog.log("[onNetworkQuality] userID: %s, upstreamQuality: %s, downstreamQuality: %s", userID, upstreamQuality.name(), downstreamQuality.name());
+            
+            // High frequency callbacks do not log
 
             if (guardSink()) { return; }
 
@@ -1197,6 +1215,21 @@ public class ZegoExpressEngineEventHandler {
             map.put("userID", userID);
             map.put("upstreamQuality", upstreamQuality.value());
             map.put("downstreamQuality", downstreamQuality.value());
+
+            sink.success(map);
+        }
+
+        /* Screen Capture */
+        @Override
+        public void onScreenCaptureExceptionOccurred(ZegoScreenCaptureExceptionType exceptionType) {
+            super.onScreenCaptureExceptionOccurred(exceptionType);
+            ZegoLog.log("[onScreenCaptureExceptionOccurred] exceptionType: %s", exceptionType);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onMobileScreenCaptureExceptionOccurred");
+            map.put("exceptionType", exceptionType.value());
 
             sink.success(map);
         }
@@ -1445,8 +1478,9 @@ public class ZegoExpressEngineEventHandler {
         public void onReceiveRealTimeSequentialData(ZegoRealTimeSequentialDataManager manager, byte[] data, String streamID) {
             super.onReceiveRealTimeSequentialData(manager, data, streamID);
 
+            // High frequency callbacks do not log
+
             int realTimeSequentialDataManagerIndex = manager.getIndex();
-            ZegoLog.log("[onReceiveRealTimeSequentialData] realTimeSequentialDataManagerIndex: %d, streamID: %s", realTimeSequentialDataManagerIndex, streamID);
 
             if (guardSink()) { return; }
             HashMap<String, Object> map = new HashMap<>();

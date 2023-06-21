@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
-
   /// Get a list of screens or windows in a screen.
   ///
   /// Available since: 3.1.0
@@ -18,8 +16,13 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// - [iconWidth] Get the width of the icon corresponding to the program. (unit is pixel)
   /// - [iconHeight] Get the height of the icon corresponding to the program. (unit is pixel)
   /// - Returns List of capture source info objects.
-  Future<List<ZegoScreenCaptureSourceInfo>> getScreenCaptureSources(int thumbnailWidth, int thumbnailHeight, int iconWidth, int iconHeight) async {
-    return await ZegoExpressImpl.instance.getScreenCaptureSources(thumbnailWidth, thumbnailHeight, iconWidth, iconHeight);
+  Future<List<ZegoScreenCaptureSourceInfo>> getScreenCaptureSources(
+      int thumbnailWidth,
+      int thumbnailHeight,
+      int iconWidth,
+      int iconHeight) async {
+    return await ZegoExpressImpl.instance.getScreenCaptureSources(
+        thumbnailWidth, thumbnailHeight, iconWidth, iconHeight);
   }
 
   /// Create the screen capture source
@@ -32,8 +35,10 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// - [sourceId] The specified screen ID or window ID. Only macOS and windows platforms need to pass in this parameter.
   /// - [sourceType] The specified screen source type. Only macOS and windows platforms need to pass in this parameter.
   /// - Returns The screen capture instance, null will be returned when the maximum number is exceeded.
-  Future<ZegoScreenCaptureSource?> createScreenCaptureSource({int? sourceId, ZegoScreenCaptureSourceType? sourceType}) async {
-    return await ZegoExpressImpl.instance.createScreenCaptureSource(sourceId: sourceId, sourceType: sourceType);
+  Future<ZegoScreenCaptureSource?> createScreenCaptureSource(
+      {int? sourceId, ZegoScreenCaptureSourceType? sourceType}) async {
+    return await ZegoExpressImpl.instance
+        .createScreenCaptureSource(sourceId: sourceId, sourceType: sourceType);
   }
 
   /// Destroy the screen capture source instance
@@ -45,8 +50,8 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// Restrictions: After destroy the instance, you need to release the [ZegoScreenCaptureSource] instance object you hold by yourself, and don’t call the function of this instance object after the destruction.
   ///
   /// - [source] The screen capture source instance to be destroyed.
-  Future<void> destroyScreenCaptureSource(ZegoScreenCaptureSource source) async {
+  Future<void> destroyScreenCaptureSource(
+      ZegoScreenCaptureSource source) async {
     return await ZegoExpressImpl.instance.destroyScreenCaptureSource(source);
   }
-
 }

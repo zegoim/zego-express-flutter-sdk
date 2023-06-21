@@ -50,6 +50,9 @@ class ZegoErrorCode {
   /// Description: The backend configuration of the server is incorrect. <br>Cause: 1. The domain name configuration is incorrect; 2. The media network is abnormal; 3. The media network link is empty. <br>Solutions: Please contact ZEGO technical support.
   static const int CommonAppFlexiableConfigError = 1000038;
 
+  /// Description: Server access denied. <br>Cause: 1.The APP has enabled the restriction of access from foreign IP addresses, and the current client is outside of the domain. <br>Solutions: Please contact ZEGO technical support.
+  static const int CommonAppAccessDeniedError = 1000039;
+
   /// Description: Incorrect CDN address. <br>Cause: The set CDN URL is not a standard RTMP or FLV protocol. <br>Solutions: Please check the supported protocol and format.
   static const int CommonCdnUrlInvalid = 1000055;
 
@@ -281,8 +284,17 @@ class ZegoErrorCode {
   /// Description: The performance of object segmentation device is not enough.<br>Caution: The performance of device is not enough.<br>Solutions: Please replace the device.
   static const int PublisherObjectSegmentationPerformanceWarning = 1003011;
 
-  /// Description: This device does not support object segmentation.<br>Caution: The device is not supported.<br>Solutions, or the object segmentation of multiple channels is enabled: Please change the device or only open the object segmentation of one channel.
+  /// Description: This device does not support object segmentation.<br>Caution: The device is not supported, or the object segmentation of multiple channels is enabled.<br>Solutions: Please change the device or only open the object segmentation of one channel.
   static const int PublisherObjectSegmentationDeviceNotSupport = 1003012;
+
+  /// Description: Object segmentation unauthorized.<br>Caution: The appid is not configured with object segmentation.<br>Solutions: Please contact ZEGO technical support to configure the object segmentation function.
+  static const int PublisherObjectSegmentationNoAuth = 1003013;
+
+  /// Description: Object segmentation parameter error.<br>Caution: Object segmentation is set to green screen type, background blur is not allowed.<br>Solutions: Please use the correct parameters to enable object segmentation.
+  static const int PublisherObjectSegmentationParamError = 1003014;
+
+  /// Description: Object segmentation background image loading error.<br>Caution: The path of the background image is incorrect, or the content of the image is incorrect.<br>Solutions: Please set the correct background image.
+  static const int PublisherObjectSegmentationImageLoadError = 1003015;
 
   /// Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal.
   static const int PublisherErrorNetworkInterrupt = 1003020;
@@ -637,6 +649,9 @@ class ZegoErrorCode {
   /// Description: The MediaPlayer failed to play the media. <br>Cause: The resource file is not loaded. <br> Solutions: The media player loads the media resource [loadResource] before starting.
   static const int MediaPlayerNoFilePath = 1008003;
 
+  /// Description: The specified media file path is too long. <br>Cause: The specified media file path is too long. The maximum length should be less than 1024 bytes. <br> Solutions: Please specify media file path less than 1024 bytes.
+  static const int MediaPlayerFilePathTooLong = 1008004;
+
   /// Description: The MediaPlayer failed to load the file. <br>Cause: File formats are not supported. <br> Solutions: Files in this format are not supported, please use files in the supporting format.
   static const int MediaPlayerFileFormatError = 1008005;
 
@@ -657,6 +672,9 @@ class ZegoErrorCode {
 
   /// Description: The copyrighted music resource has expired. <br>Cause: The copyrighted music resource has expired. <br>Solutions: Please request the copyrighted music resource again.
   static const int MediaPlayerResourceExpired = 1008011;
+
+  /// Description: The copyrighted music resource ID is too long. <br>Cause: The copyrighted music resource ID is too long. The maximum length should be less than 512 bytes. <br> Solutions: Please copyrighted music resource ID less than 1024 bytes.
+  static const int MediaPlayerResourceIdTooLong = 1008012;
 
   /// Description: The MediaPlayer failed to seek. <br>Cause: The file hasn't been loaded yet. <br> Solutions: The media player loads the media resource [loadResource] before seeking [seekTo].
   static const int MediaPlayerSeekError = 1008016;
@@ -982,11 +1000,32 @@ class ZegoErrorCode {
   /// Description: The number of times the resource is free in the room is exhausted. <br>Cause: 1. The shared resources cannot be obtained again; 2. Shared resources have been obtained. <br>Solutions: Please use the acquired resources, or use [requestResource] to share resources again.
   static const int CopyrightedMusicGetSharedResourceTimesOver = 1017051;
 
-  /// Description: The vendor is unavailable. <br>Cause: The vendor ID is passed in incorrectly or the corresponding copyright vendor is not activated. <br>Solutions: Please pass in the correct vendor ID.
+  /// Description: The vendor is unavailable. <br>Cause: The corresponding copyright party has not been activated. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorIdNotAvaliable = 1017052;
 
   /// Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorNotSupportFunction = 1017053;
+
+  /// Description: Vendor ID invalid. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
+  static const int CopyrightedMusicVendorIdInvalid = 1017071;
+
+  /// Description: This vendor does not support this song ID. <br>Cause: This song ID does not exist in the copyright music library. <br>Solutions: Please pass in the correct song ID.
+  static const int CopyrightedMusicSongIdNotSupport = 1017072;
+
+  /// Description: master ID invalid. <br>Cause: When billing by owner is selected,  master ID is empty. <br>Solutions: Please pass in the correct master ID.
+  static const int CopyrightedMusicMasterIdInvalid = 1017073;
+
+  /// Description: The page parameter is invalid for multiple copyright searches. <br>Cause: The page parameter must be 1 when multiple rights search is called for the first time. <br>Solutions: Please pass in the correct page.
+  static const int CopyrightedMusicPageInvalid = 1017074;
+
+  /// Description: resource has no pitch. <br>Cause: resource has no pitch. <br>Solutions: Please pass in the correct song ID.
+  static const int CopyrightedMusicNoPitch = 1017075;
+
+  /// Description: scene ID invalid. <br>Cause: scene ID invalid. <br>Solutions: Please pass in the scene ID corresponding to the opened scene.
+  static const int CopyrightedMusicSceneIdInvalid = 1017076;
+
+  /// Description: top ID invalid. <br>Cause: An unsupported top ID was passed in when fetching chart songs. <br>Solutions: Please pass in the correct top ID.
+  static const int CopyrightedMusicTopIdInvalid = 1017077;
 
   /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicNotSupportMethod = 1017095;

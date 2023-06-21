@@ -47,6 +47,8 @@ protected:
 
     void onApiCalledResult(int errorCode, const std::string& funcName, const std::string& info) override;
 
+    void onFatalError(int errorCode) override;
+
     void onEngineStateUpdate(EXPRESS::ZegoEngineState state) override;
 
     void onRoomStateUpdate(const std::string& roomID, EXPRESS::ZegoRoomState state, int errorCode, const std::string& extendedData) override;

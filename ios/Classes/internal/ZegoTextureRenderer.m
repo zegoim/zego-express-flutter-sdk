@@ -55,8 +55,9 @@
 
 - (CVPixelBufferRef)copyPixelBuffer {
     @synchronized (self) {
-        if (_lastPixelBuffer)
-        CVPixelBufferRetain(_lastPixelBuffer);
+        if (_lastPixelBuffer) {
+            CVPixelBufferRetain(_lastPixelBuffer);
+        }
         return _lastPixelBuffer;
     }
 }

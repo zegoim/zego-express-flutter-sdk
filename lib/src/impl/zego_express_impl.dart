@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +13,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.4.2";
+  static String pluginVersion = "3.6.0";
 }
 
 class ZegoExpressImpl {
@@ -616,13 +615,20 @@ class ZegoExpressImpl {
     });
   }
 
-  Future<void> enableVideoObjectSegmentation(
-      bool enable, ZegoObjectSegmentationType type,
-      {ZegoPublishChannel? channel}) async {
+  Future<void> enableVideoObjectSegmentation(bool enable,
+      ZegoObjectSegmentationConfig config, ZegoPublishChannel channel) async {
     return await _channel.invokeMethod('enableVideoObjectSegmentation', {
       'enable': enable,
-      'type': type.index,
-      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+      'config': {
+        'objectSegmentationType': config.objectSegmentationType.index,
+        'backgroundConfig': {
+          'processType': config.backgroundConfig.processType.index,
+          'color': config.backgroundConfig.color,
+          'imageURL': config.backgroundConfig.imageURL,
+          'blurLevel': config.backgroundConfig.blurLevel.index
+        }
+      },
+      'channel': channel.index
     });
   }
 
@@ -1926,6 +1932,12 @@ class ZegoExpressImpl {
             map['errorCode'], map['funcName'], map['info']);
         break;
 
+      case 'onFatalError':
+        if (ZegoExpressEngine.onFatalError == null) return;
+
+        ZegoExpressEngine.onFatalError!(map['errorCode']);
+        break;
+
       case 'onEngineStateUpdate':
         if (ZegoExpressEngine.onEngineStateUpdate == null) return;
 
@@ -2102,8 +2114,7 @@ class ZegoExpressImpl {
         break;
 
       case 'onPublisherSendAudioFirstFrame':
-        if (ZegoExpressEngine.onPublisherSendAudioFirstFrame == null)
-          return;
+        if (ZegoExpressEngine.onPublisherSendAudioFirstFrame == null) return;
 
         ZegoExpressEngine.onPublisherSendAudioFirstFrame!();
         break;
@@ -2117,8 +2128,7 @@ class ZegoExpressImpl {
         break;
 
       case 'onPublisherSendVideoFirstFrame':
-        if (ZegoExpressEngine.onPublisherSendVideoFirstFrame == null)
-          return;
+        if (ZegoExpressEngine.onPublisherSendVideoFirstFrame == null) return;
 
         ZegoExpressEngine.onPublisherSendVideoFirstFrame!(
             ZegoPublishChannel.values[map['channel']]);
@@ -2179,15 +2189,16 @@ class ZegoExpressImpl {
             map['streamID'],
             map['extraInfo']);
         break;
-      // case 'onVideoObjectSegmentationStateChanged':
-      //   if (ZegoExpressEngine.onVideoObjectSegmentationStateChanged == null)
-      //     return;
 
-      //   ZegoExpressEngine.onVideoObjectSegmentationStateChanged!(
-      //       ZegoObjectSegmentationState.values[map['state']],
-      //       ZegoPublishChannel.values[map['channel']],
-      //       map['errorCode']);
-      //   break;
+      case 'onVideoObjectSegmentationStateChanged':
+        if (ZegoExpressEngine.onVideoObjectSegmentationStateChanged == null)
+          return;
+
+        ZegoExpressEngine.onVideoObjectSegmentationStateChanged!(
+            ZegoObjectSegmentationState.values[map['state']],
+            ZegoPublishChannel.values[map['channel']],
+            map['errorCode']);
+        break;
 
       /* Player */
 
@@ -2746,16 +2757,14 @@ class ZegoExpressImpl {
         }
         break;
       case 'onMediaPlayerFirstFrameEvent':
-        if (ZegoExpressEngine.onMediaPlayerFirstFrameEvent == null)
-          return;
+        if (ZegoExpressEngine.onMediaPlayerFirstFrameEvent == null) return;
 
         int? mediaPlayerIndex = map['mediaPlayerIndex'];
         ZegoMediaPlayer? mediaPlayer =
             ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
         if (mediaPlayer != null) {
           ZegoExpressEngine.onMediaPlayerFirstFrameEvent!(
-              mediaPlayer, 
-              ZegoMediaPlayerFirstFrameEvent.values[map['event']]);
+              mediaPlayer, ZegoMediaPlayerFirstFrameEvent.values[map['event']]);
         }
         break;
       /* AudioEffectPlayer */
@@ -2931,6 +2940,14 @@ class ZegoExpressImpl {
                   double.parse(map['windowRect']['width'].toString()),
                   double.parse(map['windowRect']['height'].toString())));
         }
+        break;
+
+      case 'onMobileScreenCaptureExceptionOccurred':
+        if (ZegoExpressEngine.onMobileScreenCaptureExceptionOccurred == null)
+          return;
+
+        ZegoExpressEngine.onMobileScreenCaptureExceptionOccurred!(
+            ZegoScreenCaptureExceptionType.values[map['exceptionType']]);
         break;
 
       default:
@@ -3250,31 +3267,45 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         {'index': _index, 'enable': enable, 'format': format.index});
   }
 
-  // @override
-  // Future<void> enableBlockData(bool enable, int blockSize) async {
-  //   return await ZegoExpressImpl._channel.invokeMethod(
-  //       'mediaPlayerEnableBlockData',
-  //       {'index': _index, 'enable': enable, 'blockSize': blockSize});
-  // }
+  @override
+  Future<void> enableBlockData(bool enable, int blockSize) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableBlockData',
+        {'index': _index, 'enable': enable, 'blockSize': blockSize});
+  }
 
-  // @override
-  // Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
-  //     ZegoMediaPlayerResource resource) async {
-  //   final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
-  //       .invokeMethod('mediaPlayerLoadResourceWithConfig', {
-  //     'index': _index,
-  //     'resource': {
-  //       'resourceID': resource.resourceID ?? '',
-  //       'startPosition': resource.startPosition ?? 0,
-  //       'loadType': resource.loadType.index,
-  //       'filePath': resource.filePath ?? '',
-  //       'alphaLayout':
-  //           resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
-  //       'memory': resource.memory ?? Uint8List.fromList([]),
-  //     }
-  //   });
-  //   return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
-  // }
+  @override
+  Future<void> updatePosition(Float32List position) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerUpdatePosition', {'index': _index, 'position': position});
+  }
+
+  @override
+  Future<ZegoMediaPlayerMediaInfo> getMediaInfo() async {
+    final map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetMediaInfo', {'index': _index});
+    return ZegoMediaPlayerMediaInfo(
+        map['width'], map['height'], map['frameRate']);
+  }
+
+  @override
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+      ZegoMediaPlayerResource resource) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerLoadResourceWithConfig', {
+      'index': _index,
+      'resource': {
+        'resourceID': resource.resourceID ?? '',
+        'startPosition': resource.startPosition ?? 0,
+        'loadType': resource.loadType.index,
+        'filePath': resource.filePath ?? '',
+        'alphaLayout':
+            resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
+        'memory': resource.memory ?? Uint8List.fromList([]),
+      }
+    });
+    return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
+  }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
@@ -3428,6 +3459,13 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
     return await ZegoExpressImpl._channel.invokeMethod(
         'audioEffectPlayerSetPlaySpeed',
         {'index': _index, 'audioEffectID': audioEffectID, 'speed': speed});
+  }
+  
+  @override
+  Future<void> updatePosition(int audioEffectID, Float32List position) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerUpdatePosition',
+        {'index': _index, 'audioEffectID': audioEffectID, 'position': position});
   }
 }
 
@@ -3704,7 +3742,8 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
             ZegoCopyrightedMusicVendorID
                 .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
-        'masterID': config.masterID ?? ''
+        'masterID': config.masterID ?? '',
+        'sceneID': config.sceneID ?? 0
       }
     });
     return ZegoCopyrightedMusicRequestAccompanimentResult(
@@ -3723,7 +3762,8 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
             ZegoCopyrightedMusicVendorID
                 .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
-        'masterID': config.masterID ?? ''
+        'masterID': config.masterID ?? '',
+        'sceneID': config.sceneID ?? 0
       }
     });
     return ZegoCopyrightedMusicRequestAccompanimentClipResult(
@@ -3742,7 +3782,8 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
             ZegoCopyrightedMusicVendorID
                 .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
-        'masterID': config.masterID ?? ''
+        'masterID': config.masterID ?? '',
+        'sceneID': config.sceneID ?? 0
       }
     });
     return ZegoCopyrightedMusicRequestSongResult(
@@ -3822,7 +3863,8 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
             ZegoCopyrightedMusicVendorID
                 .ZegoCopyrightedMusicVendorDefault.value,
         'roomID': config.roomID ?? '',
-        'masterID': config.masterID ?? ''
+        'masterID': config.masterID ?? '',
+        'sceneID': config.sceneID ?? 0
       },
       'type': type.index
     });
@@ -3872,8 +3914,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
           : {
               'captureAudio': config.captureAudio,
               'captureVideo': config.captureVideo,
-              'applicationVolume': config.applicationVolume,
-              'microphoneVolume': config.microphoneVolume,
+              'applicationVolume': config.applicationVolume ?? 100,
+              'microphoneVolume': config.microphoneVolume ?? 100,
+              'audioParam': config.audioParam == null
+                  ? null
+                  : {
+                      'sampleRate': config.audioParam!.sampleRate.value,
+                      'channel': config.audioParam!.channel.index
+                    }
             },
       'inApp': inApp,
       'index': _index
@@ -3930,5 +3978,16 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
     return await ZegoExpressImpl._channel.invokeMethod(
         'setAppGroupIDScreenCaptureSource',
         {'groupID': groupID, 'index': _index});
+  }
+
+  @override
+  Future<Rect> getCaptureSourceRect() async {
+    var map = await ZegoExpressImpl._channel.invokeMethod(
+        'getCaptureSourceRectScreenCaptureSource', {'index': _index});
+    return Rect.fromLTWH(
+        double.parse(map['x'].toString()),
+        double.parse(map['y'].toString()),
+        double.parse(map['width'].toString()),
+        double.parse(map['height'].toString()));
   }
 }

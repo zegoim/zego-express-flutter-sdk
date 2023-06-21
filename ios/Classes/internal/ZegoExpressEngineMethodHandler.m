@@ -17,6 +17,7 @@
 #import "ZegoCustomVideoRenderManager.h"
 #import "ZegoCustomVideoProcessManager.h"
 #import "ZegoMediaPlayerVideoManager.h"
+#import "ZegoMediaPlayerBlockDataManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -1184,10 +1185,25 @@
 - (void)enableVideoObjectSegmentation:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
-    int type = [ZegoUtils intValue:call.arguments[@"type"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    
+    ZegoObjectSegmentationConfig *config = [[ZegoObjectSegmentationConfig alloc] init];
+    NSDictionary *configMap = call.arguments[@"config"];
+    if (configMap) {
+        config.objectSegmentationType = (ZegoObjectSegmentationType)[ZegoUtils intValue:configMap[@"objectSegmentationType"]];
+        
+        NSDictionary *backgroundConfigMap = configMap[@"backgroundConfig"];
+        if (backgroundConfigMap) {
+            ZegoBackgroundConfig *backgroundConfig = [[ZegoBackgroundConfig alloc] init];
+            backgroundConfig.processType = (ZegoBackgroundProcessType)[ZegoUtils intValue:backgroundConfigMap[@"processType"]];
+            backgroundConfig.blurLevel = (ZegoBackgroundBlurLevel)[ZegoUtils intValue:backgroundConfigMap[@"blurLevel"]];
+            backgroundConfig.color = [ZegoUtils intValue:backgroundConfigMap[@"color"]];
+            backgroundConfig.imageURL = backgroundConfigMap[@"imageURL"];
+            config.backgroundConfig = backgroundConfig;
+        }
+    }
 
-    [[ZegoExpressEngine sharedEngine] enableVideoObjectSegmentation:enable type:(ZegoObjectSegmentationType)type channel:(ZegoPublishChannel)channel];
+    [[ZegoExpressEngine sharedEngine] enableVideoObjectSegmentation:enable config:config channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
@@ -3590,18 +3606,18 @@
 
 - (void)mediaPlayerEnableBlockData:(FlutterMethodCall *)call result:(FlutterResult)result {
 
-    // NSNumber *index = call.arguments[@"index"];
-    // ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+     NSNumber *index = call.arguments[@"index"];
+     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
-    // if (mediaPlayer) {
-    //     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-    //     unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
-    //     if (enable) {
-    //         [mediaPlayer setBlockDataHandler:(id<ZegoMediaPlayerBlockDataHandler>)[ZegoMediaPlayerVideoManager sharedInstance] blockSize:blockSize];
-    //     } else {
-    //         [mediaPlayer setBlockDataHandler:nil blockSize:blockSize];
-    //     }
-    // }
+     if (mediaPlayer) {
+         BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+         unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
+         if (enable) {
+             [mediaPlayer setBlockDataHandler:(id<ZegoMediaPlayerBlockDataHandler>)[ZegoMediaPlayerBlockDataManager sharedInstance] blockSize:blockSize];
+         } else {
+             [mediaPlayer setBlockDataHandler:nil blockSize:blockSize];
+         }
+     }
 
     result(nil);
 }
@@ -3663,6 +3679,38 @@
 }
 
 #endif
+
+- (void)mediaPlayerUpdatePosition:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        FlutterStandardTypedData *positionArray = call.arguments[@"position"];
+        float position[3];
+        convertFloatArray(position, positionArray);
+        [mediaPlayer updatePosition:position];
+    }
+
+    result(nil);
+}
+
+- (void)mediaPlayerGetMediaInfo:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        ZegoMediaPlayerMediaInfo *info = mediaPlayer.getMediaInfo;
+        result(@{
+            @"width": @(info.width),
+            @"height": @(info.height),
+            @"frameRate": @(info.frameRate),
+        });
+    } else {
+        result(@{});
+    }
+}
 
 #pragma mark - AudioEffectPlayer
 
@@ -3948,6 +3996,26 @@
         result([FlutterError errorWithCode:[@"audioEffectPlayerSetPlaySpeed_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPlaySpeed` but can't find specific player" details:nil]);
     }
 }
+
+- (void)audioEffectPlayerUpdatePosition:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        FlutterStandardTypedData *positionArray = call.arguments[@"position"];
+        float position[3];
+        convertFloatArray(position, positionArray);
+        [audioEffectPlayer updatePosition:audioEffectID position:position];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerUpdatePosition_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerUpdatePosition` but can't find specific player" details:nil]);
+    }
+}
+
 
 
 #pragma mark - Record
@@ -4680,6 +4748,7 @@
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
         config.roomID = configMap[@"roomID"];
         config.masterID = configMap[@"masterID"];
+        config.sceneID = [ZegoUtils intValue:configMap[@"sceneID"]];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4706,6 +4775,7 @@
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
         config.roomID = configMap[@"roomID"];
         config.masterID = configMap[@"masterID"];
+        config.sceneID = [ZegoUtils intValue:configMap[@"sceneID"]];
         
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4732,6 +4802,7 @@
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
         config.roomID = configMap[@"roomID"];
         config.masterID = configMap[@"masterID"];
+        config.sceneID = [ZegoUtils intValue:configMap[@"sceneID"]];
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -4854,6 +4925,7 @@
         config.vendorID = (ZegoCopyrightedMusicVendorID)[ZegoUtils intValue:configMap[@"vendorID"]];
         config.roomID = configMap[@"roomID"];
         config.masterID = configMap[@"masterID"];
+        config.sceneID = [ZegoUtils intValue:configMap[@"sceneID"]];
         
         ZegoCopyrightedMusicResourceType type = (ZegoCopyrightedMusicResourceType)[ZegoUtils intValue:call.arguments[@"type"]];
         [self.copyrightedMusicInstance requestResource: config type: type callback:^(int errorCode, NSString *_Nonnull resource) {

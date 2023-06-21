@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import java.nio.*;
 
-public abstract class IZegoFlutterMediaPlayerVideoHandler {
+public interface IZegoFlutterMediaPlayerVideoHandler {
     /**
      * The callback triggered when the media player throws out video frame data.
      *
@@ -21,5 +21,5 @@ public abstract class IZegoFlutterMediaPlayerVideoHandler {
      * @param extraInfo Video frame extra info.
      */
     public void onVideoFrame(int mediaPlayerIndex, ByteBuffer[] data, int[] dataLength,
-                      ZGFlutterVideoFrameParam param, JSONObject extraInfo) {}
+                      ZGFlutterVideoFrameParam param, JSONObject extraInfo);
 }

@@ -13,6 +13,7 @@
 #include <memory>
 #include <sstream>
 
+#include "ZegoLog.h"
 #include "internal/ZegoExpressEngineEventHandler.h"
 #include "internal/ZegoExpressEngineMethodHandler.h"
 
@@ -250,6 +251,7 @@ static const std::map<
         EngineMethodHandler(audioEffectPlayerLoadResource),
         EngineMethodHandler(audioEffectPlayerUnloadResource),
         EngineMethodHandler(audioEffectPlayerSetPlaySpeed),
+        EngineMethodHandler(audioEffectPlayerUpdatePosition),
 
         EngineMethodHandler(createMediaPlayer),
         EngineMethodHandler(destroyMediaPlayer),
@@ -293,6 +295,8 @@ static const std::map<
         EngineMethodHandler(mediaPlayerEnableVideoData),
         EngineMethodHandler(mediaPlayerEnableBlockData),
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
+        EngineMethodHandler(mediaPlayerUpdatePosition),
+        EngineMethodHandler(mediaPlayerGetMediaInfo),
 
         // Copyrighted Music
         EngineMethodHandler(createCopyrightedMusic),
@@ -362,6 +366,7 @@ static const std::map<
         EngineMethodHandler(updateCaptureSourceScreenCaptureSource),
         EngineMethodHandler(startCaptureScreenCaptureSource),
         EngineMethodHandler(stopCaptureScreenCaptureSource),
+        EngineMethodHandler(getCaptureSourceRectScreenCaptureSource),
 
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),
@@ -452,6 +457,8 @@ ZegoExpressEnginePlugin::OnCancelInternal(const flutter::EncodableValue *argumen
 void ZegoExpressEnginePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    ZF::logInfo("[DartCall][%s]", method_call.method_name().c_str());
 
     flutter::EncodableMap argument;
     if (std::holds_alternative<flutter::EncodableMap>(*method_call.arguments())) {

@@ -114,7 +114,16 @@ enum ZegoFeatureType {
   RangeAudio,
 
   /// Copy righted music feature.
-  CopyRightedMusic
+  CopyRightedMusic,
+
+  /// Video object segmentation feature.
+  VideoObjectSegmentation,
+
+  /// Range scene feature. (3.0.0 and above support)
+  RangeScene,
+
+  /// Screen capture feature. (3.1.0 and above support)
+  ScreenCapture
 }
 
 /// Language.
@@ -405,7 +414,10 @@ enum ZegoReverbPreset {
   VocalConcert,
 
   /// Gramophone reverb effect
-  GramoPhone
+  GramoPhone,
+
+  /// Enhanced KTV reverb effect. Provide KTV effect with more concentrated voice and better brightness. Compared with the original KTV reverb effect, the reverberation time is shortened and the dry-wet ratio is increased.
+  EnhancedKTV
 }
 
 /// Mode of Electronic Effects.
@@ -1245,7 +1257,7 @@ enum ZegoAudioSourceType {
   /// Using main channel as audio source. Ineffective when used in main channel. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface. The web platform does not currently support.
   MainPublishChannel,
 
-  /// Using screen capture as audio source. Typically used in mobile screen sharing scenarios, and this attribute is only supported on the iOS platform. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface.
+  /// Using screen capture as audio source. Typically used in mobile screen sharing scenarios. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface.
   ScreenCapture
 }
 
@@ -1633,6 +1645,39 @@ enum ZegoScreenCaptureSourceExceptionType {
   Failed
 }
 
+/// Screen capture source exception type. (only for Android)
+enum ZegoScreenCaptureExceptionType {
+  /// Unknown exception type.
+  Unknown,
+
+  /// The video capture system version does not support it, and Android only supports 5.0 and above.
+  VideoNotSupported,
+
+  /// The capture target fails, such as the monitor is unplugged and the window is closed.
+  AudioNotSupported,
+
+  /// Audio recording object creation failed. Possible reasons: 1. The audio recording permission is not enabled; 2. The allocated memory for audio recording is insufficient; 3. The creation of AudioRecord fails.
+  AudioCreateFailed,
+
+  /// MediaProjection request for dynamic permissions was denied.
+  MediaProjectionPermissionDenied,
+
+  /// Capture is not started. Need to start capturing with [startScreenCapture] first.
+  NotStartCapture,
+
+  /// Screen capture has already started, repeated calls failed. You need to stop the capture with [stopScreenCapture] first.
+  AlreadyStarted,
+
+  /// Failed to start the foreground service.
+  ForegroundServiceFailed,
+
+  /// Before starting screen capture, you need to call [setVideoSource], [setAudioSource] to specify the video and audio source `ScreenCapture`.
+  SourceNotSpecified,
+
+  /// System error exception. For example, low memory, etc.
+  SystemError
+}
+
 /// The state of the screen capture source window changes.
 enum ZegoScreenCaptureWindowState {
   /// The window is on the current screen, and the coordinate area changes.
@@ -1688,6 +1733,33 @@ enum ZegoObjectSegmentationState {
 
   /// Object segmentation turned on.
   On
+}
+
+/// Video background process type.
+enum ZegoBackgroundProcessType {
+  /// Background is transparent.
+  Transparent,
+
+  /// Fill the background with a solid color.
+  Color,
+
+  /// Blur background.
+  Blur,
+
+  /// The background is the specified image.
+  Image
+}
+
+/// Background blur level.
+enum ZegoBackgroundBlurLevel {
+  /// Background blur level low.
+  Low,
+
+  /// Background blur level medium.
+  Medium,
+
+  /// Background blur level high.
+  High
 }
 
 /// Log config.
@@ -2049,7 +2121,7 @@ class ZegoStream {
   /// User object instance.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ZegoUser user;
 
-  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', ' '.
+  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', '_'.
   String streamID;
 
   /// Stream extra info
@@ -2672,7 +2744,7 @@ class ZegoMixerImageInfo {
 ///
 /// Configure the mix stream input stream ID, type, and the layout
 class ZegoMixerInput {
-  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', ' '.
+  /// Stream ID, a string of up to 256 characters. Caution: You cannot include URL keywords, otherwise publishing stream and playing stream will fails. Only support numbers, English characters and '-', '_'.
   String streamID;
 
   /// Mix stream content type
@@ -2800,8 +2872,12 @@ class ZegoMixerWhiteboard {
   /// Whiteboard z-order.
   int zOrder;
 
+  /// Whiteboard background color. Defaule is 0xF1F3F400 (gray). The color value corresponding to RGBA is 0xRRGGBBAA, and setting the transparency of the background color is currently not supported. The AA in 0xRRGGBBAA is 00. For example, select RGB as \#87CEFA as the background color, this parameter passes 0x87CEFA00.F
+  int? backgroundColor;
+
   ZegoMixerWhiteboard(this.whiteboardID, this.horizontalRatio,
-      this.verticalRatio, this.isPPTAnimation, this.layout, this.zOrder);
+      this.verticalRatio, this.isPPTAnimation, this.layout, this.zOrder,
+      {this.backgroundColor});
 
   /// Create a mixer whiteboard object
   ZegoMixerWhiteboard.defaultConfig()
@@ -2810,7 +2886,8 @@ class ZegoMixerWhiteboard {
         verticalRatio = 9,
         isPPTAnimation = false,
         layout = Rect.zero,
-        zOrder = 0;
+        zOrder = 0,
+        backgroundColor = 0xF1F3F400;
 
   Map<String, dynamic> toMap() {
     return {
@@ -2824,7 +2901,8 @@ class ZegoMixerWhiteboard {
         'right': this.layout.right.toInt(),
         'bottom': this.layout.bottom.toInt()
       },
-      'zOrder': this.zOrder
+      'zOrder': this.zOrder,
+      'backgroundColor': this.backgroundColor
     };
   }
 }
@@ -3325,8 +3403,11 @@ class ZegoCopyrightedMusicRequestConfig {
   /// The master ID, which must be passed when the billing mode is billed by host. Indicate which homeowner to order song/accompaniment/accompaniment clip/accompaniment segment.
   String? masterID;
 
+  /// The scene ID, indicate the actual business. For details, please consult ZEGO technical support.
+  int? sceneID;
+
   ZegoCopyrightedMusicRequestConfig(this.songID, this.mode,
-      {this.vendorID, this.roomID, this.masterID});
+      {this.vendorID, this.roomID, this.masterID, this.sceneID});
 }
 
 /// The configuration of getting shared resource.
@@ -3352,14 +3433,25 @@ class ZegoScreenCaptureConfig {
   /// Whether to capture audio when screen capture. The default is true.
   bool captureAudio;
 
-  /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
-  int microphoneVolume;
+  /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
+  int? microphoneVolume;
 
-  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100.
-  int applicationVolume;
+  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
+  int? applicationVolume;
+
+  /// Set the audio capture parameters during screen capture. (only for Android)
+  ZegoAudioFrameParam? audioParam;
 
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
-      this.microphoneVolume, this.applicationVolume);
+      {this.microphoneVolume, this.applicationVolume, this.audioParam});
+
+  ZegoScreenCaptureConfig.defaultConfig()
+      : captureVideo = true,
+        captureAudio = true,
+        microphoneVolume = 100,
+        applicationVolume = 100,
+        audioParam = ZegoAudioFrameParam(
+            ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo);
 }
 
 /// The screen captures source information.
@@ -3435,7 +3527,7 @@ class ZegoMediaPlayerResource {
       this.memory,
       this.resourceID});
 
-  /// Create a mix stream task object with TaskID
+  /// Constructs a media player resource object by default.
   ZegoMediaPlayerResource.defaultConfig()
       : loadType = ZegoMultimediaLoadType.FilePath,
         startPosition = 0,
@@ -3443,6 +3535,74 @@ class ZegoMediaPlayerResource {
         filePath = '',
         memory = Uint8List.fromList([]),
         resourceID = '';
+}
+
+/// Background config.
+///
+/// It is used to configure background when the object segmentation is turned on.
+class ZegoBackgroundConfig {
+  /// Background process type.
+  ZegoBackgroundProcessType processType;
+
+  /// Background color, the format is 0xRRGGBB, default is black, which is 0x000000
+  int color;
+
+  /// Background image URL.
+  String imageURL;
+
+  /// Background blur level.
+  ZegoBackgroundBlurLevel blurLevel;
+
+  ZegoBackgroundConfig(
+      this.processType, this.color, this.imageURL, this.blurLevel);
+
+  /// Constructs a background image configuration object by default.
+  ZegoBackgroundConfig.defaultConfig()
+      : processType = ZegoBackgroundProcessType.Transparent,
+        color = 0,
+        imageURL = '',
+        blurLevel = ZegoBackgroundBlurLevel.Medium;
+}
+
+/// Object segmentation config.
+///
+/// It is used to configure parameters when the object segmentation is turned on.
+class ZegoObjectSegmentationConfig {
+  /// The type of object segmentation.
+  ZegoObjectSegmentationType objectSegmentationType;
+
+  /// Background config.
+  ZegoBackgroundConfig backgroundConfig;
+
+  ZegoObjectSegmentationConfig(
+      this.objectSegmentationType, this.backgroundConfig);
+
+  /// Constructs a background image configuration object by default.
+  ZegoObjectSegmentationConfig.defaultConfig()
+      : objectSegmentationType = ZegoObjectSegmentationType.AnyBackground,
+        backgroundConfig = ZegoBackgroundConfig.defaultConfig();
+}
+
+/// Media Infomration of media file.
+///
+/// Meida information such as video resolution of media file.
+class ZegoMediaPlayerMediaInfo {
+  /// Video resolution width.
+  int width;
+
+  /// Video resolution height.
+  int height;
+
+  /// Video frame rate.
+  int frameRate;
+
+  ZegoMediaPlayerMediaInfo(this.width, this.height, this.frameRate);
+
+  /// Constructs a media player information object by default.
+  ZegoMediaPlayerMediaInfo.defaultInfo()
+      : width = 0,
+        height = 0,
+        frameRate = 0;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -3458,7 +3618,7 @@ abstract class ZegoRealTimeSequentialDataManager {
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
   ///   1. Need to be globally unique within the entire AppID (Note that it cannot be the same as the stream ID passed in [startPublishingStream]). If in the same AppID, different users publish each stream and the stream ID is the same, which will cause the user to publish the stream failure. You cannot include URL keywords, otherwise publishing stream and playing stream will fails.
-  ///   2. Only support numbers, English characters and '-', ' '.
+  ///   2. Only support numbers, English characters and '-', '_'.
   Future<void> startBroadcasting(String streamID);
 
   /// Stop broadcasting real-time sequential data stream.
@@ -3499,7 +3659,7 @@ abstract class ZegoRealTimeSequentialDataManager {
   ///
   /// - [streamID] Stream ID, a string of up to 256 characters.
   ///   Caution:
-  ///   Only support numbers, English characters and '-', ' '.
+  ///   Only support numbers, English characters and '-', '_'.
   Future<void> startSubscribing(String streamID);
 
   /// Stop subscribing real-time sequential data stream.
@@ -3521,7 +3681,7 @@ abstract class ZegoRealTimeSequentialDataManager {
 }
 
 abstract class ZegoMediaPlayer {
-  /// Load media resource.
+  /// Load local or network media resource.
   ///
   /// Available: since 1.3.4
   /// Description: Load media resources.
@@ -3533,7 +3693,7 @@ abstract class ZegoMediaPlayer {
   /// - Returns Callback result of loading media resource.
   Future<ZegoMediaPlayerLoadResourceResult> loadResource(String path);
 
-  /// Load media resource.
+  /// Load local or network media resource and specify the start position.
   ///
   /// Available: since 2.14.0
   /// Description: Load media resources, and specify the progress, in milliseconds, at which playback begins.
@@ -3548,7 +3708,7 @@ abstract class ZegoMediaPlayer {
   Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithPosition(
       String path, int startPosition);
 
-  /// Load media resource.
+  /// Load binary audio resource.
   ///
   /// Available: since 2.10.0
   /// Description: Load binary audio data.
@@ -3577,6 +3737,19 @@ abstract class ZegoMediaPlayer {
   Future<ZegoMediaPlayerLoadResourceResult>
       loadCopyrightedMusicResourceWithPosition(
           String resourceID, int startPosition);
+
+  /// Load local or network media resource with config.
+  ///
+  /// Available: since 3.3.0
+  /// Description: Load media resources.
+  /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
+  /// When to call: Called after the engine [createEngine] has been initialized and the media player [createMediaPlayer] has been created.
+  /// Related APIs: Support for loading resources through the [loadResourceWithPosition] or [loadResourceFromMediaData] interface.
+  ///
+  /// - [resource] Multimedia resources that need to be loaded.
+  /// - Returns Callback result of loading media resource.
+  Future<ZegoMediaPlayerLoadResourceResult> loadResourceWithConfig(
+      ZegoMediaPlayerResource resource);
 
   /// Start playing.
   ///
@@ -3613,7 +3786,7 @@ abstract class ZegoMediaPlayer {
   /// Restrictions: None.
   /// Related APIs: Resources can be loaded through the [loadResource] function.
   ///
-  /// - [speed] The speed of play. The range is 0.5 ~ 2.0. The default is 1.0.
+  /// - [speed] The speed of play. The range is 0.5 ~ 4.0. The default is 1.0.
   Future<void> setPlaySpeed(double speed);
 
   /// Whether to mix the player's sound into the stream being published.
@@ -3749,6 +3922,18 @@ abstract class ZegoMediaPlayer {
   /// - [format] Video frame format for video data
   Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format);
 
+  /// Whether to throw block data of the media resource.
+  ///
+  /// Available since: 3.4.0
+  /// Description: Whether to throw block data of the media resource.
+  /// When to call: After the [ZegoMediaPlayer] instance created, before playing media resources.
+  /// Restrictions: None.
+  /// Caution: When it is no longer necessary to listen to the callback for data decryption, please call this function again to clear the handler.
+  ///
+  /// - [enable] Throw out the media resource block data tag, which is false by default.
+  /// - [blockSize] The size of the encrypted data block. The bufferSize in the OnBlockData callback is an integer multiple of blockSize.
+  Future<void> enableBlockData(bool enable, int blockSize);
+
   /// Take a screenshot of the current playing screen of the media player.
   ///
   /// Only in the case of calling [setPlayerCanvas] to set the display controls and the playback state, can the screenshot be taken normally
@@ -3830,6 +4015,25 @@ abstract class ZegoMediaPlayer {
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Restrictions: The interface call takes effect only when the media player ends playing.
   Future<void> clearView();
+
+  /// Get meida information such as video resolution from media file.
+  ///
+  /// Available since: 3.6.0
+  /// Description: Get meida information such as video resolution from media file.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: None.
+  Future<ZegoMediaPlayerMediaInfo> getMediaInfo();
+
+  /// Update the position of the media player (audio source).
+  ///
+  /// Available since: 3.6.0
+  /// Description: Update the position of the media player (audio source).
+  /// Use cases: The media player also needs to have 3D spatial sound.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: This interface needs to be used in conjunction with the RangeAudio/RangeScene module. This interface can only be called successfully after the RangeAudio/RangeScene module enables 3D sound effects.
+  ///
+  /// - [position] The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3.
+  Future<void> updatePosition(Float32List position);
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -3993,6 +4197,18 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - [audioEffectID] ID for the audio effect loaded.
   Future<void> unloadResource(int audioEffectID);
+
+  /// Update the position of the audio effect player (audio source).
+  ///
+  /// Available since: 3.6.0
+  /// Description: Update the position of the audio effect player (audio source).
+  /// Use cases: The audio effect player also needs to have 3D spatial sound.
+  /// When to call: Listen to the [onAudioEffectPlayStateUpdate] callback, please call this interface after the player state is ZegoAudioEffectPlayState.Playing and before ZegoAudioEffectPlayState.NoPlay/PlayEnded.
+  /// Restrictions: This interface needs to be used in conjunction with the RangeAudio/RangeScene module. This interface can only be called successfully after the RangeAudio/RangeScene module enables 3D sound effects.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [position] The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3.
+  Future<void> updatePosition(int audioEffectID, Float32List position);
 
   /// Get audio effect player index.
   ///
@@ -4239,7 +4455,7 @@ abstract class ZegoCopyrightedMusic {
   /// Get lyrics in krc format.
   ///
   /// Available since: 2.13.0
-  /// Description: Get lyrics in krc format, support parsing lyrics word by word.
+  /// Description: Get verbatim lyrics, support parsing lyrics word by word.
   /// Use case: Used to display lyrics word by word.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
@@ -4321,7 +4537,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Start the scoring function.After starting scoring, the scoring result OnCurrentPitchValueUpdate callback will be received according to the set callback time interval.
   /// Use case: Can be used to display the singing score on the view.
-  /// When to call: After obtaining krc verbatim lyrics and playing the accompaniment resources of copyrighted music.
+  /// When to call: After obtaining verbatim lyrics and playing the accompaniment resources of copyrighted music.
   /// Restrictions: Only support use this api after [startPublishingStream].
   ///
   /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
@@ -4509,7 +4725,7 @@ abstract class ZegoScreenCaptureSource {
   /// Description: Start screen capture.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
   ///
-  /// - [config] Screen capture parameter configuration, only available on the iOS platform.
+  /// - [config] Screen capture parameter configuration, only available on the iOS and Android platform.
   /// - [inApp] in-app capture only, only available on the iOS platform.
   Future<void> startCapture({ZegoScreenCaptureConfig? config, bool? inApp});
 
@@ -4518,6 +4734,15 @@ abstract class ZegoScreenCaptureSource {
   /// Available since: 3.1.0
   /// Description: Stop screen capture.
   Future<void> stopCapture();
+
+  /// Gets the rectangle of the screen capture source.
+  ///
+  /// Available since: 3.6.0
+  /// Description: Gets the rectangle of the screen capture source.
+  /// Restrictions: For window type sources only, only support in Windows/macOS.
+  ///
+  /// - Returns Rect information about the window resource.
+  Future<Rect> getCaptureSourceRect();
 
   /// Update the area captured by the screen.
   ///
@@ -4840,15 +5065,15 @@ class ZegoCopyrightedMusicGetLrcLyricResult {
   ZegoCopyrightedMusicGetLrcLyricResult(this.errorCode, this.lyrics);
 }
 
-/// Get krc format lyrics complete callback.
+/// Get verbatim lyrics complete callback.
 ///
 /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
-/// - [lyrics] krc format lyrics.
+/// - [lyrics] verbatim lyrics.
 class ZegoCopyrightedMusicGetKrcLyricByTokenResult {
   /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   int errorCode;
 
-  /// krc format lyrics.
+  /// verbatim lyrics.
   String lyrics;
 
   ZegoCopyrightedMusicGetKrcLyricByTokenResult(this.errorCode, this.lyrics);

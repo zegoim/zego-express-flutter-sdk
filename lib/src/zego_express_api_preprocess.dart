@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
-
   /// Whether to enable acoustic echo cancellation (AEC).
   ///
   /// Available since: 1.1.0
@@ -200,7 +198,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [bandIndex] Band frequency index, the value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
   /// - [bandGain] Band gain for the index, the value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
   Future<void> setAudioEqualizerGain(int bandIndex, double bandGain) async {
-    return await ZegoExpressImpl.instance.setAudioEqualizerGain(bandIndex, bandGain);
+    return await ZegoExpressImpl.instance
+        .setAudioEqualizerGain(bandIndex, bandGain);
   }
 
   /// Setting up the voice changer via preset enumeration.
@@ -305,8 +304,10 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo.
   /// - [angle] The angle of the sound source in virtual stereo in the range of 0 ~ 360, with 90 being directly in front, 0 / 180 / 270 corresponding to the rightmost and leftmost respectively.
   /// - [streamID] Stream ID.
-  Future<void> enablePlayStreamVirtualStereo(bool enable, int angle, String streamID) async {
-    return await ZegoExpressImpl.instance.enablePlayStreamVirtualStereo(enable, angle, streamID);
+  Future<void> enablePlayStreamVirtualStereo(
+      bool enable, int angle, String streamID) async {
+    return await ZegoExpressImpl.instance
+        .enablePlayStreamVirtualStereo(enable, angle, streamID);
   }
 
   /// Turn on or off the electronic sound effect.
@@ -323,8 +324,9 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [enable] true to turn on the electronic sound effect, false to turn off the electronic sound effect.
   /// - [mode] Mode of Electronic Effects reference.
   /// - [tonal] The starting pitch of an electric tone in a given mode, representing 12 semitones in one octave of the sound, in the range [0, 11].
-  Future<void> setElectronicEffects(bool enable, ZegoElectronicEffectsMode mode, int tonal) async {
-    return await ZegoExpressImpl.instance.setElectronicEffects(enable, mode, tonal);
+  Future<void> setElectronicEffects(
+      bool enable, ZegoElectronicEffectsMode mode, int tonal) async {
+    return await ZegoExpressImpl.instance
+        .setElectronicEffects(enable, mode, tonal);
   }
-
 }
