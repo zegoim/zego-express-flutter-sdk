@@ -1640,7 +1640,7 @@
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:windowState:windowRect:] state: %d, rect: %@", state, NSStringFromCGRect(rect));
+    ZGLog(@"[screenCapture:windowState:windowRect:] state: %d, rect: %@", state, NSStringFromRect(rect));
     
     GUARD_SINK
     
