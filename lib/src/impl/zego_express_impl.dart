@@ -50,7 +50,7 @@ class ZegoExpressImpl {
     use &= !kIsWindows;
     // TODO: PlatformView support on macOS has a crash issue, don't use it now
     // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= !kIsMacOS;
+    use &= kIsMacOS;
     return use;
   }
 

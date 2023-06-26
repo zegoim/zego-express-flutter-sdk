@@ -4990,6 +4990,25 @@
     });
 }
 
+- (void)getCaptureSourceRectScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        CGRect rect = [screenCaptureSource getCaptureSourceRect];
+        
+        NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+        resultMap[@"x"] = @(rect.origin.x);
+        resultMap[@"y"] = @(rect.origin.y);
+        resultMap[@"width"] = @(rect.size.width);
+        resultMap[@"height"] = @(rect.size.height);
+        result(resultMap);
+    } else {
+        result(nil);
+    }
+}
+
 - (void)createScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (!self.screenCaptureSouceMap) {
