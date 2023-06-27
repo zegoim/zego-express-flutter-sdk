@@ -816,7 +816,7 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
     }
 
     bool hasChannel = false;
-    int channel = -1;
+    int channel = 0;
     if (!argument[FTValue("channel")].IsNull()) {
         hasChannel = true;
         channel = std::get<int32_t>(argument[FTValue("channel")]);

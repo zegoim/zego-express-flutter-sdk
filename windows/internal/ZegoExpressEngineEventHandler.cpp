@@ -1657,9 +1657,10 @@ void ZegoExpressEngineEventHandler::onAvailableFrame(EXPRESS::IZegoScreenCapture
 
     // High frequency callbacks do not log
 
+    unsigned char *rgb_data = (unsigned char *)data;
     ZegoTextureRendererController::getInstance()->sendCapturedVideoFrameRawData(
-        &data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE, 
-        (ZEGO::EXPRESS::ZegoPublishChannel)ZegoExpressEngineMethodHandler::getInstance()->getScreenCaptureSourceChannel());
+        &rgb_data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE, 
+        (ZEGO::EXPRESS::ZegoPublishChannel)ZegoExpressEngineMethodHandler::getInstance().getScreenCaptureSourceChannel());
 }
 
 void ZegoExpressEngineEventHandler::onExceptionOccurred(
