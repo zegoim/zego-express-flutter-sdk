@@ -1101,7 +1101,7 @@
     }
 
     BOOL hasChannel = NO;
-    int channel = -1;
+    int channel = 0;
     if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
         hasChannel = YES;
         channel = [ZegoUtils intValue:call.arguments[@"channel"]];
