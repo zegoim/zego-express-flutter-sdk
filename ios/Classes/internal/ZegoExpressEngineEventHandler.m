@@ -9,7 +9,6 @@
 #import "ZegoExpressEngineEventHandler.h"
 #import "ZegoLog.h"
 #import "ZegoCustomVideoCaptureManager.h"
-#import "ZegoEffectsPixelBufferHelper.h"
 #import "ZegoTextureRendererController.h"
 #import "ZegoExpressEngineMethodHandler.h"
 #import <objc/message.h>
@@ -1650,7 +1649,9 @@
         
         [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:target param:param flipMode:ZegoVideoFlipModeNone channel:ZegoPublishChannelMain];
         
-        CVPixelBufferRelease(target);
+        if (target != NULL) {
+            CVPixelBufferRelease(target);
+        }
     }
 }
 
