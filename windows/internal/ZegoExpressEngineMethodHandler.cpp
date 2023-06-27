@@ -837,6 +837,12 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
             (EXPRESS::ZegoVideoSourceType)source, instanceID, (EXPRESS::ZegoPublishChannel)channel);
     }
 
+    if (source == EXPRESS::ZEGO_VIDEO_SOURCE_TYPE_SCREEN_CAPTURE) {
+        screenCaptureSourceChannel_ = channel;
+    } else if (screenCaptureSourceChannel_ == channel) {
+        screenCaptureSourceChannel_ = -1;
+    }
+
     result->Success(FTValue(ret));
 }
 
@@ -5253,4 +5259,8 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
     }
 
     result->Success();
+}
+
+int ZegoExpressEngineMethodHandler::getScreenCaptureSourceChannel() {
+    return screenCaptureSourceChannel_;
 }

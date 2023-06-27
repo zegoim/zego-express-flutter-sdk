@@ -1,5 +1,7 @@
 #include "ZegoExpressEngineEventHandler.h"
 #include "../ZegoLog.h"
+#include "ZegoExpressEngineMethodHandler.h"
+#include "ZegoTextureRendererController.h"
 #include <flutter/encodable_value.h>
 #include <memory>
 
@@ -1651,7 +1653,14 @@ void ZegoExpressEngineEventHandler::onProcessPlaybackAudioData(unsigned char *da
 
 void ZegoExpressEngineEventHandler::onAvailableFrame(EXPRESS::IZegoScreenCaptureSource *source,
                                                      const void *data, unsigned int dataLength,
-                                                     EXPRESS::ZegoVideoFrameParam param) {}
+                                                     EXPRESS::ZegoVideoFrameParam param) {
+
+    // High frequency callbacks do not log
+
+    ZegoTextureRendererController::getInstance()->sendCapturedVideoFrameRawData(
+        &data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE, 
+        (ZEGO::EXPRESS::ZegoPublishChannel)ZegoExpressEngineMethodHandler::getInstance()->getScreenCaptureSourceChannel());
+}
 
 void ZegoExpressEngineEventHandler::onExceptionOccurred(
     EXPRESS::IZegoScreenCaptureSource *source,

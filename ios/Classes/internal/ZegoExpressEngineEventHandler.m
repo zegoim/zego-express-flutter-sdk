@@ -1624,7 +1624,9 @@
 #if TARGET_OS_OSX
 - (void)screenCapture:(ZegoScreenCaptureSource *)source availableFrame:(const void *)data dataLength:(unsigned int)dataLength param:(ZegoVideoFrameParam *)param {
     
-    if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
+    int channel = [ZegoExpressEngineMethodHandler sharedInstance].screenCaptureChannel;
+    BOOL enablePlatformView = [ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView;
+    if(!enablePlatformView && channel >= 0) {
         CVPixelBufferRef target = NULL;
         int width = param.size.width;
         int height = param.size.height;
@@ -1647,7 +1649,7 @@
         memcpy(rgb_data, data, width * 4 * height);
         CVPixelBufferUnlockBaseAddress(target, 0);
         
-        [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:target param:param flipMode:ZegoVideoFlipModeNone channel:ZegoPublishChannelMain];
+        [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:target param:param flipMode:ZegoVideoFlipModeNone channel:(ZegoPublishChannel)channel];
         
         if (target != NULL) {
             CVPixelBufferRelease(target);

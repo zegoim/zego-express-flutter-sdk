@@ -1118,6 +1118,13 @@
         ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID channel:(ZegoPublishChannel)channel];
     }
 
+    /// 标识推流通道的视频源
+    if (source == ZegoVideoSourceTypeScreenCapture) {
+        _screenCaptureChannel = channel;
+    } else if (self.screenCaptureChannel == channel) {
+        _screenCaptureChannel = -1;
+    }
+
     result(@(ret));
 }
 
