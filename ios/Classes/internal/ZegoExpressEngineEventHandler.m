@@ -1692,6 +1692,26 @@
         });
     }
 }
+
+- (void)screenCapture:(ZegoScreenCaptureSource *)source captureRect:(CGRect)rect {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[screenCapture:captureRect:], rect: %@", NSStringFromRect(rect));
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRectChanged",
+            @"screenCaptureSourceIndex": [source getIndex],
+            @"captureRect": @{
+                @"x": @(rect.origin.x),
+                @"y": @(rect.origin.y),
+                @"width": @(rect.size.width),
+                @"height": @(rect.size.height)
+            }
+        });
+    }
+}
 #endif
 
 @end
