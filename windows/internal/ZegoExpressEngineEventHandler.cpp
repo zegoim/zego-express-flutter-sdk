@@ -1702,3 +1702,23 @@ void ZegoExpressEngineEventHandler::onWindowStateChanged(
         eventSink_->Success(retMap);
     }
 }
+
+void ZegoExpressEngineEventHandler::onRectChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoRect captureRect) {
+    ZF::logInfo("[onRectChanged] index: %d", source->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRectChanged");
+        retMap[FTValue("screenCaptureSourceIndex")] = FTValue(source->getIndex());
+
+        FTMap rectMap;
+        rectMap[FTValue("x")] = FTValue(captureRect.x);
+        rectMap[FTValue("y")] = FTValue(captureRect.y);
+        rectMap[FTValue("width")] = FTValue(captureRect.width);
+        rectMap[FTValue("height")] = FTValue(captureRect.height);
+
+        retMap[FTValue("captureRect")] = rectMap;
+
+        eventSink_->Success(retMap);
+    }
+}
