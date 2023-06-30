@@ -1631,22 +1631,28 @@
         int width = param.size.width;
         int height = param.size.height;
         
+        int dataWidth = dataLength/4/height;
+        
+        //最终创建的图像可能经过字节对齐，比如创建时传入width、height，最终创建出来的图像和获取的rgb_data，并不是width*height*4
         NSDictionary* pixBuffAttributes = @{
             (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
             (id)kCVPixelBufferIOSurfacePropertiesKey : @{
-                (id)kIOSurfaceBytesPerRow : @(width * 4),
-                (id)kIOSurfaceWidth : @(width),
+                (id)kIOSurfaceBytesPerRow : @(dataWidth * 4),
+                (id)kIOSurfaceWidth : @(dataWidth),
                 (id)kIOSurfaceHeight : @(height),
             },
             (id)kCVPixelBufferOpenGLCompatibilityKey : @YES,
             (id)kCVPixelBufferMetalCompatibilityKey : @YES,
         };
         
-        CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef _Nullable)(pixBuffAttributes), &target);
+        CVPixelBufferCreate(kCFAllocatorDefault, dataWidth, height, kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef _Nullable)(pixBuffAttributes), &target);
         
         CVPixelBufferLockBaseAddress(target, kCVPixelBufferLock_ReadOnly);
         void *rgb_data = CVPixelBufferGetBaseAddress(target);
-        memcpy(rgb_data, data, width * 4 * height);
+        for(int i = 0; i<height; i++)
+        {
+            memcpy(rgb_data + i*dataWidth*4, data+dataWidth*4*i,width*4);
+        }
         CVPixelBufferUnlockBaseAddress(target, 0);
         
         [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:target param:param flipMode:ZegoVideoFlipModeNone channel:(ZegoPublishChannel)channel];
