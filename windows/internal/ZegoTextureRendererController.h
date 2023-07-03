@@ -74,6 +74,13 @@ public:
     /// Called when dart invoke `startPreview/startPlayingStream/updatePlayingCanvas`
     void enableTextureAlpha(bool enable, int64_t textureID);
 
+public:
+    void sendCapturedVideoFrameRawData(unsigned char ** data,
+                                        unsigned int * dataLength,
+                                        ZEGO::EXPRESS::ZegoVideoFrameParam param,
+                                        ZEGO::EXPRESS::ZegoVideoFlipMode flipMode,
+                                        ZEGO::EXPRESS::ZegoPublishChannel channel);
+
 protected:
     // When custom video rendering is enabled, the original video frame data collected by the local preview is called back.
     virtual void onCapturedVideoFrameRawData(unsigned char ** data,

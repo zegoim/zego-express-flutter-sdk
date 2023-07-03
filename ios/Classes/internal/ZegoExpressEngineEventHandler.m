@@ -9,7 +9,10 @@
 #import "ZegoExpressEngineEventHandler.h"
 #import "ZegoLog.h"
 #import "ZegoCustomVideoCaptureManager.h"
+#import "ZegoTextureRendererController.h"
+#import "ZegoExpressEngineMethodHandler.h"
 #import <objc/message.h>
+#import <Metal/Metal.h>
 
 #define GUARD_SINK if(!sink){ZGError(@"[%s] FlutterEventSink is nil", __FUNCTION__);}
 
@@ -1621,11 +1624,48 @@
 #if TARGET_OS_OSX
 - (void)screenCapture:(ZegoScreenCaptureSource *)source availableFrame:(const void *)data dataLength:(unsigned int)dataLength param:(ZegoVideoFrameParam *)param {
     
+    int channel = [ZegoExpressEngineMethodHandler sharedInstance].screenCaptureChannel;
+    BOOL enablePlatformView = [ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView;
+    if(!enablePlatformView && channel >= 0) {
+        CVPixelBufferRef target = NULL;
+        int width = param.size.width;
+        int height = param.size.height;
+        
+        int dataWidth = dataLength/4/height;
+        
+        //最终创建的图像可能经过字节对齐，比如创建时传入width、height，最终创建出来的图像和获取的rgb_data，并不是width*height*4
+        NSDictionary* pixBuffAttributes = @{
+            (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+            (id)kCVPixelBufferIOSurfacePropertiesKey : @{
+                (id)kIOSurfaceBytesPerRow : @(dataWidth * 4),
+                (id)kIOSurfaceWidth : @(dataWidth),
+                (id)kIOSurfaceHeight : @(height),
+            },
+            (id)kCVPixelBufferOpenGLCompatibilityKey : @YES,
+            (id)kCVPixelBufferMetalCompatibilityKey : @YES,
+        };
+        
+        CVPixelBufferCreate(kCFAllocatorDefault, dataWidth, height, kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef _Nullable)(pixBuffAttributes), &target);
+        
+        CVPixelBufferLockBaseAddress(target, kCVPixelBufferLock_ReadOnly);
+        void *rgb_data = CVPixelBufferGetBaseAddress(target);
+        for(int i = 0; i<height; i++)
+        {
+            memcpy(rgb_data + i*dataWidth*4, data+dataWidth*4*i,width*4);
+        }
+        CVPixelBufferUnlockBaseAddress(target, 0);
+        
+        [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:target param:param flipMode:ZegoVideoFlipModeNone channel:(ZegoPublishChannel)channel];
+        
+        if (target != NULL) {
+            CVPixelBufferRelease(target);
+        }
+    }
 }
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)type {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:exceptionOccurred:] type: %d", type);
+    ZGLog(@"[screenCapture:exceptionOccurred:] type: %td", type);
 
     GUARD_SINK
     
@@ -1640,7 +1680,7 @@
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:windowState:windowRect:] state: %d, rect: %@", state, NSStringFromRect(rect));
+    ZGLog(@"[screenCapture:windowState:windowRect:] state: %td, rect: %@", state, NSStringFromRect(rect));
     
     GUARD_SINK
     
@@ -1650,6 +1690,26 @@
             @"screenCaptureSourceIndex": [source getIndex],
             @"windowState": @(state),
             @"windowRect": @{
+                @"x": @(rect.origin.x),
+                @"y": @(rect.origin.y),
+                @"width": @(rect.size.width),
+                @"height": @(rect.size.height)
+            }
+        });
+    }
+}
+
+- (void)screenCapture:(ZegoScreenCaptureSource *)source captureRect:(CGRect)rect {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[screenCapture:captureRect:], rect: %@", NSStringFromRect(rect));
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRectChanged",
+            @"screenCaptureSourceIndex": [source getIndex],
+            @"captureRect": @{
                 @"x": @(rect.origin.x),
                 @"y": @(rect.origin.y),
                 @"width": @(rect.size.width),

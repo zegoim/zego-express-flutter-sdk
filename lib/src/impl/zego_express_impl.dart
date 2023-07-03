@@ -50,7 +50,7 @@ class ZegoExpressImpl {
     use &= !kIsWindows;
     // TODO: PlatformView support on macOS has a crash issue, don't use it now
     // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= !kIsMacOS;
+    use &= kIsMacOS;
     return use;
   }
 
@@ -2942,6 +2942,23 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onRectChanged':
+        if (ZegoExpressEngine.onRectChanged == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onRectChanged!(
+              screenCaptureSource,
+              Rect.fromLTWH(
+                  double.parse(map['captureRect']['x'].toString()),
+                  double.parse(map['captureRect']['y'].toString()),
+                  double.parse(map['captureRect']['width'].toString()),
+                  double.parse(map['captureRect']['height'].toString())));
+        }
+        break;
+
       case 'onMobileScreenCaptureExceptionOccurred':
         if (ZegoExpressEngine.onMobileScreenCaptureExceptionOccurred == null)
           return;
@@ -3460,12 +3477,15 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
         'audioEffectPlayerSetPlaySpeed',
         {'index': _index, 'audioEffectID': audioEffectID, 'speed': speed});
   }
-  
+
   @override
   Future<void> updatePosition(int audioEffectID, Float32List position) async {
     return await ZegoExpressImpl._channel.invokeMethod(
-        'audioEffectPlayerUpdatePosition',
-        {'index': _index, 'audioEffectID': audioEffectID, 'position': position});
+        'audioEffectPlayerUpdatePosition', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'position': position
+    });
   }
 }
 
