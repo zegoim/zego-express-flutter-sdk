@@ -787,7 +787,7 @@ class ZegoExpressEngineWeb {
 
   Future<Map<dynamic, dynamic>> setRoomExtraInfo(
       String roomID, String key, String value) async {
-    await ZegoFlutterEngine.instance.sendReliableMessage(roomID, key, value);
+    await ZegoFlutterEngine.instance.setRoomExtraInfo(roomID, key, value);
     final Map<dynamic, dynamic> map = {};
     map["errorCode"] = 0;
 

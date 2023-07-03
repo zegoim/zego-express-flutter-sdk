@@ -159,6 +159,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
 
   void startPublishingStream(String streamID) {
     ZegoExpressEngine.instance.startPublishingStream(streamID);
+    ZegoExpressEngine.instance.setRoomExtraInfo(_roomID, "test222", "1111");
     print('📤 Start publishing stream, streamID: $streamID');
   }
 
