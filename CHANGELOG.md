@@ -1,5 +1,9 @@
 # Change Log
+## 3.6.1
 
+### Bug Fixes
+
+1. Fix the problem that setRoomExtraInfo call fails.
 ## 3.6.0
 
 ### **💥 Breaking changes**
