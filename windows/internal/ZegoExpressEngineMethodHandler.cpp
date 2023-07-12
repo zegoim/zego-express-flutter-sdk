@@ -539,9 +539,9 @@ void ZegoExpressEngineMethodHandler::stopPreview(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
         (EXPRESS::ZegoPublishChannel)channel);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 
@@ -1039,8 +1039,8 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
     ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
 
     result->Success();
 }
