@@ -2615,14 +2615,14 @@ void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
 
     FTMap config_map = std::get<FTMap>(argument[FTValue("config")]);
     EXPRESS::ZegoMediaDataPublisherConfig config{};
-    config.channel = std::get<int32_t>(configMap[FTValue("channel")]);
+    config.channel = std::get<int32_t>(config_map[FTValue("channel")]);
     config.mode =
-        (EXPRESS::ZegoMediaDataPublisherMode)std::get<int32_t>(configMap[FTValue("mode")]);
+        (EXPRESS::ZegoMediaDataPublisherMode)std::get<int32_t>(config_map[FTValue("mode")]);
 
     auto publisher = EXPRESS::ZegoExpressSDK::getEngine()->createMediaDataPublisher(config);
     if (publisher) {
         int index = publisher->getIndex();
-        publisher->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        publisher->setMediaDataPublisherEventHandler(ZegoExpressEngineEventHandler::getInstance());
         mediaDataPublisherMap_[index] = publisher;
         result->Success(FTValue(index));
     } else {
@@ -2668,7 +2668,7 @@ void ZegoExpressEngineMethodHandler::mediaDataPublisherGetCurrentDuration(
     auto publisher = mediaDataPublisherMap_[index];
     if (publisher) {
         auto duration = publisher->getCurrentDuration();
-        result->Success(duration);
+        result->Success(FTValue((int64_t)duration));
     } else {
         result->Error("mediaDataPublisherGetCurrentDuration_Can_not_find_publisher",
                       "Invoke `mediaDataPublisherGetCurrentDuration` but can't find specific publisher");
@@ -2682,7 +2682,7 @@ void ZegoExpressEngineMethodHandler::mediaDataPublisherGetTotalDuration(
     auto publisher = mediaDataPublisherMap_[index];
     if (publisher) {
         auto duration = publisher->getTotalDuration();
-        result->Success(duration);
+        result->Success(FTValue((int64_t)duration));
     } else {
         result->Error("mediaDataPublisherGetTotalDuration_Can_not_find_publisher",
                       "Invoke `mediaDataPublisherGetTotalDuration` but can't find specific publisher");

@@ -789,7 +789,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
 }
 
 // MediaDataPublisher
-void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
     ZF::logInfo("[onMediaDataPublisherFileOpen] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
 
     if (eventSink_) {
@@ -802,7 +802,7 @@ void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(IZegoMediaDataP
     }
 }
 
-void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) {
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) {
     ZF::logInfo("[onMediaDataPublisherFileClose] index: %d, errorCode: %d, path: %s", mediaDataPublisher->getIndex(), errorCode, path.c_str());
 
     if (eventSink_) {
@@ -816,7 +816,7 @@ void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(IZegoMediaData
     }
 }
 
-void ZegoExpressEngineEventHandler::onMediaDataPublisherFileDataBegin(IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileDataBegin(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
     ZF::logInfo("[onMediaDataPublisherFileDataBegin] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
 
     if (eventSink_) {

@@ -201,13 +201,11 @@ protected:
 
 // MediaDataPublisher
 protected:
-    void onMediaDataPublisherFileOpen(IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) override;
+    void onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) override;
 
-    void onMediaDataPublisherFileClose(IZegoMediaDataPublisher *mediaDataPublisher,
-                                               int errorCode, const std::string &path) override;
+    void onMediaDataPublisherFileClose(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) override;
 
-    void onMediaDataPublisherFileDataBegin(IZegoMediaDataPublisher *mediaDataPublisher,
-                                                   const std::string &path) override;
+    void onMediaDataPublisherFileDataBegin(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) override;
 
 
 protected:
