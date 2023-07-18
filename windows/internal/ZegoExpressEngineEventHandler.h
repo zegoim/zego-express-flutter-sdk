@@ -14,6 +14,7 @@ class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
     , public EXPRESS::IZegoAudioEffectPlayerEventHandler
     , public EXPRESS::IZegoMediaPlayerEventHandler
+    , public EXPRESS::IZegoMediaDataPublisherEventHandler
     , public EXPRESS::IZegoAudioDataHandler
     , public EXPRESS::IZegoDataRecordEventHandler
     , public EXPRESS::IZegoApiCalledEventHandler
@@ -197,6 +198,18 @@ protected:
     void onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList) override;
 
     void onMediaPlayerFirstFrameEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) override;
+
+// MediaDataPublisher
+protected:
+    void onMediaDataPublisherFileOpen(IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) override;
+
+    void onMediaDataPublisherFileClose(IZegoMediaDataPublisher *mediaDataPublisher,
+                                               int errorCode, const std::string &path) override;
+
+    void onMediaDataPublisherFileDataBegin(IZegoMediaDataPublisher *mediaDataPublisher,
+                                                   const std::string &path) override;
+
+
 protected:
     void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 

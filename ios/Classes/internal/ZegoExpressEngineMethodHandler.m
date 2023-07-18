@@ -4023,6 +4023,23 @@
 }
 
 
+#pragma mark - MediaDataPublisher
+
+- (void)createMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Implement this feature when Objective-C API ready
+    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+}
+
+- (void)destroyMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Implement this feature when Objective-C API ready
+    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+}
+
+- (void)mediaDataPublisherAddMediaFilePath:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Implement this feature when Objective-C API ready
+    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+}
+
 
 #pragma mark - Record
 

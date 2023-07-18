@@ -788,6 +788,46 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
     }
 }
 
+// MediaDataPublisher
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileOpen] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileOpen");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileClose] index: %d, errorCode: %d, path: %s", mediaDataPublisher->getIndex(), errorCode, path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileClose");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("errorCode")] = FTValue(errorCode);
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileDataBegin(IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileDataBegin] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileDataBegin");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
 
 void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char *data,
                                                         unsigned int dataLength,

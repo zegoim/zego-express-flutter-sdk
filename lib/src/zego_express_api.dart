@@ -1132,6 +1132,43 @@ class ZegoExpressEngine {
       ZegoAudioEffectPlayState state,
       int errorCode)? onAudioEffectPlayStateUpdate;
 
+  /// The event callback of the media data publisher opening a media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback of the media data publisher opening a media file.
+  /// Trigger: The callback triggered when the media data publisher start loading a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileOpen;
+
+  /// The event callback of the media data publisher closing a media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback of the media data publisher closing a media file.
+  /// Trigger: The callback triggered when the media data publisher start unloading a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [errorCode] error code. 0 means closing the file normally.
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, int errorCode,
+      String path)? onMediaDataPublisherFileClose;
+
+  /// The event callback that the media data publisher has read data from the media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback that the media data publisher has read data from the media file.
+  /// Trigger: The callback triggered when the media data publisher begin to read media data from a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileDataBegin;
+
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
   /// Available since: 1.10.0
