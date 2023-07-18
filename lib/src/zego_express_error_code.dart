@@ -859,7 +859,7 @@ class ZegoErrorCode {
   /// Description: RTP timeout. <br>Cause: Not connected to the network. <br> Solutions: Please check if you can access the Internet properly.
   static const int UtilitiesNetworkToolRtpTimeoutError = 1015003;
 
-  /// Description: The server side ends the network speed test. <br>Cause: Network speed test time is too long. <br> Solutions: Please stop network speed test in 3 minutes.
+  /// Description: The server side ends the network speed test. <br>Cause: Network speed test time is too long. <br> Solutions: Please stop network speed test in 30 seconds.
   static const int UtilitiesNetworkToolEngineDenied = 1015004;
 
   /// Description: Network speed test stopped. <br>Cause: Network speed test not stopped before publishing stream. <br> Solutions: Please stop network speed test(stopNetworkSpeedTest) before publishing stream.

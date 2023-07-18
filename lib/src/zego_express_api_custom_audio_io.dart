@@ -94,7 +94,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Description: When custom audio processing is turned on, use this function to turn on audio data callback monitoring.
   /// Use cases: When develop need to monitor the original audio.
   /// When to call: After creating the engine.
-  /// Restrictions: None.
+  /// Restrictions: Audio monitoring is triggered only after this function has been called and the callback has been set by calling [setAudioDataHandler]. If you want to enable the [onPlayerAudioData] callback, you must also be in the pull stream, and the incoming sampling rate of the [startAudioDataObserver] function is not supported at 8000Hz, 22050Hz, and 24000Hz.
   /// Caution: This api will start the media engine and occupy the microphone device.
   ///
   /// - [observerBitMask] The callback function bitmask marker for receive audio data, refer to enum [ZegoAudioDataCallbackBitMask], when this param converted to binary, 0b01 that means 1 << 0 for triggering [onCapturedAudioData], 0x10 that means 1 << 1 for triggering [onPlaybackAudioData], 0x100 that means 1 << 2 for triggering [onMixedAudioData], 0x1000 that means 1 << 3 for triggering [onPlayerAudioData]. The masks can be combined to allow different callbacks to be triggered simultaneously.
