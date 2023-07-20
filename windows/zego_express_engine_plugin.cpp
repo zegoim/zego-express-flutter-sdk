@@ -298,6 +298,16 @@ static const std::map<
         EngineMethodHandler(mediaPlayerUpdatePosition),
         EngineMethodHandler(mediaPlayerGetMediaInfo),
 
+        // MediaDataPublihser
+        EngineMethodHandler(createMediaDataPublisher),
+        EngineMethodHandler(destroyMediaDataPublisher),
+        EngineMethodHandler(mediaDataPublisherAddMediaFilePath),
+        EngineMethodHandler(mediaDataPublisherGetCurrentDuration),
+        EngineMethodHandler(mediaDataPublisherGetTotalDuration),
+        EngineMethodHandler(mediaDataPublisherReset),
+        EngineMethodHandler(mediaDataPublisherSeekTo),
+        EngineMethodHandler(mediaDataPublisherSetVideoSendDelayTime),
+
         // Copyrighted Music
         EngineMethodHandler(createCopyrightedMusic),
         EngineMethodHandler(destroyCopyrightedMusic),
