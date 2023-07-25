@@ -202,6 +202,15 @@ void ZegoTextureRendererController::enableTextureAlpha(bool enable, int64_t text
     }
 }
 
+void ZegoTextureRendererController::sendCapturedVideoFrameRawData(unsigned char ** data,
+                                        unsigned int * dataLength,
+                                        ZEGO::EXPRESS::ZegoVideoFrameParam param,
+                                        ZEGO::EXPRESS::ZegoVideoFlipMode flipMode,
+                                        ZEGO::EXPRESS::ZegoPublishChannel channel)
+{
+    onCapturedVideoFrameRawData(data, dataLength, param, flipMode, channel);
+}
+
 void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char ** data,
                                              unsigned int * dataLength,
                                              ZegoVideoFrameParam param,

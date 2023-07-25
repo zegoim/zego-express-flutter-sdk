@@ -1,5 +1,7 @@
 #include "ZegoExpressEngineEventHandler.h"
 #include "../ZegoLog.h"
+#include "ZegoExpressEngineMethodHandler.h"
+#include "ZegoTextureRendererController.h"
 #include <flutter/encodable_value.h>
 #include <memory>
 
@@ -786,6 +788,46 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
     }
 }
 
+// MediaDataPublisher
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileOpen] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileOpen");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileClose] index: %d, errorCode: %d, path: %s", mediaDataPublisher->getIndex(), errorCode, path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileClose");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("errorCode")] = FTValue(errorCode);
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileDataBegin(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileDataBegin] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileDataBegin");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
 
 void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char *data,
                                                         unsigned int dataLength,
@@ -1651,7 +1693,15 @@ void ZegoExpressEngineEventHandler::onProcessPlaybackAudioData(unsigned char *da
 
 void ZegoExpressEngineEventHandler::onAvailableFrame(EXPRESS::IZegoScreenCaptureSource *source,
                                                      const void *data, unsigned int dataLength,
-                                                     EXPRESS::ZegoVideoFrameParam param) {}
+                                                     EXPRESS::ZegoVideoFrameParam param) {
+
+    // High frequency callbacks do not log
+
+    unsigned char *rgb_data = (unsigned char *)data;
+    ZegoTextureRendererController::getInstance()->sendCapturedVideoFrameRawData(
+        &rgb_data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE, 
+        (ZEGO::EXPRESS::ZegoPublishChannel)ZegoExpressEngineMethodHandler::getInstance().getScreenCaptureSourceChannel());
+}
 
 void ZegoExpressEngineEventHandler::onExceptionOccurred(
     EXPRESS::IZegoScreenCaptureSource *source,
@@ -1688,6 +1738,26 @@ void ZegoExpressEngineEventHandler::onWindowStateChanged(
         rectMap[FTValue("height")] = FTValue(windowRect.height);
 
         retMap[FTValue("windowRect")] = rectMap;
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRectChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoRect captureRect) {
+    ZF::logInfo("[onRectChanged] index: %d", source->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRectChanged");
+        retMap[FTValue("screenCaptureSourceIndex")] = FTValue(source->getIndex());
+
+        FTMap rectMap;
+        rectMap[FTValue("x")] = FTValue(captureRect.x);
+        rectMap[FTValue("y")] = FTValue(captureRect.y);
+        rectMap[FTValue("width")] = FTValue(captureRect.width);
+        rectMap[FTValue("height")] = FTValue(captureRect.height);
+
+        retMap[FTValue("captureRect")] = rectMap;
 
         eventSink_->Success(retMap);
     }

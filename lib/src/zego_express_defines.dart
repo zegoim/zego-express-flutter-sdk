@@ -1762,6 +1762,15 @@ enum ZegoBackgroundBlurLevel {
   High
 }
 
+/// The config of the media data publisher.
+enum ZegoMediaDataPublisherMode {
+  /// Both publish video and audio.
+  BothVideoAndAudio,
+
+  /// Only publish video.
+  OnlyVideo
+}
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -3605,6 +3614,19 @@ class ZegoMediaPlayerMediaInfo {
         frameRate = 0;
 }
 
+/// Used to config the media data publisher.
+///
+/// Used to config the media data publisher when creating it.
+class ZegoMediaDataPublisherConfig {
+  /// Used to specify the publish channel index of publisher.
+  int channel;
+
+  /// Used to specify the mode of publisher.
+  ZegoMediaDataPublisherMode mode;
+
+  ZegoMediaDataPublisherConfig(this.channel, this.mode);
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -4221,6 +4243,75 @@ abstract class ZegoAudioEffectPlayer {
   int getIndex();
 }
 
+abstract class ZegoMediaDataPublisher {
+  /// Add media file to the publish queue. Currently, only mp4 / m4a / aac files are supported, and special conversion is required.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Add media file to the publish queue. Currently, only mp4 / m4a / aac file are supported, and special conversion is required.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: After calling the [createMediaDataPublisher] function to create a media data publisher.
+  /// Caution: The mp4 file format must meet the following points：The video must be encoded as H.264 and cannot contain B frames, only I and P frames. The I frame interval is 2s, that is, a single GOP value is 2s; The frame rate, bit rate, and resolution of the video are consistent with the frame rate, bit rate, and resolution set by [setVideoConfig] before publishing stream; Audio encoding must be MPEG-4 AAC.
+  ///
+  /// - [path] Local absolute path to the media file.
+  /// - [isClear] Whether to clear the publish queue.
+  Future<void> addMediaFilePath(String path, bool isClear);
+
+  /// Add media file to the publish queue. Currently, only mp4 file are supported, and special conversion is required.
+  ///
+  /// Available since: 2.17.0
+  /// Description: When you need to re-publish stream and do not need to continue publishing from the previous publish queue, you can call this function to reset the MediaDataPublisher state.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: Before [startPublishingStream].
+  /// Caution: When the developer calls [logoutRoom], the state is automatically reset.
+  Future<void> reset();
+
+  /// Set to postpone the video playback time, mainly used to correct the fixed audio and picture asynchronous phenomenon that occurs during the publishing stream.
+  ///
+  /// Available since: 2.17.0
+  /// Description: When this value is set, when publishing video file stream, the SDK will permanently delay the video to the set time value before sending.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: After calling the [createMediaDataPublisher] function to create a media data publisher.
+  ///
+  /// - [delayTime] Video playback time.Required: Yes.Value range: [0, 100] ms.
+  Future<void> setVideoSendDelayTime(int delayTime);
+
+  /// Specify the starting point of the current video file publishing.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Specify the starting point of the current video file publishing.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: Called at any point between [OnMediaDataPublisherFileOpen] and [OnMediaDataPublisherFileClose]. For example: this function can be called directly in the [OnMediaDataPublisherFileOpen] callback.
+  ///
+  /// - [millisecond] The timestamp of the start of streaming (relative to the timestamp of the file currently being published, the starting value is 0). the unit is milliseconds
+  Future<void> seekTo(int millisecond);
+
+  /// Get the total duration of the current file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Get the total duration of the current file, in milliseconds.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: After [onMediaDataPublisherFileDataBegin] callback.
+  ///
+  /// - Returns The total duration of the current file.
+  Future<int> getTotalDuration();
+
+  /// Get the playing progress of the current file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Get the playing progress of the current file, in milliseconds.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: After [onMediaDataPublisherFileDataBegin] callback.
+  ///
+  /// - Returns The playing progress of the current file.
+  Future<int> getCurrentDuration();
+
+  /// Get the channel index of the media data publisher.
+  ///
+  /// Available since: 3.4.0
+  /// Description: Get the channel index of the media data publisher.
+  int getIndex();
+}
+
 abstract class ZegoRangeAudio {
   /// Set the maximum range of received audio.
   ///
@@ -4739,9 +4830,9 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// Available since: 3.6.0
   /// Description: Gets the rectangle of the screen capture source.
-  /// Restrictions: For window type sources only, only support in Windows/macOS.
+  /// Restrictions: Called after starting [startScreenCapture] acquisition, only support in Windows/macOS.
   ///
-  /// - Returns Rect information about the window resource.
+  /// - Returns Rect information about the capture resource.
   Future<Rect> getCaptureSourceRect();
 
   /// Update the area captured by the screen.

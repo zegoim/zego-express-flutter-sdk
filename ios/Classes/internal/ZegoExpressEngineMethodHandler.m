@@ -33,6 +33,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaDataPublisher *> *mediaDataPublisherMap;
+
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoRealTimeSequentialDataManager *> *realTimeSequentialDataManagerMap;
 
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
@@ -1101,7 +1103,7 @@
     }
 
     BOOL hasChannel = NO;
-    int channel = -1;
+    int channel = 0;
     if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
         hasChannel = YES;
         channel = [ZegoUtils intValue:call.arguments[@"channel"]];
@@ -1116,6 +1118,13 @@
         ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID];
     } else {
         ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID channel:(ZegoPublishChannel)channel];
+    }
+
+    /// 标识推流通道的视频源
+    if (source == ZegoVideoSourceTypeScreenCapture) {
+        _screenCaptureChannel = channel;
+    } else if (self.screenCaptureChannel == channel) {
+        _screenCaptureChannel = -1;
     }
 
     result(@(ret));
@@ -3648,6 +3657,7 @@
 
     result(nil);
 }
+#endif
 
 - (void)mediaPlayerLoadResourceWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
     
@@ -3677,8 +3687,6 @@
         result([FlutterError errorWithCode:[@"loadResourceWithConfig_Can_not_find_player" uppercaseString] message:@"Invoke `loadResourceWithConfig` but can't find specific player" details:nil]);
     }
 }
-
-#endif
 
 - (void)mediaPlayerUpdatePosition:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -3766,7 +3774,7 @@
         if (configMap && configMap.count > 0) {
             configObject = [[ZegoAudioEffectPlayConfig alloc] init];
             configObject.playCount = [ZegoUtils unsignedIntValue:configMap[@"playCount"]];
-            configObject.isPublishOut = [ZegoUtils boolValue:configMap[@"isPublishOut"]];;
+            configObject.isPublishOut = [ZegoUtils boolValue:configMap[@"isPublishOut"]];
         }
 
         [audioEffectPlayer start:audioEffectID path:path config:configObject];
@@ -4016,6 +4024,44 @@
     }
 }
 
+
+#pragma mark - MediaDataPublisher
+
+- (void)createMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {
+    if (!self.mediaDataPublisherMap) {
+        self.mediaDataPublisherMap = [NSMutableDictionary dictionary];
+    }
+    
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoMediaDataPublisherConfig *configObject = nil;
+
+    if (configMap && configMap.count > 0) {
+        configObject = [[ZegoMediaDataPublisherConfig alloc] init];
+        configObject.channel = [ZegoUtils intValue:configMap[@"channel"]];
+        configObject.mode = [ZegoUtils intValue:configMap[@"mode"]];
+    }
+    
+    ZegoMediaDataPublisher *instance = [[ZegoExpressEngine sharedEngine] createMediaDataPublisher:configObject];
+    
+    if (instance) {
+        NSNumber *index = [instance getIndex];
+        [instance setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        self.mediaDataPublisherMap[index] = instance;
+        result(index);
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Implement this feature when Objective-C API ready
+    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+}
+
+- (void)mediaDataPublisherAddMediaFilePath:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Implement this feature when Objective-C API ready
+    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+}
 
 
 #pragma mark - Record
@@ -4988,6 +5034,25 @@
             result(resultMap);
         });
     });
+}
+
+- (void)getCaptureSourceRectScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        CGRect rect = [screenCaptureSource getCaptureSourceRect];
+        
+        NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+        resultMap[@"x"] = @(rect.origin.x);
+        resultMap[@"y"] = @(rect.origin.y);
+        resultMap[@"width"] = @(rect.size.width);
+        resultMap[@"height"] = @(rect.size.height);
+        result(resultMap);
+    } else {
+        result(nil);
+    }
 }
 
 - (void)createScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {

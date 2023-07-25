@@ -4276,6 +4276,26 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+    /* MediaDataPublisher */
+
+    @SuppressWarnings("unused")
+    public static void createMediaDataPublisher(MethodCall call, Result result) {
+        // TODO: Implement this feature when Java API ready
+        result.error("MediaDataPublisher_Not_Supported".toUpperCase(), "The media data publisher has not been implemented yet", null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyMediaDataPublisher(MethodCall call, Result result) {
+        // TODO: Implement this feature when Java API ready
+        result.error("MediaDataPublisher_Not_Supported".toUpperCase(), "The media data publisher has not been implemented yet", null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherAddMediaFilePath(MethodCall call, Result result) {
+        // TODO: Implement this feature when Java API ready
+        result.error("MediaDataPublisher_Not_Supported".toUpperCase(), "The media data publisher has not been implemented yet", null);
+    }
+
     /* Record */
 
     @SuppressWarnings("unused")
