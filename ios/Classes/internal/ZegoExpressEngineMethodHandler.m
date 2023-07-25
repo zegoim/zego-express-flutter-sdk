@@ -33,6 +33,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAudioEffectPlayer *> *audioEffectPlayerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoMediaDataPublisher *> *mediaDataPublisherMap;
+
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoRealTimeSequentialDataManager *> *realTimeSequentialDataManagerMap;
 
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
@@ -3772,7 +3774,7 @@
         if (configMap && configMap.count > 0) {
             configObject = [[ZegoAudioEffectPlayConfig alloc] init];
             configObject.playCount = [ZegoUtils unsignedIntValue:configMap[@"playCount"]];
-            configObject.isPublishOut = [ZegoUtils boolValue:configMap[@"isPublishOut"]];;
+            configObject.isPublishOut = [ZegoUtils boolValue:configMap[@"isPublishOut"]];
         }
 
         [audioEffectPlayer start:audioEffectID path:path config:configObject];
@@ -4026,8 +4028,29 @@
 #pragma mark - MediaDataPublisher
 
 - (void)createMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // TODO: Implement this feature when Objective-C API ready
-    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+    if (!self.mediaDataPublisherMap) {
+        self.mediaDataPublisherMap = [NSMutableDictionary dictionary];
+    }
+    
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoMediaDataPublisherConfig *configObject = nil;
+
+    if (configMap && configMap.count > 0) {
+        configObject = [[ZegoMediaDataPublisherConfig alloc] init];
+        configObject.channel = [ZegoUtils intValue:configMap[@"channel"]];
+        configObject.mode = [ZegoUtils intValue:configMap[@"mode"]];
+    }
+    
+    ZegoMediaDataPublisher *instance = [[ZegoExpressEngine sharedEngine] createMediaDataPublisher:configObject];
+    
+    if (instance) {
+        NSNumber *index = [instance getIndex];
+        [instance setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        self.mediaDataPublisherMap[index] = instance;
+        result(index);
+    } else {
+        result(@(-1));
+    }
 }
 
 - (void)destroyMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {

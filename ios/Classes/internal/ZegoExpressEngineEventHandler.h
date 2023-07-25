@@ -18,7 +18,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZegoExpressEngineEventHandler : NSObject<ZegoEventHandler, ZegoMediaPlayerEventHandler, ZegoAudioEffectPlayerEventHandler, ZegoDataRecordEventHandler, ZegoAudioDataHandler, ZegoRangeAudioEventHandler, ZegoCustomAudioProcessHandler, ZegoApiCalledEventHandler, ZegoRealTimeSequentialDataEventHandler, ZegoCopyrightedMusicEventHandler
+@interface ZegoExpressEngineEventHandler : NSObject<ZegoEventHandler, ZegoMediaPlayerEventHandler, ZegoAudioEffectPlayerEventHandler, ZegoMediaDataPublisherEventHandler, ZegoDataRecordEventHandler, ZegoAudioDataHandler, ZegoRangeAudioEventHandler, ZegoCustomAudioProcessHandler, ZegoApiCalledEventHandler, ZegoRealTimeSequentialDataEventHandler, ZegoCopyrightedMusicEventHandler
 #if TARGET_OS_OSX
     ,ZegoScreenCaptureSourceEventHandler
 #endif
