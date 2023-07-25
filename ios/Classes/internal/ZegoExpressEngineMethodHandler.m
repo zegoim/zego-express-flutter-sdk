@@ -4054,13 +4054,92 @@
 }
 
 - (void)destroyMediaDataPublisher:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // TODO: Implement this feature when Objective-C API ready
-    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        [[ZegoExpressEngine sharedEngine] destroyMediaDataPublisher:publisher];
+        [self.mediaDataPublisherMap removeObjectForKey:index];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"destroyMediaDataPublisher_Can_not_find_publisher" uppercaseString] message:@"Invoke `destroyMediaDataPublisher` but can't find specific publisher" details:nil]);
+    }
 }
 
 - (void)mediaDataPublisherAddMediaFilePath:(FlutterMethodCall *)call result:(FlutterResult)result {
-    // TODO: Implement this feature when Objective-C API ready
-    result([FlutterError errorWithCode:[@"MediaDataPublisher_Not_Supported" uppercaseString] message:@"The media data publisher has not been implemented yet" details:nil]);
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        NSString *path = call.arguments[@"path"];
+        BOOL isClear = [ZegoUtils boolValue:call.arguments[@"isClear"]];
+        [publisher addMediaFilePath:path isClear:isClear];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"mediaDataPublisherAddMediaFilePath_Can_not_find_publisher" uppercaseString] message:@"Invoke `mediaDataPublisherAddMediaFilePath` but can't find specific publisher" details:nil]);
+    }
+}
+
+- (void)mediaDataPublisherGetCurrentDuration:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        unsigned long long duration = [publisher getCurrentDuration];
+        result(@(duration));
+    } else {
+        result([FlutterError errorWithCode:[@"mediaDataPublisherGetCurrentDuration_Can_not_find_publisher" uppercaseString] message:@"Invoke `mediaDataPublisherGetCurrentDuration` but can't find specific publisher" details:nil]);
+    }
+}
+
+- (void)mediaDataPublisherGetTotalDuration:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        unsigned long long duration = [publisher getTotalDuration];
+        result(@(duration));
+    } else {
+        result([FlutterError errorWithCode:[@"mediaDataPublisherGetTotalDuration_Can_not_find_publisher" uppercaseString] message:@"Invoke `mediaDataPublisherGetTotalDuration` but can't find specific publisher" details:nil]);
+    }
+}
+
+- (void)mediaDataPublisherReset:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        [publisher reset];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"mediaDataPublisherReset_Can_not_find_publisher" uppercaseString] message:@"Invoke `mediaDataPublisherReset` but can't find specific publisher" details:nil]);
+    }
+}
+
+- (void)mediaDataPublisherSeekTo:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        unsigned long long ms = [ZegoUtils unsignedLongLongValue:call.arguments[@"millisecond"]];
+        [publisher seekTo:ms];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"mediaDataPublisherSeekTo_Can_not_find_publisher" uppercaseString] message:@"Invoke `mediaDataPublisherSeekTo` but can't find specific publisher" details:nil]);
+    }
+}
+
+- (void)mediaDataPublisherSetVideoSendDelayTime:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaDataPublisher *publisher = self.mediaDataPublisherMap[index];
+
+    if (publisher) {
+        int delayTime = [ZegoUtils intValue:call.arguments[@"delayTime"]];
+        [publisher setVideoSendDelayTime:delayTime];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"mediaDataPublisherSetVideoSendDelayTime_Can_not_find_publisher" uppercaseString] message:@"Invoke `mediaDataPublisherSetVideoSendDelayTime` but can't find specific publisher" details:nil]);
+    }
 }
 
 
