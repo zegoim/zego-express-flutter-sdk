@@ -1101,7 +1101,7 @@
     }
 
     BOOL hasChannel = NO;
-    int channel = -1;
+    int channel = 0;
     if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
         hasChannel = YES;
         channel = [ZegoUtils intValue:call.arguments[@"channel"]];
@@ -1116,6 +1116,13 @@
         ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID];
     } else {
         ret = [[ZegoExpressEngine sharedEngine] setVideoSource:(ZegoVideoSourceType)source instanceID:instanceID channel:(ZegoPublishChannel)channel];
+    }
+
+    /// 标识推流通道的视频源
+    if (source == ZegoVideoSourceTypeScreenCapture) {
+        _screenCaptureChannel = channel;
+    } else if (self.screenCaptureChannel == channel) {
+        _screenCaptureChannel = -1;
     }
 
     result(@(ret));
@@ -4988,6 +4995,25 @@
             result(resultMap);
         });
     });
+}
+
+- (void)getCaptureSourceRectScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        CGRect rect = [screenCaptureSource getCaptureSourceRect];
+        
+        NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+        resultMap[@"x"] = @(rect.origin.x);
+        resultMap[@"y"] = @(rect.origin.y);
+        resultMap[@"width"] = @(rect.size.width);
+        resultMap[@"height"] = @(rect.size.height);
+        result(resultMap);
+    } else {
+        result(nil);
+    }
 }
 
 - (void)createScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {

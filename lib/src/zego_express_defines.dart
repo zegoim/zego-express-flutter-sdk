@@ -4739,9 +4739,9 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// Available since: 3.6.0
   /// Description: Gets the rectangle of the screen capture source.
-  /// Restrictions: For window type sources only, only support in Windows/macOS.
+  /// Restrictions: Called after starting [startScreenCapture] acquisition, only support in Windows/macOS.
   ///
-  /// - Returns Rect information about the window resource.
+  /// - Returns Rect information about the capture resource.
   Future<Rect> getCaptureSourceRect();
 
   /// Update the area captured by the screen.

@@ -539,9 +539,9 @@ void ZegoExpressEngineMethodHandler::stopPreview(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
         (EXPRESS::ZegoPublishChannel)channel);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 
@@ -816,7 +816,7 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
     }
 
     bool hasChannel = false;
-    int channel = -1;
+    int channel = 0;
     if (!argument[FTValue("channel")].IsNull()) {
         hasChannel = true;
         channel = std::get<int32_t>(argument[FTValue("channel")]);
@@ -835,6 +835,12 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
     } else {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
             (EXPRESS::ZegoVideoSourceType)source, instanceID, (EXPRESS::ZegoPublishChannel)channel);
+    }
+
+    if (source == EXPRESS::ZEGO_VIDEO_SOURCE_TYPE_SCREEN_CAPTURE) {
+        screenCaptureSourceChannel_ = channel;
+    } else if (screenCaptureSourceChannel_ == channel) {
+        screenCaptureSourceChannel_ = -1;
     }
 
     result->Success(FTValue(ret));
@@ -1033,8 +1039,8 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
     ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
 
     result->Success();
 }
@@ -5253,4 +5259,8 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
     }
 
     result->Success();
+}
+
+int ZegoExpressEngineMethodHandler::getScreenCaptureSourceChannel() {
+    return screenCaptureSourceChannel_;
 }

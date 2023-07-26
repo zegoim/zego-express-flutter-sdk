@@ -1442,6 +1442,17 @@ class ZegoExpressEngine {
       ZegoScreenCaptureWindowState windowState,
       Rect windowRect)? onWindowStateChanged;
 
+  /// The callback will be triggered when the state of the capture target window change.
+  ///
+  /// Available since: 3.7.0
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [captureRect] Capture source rect.
+  static void Function(ZegoScreenCaptureSource source, Rect captureRect)?
+      onRectChanged;
+
   /// The callback triggered when a screen capture source exception occurred
   ///
   /// Available since: 3.6.0
