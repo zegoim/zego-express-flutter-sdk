@@ -72,7 +72,7 @@ protected:
 
     void onPublisherCapturedAudioFirstFrame() override;
 
-    void onPublisherSendAudioFirstFrame() override;
+    void onPublisherSendAudioFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
     
     void onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;
 

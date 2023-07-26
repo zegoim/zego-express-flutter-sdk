@@ -304,9 +304,9 @@ void ZegoExpressEngineEventHandler::onPublisherCapturedAudioFirstFrame() {
     }
 }
 
-void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame() {
+void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame(EXPRESS::ZegoPublishChannel channel) {
 
-    ZF::logInfo("[onPublisherSendAudioFirstFrame]");
+    ZF::logInfo("[onPublisherSendAudioFirstFrame] channel: %d", channel);
     
     if (eventSink_) {
         FTMap retMap;
