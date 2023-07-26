@@ -4256,20 +4256,19 @@ abstract class ZegoMediaDataPublisher {
   /// - [isClear] Whether to clear the publish queue.
   Future<void> addMediaFilePath(String path, bool isClear);
 
-  /// Add media file to the publish queue. Currently, only mp4 file are supported, and special conversion is required.
+  /// Clear all the status in this media data publisher, so that it can be restarted next time.
   ///
   /// Available since: 2.17.0
-  /// Description: When you need to re-publish stream and do not need to continue publishing from the previous publish queue, you can call this function to reset the MediaDataPublisher state.
+  /// Description: When you need to re-publish stream and do not need to continue publishing from the previous publish queue, you can call this function to reset this media data publisher's state.
   /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
-  /// When to call: Before [startPublishingStream].
   /// Caution: When the developer calls [logoutRoom], the state is automatically reset.
   Future<void> reset();
 
-  /// Set to postpone the video playback time, mainly used to correct the fixed audio and picture asynchronous phenomenon that occurs during the publishing stream.
+  /// Set the delay time of video playback.
   ///
   /// Available since: 2.17.0
   /// Description: When this value is set, when publishing video file stream, the SDK will permanently delay the video to the set time value before sending.
-  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// Use cases: Mainly used to correct the fixed audio and picture asynchronous phenomenon that occurs during streaming.
   /// When to call: After calling the [createMediaDataPublisher] function to create a media data publisher.
   ///
   /// - [delayTime] Video playback time.Required: Yes.Value range: [0, 100] ms.
@@ -4279,7 +4278,6 @@ abstract class ZegoMediaDataPublisher {
   ///
   /// Available since: 2.17.0
   /// Description: Specify the starting point of the current video file publishing.
-  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
   /// When to call: Called at any point between [OnMediaDataPublisherFileOpen] and [OnMediaDataPublisherFileClose]. For example: this function can be called directly in the [OnMediaDataPublisherFileOpen] callback.
   ///
   /// - [millisecond] The timestamp of the start of streaming (relative to the timestamp of the file currently being published, the starting value is 0). the unit is milliseconds
@@ -4289,7 +4287,6 @@ abstract class ZegoMediaDataPublisher {
   ///
   /// Available since: 2.17.0
   /// Description: Get the total duration of the current file, in milliseconds.
-  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
   /// When to call: After [onMediaDataPublisherFileDataBegin] callback.
   ///
   /// - Returns The total duration of the current file.
@@ -4299,8 +4296,7 @@ abstract class ZegoMediaDataPublisher {
   ///
   /// Available since: 2.17.0
   /// Description: Get the playing progress of the current file, in milliseconds.
-  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
-  /// When to call: After [onMediaDataPublisherFileDataBegin] callback.
+  /// When to call: After received the [onMediaDataPublisherFileDataBegin] callback.
   ///
   /// - Returns The playing progress of the current file.
   Future<int> getCurrentDuration();
