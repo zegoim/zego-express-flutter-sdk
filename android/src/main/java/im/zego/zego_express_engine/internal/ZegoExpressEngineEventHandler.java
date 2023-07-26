@@ -679,6 +679,7 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onPlayerRecvSEI(String streamID, byte[] data) {
             super.onPlayerRecvSEI(streamID, data);
