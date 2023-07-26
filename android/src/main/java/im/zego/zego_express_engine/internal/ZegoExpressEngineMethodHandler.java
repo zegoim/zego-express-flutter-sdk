@@ -39,6 +39,7 @@ import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.ZegoMediaDataPublisher;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.ZegoRangeAudio;
 import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
@@ -94,6 +95,7 @@ import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
+import im.zego.zegoexpress.constants.ZegoMediaDataPublisherMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
@@ -161,6 +163,7 @@ import im.zego.zegoexpress.entity.ZegoEngineProfile;
 import im.zego.zegoexpress.entity.ZegoFontStyle;
 import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
+import im.zego.zegoexpress.entity.ZegoMediaDataPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerMediaInfo;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
@@ -216,6 +219,8 @@ public class ZegoExpressEngineMethodHandler {
     private static final HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
+
+    private static final HashMap<Integer, ZegoMediaDataPublisher> mediaDataPublisherHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoRealTimeSequentialDataManager> realTimeSequentialDataManagerHashMap = new HashMap<>();
 
@@ -4280,20 +4285,114 @@ public class ZegoExpressEngineMethodHandler {
 
     @SuppressWarnings("unused")
     public static void createMediaDataPublisher(MethodCall call, Result result) {
-        // TODO: Implement this feature when Java API ready
-        result.error("MediaDataPublisher_Not_Supported".toUpperCase(), "The media data publisher has not been implemented yet", null);
+        HashMap<String, Object> configMap = call.argument("config");
+        ZegoMediaDataPublisherConfig config = null;
+        if (configMap != null && !configMap.isEmpty()) {
+            config = new ZegoMediaDataPublisherConfig();
+            config.channel = ZegoUtils.intValue((Number) configMap.get("channel"));
+            config.mode = ZegoMediaDataPublisherMode.getZegoMediaDataPublisherMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+        }
+
+        ZegoMediaDataPublisher publisher = ZegoExpressEngine.getEngine().createMediaDataPublisher(config);
+        if (publisher != null) {
+            int index = publisher.getIndex();
+            publisher.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaDataPublisherEventHandler);
+            mediaDataPublisherHashMap.put(index, publisher);
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
     }
 
     @SuppressWarnings("unused")
     public static void destroyMediaDataPublisher(MethodCall call, Result result) {
-        // TODO: Implement this feature when Java API ready
-        result.error("MediaDataPublisher_Not_Supported".toUpperCase(), "The media data publisher has not been implemented yet", null);
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            publisher.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyMediaDataPublisher(publisher);
+            mediaDataPublisherHashMap.remove(index);
+            result.success(null);
+        } else {
+            result.error("destroyMediaDataPublisher_Can_not_find_publisher".toUpperCase(), "Invoke `destroyMediaDataPublisher` but can't find specific publisher", null);
+        }
     }
 
     @SuppressWarnings("unused")
     public static void mediaDataPublisherAddMediaFilePath(MethodCall call, Result result) {
-        // TODO: Implement this feature when Java API ready
-        result.error("MediaDataPublisher_Not_Supported".toUpperCase(), "The media data publisher has not been implemented yet", null);
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            String path = call.argument("path");
+            boolean isClear = ZegoUtils.boolValue((Boolean) call.argument("isClear"));
+            publisher.addMediaFilePath(path, isClear);
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherAddMediaFilePath_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherAddMediaFilePath` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherGetCurrentDuration(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            long duration = publisher.getCurrentDuration();
+            result.success(duration);
+        } else {
+            result.error("mediaDataPublisherGetCurrentDuration_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherGetCurrentDuration` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherGetTotalDuration(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            long duration = publisher.getTotalDuration();
+            result.success(duration);
+        } else {
+            result.error("mediaDataPublisherGetTotalDuration_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherGetTotalDuration` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherReset(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            publisher.reset();
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherReset_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherReset` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherSeekTo(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            long millisecond = ZegoUtils.longValue((Number) call.argument("millisecond"));
+            publisher.seekTo(millisecond);
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherSeekTo_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherSeekTo` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherSetVideoSendDelayTime(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            String path = call.argument("path");
+            int delayTime = ZegoUtils.intValue((Number) call.argument("delayTime"));
+            publisher.setVideoSendDelayTime(delayTime);
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherSetVideoSendDelayTime_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherSetVideoSendDelayTime` but can't find specific publisher", null);
+        }
     }
 
     /* Record */
