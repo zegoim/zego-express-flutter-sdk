@@ -1323,9 +1323,9 @@
     }
 }
 
-- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileClose:(NSString *)path {
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileClose:(NSString *)path errorCode:(int)errorCode {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaDataPublisherFileClose] idx: %d, path: %@", [publisher getIndex].intValue, path);
+    ZGLog(@"[onMediaDataPublisherFileClose] idx: %d, path: %@, errorCode: %d", [publisher getIndex].intValue, path, errorCode);
 
     GUARD_SINK
     if (sink) {
@@ -1333,6 +1333,7 @@
             @"method": @"onMediaDataPublisherFileClose",
             @"publisherIndex": [publisher getIndex],
             @"path": path,
+            @"errorCode": @(errorCode),
         });
     }
 }

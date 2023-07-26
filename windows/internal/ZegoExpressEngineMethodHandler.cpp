@@ -2622,7 +2622,7 @@ void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
     auto publisher = EXPRESS::ZegoExpressSDK::getEngine()->createMediaDataPublisher(config);
     if (publisher) {
         int index = publisher->getIndex();
-        publisher->setMediaDataPublisherEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        publisher->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
         mediaDataPublisherMap_[index] = publisher;
         result->Success(FTValue(index));
     } else {
