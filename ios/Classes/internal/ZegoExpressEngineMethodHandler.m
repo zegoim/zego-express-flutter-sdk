@@ -345,6 +345,14 @@
     result(nil);
 }
 
+- (void)submitLog:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [ZegoExpressEngine submitLog];
+
+    result(nil);
+}
+
+
 - (void)enableDebugAssistant:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
@@ -700,6 +708,33 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:(ZegoVideoMirrorMode)mode channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+
+}
+
+- (void)setPublishDualStreamConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSArray<NSDictionary *> *configListMap = call.arguments[@"configList"];
+    NSMutableArray<ZegoPublishDualStreamConfig *> *configList = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *configMap in configListMap) {
+        ZegoPublishDualStreamConfig *config = [[ZegoPublishDualStreamConfig alloc] init];
+        int streamType = [ZegoUtils intValue:configMap[@"streamType"]];
+        int width = [ZegoUtils intValue:configMap[@"encodeWidth"]];
+        int height = [ZegoUtils intValue:configMap[@"encodeHeight"]];
+        
+        config.streamType = (ZegoVideoStreamType) streamType;
+        config.fps = [ZegoUtils intValue:configMap[@"fps"]];
+        config.bitrate = [ZegoUtils intValue:configMap[@"bitrate"]];
+        config.encodeResolution = CGSizeMake(width, height);
+        
+        [configList addObject:config];
+    }
+    
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setPublishDualStreamConfig:configList.copy channel:(ZegoPublishChannel)channel];
 
     result(nil);
 

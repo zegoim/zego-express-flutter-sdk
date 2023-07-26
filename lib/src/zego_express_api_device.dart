@@ -81,7 +81,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Chooses to use the specified audio device.
   ///
-  /// Available since: 1.0.0
+  /// Available since: 1.1.0
   /// Description: Chooses to use the specified audio device.
   /// When to call: After creating the engine [createEngine] and before call [startPublishingStream] or [startPlayingStream].
   /// Restrictions: Only supports Windows / macOS / Linux
@@ -152,7 +152,12 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Turn on audio device volume monitoring.
   ///
-  /// Only for Windows / macOS / Linux
+  /// Available since: 1.1.0
+  /// Description: Starts the audio device volume monitor. When the volume of the device changes, the changed volume will be called back via [onAudioDeviceVolumeChanged].
+  /// Caution: Currently, only one audio output device and one audio input device are supported to be monitored at the same time. When this API is called multiple times and the same device type is set, the device ID set to this API during the last call will be overwritten.
+  /// When to call: After creating the engine via [createEngine].
+  /// Platform differences: Only supports Windows and macOS.
+  /// Related APIs: When you no longer need to monitor the device volume, please call [stopAudioDeviceVolumeMonitor] to stop monitoring.
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -164,7 +169,10 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Turn off audio device volume monitoring. Only for Windows/macOS.
   ///
-  /// Only for Windows / macOS / Linux
+  /// Available since: 1.1.0
+  /// Description: Stops the audio device volume monitor.
+  /// When to call: After creating the engine via [createEngine], and when you no longer need to monitor the device volume.
+  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [deviceType] Audio device type
   /// - [deviceID] ID of a device obtained by [getAudioDeviceList]
@@ -597,7 +605,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Enable or disable mix SDK playout to stream publishing.
   ///
-  /// Available since: 1.0.0
+  /// Available since: 1.1.0
   /// Description: Enable mix SDK playout sounds into the stream publishing.
   /// Use cases: Users need to mix the sound of SDK playout into stream publishing. For example, when the class scene, the teacher and student Co-hosting, and the teacher can mix the play streaming sound into the publish streaming.
   /// Default value: Default is disable.
@@ -630,7 +638,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Stop audio VAD stable state monitoring.
   ///
-  /// Available: since 2.14.0
+  /// Available since: 2.14.0
   /// Description: After calling this interface, the specified type of [onAudioVADStateUpdate] callback can no longer be received.
   /// When to call: None.
   /// Restrictions: None.

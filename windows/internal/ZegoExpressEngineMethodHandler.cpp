@@ -282,6 +282,13 @@ void ZegoExpressEngineMethodHandler::uploadLog(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::submitLog(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    EXPRESS::ZegoExpressSDK::submitLog();
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::enableDebugAssistant(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -583,6 +590,31 @@ void ZegoExpressEngineMethodHandler::getVideoConfig(
     configMap[FTValue("encodeWidth")] = FTValue(config.encodeWidth);
     configMap[FTValue("fps")] = FTValue(config.fps);
     configMap[FTValue("keyFrameInterval")] = FTValue(config.keyFrameInterval);
+
+    result->Success(configMap);
+}
+
+void ZegoExpressEngineMethodHandler::setPublishDualStreamConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    std::vector<EXPRESS::ZegoPublishDualStreamConfig> configList;
+    auto configListMap = std::get<FTArray>(argument[FTValue("configList")]);
+    for (auto config_ : configListMap) {
+        FTMap configMap = std::get<FTMap>(config_);
+        EXPRESS::ZegoPublishDualStreamConfig config;
+
+        config.encodeWidth = std::get<int32_t>(configMap[FTValue("encodeWidth")]);
+        config.encodeHeight = std::get<int32_t>(configMap[FTValue("encodeHeight")]);
+        config.fps = std::get<int32_t>(configMap[FTValue("fps")]);
+        config.bitrate = std::get<int32_t>(configMap[FTValue("bitrate")]);
+        config.streamType = (EXPRESS::ZegoVideoStreamType) std::get<int32_t>(configMap[FTValue("streamType")]);
+
+        configList.push_back(config);
+    }
+    
+    EXPRESS::ZegoExpressSDK::getEngine()->setPublishDualStreamConfig(configList, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success(configMap);
 }
