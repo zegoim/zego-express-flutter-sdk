@@ -854,6 +854,8 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
         channel = std::get<int32_t>(argument[FTValue("channel")]);
     }
 
+    ZegoTextureRendererController::getInstance()->setVideoSourceChannel((EXPRESS::ZegoPublishChannel)channel, (EXPRESS::ZegoVideoSourceType)source);
+
     int ret = 0;
     if (!hasChannel && !hasInstanceID) {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
@@ -867,12 +869,6 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
     } else {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
             (EXPRESS::ZegoVideoSourceType)source, instanceID, (EXPRESS::ZegoPublishChannel)channel);
-    }
-
-    if (source == EXPRESS::ZEGO_VIDEO_SOURCE_TYPE_SCREEN_CAPTURE) {
-        screenCaptureSourceChannel_ = channel;
-    } else if (screenCaptureSourceChannel_ == channel) {
-        screenCaptureSourceChannel_ = -1;
     }
 
     result->Success(FTValue(ret));
@@ -5291,8 +5287,4 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
     }
 
     result->Success();
-}
-
-int ZegoExpressEngineMethodHandler::getScreenCaptureSourceChannel() {
-    return screenCaptureSourceChannel_;
 }

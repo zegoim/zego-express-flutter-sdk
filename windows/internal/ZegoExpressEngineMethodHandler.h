@@ -891,9 +891,6 @@ class ZegoExpressEngineMethodHandler {
     destroyTextureRenderer(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-  public:
-    int getScreenCaptureSourceChannel();
-
   private:
     ZegoExpressEngineMethodHandler() = default;
 
@@ -904,7 +901,6 @@ class ZegoExpressEngineMethodHandler {
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
-    int screenCaptureSourceChannel_ = -1;
 
     flutter::PluginRegistrarWindows *registrar_;
 };

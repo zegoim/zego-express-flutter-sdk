@@ -20,7 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZegoExpressEngineMethodHandler : NSObject
 
 @property (nonatomic, assign, readonly) BOOL enablePlatformView;
-@property (nonatomic, assign, readonly) int screenCaptureChannel;
 
 + (instancetype)sharedInstance;
 

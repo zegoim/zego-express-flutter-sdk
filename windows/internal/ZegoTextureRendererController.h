@@ -74,8 +74,11 @@ public:
     /// Called when dart invoke `startPreview/startPlayingStream/updatePlayingCanvas`
     void enableTextureAlpha(bool enable, int64_t textureID);
 
+    /// Called when dart invoke `setVideoSource`
+    void setVideoSourceChannel(ZEGO::EXPRESS::ZegoPublishChannel channel, ZEGO::EXPRESS::ZegoVideoSourceType sourceType);
+
 public:
-    void sendCapturedVideoFrameRawData(unsigned char ** data,
+    void sendScreenCapturedVideoFrameRawData(unsigned char ** data,
                                         unsigned int * dataLength,
                                         ZEGO::EXPRESS::ZegoVideoFrameParam param,
                                         ZEGO::EXPRESS::ZegoVideoFlipMode flipMode,
@@ -113,6 +116,7 @@ private:
     std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel , std::shared_ptr<ZegoTextureRenderer> > capturedRenderers_;
     std::unordered_map<std::string , std::shared_ptr<ZegoTextureRenderer> > remoteRenderers_;
     std::unordered_map<ZEGO::EXPRESS::IZegoMediaPlayer * , std::shared_ptr<ZegoTextureRenderer> > mediaPlayerRenderers_;
+    std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel , ZEGO::EXPRESS::ZegoVideoSourceType > videoSourceChannels_;
 
     std::atomic_bool isInit = false;
 
