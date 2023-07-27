@@ -15,7 +15,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.6.1";
+  static String pluginVersion = "3.7.0";
 }
 
 class ZegoExpressImpl {
@@ -52,7 +52,7 @@ class ZegoExpressImpl {
     use &= !kIsWindows;
     // TODO: PlatformView support on macOS has a crash issue, don't use it now
     // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= kIsMacOS;
+    use &= !kIsMacOS;
     return use;
   }
 
