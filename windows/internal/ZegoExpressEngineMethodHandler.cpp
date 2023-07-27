@@ -616,7 +616,7 @@ void ZegoExpressEngineMethodHandler::setPublishDualStreamConfig(
     
     EXPRESS::ZegoExpressSDK::getEngine()->setPublishDualStreamConfig(configList, (EXPRESS::ZegoPublishChannel)channel);
 
-    result->Success(configMap);
+    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::setVideoMirrorMode(
