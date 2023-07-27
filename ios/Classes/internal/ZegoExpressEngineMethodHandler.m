@@ -3690,6 +3690,7 @@
 
     result(nil);
 }
+#endif
 
 - (void)mediaPlayerLoadResourceWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
     
@@ -3719,8 +3720,6 @@
         result([FlutterError errorWithCode:[@"loadResourceWithConfig_Can_not_find_player" uppercaseString] message:@"Invoke `loadResourceWithConfig` but can't find specific player" details:nil]);
     }
 }
-
-#endif
 
 - (void)mediaPlayerUpdatePosition:(FlutterMethodCall *)call result:(FlutterResult)result {
 
