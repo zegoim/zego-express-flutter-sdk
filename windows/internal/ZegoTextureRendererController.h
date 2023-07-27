@@ -81,8 +81,7 @@ public:
     void sendScreenCapturedVideoFrameRawData(unsigned char ** data,
                                         unsigned int * dataLength,
                                         ZEGO::EXPRESS::ZegoVideoFrameParam param,
-                                        ZEGO::EXPRESS::ZegoVideoFlipMode flipMode,
-                                        ZEGO::EXPRESS::ZegoPublishChannel channel);
+                                        ZEGO::EXPRESS::ZegoVideoFlipMode flipMode);
 
 protected:
     // When custom video rendering is enabled, the original video frame data collected by the local preview is called back.
