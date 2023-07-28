@@ -345,6 +345,14 @@
     result(nil);
 }
 
+- (void)submitLog:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    [ZegoExpressEngine submitLog];
+
+    result(nil);
+}
+
+
 - (void)enableDebugAssistant:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
@@ -700,6 +708,33 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setVideoMirrorMode:(ZegoVideoMirrorMode)mode channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+
+}
+
+- (void)setPublishDualStreamConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSArray<NSDictionary *> *configListMap = call.arguments[@"configList"];
+    NSMutableArray<ZegoPublishDualStreamConfig *> *configList = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *configMap in configListMap) {
+        ZegoPublishDualStreamConfig *config = [[ZegoPublishDualStreamConfig alloc] init];
+        int streamType = [ZegoUtils intValue:configMap[@"streamType"]];
+        int width = [ZegoUtils intValue:configMap[@"encodeWidth"]];
+        int height = [ZegoUtils intValue:configMap[@"encodeHeight"]];
+        
+        config.streamType = (ZegoVideoStreamType) streamType;
+        config.fps = [ZegoUtils intValue:configMap[@"fps"]];
+        config.bitrate = [ZegoUtils intValue:configMap[@"bitrate"]];
+        config.encodeResolution = CGSizeMake(width, height);
+        
+        [configList addObject:config];
+    }
+    
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setPublishDualStreamConfig:configList.copy channel:(ZegoPublishChannel)channel];
 
     result(nil);
 
@@ -1101,11 +1136,14 @@
     }
 
     BOOL hasChannel = NO;
-    int channel = -1;
+    int channel = 0;
     if (![ZegoUtils isNullObject:call.arguments[@"channel"]]) {
         hasChannel = YES;
         channel = [ZegoUtils intValue:call.arguments[@"channel"]];
     }
+    
+    /// 标识推流通道的视频源
+    [ZegoTextureRendererController.sharedInstance setVideoSourceChannel:@(channel) withSource:source];
 
     int ret = 0;
     if (!hasChannel && !hasInstanceID) {
@@ -3648,6 +3686,7 @@
 
     result(nil);
 }
+#endif
 
 - (void)mediaPlayerLoadResourceWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
     
@@ -3677,8 +3716,6 @@
         result([FlutterError errorWithCode:[@"loadResourceWithConfig_Can_not_find_player" uppercaseString] message:@"Invoke `loadResourceWithConfig` but can't find specific player" details:nil]);
     }
 }
-
-#endif
 
 - (void)mediaPlayerUpdatePosition:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -4988,6 +5025,25 @@
             result(resultMap);
         });
     });
+}
+
+- (void)getCaptureSourceRectScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        CGRect rect = [screenCaptureSource getCaptureSourceRect];
+        
+        NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+        resultMap[@"x"] = @(rect.origin.x);
+        resultMap[@"y"] = @(rect.origin.y);
+        resultMap[@"width"] = @(rect.size.width);
+        resultMap[@"height"] = @(rect.size.height);
+        result(resultMap);
+    } else {
+        result(nil);
+    }
 }
 
 - (void)createScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {

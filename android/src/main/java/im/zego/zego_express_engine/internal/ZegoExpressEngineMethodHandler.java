@@ -176,6 +176,7 @@ import im.zego.zegoexpress.entity.ZegoNetworkTimeInfo;
 import im.zego.zegoexpress.entity.ZegoObjectSegmentationConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoProxyInfo;
+import im.zego.zegoexpress.entity.ZegoPublishDualStreamConfig;
 import im.zego.zegoexpress.entity.ZegoPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
@@ -474,6 +475,14 @@ public class ZegoExpressEngineMethodHandler {
     public static void uploadLog(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().uploadLog();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void submitLog(MethodCall call, Result result) {
+
+        ZegoExpressEngine.submitLog();
 
         result.success(null);
     }
@@ -824,6 +833,35 @@ public class ZegoExpressEngineMethodHandler {
         resultMap.put("bitrate", config.bitrate);
         resultMap.put("codecID", config.codecID.value());
         result.success(resultMap);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPublishDualStreamConfig(MethodCall call, Result result) {
+
+        ArrayList<HashMap<String, Object>> configListMap = call.argument("configList");
+        ArrayList<ZegoPublishDualStreamConfig> configList = new ArrayList<>();
+        for (HashMap<String, Object> configMap : configListMap) {
+            ZegoVideoStreamType streamType = ZegoVideoStreamType.getZegoVideoStreamType(ZegoUtils.intValue((Number) configMap.get("streamType")));
+            int width = ZegoUtils.intValue((Number) configMap.get("encodeWidth"));
+            int height = ZegoUtils.intValue((Number) configMap.get("encodeHeight"));
+            int fps = ZegoUtils.intValue((Number) configMap.get("fps"));
+            int bitrate = ZegoUtils.intValue((Number) configMap.get("bitrate"));
+
+            ZegoPublishDualStreamConfig config = new ZegoPublishDualStreamConfig();
+            config.streamType = streamType;
+            config.encodeWidth = width;
+            config.encodeHeight = height;
+            config.fps = fps;
+            config.bitrate = bitrate;
+
+            configList.add(config);
+        }
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setPublishDualStreamConfig(configList, channel);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
