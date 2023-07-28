@@ -15,7 +15,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.6.1";
+  static String pluginVersion = "3.7.0";
 }
 
 class ZegoExpressImpl {
@@ -192,6 +192,10 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('uploadLog');
   }
 
+  static Future<void> submitLog() async {
+    return await _channel.invokeMethod('submitLog');
+  }
+
   Future<void> enableDebugAssistant(bool enable) async {
     return await _channel
         .invokeMethod('enableDebugAssistant', {'enable': enable});
@@ -356,6 +360,19 @@ class ZegoExpressImpl {
         keyFrameInterval: map['keyFrameInterval'] ?? 2);
 
     return config;
+  }
+
+  Future<void> setPublishDualStreamConfig(
+      List<ZegoPublishDualStreamConfig> configList,
+      {ZegoPublishChannel? channel}) async {
+    List<Map<String, dynamic>> configMapConfig = [];
+    for (ZegoPublishDualStreamConfig config in configList) {
+      configMapConfig.add(config.toMap());
+    }
+    return await _channel.invokeMethod('setPublishDualStreamConfig', {
+      'configList': configMapConfig,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode,
@@ -2944,6 +2961,23 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onRectChanged':
+        if (ZegoExpressEngine.onRectChanged == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onRectChanged!(
+              screenCaptureSource,
+              Rect.fromLTWH(
+                  double.parse(map['captureRect']['x'].toString()),
+                  double.parse(map['captureRect']['y'].toString()),
+                  double.parse(map['captureRect']['width'].toString()),
+                  double.parse(map['captureRect']['height'].toString())));
+        }
+        break;
+
       case 'onMobileScreenCaptureExceptionOccurred':
         if (ZegoExpressEngine.onMobileScreenCaptureExceptionOccurred == null)
           return;
@@ -3462,12 +3496,15 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
         'audioEffectPlayerSetPlaySpeed',
         {'index': _index, 'audioEffectID': audioEffectID, 'speed': speed});
   }
-  
+
   @override
   Future<void> updatePosition(int audioEffectID, Float32List position) async {
     return await ZegoExpressImpl._channel.invokeMethod(
-        'audioEffectPlayerUpdatePosition',
-        {'index': _index, 'audioEffectID': audioEffectID, 'position': position});
+        'audioEffectPlayerUpdatePosition', {
+      'index': _index,
+      'audioEffectID': audioEffectID,
+      'position': position
+    });
   }
 }
 

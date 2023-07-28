@@ -128,6 +128,22 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.getVideoConfig(channel: channel);
   }
 
+  /// Set dual stream config.
+  ///
+  /// Available since: 3.7.0
+  /// Description: Set the stream config.
+  /// When to call: This must take effect when the codecID specified in the call to [ZegoExpressEngine > setVideoConfig] is ZegoVideoCodecIDH264DualStream after [createEngine] is called.
+  /// Restrictions: To take effect, the parameters of flow and small flow must be specified at the same time. The resolution ratio of flow and small flow must be the same. For example, both are 4:3 .
+  ///
+  /// - [configList] config info.
+  /// - [channel] ZegoPublishChannel.
+  Future<void> setPublishDualStreamConfig(
+      List<ZegoPublishDualStreamConfig> configList,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setPublishDualStreamConfig(configList, channel: channel);
+  }
+
   /// Sets the video mirroring mode (for the specified channel).
   ///
   /// Available since: 1.1.0

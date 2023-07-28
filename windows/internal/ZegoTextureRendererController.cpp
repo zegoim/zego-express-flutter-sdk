@@ -16,6 +16,7 @@ ZegoTextureRendererController::~ZegoTextureRendererController()
         remoteRenderers_.clear();
         mediaPlayerRenderers_.clear();
         alphaRenders_.clear();
+        videoSourceChannels_.clear();
     }
     
     renderers_.clear();
@@ -48,6 +49,7 @@ void ZegoTextureRendererController::uninit()
         remoteRenderers_.clear();
         mediaPlayerRenderers_.clear();
         alphaRenders_.clear();
+        videoSourceChannels_.clear();
     }
     
     renderers_.clear();
@@ -199,6 +201,35 @@ void ZegoTextureRendererController::enableTextureAlpha(bool enable, int64_t text
     {
         std::lock_guard<std::mutex> lock(rendersMutex_);
         alphaRenders_.insert(std::pair<int64_t , bool>(textureID, enable));
+    }
+}
+
+void ZegoTextureRendererController::setVideoSourceChannel(ZEGO::EXPRESS::ZegoPublishChannel channel, ZEGO::EXPRESS::ZegoVideoSourceType sourceType)
+{
+    ZF::logInfo("[setVideoSourceChannel] channel: %d, sourceType: %d", channel, sourceType);
+
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        videoSourceChannels_.insert(std::pair<ZEGO::EXPRESS::ZegoPublishChannel , ZEGO::EXPRESS::ZegoVideoSourceType>(channel, sourceType));
+    }
+}
+
+
+void ZegoTextureRendererController::sendScreenCapturedVideoFrameRawData(unsigned char ** data,
+                                        unsigned int * dataLength,
+                                        ZEGO::EXPRESS::ZegoVideoFrameParam param,
+                                        ZEGO::EXPRESS::ZegoVideoFlipMode flipMode)
+{
+    int key = -1;
+    for (auto const& pair : videoSourceChannels_) {
+        if (pair.second == ZEGO::EXPRESS::ZegoVideoSourceType::ZEGO_VIDEO_SOURCE_TYPE_SCREEN_CAPTURE) {
+            key = pair.first;
+            break;
+        }
+    }
+
+    if (key != -1) {
+        onCapturedVideoFrameRawData(data, dataLength, param, flipMode, (ZEGO::EXPRESS::ZegoPublishChannel)key);
     }
 }
 

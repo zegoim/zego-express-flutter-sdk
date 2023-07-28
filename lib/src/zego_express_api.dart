@@ -18,7 +18,7 @@ class ZegoExpressEngine {
   /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
   /// When to call: The engine needs to be created before calling other functions.
   /// Restrictions: None.
-  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. If you need call [createEngine] multiple times, you need call [destroyEngine] before you call the next [createEngine]. Otherwise it will return the instance which created by [createEngine] you called last time.
   ///
   /// - [profile] The basic configuration information is used to create the engine.
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
@@ -184,11 +184,23 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
   /// Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
-  /// When to call: After [loginRoom] or [loginScene].
-  /// Restrictions: If you call this interface repeatedly within 10 minutes, only the last call will take effect.
-  /// Caution: After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback.
+  /// When to call: After [createEngine].
+  /// Restrictions:  The frequency limit is once per minute.
+  /// Caution: 1.After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback. 2.If you want to call before [createEngine], use the [submitLog] interface.
   Future<void> uploadLog() async {
     return await ZegoExpressImpl.instance.uploadLog();
+  }
+
+  /// Uploads logs to the ZEGO server.
+  ///
+  /// Available since: 3.7.0
+  /// Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
+  /// Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
+  /// When to call: None.
+  /// Restrictions: The frequency limit is once per minute.
+  /// Caution: 1.After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback. 2.It is supported to call before [createEngine]. If it had called [createEngine] before, the last appid will be used to upload the log, otherwise the log will not be uploaded until the next [createEngine].
+  static Future<void> submitLog() async {
+    return await ZegoExpressImpl.submitLog();
   }
 
   /// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
@@ -783,10 +795,9 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change of the volume for the audio devices.
   ///
-  /// Available since: 1.0.0
-  /// Description: This callback is used to receive audio device volume change events.
-  /// When to trigger: The callback triggered when there is a change of the volume fo the audio devices.
-  /// Restrictions: None
+  /// Available since: 1.1.0
+  /// Description: Audio device volume change event callback.
+  /// When to trigger: After calling the [startAudioDeviceVolumeMonitor] function to start the device volume monitor, and the volume of the monitored audio device changes.
   /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [deviceType] Audio device type
@@ -798,7 +809,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
-  /// Available since: 1.0.0
+  /// Available since: 1.1.0
   /// Description: By listening to this callback, users can update the video capture using a specific device when necessary.
   /// When to trigger: This callback is triggered when a video device is added or removed from the system.
   /// Restrictions: None
@@ -1223,7 +1234,7 @@ class ZegoExpressEngine {
   ///   Versions 2.10.0 to 2.13.1:
   ///   1. Developer must both publish and play streams before you receive your own network quality callback.
   ///   2. When playing a stream, the publish end has a play stream and the publish end is in the room where it is located, then the user's network quality will be received.
-  ///   Version 2.14.0 and above:
+  ///   Versions 2.14.0 to 2.21.1:
   ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
   ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
   ///   Version 2.22.0 and above:
@@ -1442,6 +1453,17 @@ class ZegoExpressEngine {
       ZegoScreenCaptureWindowState windowState,
       Rect windowRect)? onWindowStateChanged;
 
+  /// The callback will be triggered when the state of the capture target window change.
+  ///
+  /// Available since: 3.7.0
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [captureRect] Capture source rect.
+  static void Function(ZegoScreenCaptureSource source, Rect captureRect)?
+      onRectChanged;
+
   /// The callback triggered when a screen capture source exception occurred
   ///
   /// Available since: 3.6.0
@@ -1460,7 +1482,7 @@ class ZegoExpressEngine {
   /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
   /// When to call: The engine needs to be created before calling other functions.
   /// Restrictions: None.
-  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. If you need call [createEngine] multiple times, you need call [destroyEngine] before you call the next [createEngine]. Otherwise it will return the instance which created by [createEngine] you called last time.
   ///
   /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.

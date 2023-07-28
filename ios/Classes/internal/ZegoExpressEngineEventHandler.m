@@ -8,7 +8,8 @@
 
 #import "ZegoExpressEngineEventHandler.h"
 #import "ZegoLog.h"
-#import "ZegoCustomVideoCaptureManager.h"
+#import "ZegoTextureRendererController.h"
+#import "ZegoExpressEngineMethodHandler.h"
 #import <objc/message.h>
 
 #define GUARD_SINK if(!sink){ZGError(@"[%s] FlutterEventSink is nil", __FUNCTION__);}
@@ -1620,12 +1621,14 @@
 
 #if TARGET_OS_OSX
 - (void)screenCapture:(ZegoScreenCaptureSource *)source availableFrame:(const void *)data dataLength:(unsigned int)dataLength param:(ZegoVideoFrameParam *)param {
-    
+    if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
+        [ZegoTextureRendererController.sharedInstance sendScreenCapturedVideoFrameRawData:data dataLength:dataLength param:param];
+    }
 }
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)type {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:exceptionOccurred:] type: %d", type);
+    ZGLog(@"[screenCapture:exceptionOccurred:] type: %td", type);
 
     GUARD_SINK
     
@@ -1640,7 +1643,7 @@
 
 - (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:windowState:windowRect:] state: %d, rect: %@", state, NSStringFromRect(rect));
+    ZGLog(@"[screenCapture:windowState:windowRect:] state: %td, rect: %@", state, NSStringFromRect(rect));
     
     GUARD_SINK
     
@@ -1650,6 +1653,26 @@
             @"screenCaptureSourceIndex": [source getIndex],
             @"windowState": @(state),
             @"windowRect": @{
+                @"x": @(rect.origin.x),
+                @"y": @(rect.origin.y),
+                @"width": @(rect.size.width),
+                @"height": @(rect.size.height)
+            }
+        });
+    }
+}
+
+- (void)screenCapture:(ZegoScreenCaptureSource *)source rectChanged:(CGRect)rect {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[screenCapture:rectChanged:], rect: %@", NSStringFromRect(rect));
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onRectChanged",
+            @"screenCaptureSourceIndex": [source getIndex],
+            @"captureRect": @{
                 @"x": @(rect.origin.x),
                 @"y": @(rect.origin.y),
                 @"width": @(rect.size.width),
