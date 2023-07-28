@@ -11,7 +11,6 @@
 #import "ZegoTextureRendererController.h"
 #import "ZegoExpressEngineMethodHandler.h"
 #import <objc/message.h>
-#import <Metal/Metal.h>
 
 #define GUARD_SINK if(!sink){ZGError(@"[%s] FlutterEventSink is nil", __FUNCTION__);}
 
@@ -1663,9 +1662,9 @@
     }
 }
 
-- (void)screenCapture:(ZegoScreenCaptureSource *)source captureRect:(CGRect)rect {
+- (void)screenCapture:(ZegoScreenCaptureSource *)source rectChanged:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:captureRect:], rect: %@", NSStringFromRect(rect));
+    ZGLog(@"[screenCapture:rectChanged:], rect: %@", NSStringFromRect(rect));
     
     GUARD_SINK
     
