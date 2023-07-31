@@ -1,9 +1,57 @@
 # Change Log
+
+## 3.7.0
+
+### New Features
+
+1. After enabling the encoding of H.264 DualStream, in addition to the video parameters for the big stream, it is now possible to set the video parameters for the small one.
+
+    Note:
+
+    Before using this function, you need to call the [setVideoConfig] interface to specify the video codecID as ZegoVideoCodecIDH264DualStream.
+
+    The ratio of setting the resolution for the big stream and the small stream needs to be consistent, otherwise it will cause errors when calling the interface.
+
+    When specifying the codecID as ZegoVideoCodecIDH264DualStream, you can separately set the resolution, frame rate, and bitrate for the big stream and the small stream.
+
+    For related API, please refer to [setVideoConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setVideoConfig.html), [setPublishDualStreamConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setPublishDualStreamConfig.html)
+
+2. Added a callback notification when the desktop screen capture area changes.
+
+    The callback notification for when the desktop screen capture area changes is called [onRectChanged]. After starting the screen capture, when the capture area changes, the SDK will notify the developer through this callback. By listening to this callback, developers can modify the preview screen size and other configurations.
+
+    For related API, please refer to [onRectChanged](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRectChanged.html)
+
+### Enhancements
+
+1. Optimize the internal logic of the SDK and reduce the memory usage by 400KB ~ 600KB.
+
+2. Optimize the SDK video capture strategy to improve image quality.
+
+3. In the publish-play stream retry state caused by network disconnection, support callback for local network quality
+
+    For related API, please refer to [onNetworkQuality](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onNetworkQuality.html)
+
+4. Support generating log upload tasks after calling the [destroyEngine] interface.
+
+    For related API, please refer to [submitLog](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/submitLog.html)
+
+5. Optimize the internal logic of the SDK to improve the call experience in a weak network environment.
+
+### Bug Fixes
+
+1. Fixed the occasional stuck problem when rendering on the metal screen.
+
+2. Fix the problem that after MediaRecorder and AudioObserver stop streaming, the local streaming is not resumed and the collection continues.
+
+3. Fix the problem of multi-thread deadlock in NetMonitor module.
+
 ## 3.6.1
 
 ### Bug Fixes
 
 1. Fix the problem that setRoomExtraInfo call fails.
+
 ## 3.6.0
 
 ### **💥 Breaking changes**

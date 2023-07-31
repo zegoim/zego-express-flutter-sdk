@@ -727,6 +727,18 @@ enum ZegoStreamResourceMode {
   CDNPlus
 }
 
+/// Stream Switch Resource Mode
+enum ZegoStreamResourceSwitchMode {
+  /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
+  Default,
+
+  /// Auto switch to RTC resource when publishing.
+  SwitchToRTC,
+
+  /// Keep using original resource when publishing, not switch to RTC resource.
+  KeepOriginal
+}
+
 /// Update type.
 enum ZegoUpdateType {
   /// Add
@@ -1015,7 +1027,13 @@ enum ZegoVideoFrameFormat {
   ABGR32,
 
   /// I422 (YUV422Planar) format
-  I422
+  I422,
+
+  /// BGR24 format
+  BGR24,
+
+  /// RGB24 format
+  RGB24
 }
 
 /// Video frame buffer type.
@@ -1039,7 +1057,16 @@ enum ZegoVideoBufferType {
   SurfaceTexture,
 
   /// GL_TEXTURE_EXTERNAL_OES type video frame
-  GLTextureExternalOES
+  GLTextureExternalOES,
+
+  /// Texture 2D and raw data type video frame
+  GLTexture2DAndRawData,
+
+  /// D3D Texture2D type video frame
+  D3DTexture2D,
+
+  /// CVPixelBuffer type nv12 format video frame
+  NV12CVPixelBuffer
 }
 
 /// Video frame format series.
@@ -2015,6 +2042,37 @@ class ZegoVideoConfig {
   }
 }
 
+/// Dual stream info.
+class ZegoPublishDualStreamConfig {
+  /// streamType
+  ZegoVideoStreamType streamType;
+
+  /// Video resolution width to be adjusted
+  int encodeWidth;
+
+  /// Video resolution height to be adjusted
+  int encodeHeight;
+
+  /// Video FPS to be adjusted
+  int fps;
+
+  /// Video bitrate in kbps to be adjusted
+  int bitrate;
+
+  ZegoPublishDualStreamConfig(this.streamType, this.encodeWidth,
+      this.encodeHeight, this.fps, this.bitrate);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'streamType': this.streamType.index,
+      'encodeWidth': this.encodeWidth,
+      'encodeHeight': this.encodeHeight,
+      'fps': this.fps,
+      'bitrate': this.bitrate
+    };
+  }
+}
+
 /// SEI configuration
 ///
 /// Used to set the relevant configuration of the Supplemental Enhancement Information.
@@ -2332,19 +2390,24 @@ class ZegoPlayerConfig {
   /// Preconfigured codec template ID, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   int? codecTemplateID;
 
+  /// Play resource switching strategy mode, the default is ZegoStreamResourceSwitchModeDefault
+  ZegoStreamResourceSwitchMode? resourceSwitchMode;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
       this.videoCodecID,
       this.sourceResourceType,
-      this.codecTemplateID});
+      this.codecTemplateID,
+      this.resourceSwitchMode});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
       : resourceMode = ZegoStreamResourceMode.Default,
         videoCodecID = ZegoVideoCodecID.Unknown,
         sourceResourceType = ZegoResourceType.RTC,
-        codecTemplateID = 0;
+        codecTemplateID = 0,
+        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default;
 }
 
 /// Played stream quality information.
@@ -2742,10 +2805,13 @@ class ZegoMixerImageInfo {
   /// The image path, if not empty, the image will be displayed, otherwise, the video will be displayed. JPG and PNG formats are supported. There are 2 ways to use it: 1. URI: Provide the picture to ZEGO technical support for configuration. After the configuration is complete, the picture URI will be provided, for example: preset-id://xxx.jpg. 2. URL: Only HTTP protocol is supported.
   String url;
 
-  ZegoMixerImageInfo(this.url);
+  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream is empty or not. Display image when the input stream is empty for 3 consecutive seconds. The default duration for determine a input stream is empty or not is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.
+  int? displayMode;
+
+  ZegoMixerImageInfo(this.url, {this.displayMode});
 
   Map<String, dynamic> toMap() {
-    return {'url': this.url};
+    return {'url': this.url, 'displayMode': this.displayMode};
   }
 }
 
@@ -3627,6 +3693,38 @@ class ZegoMediaDataPublisherConfig {
   ZegoMediaDataPublisherConfig(this.channel, this.mode);
 }
 
+/// Receive range configuration.
+class ZegoReceiveRangeParam {
+  /// The minimum distance at which the 3D sound effect starts to have attenuation effect, the value needs to be >= 0 and <= max, the default value is 0.
+  double min;
+
+  /// The maximum range received, the value needs to be >= min, the default value is 0.
+  double max;
+
+  ZegoReceiveRangeParam(this.min, this.max);
+
+  /// Constructs a range audio receive range object by default.
+  ZegoReceiveRangeParam.defaultParam()
+      : min = 0,
+        max = 0;
+}
+
+/// Vocal range configuration.
+class ZegoVocalRangeParam {
+  /// The minimum distance at which the 3D sound effect starts to have attenuation effect, the value needs to be >= 0 and <= max, the default value is 0.
+  double min;
+
+  /// The maximum range of the sound, the value needs to be >= min, the default value is 0.
+  double max;
+
+  ZegoVocalRangeParam(this.min, this.max);
+
+  /// Constructs a range audio vocal range object by default.
+  ZegoVocalRangeParam.defaultParam()
+      : min = 0,
+        max = 0;
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -4056,6 +4154,13 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [position] The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3.
   Future<void> updatePosition(Float32List position);
+
+  /// Set http headers.
+  ///
+  /// When the network resource needs to set special header information, call this function to set the http headers of the http network resource.
+  ///
+  /// - [headers] Headers info.
+  Future<void> setHttpHeader(Map headers);
 }
 
 abstract class ZegoAudioEffectPlayer {

@@ -191,6 +191,18 @@ class ZegoExpressEngine {
     return await ZegoExpressImpl.instance.uploadLog();
   }
 
+  /// Uploads logs to the ZEGO server.
+  ///
+  /// Available since: 3.7.0
+  /// Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
+  /// Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
+  /// When to call: None.
+  /// Restrictions: The frequency limit is once per minute.
+  /// Caution: 1.After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback. 2.It is supported to call before [createEngine]. If it had called [createEngine] before, the last appid will be used to upload the log, otherwise the log will not be uploaded until the next [createEngine].
+  static Future<void> submitLog() async {
+    return await ZegoExpressImpl.submitLog();
+  }
+
   /// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
   ///
   /// Available since: 2.17.0
@@ -468,7 +480,10 @@ class ZegoExpressEngine {
   /// Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data. Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
   /// Trigger: In the case of no startPublishingStream audio stream, the first startPublishingStream audio stream, it will receive this callback.
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
-  static void Function()? onPublisherSendAudioFirstFrame;
+  ///
+  /// - [channel] Publishing stream channel.If you only publish one audio stream, you can ignore this parameter.
+  static void Function(ZegoPublishChannel channel)?
+      onPublisherSendAudioFirstFrame;
 
   /// The callback triggered when the first video frame is sent.
   ///
@@ -478,7 +493,7 @@ class ZegoExpressEngine {
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
-  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  /// - [channel] Publishing stream channel.If you only publish one video stream, you can ignore this parameter.
   static void Function(ZegoPublishChannel channel)?
       onPublisherSendVideoFirstFrame;
 
@@ -551,7 +566,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 3.4.0
   /// Description: The object segmentation state of the stream publishing end changes.
-  /// When to trigger: When [enableObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
+  /// When to trigger: When [enableVideoObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
   /// Caution: This callback depends on enabling preview or stream publishing.
   ///
   /// - [state] Object segmentation state.

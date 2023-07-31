@@ -282,6 +282,13 @@ void ZegoExpressEngineMethodHandler::uploadLog(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::submitLog(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    EXPRESS::ZegoExpressSDK::submitLog();
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::enableDebugAssistant(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -539,9 +546,9 @@ void ZegoExpressEngineMethodHandler::stopPreview(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
         (EXPRESS::ZegoPublishChannel)channel);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 
@@ -585,6 +592,31 @@ void ZegoExpressEngineMethodHandler::getVideoConfig(
     configMap[FTValue("keyFrameInterval")] = FTValue(config.keyFrameInterval);
 
     result->Success(configMap);
+}
+
+void ZegoExpressEngineMethodHandler::setPublishDualStreamConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    std::vector<EXPRESS::ZegoPublishDualStreamConfig> configList;
+    auto configListMap = std::get<FTArray>(argument[FTValue("configList")]);
+    for (auto config_ : configListMap) {
+        FTMap configMap = std::get<FTMap>(config_);
+        EXPRESS::ZegoPublishDualStreamConfig config;
+
+        config.encodeWidth = std::get<int32_t>(configMap[FTValue("encodeWidth")]);
+        config.encodeHeight = std::get<int32_t>(configMap[FTValue("encodeHeight")]);
+        config.fps = std::get<int32_t>(configMap[FTValue("fps")]);
+        config.bitrate = std::get<int32_t>(configMap[FTValue("bitrate")]);
+        config.streamType = (EXPRESS::ZegoVideoStreamType) std::get<int32_t>(configMap[FTValue("streamType")]);
+
+        configList.push_back(config);
+    }
+    
+    EXPRESS::ZegoExpressSDK::getEngine()->setPublishDualStreamConfig(configList, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::setVideoMirrorMode(
@@ -822,6 +854,8 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
         channel = std::get<int32_t>(argument[FTValue("channel")]);
     }
 
+    ZegoTextureRendererController::getInstance()->setVideoSourceChannel((EXPRESS::ZegoPublishChannel)channel, (EXPRESS::ZegoVideoSourceType)source);
+
     int ret = 0;
     if (!hasChannel && !hasInstanceID) {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
@@ -835,12 +869,6 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
     } else {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
             (EXPRESS::ZegoVideoSourceType)source, instanceID, (EXPRESS::ZegoPublishChannel)channel);
-    }
-
-    if (source == EXPRESS::ZEGO_VIDEO_SOURCE_TYPE_SCREEN_CAPTURE) {
-        screenCaptureSourceChannel_ = channel;
-    } else if (screenCaptureSourceChannel_ == channel) {
-        screenCaptureSourceChannel_ = -1;
     }
 
     result->Success(FTValue(ret));
@@ -1039,8 +1067,8 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
     ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+    EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
 
     result->Success();
 }
@@ -5383,8 +5411,4 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
     }
 
     result->Success();
-}
-
-int ZegoExpressEngineMethodHandler::getScreenCaptureSourceChannel() {
-    return screenCaptureSourceChannel_;
 }

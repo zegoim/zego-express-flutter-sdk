@@ -57,6 +57,8 @@ class ZegoExpressEngineMethodHandler {
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void uploadLog(flutter::EncodableMap &argument,
                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void submitLog(flutter::EncodableMap &argument,
+                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     enableDebugAssistant(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -93,6 +95,8 @@ class ZegoExpressEngineMethodHandler {
     void setVideoConfig(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void getVideoConfig(flutter::EncodableMap &argument,
+                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void setPublishDualStreamConfig(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setVideoMirrorMode(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -913,9 +917,6 @@ class ZegoExpressEngineMethodHandler {
     destroyTextureRenderer(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-  public:
-    int getScreenCaptureSourceChannel();
-
   private:
     ZegoExpressEngineMethodHandler() = default;
 
@@ -927,7 +928,6 @@ class ZegoExpressEngineMethodHandler {
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
-    int screenCaptureSourceChannel_ = -1;
 
     flutter::PluginRegistrarWindows *registrar_;
 };

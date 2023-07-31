@@ -15,7 +15,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.6.1";
+  static String pluginVersion = "3.7.0";
 }
 
 class ZegoExpressImpl {
@@ -192,6 +192,10 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('uploadLog');
   }
 
+  static Future<void> submitLog() async {
+    return await _channel.invokeMethod('submitLog');
+  }
+
   Future<void> enableDebugAssistant(bool enable) async {
     return await _channel
         .invokeMethod('enableDebugAssistant', {'enable': enable});
@@ -356,6 +360,19 @@ class ZegoExpressImpl {
         keyFrameInterval: map['keyFrameInterval'] ?? 2);
 
     return config;
+  }
+
+  Future<void> setPublishDualStreamConfig(
+      List<ZegoPublishDualStreamConfig> configList,
+      {ZegoPublishChannel? channel}) async {
+    List<Map<String, dynamic>> configMapConfig = [];
+    for (ZegoPublishDualStreamConfig config in configList) {
+      configMapConfig.add(config.toMap());
+    }
+    return await _channel.invokeMethod('setPublishDualStreamConfig', {
+      'configList': configMapConfig,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode,
