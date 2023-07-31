@@ -413,15 +413,16 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
-        public void onPublisherSendAudioFirstFrame() {
-            super.onPublisherSendAudioFirstFrame();
-            ZegoLog.log("[onPublisherSendAudioFirstFrame]");
+        public void onPublisherSendAudioFirstFrame(ZegoPublishChannel channel) {
+            super.onPublisherSendAudioFirstFrame(channel);
+            ZegoLog.log("[onPublisherSendAudioFirstFrame] channel: %s", channel.name());
 
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onPublisherSendAudioFirstFrame");
+            map.put("channel", channel.value());
 
             sink.success(map);
         }

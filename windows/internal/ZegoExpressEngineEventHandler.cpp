@@ -311,6 +311,7 @@ void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame(EXPRESS::Zego
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onPublisherSendAudioFirstFrame");
+        retMap[FTValue("channel")] = FTValue((int)channel);
 
         eventSink_->Success(retMap);
     }

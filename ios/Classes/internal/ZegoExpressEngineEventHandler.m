@@ -386,14 +386,15 @@
     }
 }
 
-- (void)onPublisherSendAudioFirstFrame {
+- (void)onPublisherSendAudioFirstFrame:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPublisherSendAudioFirstFrame]");
+    ZGLog(@"[onPublisherSendAudioFirstFrame] channel: %d", (int)channel);
 
     GUARD_SINK
     if (sink) {
         sink(@{
             @"method": @"onPublisherSendAudioFirstFrame",
+            @"channel": @(channel)
         });
     }
 }

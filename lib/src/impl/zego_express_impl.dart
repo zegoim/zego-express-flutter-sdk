@@ -2170,7 +2170,8 @@ class ZegoExpressImpl {
       case 'onPublisherSendAudioFirstFrame':
         if (ZegoExpressEngine.onPublisherSendAudioFirstFrame == null) return;
 
-        ZegoExpressEngine.onPublisherSendAudioFirstFrame!();
+        ZegoExpressEngine.onPublisherSendAudioFirstFrame!(
+            ZegoPublishChannel.values[map['channel']]);
         break;
 
       case 'onPublisherCapturedVideoFirstFrame':
@@ -3414,6 +3415,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
       }
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
+  }
+  
+  @override
+  Future<void> setHttpHeader(Map headers) {
+    // TODO: implement setHttpHeader
+    throw UnimplementedError();
   }
 }
 
