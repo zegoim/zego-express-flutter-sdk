@@ -1811,9 +1811,9 @@ class ZegoLogConfig {
   int logSize;
 
   /// Log files count. Default is 3. Value range is [3, 20].
-  int logCount;
+  int? logCount;
 
-  ZegoLogConfig(this.logPath, this.logSize, this.logCount);
+  ZegoLogConfig(this.logPath, this.logSize, {this.logCount});
 }
 
 /// Custom video capture configuration.

@@ -125,7 +125,11 @@ class ZegoExpressImpl {
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
     return await _channel.invokeMethod('setLogConfig', {
-      'config': {'logPath': config.logPath, 'logSize': config.logSize, 'logCount': config.logCount}
+      'config': {
+        'logPath': config.logPath,
+        'logSize': config.logSize,
+        'logCount': config.logCount
+      }
     });
   }
 
