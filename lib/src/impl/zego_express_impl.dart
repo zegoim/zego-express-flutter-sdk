@@ -114,7 +114,8 @@ class ZegoExpressImpl {
         'logConfig': config.logConfig != null
             ? {
                 'logPath': config.logConfig?.logPath,
-                'logSize': config.logConfig?.logSize
+                'logSize': config.logConfig?.logSize,
+                'logCount': config.logConfig?.logCount,
               }
             : {},
         'advancedConfig': config.advancedConfig ?? {}
@@ -124,7 +125,7 @@ class ZegoExpressImpl {
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
     return await _channel.invokeMethod('setLogConfig', {
-      'config': {'logPath': config.logPath, 'logSize': config.logSize}
+      'config': {'logPath': config.logPath, 'logSize': config.logSize, 'logCount': config.logCount}
     });
   }
 
@@ -3416,7 +3417,7 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
-  
+
   @override
   Future<void> setHttpHeader(Map headers) {
     // TODO: implement setHttpHeader

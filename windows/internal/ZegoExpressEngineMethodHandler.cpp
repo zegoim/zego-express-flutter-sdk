@@ -156,7 +156,8 @@ void ZegoExpressEngineMethodHandler::setEngineConfig(
         if (logConfigMap.size() > 0) {
             logConfigPtr = std::make_unique<EXPRESS::ZegoLogConfig>();
             logConfigPtr->logPath = std::get<std::string>(logConfigMap[FTValue("logPath")]);
-            logConfigPtr->logSize = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+            logConfigPtr->logSize  = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+            logConfigPtr->logCount = std::get<int32_t>(logConfigMap[FTValue("logCount")]);
         }
 
         config.logConfig = logConfigPtr.get();
@@ -181,7 +182,8 @@ void ZegoExpressEngineMethodHandler::setLogConfig(
     EXPRESS::ZegoLogConfig config;
     if (configMap.size() > 0) {
         config.logPath = std::get<std::string>(configMap[FTValue("logPath")]);
-        config.logSize = std::get<int32_t>(configMap[FTValue("logSize")]);
+        config.logSize  = std::get<int32_t>(configMap[FTValue("logSize")]);
+        config.logCount = std::get<int32_t>(configMap[FTValue("logCount")]);
         EXPRESS::ZegoExpressSDK::setLogConfig(config);
     }
 

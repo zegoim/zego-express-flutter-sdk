@@ -231,6 +231,7 @@
             logConfigObject = [[ZegoLogConfig alloc] init];
             logConfigObject.logPath = logConfigMap[@"logPath"];
             logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:logConfigMap[@"logSize"]];
+            logConfigObject.logCount = [ZegoUtils unsignedIntValue:logConfigMap[@"logCount"]];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -256,6 +257,7 @@
 
         logConfigObject.logPath = configMap[@"logPath"];
         logConfigObject.logSize = [ZegoUtils unsignedLongLongValue:configMap[@"logSize"]];
+        logConfigObject.logCount = [ZegoUtils unsignedIntValue:configMap[@"logCount"]];
 
         [ZegoExpressEngine setLogConfig:logConfigObject];
 

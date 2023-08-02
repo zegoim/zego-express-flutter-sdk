@@ -351,7 +351,8 @@ public class ZegoExpressEngineMethodHandler {
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
                 logConfigObject.logPath = (String) logConfigMap.get("logPath");
-                logConfigObject.logSize = ZegoUtils.intValue((Number) logConfigMap.get("logSize"));
+                logConfigObject.logSize  = ZegoUtils.intValue((Number) logConfigMap.get("logSize"));
+                logConfigObject.logCount = ZegoUtils.intValue((Number) logConfigMap.get("logCount"));
 
                 configObject.logConfig = logConfigObject;
             }
@@ -371,7 +372,8 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null && !configMap.isEmpty()) {
             logConfigObject = new ZegoLogConfig();
             logConfigObject.logPath = (String) configMap.get("logPath");
-            logConfigObject.logSize = ZegoUtils.intValue((Number) configMap.get("logSize"));
+            logConfigObject.logSize  = ZegoUtils.intValue((Number) configMap.get("logSize"));
+            logConfigObject.logCount = ZegoUtils.intValue((Number) configMap.get("logCount"));
 
             ZegoExpressEngine.setLogConfig(logConfigObject);
             result.success(null);

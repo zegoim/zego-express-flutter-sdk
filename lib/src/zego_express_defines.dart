@@ -1810,7 +1810,10 @@ class ZegoLogConfig {
   /// Maximum log file size(Bytes). Description: Used to customize the maximum log file size. Use cases: This configuration is required when you need to customize the upper limit of the log file size. Required: False. Default value: 5MB (5 * 1024 * 1024 Bytes). Value range: Minimum 1MB (1 * 1024 * 1024 Bytes), maximum 100M (100 * 1024 * 1024 Bytes), 0 means no need to write logs. Caution: The larger the upper limit of the log file size, the more log information it carries, but the log upload time will be longer.
   int logSize;
 
-  ZegoLogConfig(this.logPath, this.logSize);
+  /// Log files count. Default is 3. Value range is [3, 20].
+  int logCount;
+
+  ZegoLogConfig(this.logPath, this.logSize, this.logCount);
 }
 
 /// Custom video capture configuration.
