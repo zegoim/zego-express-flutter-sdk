@@ -115,7 +115,7 @@ class ZegoExpressImpl {
             ? {
                 'logPath': config.logConfig?.logPath,
                 'logSize': config.logConfig?.logSize,
-                'logCount': config.logConfig?.logCount,
+                'logCount': config.logConfig?.logCount ?? 3,
               }
             : {},
         'advancedConfig': config.advancedConfig ?? {}
@@ -128,7 +128,7 @@ class ZegoExpressImpl {
       'config': {
         'logPath': config.logPath,
         'logSize': config.logSize,
-        'logCount': config.logCount
+        'logCount': config.logCount ?? 3,
       }
     });
   }
