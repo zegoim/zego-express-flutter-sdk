@@ -1125,7 +1125,7 @@ enum ZegoRangeAudioMode {
 
 /// Range audio speak mode
 enum ZegoRangeAudioSpeakMode {
-  /// All mode, everyone in the room can hear his voice.
+  /// All mode, his voice can be heard by members of the team and by those within range.
   All,
 
   /// Only world mode, only those within range can hear his voice.
