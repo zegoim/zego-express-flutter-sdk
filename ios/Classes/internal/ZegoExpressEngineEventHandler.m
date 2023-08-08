@@ -386,14 +386,15 @@
     }
 }
 
-- (void)onPublisherSendAudioFirstFrame {
+- (void)onPublisherSendAudioFirstFrame:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPublisherSendAudioFirstFrame]");
+    ZGLog(@"[onPublisherSendAudioFirstFrame] channel: %d", (int)channel);
 
     GUARD_SINK
     if (sink) {
         sink(@{
             @"method": @"onPublisherSendAudioFirstFrame",
+            @"channel": @(channel)
         });
     }
 }
@@ -1287,7 +1288,7 @@
 }
 
 
-# pragma mark - ZegoAudioEffectPlayerEventHandler
+#pragma mark - ZegoAudioEffectPlayerEventHandler
 
 - (void)audioEffectPlayer:(ZegoAudioEffectPlayer *)audioEffectPlayer audioEffectID:(unsigned int)audioEffectID playStateUpdate:(ZegoAudioEffectPlayState)state errorCode:(int)errorCode {
     FlutterEventSink sink = _eventSink;
@@ -1301,6 +1302,51 @@
             @"audioEffectID": @(audioEffectID),
             @"state": @(state),
             @"errorCode": @(errorCode)
+        });
+    }
+}
+
+#pragma mark - MediaDataPublisher
+
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileOpen:(NSString *)path {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaDataPublisherFileOpen] idx: %d, path: %@", [publisher getIndex].intValue, path);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaDataPublisherFileOpen",
+            @"publisherIndex": [publisher getIndex],
+            @"path": path,
+        });
+    }
+}
+
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileClose:(NSString *)path errorCode:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaDataPublisherFileClose] idx: %d, path: %@, errorCode: %d", [publisher getIndex].intValue, path, errorCode);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaDataPublisherFileClose",
+            @"publisherIndex": [publisher getIndex],
+            @"path": path,
+            @"errorCode": @(errorCode),
+        });
+    }
+}
+
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileDataBegin:(NSString *)path {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaDataPublisherFileDataBegin] idx: %d, path: %@", [publisher getIndex].intValue, path);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaDataPublisherFileDataBegin",
+            @"publisherIndex": [publisher getIndex],
+            @"path": path,
         });
     }
 }

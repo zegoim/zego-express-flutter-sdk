@@ -619,6 +619,32 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    /* Media Data Publisher */
+    void createMediaDataPublisher(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void destroyMediaDataPublisher(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaDataPublisherAddMediaFilePath(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaDataPublisherGetCurrentDuration(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaDataPublisherGetTotalDuration(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaDataPublisherReset(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaDataPublisherSeekTo(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaDataPublisherSetVideoSendDelayTime(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void startMixerTask(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopMixerTask(flutter::EncodableMap &argument,
@@ -897,6 +923,7 @@ class ZegoExpressEngineMethodHandler {
   private:
     std::unordered_map<int, EXPRESS::IZegoAudioEffectPlayer *> audioEffectPlayerMap_;
     std::unordered_map<int, EXPRESS::IZegoMediaPlayer *> mediaPlayerMap_;
+    std::unordered_map<int, EXPRESS::IZegoMediaDataPublisher *> mediaDataPublisherMap_;
     std::unordered_map<int, EXPRESS::IZegoScreenCaptureSource *> screenCaptureSourceMap_;
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;

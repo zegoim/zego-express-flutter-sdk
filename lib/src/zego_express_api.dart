@@ -480,7 +480,10 @@ class ZegoExpressEngine {
   /// Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data. Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
   /// Trigger: In the case of no startPublishingStream audio stream, the first startPublishingStream audio stream, it will receive this callback.
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
-  static void Function()? onPublisherSendAudioFirstFrame;
+  ///
+  /// - [channel] Publishing stream channel.If you only publish one audio stream, you can ignore this parameter.
+  static void Function(ZegoPublishChannel channel)?
+      onPublisherSendAudioFirstFrame;
 
   /// The callback triggered when the first video frame is sent.
   ///
@@ -490,7 +493,7 @@ class ZegoExpressEngine {
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
-  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  /// - [channel] Publishing stream channel.If you only publish one video stream, you can ignore this parameter.
   static void Function(ZegoPublishChannel channel)?
       onPublisherSendVideoFirstFrame;
 
@@ -563,7 +566,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 3.4.0
   /// Description: The object segmentation state of the stream publishing end changes.
-  /// When to trigger: When [enableObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
+  /// When to trigger: When [enableVideoObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
   /// Caution: This callback depends on enabling preview or stream publishing.
   ///
   /// - [state] Object segmentation state.
@@ -624,7 +627,7 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRecvAudioFirstFrame;
 
-  /// The callback triggered when the first video frame is received.
+  /// The callback triggered when the first video frame is received. Except for Linux systems, this callback is thrown from the ui thread by default.
   ///
   /// Available since: 1.1.0
   /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
@@ -681,7 +684,10 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
   /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
-  /// Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
+  /// Caution:
+  ///  1. This function will switch the UI thread callback data, and the customer can directly operate the UI control in this callback function.
+  ///  2. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set.
+  ///  3. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
   ///
   /// - [streamID] Stream ID.
   /// - [data] SEI content.
@@ -1143,6 +1149,43 @@ class ZegoExpressEngine {
       int audioEffectID,
       ZegoAudioEffectPlayState state,
       int errorCode)? onAudioEffectPlayStateUpdate;
+
+  /// The event callback of the media data publisher opening a media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback of the media data publisher opening a media file.
+  /// Trigger: The callback triggered when the media data publisher start loading a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileOpen;
+
+  /// The event callback of the media data publisher closing a media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback of the media data publisher closing a media file.
+  /// Trigger: The callback triggered when the media data publisher start unloading a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [errorCode] error code. 0 means closing the file normally.
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, int errorCode,
+      String path)? onMediaDataPublisherFileClose;
+
+  /// The event callback that the media data publisher has read data from the media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback that the media data publisher has read data from the media file.
+  /// Trigger: The callback triggered when the media data publisher begin to read media data from a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileDataBegin;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///

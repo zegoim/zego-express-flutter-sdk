@@ -14,6 +14,7 @@ class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
     , public EXPRESS::IZegoAudioEffectPlayerEventHandler
     , public EXPRESS::IZegoMediaPlayerEventHandler
+    , public EXPRESS::IZegoMediaDataPublisherEventHandler
     , public EXPRESS::IZegoAudioDataHandler
     , public EXPRESS::IZegoDataRecordEventHandler
     , public EXPRESS::IZegoApiCalledEventHandler
@@ -71,7 +72,7 @@ protected:
 
     void onPublisherCapturedAudioFirstFrame() override;
 
-    void onPublisherSendAudioFirstFrame() override;
+    void onPublisherSendAudioFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
     
     void onPublisherStreamEvent(EXPRESS::ZegoStreamEvent eventID, const std::string& streamID, const std::string& extraInfo) override;
 
@@ -197,6 +198,16 @@ protected:
     void onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList) override;
 
     void onMediaPlayerFirstFrameEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) override;
+
+// MediaDataPublisher
+protected:
+    void onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) override;
+
+    void onMediaDataPublisherFileClose(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) override;
+
+    void onMediaDataPublisherFileDataBegin(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) override;
+
+
 protected:
     void onCapturedAudioData(const unsigned char* data, unsigned int dataLength, EXPRESS::ZegoAudioFrameParam param) override;
 
