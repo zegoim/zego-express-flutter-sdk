@@ -304,13 +304,14 @@ void ZegoExpressEngineEventHandler::onPublisherCapturedAudioFirstFrame() {
     }
 }
 
-void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame() {
+void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame(EXPRESS::ZegoPublishChannel channel) {
 
-    ZF::logInfo("[onPublisherSendAudioFirstFrame]");
+    ZF::logInfo("[onPublisherSendAudioFirstFrame] channel: %d", channel);
     
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onPublisherSendAudioFirstFrame");
+        retMap[FTValue("channel")] = FTValue((int)channel);
 
         eventSink_->Success(retMap);
     }
@@ -788,6 +789,46 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
     }
 }
 
+// MediaDataPublisher
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileOpen] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileOpen");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileClose] index: %d, errorCode: %d, path: %s", mediaDataPublisher->getIndex(), errorCode, path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileClose");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("errorCode")] = FTValue(errorCode);
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileDataBegin(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileDataBegin] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileDataBegin");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
 
 void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char *data,
                                                         unsigned int dataLength,

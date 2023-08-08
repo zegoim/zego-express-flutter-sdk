@@ -156,7 +156,8 @@ void ZegoExpressEngineMethodHandler::setEngineConfig(
         if (logConfigMap.size() > 0) {
             logConfigPtr = std::make_unique<EXPRESS::ZegoLogConfig>();
             logConfigPtr->logPath = std::get<std::string>(logConfigMap[FTValue("logPath")]);
-            logConfigPtr->logSize = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+            logConfigPtr->logSize  = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+            logConfigPtr->logCount = std::get<int32_t>(logConfigMap[FTValue("logCount")]);
         }
 
         config.logConfig = logConfigPtr.get();
@@ -181,7 +182,8 @@ void ZegoExpressEngineMethodHandler::setLogConfig(
     EXPRESS::ZegoLogConfig config;
     if (configMap.size() > 0) {
         config.logPath = std::get<std::string>(configMap[FTValue("logPath")]);
-        config.logSize = std::get<int32_t>(configMap[FTValue("logSize")]);
+        config.logSize  = std::get<int32_t>(configMap[FTValue("logSize")]);
+        config.logCount = std::get<int32_t>(configMap[FTValue("logCount")]);
         EXPRESS::ZegoExpressSDK::setLogConfig(config);
     }
 
@@ -2634,6 +2636,130 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetMediaInfo(
     } else {
         result->Error("mediaPlayerGetMediaInfo_Can_not_find_player",
                       "Invoke `mediaPlayerGetMediaInfo` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    FTMap config_map = std::get<FTMap>(argument[FTValue("config")]);
+    EXPRESS::ZegoMediaDataPublisherConfig config{};
+    config.channel = std::get<int32_t>(config_map[FTValue("channel")]);
+    config.mode =
+        (EXPRESS::ZegoMediaDataPublisherMode)std::get<int32_t>(config_map[FTValue("mode")]);
+
+    auto publisher = EXPRESS::ZegoExpressSDK::getEngine()->createMediaDataPublisher(config);
+    if (publisher) {
+        int index = publisher->getIndex();
+        publisher->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        mediaDataPublisherMap_[index] = publisher;
+        result->Success(FTValue(index));
+    } else {
+        result->Success(FTValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyMediaDataPublisher(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyMediaDataPublisher(publisher);
+        mediaDataPublisherMap_.erase(index);
+        result->Success();
+    } else {
+        result->Error("destroyMediaDataPublisher_Can_not_find_publisher",
+                      "Invoke `destroyMediaDataPublisher` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherAddMediaFilePath(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        bool is_clear = std::get<bool>(argument[FTValue("isClear")]);
+        std::string path = std::get<std::string>(argument[FTValue("path")]);
+        publisher->addMediaFilePath(path, is_clear);
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherAddMediaFilePath_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherAddMediaFilePath` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherGetCurrentDuration(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        auto duration = publisher->getCurrentDuration();
+        result->Success(FTValue((int64_t)duration));
+    } else {
+        result->Error("mediaDataPublisherGetCurrentDuration_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherGetCurrentDuration` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherGetTotalDuration(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        auto duration = publisher->getTotalDuration();
+        result->Success(FTValue((int64_t)duration));
+    } else {
+        result->Error("mediaDataPublisherGetTotalDuration_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherGetTotalDuration` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherReset(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        publisher->reset();
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherReset_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherReset` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherSeekTo(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
+        publisher->seekTo(millisecond);
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherSeekTo_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherSeekTo` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherSetVideoSendDelayTime(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        int delay_time = std::get<int32_t>(argument[FTValue("delay_time")]);
+        publisher->setVideoSendDelayTime(delay_time);
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherSetVideoSendDelayTime_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherSetVideoSendDelayTime` but can't find specific publisher");
     }
 }
 

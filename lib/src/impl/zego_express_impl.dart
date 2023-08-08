@@ -114,7 +114,8 @@ class ZegoExpressImpl {
         'logConfig': config.logConfig != null
             ? {
                 'logPath': config.logConfig?.logPath,
-                'logSize': config.logConfig?.logSize
+                'logSize': config.logConfig?.logSize,
+                'logCount': config.logConfig?.logCount ?? 3,
               }
             : {},
         'advancedConfig': config.advancedConfig ?? {}
@@ -124,7 +125,11 @@ class ZegoExpressImpl {
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
     return await _channel.invokeMethod('setLogConfig', {
-      'config': {'logPath': config.logPath, 'logSize': config.logSize}
+      'config': {
+        'logPath': config.logPath,
+        'logSize': config.logSize,
+        'logCount': config.logCount ?? 3,
+      }
     });
   }
 
@@ -1549,6 +1554,41 @@ class ZegoExpressImpl {
     return;
   }
 
+  /* MediaDataPublisher */
+
+  static final Map<int, ZegoMediaDataPublisher> mediaDataPublisherMap = {};
+
+  Future<ZegoMediaDataPublisher?> createMediaDataPublisher(
+      ZegoMediaDataPublisherConfig config) async {
+    int index = await _channel.invokeMethod('createMediaDataPublisher', {
+      'config': {
+        'channel': config.channel,
+        'mode': config.mode.index,
+      }
+    });
+
+    if (index >= 0) {
+      ZegoMediaDataPublisherImpl publisherInstance =
+          ZegoMediaDataPublisherImpl(index);
+      mediaDataPublisherMap[index] = publisherInstance;
+
+      return publisherInstance;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyMediaDataPublisher(
+      ZegoMediaDataPublisher mediaDataPublisher) async {
+    int index = mediaDataPublisher.getIndex();
+
+    await _channel.invokeMethod('destroyMediaDataPublisher', {'index': index});
+
+    mediaDataPublisherMap.remove(index);
+
+    return;
+  }
+
   /* Record */
 
   Future<void> startRecordingCapturedData(ZegoDataRecordConfig config,
@@ -2135,7 +2175,8 @@ class ZegoExpressImpl {
       case 'onPublisherSendAudioFirstFrame':
         if (ZegoExpressEngine.onPublisherSendAudioFirstFrame == null) return;
 
-        ZegoExpressEngine.onPublisherSendAudioFirstFrame!();
+        ZegoExpressEngine.onPublisherSendAudioFirstFrame!(
+            ZegoPublishChannel.values[map['channel']]);
         break;
 
       case 'onPublisherCapturedVideoFirstFrame':
@@ -2803,6 +2844,44 @@ class ZegoExpressImpl {
         }
         break;
 
+      /* MediaDataPublisher */
+
+      case 'onMediaDataPublisherFileOpen':
+        if (ZegoExpressEngine.onMediaDataPublisherFileOpen == null) return;
+
+        int? publisherIndex = map['publisherIndex'];
+        ZegoMediaDataPublisher? publisher =
+            ZegoExpressImpl.mediaDataPublisherMap[publisherIndex!];
+        if (publisher != null) {
+          ZegoExpressEngine.onMediaDataPublisherFileOpen!(
+              publisher, map['path']);
+        }
+        break;
+
+      case 'onMediaDataPublisherFileClose':
+        if (ZegoExpressEngine.onMediaDataPublisherFileClose == null) return;
+
+        int? publisherIndex = map['publisherIndex'];
+        ZegoMediaDataPublisher? publisher =
+            ZegoExpressImpl.mediaDataPublisherMap[publisherIndex!];
+        if (publisher != null) {
+          ZegoExpressEngine.onMediaDataPublisherFileClose!(
+              publisher, map['errorCode'], map['path']);
+        }
+        break;
+
+      case 'onMediaDataPublisherFileDataBegin':
+        if (ZegoExpressEngine.onMediaDataPublisherFileDataBegin == null) return;
+
+        int? publisherIndex = map['publisherIndex'];
+        ZegoMediaDataPublisher? publisher =
+            ZegoExpressImpl.mediaDataPublisherMap[publisherIndex!];
+        if (publisher != null) {
+          ZegoExpressEngine.onMediaDataPublisherFileDataBegin!(
+              publisher, map['path']);
+        }
+        break;
+
       /* Record */
 
       case 'onCapturedDataRecordStateUpdate':
@@ -3342,6 +3421,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
+
+  @override
+  Future<void> setHttpHeader(Map headers) {
+    // TODO: implement setHttpHeader
+    throw UnimplementedError();
+  }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
@@ -3505,6 +3590,56 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
       'audioEffectID': audioEffectID,
       'position': position
     });
+  }
+}
+
+class ZegoMediaDataPublisherImpl extends ZegoMediaDataPublisher {
+  final int _index;
+
+  ZegoMediaDataPublisherImpl(int index) : _index = index;
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+  @override
+  Future<void> addMediaFilePath(String path, bool isClear) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherAddMediaFilePath',
+        {'index': _index, 'path': path, 'isClear': isClear});
+  }
+
+  @override
+  Future<int> getCurrentDuration() async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherGetCurrentDuration', {'index': _index});
+  }
+
+  @override
+  Future<int> getTotalDuration() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaDataPublisherGetTotalDuration', {'index': _index});
+  }
+
+  @override
+  Future<void> reset() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaDataPublisherReset', {'index': _index});
+  }
+
+  @override
+  Future<void> seekTo(int millisecond) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherSeekTo',
+        {'index': _index, 'millisecond': millisecond});
+  }
+
+  @override
+  Future<void> setVideoSendDelayTime(int delayTime) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherSetVideoSendDelayTime',
+        {'index': _index, 'delayTime': delayTime});
   }
 }
 

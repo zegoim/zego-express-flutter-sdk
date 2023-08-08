@@ -727,6 +727,18 @@ enum ZegoStreamResourceMode {
   CDNPlus
 }
 
+/// Stream Switch Resource Mode
+enum ZegoStreamResourceSwitchMode {
+  /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
+  Default,
+
+  /// Auto switch to RTC resource when publishing.
+  SwitchToRTC,
+
+  /// Keep using original resource when publishing, not switch to RTC resource.
+  KeepOriginal
+}
+
 /// Update type.
 enum ZegoUpdateType {
   /// Add
@@ -1015,7 +1027,13 @@ enum ZegoVideoFrameFormat {
   ABGR32,
 
   /// I422 (YUV422Planar) format
-  I422
+  I422,
+
+  /// BGR24 format
+  BGR24,
+
+  /// RGB24 format
+  RGB24
 }
 
 /// Video frame buffer type.
@@ -1039,7 +1057,16 @@ enum ZegoVideoBufferType {
   SurfaceTexture,
 
   /// GL_TEXTURE_EXTERNAL_OES type video frame
-  GLTextureExternalOES
+  GLTextureExternalOES,
+
+  /// Texture 2D and raw data type video frame
+  GLTexture2DAndRawData,
+
+  /// D3D Texture2D type video frame
+  D3DTexture2D,
+
+  /// CVPixelBuffer type nv12 format video frame
+  NV12CVPixelBuffer
 }
 
 /// Video frame format series.
@@ -1098,7 +1125,7 @@ enum ZegoRangeAudioMode {
 
 /// Range audio speak mode
 enum ZegoRangeAudioSpeakMode {
-  /// All mode, everyone in the room can hear his voice.
+  /// All mode, his voice can be heard by members of the team and by those within range.
   All,
 
   /// Only world mode, only those within range can hear his voice.
@@ -1762,6 +1789,15 @@ enum ZegoBackgroundBlurLevel {
   High
 }
 
+/// The config of the media data publisher.
+enum ZegoMediaDataPublisherMode {
+  /// Both publish video and audio.
+  BothVideoAndAudio,
+
+  /// Only publish video.
+  OnlyVideo
+}
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -1774,7 +1810,10 @@ class ZegoLogConfig {
   /// Maximum log file size(Bytes). Description: Used to customize the maximum log file size. Use cases: This configuration is required when you need to customize the upper limit of the log file size. Required: False. Default value: 5MB (5 * 1024 * 1024 Bytes). Value range: Minimum 1MB (1 * 1024 * 1024 Bytes), maximum 100M (100 * 1024 * 1024 Bytes), 0 means no need to write logs. Caution: The larger the upper limit of the log file size, the more log information it carries, but the log upload time will be longer.
   int logSize;
 
-  ZegoLogConfig(this.logPath, this.logSize);
+  /// Log files count. Default is 3. Value range is [3, 20].
+  int? logCount;
+
+  ZegoLogConfig(this.logPath, this.logSize, {this.logCount});
 }
 
 /// Custom video capture configuration.
@@ -2354,19 +2393,24 @@ class ZegoPlayerConfig {
   /// Preconfigured codec template ID, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   int? codecTemplateID;
 
+  /// Play resource switching strategy mode, the default is ZegoStreamResourceSwitchModeDefault
+  ZegoStreamResourceSwitchMode? resourceSwitchMode;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
       this.videoCodecID,
       this.sourceResourceType,
-      this.codecTemplateID});
+      this.codecTemplateID,
+      this.resourceSwitchMode});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
       : resourceMode = ZegoStreamResourceMode.Default,
         videoCodecID = ZegoVideoCodecID.Unknown,
         sourceResourceType = ZegoResourceType.RTC,
-        codecTemplateID = 0;
+        codecTemplateID = 0,
+        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default;
 }
 
 /// Played stream quality information.
@@ -3639,6 +3683,19 @@ class ZegoMediaPlayerMediaInfo {
         frameRate = 0;
 }
 
+/// Used to config the media data publisher.
+///
+/// Used to config the media data publisher when creating it.
+class ZegoMediaDataPublisherConfig {
+  /// Used to specify the publish channel index of publisher.
+  int channel;
+
+  /// Used to specify the mode of publisher.
+  ZegoMediaDataPublisherMode mode;
+
+  ZegoMediaDataPublisherConfig(this.channel, this.mode);
+}
+
 /// Receive range configuration.
 class ZegoReceiveRangeParam {
   /// The minimum distance at which the 3D sound effect starts to have attenuation effect, the value needs to be >= 0 and <= max, the default value is 0.
@@ -4100,6 +4157,13 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [position] The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3.
   Future<void> updatePosition(Float32List position);
+
+  /// Set http headers.
+  ///
+  /// When the network resource needs to set special header information, call this function to set the http headers of the http network resource.
+  ///
+  /// - [headers] Headers info.
+  Future<void> setHttpHeader(Map headers);
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -4284,6 +4348,71 @@ abstract class ZegoAudioEffectPlayer {
   /// Restrictions: None.
   ///
   /// - Returns Audio effect player index.
+  int getIndex();
+}
+
+abstract class ZegoMediaDataPublisher {
+  /// Add media file to the publish queue. Currently, only mp4 / m4a / aac files are supported, and special conversion is required.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Add media file to the publish queue. Currently, only mp4 / m4a / aac file are supported, and special conversion is required.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// When to call: After calling the [createMediaDataPublisher] function to create a media data publisher.
+  /// Caution: The mp4 file format must meet the following points：The video must be encoded as H.264 and cannot contain B frames, only I and P frames. The I frame interval is 2s, that is, a single GOP value is 2s; The frame rate, bit rate, and resolution of the video are consistent with the frame rate, bit rate, and resolution set by [setVideoConfig] before publishing stream; Audio encoding must be MPEG-4 AAC.
+  ///
+  /// - [path] Local absolute path to the media file.
+  /// - [isClear] Whether to clear the publish queue.
+  Future<void> addMediaFilePath(String path, bool isClear);
+
+  /// Clear all the status in this media data publisher, so that it can be restarted next time.
+  ///
+  /// Available since: 2.17.0
+  /// Description: When you need to re-publish stream and do not need to continue publishing from the previous publish queue, you can call this function to reset this media data publisher's state.
+  /// Use cases: Often used in server-side publishing stream scenarios, such as AI classrooms.
+  /// Caution: When the developer calls [logoutRoom], the state is automatically reset.
+  Future<void> reset();
+
+  /// Set the delay time of video playback.
+  ///
+  /// Available since: 2.17.0
+  /// Description: When this value is set, when publishing video file stream, the SDK will permanently delay the video to the set time value before sending.
+  /// Use cases: Mainly used to correct the fixed audio and picture asynchronous phenomenon that occurs during streaming.
+  /// When to call: After calling the [createMediaDataPublisher] function to create a media data publisher.
+  ///
+  /// - [delayTime] Video playback time.Required: Yes.Value range: [0, 100] ms.
+  Future<void> setVideoSendDelayTime(int delayTime);
+
+  /// Specify the starting point of the current video file publishing.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Specify the starting point of the current video file publishing.
+  /// When to call: Called at any point between [OnMediaDataPublisherFileOpen] and [OnMediaDataPublisherFileClose]. For example: this function can be called directly in the [OnMediaDataPublisherFileOpen] callback.
+  ///
+  /// - [millisecond] The timestamp of the start of streaming (relative to the timestamp of the file currently being published, the starting value is 0). the unit is milliseconds
+  Future<void> seekTo(int millisecond);
+
+  /// Get the total duration of the current file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Get the total duration of the current file, in milliseconds.
+  /// When to call: After [onMediaDataPublisherFileDataBegin] callback.
+  ///
+  /// - Returns The total duration of the current file.
+  Future<int> getTotalDuration();
+
+  /// Get the playing progress of the current file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: Get the playing progress of the current file, in milliseconds.
+  /// When to call: After received the [onMediaDataPublisherFileDataBegin] callback.
+  ///
+  /// - Returns The playing progress of the current file.
+  Future<int> getCurrentDuration();
+
+  /// Get the channel index of the media data publisher.
+  ///
+  /// Available since: 3.4.0
+  /// Description: Get the channel index of the media data publisher.
   int getIndex();
 }
 
