@@ -18,10 +18,29 @@ class Global {
   static String pluginVersion = "3.7.0";
 }
 
+class MethodChannelWrapper extends MethodChannel {
+  MethodChannelWrapper(String name) : super(name);
+  bool showFlutterApiCalledDetail = false;
+
+  @override
+  Future<T?> invokeMethod<T>(String method, [arguments]) {
+    if (showFlutterApiCalledDetail) {
+      if (ZegoExpressImpl.onFlutterApiCalledDetail != null) {
+        ZegoExpressImpl.onFlutterApiCalledDetail!(
+          method,
+          jsonEncode(arguments),
+          // arguments != null ? jsonEncode(arguments) : '{}',
+        );
+      }
+    }
+    return super.invokeMethod(method, arguments);
+  }
+}
+
 class ZegoExpressImpl {
   /// Method Channel
-  static const MethodChannel _channel =
-      MethodChannel('plugins.zego.im/zego_express_engine');
+  static MethodChannelWrapper _channel =
+      MethodChannelWrapper('plugins.zego.im/zego_express_engine');
   static const EventChannel _event =
       EventChannel('plugins.zego.im/zego_express_event_handler');
 
@@ -35,7 +54,7 @@ class ZegoExpressImpl {
   static final ZegoExpressImpl instance = ZegoExpressImpl._internal();
 
   /// Exposing methodChannel to other files
-  static MethodChannel get methodChannel => _channel;
+  static MethodChannelWrapper get methodChannel => _channel;
 
   // is create engine
   static bool isEngineCreated = false;
@@ -55,6 +74,9 @@ class ZegoExpressImpl {
     use &= !kIsMacOS;
     return use;
   }
+
+  // Private function
+  static void Function(String api, String jsonArgs)? onFlutterApiCalledDetail;
 
   /* Main */
 
