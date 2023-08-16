@@ -39,7 +39,7 @@ class MethodChannelWrapper extends MethodChannel {
 
 class ZegoExpressImpl {
   /// Method Channel
-  static MethodChannelWrapper _channel =
+  static final MethodChannelWrapper _channel =
       MethodChannelWrapper('plugins.zego.im/zego_express_engine');
   static const EventChannel _event =
       EventChannel('plugins.zego.im/zego_express_event_handler');
