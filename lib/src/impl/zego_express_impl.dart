@@ -69,9 +69,27 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
-    // TODO: PlatformView support on macOS has a crash issue, don't use it now
-    // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= !kIsMacOS;
+
+    if (kIsMacOS) {
+      try {
+        String dartVersion = Platform.version.split(' ')[0];
+        int? major = int.tryParse(dartVersion.split('.')[0]);
+        // Flutter v3.10 <==> Dart v3.0
+        print(
+            '[shouldUsePlatformView] dartVersion: [$dartVersion], platform version: [${Platform.version}]');
+        print('[shouldUsePlatformView] outter major: $major');
+        if (major == null || major < 3) {
+          print('[shouldUsePlatformView] inner major: $major');
+          // PlatformView on macOS has a crash issue under flutter v3.10
+          // Ref: https://github.com/flutter/flutter/issues/96668
+          use = false;
+        }
+      } catch (e) {
+        print('[shouldUsePlatformView] catch error: $e');
+        use = false;
+      }
+    }
+
     return use;
   }
 
