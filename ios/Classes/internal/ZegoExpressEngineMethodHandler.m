@@ -3771,8 +3771,8 @@
     ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
 
     if (mediaPlayer) {
-        unsigned long long process = mediaPlayer.currentRenderingProgress;
-        result(@(process));
+        unsigned long long progress = mediaPlayer.currentRenderingProgress;
+        result(@(progress));
     } else {
         result(@(0));
     }

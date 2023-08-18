@@ -4002,14 +4002,14 @@ public class ZegoExpressEngineMethodHandler {
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
         if (mediaPlayer != null) {
-            HashMap<String, String> map = call.argument("headers");
-            mediaPlayer.setHttpHeader(map);
+            HashMap<String, String> headers = call.argument("headers");
+            mediaPlayer.setHttpHeader(headers);
         }
         result.success(null);
     }
 
     @SuppressWarnings("unused")
-    public static void getCurrentRenderingProgress(MethodCall call, final Result result) {
+    public static void mediaPlayerGetCurrentRenderingProgress(MethodCall call, final Result result) {
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
@@ -4569,12 +4569,12 @@ public class ZegoExpressEngineMethodHandler {
             ZegoReceiveRangeParam rangeParam = new ZegoReceiveRangeParam();
             HashMap<String, Object> paramMap = call.argument("param");
             if (paramMap != null) {
-                rangeParam.min = ZegoUtils.floatValue((Float) paramMap.get("min"));
-                rangeParam.max = ZegoUtils.floatValue((Float) paramMap.get("max"));
+                rangeParam.min = ZegoUtils.floatValue((Double) paramMap.get("min"));
+                rangeParam.max = ZegoUtils.floatValue((Double) paramMap.get("max"));
             }
-            rangeAudioInstance.setAudioReceiveRange(rangeParam);
+            int ret = rangeAudioInstance.setAudioReceiveRange(rangeParam);
 
-            result.success(null);
+            result.success(ret);
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetAudioReceiveRange` but can't find specific instance", null);
@@ -4688,12 +4688,12 @@ public class ZegoExpressEngineMethodHandler {
             ZegoVocalRangeParam rangeParam = new ZegoVocalRangeParam();
             HashMap<String, Object> paramMap = call.argument("param");
             if (paramMap != null) {
-                rangeParam.min = ZegoUtils.floatValue((Float) paramMap.get("min"));
-                rangeParam.max = ZegoUtils.floatValue((Float) paramMap.get("max"));
+                rangeParam.min = ZegoUtils.floatValue((Double) paramMap.get("min"));
+                rangeParam.max = ZegoUtils.floatValue((Double) paramMap.get("max"));
             }
-            rangeAudioInstance.setStreamVocalRange(streamID, rangeParam);
+            int ret = rangeAudioInstance.setStreamVocalRange(streamID, rangeParam);
             
-            result.success(null);
+            result.success(ret);
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance", null);

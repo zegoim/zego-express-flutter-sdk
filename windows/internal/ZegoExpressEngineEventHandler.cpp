@@ -354,6 +354,21 @@ void ZegoExpressEngineEventHandler::onVideoObjectSegmentationStateChanged(
     }
 }
 
+void onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) {
+    ZF::logInfo("[onPublisherLowFpsWarning] codecID: %d, channel: %d", codecID, channel);
+
+    if (eventSink_) {
+        FTMap retMap;
+
+        retMap[FTValue("method")] = FTValue("onPublisherLowFpsWarning");
+        retMap[FTValue("codecID")] = FTValue((int32_t)codecID);
+        retMap[FTValue("channel")] = FTValue((int32_t)channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
                                                         int errorCode,
@@ -788,6 +803,21 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
         eventSink_->Success(retMap);
     }
 }
+
+void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
+    ZF::logInfo("[onMediaPlayerRenderingProgress] index: %d, millisecond: %lld", mediaPlayer->getIndex(), millisecond);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerRenderingProgress");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("millisecond")] = FTValue(millisecond);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 
 // MediaDataPublisher
 void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {

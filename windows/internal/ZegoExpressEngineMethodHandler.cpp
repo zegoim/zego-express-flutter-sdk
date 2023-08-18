@@ -2639,6 +2639,47 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetMediaInfo(
     }
 }
 
+void mediaPlayerSetHttpHeader(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto headersMap = std::get<FTMap>(argument[FTValue("headers")]);
+        std::unordered_map<std::string, std::string> headers;
+        for (auto &header : headersMap) {
+            std::string key = std::get<std::string>(header.first);
+            std::string value = std::get<std::string>(header.second);
+            headers[key] = value;
+        }
+
+        mediaPlayer->setHttpHeader(headers);
+
+        result->Success();
+    } else {
+        result->Error("mediaPlayerSetHttpHeader_Can_not_find_player",
+                      "Invoke `mediaPlayerSetHttpHeader` but can't find specific player");
+    }
+}
+
+void mediaPlayerGetCurrentRenderingProgress(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto progress = mediaPlayer->getCurrentRenderingProgress();
+        result->Success(FTValue((int64_t)progress));
+
+    } else {
+        result->Error("mediaPlayerGetCurrentRenderingProgress_Can_not_find_player",
+                      "Invoke `mediaPlayerGetCurrentRenderingProgress` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -4909,9 +4950,13 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetAudioReceiveRange(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     if (rangeAudio_) {
-        auto range = std::get<double>(argument[FTValue("range")]);
+        auto paramMap = std::get<FTMap>(argument[FTValue("param")]);
 
-        rangeAudio_->setAudioReceiveRange(range);
+        EXPRESS::ZegoReceiveRangeParam param;
+        param.min = (float)std::get<double>(paramMap[FTValue("min")]);
+        param.max = (float)std::get<double>(paramMap[FTValue("max")]);
+
+        rangeAudio_->setAudioReceiveRange(param);
 
         result->Success();
     } else {
@@ -5038,9 +5083,13 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetStreamVocalRange(
     if (rangeAudio_) {
         auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
 
-        auto vocalRange = std::get<double>(argument[FTValue("vocalRange")]);
+        auto paramMap = std::get<FTMap>(argument[FTValue("param")]);
 
-        rangeAudio_->setStreamVocalRange(streamID, vocalRange);
+        EXPRESS::ZegoVocalRangeParam param;
+        param.min = (float)std::get<double>(paramMap[FTValue("min")]);
+        param.max = (float)std::get<double>(paramMap[FTValue("max")]);
+
+        rangeAudio_->setStreamVocalRange(streamID, param);
 
         result->Success();
     } else {
