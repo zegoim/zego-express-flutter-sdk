@@ -354,7 +354,7 @@ void ZegoExpressEngineEventHandler::onVideoObjectSegmentationStateChanged(
     }
 }
 
-void onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) {
+void ZegoExpressEngineEventHandler::onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) {
     ZF::logInfo("[onPublisherLowFpsWarning] codecID: %d, channel: %d", codecID, channel);
 
     if (eventSink_) {
@@ -804,7 +804,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
     }
 }
 
-void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
+void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
     ZF::logInfo("[onMediaPlayerRenderingProgress] index: %d, millisecond: %lld", mediaPlayer->getIndex(), millisecond);
 
     if (eventSink_) {
@@ -812,7 +812,7 @@ void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsi
         retMap[FTValue("method")] = FTValue("onMediaPlayerRenderingProgress");
         retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
 
-        retMap[FTValue("millisecond")] = FTValue(millisecond);
+        retMap[FTValue("millisecond")] = FTValue((int64_t)millisecond);
 
         eventSink_->Success(retMap);
     }
@@ -1241,7 +1241,7 @@ void ZegoExpressEngineEventHandler::onAutoMixerSoundLevelUpdate(
 void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(
     EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo &deviceInfo) {
 
-    ZF::logInfo("[onVideoDeviceStateChanged] updateType: %d, deviceID: %s, deviceName: %s", updateType, deviceInfo.deviceID, deviceInfo.deviceName);
+    ZF::logInfo("[onVideoDeviceStateChanged] updateType: %d, deviceID: %s, deviceName: %s", updateType, deviceInfo.deviceID.c_str(), deviceInfo.deviceName.c_str());
 
     if (eventSink_) {
         FTMap retMap;
@@ -1562,7 +1562,7 @@ void ZegoExpressEngineEventHandler::onNetworkSpeedTestQualityUpdate(
 
 void ZegoExpressEngineEventHandler::onRecvExperimentalAPI(const std::string &content) {
 
-    ZF::logInfo("[onRecvExperimentalAPI] content: %s", content);
+    ZF::logInfo("[onRecvExperimentalAPI] content: %s", content.c_str());
 
     if (eventSink_) {
         FTMap retMap;

@@ -2639,7 +2639,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetMediaInfo(
     }
 }
 
-void mediaPlayerSetHttpHeader(
+void ZegoExpressEngineMethodHandler::mediaPlayerSetHttpHeader(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
 
@@ -2664,7 +2664,7 @@ void mediaPlayerSetHttpHeader(
     }
 }
 
-void mediaPlayerGetCurrentRenderingProgress(
+void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentRenderingProgress(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto index = std::get<int32_t>(argument[FTValue("index")]);
@@ -4956,9 +4956,9 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetAudioReceiveRange(
         param.min = (float)std::get<double>(paramMap[FTValue("min")]);
         param.max = (float)std::get<double>(paramMap[FTValue("max")]);
 
-        rangeAudio_->setAudioReceiveRange(param);
+        int ret = rangeAudio_->setAudioReceiveRange(param);
 
-        result->Success();
+        result->Success(FTValue(ret));
     } else {
         result->Error("rangeAudioSetAudioReceiveRange_Can_not_find_instance",
                       "Invoke `rangeAudioSetAudioReceiveRange` but can't find specific instance");
@@ -5082,16 +5082,15 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetStreamVocalRange(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     if (rangeAudio_) {
         auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
-
         auto paramMap = std::get<FTMap>(argument[FTValue("param")]);
 
         EXPRESS::ZegoVocalRangeParam param;
         param.min = (float)std::get<double>(paramMap[FTValue("min")]);
         param.max = (float)std::get<double>(paramMap[FTValue("max")]);
 
-        rangeAudio_->setStreamVocalRange(streamID, param);
+        int ret = rangeAudio_->setStreamVocalRange(streamID, param);
 
-        result->Success();
+        result->Success(FTValue(ret));
     } else {
         result->Error("rangeAudioSetStreamVocalRange_Can_not_find_instance",
                       "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance");
