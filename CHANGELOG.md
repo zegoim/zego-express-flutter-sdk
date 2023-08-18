@@ -34,7 +34,7 @@ For related API, please refer to [setHttpHeader](https://pub.dev/documentation/z
 
 In the range voice scene:
 
-- Support to set the attenuation range [min, max] of the 3D audio effect distance through the [setAudioReceiveRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setAudioReceiveRange.html) 接口，设置 3D 音效距离的衰减范围区间 [min, max] interface. When the distance is less than min, the volume will not attenuate as the distance increases; when the distance is greater than max, the other party's voice will not be heard.
+- Support to set the attenuation range [min, max] of the 3D audio effect distance through the [setAudioReceiveRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setAudioReceiveRange.html) function，set the attenuation range [min, max] of the 3D audio effect interface. When the distance is less than min, the volume will not attenuate as the distance increases; when the distance is greater than max, the other party's voice will not be heard.
 - Support setting the vocal range [min, max] of a single stream through the [setStreamVocalRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setStreamVocalRange.html) interface.
 
 #### 6. Support callback related event activities by publish channel
