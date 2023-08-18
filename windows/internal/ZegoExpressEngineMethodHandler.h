@@ -618,7 +618,12 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerGetMediaInfo(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-
+    void mediaPlayerSetHttpHeader(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerGetCurrentRenderingProgress(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     /* Media Data Publisher */
     void createMediaDataPublisher(
         flutter::EncodableMap &argument,

@@ -511,6 +511,20 @@
     }
 }
 
+- (void)onPublisherLowFpsWarning:(ZegoVideoCodecID)codecID channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherLowFpsWarning] codecID: %d, channel: %d", (int)codecID, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherLowFpsWarning",
+            @"codecID": @((int)codecID),
+            @"channel": @((int)channel),
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -1283,6 +1297,20 @@
             @"method": @"onMediaPlayerFirstFrameEvent",
             @"mediaPlayerIndex": mediaPlayer.index,
             @"event": @(event),
+        });
+    }
+}
+
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer renderingProgress:(unsigned long long)millisecond {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerRenderingProgress] idx: %d, event: %lld", mediaPlayer.index.intValue, millisecond);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerRenderingProgress",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"millisecond": @(millisecond),
         });
     }
 }

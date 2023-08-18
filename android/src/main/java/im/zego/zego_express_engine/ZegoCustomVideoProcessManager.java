@@ -2,10 +2,13 @@ package im.zego.zego_express_engine;
 
 import android.graphics.SurfaceTexture;
 
-import im.zego.zego_express_engine.internal.ZegoLog;
+import java.nio.ByteBuffer;
+
 import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zego_express_engine.internal.ZegoLog;
 import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
+import im.zego.zegoexpress.entity.ZegoVideoFrameParam;
 
 public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandler {
     private volatile static ZegoCustomVideoProcessManager singleton;
@@ -104,6 +107,22 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
     public void onCapturedUnprocessedTextureData(int textureID, int width, int height, long referenceTimeMillisecond, ZegoPublishChannel channel) {
         if (mHander != null) {
             mHander.onCapturedUnprocessedTextureData(textureID, width, height, referenceTimeMillisecond, ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
+        }
+    }
+
+    @Override
+    public void onCapturedUnprocessedRawData(ByteBuffer data, int[] dataLength, ZegoVideoFrameParam param, long referenceTimeMillisecond, ZegoPublishChannel channel) {
+        if (mHander != null) {
+            ZGFlutterVideoFrameParam videoFrameParam = new ZGFlutterVideoFrameParam();
+            videoFrameParam.format = ZGFlutterVideoFrameFormat.getVideoFrameFormat(param.format.value());
+            videoFrameParam.height = param.height;
+            videoFrameParam.width = param.width;
+            videoFrameParam.rotation = param.rotation;
+            for (int i = 0; i < 4; i++) {
+                videoFrameParam.strides[i] = param.strides[i];
+            }
+
+            mHander.onCapturedUnprocessedRawData(data, dataLength, videoFrameParam, referenceTimeMillisecond, ZGFlutterPublishChannel.getZegoPublishChannel(channel.value()));
         }
     }
 

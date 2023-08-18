@@ -577,6 +577,18 @@ class ZegoExpressEngine {
       ZegoPublishChannel channel,
       int errorCode)? onVideoObjectSegmentationStateChanged;
 
+  /// Video encoding low frame rate warning.
+  ///
+  /// Available since: 3.8.0
+  /// Description: Video encoding low frame rate warning.
+  /// When to trigger: This callback triggered by low frame rate in video encoding.
+  /// Caution: This callback is disabled by default, if necessary, please contact ZEGO technical support.
+  ///
+  /// - [codecID] Video codec ID.
+  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  static void Function(ZegoVideoCodecID codecID, ZegoPublishChannel channel)?
+      onPublisherLowFpsWarning;
+
   /// The callback triggered when the state of stream playing changes.
   ///
   /// Available since: 1.1.0
@@ -1080,6 +1092,19 @@ class ZegoExpressEngine {
   /// - [millisecond] Progress in milliseconds.
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
       onMediaPlayerPlayingProgress;
+
+  /// The callback to report the current rendering progress of the media player.
+  ///
+  /// Available since: 3.8.0
+  /// Description: The callback to report the current rendering progress of the media player. Set the callback interval by calling [setProgressInterval]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1 second.
+  /// Trigger: This callback will be triggered when the media player starts playing resources.
+  /// Restrictions: None.
+  /// Related APIs: [setProgressInterval].
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [millisecond] Progress in milliseconds.
+  static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
+      onMediaPlayerRenderingProgress;
 
   /// The callback triggered when the media player got media side info.
   ///

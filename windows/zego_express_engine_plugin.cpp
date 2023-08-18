@@ -299,6 +299,8 @@ static const std::map<
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
         EngineMethodHandler(mediaPlayerUpdatePosition),
         EngineMethodHandler(mediaPlayerGetMediaInfo),
+        EngineMethodHandler(mediaPlayerSetHttpHeader),
+        EngineMethodHandler(mediaPlayerGetCurrentRenderingProgress),
 
         // MediaDataPublihser
         EngineMethodHandler(createMediaDataPublisher),

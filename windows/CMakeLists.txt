@@ -64,7 +64,7 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 
 # /WX- Don't mistake warnings for errors
 # /bigobj Used to fix this problem (Error: C1128 sections exceed object file format limit)
-target_compile_options(${PLUGIN_NAME} PRIVATE /W4 /WX- /wd4100 /bigobj /utf-8)
+target_compile_options(${PLUGIN_NAME} PRIVATE /W4 /WX- /wd4100 /wd4267 /wd4189 /wd4244 /wd4996 /bigobj /utf-8)
 
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
