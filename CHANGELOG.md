@@ -1,5 +1,77 @@
 # Change Log
 
+## 3.8.1
+
+### New Features
+
+#### 1. Added support for Smart Cloud Proxy mode
+
+Note: If you need to use this function, please contact ZEGOCLOUD technical support
+
+After the developer sets the Smart Cloud Proxy mode, when publishing streams from RTC or L3, it will give priority to using the direct network mode to try. If the direct connection network is unavailable and it is currently a cellular network, continue to stay in the direct connection mode and try again; if the direct connection network is not available and it is currently a non-cellular network, then switch to the cloud proxy mode.
+
+#### 2. Support returning low frame rate alarms for encoding and hardware decoding
+
+Note: If you need to use this function, please contact ZEGOCLOUD technical support
+
+Added a low frame rate alarm callback that supports throwing encoding and hardware decoding. In 1v1 chats, live broadcasts and other scenarios, developers can adjust the streaming resolution and trigger transcoding based on this callback.
+
+For related API, please refer to [onPlayerLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerLowFpsWarning.html), [onPublisherLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherLowFpsWarning.html)
+
+#### 3. Added a callback for synchronously throwing the first frame of the video network
+
+Added a callback [onPlayerSyncRecvVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerSyncRecvVideoFirstFrame.html) that returns the first frame of the video network from a non-UI thread. This callback is not affected by UI freezes and can more accurately count the first frame of the video.
+
+For related API, please refer to [onPlayerSyncRecvVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerSyncRecvVideoFirstFrame.html)
+
+#### 4. Mediaplayer supports setting Http Headers of network resources
+
+The mediaplayer supports setting the Http Headers of network resources. Based on this configuration, developers can customize and limit the access methods of network resources to strengthen the security protection of resources.
+
+For related API, please refer to [setHttpHeader](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setHttpHeader.html)
+
+#### 5. The range voice supports configuring the attenuation range of the 3D sound effect distance and the sound range of a single stream
+
+In the range voice scene:
+
+- Support to set the attenuation range [min, max] of the 3D audio effect distance through the [setAudioReceiveRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setAudioReceiveRange.html) 接口，设置 3D 音效距离的衰减范围区间 [min, max] interface. When the distance is less than min, the volume will not attenuate as the distance increases; when the distance is greater than max, the other party's voice will not be heard.
+- Support setting the vocal range [min, max] of a single stream through the [setStreamVocalRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setStreamVocalRange.html) interface.
+
+#### 6. Support callback related event activities by publish channel
+
+The [onPublisherSendAudioFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendAudioFirstFrame.html) callback function adds a channel parameter, which supports multi-channel listening and streaming to send the first frame information.
+
+For related API, please refer to [onPublisherSendAudioFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendAudioFirstFrame.html)
+
+### Enhancements
+
+#### 1. Optimize the noise performance of the low-light enhancement algorithm
+
+#### 2. Optimize the URL length of resources loaded by mediaplayers, with a maximum support of 2048 bytes
+
+#### 3. Optimize the callback synchronization of media player SEI information and corresponding frame data to ensure the consistency of SEI and screen
+
+### Bug Fixes
+
+#### 1. Fix the problem of hard unblocking of H.265 RTMP streams with B frames
+
+#### 2. Fix the probelm that changing the userID after [createEngine] and before [destroyEngine] may cause publish-play stream failure when using Token authentication
+
+### Deleted
+
+#### 1. Abandoned some API interfaces
+
+In version 3.8.1, deprecated changes were made to the following API interfaces.
+
+- Abandoned the original `onPublisherSendAudioFirstFrame` callback interface and replaced it with the [onPublisherSendAudioFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendAudioFirstFrame.html) callback of the same name, and added a `channel` parameter to support callback-related event activities by publsih channel.
+
+- The original member function of [ZegoRangeAudio](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio-class.html) class:
+
+  - The original member function `setAudioReceiveRange` is discarded and replaced with the [setAudioReceiveRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setAudioReceiveRange.html) interface with the same name, and the parameter [ZegoReceiveRangeParam](/unique-api/express-video-sdk/en/dart_flutter/zego_express_engine/ZegoReceiveRangeParam-class.html) type is extended to support setting the audio receiving range of the range voice.
+  - The original member function `setStreamVocalRange` is discarded and replaced with the [setStreamVocalRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setStreamVocalRange.html) interface with the same name, and the parameter [ZegoVocalRangeParam](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoVocalRangeParam-class.html) type is extended to support setting the voice range of a single stream of range voice.
+
+There may be compatibility issues after the API interface changes, please refer to [Upgrade guide 3.8.1+](https://doc-en.zego.im/article/16425) for details.
+
 ## 3.7.0
 
 ### New Features
