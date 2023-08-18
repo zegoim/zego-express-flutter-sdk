@@ -3753,6 +3753,31 @@
     }
 }
 
+- (void)mediaPlayerSetHttpHeader:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        NSDictionary *headersMap = call.arguments[@"headers"];
+        [mediaPlayer setHttpHeader:headersMap];
+    }
+
+    result(nil);
+}
+
+- (void)mediaPlayerGetCurrentRenderingProgress:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        unsigned long long progress = mediaPlayer.currentRenderingProgress;
+        result(@(progress));
+    } else {
+        result(@(0));
+    }
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -4268,9 +4293,12 @@
 - (void)rangeAudioSetAudioReceiveRange:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.rangeAudioInstance) {
-        float range = [ZegoUtils floatValue:call.arguments[@"range"]];
-        [self.rangeAudioInstance setAudioReceiveRange:range];
-        result(nil);
+        ZegoReceiveRangeParam *rangeParam = [[ZegoReceiveRangeParam alloc] init];
+        NSDictionary *paramMap = call.arguments[@"param"];
+        rangeParam.min = [ZegoUtils floatValue:paramMap[@"min"]];
+        rangeParam.max = [ZegoUtils floatValue:paramMap[@"max"]];
+        int ret = [self.rangeAudioInstance setAudioReceiveRangeWithParam:rangeParam];
+        result(@(ret));
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetAudioReceiveRange` but can't find specific instance" details:nil]);
@@ -4383,10 +4411,13 @@
 
     if (self.rangeAudioInstance) {
         NSString* streamID = call.arguments[@"streamID"];
-        float vocalRange = [ZegoUtils floatValue:call.arguments[@"vocalRange"]];
+        ZegoVocalRangeParam *rangeParam = [[ZegoVocalRangeParam alloc] init];
+        NSDictionary *paramMap = call.arguments[@"param"];
+        rangeParam.min = [ZegoUtils floatValue:paramMap[@"min"]];
+        rangeParam.max = [ZegoUtils floatValue:paramMap[@"max"]];
 
-        [self.rangeAudioInstance setStreamVocalRange:streamID vocalRange: vocalRange];
-        result(nil);
+        int ret = [self.rangeAudioInstance setStreamVocalRangeWithParam:streamID param:rangeParam];
+        result(@(ret));
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance" details:nil]);

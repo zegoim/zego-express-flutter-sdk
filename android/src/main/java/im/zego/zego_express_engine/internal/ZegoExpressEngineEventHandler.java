@@ -539,6 +539,21 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPublisherLowFpsWarning(ZegoVideoCodecID codecID, ZegoPublishChannel channel) {
+            super.onPublisherLowFpsWarning(codecID, channel);
+            ZegoLog.log("[onPublisherLowFpsWarning] codecID: %s, channel: %s", codecID.name(), channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPublisherLowFpsWarning");
+            map.put("codecID", codecID.value());
+            map.put("channel", channel.value());
+
+            sink.success(map);
+        }
+
         /* Player */
 
         @Override
@@ -1431,6 +1446,22 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerFirstFrameEvent");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("event", event.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaPlayerRenderingProgress(ZegoMediaPlayer mediaPlayer, long millisecond) {
+            super.onMediaPlayerRenderingProgress(mediaPlayer, millisecond);
+            ZegoLog.log("[onMediaPlayerRenderingProgress] idx: %d, millisecond: %d", mediaPlayer.getIndex(), millisecond);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerRenderingProgress");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("millisecond", millisecond);
 
             sink.success(map);
         }

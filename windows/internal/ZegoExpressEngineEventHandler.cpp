@@ -354,6 +354,21 @@ void ZegoExpressEngineEventHandler::onVideoObjectSegmentationStateChanged(
     }
 }
 
+void ZegoExpressEngineEventHandler::onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) {
+    ZF::logInfo("[onPublisherLowFpsWarning] codecID: %d, channel: %d", codecID, channel);
+
+    if (eventSink_) {
+        FTMap retMap;
+
+        retMap[FTValue("method")] = FTValue("onPublisherLowFpsWarning");
+        retMap[FTValue("codecID")] = FTValue((int32_t)codecID);
+        retMap[FTValue("channel")] = FTValue((int32_t)channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
                                                         int errorCode,
@@ -789,6 +804,21 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
     }
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
+    ZF::logInfo("[onMediaPlayerRenderingProgress] index: %d, millisecond: %lld", mediaPlayer->getIndex(), millisecond);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerRenderingProgress");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("millisecond")] = FTValue((int64_t)millisecond);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+
 // MediaDataPublisher
 void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
     ZF::logInfo("[onMediaDataPublisherFileOpen] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
@@ -1211,7 +1241,7 @@ void ZegoExpressEngineEventHandler::onAutoMixerSoundLevelUpdate(
 void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(
     EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo &deviceInfo) {
 
-    ZF::logInfo("[onVideoDeviceStateChanged] updateType: %d, deviceID: %s, deviceName: %s", updateType, deviceInfo.deviceID, deviceInfo.deviceName);
+    ZF::logInfo("[onVideoDeviceStateChanged] updateType: %d, deviceID: %s, deviceName: %s", updateType, deviceInfo.deviceID.c_str(), deviceInfo.deviceName.c_str());
 
     if (eventSink_) {
         FTMap retMap;
@@ -1532,7 +1562,7 @@ void ZegoExpressEngineEventHandler::onNetworkSpeedTestQualityUpdate(
 
 void ZegoExpressEngineEventHandler::onRecvExperimentalAPI(const std::string &content) {
 
-    ZF::logInfo("[onRecvExperimentalAPI] content: %s", content);
+    ZF::logInfo("[onRecvExperimentalAPI] content: %s", content.c_str());
 
     if (eventSink_) {
         FTMap retMap;

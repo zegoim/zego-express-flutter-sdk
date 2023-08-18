@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 // ignore: unnecessary_import
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
@@ -15,13 +16,32 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.7.0";
+  static String pluginVersion = "3.8.1";
+}
+
+class MethodChannelWrapper extends MethodChannel {
+  MethodChannelWrapper(String name) : super(name);
+  bool showFlutterApiCalledDetail = false;
+
+  @override
+  Future<T?> invokeMethod<T>(String method, [arguments]) {
+    if (showFlutterApiCalledDetail) {
+      if (ZegoExpressImpl.onFlutterApiCalledDetail != null) {
+        ZegoExpressImpl.onFlutterApiCalledDetail!(
+          method,
+          jsonEncode(arguments),
+          // arguments != null ? jsonEncode(arguments) : '{}',
+        );
+      }
+    }
+    return super.invokeMethod(method, arguments);
+  }
 }
 
 class ZegoExpressImpl {
   /// Method Channel
-  static const MethodChannel _channel =
-      MethodChannel('plugins.zego.im/zego_express_engine');
+  static final MethodChannelWrapper _channel =
+      MethodChannelWrapper('plugins.zego.im/zego_express_engine');
   static const EventChannel _event =
       EventChannel('plugins.zego.im/zego_express_event_handler');
 
@@ -35,7 +55,7 @@ class ZegoExpressImpl {
   static final ZegoExpressImpl instance = ZegoExpressImpl._internal();
 
   /// Exposing methodChannel to other files
-  static MethodChannel get methodChannel => _channel;
+  static MethodChannelWrapper get methodChannel => _channel;
 
   // is create engine
   static bool isEngineCreated = false;
@@ -50,11 +70,27 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
-    // TODO: PlatformView support on macOS has a crash issue, don't use it now
-    // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= !kIsMacOS;
+
+    if (kIsMacOS) {
+      try {
+        String dartVersion = Platform.version.split(' ')[0];
+        int? major = int.tryParse(dartVersion.split('.')[0]);
+        // Flutter v3.10 <==> Dart v3.0
+        if (major == null || major < 3) {
+          // PlatformView on macOS has a crash issue under flutter v3.10
+          // Ref: https://github.com/flutter/flutter/issues/96668
+          use = false;
+        }
+      } catch (e) {
+        use = false;
+      }
+    }
+
     return use;
   }
+
+  // Private function
+  static void Function(String api, String jsonArgs)? onFlutterApiCalledDetail;
 
   /* Main */
 
@@ -2260,6 +2296,16 @@ class ZegoExpressImpl {
             map['errorCode']);
         break;
 
+      case 'onPublisherLowFpsWarning':
+        if (ZegoExpressEngine.onPublisherLowFpsWarning == null) {
+          return;
+        }
+
+        ZegoExpressEngine.onPublisherLowFpsWarning!(
+            ZegoVideoCodecID.values[map['codecID']],
+            ZegoPublishChannel.values[map['channel']]);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -2827,6 +2873,18 @@ class ZegoExpressImpl {
               mediaPlayer, ZegoMediaPlayerFirstFrameEvent.values[map['event']]);
         }
         break;
+      case 'onMediaPlayerRenderingProgress':
+        if (ZegoExpressEngine.onMediaPlayerRenderingProgress == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerRenderingProgress!(
+              mediaPlayer, map['millisecond']);
+        }
+        break;
+
       /* AudioEffectPlayer */
 
       case 'onAudioEffectPlayStateUpdate':
@@ -3423,9 +3481,15 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
-  Future<void> setHttpHeader(Map headers) {
-    // TODO: implement setHttpHeader
-    throw UnimplementedError();
+  Future<void> setHttpHeader(Map<String, String> headers) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetHttpHeader', {'index': _index, 'headers': headers});
+  }
+
+  @override
+  Future<int> getCurrentRenderingProgress() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetCurrentRenderingProgress', {'index': _index});
   }
 }
 
@@ -3663,9 +3727,11 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   }
 
   @override
-  Future<void> setAudioReceiveRange(double range) async {
+  Future<int> setAudioReceiveRange(ZegoReceiveRangeParam param) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('rangeAudioSetAudioReceiveRange', {'range': range});
+        .invokeMethod('rangeAudioSetAudioReceiveRange', {
+      'param': {'min': param.min, 'max': param.max}
+    });
   }
 
   @override
@@ -3718,10 +3784,13 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   }
 
   @override
-  Future<void> setStreamVocalRange(String streamID, double vocalRange) async {
-    return await ZegoExpressImpl._channel.invokeMethod(
-        'rangeAudioSetStreamVocalRange',
-        {'streamID': streamID, 'vocalRange': vocalRange});
+  Future<int> setStreamVocalRange(
+      String streamID, ZegoVocalRangeParam param) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetStreamVocalRange', {
+      'streamID': streamID,
+      'param': {'min': param.min, 'max': param.max}
+    });
   }
 
   @override

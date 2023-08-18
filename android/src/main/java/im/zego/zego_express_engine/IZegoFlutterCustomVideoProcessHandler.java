@@ -1,5 +1,6 @@
 package im.zego.zego_express_engine;
 
+import java.nio.*;
 import android.graphics.SurfaceTexture;
 
 public interface IZegoFlutterCustomVideoProcessHandler {
@@ -50,6 +51,27 @@ public interface IZegoFlutterCustomVideoProcessHandler {
     public void onCapturedUnprocessedTextureData(int textureID, int width, int height,
                                                  long referenceTimeMillisecond,
                                                  ZGFlutterPublishChannel channel);
+
+    /**
+     * Call back when the original video data is obtained.
+     *
+     * Available since: 2.2.0
+     * Description: When the custom video pre-processing is turned on, after calling [setCustomVideoProcessHandler] to set the callback, the SDK receives the original video data and calls back to the developer. After the developer has processed the original image, he must call [sendCustomVideoProcessedRawData] to send the processed data back to the SDK, otherwise it will cause frame loss.
+     * Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
+     * When to Trigger: When the custom video pre-processing is enabled, the SDK collects the original video data.
+     * Restrictions: This interface takes effect when [enableCustomVideoProcessing] is called to enable custom video pre-processing and the bufferType of config is passed in [ZegoVideoBufferTypeRawData].
+     * Platform differences: It only takes effect on the Windows platform.
+     *
+     * @param data Raw video data. RGB format data storage location is data[0], YUV format data storage location is Y component：data[0], U component：data[1], V component：data[2].
+     * @param dataLength Raw video data length. RGB format data length storage location is dataLength[0], YUV format data storage location respectively Y component length：dataLength[0], U component length：dataLength[1], V component length：dataLength[2].
+     * @param param Video frame parameters.
+     * @param referenceTimeMillisecond Video frame reference time, UNIX timestamp, in milliseconds.
+     * @param channel Publishing stream channel.
+     */
+    public void onCapturedUnprocessedRawData(ByteBuffer data, int[] dataLength,
+                                             ZGFlutterVideoFrameParam param,
+                                             long referenceTimeMillisecond,
+                                             ZGFlutterPublishChannel channel);
 
     /**
      * When the developer chooses the SurfaceTexture video pre-processing type, the SurfaceTexture used to input the original video data is obtained through this interface and passed to the SDK.
