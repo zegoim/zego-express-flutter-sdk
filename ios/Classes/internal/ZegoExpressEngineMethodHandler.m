@@ -4297,8 +4297,8 @@
         NSDictionary *paramMap = call.arguments[@"param"];
         rangeParam.min = [ZegoUtils floatValue:paramMap[@"min"]];
         rangeParam.max = [ZegoUtils floatValue:paramMap[@"max"]];
-        [self.rangeAudioInstance setAudioReceiveRangeWithParam:rangeParam];
-        result(nil);
+        int ret = [self.rangeAudioInstance setAudioReceiveRangeWithParam:rangeParam];
+        result(@(ret));
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetAudioReceiveRange` but can't find specific instance" details:nil]);
@@ -4416,8 +4416,8 @@
         rangeParam.min = [ZegoUtils floatValue:paramMap[@"min"]];
         rangeParam.max = [ZegoUtils floatValue:paramMap[@"max"]];
 
-        [self.rangeAudioInstance setStreamVocalRangeWithParam:streamID param:rangeParam];
-        result(nil);
+        int ret = [self.rangeAudioInstance setStreamVocalRangeWithParam:streamID param:rangeParam];
+        result(@(ret));
 
     } else {
         result([FlutterError errorWithCode:[@"rangeAudio_Can_not_find_Instance" uppercaseString] message:@"Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance" details:nil]);
