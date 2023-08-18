@@ -181,6 +181,7 @@ import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoProxyInfo;
 import im.zego.zegoexpress.entity.ZegoPublishDualStreamConfig;
 import im.zego.zegoexpress.entity.ZegoPublisherConfig;
+import im.zego.zegoexpress.entity.ZegoReceiveRangeParam;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
@@ -189,6 +190,7 @@ import im.zego.zegoexpress.entity.ZegoScreenCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoSoundLevelConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
+import im.zego.zegoexpress.entity.ZegoVocalRangeParam;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
 import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
@@ -3993,6 +3995,32 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetHttpHeader(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            HashMap<String, String> map = call.argument("headers");
+            mediaPlayer.setHttpHeader(map);
+        }
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void getCurrentRenderingProgress(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            long progress = mediaPlayer.getCurrentRenderingProgress();
+            result.success(progress);
+        } else {
+            result.success(0);
+        }
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")
@@ -4538,8 +4566,14 @@ public class ZegoExpressEngineMethodHandler {
     public static void rangeAudioSetAudioReceiveRange(MethodCall call, Result result) {
 
         if (rangeAudioInstance != null) {
-            float range = ZegoUtils.floatValue((Number) call.argument("range"));
-            rangeAudioInstance.setAudioReceiveRange(range);
+            ZegoReceiveRangeParam rangeParam = new ZegoReceiveRangeParam();
+            HashMap<String, Object> paramMap = call.argument("param");
+            if (paramMap != null) {
+                rangeParam.min = ZegoUtils.floatValue((Float) paramMap.get("min"));
+                rangeParam.max = ZegoUtils.floatValue((Float) paramMap.get("max"));
+            }
+            rangeAudioInstance.setAudioReceiveRange(rangeParam);
+
             result.success(null);
 
         } else {
@@ -4651,8 +4685,13 @@ public class ZegoExpressEngineMethodHandler {
         
         if (rangeAudioInstance != null) {
             String streamID = call.argument("streamID");
-            float vocalRange = ZegoUtils.floatValue((Number) call.argument("vocalRange"));
-            rangeAudioInstance.setStreamVocalRange(streamID, vocalRange);
+            ZegoVocalRangeParam rangeParam = new ZegoVocalRangeParam();
+            HashMap<String, Object> paramMap = call.argument("param");
+            if (paramMap != null) {
+                rangeParam.min = ZegoUtils.floatValue((Float) paramMap.get("min"));
+                rangeParam.max = ZegoUtils.floatValue((Float) paramMap.get("max"));
+            }
+            rangeAudioInstance.setStreamVocalRange(streamID, rangeParam);
             
             result.success(null);
 

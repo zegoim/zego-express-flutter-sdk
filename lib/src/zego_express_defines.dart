@@ -3979,6 +3979,13 @@ abstract class ZegoMediaPlayer {
   /// - Returns current progress
   Future<int> getCurrentProgress();
 
+  /// Get current rendering progress.
+  ///
+  /// You should load resource before invoking this function, otherwise the return value is 0
+  ///
+  /// - Returns current rendering progress
+  Future<int> getCurrentRenderingProgress();
+
   /// Get the number of audio tracks of the playback file.
   ///
   /// - Returns Number of audio tracks
@@ -4160,10 +4167,14 @@ abstract class ZegoMediaPlayer {
 
   /// Set http headers.
   ///
-  /// When the network resource needs to set special header information, call this function to set the http headers of the http network resource.
+  /// Available since: 3.8.0
+  /// Description: Call this function to set the http headers of the http network resource.
+  /// Use cases: When the network resource needs to set special header information.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Restrictions: Called before the corresponding network resource is loaded.
   ///
   /// - [headers] Headers info.
-  Future<void> setHttpHeader(Map headers);
+  Future<void> setHttpHeader(Map<String, String> headers);
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -4417,17 +4428,18 @@ abstract class ZegoMediaDataPublisher {
 }
 
 abstract class ZegoRangeAudio {
-  /// Set the maximum range of received audio.
+  /// Set the configuration of the audio receiving range.
   ///
-  /// Available since: 2.11.0
+  /// Available since: 3.7.0
   /// Description: Set the audio receiving range, the audio source sound beyond this range will not be received.
   /// Use case: Set the receiver's receiving range in the `World` mode.
   /// Default value: When this function is not called, only the voices of the members in the team can be received, and all voices outside the team cannot be received.
   /// When to call: After initializing the range audio [createRangeAudio].
   /// Restrictions: This range only takes effect for people outside the team.
   ///
-  /// - [range] the audio range, the value must be greater than or equal to 0.
-  Future<void> setAudioReceiveRange(double range);
+  /// - [param] Configuration of audio receiving range.
+  /// - Returns Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  Future<int> setAudioReceiveRange(ZegoReceiveRangeParam param);
 
   /// Set the frequency of real-time update locations within the SDK.
   ///
@@ -4453,15 +4465,16 @@ abstract class ZegoRangeAudio {
 
   /// Set the sound range for the stream.
   ///
-  /// Available since: 2.23.0
+  /// Available since: 3.7.0
   /// Description: Set range voice volume.
   /// Use case: When a user calls [startPlayingStream] and pulls another stream, the stream has a range speech effect by setting the range of sounds for that stream and calling [updateStreamPosition]. After the call will be the sound source of the sound range of the distance attenuation effect.
   /// When to call: After initializing the range audio [createRangeAudio] and after [startPlayingStream].
   /// Caution:  When calling [enableMicrophone] to enable range speech, the resource of the stream will be switched to RTC, regardless of whether the resource specified when [startPlayingStream] was originally called to pull the stream is RTC. If you really need to specify the resource of the stream as CDN, please configure it to pull a custom CDN stream and specify the CDN address information.
   ///
   /// - [streamID] play stream id
-  /// - [vocalRange] Flow sound range.
-  Future<void> setStreamVocalRange(String streamID, double vocalRange);
+  /// - [param] Flow sound range.
+  /// - Returns Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  Future<int> setStreamVocalRange(String streamID, ZegoVocalRangeParam param);
 
   /// Update the location of the flow.
   ///

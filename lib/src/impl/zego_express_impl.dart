@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 // ignore: unnecessary_import
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
@@ -15,7 +16,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.7.0";
+  static String pluginVersion = "3.8.1";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -2295,6 +2296,16 @@ class ZegoExpressImpl {
             map['errorCode']);
         break;
 
+      case 'onPublisherLowFpsWarning':
+        if (ZegoExpressEngine.onPublisherLowFpsWarning == null) {
+          return;
+        }
+
+        ZegoExpressEngine.onPublisherLowFpsWarning!(
+            ZegoVideoCodecID.values[map['codecID']],
+            ZegoPublishChannel.values[map['channel']]);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -2862,6 +2873,18 @@ class ZegoExpressImpl {
               mediaPlayer, ZegoMediaPlayerFirstFrameEvent.values[map['event']]);
         }
         break;
+      case 'onMediaPlayerRenderingProgress':
+        if (ZegoExpressEngine.onMediaPlayerRenderingProgress == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerRenderingProgress!(
+              mediaPlayer, map['millisecond']);
+        }
+        break;
+
       /* AudioEffectPlayer */
 
       case 'onAudioEffectPlayStateUpdate':
@@ -3458,9 +3481,15 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
-  Future<void> setHttpHeader(Map headers) {
-    // TODO: implement setHttpHeader
-    throw UnimplementedError();
+  Future<void> setHttpHeader(Map<String, String> headers) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetHttpHeader', {'index': _index, 'headers': headers});
+  }
+
+  @override
+  Future<int> getCurrentRenderingProgress() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetCurrentRenderingProgress', {'index': _index});
   }
 }
 
@@ -3698,9 +3727,11 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   }
 
   @override
-  Future<void> setAudioReceiveRange(double range) async {
+  Future<int> setAudioReceiveRange(ZegoReceiveRangeParam param) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('rangeAudioSetAudioReceiveRange', {'range': range});
+        .invokeMethod('rangeAudioSetAudioReceiveRange', {
+      'param': {'min': param.min, 'max': param.max}
+    });
   }
 
   @override
@@ -3753,10 +3784,13 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   }
 
   @override
-  Future<void> setStreamVocalRange(String streamID, double vocalRange) async {
-    return await ZegoExpressImpl._channel.invokeMethod(
-        'rangeAudioSetStreamVocalRange',
-        {'streamID': streamID, 'vocalRange': vocalRange});
+  Future<int> setStreamVocalRange(
+      String streamID, ZegoVocalRangeParam param) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetStreamVocalRange', {
+      'streamID': streamID,
+      'param': {'min': param.min, 'max': param.max}
+    });
   }
 
   @override
