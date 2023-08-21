@@ -67,11 +67,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when dart invoke `startPreview/startPlayingStream/updatePlayingCanvas`
 - (BOOL)enableTextureAlpha:(BOOL) enable withTexture:(int64_t)textureID;
 
+/// Called when dart invoke `setVideoSource`
+- (void)setVideoSourceChannel:(NSNumber *)channel withSource:(ZegoVideoSourceType)sourceType;
+
 #pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                     param:(ZegoVideoFrameParam *)param
                                  flipMode:(ZegoVideoFlipMode)flipMode
                                   channel:(ZegoPublishChannel)channel;
+
+- (void)sendScreenCapturedVideoFrameRawData:(const void *)data
+                                 dataLength:(unsigned int)dataLength
+                                      param:(ZegoVideoFrameParam *)param;
 
 @end
 

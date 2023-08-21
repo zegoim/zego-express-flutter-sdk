@@ -57,7 +57,7 @@ class ZegoFlutterEngine {
   external static setEngineConfig(dynamic config);
   external setStreamExtraInfo(String extraInfo, int channel);
   external sendSEI(dynamic data, int dataLength, int channel);
-  external sendReliableMessage(String roomID, String key, String value);
+  external setRoomExtraInfo(String roomID, String key, String value);
   external createMediaPlayer();
   external setStyleByCanvas(dynamic canvas);
   external mediaPlayerSetPlayerCanvas(

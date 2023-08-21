@@ -156,7 +156,8 @@ void ZegoExpressEngineMethodHandler::setEngineConfig(
         if (logConfigMap.size() > 0) {
             logConfigPtr = std::make_unique<EXPRESS::ZegoLogConfig>();
             logConfigPtr->logPath = std::get<std::string>(logConfigMap[FTValue("logPath")]);
-            logConfigPtr->logSize = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+            logConfigPtr->logSize  = std::get<int32_t>(logConfigMap[FTValue("logSize")]);
+            logConfigPtr->logCount = std::get<int32_t>(logConfigMap[FTValue("logCount")]);
         }
 
         config.logConfig = logConfigPtr.get();
@@ -181,7 +182,8 @@ void ZegoExpressEngineMethodHandler::setLogConfig(
     EXPRESS::ZegoLogConfig config;
     if (configMap.size() > 0) {
         config.logPath = std::get<std::string>(configMap[FTValue("logPath")]);
-        config.logSize = std::get<int32_t>(configMap[FTValue("logSize")]);
+        config.logSize  = std::get<int32_t>(configMap[FTValue("logSize")]);
+        config.logCount = std::get<int32_t>(configMap[FTValue("logCount")]);
         EXPRESS::ZegoExpressSDK::setLogConfig(config);
     }
 
@@ -279,6 +281,13 @@ void ZegoExpressEngineMethodHandler::uploadLog(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     EXPRESS::ZegoExpressSDK::getEngine()->uploadLog();
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::submitLog(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    EXPRESS::ZegoExpressSDK::submitLog();
     result->Success();
 }
 
@@ -587,6 +596,31 @@ void ZegoExpressEngineMethodHandler::getVideoConfig(
     result->Success(configMap);
 }
 
+void ZegoExpressEngineMethodHandler::setPublishDualStreamConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    std::vector<EXPRESS::ZegoPublishDualStreamConfig> configList;
+    auto configListMap = std::get<FTArray>(argument[FTValue("configList")]);
+    for (auto config_ : configListMap) {
+        FTMap configMap = std::get<FTMap>(config_);
+        EXPRESS::ZegoPublishDualStreamConfig config;
+
+        config.encodeWidth = std::get<int32_t>(configMap[FTValue("encodeWidth")]);
+        config.encodeHeight = std::get<int32_t>(configMap[FTValue("encodeHeight")]);
+        config.fps = std::get<int32_t>(configMap[FTValue("fps")]);
+        config.bitrate = std::get<int32_t>(configMap[FTValue("bitrate")]);
+        config.streamType = (EXPRESS::ZegoVideoStreamType) std::get<int32_t>(configMap[FTValue("streamType")]);
+
+        configList.push_back(config);
+    }
+    
+    EXPRESS::ZegoExpressSDK::getEngine()->setPublishDualStreamConfig(configList, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::setVideoMirrorMode(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -822,6 +856,8 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
         channel = std::get<int32_t>(argument[FTValue("channel")]);
     }
 
+    ZegoTextureRendererController::getInstance()->setVideoSourceChannel((EXPRESS::ZegoPublishChannel)channel, (EXPRESS::ZegoVideoSourceType)source);
+
     int ret = 0;
     if (!hasChannel && !hasInstanceID) {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
@@ -835,12 +871,6 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
     } else {
         ret = EXPRESS::ZegoExpressSDK::getEngine()->setVideoSource(
             (EXPRESS::ZegoVideoSourceType)source, instanceID, (EXPRESS::ZegoPublishChannel)channel);
-    }
-
-    if (source == EXPRESS::ZEGO_VIDEO_SOURCE_TYPE_SCREEN_CAPTURE) {
-        screenCaptureSourceChannel_ = channel;
-    } else if (screenCaptureSourceChannel_ == channel) {
-        screenCaptureSourceChannel_ = -1;
     }
 
     result->Success(FTValue(ret));
@@ -2606,6 +2636,171 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetMediaInfo(
     } else {
         result->Error("mediaPlayerGetMediaInfo_Can_not_find_player",
                       "Invoke `mediaPlayerGetMediaInfo` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetHttpHeader(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto headersMap = std::get<FTMap>(argument[FTValue("headers")]);
+        std::unordered_map<std::string, std::string> headers;
+        for (auto &header : headersMap) {
+            std::string key = std::get<std::string>(header.first);
+            std::string value = std::get<std::string>(header.second);
+            headers[key] = value;
+        }
+
+        mediaPlayer->setHttpHeader(headers);
+
+        result->Success();
+    } else {
+        result->Error("mediaPlayerSetHttpHeader_Can_not_find_player",
+                      "Invoke `mediaPlayerSetHttpHeader` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentRenderingProgress(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto progress = mediaPlayer->getCurrentRenderingProgress();
+        result->Success(FTValue((int64_t)progress));
+
+    } else {
+        result->Error("mediaPlayerGetCurrentRenderingProgress_Can_not_find_player",
+                      "Invoke `mediaPlayerGetCurrentRenderingProgress` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    FTMap config_map = std::get<FTMap>(argument[FTValue("config")]);
+    EXPRESS::ZegoMediaDataPublisherConfig config{};
+    config.channel = std::get<int32_t>(config_map[FTValue("channel")]);
+    config.mode =
+        (EXPRESS::ZegoMediaDataPublisherMode)std::get<int32_t>(config_map[FTValue("mode")]);
+
+    auto publisher = EXPRESS::ZegoExpressSDK::getEngine()->createMediaDataPublisher(config);
+    if (publisher) {
+        int index = publisher->getIndex();
+        publisher->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        mediaDataPublisherMap_[index] = publisher;
+        result->Success(FTValue(index));
+    } else {
+        result->Success(FTValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyMediaDataPublisher(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyMediaDataPublisher(publisher);
+        mediaDataPublisherMap_.erase(index);
+        result->Success();
+    } else {
+        result->Error("destroyMediaDataPublisher_Can_not_find_publisher",
+                      "Invoke `destroyMediaDataPublisher` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherAddMediaFilePath(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        bool is_clear = std::get<bool>(argument[FTValue("isClear")]);
+        std::string path = std::get<std::string>(argument[FTValue("path")]);
+        publisher->addMediaFilePath(path, is_clear);
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherAddMediaFilePath_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherAddMediaFilePath` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherGetCurrentDuration(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        auto duration = publisher->getCurrentDuration();
+        result->Success(FTValue((int64_t)duration));
+    } else {
+        result->Error("mediaDataPublisherGetCurrentDuration_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherGetCurrentDuration` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherGetTotalDuration(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        auto duration = publisher->getTotalDuration();
+        result->Success(FTValue((int64_t)duration));
+    } else {
+        result->Error("mediaDataPublisherGetTotalDuration_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherGetTotalDuration` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherReset(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        publisher->reset();
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherReset_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherReset` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherSeekTo(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
+        publisher->seekTo(millisecond);
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherSeekTo_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherSeekTo` but can't find specific publisher");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaDataPublisherSetVideoSendDelayTime(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto publisher = mediaDataPublisherMap_[index];
+    if (publisher) {
+        int delay_time = std::get<int32_t>(argument[FTValue("delay_time")]);
+        publisher->setVideoSendDelayTime(delay_time);
+        result->Success();
+    } else {
+        result->Error("mediaDataPublisherSetVideoSendDelayTime_Can_not_find_publisher",
+                      "Invoke `mediaDataPublisherSetVideoSendDelayTime` but can't find specific publisher");
     }
 }
 
@@ -4755,11 +4950,15 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetAudioReceiveRange(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     if (rangeAudio_) {
-        auto range = std::get<double>(argument[FTValue("range")]);
+        auto paramMap = std::get<FTMap>(argument[FTValue("param")]);
 
-        rangeAudio_->setAudioReceiveRange(range);
+        EXPRESS::ZegoReceiveRangeParam param;
+        param.min = (float)std::get<double>(paramMap[FTValue("min")]);
+        param.max = (float)std::get<double>(paramMap[FTValue("max")]);
 
-        result->Success();
+        int ret = rangeAudio_->setAudioReceiveRange(param);
+
+        result->Success(FTValue(ret));
     } else {
         result->Error("rangeAudioSetAudioReceiveRange_Can_not_find_instance",
                       "Invoke `rangeAudioSetAudioReceiveRange` but can't find specific instance");
@@ -4883,12 +5082,15 @@ void ZegoExpressEngineMethodHandler::rangeAudioSetStreamVocalRange(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     if (rangeAudio_) {
         auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
+        auto paramMap = std::get<FTMap>(argument[FTValue("param")]);
 
-        auto vocalRange = std::get<double>(argument[FTValue("vocalRange")]);
+        EXPRESS::ZegoVocalRangeParam param;
+        param.min = (float)std::get<double>(paramMap[FTValue("min")]);
+        param.max = (float)std::get<double>(paramMap[FTValue("max")]);
 
-        rangeAudio_->setStreamVocalRange(streamID, vocalRange);
+        int ret = rangeAudio_->setStreamVocalRange(streamID, param);
 
-        result->Success();
+        result->Success(FTValue(ret));
     } else {
         result->Error("rangeAudioSetStreamVocalRange_Can_not_find_instance",
                       "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance");
@@ -5259,8 +5461,4 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
     }
 
     result->Success();
-}
-
-int ZegoExpressEngineMethodHandler::getScreenCaptureSourceChannel() {
-    return screenCaptureSourceChannel_;
 }

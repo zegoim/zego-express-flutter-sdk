@@ -58,6 +58,7 @@ static const std::map<
         EngineStaticMethodHandler(setRoomMode),
         EngineStaticMethodHandler(setLicense),
         EngineStaticMethodHandler(setGeoFence),
+        EngineStaticMethodHandler(submitLog),
         EngineMethodHandler(setRoomScenario),
         EngineMethodHandler(uploadLog),
         EngineMethodHandler(enableDebugAssistant),
@@ -76,6 +77,7 @@ static const std::map<
         EngineMethodHandler(stopPreview),
         EngineMethodHandler(setVideoConfig),
         EngineMethodHandler(getVideoConfig),
+        EngineMethodHandler(setPublishDualStreamConfig),
         EngineMethodHandler(setVideoMirrorMode),
         EngineMethodHandler(setAudioConfig),
         EngineMethodHandler(getAudioConfig),
@@ -297,6 +299,18 @@ static const std::map<
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
         EngineMethodHandler(mediaPlayerUpdatePosition),
         EngineMethodHandler(mediaPlayerGetMediaInfo),
+        EngineMethodHandler(mediaPlayerSetHttpHeader),
+        EngineMethodHandler(mediaPlayerGetCurrentRenderingProgress),
+
+        // MediaDataPublihser
+        EngineMethodHandler(createMediaDataPublisher),
+        EngineMethodHandler(destroyMediaDataPublisher),
+        EngineMethodHandler(mediaDataPublisherAddMediaFilePath),
+        EngineMethodHandler(mediaDataPublisherGetCurrentDuration),
+        EngineMethodHandler(mediaDataPublisherGetTotalDuration),
+        EngineMethodHandler(mediaDataPublisherReset),
+        EngineMethodHandler(mediaDataPublisherSeekTo),
+        EngineMethodHandler(mediaDataPublisherSetVideoSendDelayTime),
 
         // Copyrighted Music
         EngineMethodHandler(createCopyrightedMusic),

@@ -304,13 +304,14 @@ void ZegoExpressEngineEventHandler::onPublisherCapturedAudioFirstFrame() {
     }
 }
 
-void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame() {
+void ZegoExpressEngineEventHandler::onPublisherSendAudioFirstFrame(EXPRESS::ZegoPublishChannel channel) {
 
-    ZF::logInfo("[onPublisherSendAudioFirstFrame]");
+    ZF::logInfo("[onPublisherSendAudioFirstFrame] channel: %d", channel);
     
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onPublisherSendAudioFirstFrame");
+        retMap[FTValue("channel")] = FTValue((int)channel);
 
         eventSink_->Success(retMap);
     }
@@ -352,6 +353,21 @@ void ZegoExpressEngineEventHandler::onVideoObjectSegmentationStateChanged(
         eventSink_->Success(retMap);
     }
 }
+
+void ZegoExpressEngineEventHandler::onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) {
+    ZF::logInfo("[onPublisherLowFpsWarning] codecID: %d, channel: %d", codecID, channel);
+
+    if (eventSink_) {
+        FTMap retMap;
+
+        retMap[FTValue("method")] = FTValue("onPublisherLowFpsWarning");
+        retMap[FTValue("codecID")] = FTValue((int32_t)codecID);
+        retMap[FTValue("channel")] = FTValue((int32_t)channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
@@ -788,6 +804,61 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
     }
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
+    ZF::logInfo("[onMediaPlayerRenderingProgress] index: %d, millisecond: %lld", mediaPlayer->getIndex(), millisecond);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerRenderingProgress");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("millisecond")] = FTValue((int64_t)millisecond);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+
+// MediaDataPublisher
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileOpen] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileOpen");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileClose(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, int errorCode, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileClose] index: %d, errorCode: %d, path: %s", mediaDataPublisher->getIndex(), errorCode, path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileClose");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("errorCode")] = FTValue(errorCode);
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaDataPublisherFileDataBegin(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
+    ZF::logInfo("[onMediaDataPublisherFileDataBegin] index: %d, path: %s", mediaDataPublisher->getIndex(), path.c_str());
+
+    if (eventSink_) {
+        FTMap return_map;
+        return_map[FTValue("method")] = FTValue("onMediaDataPublisherFileDataBegin");
+        return_map[FTValue("publisherIndex")] = FTValue(mediaDataPublisher->getIndex());
+        return_map[FTValue("path")] = FTValue(path);
+
+        eventSink_->Success(return_map);
+    }
+}
 
 void ZegoExpressEngineEventHandler::onCapturedAudioData(const unsigned char *data,
                                                         unsigned int dataLength,
@@ -1170,7 +1241,7 @@ void ZegoExpressEngineEventHandler::onAutoMixerSoundLevelUpdate(
 void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(
     EXPRESS::ZegoUpdateType updateType, const EXPRESS::ZegoDeviceInfo &deviceInfo) {
 
-    ZF::logInfo("[onVideoDeviceStateChanged] updateType: %d, deviceID: %s, deviceName: %s", updateType, deviceInfo.deviceID, deviceInfo.deviceName);
+    ZF::logInfo("[onVideoDeviceStateChanged] updateType: %d, deviceID: %s, deviceName: %s", updateType, deviceInfo.deviceID.c_str(), deviceInfo.deviceName.c_str());
 
     if (eventSink_) {
         FTMap retMap;
@@ -1491,7 +1562,7 @@ void ZegoExpressEngineEventHandler::onNetworkSpeedTestQualityUpdate(
 
 void ZegoExpressEngineEventHandler::onRecvExperimentalAPI(const std::string &content) {
 
-    ZF::logInfo("[onRecvExperimentalAPI] content: %s", content);
+    ZF::logInfo("[onRecvExperimentalAPI] content: %s", content.c_str());
 
     if (eventSink_) {
         FTMap retMap;
@@ -1656,11 +1727,9 @@ void ZegoExpressEngineEventHandler::onAvailableFrame(EXPRESS::IZegoScreenCapture
                                                      EXPRESS::ZegoVideoFrameParam param) {
 
     // High frequency callbacks do not log
-
     unsigned char *rgb_data = (unsigned char *)data;
-    ZegoTextureRendererController::getInstance()->sendCapturedVideoFrameRawData(
-        &rgb_data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE, 
-        (ZEGO::EXPRESS::ZegoPublishChannel)ZegoExpressEngineMethodHandler::getInstance().getScreenCaptureSourceChannel());
+    ZegoTextureRendererController::getInstance()->sendScreenCapturedVideoFrameRawData(
+        &rgb_data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE);
 }
 
 void ZegoExpressEngineEventHandler::onExceptionOccurred(

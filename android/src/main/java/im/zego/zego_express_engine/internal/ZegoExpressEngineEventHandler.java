@@ -17,6 +17,7 @@ import java.util.Map;
 
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoCopyrightedMusic;
+import im.zego.zegoexpress.ZegoMediaDataPublisher;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.ZegoRangeAudio;
 import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
@@ -27,6 +28,7 @@ import im.zego.zegoexpress.callback.IZegoCopyrightedMusicEventHandler;
 import im.zego.zegoexpress.callback.IZegoCustomAudioProcessHandler;
 import im.zego.zegoexpress.callback.IZegoDataRecordEventHandler;
 import im.zego.zegoexpress.callback.IZegoEventHandler;
+import im.zego.zegoexpress.callback.IZegoMediaDataPublisherEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
 import im.zego.zegoexpress.callback.IZegoRangeAudioEventHandler;
 import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataEventHandler;
@@ -411,15 +413,16 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
-        public void onPublisherSendAudioFirstFrame() {
-            super.onPublisherSendAudioFirstFrame();
-            ZegoLog.log("[onPublisherSendAudioFirstFrame]");
+        public void onPublisherSendAudioFirstFrame(ZegoPublishChannel channel) {
+            super.onPublisherSendAudioFirstFrame(channel);
+            ZegoLog.log("[onPublisherSendAudioFirstFrame] channel: %s", channel.name());
 
             if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
             map.put("method", "onPublisherSendAudioFirstFrame");
+            map.put("channel", channel.value());
 
             sink.success(map);
         }
@@ -532,6 +535,21 @@ public class ZegoExpressEngineEventHandler {
             map.put("state", state.value());
             map.put("channel", channel.value());
             map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPublisherLowFpsWarning(ZegoVideoCodecID codecID, ZegoPublishChannel channel) {
+            super.onPublisherLowFpsWarning(codecID, channel);
+            ZegoLog.log("[onPublisherLowFpsWarning] codecID: %s, channel: %s", codecID.name(), channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPublisherLowFpsWarning");
+            map.put("codecID", codecID.value());
+            map.put("channel", channel.value());
 
             sink.success(map);
         }
@@ -677,6 +695,7 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onPlayerRecvSEI(String streamID, byte[] data) {
             super.onPlayerRecvSEI(streamID, data);
@@ -1430,6 +1449,22 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
+
+        @Override
+        public void onMediaPlayerRenderingProgress(ZegoMediaPlayer mediaPlayer, long millisecond) {
+            super.onMediaPlayerRenderingProgress(mediaPlayer, millisecond);
+            ZegoLog.log("[onMediaPlayerRenderingProgress] idx: %d, millisecond: %d", mediaPlayer.getIndex(), millisecond);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerRenderingProgress");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("millisecond", millisecond);
+
+            sink.success(map);
+        }
     };
 
 
@@ -1448,6 +1483,57 @@ public class ZegoExpressEngineEventHandler {
             map.put("audioEffectID", audioEffectID);
             map.put("state", state.value());
             map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+    };
+
+    IZegoMediaDataPublisherEventHandler mediaDataPublisherEventHandler = new IZegoMediaDataPublisherEventHandler() {
+        @Override
+        public void onMediaDataPublisherFileOpen(ZegoMediaDataPublisher mediaDataPublisher, String path) {
+            super.onMediaDataPublisherFileOpen(mediaDataPublisher, path);
+            ZegoLog.log("[onMediaDataPublisherFileOpen] idx: %d, path: %s", mediaDataPublisher.getIndex(), path);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaDataPublisherFileOpen");
+            map.put("publisherIndex", mediaDataPublisher.getIndex());
+            map.put("path", path);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaDataPublisherFileClose(ZegoMediaDataPublisher mediaDataPublisher, int errorCode, String path) {
+            super.onMediaDataPublisherFileClose(mediaDataPublisher, errorCode, path);
+            ZegoLog.log("[onMediaDataPublisherFileClose] idx: %d, errorCode: %d, path: %s", mediaDataPublisher.getIndex(), errorCode, path);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaDataPublisherFileClose");
+            map.put("publisherIndex", mediaDataPublisher.getIndex());
+            map.put("errorCode", errorCode);
+            map.put("path", path);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaDataPublisherFileDataBegin(ZegoMediaDataPublisher mediaDataPublisher, String path) {
+            super.onMediaDataPublisherFileDataBegin(mediaDataPublisher, path);
+            ZegoLog.log("[onMediaDataPublisherFileDataBegin] idx: %d, path: %s", mediaDataPublisher.getIndex(), path);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaDataPublisherFileDataBegin");
+            map.put("publisherIndex", mediaDataPublisher.getIndex());
+            map.put("path", path);
 
             sink.success(map);
         }

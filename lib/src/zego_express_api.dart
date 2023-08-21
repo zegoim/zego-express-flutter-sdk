@@ -18,7 +18,7 @@ class ZegoExpressEngine {
   /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
   /// When to call: The engine needs to be created before calling other functions.
   /// Restrictions: None.
-  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. If you need call [createEngine] multiple times, you need call [destroyEngine] before you call the next [createEngine]. Otherwise it will return the instance which created by [createEngine] you called last time.
   ///
   /// - [profile] The basic configuration information is used to create the engine.
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {
@@ -184,11 +184,23 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
   /// Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
-  /// When to call: After [loginRoom] or [loginScene].
-  /// Restrictions: If you call this interface repeatedly within 10 minutes, only the last call will take effect.
-  /// Caution: After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback.
+  /// When to call: After [createEngine].
+  /// Restrictions:  The frequency limit is once per minute.
+  /// Caution: 1.After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback. 2.If you want to call before [createEngine], use the [submitLog] interface.
   Future<void> uploadLog() async {
     return await ZegoExpressImpl.instance.uploadLog();
+  }
+
+  /// Uploads logs to the ZEGO server.
+  ///
+  /// Available since: 3.7.0
+  /// Description: By default, SDK creates and prints log files in the App's default directory. Each log file defaults to a maximum of 5MB. Three log files are written over and over in a circular fashion. When calling this function, SDK will auto package and upload the log files to the ZEGO server.
+  /// Use cases: Developers can provide a business “feedback” channel in the App. When users feedback problems, they can call this function to upload the local log information of SDK to help locate user problems.
+  /// When to call: None.
+  /// Restrictions: The frequency limit is once per minute.
+  /// Caution: 1.After calling this interface to upload logs, if you call [destroyEngine] or exit the App too quickly, there may be a failure.It is recommended to wait a few seconds, and then call [destroyEngine] or exit the App after receiving the upload success callback. 2.It is supported to call before [createEngine]. If it had called [createEngine] before, the last appid will be used to upload the log, otherwise the log will not be uploaded until the next [createEngine].
+  static Future<void> submitLog() async {
+    return await ZegoExpressImpl.submitLog();
   }
 
   /// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
@@ -468,7 +480,10 @@ class ZegoExpressEngine {
   /// Description: After the [startPublishingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data. Developers can use this callback to determine whether SDK has actually collected audio data. If the callback is not received, the audio capture device is occupied or abnormal.
   /// Trigger: In the case of no startPublishingStream audio stream, the first startPublishingStream audio stream, it will receive this callback.
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
-  static void Function()? onPublisherSendAudioFirstFrame;
+  ///
+  /// - [channel] Publishing stream channel.If you only publish one audio stream, you can ignore this parameter.
+  static void Function(ZegoPublishChannel channel)?
+      onPublisherSendAudioFirstFrame;
 
   /// The callback triggered when the first video frame is sent.
   ///
@@ -478,7 +493,7 @@ class ZegoExpressEngine {
   /// Related callbacks: After the [startPublishingStream] function is called successfully, determine if the SDK actually collected audio data by the callback function [onPublisherCapturedAudioFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
-  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  /// - [channel] Publishing stream channel.If you only publish one video stream, you can ignore this parameter.
   static void Function(ZegoPublishChannel channel)?
       onPublisherSendVideoFirstFrame;
 
@@ -551,7 +566,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 3.4.0
   /// Description: The object segmentation state of the stream publishing end changes.
-  /// When to trigger: When [enableObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
+  /// When to trigger: When [enableVideoObjectSegmentation] enables or disables object segmentation, notify the developer whether to enable object segmentation according to the actual state.
   /// Caution: This callback depends on enabling preview or stream publishing.
   ///
   /// - [state] Object segmentation state.
@@ -561,6 +576,18 @@ class ZegoExpressEngine {
       ZegoObjectSegmentationState state,
       ZegoPublishChannel channel,
       int errorCode)? onVideoObjectSegmentationStateChanged;
+
+  /// Video encoding low frame rate warning.
+  ///
+  /// Available since: 3.8.0
+  /// Description: Video encoding low frame rate warning.
+  /// When to trigger: This callback triggered by low frame rate in video encoding.
+  /// Caution: This callback is disabled by default, if necessary, please contact ZEGO technical support.
+  ///
+  /// - [codecID] Video codec ID.
+  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  static void Function(ZegoVideoCodecID codecID, ZegoPublishChannel channel)?
+      onPublisherLowFpsWarning;
 
   /// The callback triggered when the state of stream playing changes.
   ///
@@ -612,7 +639,7 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRecvAudioFirstFrame;
 
-  /// The callback triggered when the first video frame is received.
+  /// The callback triggered when the first video frame is received. Except for Linux systems, this callback is thrown from the ui thread by default.
   ///
   /// Available since: 1.1.0
   /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
@@ -669,7 +696,10 @@ class ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
   /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
-  /// Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
+  /// Caution:
+  ///  1. This function will switch the UI thread callback data, and the customer can directly operate the UI control in this callback function.
+  ///  2. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set.
+  ///  3. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
   ///
   /// - [streamID] Stream ID.
   /// - [data] SEI content.
@@ -783,10 +813,9 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change of the volume for the audio devices.
   ///
-  /// Available since: 1.0.0
-  /// Description: This callback is used to receive audio device volume change events.
-  /// When to trigger: The callback triggered when there is a change of the volume fo the audio devices.
-  /// Restrictions: None
+  /// Available since: 1.1.0
+  /// Description: Audio device volume change event callback.
+  /// When to trigger: After calling the [startAudioDeviceVolumeMonitor] function to start the device volume monitor, and the volume of the monitored audio device changes.
   /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [deviceType] Audio device type
@@ -798,7 +827,7 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
   ///
-  /// Available since: 1.0.0
+  /// Available since: 1.1.0
   /// Description: By listening to this callback, users can update the video capture using a specific device when necessary.
   /// When to trigger: This callback is triggered when a video device is added or removed from the system.
   /// Restrictions: None
@@ -1064,6 +1093,19 @@ class ZegoExpressEngine {
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
       onMediaPlayerPlayingProgress;
 
+  /// The callback to report the current rendering progress of the media player.
+  ///
+  /// Available since: 3.8.0
+  /// Description: The callback to report the current rendering progress of the media player. Set the callback interval by calling [setProgressInterval]. When the callback interval is set to 0, the callback is stopped. The default callback interval is 1 second.
+  /// Trigger: This callback will be triggered when the media player starts playing resources.
+  /// Restrictions: None.
+  /// Related APIs: [setProgressInterval].
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [millisecond] Progress in milliseconds.
+  static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
+      onMediaPlayerRenderingProgress;
+
   /// The callback triggered when the media player got media side info.
   ///
   /// Available since: 2.2.0
@@ -1132,6 +1174,43 @@ class ZegoExpressEngine {
       int audioEffectID,
       ZegoAudioEffectPlayState state,
       int errorCode)? onAudioEffectPlayStateUpdate;
+
+  /// The event callback of the media data publisher opening a media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback of the media data publisher opening a media file.
+  /// Trigger: The callback triggered when the media data publisher start loading a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileOpen;
+
+  /// The event callback of the media data publisher closing a media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback of the media data publisher closing a media file.
+  /// Trigger: The callback triggered when the media data publisher start unloading a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [errorCode] error code. 0 means closing the file normally.
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, int errorCode,
+      String path)? onMediaDataPublisherFileClose;
+
+  /// The event callback that the media data publisher has read data from the media file.
+  ///
+  /// Available since: 2.17.0
+  /// Description: The event callback that the media data publisher has read data from the media file.
+  /// Trigger: The callback triggered when the media data publisher begin to read media data from a media file.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object
+  /// - [path] Path of currently open file
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileDataBegin;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
@@ -1223,7 +1302,7 @@ class ZegoExpressEngine {
   ///   Versions 2.10.0 to 2.13.1:
   ///   1. Developer must both publish and play streams before you receive your own network quality callback.
   ///   2. When playing a stream, the publish end has a play stream and the publish end is in the room where it is located, then the user's network quality will be received.
-  ///   Version 2.14.0 and above:
+  ///   Versions 2.14.0 to 2.21.1:
   ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
   ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
   ///   Version 2.22.0 and above:
@@ -1471,7 +1550,7 @@ class ZegoExpressEngine {
   /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
   /// When to call: The engine needs to be created before calling other functions.
   /// Restrictions: None.
-  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. Multiple calls to this function return the same object.
+  /// Caution: The SDK only supports the creation of one instance of ZegoExpressEngine. If you need call [createEngine] multiple times, you need call [destroyEngine] before you call the next [createEngine]. Otherwise it will return the instance which created by [createEngine] you called last time.
   ///
   /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
   /// - [appID] Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.

@@ -39,6 +39,7 @@ import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoExpressEngine;
+import im.zego.zegoexpress.ZegoMediaDataPublisher;
 import im.zego.zegoexpress.ZegoMediaPlayer;
 import im.zego.zegoexpress.ZegoRangeAudio;
 import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
@@ -94,6 +95,7 @@ import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
+import im.zego.zegoexpress.constants.ZegoMediaDataPublisherMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
@@ -161,6 +163,7 @@ import im.zego.zegoexpress.entity.ZegoEngineProfile;
 import im.zego.zegoexpress.entity.ZegoFontStyle;
 import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
+import im.zego.zegoexpress.entity.ZegoMediaDataPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerMediaInfo;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
@@ -176,7 +179,9 @@ import im.zego.zegoexpress.entity.ZegoNetworkTimeInfo;
 import im.zego.zegoexpress.entity.ZegoObjectSegmentationConfig;
 import im.zego.zegoexpress.entity.ZegoPlayerConfig;
 import im.zego.zegoexpress.entity.ZegoProxyInfo;
+import im.zego.zegoexpress.entity.ZegoPublishDualStreamConfig;
 import im.zego.zegoexpress.entity.ZegoPublisherConfig;
+import im.zego.zegoexpress.entity.ZegoReceiveRangeParam;
 import im.zego.zegoexpress.entity.ZegoReverbAdvancedParam;
 import im.zego.zegoexpress.entity.ZegoReverbEchoParam;
 import im.zego.zegoexpress.entity.ZegoRoomConfig;
@@ -185,6 +190,7 @@ import im.zego.zegoexpress.entity.ZegoScreenCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoSoundLevelConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
+import im.zego.zegoexpress.entity.ZegoVocalRangeParam;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
 import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
@@ -216,6 +222,8 @@ public class ZegoExpressEngineMethodHandler {
     private static final HashMap<Integer, ZegoMediaPlayer> mediaPlayerHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoAudioEffectPlayer> audioEffectPlayerHashMap = new HashMap<>();
+
+    private static final HashMap<Integer, ZegoMediaDataPublisher> mediaDataPublisherHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoRealTimeSequentialDataManager> realTimeSequentialDataManagerHashMap = new HashMap<>();
 
@@ -345,7 +353,8 @@ public class ZegoExpressEngineMethodHandler {
             if (logConfigMap != null && !logConfigMap.isEmpty()) {
                 logConfigObject = new ZegoLogConfig();
                 logConfigObject.logPath = (String) logConfigMap.get("logPath");
-                logConfigObject.logSize = ZegoUtils.intValue((Number) logConfigMap.get("logSize"));
+                logConfigObject.logSize  = ZegoUtils.intValue((Number) logConfigMap.get("logSize"));
+                logConfigObject.logCount = ZegoUtils.intValue((Number) logConfigMap.get("logCount"));
 
                 configObject.logConfig = logConfigObject;
             }
@@ -365,7 +374,8 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null && !configMap.isEmpty()) {
             logConfigObject = new ZegoLogConfig();
             logConfigObject.logPath = (String) configMap.get("logPath");
-            logConfigObject.logSize = ZegoUtils.intValue((Number) configMap.get("logSize"));
+            logConfigObject.logSize  = ZegoUtils.intValue((Number) configMap.get("logSize"));
+            logConfigObject.logCount = ZegoUtils.intValue((Number) configMap.get("logCount"));
 
             ZegoExpressEngine.setLogConfig(logConfigObject);
             result.success(null);
@@ -474,6 +484,14 @@ public class ZegoExpressEngineMethodHandler {
     public static void uploadLog(MethodCall call, Result result) {
 
         ZegoExpressEngine.getEngine().uploadLog();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void submitLog(MethodCall call, Result result) {
+
+        ZegoExpressEngine.submitLog();
 
         result.success(null);
     }
@@ -824,6 +842,35 @@ public class ZegoExpressEngineMethodHandler {
         resultMap.put("bitrate", config.bitrate);
         resultMap.put("codecID", config.codecID.value());
         result.success(resultMap);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPublishDualStreamConfig(MethodCall call, Result result) {
+
+        ArrayList<HashMap<String, Object>> configListMap = call.argument("configList");
+        ArrayList<ZegoPublishDualStreamConfig> configList = new ArrayList<>();
+        for (HashMap<String, Object> configMap : configListMap) {
+            ZegoVideoStreamType streamType = ZegoVideoStreamType.getZegoVideoStreamType(ZegoUtils.intValue((Number) configMap.get("streamType")));
+            int width = ZegoUtils.intValue((Number) configMap.get("encodeWidth"));
+            int height = ZegoUtils.intValue((Number) configMap.get("encodeHeight"));
+            int fps = ZegoUtils.intValue((Number) configMap.get("fps"));
+            int bitrate = ZegoUtils.intValue((Number) configMap.get("bitrate"));
+
+            ZegoPublishDualStreamConfig config = new ZegoPublishDualStreamConfig();
+            config.streamType = streamType;
+            config.encodeWidth = width;
+            config.encodeHeight = height;
+            config.fps = fps;
+            config.bitrate = bitrate;
+
+            configList.add(config);
+        }
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setPublishDualStreamConfig(configList, channel);
+
+        result.success(null);
     }
 
     @SuppressWarnings("unused")
@@ -3948,6 +3995,32 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetHttpHeader(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            HashMap<String, String> headers = call.argument("headers");
+            mediaPlayer.setHttpHeader(headers);
+        }
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetCurrentRenderingProgress(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            long progress = mediaPlayer.getCurrentRenderingProgress();
+            result.success(progress);
+        } else {
+            result.success(0);
+        }
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")
@@ -4276,6 +4349,120 @@ public class ZegoExpressEngineMethodHandler {
         }
     }
 
+    /* MediaDataPublisher */
+
+    @SuppressWarnings("unused")
+    public static void createMediaDataPublisher(MethodCall call, Result result) {
+        HashMap<String, Object> configMap = call.argument("config");
+        ZegoMediaDataPublisherConfig config = null;
+        if (configMap != null && !configMap.isEmpty()) {
+            config = new ZegoMediaDataPublisherConfig();
+            config.channel = ZegoUtils.intValue((Number) configMap.get("channel"));
+            config.mode = ZegoMediaDataPublisherMode.getZegoMediaDataPublisherMode(ZegoUtils.intValue((Number) configMap.get("mode")));
+        }
+
+        ZegoMediaDataPublisher publisher = ZegoExpressEngine.getEngine().createMediaDataPublisher(config);
+        if (publisher != null) {
+            int index = publisher.getIndex();
+            publisher.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaDataPublisherEventHandler);
+            mediaDataPublisherHashMap.put(index, publisher);
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyMediaDataPublisher(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            publisher.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyMediaDataPublisher(publisher);
+            mediaDataPublisherHashMap.remove(index);
+            result.success(null);
+        } else {
+            result.error("destroyMediaDataPublisher_Can_not_find_publisher".toUpperCase(), "Invoke `destroyMediaDataPublisher` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherAddMediaFilePath(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            String path = call.argument("path");
+            boolean isClear = ZegoUtils.boolValue((Boolean) call.argument("isClear"));
+            publisher.addMediaFilePath(path, isClear);
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherAddMediaFilePath_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherAddMediaFilePath` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherGetCurrentDuration(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            long duration = publisher.getCurrentDuration();
+            result.success(duration);
+        } else {
+            result.error("mediaDataPublisherGetCurrentDuration_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherGetCurrentDuration` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherGetTotalDuration(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            long duration = publisher.getTotalDuration();
+            result.success(duration);
+        } else {
+            result.error("mediaDataPublisherGetTotalDuration_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherGetTotalDuration` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherReset(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            publisher.reset();
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherReset_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherReset` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherSeekTo(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            long millisecond = ZegoUtils.longValue((Number) call.argument("millisecond"));
+            publisher.seekTo(millisecond);
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherSeekTo_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherSeekTo` but can't find specific publisher", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaDataPublisherSetVideoSendDelayTime(MethodCall call, Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaDataPublisher publisher = mediaDataPublisherHashMap.get(index);
+        if (publisher != null) {
+            String path = call.argument("path");
+            int delayTime = ZegoUtils.intValue((Number) call.argument("delayTime"));
+            publisher.setVideoSendDelayTime(delayTime);
+            result.success(null);
+        } else {
+            result.error("mediaDataPublisherSetVideoSendDelayTime_Can_not_find_publisher".toUpperCase(), "Invoke `mediaDataPublisherSetVideoSendDelayTime` but can't find specific publisher", null);
+        }
+    }
+
     /* Record */
 
     @SuppressWarnings("unused")
@@ -4379,9 +4566,15 @@ public class ZegoExpressEngineMethodHandler {
     public static void rangeAudioSetAudioReceiveRange(MethodCall call, Result result) {
 
         if (rangeAudioInstance != null) {
-            float range = ZegoUtils.floatValue((Number) call.argument("range"));
-            rangeAudioInstance.setAudioReceiveRange(range);
-            result.success(null);
+            ZegoReceiveRangeParam rangeParam = new ZegoReceiveRangeParam();
+            HashMap<String, Object> paramMap = call.argument("param");
+            if (paramMap != null) {
+                rangeParam.min = ZegoUtils.floatValue((Double) paramMap.get("min"));
+                rangeParam.max = ZegoUtils.floatValue((Double) paramMap.get("max"));
+            }
+            int ret = rangeAudioInstance.setAudioReceiveRange(rangeParam);
+
+            result.success(ret);
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetAudioReceiveRange` but can't find specific instance", null);
@@ -4492,10 +4685,15 @@ public class ZegoExpressEngineMethodHandler {
         
         if (rangeAudioInstance != null) {
             String streamID = call.argument("streamID");
-            float vocalRange = ZegoUtils.floatValue((Number) call.argument("vocalRange"));
-            rangeAudioInstance.setStreamVocalRange(streamID, vocalRange);
+            ZegoVocalRangeParam rangeParam = new ZegoVocalRangeParam();
+            HashMap<String, Object> paramMap = call.argument("param");
+            if (paramMap != null) {
+                rangeParam.min = ZegoUtils.floatValue((Double) paramMap.get("min"));
+                rangeParam.max = ZegoUtils.floatValue((Double) paramMap.get("max"));
+            }
+            int ret = rangeAudioInstance.setStreamVocalRange(streamID, rangeParam);
             
-            result.success(null);
+            result.success(ret);
 
         } else {
             result.error("rangeAudio_Can_not_find_instance".toUpperCase(), "Invoke `rangeAudioSetStreamVocalRange` but can't find specific instance", null);

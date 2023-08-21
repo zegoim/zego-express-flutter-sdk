@@ -8,11 +8,9 @@
 
 #import "ZegoExpressEngineEventHandler.h"
 #import "ZegoLog.h"
-#import "ZegoCustomVideoCaptureManager.h"
 #import "ZegoTextureRendererController.h"
 #import "ZegoExpressEngineMethodHandler.h"
 #import <objc/message.h>
-#import <Metal/Metal.h>
 
 #define GUARD_SINK if(!sink){ZGError(@"[%s] FlutterEventSink is nil", __FUNCTION__);}
 
@@ -388,14 +386,15 @@
     }
 }
 
-- (void)onPublisherSendAudioFirstFrame {
+- (void)onPublisherSendAudioFirstFrame:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPublisherSendAudioFirstFrame]");
+    ZGLog(@"[onPublisherSendAudioFirstFrame] channel: %d", (int)channel);
 
     GUARD_SINK
     if (sink) {
         sink(@{
             @"method": @"onPublisherSendAudioFirstFrame",
+            @"channel": @(channel)
         });
     }
 }
@@ -508,6 +507,20 @@
             @"state": @((int)state),
             @"channel": @((int)channel),
             @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)onPublisherLowFpsWarning:(ZegoVideoCodecID)codecID channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherLowFpsWarning] codecID: %d, channel: %d", (int)codecID, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherLowFpsWarning",
+            @"codecID": @((int)codecID),
+            @"channel": @((int)channel),
         });
     }
 }
@@ -1288,8 +1301,22 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer renderingProgress:(unsigned long long)millisecond {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerRenderingProgress] idx: %d, event: %lld", mediaPlayer.index.intValue, millisecond);
 
-# pragma mark - ZegoAudioEffectPlayerEventHandler
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerRenderingProgress",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"millisecond": @(millisecond),
+        });
+    }
+}
+
+
+#pragma mark - ZegoAudioEffectPlayerEventHandler
 
 - (void)audioEffectPlayer:(ZegoAudioEffectPlayer *)audioEffectPlayer audioEffectID:(unsigned int)audioEffectID playStateUpdate:(ZegoAudioEffectPlayState)state errorCode:(int)errorCode {
     FlutterEventSink sink = _eventSink;
@@ -1303,6 +1330,51 @@
             @"audioEffectID": @(audioEffectID),
             @"state": @(state),
             @"errorCode": @(errorCode)
+        });
+    }
+}
+
+#pragma mark - MediaDataPublisher
+
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileOpen:(NSString *)path {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaDataPublisherFileOpen] idx: %d, path: %@", [publisher getIndex].intValue, path);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaDataPublisherFileOpen",
+            @"publisherIndex": [publisher getIndex],
+            @"path": path,
+        });
+    }
+}
+
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileClose:(NSString *)path errorCode:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaDataPublisherFileClose] idx: %d, path: %@, errorCode: %d", [publisher getIndex].intValue, path, errorCode);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaDataPublisherFileClose",
+            @"publisherIndex": [publisher getIndex],
+            @"path": path,
+            @"errorCode": @(errorCode),
+        });
+    }
+}
+
+- (void)mediaDataPublisher:(ZegoMediaDataPublisher *)publisher fileDataBegin:(NSString *)path {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaDataPublisherFileDataBegin] idx: %d, path: %@", [publisher getIndex].intValue, path);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaDataPublisherFileDataBegin",
+            @"publisherIndex": [publisher getIndex],
+            @"path": path,
         });
     }
 }
@@ -1623,43 +1695,8 @@
 
 #if TARGET_OS_OSX
 - (void)screenCapture:(ZegoScreenCaptureSource *)source availableFrame:(const void *)data dataLength:(unsigned int)dataLength param:(ZegoVideoFrameParam *)param {
-    
-    int channel = [ZegoExpressEngineMethodHandler sharedInstance].screenCaptureChannel;
-    BOOL enablePlatformView = [ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView;
-    if(!enablePlatformView && channel >= 0) {
-        CVPixelBufferRef target = NULL;
-        int width = param.size.width;
-        int height = param.size.height;
-        
-        int dataWidth = dataLength/4/height;
-        
-        //最终创建的图像可能经过字节对齐，比如创建时传入width、height，最终创建出来的图像和获取的rgb_data，并不是width*height*4
-        NSDictionary* pixBuffAttributes = @{
-            (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-            (id)kCVPixelBufferIOSurfacePropertiesKey : @{
-                (id)kIOSurfaceBytesPerRow : @(dataWidth * 4),
-                (id)kIOSurfaceWidth : @(dataWidth),
-                (id)kIOSurfaceHeight : @(height),
-            },
-            (id)kCVPixelBufferOpenGLCompatibilityKey : @YES,
-            (id)kCVPixelBufferMetalCompatibilityKey : @YES,
-        };
-        
-        CVPixelBufferCreate(kCFAllocatorDefault, dataWidth, height, kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef _Nullable)(pixBuffAttributes), &target);
-        
-        CVPixelBufferLockBaseAddress(target, kCVPixelBufferLock_ReadOnly);
-        void *rgb_data = CVPixelBufferGetBaseAddress(target);
-        for(int i = 0; i<height; i++)
-        {
-            memcpy(rgb_data + i*dataWidth*4, data+dataWidth*4*i,width*4);
-        }
-        CVPixelBufferUnlockBaseAddress(target, 0);
-        
-        [[ZegoTextureRendererController sharedInstance] onCapturedVideoFrameCVPixelBuffer:target param:param flipMode:ZegoVideoFlipModeNone channel:(ZegoPublishChannel)channel];
-        
-        if (target != NULL) {
-            CVPixelBufferRelease(target);
-        }
+    if(![ZegoExpressEngineMethodHandler sharedInstance].enablePlatformView) {
+        [ZegoTextureRendererController.sharedInstance sendScreenCapturedVideoFrameRawData:data dataLength:dataLength param:param];
     }
 }
 
@@ -1699,9 +1736,9 @@
     }
 }
 
-- (void)screenCapture:(ZegoScreenCaptureSource *)source captureRect:(CGRect)rect {
+- (void)screenCapture:(ZegoScreenCaptureSource *)source rectChanged:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:captureRect:], rect: %@", NSStringFromRect(rect));
+    ZGLog(@"[screenCapture:rectChanged:], rect: %@", NSStringFromRect(rect));
     
     GUARD_SINK
     

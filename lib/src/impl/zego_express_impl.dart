@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+// ignore: unnecessary_import
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,13 +16,32 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.6.0";
+  static String pluginVersion = "3.8.1";
+}
+
+class MethodChannelWrapper extends MethodChannel {
+  MethodChannelWrapper(String name) : super(name);
+  bool showFlutterApiCalledDetail = false;
+
+  @override
+  Future<T?> invokeMethod<T>(String method, [arguments]) {
+    if (showFlutterApiCalledDetail) {
+      if (ZegoExpressImpl.onFlutterApiCalledDetail != null) {
+        ZegoExpressImpl.onFlutterApiCalledDetail!(
+          method,
+          jsonEncode(arguments),
+          // arguments != null ? jsonEncode(arguments) : '{}',
+        );
+      }
+    }
+    return super.invokeMethod(method, arguments);
+  }
 }
 
 class ZegoExpressImpl {
   /// Method Channel
-  static const MethodChannel _channel =
-      MethodChannel('plugins.zego.im/zego_express_engine');
+  static final MethodChannelWrapper _channel =
+      MethodChannelWrapper('plugins.zego.im/zego_express_engine');
   static const EventChannel _event =
       EventChannel('plugins.zego.im/zego_express_event_handler');
 
@@ -33,7 +55,7 @@ class ZegoExpressImpl {
   static final ZegoExpressImpl instance = ZegoExpressImpl._internal();
 
   /// Exposing methodChannel to other files
-  static MethodChannel get methodChannel => _channel;
+  static MethodChannelWrapper get methodChannel => _channel;
 
   // is create engine
   static bool isEngineCreated = false;
@@ -48,11 +70,27 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
-    // TODO: PlatformView support on macOS has a crash issue, don't use it now
-    // Ref: https://github.com/flutter/flutter/issues/96668
-    use &= kIsMacOS;
+
+    if (kIsMacOS) {
+      try {
+        String dartVersion = Platform.version.split(' ')[0];
+        int? major = int.tryParse(dartVersion.split('.')[0]);
+        // Flutter v3.10 <==> Dart v3.0
+        if (major == null || major < 3) {
+          // PlatformView on macOS has a crash issue under flutter v3.10
+          // Ref: https://github.com/flutter/flutter/issues/96668
+          use = false;
+        }
+      } catch (e) {
+        use = false;
+      }
+    }
+
     return use;
   }
+
+  // Private function
+  static void Function(String api, String jsonArgs)? onFlutterApiCalledDetail;
 
   /* Main */
 
@@ -112,7 +150,8 @@ class ZegoExpressImpl {
         'logConfig': config.logConfig != null
             ? {
                 'logPath': config.logConfig?.logPath,
-                'logSize': config.logConfig?.logSize
+                'logSize': config.logConfig?.logSize,
+                'logCount': config.logConfig?.logCount ?? 3,
               }
             : {},
         'advancedConfig': config.advancedConfig ?? {}
@@ -122,7 +161,11 @@ class ZegoExpressImpl {
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
     return await _channel.invokeMethod('setLogConfig', {
-      'config': {'logPath': config.logPath, 'logSize': config.logSize}
+      'config': {
+        'logPath': config.logPath,
+        'logSize': config.logSize,
+        'logCount': config.logCount ?? 3,
+      }
     });
   }
 
@@ -188,6 +231,10 @@ class ZegoExpressImpl {
 
   Future<void> uploadLog() async {
     return await _channel.invokeMethod('uploadLog');
+  }
+
+  static Future<void> submitLog() async {
+    return await _channel.invokeMethod('submitLog');
   }
 
   Future<void> enableDebugAssistant(bool enable) async {
@@ -354,6 +401,19 @@ class ZegoExpressImpl {
         keyFrameInterval: map['keyFrameInterval'] ?? 2);
 
     return config;
+  }
+
+  Future<void> setPublishDualStreamConfig(
+      List<ZegoPublishDualStreamConfig> configList,
+      {ZegoPublishChannel? channel}) async {
+    List<Map<String, dynamic>> configMapConfig = [];
+    for (ZegoPublishDualStreamConfig config in configList) {
+      configMapConfig.add(config.toMap());
+    }
+    return await _channel.invokeMethod('setPublishDualStreamConfig', {
+      'configList': configMapConfig,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
   }
 
   Future<void> setVideoMirrorMode(ZegoVideoMirrorMode mirrorMode,
@@ -1530,6 +1590,41 @@ class ZegoExpressImpl {
     return;
   }
 
+  /* MediaDataPublisher */
+
+  static final Map<int, ZegoMediaDataPublisher> mediaDataPublisherMap = {};
+
+  Future<ZegoMediaDataPublisher?> createMediaDataPublisher(
+      ZegoMediaDataPublisherConfig config) async {
+    int index = await _channel.invokeMethod('createMediaDataPublisher', {
+      'config': {
+        'channel': config.channel,
+        'mode': config.mode.index,
+      }
+    });
+
+    if (index >= 0) {
+      ZegoMediaDataPublisherImpl publisherInstance =
+          ZegoMediaDataPublisherImpl(index);
+      mediaDataPublisherMap[index] = publisherInstance;
+
+      return publisherInstance;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyMediaDataPublisher(
+      ZegoMediaDataPublisher mediaDataPublisher) async {
+    int index = mediaDataPublisher.getIndex();
+
+    await _channel.invokeMethod('destroyMediaDataPublisher', {'index': index});
+
+    mediaDataPublisherMap.remove(index);
+
+    return;
+  }
+
   /* Record */
 
   Future<void> startRecordingCapturedData(ZegoDataRecordConfig config,
@@ -2116,7 +2211,8 @@ class ZegoExpressImpl {
       case 'onPublisherSendAudioFirstFrame':
         if (ZegoExpressEngine.onPublisherSendAudioFirstFrame == null) return;
 
-        ZegoExpressEngine.onPublisherSendAudioFirstFrame!();
+        ZegoExpressEngine.onPublisherSendAudioFirstFrame!(
+            ZegoPublishChannel.values[map['channel']]);
         break;
 
       case 'onPublisherCapturedVideoFirstFrame':
@@ -2198,6 +2294,16 @@ class ZegoExpressImpl {
             ZegoObjectSegmentationState.values[map['state']],
             ZegoPublishChannel.values[map['channel']],
             map['errorCode']);
+        break;
+
+      case 'onPublisherLowFpsWarning':
+        if (ZegoExpressEngine.onPublisherLowFpsWarning == null) {
+          return;
+        }
+
+        ZegoExpressEngine.onPublisherLowFpsWarning!(
+            ZegoVideoCodecID.values[map['codecID']],
+            ZegoPublishChannel.values[map['channel']]);
         break;
 
       /* Player */
@@ -2767,6 +2873,18 @@ class ZegoExpressImpl {
               mediaPlayer, ZegoMediaPlayerFirstFrameEvent.values[map['event']]);
         }
         break;
+      case 'onMediaPlayerRenderingProgress':
+        if (ZegoExpressEngine.onMediaPlayerRenderingProgress == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerRenderingProgress!(
+              mediaPlayer, map['millisecond']);
+        }
+        break;
+
       /* AudioEffectPlayer */
 
       case 'onAudioEffectPlayStateUpdate':
@@ -2781,6 +2899,44 @@ class ZegoExpressImpl {
               map['audioEffectID'],
               ZegoAudioEffectPlayState.values[map['state']],
               map['errorCode']);
+        }
+        break;
+
+      /* MediaDataPublisher */
+
+      case 'onMediaDataPublisherFileOpen':
+        if (ZegoExpressEngine.onMediaDataPublisherFileOpen == null) return;
+
+        int? publisherIndex = map['publisherIndex'];
+        ZegoMediaDataPublisher? publisher =
+            ZegoExpressImpl.mediaDataPublisherMap[publisherIndex!];
+        if (publisher != null) {
+          ZegoExpressEngine.onMediaDataPublisherFileOpen!(
+              publisher, map['path']);
+        }
+        break;
+
+      case 'onMediaDataPublisherFileClose':
+        if (ZegoExpressEngine.onMediaDataPublisherFileClose == null) return;
+
+        int? publisherIndex = map['publisherIndex'];
+        ZegoMediaDataPublisher? publisher =
+            ZegoExpressImpl.mediaDataPublisherMap[publisherIndex!];
+        if (publisher != null) {
+          ZegoExpressEngine.onMediaDataPublisherFileClose!(
+              publisher, map['errorCode'], map['path']);
+        }
+        break;
+
+      case 'onMediaDataPublisherFileDataBegin':
+        if (ZegoExpressEngine.onMediaDataPublisherFileDataBegin == null) return;
+
+        int? publisherIndex = map['publisherIndex'];
+        ZegoMediaDataPublisher? publisher =
+            ZegoExpressImpl.mediaDataPublisherMap[publisherIndex!];
+        if (publisher != null) {
+          ZegoExpressEngine.onMediaDataPublisherFileDataBegin!(
+              publisher, map['path']);
         }
         break;
 
@@ -3323,6 +3479,18 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
   }
+
+  @override
+  Future<void> setHttpHeader(Map<String, String> headers) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerSetHttpHeader', {'index': _index, 'headers': headers});
+  }
+
+  @override
+  Future<int> getCurrentRenderingProgress() async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerGetCurrentRenderingProgress', {'index': _index});
+  }
 }
 
 class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
@@ -3489,6 +3657,56 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   }
 }
 
+class ZegoMediaDataPublisherImpl extends ZegoMediaDataPublisher {
+  final int _index;
+
+  ZegoMediaDataPublisherImpl(int index) : _index = index;
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+  @override
+  Future<void> addMediaFilePath(String path, bool isClear) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherAddMediaFilePath',
+        {'index': _index, 'path': path, 'isClear': isClear});
+  }
+
+  @override
+  Future<int> getCurrentDuration() async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherGetCurrentDuration', {'index': _index});
+  }
+
+  @override
+  Future<int> getTotalDuration() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaDataPublisherGetTotalDuration', {'index': _index});
+  }
+
+  @override
+  Future<void> reset() async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaDataPublisherReset', {'index': _index});
+  }
+
+  @override
+  Future<void> seekTo(int millisecond) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherSeekTo',
+        {'index': _index, 'millisecond': millisecond});
+  }
+
+  @override
+  Future<void> setVideoSendDelayTime(int delayTime) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaDataPublisherSetVideoSendDelayTime',
+        {'index': _index, 'delayTime': delayTime});
+  }
+}
+
 class ZegoRangeAudioImpl extends ZegoRangeAudio {
   @override
   Future<void> enableMicrophone(bool enable) async {
@@ -3509,9 +3727,11 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   }
 
   @override
-  Future<void> setAudioReceiveRange(double range) async {
+  Future<int> setAudioReceiveRange(ZegoReceiveRangeParam param) async {
     return await ZegoExpressImpl._channel
-        .invokeMethod('rangeAudioSetAudioReceiveRange', {'range': range});
+        .invokeMethod('rangeAudioSetAudioReceiveRange', {
+      'param': {'min': param.min, 'max': param.max}
+    });
   }
 
   @override
@@ -3564,10 +3784,13 @@ class ZegoRangeAudioImpl extends ZegoRangeAudio {
   }
 
   @override
-  Future<void> setStreamVocalRange(String streamID, double vocalRange) async {
-    return await ZegoExpressImpl._channel.invokeMethod(
-        'rangeAudioSetStreamVocalRange',
-        {'streamID': streamID, 'vocalRange': vocalRange});
+  Future<int> setStreamVocalRange(
+      String streamID, ZegoVocalRangeParam param) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('rangeAudioSetStreamVocalRange', {
+      'streamID': streamID,
+      'param': {'min': param.min, 'max': param.max}
+    });
   }
 
   @override
