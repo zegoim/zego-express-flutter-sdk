@@ -3488,8 +3488,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
 
   @override
   Future<int> getCurrentRenderingProgress() async {
-    return await ZegoExpressImpl._channel
-        .invokeMethod('mediaPlayerGetCurrentRenderingProgress', {'index': _index});
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerGetCurrentRenderingProgress', {'index': _index});
   }
 }
 
