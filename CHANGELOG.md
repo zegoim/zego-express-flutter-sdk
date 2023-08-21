@@ -18,26 +18,22 @@ Added a low frame rate alarm callback that supports throwing encoding and hardwa
 
 For related API, please refer to [onPlayerLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerLowFpsWarning.html), [onPublisherLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherLowFpsWarning.html)
 
-#### 3. Added a callback for synchronously throwing the first frame of the video network
-
-Added a callback [onPlayerSyncRecvVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerSyncRecvVideoFirstFrame.html) that returns the first frame of the video network from a non-UI thread. This callback is not affected by UI freezes and can more accurately count the first frame of the video.
-
 For related API, please refer to [onPlayerSyncRecvVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerSyncRecvVideoFirstFrame.html)
 
-#### 4. Mediaplayer supports setting Http Headers of network resources
+#### 3. Mediaplayer supports setting Http Headers of network resources
 
 The mediaplayer supports setting the Http Headers of network resources. Based on this configuration, developers can customize and limit the access methods of network resources to strengthen the security protection of resources.
 
 For related API, please refer to [setHttpHeader](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setHttpHeader.html)
 
-#### 5. The range voice supports configuring the attenuation range of the 3D sound effect distance and the sound range of a single stream
+#### 4. The range voice supports configuring the attenuation range of the 3D sound effect distance and the sound range of a single stream
 
 In the range voice scene:
 
 - Support to set the attenuation range [min, max] of the 3D audio effect distance through the [setAudioReceiveRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setAudioReceiveRange.html) function，set the attenuation range [min, max] of the 3D audio effect interface. When the distance is less than min, the volume will not attenuate as the distance increases; when the distance is greater than max, the other party's voice will not be heard.
 - Support setting the vocal range [min, max] of a single stream through the [setStreamVocalRange](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoRangeAudio/setStreamVocalRange.html) interface.
 
-#### 6. Support callback related event activities by publish channel
+#### 5. Support callback related event activities by publish channel
 
 The [onPublisherSendAudioFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherSendAudioFirstFrame.html) callback function adds a channel parameter, which supports multi-channel listening and streaming to send the first frame information.
 
