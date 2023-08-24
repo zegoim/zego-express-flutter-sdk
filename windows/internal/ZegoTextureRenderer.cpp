@@ -21,10 +21,10 @@ ZegoTextureRenderer::~ZegoTextureRenderer() {
   // Lock mutex for safe destruction
   const std::lock_guard<std::mutex> lock(bufferMutex_);
   if (textureRegistrar_ && textureID_ > 0) {
-    textureRegistrar_->UnregisterTexture(textureID_);
+    textureRegistrar_->UnregisterTexture(textureID_, [cap_texture_ = std::move(texture_)]()mutable{ cap_texture_ = nullptr; });
   }
   textureID_ = -1;
-  texture_ = nullptr;
+  //texture_ = nullptr;
   textureRegistrar_ = nullptr;
 }
 
