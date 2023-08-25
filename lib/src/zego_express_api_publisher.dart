@@ -194,18 +194,18 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .setAudioConfig(config, channel: channel);
   }
 
-  /// Gets the current audio configurations.
+  /// Gets the current audio configurations from the specified publish channel.
   ///
   /// Available since: 1.8.0
   /// Description: You can get the current audio codec, bit rate, and audio channel through this function.
   /// When to call: After the engine is created [createEngine].
   /// Restrictions: None.
-  /// Caution: Act on the main publish channel ZegoPublishChannel.Main.
   /// Related APIs: [setAudioConfig].
   ///
+  /// - [channel] Publish stream channel.
   /// - Returns Audio config.
-  Future<ZegoAudioConfig> getAudioConfig() async {
-    return await ZegoExpressImpl.instance.getAudioConfig();
+  Future<ZegoAudioConfig> getAudioConfig({ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.getAudioConfig(channel: channel);
   }
 
   /// Set encryption key for the publishing stream for the specified publish channel.
