@@ -744,7 +744,13 @@ public class ZegoExpressEngineEventHandler {
             map.put("SEIData", data);
             map.put("timestampNs", info.timestampNs);
 
-            sink.success(map);
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
+
         }
 
         @Override
