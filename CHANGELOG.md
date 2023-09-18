@@ -1,5 +1,81 @@
 # Change Log
 
+## 3.9.0
+
+### New Features
+
+#### 1. ScreenCapture supports system WGC
+
+Note: This feature requires Windows 10.18362 or above.
+
+When the multi-source acquisition module performs screen capture, it supports system WGC, which also known as Windows Graphics Capture, and uses this mode by default, making the acquisition more efficient.
+
+#### 2. ScreenCapture supports setting publishing-stream area
+
+The multi-source collection module supports users to set independent preview and publishing-stream areas when performing screen capture.
+
+For related API, please refer to [updatePublishRegion](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/updatePublishRegion.html)
+
+#### 3. Added SEI callback with timestamp
+
+For related API, please refer to [onPlayerRecvMediaSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRecvMediaSideInfo.html)
+
+#### 4. The single-stream transcoding function supports playing stream by RTC
+
+Note:
+
+If you need to use this function, please contact ZEGOCLOUD technical support.
+
+Transcoding will cause additional delays. It is not recommended if you use this function in your Live Streaming scenarios which playing stream by RTC.
+
+When RTC plays streams, it supports triggering single-stream transcoding tasks through preset transcoding templates, and outputs transcoded streams with different resolutions.
+
+This function can be used in scenarios such as live broadcasts. Viewers can choose streams of different resolutions to ensure smooth playback that based on network quality, terminal equipment, etc..
+
+For related API, please refer to [ZegoPlayerConfig > codecTemplateID](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPlayerConfig/codecTemplateID.html)
+
+#### 5. Supports throwing [setDummyCaptureImagePath] exception callback
+
+For related API, please refer to [onPublisherDummyCaptureImagePathError](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherDummyCaptureImagePathError.html)
+
+#### 6. Direct-publish CDN supports updating the CDN address during publishing
+
+For related API, please refer to [enablePublishDirectToCdn](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enablePublishDirectToCDN.html)
+
+#### 7. Supports AI-balanced noise reduction mode
+
+Note: The current official SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support for special packaging.
+
+Support balanced AI noise reduction mode. Compared with the original mode, under the premise of the same human voice fidelity effect, the noise suppression effect is significantly improved, and can reach the level of clean and noise-free or non-disturbing; but the performance Consumption increased slightly. Suitable for noisy (low signal-to-noise ratio) outdoor environments such as streets, roads, markets, etc..
+
+For related API, please refer to [ZegoANSModeAIBalanced](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoANSMode/ZegoANSModeAIBalanced.html)
+
+### Enhancements
+
+#### 1. Optimize [setLogConfig] interface
+
+The life cycle of [setLogConfig] is expanded to the App life cycle, and its priority is higher than the configuration in [setEngineConfig].
+
+For related API, please refer to [setLogConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setLogConfig.html), [setEngineConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setLogConfig.html)
+
+#### 2. Optimize the retry rules when the App is dormant
+
+Optimize the retry rules when the App is sleeping. During the loginRoom and publishing-playing process, the App Sleep Time is also included in the Maximum Allowed Retry Time.
+
+### Bug Fixes
+
+1. Fixed the problem that the audio external collection module would cause silence when switching audio sources.
+
+2. Fixed the issue where no error message is thrown when the watermark path exceeds the maximum length set by [setPublishWatermark](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setPublishWatermark.html).
+
+3. Fixed the issue of a very small probability of failure when sending a new stream.
+
+4. Fixed the issue of the sound effects player occasionally crashes.
+
+5. Fixed the problem that when calling the [sendAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/sendAudioSideInfo.html) interface to send audio secondary messages, it takes about 10 seconds for the player to receive the message.
+
+6. Fix the problem that the time spent on TCP disconnection of WS CDN in the case of direct publishing is fixed at 500 ms
+
 ## 3.8.1
 
 ### New Features
@@ -17,8 +93,6 @@ Note: If you need to use this function, please contact ZEGOCLOUD technical suppo
 Added a low frame rate alarm callback that supports throwing encoding and hardware decoding. In 1v1 chats, live broadcasts and other scenarios, developers can adjust the streaming resolution and trigger transcoding based on this callback.
 
 For related API, please refer to [onPlayerLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerLowFpsWarning.html), [onPublisherLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherLowFpsWarning.html)
-
-For related API, please refer to [onPlayerSyncRecvVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerSyncRecvVideoFirstFrame.html)
 
 #### 3. Mediaplayer supports setting Http Headers of network resources
 
