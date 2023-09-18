@@ -368,7 +368,7 @@ void ZegoExpressEngineEventHandler::onPublisherLowFpsWarning(EXPRESS::ZegoVideoC
     }
 }
 
-void ZegoExpressEngineEventHanlder::onPublisherDummyCaptureImagePathError(int errorCode, const std::string& path, EXPRESS::ZegoPublishChannel channel) {
+void ZegoExpressEngineEventHandler::onPublisherDummyCaptureImagePathError(int errorCode, const std::string& path, EXPRESS::ZegoPublishChannel channel) {
     ZF::logInfo("[onPublisherDummyCaptureImagePathError] errorCode: %d, path: %s, channel: %d", errorCode, path.c_str(), channel);
 
     if (eventSink_) {

@@ -3668,7 +3668,7 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCacheWithConfig(
         config.songID = std::get<std::string>(configMap[FTValue("songID")]);
         config.vendorID = (EXPRESS::ZegoCopyrightedMusicVendorID) std::get<int32_t>(configMap[FTValue("vendorID")]);
         config.resourceType = (EXPRESS::ZegoCopyrightedMusicResourceType) std::get<int32_t>(configMap[FTValue("resourceType")]);
-        config.resourceQualityType = (EXPRESS::ZegoCopyrightedMusicResourceQualityType) std::get<int32_t>(configMap[FTValue("resourceQuality")]);
+        config.resourceQualityType = (EXPRESS::ZegoCopyrightedMusicResourceQualityType) std::get<int32_t>(configMap[FTValue("resourceQualityType")]);
 
         bool ret = copyrightedMusic_->queryCache(config);
         result->Success(FTValue(ret));
