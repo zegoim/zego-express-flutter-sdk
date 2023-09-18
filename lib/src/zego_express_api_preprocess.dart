@@ -100,7 +100,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: When [enableANS] is used to enable noise suppression, this function can be used to switch between different noise suppression modes to control the degree of noise suppression.
   /// Use case: When the default noise suppression effect does not meet expectations, this function can be used to adjust the noise suppression mode.
-  /// Default value: When this function is not called, the default echo cancellation mode is [Medium].
+  /// Default value: When this function is not called, the default automatic noise suppression (ANS) mode is [Medium].
   /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
   /// Restrictions: The value set by this function is valid only after the noise suppression function is turned on.
   ///

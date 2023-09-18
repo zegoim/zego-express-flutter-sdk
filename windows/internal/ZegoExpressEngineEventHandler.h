@@ -79,6 +79,8 @@ protected:
     void onVideoObjectSegmentationStateChanged(EXPRESS::ZegoObjectSegmentationState state, EXPRESS::ZegoPublishChannel channel, int errorCode) override;
 
     void onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) override;
+    
+    void onPublisherDummyCaptureImagePathError(int errorCode, const std::string& path, EXPRESS::ZegoPublishChannel channel) override;
 
     void onPlayerStateUpdate(const std::string& streamID, EXPRESS::ZegoPlayerState state, int errorCode, const std::string& extendedData) override;
 
@@ -89,6 +91,8 @@ protected:
     void onPlayerRecvAudioFirstFrame(const std::string& streamID) override;
 
     void onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
+
+    void onPlayerRecvMediaSideInfo(const EXPRESS::ZegoMediaSideInfo & info) override;
 
     void onPlayerRecvAudioSideInfo(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 

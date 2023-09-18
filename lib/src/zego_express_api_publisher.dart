@@ -166,7 +166,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set the video orientation.
   /// Use cases: When users use mobile devices to conduct live broadcasts or video calls, they can set different video directions according to the scene.
   /// When to call: After [createEngine].
-  /// Restrictions: None.
+  /// Restrictions: Currently only supports iOS and Android platforms.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [orientation] Video orientation.

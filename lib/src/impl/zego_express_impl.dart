@@ -16,7 +16,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.8.1";
+  static String pluginVersion = "3.9.0";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -2306,6 +2306,16 @@ class ZegoExpressImpl {
             ZegoPublishChannel.values[map['channel']]);
         break;
 
+      case 'onPublisherDummyCaptureImagePathError':
+        if (ZegoExpressEngine.onPublisherDummyCaptureImagePathError == null)
+          return;
+
+        ZegoExpressEngine.onPublisherDummyCaptureImagePathError!(
+            map['errorCode'],
+            map['path'],
+            ZegoPublishChannel.values[map['channel']]);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -2392,6 +2402,13 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
 
         ZegoExpressEngine.onPlayerRecvSEI!(map['streamID'], map['data']);
+        break;
+
+      case 'onPlayerRecvMediaSideInfo':
+        if (ZegoExpressEngine.onPlayerRecvMediaSideInfo == null) return;
+
+        ZegoExpressEngine.onPlayerRecvMediaSideInfo!(ZegoMediaSideInfo(
+            map['streamID'], map['SEIData'], map['timestampNs']));
         break;
 
       case 'onPlayerRecvAudioSideInfo':
@@ -4114,6 +4131,20 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
     return ZegoCopyrightedMusicRequestResourceResult(
         resultMap['errorCode'], resultMap['resource']);
   }
+
+  @override
+  Future<bool> queryCacheWithConfig(
+      ZegoCopyrightedMusicQueryCacheConfig config) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicQueryCacheWithConfig', {
+      'config': {
+        'songID': config.songID,
+        'resourceType': config.resourceType.index,
+        'vendorID': config.vendorID.value,
+        'resourceQualityType': config.resourceQualityType.index
+      }
+    });
+  }
 }
 
 class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
@@ -4232,5 +4263,19 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
         double.parse(map['y'].toString()),
         double.parse(map['width'].toString()),
         double.parse(map['height'].toString()));
+  }
+
+  @override
+  Future<void> updatePublishRegion(Rect rect) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('updatePublishRegionScreenCaptureSource', {
+      'rect': {
+        'x': rect.left,
+        'y': rect.top,
+        'width': rect.width,
+        'height': rect.height,
+      },
+      'index': _index
+    });
   }
 }

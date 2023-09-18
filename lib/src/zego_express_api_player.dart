@@ -112,7 +112,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// When to call: after called [startPlayingStream].
   /// Restrictions: None.
   /// Related APIs: [setPlayVolume] Set the specified streaming volume.
-  /// Caution: You need to reset after [stopPlayingStream] and [startPlayingStream]. Set the specified streaming volume and [setAllPlayStreamVolume] interface to override each other, and the last call takes effect.
+  /// Caution: Set the specified streaming volume and [setAllPlayStreamVolume] interface to override each other, and the last call takes effect.
   ///
   /// - [volume] Volume percentage. The value ranges from 0 to 200, and the default value is 100.
   Future<void> setAllPlayStreamVolume(int volume) async {

@@ -87,6 +87,7 @@ import im.zego.zegoexpress.constants.ZegoBackgroundBlurLevel;
 import im.zego.zegoexpress.constants.ZegoBackgroundProcessType;
 import im.zego.zegoexpress.constants.ZegoCapturePipelineScaleMode;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicBillingMode;
+import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceQualityType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
@@ -149,6 +150,7 @@ import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicConfig;
+import im.zego.zegoexpress.entity.ZegoCopyrightedMusicQueryCacheConfig;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicRequestConfig;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfig;
 import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
@@ -5251,6 +5253,27 @@ public class ZegoExpressEngineMethodHandler {
             result.success(isCache);
         } else {
             result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicQueryCache` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicQueryCacheWithConfig(MethodCall call, Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicQueryCacheConfig config = new ZegoCopyrightedMusicQueryCacheConfig();
+
+            if (configMap != null) {
+                config.songID = configMap.get("songID").toString();
+                config.vendorID = ZegoCopyrightedMusicVendorID.getZegoCopyrightedMusicVendorID(ZegoUtils.intValue((Number) configMap.get("vendorID")));
+                config.resourceType = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) configMap.get("resourceType")));
+                config.resourceQualityType = ZegoCopyrightedMusicResourceQualityType.getZegoCopyrightedMusicResourceQualityType(ZegoUtils.intValue((Number) configMap.get("resourceQualityType")));
+            }
+
+            boolean isCache = copyrightedMusicInstance.queryCache(config);
+            result.success(isCache);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicQueryCacheWithConfig` but can't find specific instance", null);
         }
     }
 

@@ -344,7 +344,7 @@ class ZegoErrorCode {
   /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path is empty. <br>Solutions: Incoming non-empty path.
   static const int PublisherWatermarkUrlNull = 1003055;
 
-  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path exceeds the byte size limit. <br>Solutions: The incoming watermark path should be less than 1024 bytes.
+  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path exceeds the byte size limit. <br>Solutions: The incoming watermark path should be less than 512 bytes.
   static const int PublisherWatermarkUrlTooLong = 1003056;
 
   /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path was entered incorrectly or the image format is not supported. <br>Solutions: Incoming the correct watermark path, only `jpg` and `png` image formats are supported.
@@ -365,6 +365,9 @@ class ZegoErrorCode {
 
   /// Description: Push-pull flow authentication is incorrect. <br>Caution: An [appSign] error was passed when creating the engine, or a Token error or timeout was passed when logging into the room. <br>Solutions: Pass the correct [Token] upon login, or invoke [renewToken] when recive [onRoomTokenWillExpire] callback.
   static const int PublisherErrorDispatchAuthError = 1003072;
+
+  /// Description: The specified path for displaying static images when the camera is turned off is incorrect. <br>Caution: The path may be misspelled or there may be no read permission.<br>Solutions: Please check if the designated image path is correct and if there is read permission.
+  static const int PublisherDummyCaptureImagePathError = 1003073;
 
   /// Description: Unsupported video encoder.<br>Caution: There is no selected video encoder in the current SDK.<br>Solutions: Please contact ZEGO technical support.
   static const int PublisherVideoEncoderNoSupportted = 1003080;
@@ -531,6 +534,9 @@ class ZegoErrorCode {
 
   /// Description: Failed to start mixed stream. <br>Cause: The input watermark URL is illegal. <br>Solutions: The watermark URL must start with `preset-id://` and end with `.jpg` or `.png`.
   static const int MixerWatermarkUrlInvalid = 1005063;
+
+  /// Description: The mixed stream background image url is too long. <br>Cause: The length of the mixed stream background url parameter exceeds the limit. <br>Solution: Please make sure the background image url length does not exceed 1024 bytes.
+  static const int MixerBackgroundImageUrlTooLong = 1005066;
 
   /// Description: Failed to start mixed stream. <br>Cause: The URL of the background image entered is illegal. <br>Solutions: The URL of the background image must start with preset-id:// and end with `.jpg` or `.png`.
   static const int MixerBackgroundImageUrlInvalid = 1005067;

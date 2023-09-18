@@ -368,6 +368,21 @@ void ZegoExpressEngineEventHandler::onPublisherLowFpsWarning(EXPRESS::ZegoVideoC
     }
 }
 
+void ZegoExpressEngineEventHanlder::onPublisherDummyCaptureImagePathError(int errorCode, const std::string& path, EXPRESS::ZegoPublishChannel channel) {
+    ZF::logInfo("[onPublisherDummyCaptureImagePathError] errorCode: %d, path: %s, channel: %d", errorCode, path.c_str(), channel);
+
+    if (eventSink_) {
+        FTMap retMap;
+
+        retMap[FTValue("method")] = FTValue("onPublisherDummyCaptureImagePathError");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("path")] = FTValue(path);
+        retMap[FTValue("channel")] = FTValue((int32_t)channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
@@ -473,6 +488,24 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string &streamID,
         std::vector<uint8_t> dataArray(nonConstData, nonConstData + dataLength);
 
         retMap[FTValue("data")] = FTValue(dataArray);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onPlayerRecvMediaSideInfo(const EXPRESS::ZegoMediaSideInfo & info) {
+    // High frequency callbacks do not log
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPlayerRecvMediaSideInfo");
+        retMap[FTValue("streamID")] = FTValue(info.streamID);
+        retMap[FTValue("timestampNs")] = FTValue(info.timestampNs);
+
+        auto nonConstData = const_cast<unsigned char *>(info.SEIData);
+        std::vector<uint8_t> dataArray(nonConstData, nonConstData + info.SEIDataLength);
+
+        retMap[FTValue("SEIData")] = FTValue(dataArray);
 
         eventSink_->Success(retMap);
     }

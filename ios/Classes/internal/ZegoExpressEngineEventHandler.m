@@ -525,6 +525,21 @@
     }
 }
 
+- (void)onPublisherDummyCaptureImagePathError:(int)errorCode path:(NSString *)path channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherDummyCaptureImagePathError] errorCode: %d, path: %@, channel: %d", errorCode, path, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherDummyCaptureImagePathError",
+            @"errorCode": @(errorCode),
+            @"path": path,
+            @"channel": @((int)channel),
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -678,6 +693,21 @@
     }
 }
 #pragma clang diagnostic pop
+
+- (void)onPlayerRecvMediaSideInfo:(ZegoMediaSideInfo *)info {
+    FlutterEventSink sink = _eventSink;
+    // Do not log high frequency callback
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRecvMediaSideInfo",
+            @"SEIData": [FlutterStandardTypedData typedDataWithBytes:info.SEIData],
+            @"streamID": info.streamID,
+            @"timestampNs": @(info.timestampNs)
+        });
+    }
+}
 
 - (void)onPlayerRecvAudioSideInfo:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;

@@ -4915,14 +4915,39 @@
         int type = [ZegoUtils intValue:call.arguments[@"type"]];
         BOOL isQueryCache = false;
         if ([ZegoUtils isNullObject:call.arguments[@"vendorID"]]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             isQueryCache = [self.copyrightedMusicInstance queryCache: songID type:(ZegoCopyrightedMusicType)type];
+#pragma clang diagnostic pop
         } else {
             int vendorID = [ZegoUtils intValue:call.arguments[@"vendorID"]];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             isQueryCache = [self.copyrightedMusicInstance queryCache:songID type:(ZegoCopyrightedMusicType)type vendorID:(ZegoCopyrightedMusicVendorID)vendorID];
+#pragma clang diagnostic pop
         }
         result(@(isQueryCache));
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicQueryCache` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)copyrightedMusicQueryCacheWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
+        
+        ZegoCopyrightedMusicQueryCacheConfig *config = [[ZegoCopyrightedMusicQueryCacheConfig alloc] init];
+        
+        config.songID = configMap[@"songID"];
+        config.vendorID = [ZegoUtils unsignedIntValue:configMap[@"vendorID"]];
+        config.resourceType = [ZegoUtils unsignedIntValue:configMap[@"resourceType"]];
+        config.resourceQualityType = [ZegoUtils unsignedIntValue:configMap[@"resourceQualityType"]];
+        
+        BOOL isQueryCache = [self.copyrightedMusicInstance queryCache:config];
+        result(@(isQueryCache));
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicQueryCacheWithConfig` but can't find specific instance" details:nil]);
     }
 }
 
@@ -5292,6 +5317,26 @@
         CGRect rect = CGRectMake(x, y, width, height);
         
         [screenCaptureSource updateCaptureRegion:rect];
+    }
+
+    result(nil);
+}
+
+- (void)updatePublishRegionScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        NSDictionary *rectMap = call.arguments[@"rect"];
+        
+        int x = [ZegoUtils intValue:rectMap[@"x"]];
+        int y = [ZegoUtils intValue:rectMap[@"y"]];
+        int width = [ZegoUtils intValue:rectMap[@"width"]];
+        int height = [ZegoUtils intValue:rectMap[@"height"]];
+        
+        CGRect rect = CGRectMake(x, y, width, height);
+        
+        [screenCaptureSource updatePublishRegion:rect];
     }
 
     result(nil);

@@ -3658,6 +3658,26 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCache(
     }
 }
 
+void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCacheWithConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicQueryCacheConfig config;
+        
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.vendorID = (EXPRESS::ZegoCopyrightedMusicVendorID) std::get<int32_t>(configMap[FTValue("vendorID")]);
+        config.resourceType = (EXPRESS::ZegoCopyrightedMusicResourceType) std::get<int32_t>(configMap[FTValue("resourceType")]);
+        config.resourceQualityType = (EXPRESS::ZegoCopyrightedMusicResourceQualityType) std::get<int32_t>(configMap[FTValue("resourceQuality")]);
+
+        bool ret = copyrightedMusic_->queryCache(config);
+        result->Success(FTValue(ret));
+    } else {
+        result->Error("copyrightedMusicQueryCache_Can_not_find_instance",
+                      "Invoke `copyrightedMusicQueryCacheWithConfig` but can't find specific instance");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::copyrightedMusicRequestAccompaniment(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -5396,6 +5416,25 @@ void ZegoExpressEngineMethodHandler::updateCaptureRegionScreenCaptureSource(
         rect.width = std::get<double>(rectMap[FTValue("width")]);
         rect.height = std::get<double>(rectMap[FTValue("height")]);
         screenCaptureSource->updateCaptureRegion(rect);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::updatePublishRegionScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto rectMap = std::get<FTMap>(argument[FTValue("rect")]);
+        EXPRESS::ZegoRect rect;
+        rect.x = std::get<double>(rectMap[FTValue("x")]);
+        rect.y = std::get<double>(rectMap[FTValue("y")]);
+        rect.width = std::get<double>(rectMap[FTValue("width")]);
+        rect.height = std::get<double>(rectMap[FTValue("height")]);
+        screenCaptureSource->updatePublishRegion(rect);
     }
 
     result->Success();

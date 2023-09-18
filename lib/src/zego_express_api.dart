@@ -589,6 +589,19 @@ class ZegoExpressEngine {
   static void Function(ZegoVideoCodecID codecID, ZegoPublishChannel channel)?
       onPublisherLowFpsWarning;
 
+  /// The notification for setting the path of the static image displayed when the camera is turned off is incorrect.
+  ///
+  /// Available since: 3.9.0
+  /// Description: The notification for setting the path of the static image displayed when the camera is turned off is incorrect.
+  /// When to trigger: If the path for the image is set using [setDummyCaptureImagePath], but the image cannot be obtained during streaming, this callback will be triggered.
+  /// Caution: Please make sure that the image path is correct and has read permission before setting it.
+  ///
+  /// - [errorCode] error code.
+  /// - [path] Image path.
+  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  static void Function(int errorCode, String path, ZegoPublishChannel channel)?
+      onPublisherDummyCaptureImagePathError;
+
   /// The callback triggered when the state of stream playing changes.
   ///
   /// Available since: 1.1.0
@@ -704,6 +717,16 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [data] SEI content.
   static void Function(String streamID, Uint8List data)? onPlayerRecvSEI;
+
+  /// The callback triggered when Supplemental Enhancement Information is received synchronously.
+  ///
+  /// Available since: 3.9.0
+  /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
+  /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
+  /// Caution: 1. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set. 2. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
+  ///
+  /// - [info] SEI Callback info.
+  static void Function(ZegoMediaSideInfo info)? onPlayerRecvMediaSideInfo;
 
   /// Receive the audio side information content of the remote stream.
   ///

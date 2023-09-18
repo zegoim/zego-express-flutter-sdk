@@ -66,6 +66,7 @@ import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
+import im.zego.zegoexpress.entity.ZegoMediaSideInfo;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestQuality;
 import im.zego.zegoexpress.entity.ZegoPerformanceStatus;
 import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
@@ -554,6 +555,22 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onPublisherDummyCaptureImagePathError(int errorCode, String path, ZegoPublishChannel channel) {
+            super.onPublisherDummyCaptureImagePathError(errorCode, path, channel);
+            ZegoLog.log("[onPublisherDummyCaptureImagePathError] errorCode: %d, path: %s, channel: %s", errorCode, path, channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPublisherDummyCaptureImagePathError");
+            map.put("errorCode", errorCode);
+            map.put("path", path);
+            map.put("channel", channel.value());
+
+            sink.success(map);
+        }
+
         /* Player */
 
         @Override
@@ -707,6 +724,25 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onPlayerRecvSEI");
             map.put("streamID", streamID);
             map.put("data", data);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPlayerRecvMediaSideInfo(ZegoMediaSideInfo info) {
+            super.onPlayerRecvMediaSideInfo(info);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            byte[] data = new byte[info.SEIData.remaining()];
+            info.SEIData.get(data, 0, info.SEIDataLength);
+
+            map.put("method", "onPlayerRecvMediaSideInfo");
+            map.put("streamID", info.streamID);
+            map.put("SEIData", data);
+            map.put("timestampNs", info.timestampNs);
 
             sink.success(map);
         }

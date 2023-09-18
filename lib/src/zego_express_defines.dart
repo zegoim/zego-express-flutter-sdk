@@ -601,7 +601,10 @@ enum ZegoANSMode {
   Aggressive,
 
   /// AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-  AI
+  AI,
+
+  /// Balanced AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+  AIBalanced
 }
 
 /// video encode profile.
@@ -829,7 +832,10 @@ enum ZegoDeviceType {
   Speaker,
 
   /// Audio device. (Other audio device that cannot be accurately classified into microphones or speakers.)
-  AudioDevice
+  AudioDevice,
+
+  /// Audio Session.
+  AudioSession
 }
 
 /// The exception type for the device.
@@ -868,7 +874,13 @@ enum ZegoDeviceExceptionType {
   SoundLevelTooLow,
 
   /// The device is being occupied, and maybe cause by iPad magnetic case (Apple platform only).
-  MagneticCase
+  MagneticCase,
+
+  /// Audio session deactive (Apple platform only).
+  AudioSessionDeactive,
+
+  /// Audio session category change (Apple platform only).
+  AudioSessionCategoryChange
 }
 
 /// Remote device status.
@@ -900,10 +912,10 @@ enum ZegoRemoteDeviceState {
   /// System media services stop, such as under the iOS platform, when the system detects that the current pressure is huge (such as playing a lot of animation), it is possible to disable all media related services.
   SystemMediaServicesLost,
 
-  /// The remote user calls [enableCamera] or [muteMicrophone] to disable the camera or microphone.
+  /// The remote user calls [enableCamera] or [enableAudioCaptureDevice] to disable the camera or microphone.
   Disable,
 
-  /// The remote user actively calls [mutePublishStreamAudio] or [mutePublishStreamVideo] to stop publish the audio or video stream.
+  /// The remote user actively calls [muteMicrophone] or [mutePublishStreamAudio] or [mutePublishStreamVideo] to stop publish the audio or video stream.
   Mute,
 
   /// The device is interrupted, such as a phone call interruption, etc.
@@ -1383,26 +1395,38 @@ enum ZegoCopyrightedMusicBillingMode {
 
 /// The music resource type. For [querycache] interface.
 enum ZegoCopyrightedMusicType {
-  /// Song.
+  /// Song. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicSong,
 
-  /// Song with high quality.
+  /// Song with high quality. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicSongHQ,
 
-  /// Song with super quality.
+  /// Song with super quality. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicSongSQ,
 
-  /// Song accompaniment.
+  /// Song accompaniment. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicAccompaniment,
 
-  /// Song accompaniment clip.
+  /// Song accompaniment clip. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicAccompanimentClip,
 
-  /// Song accompaniment segment.
+  /// Song accompaniment segment. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicAccompanimentSegment
 }
 
-/// The music resource type. For [ZegoCopyrightedMusicRequestConfig] and [ZegoCopyrightedMusicGetSharedConfig].
+/// The music resource type. For [ZegoCopyrightedMusicRequestConfig], [ZegoCopyrightedMusicGetSharedConfig] and [ZegoCopyrightedMusicQueryCacheConfig].
 enum ZegoCopyrightedMusicResourceType {
   /// Song.
   ZegoCopyrightedMusicResourceSong,
@@ -1430,6 +1454,18 @@ enum ZegoCopyrightedMusicVendorID {
 
   /// Third copyright provider.
   ZegoCopyrightedMusicVendor3
+}
+
+/// The music resource quality type. For [ZegoCopyrightedMusicQueryCacheConfig].
+enum ZegoCopyrightedMusicResourceQualityType {
+  /// Standard Definition Audio.
+  ZegoCopyrightedMusicResourceQualityNormal,
+
+  /// High Definition Audio.
+  ZegoCopyrightedMusicResourceQualityHQ,
+
+  /// Lossless Audio Quality.
+  ZegoCopyrightedMusicResourceQualitySQ
 }
 
 /// Font type.
@@ -1669,7 +1705,10 @@ enum ZegoScreenCaptureSourceExceptionType {
   Invalid,
 
   /// Failed to collect target, internal reasons of the system.
-  Failed
+  Failed,
+
+  /// The set publish region is invalid, and the publish region is not within the capture screen region.
+  PublishRegionInvalid
 }
 
 /// Screen capture source exception type. (only for Android)
@@ -2531,6 +2570,20 @@ class ZegoCrossAppInfo {
   ZegoCrossAppInfo(this.appID, this.token);
 }
 
+/// SEI Callback info.
+class ZegoMediaSideInfo {
+  /// Stream ID.
+  String streamID;
+
+  /// SEI data
+  Uint8List SEIData;
+
+  /// timestamp
+  int timestampNs;
+
+  ZegoMediaSideInfo(this.streamID, this.SEIData, this.timestampNs);
+}
+
 /// Device Info.
 ///
 /// Including device ID and name
@@ -2909,7 +2962,7 @@ class ZegoMixerOutput {
 ///
 /// Configure a watermark image URL and the layout of the watermark in the screen.
 class ZegoWatermark {
-  /// The path of the watermark image. Support local file absolute path (file://xxx). The format supports png, jpg.
+  /// The path of the watermark image. Support local file absolute path (file://xxx). The format supports png, jpg. The maximum length is less than 512 bytes.
   String imageURL;
 
   /// Watermark image layout
@@ -3501,6 +3554,24 @@ class ZegoCopyrightedMusicGetSharedConfig {
 
   ZegoCopyrightedMusicGetSharedConfig(this.songID,
       {this.vendorID, this.roomID});
+}
+
+/// The configuration of querying cache.
+class ZegoCopyrightedMusicQueryCacheConfig {
+  /// the ID of the song.
+  String songID;
+
+  /// The resource type of music.
+  ZegoCopyrightedMusicResourceType resourceType;
+
+  /// The resource quality type of music.
+  ZegoCopyrightedMusicResourceQualityType resourceQualityType;
+
+  /// Copyright music resource song copyright provider.
+  ZegoCopyrightedMusicVendorID vendorID;
+
+  ZegoCopyrightedMusicQueryCacheConfig(
+      this.songID, this.resourceType, this.resourceQualityType, this.vendorID);
 }
 
 /// Screen capture configuration parameters.
@@ -4611,7 +4682,7 @@ abstract class ZegoCopyrightedMusic {
   ///
   /// Available since: 2.13.0
   /// Description: Initialize the copyrighted music so that you can use the function of the copyrighted music later.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After call [createCopyrightedMusic] and [loginRoom].
   /// Caution: 1. The real user information must be passed in, otherwise the song resources cannot be obtained for playback. 2. The user ID set when initializing copyrighted music needs to be the same as the user ID set when logging in to the room.
   ///
   /// - [config] the copyrighted music configuration.
@@ -4719,16 +4790,14 @@ abstract class ZegoCopyrightedMusic {
 
   /// Query the resource's cache is existed or not.
   ///
-  /// Available since: 3.2.1
+  /// Available since: 3.9.0
   /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
   /// Use case: Can be used to check the resource's cache is existed or not
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
-  /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
-  /// - [type] the song resource type.
-  /// - [vendorID] Copyright music resource song copyright provider.
-  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type,
-      {ZegoCopyrightedMusicVendorID? vendorID});
+  /// - [config] The configuration of querying cache.
+  Future<bool> queryCacheWithConfig(
+      ZegoCopyrightedMusicQueryCacheConfig config);
 
   /// Get the playing time of a song or accompaniment file.
   ///
@@ -4911,6 +4980,22 @@ abstract class ZegoCopyrightedMusic {
       'Deprecated since 3.0.2, please use the [getSharedResource] function instead.')
   Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
       String shareToken);
+
+  /// [Deprecated] Query the resource's cache is existed or not. Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.
+  ///
+  /// Available since: 3.2.1
+  /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
+  /// Use case: Can be used to check the resource's cache is existed or not
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// @deprecated Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.
+  /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
+  /// - [type] the song resource type.
+  /// - [vendorID] Copyright music resource song copyright provider.
+  @Deprecated(
+      'Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.')
+  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type,
+      {ZegoCopyrightedMusicVendorID? vendorID});
 }
 
 abstract class ZegoScreenCaptureSource {
@@ -4961,6 +5046,17 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [rect] The position of the area to be captured relative to the entire screen or window.
   Future<void> updateCaptureRegion(Rect rect);
+
+  /// Update the streaming area of ​​the screen capture.
+  ///
+  /// Available since: 3.8.0
+  /// Description: Update the streaming area of ​​the screen capture.
+  /// When to call: After updating the screen capture source [updateScreenCaptureSource].
+  /// Restrictions: Every time the screen capture source [updateScreenCaptureSource] is updated, the area will be cleared and needs to be reset, only support in Windows/macOS.
+  /// Caution: The set area cannot exceed the size returned by [onAvailableFrame], otherwise the setting will fail and the original frame will be pushed. The failure of the streaming area will be notified through [onExceptionOccurred].
+  ///
+  /// - [rect] The position of the area to be pushed relative to the upper left corner of the capture screen, the actual capture screen size can be obtained through [onAvailableFrame].
+  Future<void> updatePublishRegion(Rect rect);
 
   /// Sets the filtered list of windows.
   ///
