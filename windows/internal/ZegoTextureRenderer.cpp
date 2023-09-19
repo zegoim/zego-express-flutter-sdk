@@ -21,10 +21,13 @@ ZegoTextureRenderer::~ZegoTextureRenderer() {
   // Lock mutex for safe destruction
   const std::lock_guard<std::mutex> lock(bufferMutex_);
   if (textureRegistrar_ && textureID_ > 0) {
-    textureRegistrar_->UnregisterTexture(textureID_);
+    std::shared_ptr<flutter::TextureVariant> share_texture = std::move(texture_);
+    textureRegistrar_->UnregisterTexture(textureID_, [share_texture]() mutable {
+      share_texture.reset();
+    });
   }
   textureID_ = -1;
-  texture_ = nullptr;
+  //texture_ = nullptr;
   textureRegistrar_ = nullptr;
 }
 
