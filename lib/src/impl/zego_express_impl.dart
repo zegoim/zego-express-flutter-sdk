@@ -4240,9 +4240,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
       'config': {
         'captureVideo': config.captureVideo,
         'captureAudio': config.captureAudio,
-        'applicationVolume': config.applicationVolume,
-        'microphoneVolume': config.microphoneVolume
-      },
+        'applicationVolume': config.applicationVolume ?? 100,
+        'microphoneVolume': config.microphoneVolume ?? 100,
+        'audioParam': config.audioParam == null
+            ? null
+            : {
+                'sampleRate': config.audioParam!.sampleRate.value,
+                'channel': config.audioParam!.channel.index
+              }},
       'index': _index
     });
   }
