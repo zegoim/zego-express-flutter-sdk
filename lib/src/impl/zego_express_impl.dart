@@ -747,7 +747,8 @@ class ZegoExpressImpl {
                   config.videoCodecID?.index ?? ZegoVideoCodecID.Default.index,
               'sourceResourceType': config.sourceResourceType?.index ??
                   ZegoResourceType.RTC.index,
-              'codecTemplateID': config.codecTemplateID ?? 0
+              'codecTemplateID': config.codecTemplateID ?? 0,
+              'resourceSwitchMode': config.resourceSwitchMode?.index ?? ZegoStreamResourceSwitchMode.Default.index,
             }
           : {}
     });
@@ -4271,9 +4272,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
       'config': {
         'captureVideo': config.captureVideo,
         'captureAudio': config.captureAudio,
-        'applicationVolume': config.applicationVolume,
-        'microphoneVolume': config.microphoneVolume
-      },
+        'applicationVolume': config.applicationVolume ?? 100,
+        'microphoneVolume': config.microphoneVolume ?? 100,
+        'audioParam': config.audioParam == null
+            ? null
+            : {
+                'sampleRate': config.audioParam!.sampleRate.value,
+                'channel': config.audioParam!.channel.index
+              }},
       'index': _index
     });
   }
