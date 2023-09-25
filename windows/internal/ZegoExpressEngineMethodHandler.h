@@ -237,6 +237,8 @@ class ZegoExpressEngineMethodHandler {
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void sendCustomCommand(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void ZegoExpressEngineMethodHandler::sendTransparentMessage(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result); 
     void enableCustomVideoCapture(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

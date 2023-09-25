@@ -123,7 +123,10 @@ enum ZegoFeatureType {
   RangeScene,
 
   /// Screen capture feature. (3.1.0 and above support)
-  ScreenCapture
+  ScreenCapture,
+
+  /// AI voice changer feature. (3.8.0 and above support)
+  AIVoiceChanger
 }
 
 /// Language.
@@ -223,6 +226,27 @@ enum ZegoRoomStateChangedReason {
 
   /// Failed to log out of the room. Enter this state when calling [logoutRoom] fails to log out of the room or [switchRoom] fails to log out of the current room internally.
   LogoutFailed
+}
+
+/// Room mode.
+enum ZegoRoomTransparentMessageMode {
+  /// Single room mode.
+  OnlyClient,
+
+  /// Multiple room mode.
+  OnlyServer,
+
+  /// Multiple room mode.
+  ClientAndServer
+}
+
+/// Room mode.
+enum ZegoRoomTransparentMessageType {
+  /// Single room mode.
+  ZegoRoomTransparentMessageNormal,
+
+  /// Multiple room mode.
+  ZegoRoomTransparentMessageSequence
 }
 
 /// Publish channel.
@@ -3229,6 +3253,42 @@ class ZegoBarrageMessageInfo {
       this.message, this.messageID, this.sendTime, this.fromUser);
 }
 
+/// Transparent message info.
+///
+/// Room transparent message, including room id, message content, sending user, sending type, sending mode, timeout period
+class ZegoRoomSendTransparentMessage {
+  /// send mode
+  ZegoRoomTransparentMessageMode sendMode;
+
+  /// send type
+  ZegoRoomTransparentMessageType sendType;
+
+  /// Message send content.
+  Uint8List content;
+
+  /// Message receiver list, when sendType appointed ZegoRoomTransparentMessageModeOnlyServer don't fill in. When appointed ZegoRoomTransparentMessageModeClientAndServer or ZegoRoomTransparentMessageModeOnlyClient, empty room will be sent to all online users.
+  List<ZegoUser> recvUserList;
+
+  /// send message timeout, The default value is 10s.
+  int timeOut;
+
+  ZegoRoomSendTransparentMessage(this.sendMode, this.sendType, this.content,
+      this.recvUserList, this.timeOut);
+}
+
+/// Received a transparent message from the room.
+///
+/// Room transparent message, including message content, sending user, sending type, sending mode
+class ZegoRoomRecvTransparentMessage {
+  /// send message user
+  ZegoUser sendUser;
+
+  /// Message send content.
+  Uint8List content;
+
+  ZegoRoomRecvTransparentMessage(this.sendUser, this.content);
+}
+
 /// Parameter object for audio frame.
 ///
 /// Including the sampling rate and channel of the audio frame
@@ -5270,6 +5330,16 @@ class ZegoIMSendCustomCommandResult {
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode);
+}
+
+/// Callback for sending custom command.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+class ZegoRoomSendTransparentMessageResult {
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  ZegoRoomSendTransparentMessageResult(this.errorCode);
 }
 
 /// Callback for media player loads resources.

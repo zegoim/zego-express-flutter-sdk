@@ -2903,6 +2903,49 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    @SuppressWarnings("unused")
+    public static void sendTransparentMessage(MethodCall call, final Result result) {
+
+        ArrayList<ZegoUser> toUserList = new ArrayList<>();
+
+        ArrayList<HashMap<String, Object>> toUserMapList = call.argument("recvUserList");
+        if (toUserMapList != null) {
+            result.error("sendCustomCommand_Null_toUserList".toUpperCase(), "[sendCustomCommand] Null toUserList", null);
+            return;
+        }
+
+        for (HashMap<String, Object> userMap: toUserMapList) {
+            String userID = (String) userMap.get("userID");
+            String userName = (String) userMap.get("userName");
+            ZegoUser user = new ZegoUser(userID, userName);
+            toUserList.add(user);
+        }
+
+        String roomID = call.argument("roomID");
+        int sendMode = ZegoUtils.intValue((Number) call.argument("sendMode"));
+        int sendType = ZegoUtils.intValue((Number) call.argument("sendType"));
+        int timeOut = ZegoUtils.intValue((Number) call.argument("timeOut"));
+        
+        byte[] content = call.argument("content");
+
+        ZegoRoomSendTransparentMessage message = new ZegoRoomSendTransparentMessage();
+        message.sendMode = ZegoRoomTransparentMessageMode.getZegoRoomTransparentMessageMode(sendMode);
+        message.sendType = ZegoRoomTransparentMessageType.getZegoRoomTransparentMessageType(sendType);
+        message.timeOut = timeOut;
+        message.recvUserList = toUserList;
+        message.content = content;
+
+
+        ZegoExpressEngine.getEngine().sendTransparentMessage(roomID, message,new IZegoRoomSendTransparentMessageCallback() {
+            @Override
+            public void onRoomSendTransparentMessageResult(int errorCode); {
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("errorCode", errorCode);
+                result.success(resultMap);
+            }
+        });
+    }
+
     /* CustomVideoCapture */
     @SuppressWarnings("unused")
     public static void enableCustomVideoRender(MethodCall call, Result result) {

@@ -1173,6 +1173,28 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
+        
+        @Override
+        public void onRecvRoomTransparentMessage(String roomID, ZegoRoomRecvTransparentMessage message)
+        {
+            super.onRecvRoomTransparentMessage(roomID, message);
+            ZegoLog.log("[onRecvRoomTransparentMessage] roomID: %s, sendUserID: %s, sendUserName: %s", roomID, message.sendUser.userID, message.sendUser.userName);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> userMap = new HashMap<>();
+            userMap.put("userID", message.sendUser.userID);
+            userMap.put("userName", message.sendUser.userName);
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRecvRoomTransparentMessage");
+            map.put("roomID", roomID);
+            map.put("sendUser", userMap);
+
+            map.put("content", message.content);
+
+            sink.success(map);
+        }
 
 
         /* Utilities */

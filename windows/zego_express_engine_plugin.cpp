@@ -133,6 +133,7 @@ static const std::map<
         EngineMethodHandler(sendBroadcastMessage),
         EngineMethodHandler(sendBarrageMessage),
         EngineMethodHandler(sendCustomCommand),
+        EngineMethodHandler(sendTransparentMessage),
         EngineMethodHandler(enableCustomVideoCapture),
         EngineMethodHandler(enableCustomVideoProcessing),
         EngineMethodHandler(enableCustomVideoRender),

@@ -1134,6 +1134,26 @@
     }
 }
 
+- (void)onRecvRoomTransparentMessage:(ZegoRoomRecvTransparentMessage *)message roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRecvRoomTransparentMessage] sendUserID: %@, sendUserName: %@, roomID: %@", message.sendUser.userID, message.sendUser.userName, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRecvRoomTransparentMessage",
+            @"message": @{
+                @"sendUser": @{
+                    @"userID": message.sendUser.userID,
+                    @"userName": message.sendUser.userName
+                },
+                @"content": message.content
+            },
+            @"roomID": roomID
+        });
+    }
+}
+
 #pragma mark Utilities Callback
 
 - (void)onPerformanceStatusUpdate:(ZegoPerformanceStatus *)status {

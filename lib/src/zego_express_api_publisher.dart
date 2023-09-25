@@ -731,8 +731,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 3.4.0
   /// Description: Enable the alpha channel support of the video encoder on the stream publishing end, and encode the split video body for streaming.
   /// Use cases: Scenes where the object in the video needs to be separated from the background, such as mixed reality, multi-person interaction scenes, and so on.
-  /// When to call: After creating the engine, before calling the [startPublishingStream] function publishing stream.
-  /// Caution: This feature requires special braiding, please contact ZEGO Technical Support
+  /// When to call: After creating the engine.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Enable video encoder alpha channel support, off by default.

@@ -2964,6 +2964,41 @@
     }];
 }
 
+- (void)sendTransparentMessage:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *roomID = call.arguments[@"roomID"];
+    int senMode = [ZegoUtils intValue:call.arguments[@"sendMode"]];
+    int senType = [ZegoUtils intValue:call.arguments[@"sendType"]];
+    int timeOut = [ZegoUtils intValue:call.arguments[@"timeOut"]];
+
+    FlutterStandardTypedData *content = call.arguments[@"content"];
+
+    NSArray<NSDictionary *> *userListMap = call.arguments[@"recvUserList"];
+
+    NSMutableArray<ZegoUser *> *userListObject = nil;
+    if (userListMap && userListMap.count > 0) {
+        userListObject = [[NSMutableArray alloc] init];
+        for(NSDictionary *userMap in userListMap) {
+            ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
+            [userListObject addObject:userObject];
+        }
+    }
+
+    ZegoRoomSendTransparentMessage *message = [[ZegoRoomSendTransparentMessage alloc] init];
+    message.timeOut = timeOut;
+    message.senMode = (ZegoRoomTransparentMessageMode)senMode;
+    message.senType = (ZegoRoomTransparentMessageType)senType;
+    message.recvUserList = userListObject;
+    message.content = content.data();
+
+
+    [[ZegoExpressEngine sharedEngine] sendTransparentMessage:message roomID:roomID callback:^(int errorCode) {
+        result(@{
+            @"errorCode": @(errorCode)
+        });
+    }];
+}
+
 
 #pragma mark - CustomVideoCapture
 
