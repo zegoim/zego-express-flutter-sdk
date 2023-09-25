@@ -747,7 +747,8 @@ class ZegoExpressImpl {
                   config.videoCodecID?.index ?? ZegoVideoCodecID.Default.index,
               'sourceResourceType': config.sourceResourceType?.index ??
                   ZegoResourceType.RTC.index,
-              'codecTemplateID': config.codecTemplateID ?? 0
+              'codecTemplateID': config.codecTemplateID ?? 0,
+              'resourceSwitchMode': config.resourceSwitchMode?.index ?? ZegoStreamResourceSwitchMode.Default.index,
             }
           : {}
     });
