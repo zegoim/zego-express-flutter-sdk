@@ -76,6 +76,7 @@ import im.zego.zegoexpress.entity.ZegoSoundLevelInfo;
 import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
+import im.zego.zegoexpress.entity.ZegoRoomRecvTransparentMessage;
 import io.flutter.plugin.common.EventChannel;
 import android.os.Handler;
 import android.os.Looper;

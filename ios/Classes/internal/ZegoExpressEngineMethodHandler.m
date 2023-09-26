@@ -2980,6 +2980,9 @@
     if (userListMap && userListMap.count > 0) {
         userListObject = [[NSMutableArray alloc] init];
         for(NSDictionary *userMap in userListMap) {
+            NSString *uid =  userMap[@"userID"];
+            if(uid.length == 0)
+                continue;
             ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
             [userListObject addObject:userObject];
         }
@@ -2987,10 +2990,10 @@
 
     ZegoRoomSendTransparentMessage *message = [[ZegoRoomSendTransparentMessage alloc] init];
     message.timeOut = timeOut;
-    message.senMode = (ZegoRoomTransparentMessageMode)senMode;
-    message.senType = (ZegoRoomTransparentMessageType)senType;
+    message.sendMode = (ZegoRoomTransparentMessageMode)senMode;
+    message.sendType = (ZegoRoomTransparentMessageType)senType;
     message.recvUserList = userListObject;
-    message.content = content.data();
+    message.content = content.data;
 
 
     [[ZegoExpressEngine sharedEngine] sendTransparentMessage:message roomID:roomID callback:^(int errorCode) {

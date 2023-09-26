@@ -74,6 +74,7 @@ import im.zego.zegoexpress.callback.IZegoRoomLoginCallback;
 import im.zego.zegoexpress.callback.IZegoRoomLogoutCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataSentCallback;
+import im.zego.zegoexpress.callback.IZegoRoomSendTransparentMessageCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
 import im.zego.zegoexpress.constants.ZegoANSMode;
 import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
@@ -140,6 +141,8 @@ import im.zego.zegoexpress.constants.ZegoMultimediaLoadType;
 import im.zego.zegoexpress.constants.ZegoAlphaLayoutType;
 import im.zego.zegoexpress.constants.ZegoRangeAudioSpeakMode;
 import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
+import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageMode;
+import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -200,6 +203,8 @@ import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerResource;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
+import im.zego.zegoexpress.entity.ZegoRoomSendTransparentMessage;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -2911,16 +2916,18 @@ public class ZegoExpressEngineMethodHandler {
         ArrayList<ZegoUser> toUserList = new ArrayList<>();
 
         ArrayList<HashMap<String, Object>> toUserMapList = call.argument("recvUserList");
-        if (toUserMapList != null) {
-            result.error("sendCustomCommand_Null_toUserList".toUpperCase(), "[sendCustomCommand] Null toUserList", null);
-            return;
-        }
+        if (toUserMapList != null)
+        {
+            for (HashMap<String, Object> userMap: toUserMapList) {
+                String userID = (String) userMap.get("userID");
 
-        for (HashMap<String, Object> userMap: toUserMapList) {
-            String userID = (String) userMap.get("userID");
-            String userName = (String) userMap.get("userName");
-            ZegoUser user = new ZegoUser(userID, userName);
-            toUserList.add(user);
+                if(userID.isEmpty())
+                    continue;
+
+                String userName = (String) userMap.get("userName");
+                ZegoUser user = new ZegoUser(userID, userName);
+                toUserList.add(user);
+            }
         }
 
         String roomID = call.argument("roomID");
@@ -2937,10 +2944,9 @@ public class ZegoExpressEngineMethodHandler {
         message.recvUserList = toUserList;
         message.content = content;
 
-
         ZegoExpressEngine.getEngine().sendTransparentMessage(roomID, message,new IZegoRoomSendTransparentMessageCallback() {
             @Override
-            public void onRoomSendTransparentMessageResult(int errorCode); {
+            public void onRoomSendTransparentMessageResult(int errorCode){
                 HashMap<String, Object> resultMap = new HashMap<>();
                 resultMap.put("errorCode", errorCode);
                 result.success(resultMap);
