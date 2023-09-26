@@ -296,20 +296,21 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .setStreamAlignmentProperty(alignment, channel);
   }
 
-  /// Enables or disables traffic control.
+  /// Enables or disables the traffic control for the specified publish channel.
   ///
   /// Available since: 1.5.0
   /// Description: Enabling traffic control allows the SDK to adjust the audio and video streaming bitrate according to the current upstream network environment conditions, or according to the counterpart's downstream network environment conditions in a one-to-one interactive scenario, to ensure smooth results. At the same time, you can further specify the attributes of traffic control to adjust the corresponding control strategy.
   /// Default value: Enable.
   /// When to call: After the engine is created [createEngine], Called before [startPublishingStream] can take effect.
   /// Restrictions: Only support RTC publish.
-  /// Caution: Act on the main publish channel ZegoPublishChannel.Main.
   ///
   /// - [enable] Whether to enable traffic control. The default is ture.
-  /// - [property] Adjustable property of traffic control, bitmask OR format. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
-  Future<void> enableTrafficControl(bool enable, int property) async {
+  /// - [property] Adjustable property of traffic control, bitmask format. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
+  /// - [channel] Publish stream channel.
+  Future<void> enableTrafficControl(bool enable, int property,
+      {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
-        .enableTrafficControl(enable, property);
+        .enableTrafficControl(enable, property, channel: channel);
   }
 
   /// Sets the minimum video bitrate for traffic control for the specified publish channel.
@@ -731,8 +732,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 3.4.0
   /// Description: Enable the alpha channel support of the video encoder on the stream publishing end, and encode the split video body for streaming.
   /// Use cases: Scenes where the object in the video needs to be separated from the background, such as mixed reality, multi-person interaction scenes, and so on.
-  /// When to call: After creating the engine, before calling the [startPublishingStream] function publishing stream.
-  /// Caution: This feature requires special braiding, please contact ZEGO Technical Support
+  /// When to call: After creating the engine.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Enable video encoder alpha channel support, off by default.

@@ -123,7 +123,10 @@ enum ZegoFeatureType {
   RangeScene,
 
   /// Screen capture feature. (3.1.0 and above support)
-  ScreenCapture
+  ScreenCapture,
+
+  /// AI voice changer feature. (3.8.0 and above support)
+  AIVoiceChanger
 }
 
 /// Language.
