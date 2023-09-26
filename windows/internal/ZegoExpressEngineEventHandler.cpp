@@ -1530,19 +1530,22 @@ void ZegoExpressEngineEventHandler::onRecvRoomTransparentMessage(const std::stri
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onRecvRoomTransparentMessage");
-
         retMap[FTValue("roomID")] = FTValue(roomID);
-        FTMap userMap;
+
+        FTMap userMap, messageMap;
+
         userMap[FTValue("userID")] = FTValue(message.sendUser.userID);
         userMap[FTValue("userName")] = FTValue(message.sendUser.userName);
-        retMap[FTValue("sendUser")] = FTValue(userMap);
+        messageMap[FTValue("sendUser")] = FTValue(userMap);
 
         unsigned char* data =  (unsigned char* )message.content.data();
         unsigned int data_length = (unsigned int)message.content.length();
         std::vector<uint8_t> dataArray(data, data + data_length);
         
-        retMap[FTValue("content")] = FTValue(dataArray);
+        messageMap[FTValue("content")] = FTValue(dataArray);
 
+        retMap[FTValue("message")] = FTValue(messageMap);
+        
         eventSink_->Success(retMap);
     }
 }

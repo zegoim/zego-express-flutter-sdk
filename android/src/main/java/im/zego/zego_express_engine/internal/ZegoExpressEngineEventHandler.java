@@ -1183,16 +1183,23 @@ public class ZegoExpressEngineEventHandler {
 
             if (guardSink()) { return; }
 
-            HashMap<String, Object> userMap = new HashMap<>();
-            userMap.put("userID", message.sendUser.userID);
-            userMap.put("userName", message.sendUser.userName);
+
 
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onRecvRoomTransparentMessage");
             map.put("roomID", roomID);
-            map.put("sendUser", userMap);
 
-            map.put("content", message.content);
+            HashMap<String, Object> messageMap = new HashMap<>();
+
+            HashMap<String, Object> userMap = new HashMap<>();
+            userMap.put("userID", message.sendUser.userID);
+            userMap.put("userName", message.sendUser.userName);
+
+            messageMap.put("sendUser", userMap);
+            messageMap.put("content", message.content);
+
+            map.put("message", messageMap);
+
 
             sink.success(map);
         }

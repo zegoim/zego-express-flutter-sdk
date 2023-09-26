@@ -2705,8 +2705,9 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onRecvRoomTransparentMessage == null) return;
 
         ZegoRoomRecvTransparentMessage message = ZegoRoomRecvTransparentMessage(
-            ZegoUser(map['sendUser']['userID'], map['sendUser']['userName']),
-            map['content']);
+            ZegoUser(map['message']['sendUser']['userID'],
+                map['message']['sendUser']['userName']),
+            map['message']['content']);
 
         ZegoExpressEngine.onRecvRoomTransparentMessage!(map['roomID'], message);
         break;
