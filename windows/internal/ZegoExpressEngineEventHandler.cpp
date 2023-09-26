@@ -1535,6 +1535,7 @@ void ZegoExpressEngineEventHandler::onRecvRoomTransparentMessage(const std::stri
         FTMap userMap;
         userMap[FTValue("userID")] = FTValue(message.sendUser.userID);
         userMap[FTValue("userName")] = FTValue(message.sendUser.userName);
+        retMap[FTValue("sendUser")] = FTValue(userMap);
 
         unsigned char* data =  (unsigned char* )message.content.data();
         unsigned int data_length = (unsigned int)message.content.length();
