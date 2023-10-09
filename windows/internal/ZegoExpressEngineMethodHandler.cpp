@@ -3216,8 +3216,10 @@ void ZegoExpressEngineMethodHandler::enableTrafficControl(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto enable = std::get<bool>(argument[FTValue("enable")]);
     auto property = std::get<int32_t>(argument[FTValue("property")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->enableTrafficControl(enable, property);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableTrafficControl(enable, property, 
+        (EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 

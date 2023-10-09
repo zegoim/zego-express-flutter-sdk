@@ -874,8 +874,9 @@
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     int property = [ZegoUtils intValue:call.arguments[@"property"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] enableTrafficControl:enable property:(ZegoTrafficControlProperty)property];
+    [[ZegoExpressEngine sharedEngine] enableTrafficControl:enable property:(ZegoTrafficControlProperty)property channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }

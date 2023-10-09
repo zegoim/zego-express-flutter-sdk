@@ -1024,8 +1024,9 @@ public class ZegoExpressEngineMethodHandler {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         int property = ZegoUtils.intValue((Number) call.argument("property"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().enableTrafficControl(enable, property);
+        ZegoExpressEngine.getEngine().enableTrafficControl(enable, property, channel);
 
         result.success(null);
     }
