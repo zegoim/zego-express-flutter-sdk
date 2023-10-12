@@ -4902,6 +4902,45 @@ void ZegoExpressEngineMethodHandler::getNetworkTimeInfo(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::startDumpData(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoDumpDataConfig config;
+        config.dataType = (EXPRESS::ZegoDumpDataType)std::get<int>(configMap[FTValue("dataType")]);
+
+        EXPRESS::ZegoExpressSDK::getEngine()->startDumpData(config);
+
+        result->Success();
+    }
+
+void ZegoExpressEngineMethodHandler::stopDumpData(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+        
+        EXPRESS::ZegoExpressSDK::getEngine()->stopDumpData();
+
+        result->Success();
+    }
+
+void ZegoExpressEngineMethodHandler::uploadDumpData(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+        EXPRESS::ZegoExpressSDK::getEngine()->uploadDumpData();
+
+        result->Success();
+    }
+
+void ZegoExpressEngineMethodHandler::removeDumpData(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+        EXPRESS::ZegoExpressSDK::getEngine()->removeDumpData();
+
+        result->Success();
+    }
+
 void ZegoExpressEngineMethodHandler::createRangeAudio(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

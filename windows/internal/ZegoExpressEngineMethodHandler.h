@@ -293,6 +293,16 @@ class ZegoExpressEngineMethodHandler {
     void getNetworkTimeInfo(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    void startDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void uploadDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void removeDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        
+
     void
     mutePublishStreamAudio(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

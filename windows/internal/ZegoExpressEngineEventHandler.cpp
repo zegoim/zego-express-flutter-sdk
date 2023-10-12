@@ -1070,6 +1070,54 @@ void ZegoExpressEngineEventHandler::onNetworkTimeSynchronized() {
     }
 }
 
+void ZegoExpressEngineEventHandler::onRequestDumpData() {
+    ZF::logInfo("[onRequestDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRequestDumpData");
+        
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onStartDumpData(int errorCode) {
+    ZF::logInfo("[onStartDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onStartDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onStopDumpData(int errorCode, const std::string& dumpDir) {
+     ZF::logInfo("[onStopDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onStopDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("dumpDir")] = FTValue(dumpDir);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUploadDumpData(int errorCode) {
+     ZF::logInfo("[onUploadDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onUploadDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onRoomTokenWillExpire(const std::string &roomID,
                                                           int remainTimeInSecond) {
 
