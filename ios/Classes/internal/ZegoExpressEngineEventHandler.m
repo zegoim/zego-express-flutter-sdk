@@ -1345,6 +1345,20 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer videoSizeChanged:(CGSize)size {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerVideoSizeChanged] idx: %d, width: %d, height: %d", mediaPlayer.index.intValue, (int)size.width, (int)size.height);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerVideoSizeChanged",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"width": @((int)size.width),
+            @"height": @((int)size.height),
+        });
+    }
+}
 
 #pragma mark - ZegoAudioEffectPlayerEventHandler
 

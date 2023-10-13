@@ -851,6 +851,21 @@ void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZeg
     }
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) {
+    ZF::logInfo("[onMediaPlayerVideoSizeChanged] index: %d, width: %d, height: %d", mediaPlayer->getIndex(), width, height);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerVideoSizeChanged");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("width")] = FTValue(width);
+        retMap[FTValue("height")] = FTValue(height);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 
 // MediaDataPublisher
 void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
