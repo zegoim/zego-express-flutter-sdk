@@ -317,6 +317,7 @@ static const std::map<
         EngineMethodHandler(destroyCopyrightedMusic),
         EngineMethodHandler(copyrightedMusicClearCache),
         EngineMethodHandler(copyrightedMusicDownload),
+        EngineMethodHandler(copyrightedMusicCancelDownload),
         EngineMethodHandler(copyrightedMusicGetAverageScore),
         EngineMethodHandler(copyrightedMusicGetCacheSize),
         EngineMethodHandler(copyrightedMusicGetCurrentPitch),

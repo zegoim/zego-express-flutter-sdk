@@ -883,6 +883,24 @@ class ZegoErrorCode {
   /// Description: Login to the room causes the network test to stop. <br>Cause: Already logged in to the room. <br>Solutions: Since the network test will take up bandwidth, please do it before logging in to the room.
   static const int UtilitiesStopByLoginRoom = 1015032;
 
+  /// Description: Fail to dump data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesStartDumpAudioDataFailed = 1015033;
+
+  /// Description: Already start dumping data. <br>Cause:  Call [startDumpData] repeatedly. <br>Solutions: Stop or cancel the previous dump data task.
+  static const int UtilitiesAlreadyStartDumpDataError = 1015034;
+
+  /// Description: No dump data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesNoDumpDataError = 1015035;
+
+  /// Description: Failed to create dump data folder. <br>Cause: No read and write permission or the disk is full. <br>Solutions: Check to see if there is still space on the disk.
+  static const int UtilitiesCreateDumpDataFolderError = 1015036;
+
+  /// Description: Internal error of upload module. <br>Cause: Error occurred in upload module. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesUploadModuleInnerError = 1015037;
+
+  /// Description: The dump data exceeding the maximum upload limit error. <br>Cause: The dump data is too large to exceed the limit of the upload module. <br>Solutions: Please contact ZEGO technical support and report to ZEGO manually.
+  static const int UtilitiesDumpDataExceedMaxSizeError = 1015038;
+
   /// Description: The function call failed. <br>Cause: No range auido instance has been created. <br>Solutions: Create a range audio instance.
   static const int RangeAudioNoInstance = 1016000;
 
@@ -945,6 +963,9 @@ class ZegoErrorCode {
 
   /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid = 1017015;
+
+  /// Description: Download canceled. <br>Cause: Call [cancelDownload] to actively cancel the download.
+  static const int CopyrightedMusicDownloadCanceled = 1017016;
 
   /// Description: The resource_id unauthorized. <br>Cause: The resource ID is not obtained through [requestResource] [getSharedResource] function. <br>Solutions: Please call the [requestResource] [getSharedResource] function to get valid resource ID.
   static const int CopyrightedMusicResourceIdUnauthorized = 1017018;
@@ -1134,4 +1155,13 @@ class ZegoErrorCode {
 
   /// Description: Failed to create screen capture source. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing screen capture instance or destroy the previous instance.
   static const int ScreenCaptureExceedMaxCount = 1020004;
+
+  /// Description: The function call failed. <br>Cause: No AI voice changer instance has been created. <br>Solutions: Create an AI voice changer instance.
+  static const int AIVoiceChangerNoInstance = 1021000;
+
+  /// Description: Failed to create AI voice changer. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing AI voice changer instance or destroy the previous instance.
+  static const int AIVoiceChangerExceedMaxCount = 1021001;
+
+  /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int AIVoiceChangerInnerError = 1021002;
 }

@@ -123,7 +123,10 @@ enum ZegoFeatureType {
   RangeScene,
 
   /// Screen capture feature. (3.1.0 and above support)
-  ScreenCapture
+  ScreenCapture,
+
+  /// AI voice changer feature. (3.8.0 and above support)
+  AIVoiceChanger
 }
 
 /// Language.
@@ -1813,7 +1816,10 @@ enum ZegoBackgroundProcessType {
   Blur,
 
   /// The background is the specified image.
-  Image
+  Image,
+
+  /// The background is the specified video.
+  Video
 }
 
 /// Background blur level.
@@ -1835,6 +1841,12 @@ enum ZegoMediaDataPublisherMode {
 
   /// Only publish video.
   OnlyVideo
+}
+
+/// Dump data type.
+enum ZegoDumpDataType {
+  /// Audio.
+  Audio
 }
 
 /// Log config.
@@ -2209,7 +2221,7 @@ class ZegoReverbEchoParam {
 /// Note that the userID must be unique under the same appID, otherwise, there will be mutual kicks when logging in to the room.
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
-  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK.
+  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'. Do not use '%' if you need to communicate with the Web SDK.
   String userID;
 
   /// User Name, a utf8 string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
@@ -3699,17 +3711,21 @@ class ZegoBackgroundConfig {
   /// Background image URL.
   String imageURL;
 
+  /// Background video URL.
+  String videoURL;
+
   /// Background blur level.
   ZegoBackgroundBlurLevel blurLevel;
 
-  ZegoBackgroundConfig(
-      this.processType, this.color, this.imageURL, this.blurLevel);
+  ZegoBackgroundConfig(this.processType, this.color, this.imageURL,
+      this.videoURL, this.blurLevel);
 
   /// Constructs a background image configuration object by default.
   ZegoBackgroundConfig.defaultConfig()
       : processType = ZegoBackgroundProcessType.Transparent,
         color = 0,
         imageURL = '',
+        videoURL = '',
         blurLevel = ZegoBackgroundBlurLevel.Medium;
 }
 
@@ -3797,6 +3813,14 @@ class ZegoVocalRangeParam {
   ZegoVocalRangeParam.defaultParam()
       : min = 0,
         max = 0;
+}
+
+/// Dump data config.
+class ZegoDumpDataConfig {
+  /// Data type.
+  ZegoDumpDataType dataType;
+
+  ZegoDumpDataConfig(this.dataType);
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -4777,16 +4801,27 @@ abstract class ZegoCopyrightedMusic {
       ZegoCopyrightedMusicGetSharedConfig config,
       ZegoCopyrightedMusicResourceType type);
 
-  /// Download song or accompaniment.
+  /// Download music resource.
   ///
   /// Available since: 2.13.0
-  /// Description: Download a song or accompaniment. It can only be played after downloading successfully.
-  /// Use case: Get copyrighted accompaniment for local playback and sharing.
+  /// Description: Download music resource. It can only be played after downloading successfully.
+  /// Use case: After obtaining the music resource authorization, use this interface to download the corresponding resources.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  /// Caution: Loading songs or accompaniment resources is affected by the network.
+  /// Caution: Downloading copyrighted music resources is affected by the Internet.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<ZegoCopyrightedMusicDownloadResult> download(String resourceID);
+
+  /// Cancel download of music resource.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Cancel download of music resource.
+  /// Use case: After starting to download music resources, use this interface to cancel the corresponding download task.
+  /// When to call: After starting the download [download].
+  /// Caution: When a valid resourceID is passed in, only unfinished download tasks will be cancelled. When empty is passed in, all unfinished download tasks will be canceled.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<void> cancelDownload(String resourceID);
 
   /// Query the resource's cache is existed or not.
   ///

@@ -4735,6 +4735,17 @@
     }
 }
 
+- (void)copyrightedMusicCancelDownload:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSString *resourceID = call.arguments[@"resourceID"];
+        [self.copyrightedMusicInstance cancelDownload:resourceID];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicCancelDownload` but can't find specific instance" details:nil]);
+    }
+}
+
 - (void)copyrightedMusicGetAverageScore:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.copyrightedMusicInstance) {

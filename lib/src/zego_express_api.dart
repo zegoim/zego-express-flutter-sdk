@@ -619,7 +619,7 @@ class ZegoExpressEngine {
   /// Callback for current stream playing quality.
   ///
   /// Available since: 1.1.0
-  /// Description: After calling the [startPlayingStream] successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, and the health of the played audio and video streams can be monitored in real time.
+  /// Description: After calling the [startPlayingStream] successfully, the callback will be received every 3 seconds default(If you need to change the time, please contact the instant technical support to configure). Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, and the health of the played audio and video streams can be monitored in real time.
   /// Use cases: You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback function, in order to show the downlink network status on the device UI in real time.
   /// Caution: If you does not know how to use the various parameters of the callback function, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
   /// Related callbacks: After calling the [startPublishingStream] successfully, a callback [onPublisherQualityUpdate] will be received every 3 seconds. You can monitor the health of publish streams in real time based on quality data such as frame rate, code rate, RTT, packet loss rate, etc.
@@ -1344,6 +1344,37 @@ class ZegoExpressEngine {
   /// Available since: 2.12.0
   /// This callback is triggered when internal network time synchronization completes after a developer calls [createEngine].
   static void Function()? onNetworkTimeSynchronized;
+
+  /// Request to dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
+  static void Function()? onRequestDumpData;
+
+  /// Callback when starting to dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: This callback is triggered when [startDumpData] is called.
+  ///
+  /// - [errorCode] Error code.
+  static void Function(int errorCode)? onStartDumpData;
+
+  /// Callback when stopping to dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: This callback is triggered when [stopDumpData] is called.
+  ///
+  /// - [errorCode] Error code.
+  /// - [dumpDir] Dump data dir.
+  static void Function(int errorCode, String dumpDir)? onStopDumpData;
+
+  /// Callback after uploading the dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: When [uploadDumpData] is called, this callback will be triggered after SDK executes the upload task.
+  ///
+  /// - [errorCode] Error code.
+  static void Function(int errorCode)? onUploadDumpData;
 
   /// Custom audio processing local captured PCM audio frame callback.
   ///

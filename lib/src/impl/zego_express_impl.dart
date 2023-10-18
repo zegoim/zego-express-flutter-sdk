@@ -3889,6 +3889,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<void> cancelDownload(String resourceID) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicCancelDownload', {'resourceID': resourceID});
+  }
+
+  @override
   Future<int> getAverageScore(String resourceID) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'copyrightedMusicGetAverageScore', {'resourceID': resourceID});
