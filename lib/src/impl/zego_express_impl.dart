@@ -1915,6 +1915,22 @@ class ZegoExpressImpl {
     return ZegoNetworkTimeInfo(map['timestamp'], map['maxDeviation']);
   }
 
+  Future<void> startDumpData(ZegoDumpDataConfig config) async {
+    return await _channel.invokeMethod('startDumpData', {'config': config});
+  }
+
+  Future<void> stopDumpData() async {
+    return await _channel.invokeMethod('stopDumpData');
+  }
+
+  Future<void> uploadDumpData() async {
+    return await _channel.invokeMethod('uploadDumpData');
+  }
+
+  Future<void> removeDumpData() async {
+    return await _channel.invokeMethod('removeDumpData');
+  }
+
   static ZegoCopyrightedMusic? copyrightedMusicImpl;
   Future<ZegoCopyrightedMusic?> createCopyrightedMusic() async {
     int errorCode = await _channel.invokeMethod('createCopyrightedMusic');
@@ -2050,6 +2066,30 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onNetworkTimeSynchronized == null) return;
 
         ZegoExpressEngine.onNetworkTimeSynchronized!();
+        break;
+
+      case 'onRequestDumpData':
+        if (ZegoExpressEngine.onRequestDumpData == null) return;
+
+        ZegoExpressEngine.onRequestDumpData!();
+        break;
+
+      case 'onStartDumpData':
+        if (ZegoExpressEngine.onStartDumpData == null) return;
+
+        ZegoExpressEngine.onStartDumpData!(map['errorCode']);
+        break;
+
+      case 'onStopDumpData':
+        if (ZegoExpressEngine.onStopDumpData == null) return;
+
+        ZegoExpressEngine.onStopDumpData!(map['errorCode'], map['dumpDir']);
+        break;
+
+      case 'onUploadDumpData':
+        if (ZegoExpressEngine.onUploadDumpData == null) return;
+
+        ZegoExpressEngine.onUploadDumpData!(map['errorCode']);
         break;
 
       /* Room */

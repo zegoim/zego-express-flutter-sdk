@@ -1250,6 +1250,62 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onRequestDumpData() {
+            super.onRequestDumpData();
+            ZegoLog.log("[onRequestDumpData]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRequestDumpData");
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onStartDumpData(int errorCode) {
+            super.onStartDumpData(errorCode);
+            ZegoLog.log("[onStartDumpData]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onStartDumpData");
+            map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onStopDumpData(int errorCode, String dumpDir) {
+            super.onStopDumpData(errorCode);
+            ZegoLog.log("[onStopDumpData]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onStopDumpData");
+            map.put("errorCode", errorCode);
+            map.put("dumpDir", dumpDir);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onUploadDumpData(int errorCode) {
+            super.onUploadDumpData(errorCode);
+            ZegoLog.log("[onUploadDumpData]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onUploadDumpData");
+            map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onRecvExperimentalAPI(String content) {
             super.onRecvExperimentalAPI(content);
             ZegoLog.log("[onRecvExperimentalAPI] content: %s", content);

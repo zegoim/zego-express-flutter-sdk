@@ -4686,6 +4686,31 @@
     });
 }
 
+- (void)startDumpData:(ZegoDumpDataConfig *)config {
+    ZegoDumpDataConfig *config = [[ZegoDumpDataConfig alloc] init];
+    [[ZegoExpressEngine sharedEngine] startDumpData:config];
+    
+    result(nil);
+}
+
+- (void)stopDumpData {
+    [[ZegoExpressEngine sharedEngine] stopDumpData];
+
+    result(nil);
+}
+
+- (void)uploadDumpData {
+    [[ZegoExpressEngine sharedEngine] uploadDumpData];
+
+    result(nil);
+}
+
+- (void)removeDumpData {
+    [[ZegoExpressEngine sharedEngine] removeDumpData];
+
+    result(nil);
+}
+
 #pragma mark - Copyrighted Music
 - (void)createCopyrightedMusic:(FlutterMethodCall *)call result:(FlutterResult)result {
 

@@ -4978,6 +4978,40 @@ public class ZegoExpressEngineMethodHandler {
         result.success(resultMap);
     }
 
+    @SuppressWarnings("unused")
+    public static void startDumpData(MethodCall call, Result result) {
+
+        ZegoDumpDataConfig config = new ZegoDumpDataConfig();
+        config.dataType = ZegoDumpDataType.getZegoDumpDataType(0);
+        ZegoExpressEngine.getEngine().startDumpData(config);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopDumpData(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopDumpData();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void uploadDumpData(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().uploadDumpData();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void removeDumpData(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().removeDumpData();
+
+        result.success(null);
+    }
+
     /* Copyrighted Music */
     @SuppressWarnings("unused")
     public static void createCopyrightedMusic(MethodCall call, Result result) {

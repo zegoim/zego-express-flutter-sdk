@@ -119,6 +119,14 @@ protected:
 
     void onNetworkTimeSynchronized() override;
 
+    void onRequestDumpData() override;
+
+    void onStartDumpData(int errorCode) override;
+
+    void onStopDumpData(int errorCode, const std::string& dumpDir) override;
+    
+    void onUploadDumpData(int errorCode) override;
+
     void onRoomTokenWillExpire(const std::string & roomID, int remainTimeInSecond) override;
 
     void onPublisherCapturedVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;

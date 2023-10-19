@@ -95,6 +95,58 @@
     }
 }
 
+- (void)onRequestDumpData {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestDumpData"
+        });
+    }
+}
+
+- (void)onStartDumpData:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onStartDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onStartDumpData",
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)onStopDumpData:(int)errorCode dumpDir:(NSString *)dumpDir {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onStopDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onStopDumpData",
+            @"errorCode": @(errorCode),
+            @"dumpDir": @(dumpDir)
+        });
+    }
+}
+
+- (void)onUploadDumpData:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onUploadDumpData",
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
 #pragma mark Room Callback
 
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
