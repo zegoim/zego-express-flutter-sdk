@@ -23,6 +23,7 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoRangeAudioEventHandler
     , public EXPRESS::IZegoCustomAudioProcessHandler
     , public EXPRESS::IZegoScreenCaptureSourceEventHandler
+    , public EXPRESS::IZegoAIVoiceChangerEventHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -262,6 +263,16 @@ protected:
     void onWindowStateChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureWindowState windowState, EXPRESS::ZegoRect windowRect) override;
 
     void onRectChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoRect captureRect) override;
+
+// AIVoiceChanger
+ protected:
+    void onInit(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) override;
+
+    void onUpdate(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) override;
+
+    void onGetSpeakerList(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode,
+                          const std::vector<EXPRESS::ZegoAIVoiceChangerSpeakerInfo> &speakerList) override;
+
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 

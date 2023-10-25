@@ -1872,3 +1872,55 @@ void ZegoExpressEngineEventHandler::onRectChanged(EXPRESS::IZegoScreenCaptureSou
         eventSink_->Success(retMap);
     }
 }
+
+void ZegoExpressEngineEventHandler::onInit(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger,
+                                           int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerInit] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerInit");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUpdate(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger,
+                                             int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerUpdate] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerUpdate");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onGetSpeakerList(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode,
+    const std::vector<EXPRESS::ZegoAIVoiceChangerSpeakerInfo> &speakerList) {
+    ZF::logInfo("[onAIVoiceChangerGetSpeakerList] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerGetSpeakerList");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        FTArray speakerListArray;
+        for (auto &speaker : speakerList) {
+            FTMap speakerMap;
+            speakerMap[FTValue("id")] = FTValue(speaker.id);
+            speakerMap[FTValue("name")] = FTValue(speaker.name);
+            speakerListArray.emplace_back(FTValue(speakerMap));
+        }
+        retMap[FTValue("speakerList")] = FTValue(speakerListArray);
+
+        eventSink_->Success(retMap);
+    }
+}

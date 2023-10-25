@@ -970,6 +970,7 @@ void ZegoExpressEngineMethodHandler::enableVideoObjectSegmentation(
             backgroundConfig.blurLevel = (EXPRESS::ZegoBackgroundBlurLevel)std::get<int32_t>(backgroundConfigMap[FTValue("blurLevel")]);
             backgroundConfig.color = std::get<int32_t>(backgroundConfigMap[FTValue("color")]);
             backgroundConfig.imageURL = std::get<std::string>(backgroundConfigMap[FTValue("imageURL")]);
+            backgroundConfig.videoURL = std::get<std::string>(backgroundConfigMap[FTValue("videoURL")]);
 
             config.backgroundConfig = backgroundConfig;
         }
@@ -1147,6 +1148,16 @@ void ZegoExpressEngineMethodHandler::muteAllPlayStreamAudio(
     auto mute = std::get<bool>(argument[FTValue("mute")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->muteAllPlayStreamAudio(mute);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::muteAllPlayAudioStreams(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto mute = std::get<bool>(argument[FTValue("mute")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->muteAllPlayAudioStreams(mute);
 
     result->Success();
 }
@@ -2681,6 +2692,43 @@ void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentRenderingProgress(
     }
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableLiveAudioEffect(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        auto mode = std::get<int32_t>(argument[FTValue("mode")]);
+
+        mediaPlayer->enableLiveAudioEffect(enable, (EXPRESS::ZegoLiveAudioEffectMode) mode);
+
+        result->Success();
+    } else {
+        result->Error("mediaPlayerEnableLiveAudioEffect_Can_not_find_player",
+                      "Invoke `mediaPlayerEnableLiveAudioEffect` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayMediaStreamType(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto streamType = std::get<int32_t>(argument[FTValue("streamType")]);
+
+        mediaPlayer->setPlayMediaStreamType((EXPRESS::ZegoMediaStreamType)streamType);
+
+        result->Success();
+    } else {
+        result->Error("mediaPlayerSetPlayMediaStreamType_Can_not_find_player",
+                      "Invoke `mediaPlayerSetPlayMediaStreamType` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -4151,6 +4199,16 @@ void ZegoExpressEngineMethodHandler::muteAllPlayStreamVideo(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::muteAllPlayVideoStreams(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto mute = std::get<bool>(argument[FTValue("mute")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->muteAllPlayVideoStreams(mute);
+    
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::enableCheckPoc(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -4910,7 +4968,7 @@ void ZegoExpressEngineMethodHandler::startDumpData(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
         auto configMap = std::get<FTMap>(argument[FTValue("config")]);
         EXPRESS::ZegoDumpDataConfig config;
-        config.dataType = (EXPRESS::ZegoDumpDataType)std::get<int>(configMap[FTValue("dataType")]);
+        config.dataType = (EXPRESS::ZegoDumpDataType)std::get<int32_t>(configMap[FTValue("dataType")]);
 
         EXPRESS::ZegoExpressSDK::getEngine()->startDumpData(config);
 
@@ -5539,6 +5597,92 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
         resultMap[FTValue("width")] = FTValue((int32_t)rect.width);
         resultMap[FTValue("height")] = FTValue((int32_t)rect.height);
         result->Success(resultMap);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::createAIVoiceChanger(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto aiVoiceChanger = EXPRESS::ZegoExpressSDK::getEngine()->createAIVoiceChanger();
+    if (aiVoiceChanger) {
+        auto index = aiVoiceChanger->getIndex();
+
+        aiVoiceChanger->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
+        aiVoiceChangerMap_[index] = aiVoiceChanger;
+
+        result->Success(FTValue(index));
+    } else {
+        result->Success(FTValue(-1));
+    }
+}
+
+
+void ZegoExpressEngineMethodHandler::destroyAIVoiceChanger(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto aiVoiceChanger = aiVoiceChangerMap_[index];
+
+    if (aiVoiceChanger) {
+        aiVoiceChanger->setEventHandler(nullptr);
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyAIVoiceChanger(aiVoiceChanger);
+    }
+
+    aiVoiceChangerMap_.erase(index);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::aiVoiceChangerInitEngine(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto aiVoiceChanger = aiVoiceChangerMap_[index];
+
+    if (aiVoiceChanger) {
+        aiVoiceChanger->initEngine();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::aiVoiceChangerUpdate(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto aiVoiceChanger = aiVoiceChangerMap_[index];
+
+    if (aiVoiceChanger) {
+        aiVoiceChanger->update();
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::aiVoiceChangerSetSpeaker(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto aiVoiceChanger = aiVoiceChangerMap_[index];
+
+    if (aiVoiceChanger) {
+        auto speakerID = std::get<int32_t>(argument[FTValue("speakerID")]);
+        aiVoiceChanger->setSpeaker(speakerID);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::aiVoiceChangerGetSpeakerList(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto aiVoiceChanger = aiVoiceChangerMap_[index];
+
+    if (aiVoiceChanger) {
+        aiVoiceChanger->getSpeakerList();
     }
 
     result->Success();

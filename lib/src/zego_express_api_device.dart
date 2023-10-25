@@ -224,7 +224,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Enables or disables the audio capture device.
   ///
   /// Available since: 1.1.0
-  /// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, there is no audio data.
+  /// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming.
   /// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
   /// Default value: The default is `true`.
   /// When to call: After creating the engine [createEngine].

@@ -1,6 +1,7 @@
 library zego_express_engine;
 
 export 'src/zego_express_api.dart';
+export 'src/zego_express_api_ai_voice_changer.dart';
 export 'src/zego_express_api_audio_effect_player.dart';
 export 'src/zego_express_api_copyrighted_music.dart';
 export 'src/zego_express_api_custom_audio_io.dart';

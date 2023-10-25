@@ -883,6 +883,24 @@ class ZegoErrorCode {
   /// Description: Login to the room causes the network test to stop. <br>Cause: Already logged in to the room. <br>Solutions: Since the network test will take up bandwidth, please do it before logging in to the room.
   static const int UtilitiesStopByLoginRoom = 1015032;
 
+  /// Description: Fail to dump data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesStartDumpAudioDataFailed = 1015033;
+
+  /// Description: Already start dumping data. <br>Cause:  Call [startDumpData] repeatedly. <br>Solutions: Stop or cancel the previous dump data task.
+  static const int UtilitiesAlreadyStartDumpDataError = 1015034;
+
+  /// Description: No dump data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesNoDumpDataError = 1015035;
+
+  /// Description: Failed to create dump data folder. <br>Cause: No read and write permission or the disk is full. <br>Solutions: Check to see if there is still space on the disk.
+  static const int UtilitiesCreateDumpDataFolderError = 1015036;
+
+  /// Description: Internal error of upload module. <br>Cause: Error occurred in upload module. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesUploadModuleInnerError = 1015037;
+
+  /// Description: The dump data exceeding the maximum upload limit error. <br>Cause: The dump data is too large to exceed the limit of the upload module. <br>Solutions: Please contact ZEGO technical support and report to ZEGO manually.
+  static const int UtilitiesDumpDataExceedMaxSizeError = 1015038;
+
   /// Description: The function call failed. <br>Cause: No range auido instance has been created. <br>Solutions: Create a range audio instance.
   static const int RangeAudioNoInstance = 1016000;
 
