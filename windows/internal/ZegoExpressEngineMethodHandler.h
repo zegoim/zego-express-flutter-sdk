@@ -738,6 +738,9 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicDownload(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicCancelDownload(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicGetAverageScore(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
