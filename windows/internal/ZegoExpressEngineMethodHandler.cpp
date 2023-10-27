@@ -1038,6 +1038,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
             (EXPRESS::ZegoResourceType)std::get<int32_t>(configMap[FTValue("sourceResourceType")]);
         config.codecTemplateID =
             (EXPRESS::ZegoResourceType)std::get<int32_t>(configMap[FTValue("codecTemplateID")]);
+        config.resourceSwitchMode = (EXPRESS::ZegoStreamResourceSwitchMode)std::get<int32_t>(configMap[FTValue("resourceSwitchMode")]);
 
         std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
         if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("cdnConfig")])) {
@@ -3215,8 +3216,10 @@ void ZegoExpressEngineMethodHandler::enableTrafficControl(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto enable = std::get<bool>(argument[FTValue("enable")]);
     auto property = std::get<int32_t>(argument[FTValue("property")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
 
-    EXPRESS::ZegoExpressSDK::getEngine()->enableTrafficControl(enable, property);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableTrafficControl(enable, property, 
+        (EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 

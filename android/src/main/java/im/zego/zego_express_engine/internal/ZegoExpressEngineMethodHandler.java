@@ -112,6 +112,7 @@ import im.zego.zegoexpress.constants.ZegoRoomMode;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
+import im.zego.zegoexpress.constants.ZegoStreamResourceSwitchMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
@@ -1023,8 +1024,9 @@ public class ZegoExpressEngineMethodHandler {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
         int property = ZegoUtils.intValue((Number) call.argument("property"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().enableTrafficControl(enable, property);
+        ZegoExpressEngine.getEngine().enableTrafficControl(enable, property, channel);
 
         result.success(null);
     }
@@ -1433,6 +1435,7 @@ public class ZegoExpressEngineMethodHandler {
             playerConfig.roomID = (String) playerConfigMap.get("roomID");
             playerConfig.sourceResourceType = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("sourceResourceType")));
             playerConfig.codecTemplateID = ZegoUtils.intValue((Number) playerConfigMap.get("codecTemplateID"));
+            playerConfig.resourceSwitchMode = ZegoStreamResourceSwitchMode.getZegoStreamResourceSwitchMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceSwitchMode")));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
             if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {

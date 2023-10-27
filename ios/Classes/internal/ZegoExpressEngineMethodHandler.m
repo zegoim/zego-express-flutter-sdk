@@ -874,8 +874,9 @@
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
     int property = [ZegoUtils intValue:call.arguments[@"property"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] enableTrafficControl:enable property:(ZegoTrafficControlProperty)property];
+    [[ZegoExpressEngine sharedEngine] enableTrafficControl:enable property:(ZegoTrafficControlProperty)property channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
@@ -1280,6 +1281,7 @@
         playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
         playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
         playerConfig.codecTemplateID = [ZegoUtils intValue:playerConfigMap[@"codecTemplateID"]];
+        playerConfig.resourceSwitchMode = [ZegoUtils intValue:playerConfigMap[@"resourceSwitchMode"]];
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
         if (videoCodecIDIndex > 4) {
