@@ -70,6 +70,10 @@ void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState
 
         eventSink_->Success(retMap);
     }
+
+    if (state == EXPRESS::ZegoEngineState::ZEGO_ENGINE_STATE_STOP) {
+        ZegoTextureRendererController::getInstance()->resetAllRenderFirstFrame();
+    }
 }
 
 void ZegoExpressEngineEventHandler::onRoomStateUpdate(const std::string &roomID,
@@ -741,6 +745,10 @@ void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(EXPRESS::IZegoMedia
         retMap[FTValue("errorCode")] = FTValue(errorCode);
 
         eventSink_->Success(retMap);
+    }
+
+    if (state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_NO_PLAY || state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_PLAY_ENDED) {
+        ZegoTextureRendererController::getInstance()->resetMediaPlayerRenderFirstFrame(mediaPlayer);
     }
 }
 
