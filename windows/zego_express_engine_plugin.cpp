@@ -98,6 +98,7 @@ static const std::map<
         EngineMethodHandler(setPlayStreamFocusOn),
         EngineMethodHandler(mutePlayStreamVideo),
         EngineMethodHandler(muteAllPlayStreamVideo),
+        EngineMethodHandler(muteAllPlayVideoStreams),
         EngineMethodHandler(enableCheckPoc),
         EngineMethodHandler(isVideoDecoderSupported),
         EngineMethodHandler(setPlayStreamsAlignmentProperty),
@@ -179,6 +180,7 @@ static const std::map<
         EngineMethodHandler(setAllPlayStreamVolume),
         EngineMethodHandler(mutePlayStreamAudio),
         EngineMethodHandler(muteAllPlayStreamAudio),
+        EngineMethodHandler(muteAllPlayAudioStreams),
         EngineMethodHandler(enableHardwareDecoder),
         EngineMethodHandler(muteMicrophone),
         EngineMethodHandler(isMicrophoneMuted),
@@ -235,6 +237,10 @@ static const std::map<
         EngineMethodHandler(startAudioVADStableStateMonitor),
         EngineMethodHandler(stopAudioVADStableStateMonitor),
         EngineMethodHandler(getCurrentAudioDevice),
+        EngineMethodHandler(startDumpData),
+        EngineMethodHandler(stopDumpData),
+        EngineMethodHandler(uploadDumpData),
+        EngineMethodHandler(removeDumpData),
 
         EngineMethodHandler(createAudioEffectPlayer),
         EngineMethodHandler(destroyAudioEffectPlayer),
@@ -301,6 +307,8 @@ static const std::map<
         EngineMethodHandler(mediaPlayerGetMediaInfo),
         EngineMethodHandler(mediaPlayerSetHttpHeader),
         EngineMethodHandler(mediaPlayerGetCurrentRenderingProgress),
+        EngineMethodHandler(mediaPlayerEnableLiveAudioEffect),
+        EngineMethodHandler(mediaPlayerSetPlayMediaStreamType),
 
         // MediaDataPublihser
         EngineMethodHandler(createMediaDataPublisher),
@@ -384,6 +392,14 @@ static const std::map<
         EngineMethodHandler(startCaptureScreenCaptureSource),
         EngineMethodHandler(stopCaptureScreenCaptureSource),
         EngineMethodHandler(getCaptureSourceRectScreenCaptureSource),
+
+        // AIVoiceChanger
+        EngineMethodHandler(createAIVoiceChanger),
+        EngineMethodHandler(destroyAIVoiceChanger),
+        EngineMethodHandler(aiVoiceChangerGetSpeakerList),
+        EngineMethodHandler(aiVoiceChangerInitEngine),
+        EngineMethodHandler(aiVoiceChangerSetSpeaker),
+        EngineMethodHandler(aiVoiceChangerUpdate),
 
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),

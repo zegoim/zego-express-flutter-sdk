@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 #if TARGET_OS_OSX
     ,ZegoScreenCaptureSourceEventHandler
 #endif
+    ,ZegoAIVoiceChangerEventHandler
 >
 
 + (instancetype)sharedInstance;

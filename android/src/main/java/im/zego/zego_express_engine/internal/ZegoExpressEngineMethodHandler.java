@@ -36,6 +36,7 @@ import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
 import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerBlockDataManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
+import im.zego.zegoexpress.ZegoAIVoiceChanger;
 import im.zego.zegoexpress.ZegoAudioEffectPlayer;
 import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoExpressEngine;
@@ -91,15 +92,18 @@ import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceQualityType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
+import im.zego.zegoexpress.constants.ZegoDumpDataType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
 import im.zego.zegoexpress.constants.ZegoFeatureType;
+import im.zego.zegoexpress.constants.ZegoLiveAudioEffectMode;
 import im.zego.zegoexpress.constants.ZegoMediaDataPublisherMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioChannel;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerAudioTrackMode;
 import im.zego.zegoexpress.constants.ZegoMediaPlayerState;
+import im.zego.zegoexpress.constants.ZegoMediaStreamType;
 import im.zego.zegoexpress.constants.ZegoMixRenderMode;
 import im.zego.zegoexpress.constants.ZegoMixerInputContentType;
 import im.zego.zegoexpress.constants.ZegoObjectSegmentationType;
@@ -161,6 +165,7 @@ import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoRenderConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
+import im.zego.zegoexpress.entity.ZegoDumpDataConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
 import im.zego.zegoexpress.entity.ZegoFontStyle;
@@ -229,6 +234,9 @@ public class ZegoExpressEngineMethodHandler {
     private static final HashMap<Integer, ZegoMediaDataPublisher> mediaDataPublisherHashMap = new HashMap<>();
 
     private static final HashMap<Integer, ZegoRealTimeSequentialDataManager> realTimeSequentialDataManagerHashMap = new HashMap<>();
+
+
+    private static final HashMap<Integer, ZegoAIVoiceChanger> aiVoiceChangerHashMap = new HashMap<>();
 
     private static ZegoRangeAudio rangeAudioInstance = null;
 
@@ -1385,6 +1393,7 @@ public class ZegoExpressEngineMethodHandler {
         backgroundConfig.processType = ZegoBackgroundProcessType.getZegoBackgroundProcessType(ZegoUtils.intValue((Number) backgroundMap.get("processType")));
         backgroundConfig.color = (ZegoUtils.intValue((Number) backgroundMap.get("color")));
         backgroundConfig.imageURL = (String) backgroundMap.get("imageURL");
+        backgroundConfig.videoURL = (String) backgroundMap.get("videoURL");
         backgroundConfig.blurLevel = ZegoBackgroundBlurLevel.getZegoBackgroundBlurLevel(ZegoUtils.intValue((Number) backgroundMap.get("blurLevel")));
 
         config.backgroundConfig = backgroundConfig;
@@ -1684,12 +1693,32 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void muteAllPlayAudioStreams(MethodCall call, Result result) {
+
+        boolean mute = ZegoUtils.boolValue((Boolean) call.argument("mute"));
+
+        ZegoExpressEngine.getEngine().muteAllPlayAudioStreams(mute);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mutePlayStreamVideo(MethodCall call, Result result) {
 
         String streamID = call.argument("streamID");
         boolean mute = ZegoUtils.boolValue((Boolean) call.argument("mute"));
 
         ZegoExpressEngine.getEngine().mutePlayStreamVideo(streamID, mute);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void muteAllPlayVideoStreams(MethodCall call, Result result) {
+
+        boolean mute = ZegoUtils.boolValue((Boolean) call.argument("mute"));
+
+        ZegoExpressEngine.getEngine().muteAllPlayVideoStreams(mute);
 
         result.success(null);
     }
@@ -4014,16 +4043,30 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void mediaPlayerGetCurrentRenderingProgress(MethodCall call, final Result result) {
+    public static void mediaPlayerEnableLiveAudioEffect(MethodCall call, final Result result) {
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
 
         if (mediaPlayer != null) {
-            long progress = mediaPlayer.getCurrentRenderingProgress();
-            result.success(progress);
-        } else {
-            result.success(0);
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            ZegoLiveAudioEffectMode mode = ZegoLiveAudioEffectMode.getZegoLiveAudioEffectMode(ZegoUtils.intValue((Number) call.argument("mode")));
+
+            mediaPlayer.enableLiveAudioEffect(enable, mode);
         }
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerSetPlayMediaStreamType(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            ZegoMediaStreamType streamType = ZegoMediaStreamType.getZegoMediaStreamType(ZegoUtils.intValue((Number) call.argument("streamType")));
+
+            mediaPlayer.setPlayMediaStreamType(streamType);
+        }
+        result.success(null);
     }
 
     /* AudioEffectPlayer */
@@ -4978,6 +5021,40 @@ public class ZegoExpressEngineMethodHandler {
         result.success(resultMap);
     }
 
+    @SuppressWarnings("unused")
+    public static void startDumpData(MethodCall call, Result result) {
+
+        ZegoDumpDataConfig config = new ZegoDumpDataConfig();
+        config.dataType = ZegoDumpDataType.getZegoDumpDataType(ZegoUtils.intValue((Number) call.argument("dataType")));
+        ZegoExpressEngine.getEngine().startDumpData(config);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void stopDumpData(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().stopDumpData();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void uploadDumpData(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().uploadDumpData();
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void removeDumpData(MethodCall call, Result result) {
+
+        ZegoExpressEngine.getEngine().removeDumpData();
+
+        result.success(null);
+    }
+
     /* Copyrighted Music */
     @SuppressWarnings("unused")
     public static void createCopyrightedMusic(MethodCall call, Result result) {
@@ -5561,6 +5638,99 @@ public class ZegoExpressEngineMethodHandler {
             }
         }
         ZegoExpressEngine.getEngine().updateScreenCaptureConfig(config);
+
+        result.success(null);
+    }
+
+    /* AI Voice Changer */
+    /* MediaPlayer */
+
+    public static ZegoAIVoiceChanger getAIVoiceChanger(Integer index) {
+        return aiVoiceChangerHashMap.get(index);
+    }
+
+    @SuppressWarnings("unused")
+    public static void createAIVoiceChanger(MethodCall call, Result result) {
+
+        ZegoAIVoiceChanger aiVoiceChanger = ZegoExpressEngine.getEngine().createAIVoiceChanger();
+
+        if (aiVoiceChanger != null) {
+            int index = aiVoiceChanger.getIndex();
+
+            aiVoiceChanger.setEventHandler(ZegoExpressEngineEventHandler.getInstance().aiVoiceChangerEventHandler);
+            aiVoiceChangerHashMap.put(index, aiVoiceChanger);
+
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyAIVoiceChanger(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAIVoiceChanger aiVoiceChanger = aiVoiceChangerHashMap.get(index);
+
+        if (aiVoiceChanger != null) {
+            aiVoiceChanger.setEventHandler(null);
+            ZegoExpressEngine.getEngine().destroyAIVoiceChanger(aiVoiceChanger);
+        }
+
+        aiVoiceChangerHashMap.remove(index);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void aiVoiceChangerGetSpeakerList(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAIVoiceChanger aiVoiceChanger = aiVoiceChangerHashMap.get(index);
+
+        if (aiVoiceChanger != null) {
+            aiVoiceChanger.getSpeakerList();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void aiVoiceChangerInitEngine(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAIVoiceChanger aiVoiceChanger = aiVoiceChangerHashMap.get(index);
+
+        if (aiVoiceChanger != null) {
+            aiVoiceChanger.initEngine();
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void aiVoiceChangerSetSpeaker(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAIVoiceChanger aiVoiceChanger = aiVoiceChangerHashMap.get(index);
+
+        if (aiVoiceChanger != null) {
+            int speakerID = ZegoUtils.intValue((Number) call.argument("speakerID"));
+            aiVoiceChanger.setSpeaker(speakerID);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void aiVoiceChangerUpdate(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAIVoiceChanger aiVoiceChanger = aiVoiceChangerHashMap.get(index);
+
+        if (aiVoiceChanger != null) {
+            aiVoiceChanger.update();
+        }
 
         result.success(null);
     }

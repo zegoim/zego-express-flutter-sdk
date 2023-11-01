@@ -218,6 +218,20 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.muteAllPlayStreamAudio(mute);
   }
 
+  /// Can the pull stream receive all audio data.
+  ///
+  /// Available since: 3.10.0
+  /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from all remote users when pulling streams (including the audio streams pushed by users who have newly joined the room after calling this function). By default, users can receive audio data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
+  /// Use cases: Call this function when developers need to quickly close and restore remote audio. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
+  /// When to call: This function can be called after calling [createEngine].
+  /// Caution: This function cannot be used together with [muteAllPlayStreamAudio] throughout the SDK lifecycle.
+  /// Related APIs: You can call the [mutePlayStreamAudio] function to control whether to receive a single piece of audio data. When the two functions [muteAllPlayStreamAudio] and [mutePlayStreamAudio] are set to `false` at the same time, the local user can receive the audio data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamAudio(true)] function is called, it takes effect globally, that is, local users will be prohibited from receiving audio data from all remote users. At this time, the [mutePlayStreamAudio] function will not take effect no matter if the [mutePlayStreamAudio] function is called before or after [muteAllPlayStreamAudio]. 2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [mutePlayStreamAudio] function can be used to control whether to receive a single audio data. Calling the [mutePlayStreamAudio(true, streamID)] function allows the local user to receive audio data other than the `streamID`; calling the [mutePlayStreamAudio(false, streamID)] function allows the local user to receive all audio data.
+  ///
+  /// - [mute] Whether it is possible to receive audio data from all remote users when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
+  Future<void> muteAllPlayAudioStreams(bool mute) async {
+    return await ZegoExpressImpl.instance.muteAllPlayAudioStreams(mute);
+  }
+
   /// Can the pull stream receive all video data.
   ///
   /// Available since: 2.4.0
@@ -233,6 +247,23 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [mute] Whether it is possible to receive all remote users' video data when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
   Future<void> muteAllPlayStreamVideo(bool mute) async {
     return await ZegoExpressImpl.instance.muteAllPlayStreamVideo(mute);
+  }
+
+  /// Can the pull stream receive all video data.
+  ///
+  /// Available since: 3.10.0
+  /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
+  /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
+  /// When to call: This function can be called after calling [createEngine].
+  /// Caution:
+  ///  1. This function cannot be used together with [muteAllPlayStreamVideo] throughout the SDK lifecycle.
+  ///  2. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
+  /// Related APIs: You can call the [mutePlayStreamVideo] function to control whether to receive a single piece of video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [mute] Whether it is possible to receive all remote users' video data when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
+  Future<void> muteAllPlayVideoStreams(bool mute) async {
+    return await ZegoExpressImpl.instance.muteAllPlayVideoStreams(mute);
   }
 
   /// Enables or disables hardware decoding.

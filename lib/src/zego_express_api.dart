@@ -1598,6 +1598,44 @@ class ZegoExpressEngine {
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
       onMobileScreenCaptureExceptionOccurred;
 
+  /// Initialize AI voice changer engine status callback.
+  ///
+  /// Available since: 3.10.0.
+  /// Description: Initialize AI voice changer engine status callback.
+  /// Trigger: The callback triggered when call [init] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
+      onAIVoiceChangerInit;
+
+  /// Update AI voice changer engine models status callback.
+  ///
+  /// Available since: 3.10.0.
+  /// Description: Update AI voice changer engine models status callback.
+  /// Trigger: The callback triggered when call [update] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
+      onAIVoiceChangerUpdate;
+
+  /// Get AI voice changer engine available speaker list callback.
+  ///
+  /// Available since: 3.10.0.
+  /// Description: Get AI voice changer engine available speaker list callback.
+  /// Trigger: The callback triggered when call [getSpeakerList] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  /// - [speakerList] Available speaker list.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode,
+          List<ZegoAIVoiceChangerSpeakerInfo> speakerList)?
+      onAIVoiceChangerGetSpeakerList;
+
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///
   /// Available: 1.1.0 ~ 2.13.1, deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead

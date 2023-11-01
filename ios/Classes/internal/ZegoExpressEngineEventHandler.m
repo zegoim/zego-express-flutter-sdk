@@ -81,6 +81,10 @@
             @"state": @(state)
         });
     }
+    
+    if (state == ZegoEngineStateStop) {
+        [[ZegoTextureRendererController sharedInstance] resetAllRenderFirstFrame];
+    }
 }
 
 - (void)onNetworkTimeSynchronized {
@@ -91,6 +95,58 @@
     if (sink) {
         sink(@{
             @"method": @"onNetworkTimeSynchronized"
+        });
+    }
+}
+
+- (void)onRequestDumpData {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestDumpData"
+        });
+    }
+}
+
+- (void)onStartDumpData:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onStartDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onStartDumpData",
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)onStopDumpData:(int)errorCode dumpDir:(NSString *)dumpDir {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onStopDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onStopDumpData",
+            @"errorCode": @(errorCode),
+            @"dumpDir": dumpDir
+        });
+    }
+}
+
+- (void)onUploadDumpData:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onUploadDumpData",
+            @"errorCode": @(errorCode)
         });
     }
 }
@@ -678,8 +734,9 @@
 }
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)onPlayerRecvSEI:(NSData *)data streamID:(NSString *)streamID {
+#pragma clang diagnostic pop
     FlutterEventSink sink = _eventSink;
     // Do not log high frequency callback
 
@@ -692,7 +749,6 @@
         });
     }
 }
-#pragma clang diagnostic pop
 
 - (void)onPlayerRecvMediaSideInfo:(ZegoMediaSideInfo *)info {
     FlutterEventSink sink = _eventSink;
@@ -1245,6 +1301,10 @@
             @"errorCode": @(errorCode)
         });
     }
+    
+    if (state == ZegoMediaPlayerStateNoPlay || state == ZegoMediaPlayerStatePlayEnded) {
+        [[ZegoTextureRendererController sharedInstance] resetMediaRenderFirstFrame:mediaPlayer.index];
+    }
 }
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer networkEvent:(ZegoMediaPlayerNetworkEvent)networkEvent {
@@ -1786,5 +1846,61 @@
     }
 }
 #endif
+
+#pragma mark - AI Voice Changer Handler
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onInit:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerInit], index: %d, errorCode: %d", aiVoiceChanger.getIndex, errorCode);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerInit",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdate:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerUpdate], index: %d, errorCode: %d", aiVoiceChanger.getIndex, errorCode);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerUpdate",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onGetSpeakerList:(int)errorCode speakers:(NSArray<ZegoAIVoiceChangerSpeakerInfo *> *)speakers {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerGetSpeakerList], index: %d, errorCode: %d, speakers.count:%td", aiVoiceChanger.getIndex, errorCode, speakers.count);
+    
+    GUARD_SINK
+    
+    NSMutableArray *speakerArray = [NSMutableArray array];
+    for (ZegoAIVoiceChangerSpeakerInfo *info in speakers) {
+        NSDictionary *infoMap = @{
+            @"name": info.name,
+            @"id": @(info.id)
+        };
+        [speakerArray addObject:infoMap];
+    }
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerGetSpeakerList",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode),
+            @"speakerList": speakerArray
+        });
+    }
+}
 
 @end

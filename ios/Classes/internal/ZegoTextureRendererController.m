@@ -7,6 +7,7 @@
 //
 
 #import "ZegoTextureRendererController.h"
+#import "ZegoExpressEngineEventHandler.h"
 #import "ZegoLog.h"
 #import <Accelerate/Accelerate.h>
 
@@ -18,6 +19,9 @@
 @property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *capturedTextureIdMap;
 @property (strong) NSMutableDictionary<NSString *, NSNumber *> *remoteTextureIdMap;
 @property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *mediaPlayerTextureIdMap;
+
+@property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *capturedRenderMap;
+@property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *mediaPlayerRenderMap;
 
 @property (strong) NSMutableDictionary<NSNumber *, NSNumber *> *alphaTextureIdMap;
 
@@ -54,6 +58,8 @@
         _capturedTextureIdMap = [NSMutableDictionary dictionary];
         _remoteTextureIdMap = [NSMutableDictionary dictionary];
         _mediaPlayerTextureIdMap = [NSMutableDictionary dictionary];
+        _capturedRenderMap = [NSMutableDictionary dictionary];
+        _mediaPlayerRenderMap = [NSMutableDictionary dictionary];
         _alphaTextureIdMap = [NSMutableDictionary dictionary];
         _videoSourceChannelMap = [NSMutableDictionary dictionary];
         _renderHandler = nil;
@@ -159,6 +165,7 @@
 
 - (void)uninitController {
     @synchronized (self) {
+        [self resetAllRenderFirstFrame];
         [self.renderers removeAllObjects];
         [self.capturedTextureIdMap removeAllObjects];
         [self.remoteTextureIdMap removeAllObjects];
@@ -194,6 +201,7 @@
 
     @synchronized (self) {
         [self.capturedTextureIdMap removeObjectForKey:channel];
+        [self resetPublisherRenderFirstFrame:channel];
     }
 
     [self logCurrentRenderers];
@@ -257,6 +265,7 @@
 
     @synchronized (self) {
         [self.mediaPlayerTextureIdMap removeObjectForKey:index];
+        [self resetMediaRenderFirstFrame:index];
     }
 
     [self logCurrentRenderers];
@@ -268,6 +277,22 @@
     @synchronized (self) {
         self.videoSourceChannelMap[channel] = @(sourceType);
     }
+}
+
+- (void)resetPublisherRenderFirstFrame:(NSNumber *)channel {
+    ZGLog(@"[resetPublisherRenderFirstFrame] channel: %@", channel);
+    [self.capturedRenderMap removeObjectForKey:channel];
+}
+
+- (void)resetMediaRenderFirstFrame:(NSNumber *)index {
+    ZGLog(@"[resetMediaRenderFirstFrame] index: %@", index);
+    [self.mediaPlayerRenderMap removeObjectForKey:index];
+}
+
+- (void)resetAllRenderFirstFrame {
+    ZGLog(@"[resetAllRenderFirstFrame]");
+    [self.mediaPlayerRenderMap removeAllObjects];
+    [self.capturedRenderMap removeAllObjects];
 }
 
 - (void)sendScreenCapturedVideoFrameRawData:(const void *)data
@@ -376,6 +401,7 @@
     ZegoTextureRenderer *renderer = nil;
 
     NSNumber* needAplha = nil;
+    NSNumber *isRendering = nil;
     @synchronized (self) {
         textureID = [self.capturedTextureIdMap objectForKey:@(channel)];
         if (!textureID) {
@@ -388,6 +414,7 @@
         
         needAplha = [self.alphaTextureIdMap objectForKey:textureID];
         
+        isRendering = [self.capturedRenderMap objectForKey:@(channel)];
     }
     if ([needAplha isEqual:@(1)]) {
         CVPixelBufferLockBaseAddress(buffer, 0);
@@ -403,6 +430,14 @@
         }
         CVPixelBufferUnlockBaseAddress(buffer, 0);
     }
+    
+    // trigger the first frame callback of rendering
+    if (![isRendering boolValue]) {
+        [ZegoExpressEngineEventHandler.sharedInstance onPublisherRenderVideoFirstFrame:channel];
+        isRendering = @(true);
+        [self.capturedRenderMap setObject:isRendering forKey:@(channel)];
+    }
+    
     [self updateRenderer:renderer withBuffer:buffer param:param flipMode:flipMode];
 }
 
@@ -477,6 +512,7 @@
     }
     
     
+    NSNumber *isRendering = nil;
     @synchronized (self) {
         textureID = [self.mediaPlayerTextureIdMap objectForKey:mediaPlayer.index];
         if (!textureID) {
@@ -486,6 +522,14 @@
         if (!renderer) {
             return;
         }
+        
+        isRendering = [self.mediaPlayerRenderMap objectForKey:mediaPlayer.index];
+    }
+    
+    if (![isRendering boolValue]) {
+        [ZegoExpressEngineEventHandler.sharedInstance mediaPlayer:mediaPlayer firstFrameEvent:ZegoMediaPlayerFirstFrameEventVideoRendered];
+        isRendering = @(true);
+        [self.mediaPlayerRenderMap setObject:isRendering forKey:mediaPlayer.index];
     }
     
     [self updateRenderer:renderer withBuffer:buffer param:param flipMode:ZegoVideoFlipModeNone];

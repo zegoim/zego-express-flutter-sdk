@@ -1843,6 +1843,33 @@ enum ZegoMediaDataPublisherMode {
   OnlyVideo
 }
 
+/// Live audio effect mode.
+enum ZegoLiveAudioEffectMode {
+  /// No audio effect.
+  None,
+
+  /// Only local play.
+  Local,
+
+  /// Only publish.
+  Publish,
+
+  /// Publish and local play.
+  All
+}
+
+/// Media stream type.
+enum ZegoMediaStreamType {
+  /// Media audio stream.
+  Audio,
+
+  /// Media video stream.
+  Video,
+
+  /// Media audio and video stream.
+  AV
+}
+
 /// Dump data type.
 enum ZegoDumpDataType {
   /// Audio.
@@ -3823,6 +3850,17 @@ class ZegoDumpDataConfig {
   ZegoDumpDataConfig(this.dataType);
 }
 
+/// AI voice changer speaker detail.
+class ZegoAIVoiceChangerSpeakerInfo {
+  /// Speaker ID.
+  int id;
+
+  /// Speaker name.
+  String name;
+
+  ZegoAIVoiceChangerSpeakerInfo(this.id, this.name);
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -4270,6 +4308,28 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [headers] Headers info.
   Future<void> setHttpHeader(Map<String, String> headers);
+
+  /// Set play media stream type.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Configure the media stream type to be played. You can only play video streams or audio streams. This will take effect during the life cycle of the media player.
+  /// Use cases: When the network resource needs to set special header information.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: Changing the media stream type during playing will take effect in the next playing.
+  ///
+  /// - [streamType] Stream type.
+  Future<void> setPlayMediaStreamType(ZegoMediaStreamType streamType);
+
+  /// Enable live audio effect.
+  ///
+  /// Available since: 3.10.0
+  /// Description: When the live audio effect is turned on, the spatial sense is enhanced and the instrument sounds become more prominent, without any increase in delay.
+  /// Use cases: It is commonly used in voice chat rooms and karaoke scenarios to enhance the live audio effects of the accompaniment.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  ///
+  /// - [enable] Whether to enable live audio effect.
+  /// - [mode] Live audio effect mode.
+  Future<void> enableLiveAudioEffect(bool enable, ZegoLiveAudioEffectMode mode);
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -5147,6 +5207,27 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [config] Screen capture parameter configuration.
   Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config);
+}
+
+abstract class ZegoAIVoiceChanger {
+  /// Get AI voice changer instance index.
+  ///
+  /// - Returns AI voice changer instance index.
+  int getIndex();
+
+  /// Initialize AI voice changer engine.
+  Future<void> initEngine();
+
+  /// Update AI voice changer engine models.
+  Future<void> update();
+
+  /// Get AI voice changer speaker list.
+  Future<void> getSpeakerList();
+
+  /// Set AI voice changer speaker.
+  ///
+  /// - [speakerID] Speaker ID.
+  Future<void> setSpeaker(int speakerID);
 }
 
 /// Callback for setting room extra information.
