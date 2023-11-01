@@ -81,6 +81,10 @@
             @"state": @(state)
         });
     }
+    
+    if (state == ZegoEngineStateStop) {
+        [[ZegoTextureRendererController sharedInstance] resetAllRenderFirstFrame];
+    }
 }
 
 - (void)onNetworkTimeSynchronized {
@@ -1296,6 +1300,10 @@
             @"state": @(state),
             @"errorCode": @(errorCode)
         });
+    }
+    
+    if (state == ZegoMediaPlayerStateNoPlay || state == ZegoMediaPlayerStatePlayEnded) {
+        [[ZegoTextureRendererController sharedInstance] resetMediaRenderFirstFrame:mediaPlayer.index];
     }
 }
 
