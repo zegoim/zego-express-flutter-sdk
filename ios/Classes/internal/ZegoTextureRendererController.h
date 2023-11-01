@@ -70,6 +70,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when dart invoke `setVideoSource`
 - (void)setVideoSourceChannel:(NSNumber *)channel withSource:(ZegoVideoSourceType)sourceType;
 
+- (void)resetMediaRenderFirstFrame:(NSNumber *)index;
+
+- (void)resetAllRenderFirstFrame;
+
 #pragma mark - For CustomVideoCaptureManager
 - (void)onCapturedVideoFrameCVPixelBuffer:(CVPixelBufferRef)buffer
                                     param:(ZegoVideoFrameParam *)param

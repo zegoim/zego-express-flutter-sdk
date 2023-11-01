@@ -134,8 +134,10 @@ protected:
 
     void onPublisherSendVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
+public:
     void onPublisherRenderVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
+protected:
     void onPublisherVideoSizeChanged(int width, int height, EXPRESS::ZegoPublishChannel channel) override;
 
     void onPublisherRelayCDNStateUpdate(const std::string & streamID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo> & infoList) override;
@@ -212,8 +214,10 @@ protected:
 
     void onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList) override;
 
+public:
     void onMediaPlayerFirstFrameEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) override;
 
+protected:
     void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) override;
 
 // MediaDataPublisher

@@ -1539,7 +1539,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onMediaPlayerFirstFrameEvent (ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerFirstFrameEvent event){
             super.onMediaPlayerFirstFrameEvent(mediaPlayer, event);
-            // High frequency callbacks do not log
+            ZegoLog.log("[onMediaPlayerFirstFrameEvent] idx: %d, event: %s", mediaPlayer.getIndex(), event);
 
             if (guardSink()) { return; }
 
