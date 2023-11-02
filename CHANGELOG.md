@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.10.1
+
+### **Bug Fixes**
+
+1. Remove print privacy information.
+
 ## 3.10.0
 
 ### New Features
