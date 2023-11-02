@@ -241,6 +241,7 @@ static const std::map<
         EngineMethodHandler(stopDumpData),
         EngineMethodHandler(uploadDumpData),
         EngineMethodHandler(removeDumpData),
+        EngineMethodHandler(enableColorEnhancement),
 
         EngineMethodHandler(createAudioEffectPlayer),
         EngineMethodHandler(destroyAudioEffectPlayer),
