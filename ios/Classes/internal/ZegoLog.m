@@ -39,12 +39,13 @@ static const char *moduleName = "Flutter";
 
     NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
     ((void (*)(id, SEL, const char *, const char *))objc_msgSend)(engineClass, logSelector, [message UTF8String], moduleName);
-
+#if defined(DEBUG) || defined(_DEBUG)
     if (level == 1) {
         NSLog(@"[ZEGO] [%s] [ERROR] %@", moduleName, message);
     } else {
         NSLog(@"[ZEGO] [%s] %@", moduleName, message);
     }
+#endif
 }
 
 @end

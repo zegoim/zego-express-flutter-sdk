@@ -291,7 +291,7 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
 
-        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, scenario.name());
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, scenario.name());
 
         result.success(null);
     }
@@ -334,7 +334,7 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
         
-        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, appSign:%s, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, appSign, isTestEnv ? "true" : "false", scenario.name());
+        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, isTestEnv ? "true" : "false", scenario.name());
 
         result.success(null);
     }
