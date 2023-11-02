@@ -1489,8 +1489,9 @@ class ZegoExpressImpl {
         {'enable': enable, 'mode': mode.index, 'tonal': tonal});
   }
 
-  Future<void> enableColorEnhancement(bool enable,
-      ZegoColorEnhancementParams params, ZegoPublishChannel channel) async {
+  Future<void> enableColorEnhancement(
+      bool enable, ZegoColorEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('enableColorEnhancement', {
       'enable': enable,
       'params': {
@@ -1498,7 +1499,7 @@ class ZegoExpressImpl {
         'skinToneProtectionLevel': params.skinToneProtectionLevel,
         'lipColorProtectionLevel': params.lipColorProtectionLevel
       },
-      'channel': channel.index
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
 

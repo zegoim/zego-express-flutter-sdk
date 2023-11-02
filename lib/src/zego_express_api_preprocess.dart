@@ -341,9 +341,10 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [enable] Whether to enable, true: enable, false: disable
   /// - [params] Color enhancement parameters.
   /// - [channel] Publish stream channel.
-  Future<void> enableColorEnhancement(bool enable,
-      ZegoColorEnhancementParams params, ZegoPublishChannel channel) async {
+  Future<void> enableColorEnhancement(
+      bool enable, ZegoColorEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
-        .enableColorEnhancement(enable, params, channel);
+        .enableColorEnhancement(enable, params, channel: channel);
   }
 }
