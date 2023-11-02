@@ -159,7 +159,7 @@
         [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, scenario);
+    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, scenario);
 
     result(nil);
 }
@@ -197,7 +197,7 @@
         [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }
