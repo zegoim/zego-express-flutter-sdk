@@ -964,6 +964,9 @@ class ZegoErrorCode {
   /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid = 1017015;
 
+  /// Description: Download canceled. <br>Cause: Call [cancelDownload] to actively cancel the download.
+  static const int CopyrightedMusicDownloadCanceled = 1017016;
+
   /// Description: The resource_id unauthorized. <br>Cause: The resource ID is not obtained through [requestResource] [getSharedResource] function. <br>Solutions: Please call the [requestResource] [getSharedResource] function to get valid resource ID.
   static const int CopyrightedMusicResourceIdUnauthorized = 1017018;
 

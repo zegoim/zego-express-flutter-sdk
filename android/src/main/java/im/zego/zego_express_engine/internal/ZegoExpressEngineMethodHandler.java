@@ -5112,6 +5112,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void copyrightedMusicCancelDownload(MethodCall call, final Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            String resourceID = call.argument("resourceID");
+            copyrightedMusicInstance.cancelDownload(resourceID);
+            result.success(null);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicCancelDownload` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void copyrightedMusicGetAverageScore(MethodCall call, Result result) {
 
         if (copyrightedMusicInstance != null) {

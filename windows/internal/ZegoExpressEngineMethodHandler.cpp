@@ -3486,6 +3486,19 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicDownload(
     }
 }
 
+void ZegoExpressEngineMethodHandler::copyrightedMusicCancelDownload(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto resourceID = std::get<std::string>(argument[FTValue("resourceID")]);
+        copyrightedMusic_->cancelDownload(resourceID);
+        result->Success();
+    } else {
+        result->Error("copyrightedMusicCancelDownload_Can_not_find_instance",
+                      "Invoke `copyrightedMusicCancelDownload` but can't find specific instance");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::copyrightedMusicGetAverageScore(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
