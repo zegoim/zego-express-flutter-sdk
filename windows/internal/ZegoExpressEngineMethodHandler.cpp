@@ -4374,6 +4374,9 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(
     }
     // Enable SoundLevel
     task.enableSoundLevel = std::get<bool>(argument[FTValue("enableSoundLevel")]);
+    // minPlayStreamBufferLength
+    task.minPlayStreamBufferLength =
+        std::get<int32_t>(argument[FTValue("minPlayStreamBufferLength")]);
 
     auto sharedPtrResult =
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
