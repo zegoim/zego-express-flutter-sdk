@@ -5636,9 +5636,9 @@
     NSDictionary *paramsMap = call.arguments[@"params"];
     
     ZegoColorEnhancementParams *p = [[ZegoColorEnhancementParams alloc] init];
-    p.intensity = [ZegoUtils floatValue:call.arguments[@"intensity"]];
-    p.skinToneProtectionLevel = [ZegoUtils floatValue:call.arguments[@"skinToneProtectionLevel"]];
-    p.lipColorProtectionLevel = [ZegoUtils floatValue:call.arguments[@"lipColorProtectionLevel"]];
+    p.intensity = [ZegoUtils floatValue:paramsMap[@"intensity"]];
+    p.skinToneProtectionLevel = [ZegoUtils floatValue:paramsMap[@"skinToneProtectionLevel"]];
+    p.lipColorProtectionLevel = [ZegoUtils floatValue:paramsMap[@"lipColorProtectionLevel"]];
 
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
         
