@@ -205,6 +205,7 @@ import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerResource;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
+import im.zego.zegoexpress.entity.ZegoColorEnhancementParams;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
