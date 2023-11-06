@@ -5722,6 +5722,22 @@ public class ZegoExpressEngineMethodHandler {
 
         result.success(null);
     }
+    @SuppressWarnings("unused")
+    public static void enableColorEnhancement(MethodCall call, Result result) {
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Object> paramsMap = call.argument("params");
+
+        ZegoColorEnhancementParams p = new ZegoColorEnhancementParams();
+        p.intensity = ZegoUtils.floatValue((Double)paramsMap.get("intensity"));
+        p.skinToneProtectionLevel = ZegoUtils.floatValue((Double)paramsMap.get("skinToneProtectionLevel"));
+        p.lipColorProtectionLevel = ZegoUtils.floatValue((Double)paramsMap.get("lipColorProtectionLevel"));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableColorEnhancement(enable, p, channel);
+
+        result.success(null);
+    }
 
     /* PlatformView Utils */
 
