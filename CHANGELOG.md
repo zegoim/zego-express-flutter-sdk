@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.10.2
+
+### **Bug Fixes**
+
+1. Fixed the issue of a black screen appearing after turning on low-light enhancement.
+
 ## 3.10.1
 
 ### **Bug Fixes**
