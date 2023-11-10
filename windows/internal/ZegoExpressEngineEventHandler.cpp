@@ -442,6 +442,14 @@ void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(
         qualityMap[FTValue("totalRecvBytes")] = FTValue(quality.totalRecvBytes);
         qualityMap[FTValue("audioRecvBytes")] = FTValue(quality.audioRecvBytes);
         qualityMap[FTValue("videoRecvBytes")] = FTValue(quality.videoRecvBytes);
+        qualityMap[FTValue("audioCumulativeBreakCount")] = FTValue(quality.audioCumulativeBreakCount);
+        qualityMap[FTValue("videoCumulativeBreakCount")] = FTValue(quality.videoCumulativeBreakCount);
+        qualityMap[FTValue("audioCumulativeBreakTime")] = FTValue(quality.audioCumulativeBreakTime);
+        qualityMap[FTValue("videoCumulativeBreakTime")] = FTValue(quality.videoCumulativeBreakTime);
+        qualityMap[FTValue("audioCumulativeBreakRate")] = FTValue(quality.audioCumulativeBreakRate);
+        qualityMap[FTValue("videoCumulativeBreakRate")] = FTValue(quality.videoCumulativeBreakRate);
+        qualityMap[FTValue("audioCumulativeDecodeTime")] = FTValue(audio.audioCumulativeDecodeTime);
+        qualityMap[FTValue("videoCumulativeDecodeTime")] = FTValue(video.videoCumulativeDecodeTime);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 

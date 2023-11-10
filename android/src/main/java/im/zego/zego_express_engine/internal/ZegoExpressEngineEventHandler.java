@@ -628,6 +628,14 @@ public class ZegoExpressEngineEventHandler {
             qualityMap.put("totalRecvBytes", quality.totalRecvBytes);
             qualityMap.put("audioRecvBytes", quality.audioRecvBytes);
             qualityMap.put("videoRecvBytes", quality.videoRecvBytes);
+            qualityMap.put("audioCumulativeBreakCount", quality.audioCumulativeBreakCount);
+            qualityMap.put("videoCumulativeBreakCount", quality.videoCumulativeBreakCount);
+            qualityMap.put("audioCumulativeBreakTime", quality.audioCumulativeBreakTime);
+            qualityMap.put("videoCumulativeBreakTime", quality.videoCumulativeBreakTime);
+            qualityMap.put("audioCumulativeBreakRate", quality.audioCumulativeBreakRate);
+            qualityMap.put("videoCumulativeBreakRate", quality.videoCumulativeBreakRate);
+            qualityMap.put("audioCumulativeDecodeTime", quality.audioCumulativeDecodeTime);
+            qualityMap.put("videoCumulativeDecodeTime", quality.videoCumulativeDecodeTime);
 
             HashMap<String, Object> map = new HashMap<>();
 
