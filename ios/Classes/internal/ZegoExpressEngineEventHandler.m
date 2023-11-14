@@ -658,7 +658,15 @@
                 @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
                 @"audioRecvBytes": @(quality.audioRecvBytes),
-                @"videoRecvBytes": @(quality.videoRecvBytes)
+                @"videoRecvBytes": @(quality.videoRecvBytes),
+                @"audioCumulativeBreakCount": @(quality.audioCumulativeBreakCount),
+                @"videoCumulativeBreakCount": @(quality.videoCumulativeBreakCount),
+                @"audioCumulativeBreakTime": @(quality.audioCumulativeBreakTime),
+                @"videoCumulativeBreakTime": @(quality.videoCumulativeBreakTime),
+                @"audioCumulativeBreakRate": @(quality.audioCumulativeBreakRate),
+                @"videoCumulativeBreakRate": @(quality.videoCumulativeBreakRate),
+                @"audioCumulativeDecodeTime": @(quality.audioCumulativeDecodeTime),
+                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime)
             },
             @"streamID": streamID
         });
