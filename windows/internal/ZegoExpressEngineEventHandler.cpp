@@ -442,14 +442,14 @@ void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(
         qualityMap[FTValue("totalRecvBytes")] = FTValue(quality.totalRecvBytes);
         qualityMap[FTValue("audioRecvBytes")] = FTValue(quality.audioRecvBytes);
         qualityMap[FTValue("videoRecvBytes")] = FTValue(quality.videoRecvBytes);
-        qualityMap[FTValue("audioCumulativeBreakCount")] = FTValue(quality.audioCumulativeBreakCount);
-        qualityMap[FTValue("videoCumulativeBreakCount")] = FTValue(quality.videoCumulativeBreakCount);
-        qualityMap[FTValue("audioCumulativeBreakTime")] = FTValue(quality.audioCumulativeBreakTime);
-        qualityMap[FTValue("videoCumulativeBreakTime")] = FTValue(quality.videoCumulativeBreakTime);
+        qualityMap[FTValue("audioCumulativeBreakCount")] = FTValue((int32_t)quality.audioCumulativeBreakCount);
+        qualityMap[FTValue("videoCumulativeBreakCount")] = FTValue((int32_t)quality.videoCumulativeBreakCount);
+        qualityMap[FTValue("audioCumulativeBreakTime")] = FTValue((int32_t)quality.audioCumulativeBreakTime);
+        qualityMap[FTValue("videoCumulativeBreakTime")] = FTValue((int32_t)quality.videoCumulativeBreakTime);
         qualityMap[FTValue("audioCumulativeBreakRate")] = FTValue(quality.audioCumulativeBreakRate);
         qualityMap[FTValue("videoCumulativeBreakRate")] = FTValue(quality.videoCumulativeBreakRate);
-        qualityMap[FTValue("audioCumulativeDecodeTime")] = FTValue(quality.audioCumulativeDecodeTime);
-        qualityMap[FTValue("videoCumulativeDecodeTime")] = FTValue(quality.videoCumulativeDecodeTime);
+        qualityMap[FTValue("audioCumulativeDecodeTime")] = FTValue((int32_t)quality.audioCumulativeDecodeTime);
+        qualityMap[FTValue("videoCumulativeDecodeTime")] = FTValue((int32_t)quality.videoCumulativeDecodeTime);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 
