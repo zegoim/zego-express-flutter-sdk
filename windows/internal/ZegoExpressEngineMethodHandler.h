@@ -485,7 +485,19 @@ class ZegoExpressEngineMethodHandler {
     void audioEffectPlayerSetVolume(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlayVolume(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPublishVolume(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerSetVolumeAll(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlayVolumeAll(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPublishVolumeAll(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerGetTotalDuration(

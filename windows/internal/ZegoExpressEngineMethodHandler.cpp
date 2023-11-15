@@ -1720,6 +1720,44 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolume(
     }
 }
 
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetPlayVolume(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID =
+            (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+        player->setPlayVolume(audioEffectID, volume);
+
+        result->Success();
+    } else {
+        result->Error("audioEffectPlayerSetPlayVolume_Can_not_find_player",
+                      "Invoke `audioEffectPlayerSetPlayVolume` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetPublishVolume(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        unsigned int audioEffectID =
+            (unsigned int)std::get<int32_t>(argument[FTValue("audioEffectID")]);
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+        player->setPublishVolume(audioEffectID, volume);
+
+        result->Success();
+    } else {
+        result->Error("audioEffectPlayerSetPublishVolume_Can_not_find_player",
+                      "Invoke `audioEffectPlayerSetPublishVolume` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolumeAll(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -1734,6 +1772,40 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerSetVolumeAll(
     } else {
         result->Error("audioEffectPlayerSetVolumeAll_Can_not_find_player",
                       "Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetPlayVolumeAll(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+        player->setPlayVolumeAll(volume);
+
+        result->Success();
+    } else {
+        result->Error("audioEffectPlayerSetPlayVolumeAll_Can_not_find_player",
+                      "Invoke `audioEffectPlayerSetPlayVolumeAll` but can't find specific player");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::audioEffectPlayerSetPublishVolumeAll(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto player = audioEffectPlayerMap_[index];
+    if (player) {
+
+        int volume = std::get<int32_t>(argument[FTValue("volume")]);
+        player->setPublishVolumeAll(volume);
+
+        result->Success();
+    } else {
+        result->Error("audioEffectPlayerSetPublishVolumeAll_Can_not_find_player",
+                      "Invoke `audioEffectPlayerSetPublishVolumeAll` but can't find specific player");
     }
 }
 
