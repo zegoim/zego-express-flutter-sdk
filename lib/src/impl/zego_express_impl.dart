@@ -2449,12 +2449,12 @@ class ZegoExpressImpl {
                 map['quality']['audioRecvBytes'],
                 map['quality']['videoRecvBytes'],
                 map['quality']['audioCumulativeBreakCount'],
-                map['quality']['videoCumulativeBreakCount'],
                 map['quality']['audioCumulativeBreakTime'],
-                map['quality']['videoCumulativeBreakTime'],
                 map['quality']['audioCumulativeBreakRate'],
-                map['quality']['videoCumulativeBreakRate'],
                 map['quality']['audioCumulativeDecodeTime'],
+                map['quality']['videoCumulativeBreakCount'],
+                map['quality']['videoCumulativeBreakTime'],
+                map['quality']['videoCumulativeBreakRate'],
                 map['quality']['videoCumulativeDecodeTime']));
         break;
 
