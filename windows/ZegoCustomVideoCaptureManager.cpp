@@ -117,3 +117,7 @@ void ZegoCustomVideoCaptureManager::setCustomVideoCaptureRegionOfInterest(std::v
     }
     ZEGO::EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoCaptureRegionOfInterest(zegoRectList, (ZEGO::EXPRESS::ZegoPublishChannel)channel);
 }
+
+ZEGO::EXPRESS::IZegoExpressEngine* ZegoCustomVideoCaptureManager::GetEngine() {
+    return ZEGO::EXPRESS::ZegoExpressSDK::getEngine();
+}
