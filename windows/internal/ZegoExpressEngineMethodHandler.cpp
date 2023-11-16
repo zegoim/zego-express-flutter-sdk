@@ -4974,9 +4974,13 @@ void ZegoExpressEngineMethodHandler::stopNetworkSpeedTest(
 void ZegoExpressEngineMethodHandler::getNetworkTimeInfo(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    EXPRESS::ZegoExpressSDK::getEngine()->getNetworkTimeInfo();
+    EXPRESS::ZegoNetworkTimeInfo info = EXPRESS::ZegoExpressSDK::getEngine()->getNetworkTimeInfo();
 
-    result->Success();
+    flutter::EncodableMap retMap;
+    retMap[FTValue("timestamp")] = FTValue((int64_t)info.timestamp);
+    retMap[FTValue("maxDeviation")] = FTValue((int32_t)info.maxDeviation);
+
+    result->Success(retMap);
 }
 
 void ZegoExpressEngineMethodHandler::startDumpData(

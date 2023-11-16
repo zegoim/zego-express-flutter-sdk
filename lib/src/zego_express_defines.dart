@@ -2570,6 +2570,30 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
+  /// Accumulated audio break count (Available since 2.9.0)
+  int audioCumulativeBreakCount;
+
+  /// Accumulated audio break time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeBreakTime;
+
+  /// Accumulated audio break rate, in percentage, 0.0 ~ 100.0 (Available since 2.9.0)
+  double audioCumulativeBreakRate;
+
+  /// Accumulated audio decode time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeDecodeTime;
+
+  /// Accumulated video break count (Available since 2.9.0)
+  int videoCumulativeBreakCount;
+
+  /// Accumulated video break time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeBreakTime;
+
+  /// Accumulated video break rate, in percentage, 0.0 ~ 1.0 (Available since 2.9.0)
+  double videoCumulativeBreakRate;
+
+  /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeDecodeTime;
+
   ZegoPlayStreamQuality(
       this.videoRecvFPS,
       this.videoDejitterFPS,
@@ -2595,7 +2619,15 @@ class ZegoPlayStreamQuality {
       this.videoCodecID,
       this.totalRecvBytes,
       this.audioRecvBytes,
-      this.videoRecvBytes);
+      this.videoRecvBytes,
+      this.audioCumulativeBreakCount,
+      this.audioCumulativeBreakTime,
+      this.audioCumulativeBreakRate,
+      this.audioCumulativeDecodeTime,
+      this.videoCumulativeBreakCount,
+      this.videoCumulativeBreakTime,
+      this.videoCumulativeBreakRate,
+      this.videoCumulativeDecodeTime);
 }
 
 /// Cross APP playing stream configuration.

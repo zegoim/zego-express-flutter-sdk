@@ -266,6 +266,9 @@ class ZegoErrorCode {
   /// Description: login room used license auth, but the license is expired.  <br>Solutions:  Contact ZEGO technical support to deal with it.
   static const int RoomRoomLoginLicenseExpired = 1002085;
 
+  /// Description: The user has logged in elsewhere.  <br>Solutions:  Check whether the user has logged in elsewhere.
+  static const int RoomRoomLoginOther = 1002086;
+
   /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError = 1002099;
 

@@ -2447,7 +2447,15 @@ class ZegoExpressImpl {
                     : map['quality']['videoCodecID']],
                 map['quality']['totalRecvBytes'],
                 map['quality']['audioRecvBytes'],
-                map['quality']['videoRecvBytes']));
+                map['quality']['videoRecvBytes'],
+                map['quality']['audioCumulativeBreakCount'],
+                map['quality']['audioCumulativeBreakTime'],
+                map['quality']['audioCumulativeBreakRate'],
+                map['quality']['audioCumulativeDecodeTime'],
+                map['quality']['videoCumulativeBreakCount'],
+                map['quality']['videoCumulativeBreakTime'],
+                map['quality']['videoCumulativeBreakRate'],
+                map['quality']['videoCumulativeDecodeTime']));
         break;
 
       case 'onPlayerMediaEvent':
