@@ -619,7 +619,7 @@ class ZegoExpressEngine {
   /// Callback for current stream playing quality.
   ///
   /// Available since: 1.1.0
-  /// Description: After calling the [startPlayingStream] successfully, this callback will be triggered every 3 seconds. The collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, and the health of the played audio and video streams can be monitored in real time.
+  /// Description: After calling the [startPlayingStream] successfully, the callback will be received every 3 seconds default(If you need to change the time, please contact the instant technical support to configure). Through the callback, the collection frame rate, bit rate, RTT, packet loss rate and other quality data can be obtained, and the health of the played audio and video streams can be monitored in real time.
   /// Use cases: You can monitor the health of the played audio and video streams in real time according to the quality parameters of the callback function, in order to show the downlink network status on the device UI in real time.
   /// Caution: If you does not know how to use the various parameters of the callback function, you can only focus on the level field of the quality parameter, which is a comprehensive value describing the downlink network calculated by SDK based on the quality parameters.
   /// Related callbacks: After calling the [startPublishingStream] successfully, a callback [onPublisherQualityUpdate] will be received every 3 seconds. You can monitor the health of publish streams in real time based on quality data such as frame rate, code rate, RTT, packet loss rate, etc.
@@ -1357,6 +1357,37 @@ class ZegoExpressEngine {
   /// This callback is triggered when internal network time synchronization completes after a developer calls [createEngine].
   static void Function()? onNetworkTimeSynchronized;
 
+  /// Request to dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
+  static void Function()? onRequestDumpData;
+
+  /// Callback when starting to dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: This callback is triggered when [startDumpData] is called.
+  ///
+  /// - [errorCode] Error code.
+  static void Function(int errorCode)? onStartDumpData;
+
+  /// Callback when stopping to dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: This callback is triggered when [stopDumpData] is called.
+  ///
+  /// - [errorCode] Error code.
+  /// - [dumpDir] Dump data dir.
+  static void Function(int errorCode, String dumpDir)? onStopDumpData;
+
+  /// Callback after uploading the dump data.
+  ///
+  /// Available since: 3.10.0
+  /// When to Trigger: When [uploadDumpData] is called, this callback will be triggered after SDK executes the upload task.
+  ///
+  /// - [errorCode] Error code.
+  static void Function(int errorCode)? onUploadDumpData;
+
   /// Custom audio processing local captured PCM audio frame callback.
   ///
   /// Available: Since 2.13.0
@@ -1578,6 +1609,44 @@ class ZegoExpressEngine {
   /// - [exceptionType] Screen capture exception type.
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
       onMobileScreenCaptureExceptionOccurred;
+
+  /// Initialize AI voice changer engine status callback.
+  ///
+  /// Available since: 3.10.0.
+  /// Description: Initialize AI voice changer engine status callback.
+  /// Trigger: The callback triggered when call [init] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
+      onAIVoiceChangerInit;
+
+  /// Update AI voice changer engine models status callback.
+  ///
+  /// Available since: 3.10.0.
+  /// Description: Update AI voice changer engine models status callback.
+  /// Trigger: The callback triggered when call [update] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
+      onAIVoiceChangerUpdate;
+
+  /// Get AI voice changer engine available speaker list callback.
+  ///
+  /// Available since: 3.10.0.
+  /// Description: Get AI voice changer engine available speaker list callback.
+  /// Trigger: The callback triggered when call [getSpeakerList] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  /// - [speakerList] Available speaker list.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode,
+          List<ZegoAIVoiceChangerSpeakerInfo> speakerList)?
+      onAIVoiceChangerGetSpeakerList;
 
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///

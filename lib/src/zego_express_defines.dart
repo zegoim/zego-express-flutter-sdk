@@ -1816,7 +1816,10 @@ enum ZegoBackgroundProcessType {
   Blur,
 
   /// The background is the specified image.
-  Image
+  Image,
+
+  /// The background is the specified video.
+  Video
 }
 
 /// Background blur level.
@@ -1838,6 +1841,39 @@ enum ZegoMediaDataPublisherMode {
 
   /// Only publish video.
   OnlyVideo
+}
+
+/// Live audio effect mode.
+enum ZegoLiveAudioEffectMode {
+  /// No audio effect.
+  None,
+
+  /// Only local play.
+  Local,
+
+  /// Only publish.
+  Publish,
+
+  /// Publish and local play.
+  All
+}
+
+/// Media stream type.
+enum ZegoMediaStreamType {
+  /// Media audio stream.
+  Audio,
+
+  /// Media video stream.
+  Video,
+
+  /// Media audio and video stream.
+  AV
+}
+
+/// Dump data type.
+enum ZegoDumpDataType {
+  /// Audio.
+  Audio
 }
 
 /// Log config.
@@ -2212,7 +2248,7 @@ class ZegoReverbEchoParam {
 /// Note that the userID must be unique under the same appID, otherwise, there will be mutual kicks when logging in to the room.
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
-  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK.
+  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'. Do not use '%' if you need to communicate with the Web SDK.
   String userID;
 
   /// User Name, a utf8 string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
@@ -2534,6 +2570,30 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
+  /// Accumulated audio break count (Available since 2.9.0)
+  int audioCumulativeBreakCount;
+
+  /// Accumulated audio break time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeBreakTime;
+
+  /// Accumulated audio break rate, in percentage, 0.0 ~ 100.0 (Available since 2.9.0)
+  double audioCumulativeBreakRate;
+
+  /// Accumulated audio decode time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeDecodeTime;
+
+  /// Accumulated video break count (Available since 2.9.0)
+  int videoCumulativeBreakCount;
+
+  /// Accumulated video break time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeBreakTime;
+
+  /// Accumulated video break rate, in percentage, 0.0 ~ 1.0 (Available since 2.9.0)
+  double videoCumulativeBreakRate;
+
+  /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeDecodeTime;
+
   ZegoPlayStreamQuality(
       this.videoRecvFPS,
       this.videoDejitterFPS,
@@ -2559,7 +2619,15 @@ class ZegoPlayStreamQuality {
       this.videoCodecID,
       this.totalRecvBytes,
       this.audioRecvBytes,
-      this.videoRecvBytes);
+      this.videoRecvBytes,
+      this.audioCumulativeBreakCount,
+      this.audioCumulativeBreakTime,
+      this.audioCumulativeBreakRate,
+      this.audioCumulativeDecodeTime,
+      this.videoCumulativeBreakCount,
+      this.videoCumulativeBreakTime,
+      this.videoCumulativeBreakRate,
+      this.videoCumulativeDecodeTime);
 }
 
 /// Cross APP playing stream configuration.
@@ -3702,17 +3770,21 @@ class ZegoBackgroundConfig {
   /// Background image URL.
   String imageURL;
 
+  /// Background video URL.
+  String videoURL;
+
   /// Background blur level.
   ZegoBackgroundBlurLevel blurLevel;
 
-  ZegoBackgroundConfig(
-      this.processType, this.color, this.imageURL, this.blurLevel);
+  ZegoBackgroundConfig(this.processType, this.color, this.imageURL,
+      this.videoURL, this.blurLevel);
 
   /// Constructs a background image configuration object by default.
   ZegoBackgroundConfig.defaultConfig()
       : processType = ZegoBackgroundProcessType.Transparent,
         color = 0,
         imageURL = '',
+        videoURL = '',
         blurLevel = ZegoBackgroundBlurLevel.Medium;
 }
 
@@ -3800,6 +3872,25 @@ class ZegoVocalRangeParam {
   ZegoVocalRangeParam.defaultParam()
       : min = 0,
         max = 0;
+}
+
+/// Dump data config.
+class ZegoDumpDataConfig {
+  /// Data type.
+  ZegoDumpDataType dataType;
+
+  ZegoDumpDataConfig(this.dataType);
+}
+
+/// AI voice changer speaker detail.
+class ZegoAIVoiceChangerSpeakerInfo {
+  /// Speaker ID.
+  int id;
+
+  /// Speaker name.
+  String name;
+
+  ZegoAIVoiceChangerSpeakerInfo(this.id, this.name);
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -4249,6 +4340,28 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [headers] Headers info.
   Future<void> setHttpHeader(Map<String, String> headers);
+
+  /// Set play media stream type.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Configure the media stream type to be played. You can only play video streams or audio streams. This will take effect during the life cycle of the media player.
+  /// Use cases: When the network resource needs to set special header information.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: Changing the media stream type during playing will take effect in the next playing.
+  ///
+  /// - [streamType] Stream type.
+  Future<void> setPlayMediaStreamType(ZegoMediaStreamType streamType);
+
+  /// Enable live audio effect.
+  ///
+  /// Available since: 3.10.0
+  /// Description: When the live audio effect is turned on, the spatial sense is enhanced and the instrument sounds become more prominent, without any increase in delay.
+  /// Use cases: It is commonly used in voice chat rooms and karaoke scenarios to enhance the live audio effects of the accompaniment.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  ///
+  /// - [enable] Whether to enable live audio effect.
+  /// - [mode] Live audio effect mode.
+  Future<void> enableLiveAudioEffect(bool enable, ZegoLiveAudioEffectMode mode);
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -5115,6 +5228,27 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [config] Screen capture parameter configuration.
   Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config);
+}
+
+abstract class ZegoAIVoiceChanger {
+  /// Get AI voice changer instance index.
+  ///
+  /// - Returns AI voice changer instance index.
+  int getIndex();
+
+  /// Initialize AI voice changer engine.
+  Future<void> initEngine();
+
+  /// Update AI voice changer engine models.
+  Future<void> update();
+
+  /// Get AI voice changer speaker list.
+  Future<void> getSpeakerList();
+
+  /// Set AI voice changer speaker.
+  ///
+  /// - [speakerID] Speaker ID.
+  Future<void> setSpeaker(int speakerID);
 }
 
 /// Callback for setting room extra information.

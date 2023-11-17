@@ -1,5 +1,105 @@
 # Change Log
 
+## 3.10.2
+
+### **Bug Fixes**
+
+1. Fixed the issue of a black screen appearing after turning on low-light enhancement.
+
+## 3.10.1
+
+### **Bug Fixes**
+
+1. Remove print privacy information.
+
+## 3.10.0
+
+### New Features
+
+#### 1. Added real-time AI voice-changing function
+
+Note:
+
+The AI Voice-Changing function is a paid function. If you need to apply for a trial or inquire about the official charging standards, please contact ZEGOCLOUD business personnel.
+
+The current official website SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support for special packaging.
+
+New AI voice changing function, like the Conan's Bowtie in real-time calls, perfectly reproduces the timbre and rhythm of the target character, while retaining the user's speech speed, emotion, and intonation, and can switch timbre at will, with ultra-low latency allowing users Enjoy social chat, live broadcast, game voice and other scenarios.
+
+For related API, please refer to [createAIVoiceChanger](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/createAIVoiceChanger.html), [destroyAIVoiceChanger]((https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/destroyAIVoiceChanger.html))
+
+#### 2. The virtual background of subject segmentation supports video materials
+
+Note:
+
+The current official website SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support for special packaging.
+
+The video filling method of the virtual background is centered and proportionally scaled. When the video is too large, the excess part will be cropped.
+
+When using the subject segmentation function, the virtual background supports the use of video materials. The final frame rate of the video materials will be consistent with the encoding frame rate and played in a loop.
+
+For related API, please refer to [enableVideoObjectSegmentation](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableVideoObjectSegmentation.html)
+
+#### 3. Media player supports accompaniment sound quality enhancement
+
+The media player supports accompaniment sound quality enhancement, which improves the sound quality of the accompaniment and the atmosphere of the scene. It is suitable for chat rooms, karaoke and other scenes.
+
+For related API, please refer to [enableLiveAudioEffect](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableLiveAudioEffect.html)
+
+#### 4. Supports obtaining and uploading audio Dump files
+
+Note: Since audio dump files are sensitive privacy data of users, developers must read ZEGOCLOUD Privacy Policy carefully when implementing this capability. In addition, when collecting audio Dump files, please indicate the purpose of Express SDK collection when obtaining user authorization and consent.
+
+Supports saving and uploading audio data before and after processing, which can be used to locate audio-related problems, improve troubleshooting efficiency, and shorten access time.
+
+For related API, please refer to [startDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/startDumpData.html), [stopDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/stopDumpData.html), [uploadDumpdata](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/uploadDumpdata.html), [removeDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/removeDumpData.html), [onRequestDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRequestDumpData.html), [onStartDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onStartDumpData.html), [onStopDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onStopDumpData.html), [onUploadDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onUploadDumpData.html)
+
+#### 5. Custom video capture supports transparent channel transmission
+
+Supports the extraction, encoding, and transmission of Alpha channel data in the RGBA channel collected by developers, thereby rendering the subject with a transparent background on the streaming side to achieve a more immersive and realistic video scene.
+
+For related API, please refer to [enableAlphaChannelVideoEncoder](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableAlphaChannelVideoEncoder.html)
+
+### Enhancements
+
+#### 1. Optimized low-light enhancement function, smoother in automatic mode
+
+In the automatic mode with low illumination enhancement, the dynamic adjustment of brightness will be smoother and smoother, improving the user's visual experience.
+
+For related API, please refer to [setLowlightEnhancement](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setLowlightEnhancement.html)
+
+#### 2. Optimize the upper limit of expected publish and play stream bit rates for network speed testing
+
+Optimize the upper limit of expected publish and play streaming bit rates for network speed testing, increasing it to 15M. Developers can check how well the audio and video quality matches the current network before publishing and playing streams to ensure stable call quality.
+
+For related API, please refer to [startNetworkSpeedTest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/startNetworkSpeedTest.html)
+
+#### 3. Optimize the [muteAll] interface logic for receiving audio and video data from remote users when playing streams
+
+Note: The new interfaces [muteAllPlayAudioStreams], [muteAllPlayVideoStreams] and the old interfaces [muteAllPlayStreamAudio], [muteAllPlayStreamVideo] cannot be mixed.
+
+New interfaces [muteAllPlayAudioStreams] and [muteAllPlayVideoStreams] are added to receive the audio and video data of all remote users when playing streams; at the same time, the [mutePlayStreamAudio] and [mutePlayStreamVideo] interfaces are used to individually control the specified streams.
+
+After the old interfaces [muteAllPlayStreamAudio] and [muteAllPlayStreamVideo] are called, the receiving status of the specified stream cannot be controlled individually.
+
+For related API, please refer to [muteAllPlayAudioStreams](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/muteAllPlayAudioStreams.html), [muteAllPlayVideoStreams](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/muteAllPlayVideoStreams.html), [mutePlayStreamAudio](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/mutePlayStreamAudio.html), [mutePlayStreamVideo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/mutePlayStreamVideo.html)
+
+#### 4. The media player supports only playing video or audio without consuming additional decoding performance
+
+Note: During playback, if the media stream type is modified, it will take effect the next time it is played.
+
+When using a media player to play audio and video files, the [setPlayMediaStreamType] interface can be used to set it to Audio-only or Video-only, which does not consume audio and video decoding performance.
+
+For related API, please refer to [setPlayMediaStreamType](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayMediaStreamType.html)
+
+### Bug Fixes
+
+#### 1. Fixed the issue of occasional no sound when playing streams
+
+#### 2. Fixed the issue where the [logoutRoom] and [loginRoom] interfaces were called multiple times when multiple rooms were disconnected, resulting in subsequent failure to log in to the room
+
+#### 4. Fixed the problem of frequent retries when room reconnection fails
+
 ## 3.9.0
 
 ### New Features

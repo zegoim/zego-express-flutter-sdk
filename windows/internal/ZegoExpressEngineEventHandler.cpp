@@ -70,6 +70,10 @@ void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState
 
         eventSink_->Success(retMap);
     }
+
+    if (state == EXPRESS::ZegoEngineState::ZEGO_ENGINE_STATE_STOP) {
+        ZegoTextureRendererController::getInstance()->resetAllRenderFirstFrame();
+    }
 }
 
 void ZegoExpressEngineEventHandler::onRoomStateUpdate(const std::string &roomID,
@@ -438,6 +442,14 @@ void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(
         qualityMap[FTValue("totalRecvBytes")] = FTValue(quality.totalRecvBytes);
         qualityMap[FTValue("audioRecvBytes")] = FTValue(quality.audioRecvBytes);
         qualityMap[FTValue("videoRecvBytes")] = FTValue(quality.videoRecvBytes);
+        qualityMap[FTValue("audioCumulativeBreakCount")] = FTValue((int32_t)quality.audioCumulativeBreakCount);
+        qualityMap[FTValue("videoCumulativeBreakCount")] = FTValue((int32_t)quality.videoCumulativeBreakCount);
+        qualityMap[FTValue("audioCumulativeBreakTime")] = FTValue((int32_t)quality.audioCumulativeBreakTime);
+        qualityMap[FTValue("videoCumulativeBreakTime")] = FTValue((int32_t)quality.videoCumulativeBreakTime);
+        qualityMap[FTValue("audioCumulativeBreakRate")] = FTValue(quality.audioCumulativeBreakRate);
+        qualityMap[FTValue("videoCumulativeBreakRate")] = FTValue(quality.videoCumulativeBreakRate);
+        qualityMap[FTValue("audioCumulativeDecodeTime")] = FTValue((int32_t)quality.audioCumulativeDecodeTime);
+        qualityMap[FTValue("videoCumulativeDecodeTime")] = FTValue((int32_t)quality.videoCumulativeDecodeTime);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 
@@ -741,6 +753,10 @@ void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(EXPRESS::IZegoMedia
         retMap[FTValue("errorCode")] = FTValue(errorCode);
 
         eventSink_->Success(retMap);
+    }
+
+    if (state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_NO_PLAY || state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_PLAY_ENDED) {
+        ZegoTextureRendererController::getInstance()->resetMediaPlayerRenderFirstFrame(mediaPlayer);
     }
 }
 
@@ -1081,6 +1097,54 @@ void ZegoExpressEngineEventHandler::onNetworkTimeSynchronized() {
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onNetworkTimeSynchronized");
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRequestDumpData() {
+    ZF::logInfo("[onRequestDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRequestDumpData");
+        
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onStartDumpData(int errorCode) {
+    ZF::logInfo("[onStartDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onStartDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onStopDumpData(int errorCode, const std::string& dumpDir) {
+     ZF::logInfo("[onStopDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onStopDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("dumpDir")] = FTValue(dumpDir);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUploadDumpData(int errorCode) {
+     ZF::logInfo("[onUploadDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onUploadDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
         eventSink_->Success(retMap);
     }
 }
@@ -1835,6 +1899,58 @@ void ZegoExpressEngineEventHandler::onRectChanged(EXPRESS::IZegoScreenCaptureSou
         rectMap[FTValue("height")] = FTValue(captureRect.height);
 
         retMap[FTValue("captureRect")] = rectMap;
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onInit(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger,
+                                           int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerInit] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerInit");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUpdate(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger,
+                                             int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerUpdate] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerUpdate");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onGetSpeakerList(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode,
+    const std::vector<EXPRESS::ZegoAIVoiceChangerSpeakerInfo> &speakerList) {
+    ZF::logInfo("[onAIVoiceChangerGetSpeakerList] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerGetSpeakerList");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        FTArray speakerListArray;
+        for (auto &speaker : speakerList) {
+            FTMap speakerMap;
+            speakerMap[FTValue("id")] = FTValue(speaker.id);
+            speakerMap[FTValue("name")] = FTValue(speaker.name);
+            speakerListArray.emplace_back(FTValue(speakerMap));
+        }
+        retMap[FTValue("speakerList")] = FTValue(speakerListArray);
 
         eventSink_->Success(retMap);
     }

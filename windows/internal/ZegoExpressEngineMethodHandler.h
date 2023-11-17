@@ -152,6 +152,9 @@ class ZegoExpressEngineMethodHandler {
     void
     muteAllPlayStreamVideo(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    muteAllPlayVideoStreams(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableCheckPoc(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
@@ -293,6 +296,16 @@ class ZegoExpressEngineMethodHandler {
     void getNetworkTimeInfo(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    void startDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void uploadDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void removeDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        
+
     void
     mutePublishStreamAudio(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -352,6 +365,9 @@ class ZegoExpressEngineMethodHandler {
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     muteAllPlayStreamAudio(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    muteAllPlayAudioStreams(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     enableHardwareDecoder(flutter::EncodableMap &argument,
@@ -622,6 +638,12 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerGetCurrentRenderingProgress(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableLiveAudioEffect(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerSetPlayMediaStreamType(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     /* Media Data Publisher */
@@ -921,6 +943,27 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    // AIVoiceChanger
+    void createAIVoiceChanger(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    destroyAIVoiceChanger(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void aiVoiceChangerGetSpeakerList(
+        flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void aiVoiceChangerInitEngine(
+        flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void aiVoiceChangerSetSpeaker(
+        flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    aiVoiceChangerUpdate(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void
     createTextureRenderer(flutter::EncodableMap &argument,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -937,6 +980,7 @@ class ZegoExpressEngineMethodHandler {
     std::unordered_map<int, EXPRESS::IZegoMediaDataPublisher *> mediaDataPublisherMap_;
     std::unordered_map<int, EXPRESS::IZegoScreenCaptureSource *> screenCaptureSourceMap_;
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
+    std::unordered_map<int, EXPRESS::IZegoAIVoiceChanger *> aiVoiceChangerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
 

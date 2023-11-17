@@ -37,6 +37,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoRealTimeSequentialDataManager *> *realTimeSequentialDataManagerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAIVoiceChanger *> *aiVoiceChangerMap;
+
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
 
 @property (nonatomic, strong) ZegoCopyrightedMusic *copyrightedMusicInstance;
@@ -157,7 +159,7 @@
         [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, scenario);
+    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, scenario);
 
     result(nil);
 }
@@ -195,7 +197,7 @@
         [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }
@@ -1242,6 +1244,7 @@
             backgroundConfig.blurLevel = (ZegoBackgroundBlurLevel)[ZegoUtils intValue:backgroundConfigMap[@"blurLevel"]];
             backgroundConfig.color = [ZegoUtils intValue:backgroundConfigMap[@"color"]];
             backgroundConfig.imageURL = backgroundConfigMap[@"imageURL"];
+            backgroundConfig.videoURL = backgroundConfigMap[@"videoURL"];
             config.backgroundConfig = backgroundConfig;
         }
     }
@@ -1509,12 +1512,30 @@
     result(nil);
 }
 
+- (void)muteAllPlayAudioStreams:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+
+    [[ZegoExpressEngine sharedEngine] muteAllPlayAudioStreams:mute];
+
+    result(nil);
+}
+
 - (void)mutePlayStreamVideo:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
     NSString *streamID = call.arguments[@"streamID"];
 
     [[ZegoExpressEngine sharedEngine] mutePlayStreamVideo:mute streamID:streamID];
+
+    result(nil);
+}
+
+- (void)muteAllPlayVideoStreams:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+
+    [[ZegoExpressEngine sharedEngine] muteAllPlayVideoStreams:mute];
 
     result(nil);
 }
@@ -3780,6 +3801,31 @@
     }
 }
 
+- (void)mediaPlayerEnableLiveAudioEffect:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        ZegoLiveAudioEffectMode mode = (ZegoLiveAudioEffectMode) [ZegoUtils unsignedIntValue:call.arguments[@"mode"]];
+        [mediaPlayer enableLiveAudioEffect:enable mode:mode];
+    }
+    
+    result(nil);
+}
+
+- (void)mediaPlayerSetPlayMediaStreamType:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        ZegoMediaStreamType streamType = (ZegoMediaStreamType) [ZegoUtils unsignedIntValue:call.arguments[@"streamType"]];
+        [mediaPlayer setPlayMediaStreamType:streamType];
+    }
+    
+    result(nil);
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -4686,6 +4732,35 @@
     });
 }
 
+- (void)startDumpData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSDictionary *configMap = call.arguments[@"config"];
+    
+    ZegoDumpDataConfig *config = [[ZegoDumpDataConfig alloc] init];
+    config.dataType = (ZegoDumpDataType) [ZegoUtils unsignedIntValue:configMap[@"dataType"]];
+    [[ZegoExpressEngine sharedEngine] startDumpData:config];
+    
+    result(nil);
+}
+
+- (void)stopDumpData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [[ZegoExpressEngine sharedEngine] stopDumpData];
+
+    result(nil);
+}
+
+- (void)uploadDumpData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [[ZegoExpressEngine sharedEngine] uploadDumpData];
+
+    result(nil);
+}
+
+- (void)removeDumpData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [[ZegoExpressEngine sharedEngine] removeDumpData];
+
+    result(nil);
+}
+
 #pragma mark - Copyrighted Music
 - (void)createCopyrightedMusic:(FlutterMethodCall *)call result:(FlutterResult)result {
 
@@ -4800,7 +4875,10 @@
     if (self.copyrightedMusicInstance) {
         NSString *songID = call.arguments[@"songID"];
         if ([ZegoUtils isNullObject:call.arguments[@"vendorID"]]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             [self.copyrightedMusicInstance getLrcLyric:songID callback:^(int errorCode, NSString *_Nonnull lyrics) {
+#pragma clang diagnostic pop
                 NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
                 resultMap[@"errorCode"] = @(errorCode);
                 resultMap[@"lyrics"] = lyrics;
@@ -5463,6 +5541,92 @@
         [screenCaptureSource stopCapture];
     }
 #endif
+    result(nil);
+}
+
+#pragma mark - AIVoiceChanger
+
+- (void)createAIVoiceChanger:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.aiVoiceChangerMap) {
+        self.aiVoiceChangerMap = [NSMutableDictionary dictionary];
+    }
+
+    ZegoAIVoiceChanger *aiVoiceChanger = [[ZegoExpressEngine sharedEngine] createAIVoiceChanger];
+
+    if (aiVoiceChanger) {
+        int index = aiVoiceChanger.getIndex;
+
+        [aiVoiceChanger setEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+        self.aiVoiceChangerMap[@(index)] = aiVoiceChanger;
+
+        result(@(index));
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyAIVoiceChanger:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAIVoiceChanger *aiVoiceChanger = self.aiVoiceChangerMap[index];
+
+    if (aiVoiceChanger) {
+        [aiVoiceChanger setEventHandler:nil];
+        [[ZegoExpressEngine sharedEngine] destroyAIVoiceChanger:aiVoiceChanger];
+    }
+
+    [self.aiVoiceChangerMap removeObjectForKey:index];
+
+    result(nil);
+}
+
+- (void)aiVoiceChangerGetSpeakerList:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAIVoiceChanger *aiVoiceChanger = self.aiVoiceChangerMap[index];
+
+    if (aiVoiceChanger) {
+        [aiVoiceChanger getSpeakerList];
+    }
+
+    result(nil);
+}
+
+- (void)aiVoiceChangerInitEngine:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAIVoiceChanger *aiVoiceChanger = self.aiVoiceChangerMap[index];
+
+    if (aiVoiceChanger) {
+        [aiVoiceChanger initEngine];
+    }
+
+    result(nil);
+}
+
+- (void)aiVoiceChangerUpdate:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAIVoiceChanger *aiVoiceChanger = self.aiVoiceChangerMap[index];
+
+    if (aiVoiceChanger) {
+        [aiVoiceChanger update];
+    }
+
+    result(nil);
+}
+
+- (void)aiVoiceChangerSetSpeaker:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAIVoiceChanger *aiVoiceChanger = self.aiVoiceChangerMap[index];
+
+    if (aiVoiceChanger) {
+        int speakerID = [ZegoUtils intValue:call.arguments[@"speakerID"]];
+        [aiVoiceChanger setSpeaker:speakerID];
+    }
+
     result(nil);
 }
 
