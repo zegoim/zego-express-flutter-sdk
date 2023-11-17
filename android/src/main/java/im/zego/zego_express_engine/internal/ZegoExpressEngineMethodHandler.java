@@ -4274,6 +4274,42 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPlayVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = ZegoUtils.intValue((Number) call.argument("audioEffectID"));
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPlayVolume(audioEffectID, volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPlayVolume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPlayVolume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPublishVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = ZegoUtils.intValue((Number) call.argument("audioEffectID"));
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPublishVolume(audioEffectID, volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPublishVolume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPublishVolume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void audioEffectPlayerSetVolumeAll(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
@@ -4287,6 +4323,40 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("audioEffectPlayerSetVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPlayVolumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPlayVolumeAll(volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPlayVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPlayVolumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPublishVolumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPublishVolumeAll(volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPublishVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPublishVolumeAll` but can't find specific player", null);
         }
     }
 

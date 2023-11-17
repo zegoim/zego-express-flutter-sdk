@@ -3748,9 +3748,37 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   }
 
   @override
+  Future<void> setPlayVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlayVolume',
+        {'index': _index, 'audioEffectID': audioEffectID, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPublishVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPublishVolume',
+        {'index': _index, 'audioEffectID': audioEffectID, 'volume': volume});
+  }
+
+  @override
   Future<void> setVolumeAll(int volume) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'audioEffectPlayerSetVolumeAll', {'index': _index, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPlayVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlayVolumeAll',
+        {'index': _index, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPublishVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPublishVolumeAll',
+        {'index': _index, 'volume': volume});
   }
 
   @override

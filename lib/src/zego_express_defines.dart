@@ -4457,6 +4457,28 @@ abstract class ZegoAudioEffectPlayer {
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolume(int audioEffectID, int volume);
 
+  /// Set local play volume for a single audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set local play volume for a single audio effect.
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPlayVolume(int audioEffectID, int volume);
+
+  /// Set publish volume for a single audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set publish volume for a single audio effect.
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPublishVolume(int audioEffectID, int volume);
+
   /// Set volume for all audio effect. Both the local play volume and the publish volume are set.
   ///
   /// Available since: 1.16.0
@@ -4466,6 +4488,26 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolumeAll(int volume);
+
+  /// Set local play volume for all audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set local play volume for all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPlayVolumeAll(int volume);
+
+  /// Set publish volume for all audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set publish volume for all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPublishVolumeAll(int volume);
 
   /// Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
   ///
