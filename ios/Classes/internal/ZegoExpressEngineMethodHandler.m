@@ -2017,6 +2017,8 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     taskObject.enableSoundLevel = enableSoundLevel;
+    // minPlayStreamBufferLength
+    taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
 
     [[ZegoExpressEngine sharedEngine] startAutoMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
 

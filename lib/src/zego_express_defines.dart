@@ -3235,19 +3235,17 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
+  /// Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.
+  int minPlayStreamBufferLength;
+
   /// Create a auto mix stream task object
   ZegoAutoMixerTask()
       : taskID = "",
         roomID = "",
         outputList = [],
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
-        enableSoundLevel = false {
-    taskID = "";
-    roomID = "";
-    outputList = [];
-    audioConfig = ZegoMixerAudioConfig.defaultConfig();
-    enableSoundLevel = false;
-  }
+        enableSoundLevel = false,
+        minPlayStreamBufferLength = -1;
 
   Map<String, dynamic> toMap() {
     return {
@@ -3255,7 +3253,8 @@ class ZegoAutoMixerTask {
       'roomID': this.roomID,
       'audioConfig': this.audioConfig.toMap(),
       'outputList': this.outputList,
-      'enableSoundLevel': this.enableSoundLevel
+      'enableSoundLevel': this.enableSoundLevel,
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
   }
 }
