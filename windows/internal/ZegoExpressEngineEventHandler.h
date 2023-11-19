@@ -177,6 +177,8 @@ protected:
     void onIMRecvBarrageMessage(const std::string & roomID, std::vector<EXPRESS::ZegoBarrageMessageInfo> messageList) override;
 
     void onIMRecvCustomCommand(const std::string & roomID, EXPRESS::ZegoUser fromUser, const std::string & command) override;
+    
+    void onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) override;
 
     void onPerformanceStatusUpdate(const EXPRESS::ZegoPerformanceStatus & status) override;
 

@@ -1587,6 +1587,33 @@ void ZegoExpressEngineEventHandler::onIMRecvCustomCommand(const std::string &roo
     }
 }
 
+void ZegoExpressEngineEventHandler::onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) 
+{
+    ZF::logInfo("[onRecvRoomTransparentMessage] roomID: %s, userID: %s", roomID.c_str(), message.sendUser.userID.c_str());
+    
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRecvRoomTransparentMessage");
+        retMap[FTValue("roomID")] = FTValue(roomID);
+
+        FTMap userMap, messageMap;
+
+        userMap[FTValue("userID")] = FTValue(message.sendUser.userID);
+        userMap[FTValue("userName")] = FTValue(message.sendUser.userName);
+        messageMap[FTValue("sendUser")] = FTValue(userMap);
+
+        unsigned char* data =  (unsigned char* )message.content.data();
+        unsigned int data_length = (unsigned int)message.content.length();
+        std::vector<uint8_t> dataArray(data, data + data_length);
+        
+        messageMap[FTValue("content")] = FTValue(dataArray);
+
+        retMap[FTValue("message")] = FTValue(messageMap);
+        
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onPerformanceStatusUpdate(
     const EXPRESS::ZegoPerformanceStatus &status) {
 

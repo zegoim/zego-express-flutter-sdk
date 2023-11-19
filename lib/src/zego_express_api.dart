@@ -1030,6 +1030,20 @@ class ZegoExpressEngine {
   static void Function(ZegoRealTimeSequentialDataManager manager,
       Uint8List data, String streamID)? onReceiveRealTimeSequentialData;
 
+  /// The callback triggered when Barrage Messages are received.
+  ///
+  /// Available since: 1.5.0
+  /// Description: This callback is used to receive room passthrough messages sent by other users in the same room.
+  /// When to trigger: After calling [loginRoom] to login to the room, this callback is triggered if there is a user in the room who sends a message received by the specified client through the [sendTransparentMessage] function.
+  /// Restrictions: None
+  /// Caution: Barrage messages sent by users themselves will not be notified through this callback. When there are a large number of barrage messages in the room, the notification may be delayed, and some barrage messages may be lost.
+  /// Related callbacks: A bullet-screen message sent by the user himself is not notified by this callback. [sendTransparentMessage] specifies that only a server callback is used. This callback is not triggered.
+  ///
+  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes.
+  /// - [message] recv message.
+  static void Function(String roomID, ZegoRoomRecvTransparentMessage message)?
+      onRecvRoomTransparentMessage;
+
   /// The callback triggered when Broadcast Messages are received.
   ///
   /// Available since: 1.2.1

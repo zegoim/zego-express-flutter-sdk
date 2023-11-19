@@ -1551,6 +1551,27 @@ class ZegoExpressImpl {
     return ZegoIMSendCustomCommandResult(map['errorCode']);
   }
 
+  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(
+      String roomID, ZegoRoomSendTransparentMessage message) async {
+    List<Map<String, dynamic>> recvuserMapList = [];
+
+    for (ZegoUser user in message.recvUserList) {
+      recvuserMapList.add({'userID': user.userID, 'userName': user.userName});
+    }
+
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('sendTransparentMessage', {
+      'roomID': roomID,
+      'sendMode': message.sendMode.index,
+      'sendType': message.sendType.index,
+      'content': message.content,
+      'recvUserList': recvuserMapList,
+      'timeOut': message.timeOut
+    });
+
+    return ZegoRoomSendTransparentMessageResult(map['errorCode']);
+  }
+
   /* MediaPlayer */
 
   static final Map<int, ZegoMediaPlayer> mediaPlayerMap = {};
@@ -2768,6 +2789,17 @@ class ZegoExpressImpl {
             map['roomID'],
             ZegoUser(map['fromUser']['userID'], map['fromUser']['userName']),
             map['command']);
+        break;
+
+      case 'onRecvRoomTransparentMessage':
+        if (ZegoExpressEngine.onRecvRoomTransparentMessage == null) return;
+
+        ZegoRoomRecvTransparentMessage message = ZegoRoomRecvTransparentMessage(
+            ZegoUser(map['message']['sendUser']['userID'],
+                map['message']['sendUser']['userName']),
+            map['message']['content']);
+
+        ZegoExpressEngine.onRecvRoomTransparentMessage!(map['roomID'], message);
         break;
 
       /* Utilities */

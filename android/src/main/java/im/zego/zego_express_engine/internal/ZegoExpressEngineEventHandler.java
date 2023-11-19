@@ -80,6 +80,7 @@ import im.zego.zegoexpress.entity.ZegoSoundLevelInfo;
 import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
+import im.zego.zegoexpress.entity.ZegoRoomRecvTransparentMessage;
 import io.flutter.plugin.common.EventChannel;
 import android.os.Handler;
 import android.os.Looper;
@@ -1182,6 +1183,35 @@ public class ZegoExpressEngineEventHandler {
             map.put("roomID", roomID);
             map.put("fromUser", userMap);
             map.put("command", command);
+
+            sink.success(map);
+        }
+        
+        @Override
+        public void onRecvRoomTransparentMessage(String roomID, ZegoRoomRecvTransparentMessage message)
+        {
+            super.onRecvRoomTransparentMessage(roomID, message);
+            ZegoLog.log("[onRecvRoomTransparentMessage] roomID: %s, sendUserID: %s, sendUserName: %s", roomID, message.sendUser.userID, message.sendUser.userName);
+
+            if (guardSink()) { return; }
+
+
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRecvRoomTransparentMessage");
+            map.put("roomID", roomID);
+
+            HashMap<String, Object> messageMap = new HashMap<>();
+
+            HashMap<String, Object> userMap = new HashMap<>();
+            userMap.put("userID", message.sendUser.userID);
+            userMap.put("userName", message.sendUser.userName);
+
+            messageMap.put("sendUser", userMap);
+            messageMap.put("content", message.content);
+
+            map.put("message", messageMap);
+
 
             sink.success(map);
         }

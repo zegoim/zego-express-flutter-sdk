@@ -4711,6 +4711,46 @@ void ZegoExpressEngineMethodHandler::sendCustomCommand(
         });
 }
 
+
+void ZegoExpressEngineMethodHandler::sendTransparentMessage(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
+    auto sendMode = std::get<std::int32_t>(argument[FTValue("sendMode")]);
+    auto sendType = std::get<std::int32_t>(argument[FTValue("sendType")]);
+    auto byteData = std::get<std::vector<uint8_t>>(argument[FTValue("content")]);
+
+    auto toUserListArray = std::get<FTArray>(argument[FTValue("recvUserList")]);
+    std::vector<ZEGO::EXPRESS::ZegoUser> toUserList;
+    for (auto user_ : toUserListArray) {
+        ZEGO::EXPRESS::ZegoUser user;
+        auto userMap = std::get<FTMap>(user_);
+        user.userID = std::get<std::string>(userMap[FTValue("userID")]);
+        user.userName = std::get<std::string>(userMap[FTValue("userName")]);
+        toUserList.push_back(user);
+    }
+
+    auto timeout = std::get<std::int32_t>(argument[FTValue("timeOut")]);
+
+    auto sharedPtrResult =
+        std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+
+    ZEGO::EXPRESS::ZegoRoomSendTransparentMessage message;
+    message.sendMode = (ZEGO::EXPRESS::ZegoRoomTransparentMessageMode)sendMode;
+    message.sendType = (ZEGO::EXPRESS::ZegoRoomTransparentMessageType)sendType;
+    message.content.assign((const char*)byteData.data(), (unsigned int)byteData.size());
+    message.recvUserList = std::move(toUserList);
+    message.timeOut = timeout;
+
+    EXPRESS::ZegoExpressSDK::getEngine()->sendTransparentMessage(
+        roomID, message, [=](int errorCode) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            sharedPtrResult->Success(retMap);
+        });
+}
+
+
 void ZegoExpressEngineMethodHandler::enableCustomVideoCapture(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
