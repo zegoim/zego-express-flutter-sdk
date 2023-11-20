@@ -1305,6 +1305,21 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onRequestUploadDumpData(String dumpDir, boolean takePhoto) {
+            super.onRequestUploadDumpData(dumpDir, takePhoto);
+            ZegoLog.log("[onRequestUploadDumpData]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRequestUploadDumpData");
+            map.put("dumpDir", dumpDir);
+            map.put("takePhoto", takePhoto);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onStartDumpData(int errorCode) {
             super.onStartDumpData(errorCode);
             ZegoLog.log("[onStartDumpData]");

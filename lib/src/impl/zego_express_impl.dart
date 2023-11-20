@@ -2132,6 +2132,14 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onRequestDumpData!();
         break;
+      
+      case 'onRequestUploadDumpData':
+        if (ZegoExpressEngine.onRequestUploadDumpData == null) return;
+
+        ZegoExpressEngine.onRequestUploadDumpData!(
+          map['dumpDir'], map['takePhoto']
+        );
+        break;
 
       case 'onStartDumpData':
         if (ZegoExpressEngine.onStartDumpData == null) return;

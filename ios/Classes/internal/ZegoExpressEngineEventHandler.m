@@ -111,6 +111,20 @@
     }
 }
 
+- (void)onRequestUploadDumpData:(NSString *)dumpDir takePhoto:(BOOL)takePhoto {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestUploadDumpData",
+            @"dumpDir": dumpDir,
+            @"takePhoto": @(takePhoto),
+        });
+    }
+}
+
 - (void)onStartDumpData:(int)errorCode {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onStartDumpData]");

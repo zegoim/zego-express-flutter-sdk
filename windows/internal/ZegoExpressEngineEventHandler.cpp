@@ -1097,6 +1097,19 @@ void ZegoExpressEngineEventHandler::onRequestDumpData() {
     }
 }
 
+void ZegoExpressEngineEventHandler::onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) {
+    ZF::logInfo("[onRequestUploadDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRequestUploadDumpData");
+        retMap[FTValue("dumpDir")] = FTValue(dumpDir);
+        retMap[FTValue("takePhoto")] = FTValue(takePhoto);
+        
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onStartDumpData(int errorCode) {
     ZF::logInfo("[onStartDumpData]");
 

@@ -1365,6 +1365,15 @@ class ZegoExpressEngine {
   /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
   static void Function()? onRequestDumpData;
 
+  /// Request to dump data.
+  ///
+  /// Available since: 3.11.0
+  /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
+  ///
+  /// - [dumpDir] Dump data dir.
+  /// - [takePhoto] Need to take photo when uploading dump data
+  static void Function(String dumpDir, bool takePhoto)? onRequestUploadDumpData;
+
   /// Callback when starting to dump data.
   ///
   /// Available since: 3.10.0
