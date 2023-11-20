@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.10.3
+
+### **Bug Fixes**
+
+1. Fixed the problem of false positives in the mobile terminal sleep detection module, affecting room re-login and push-pull stream retry logic.
+
 ## 3.10.2
 
 ### **Bug Fixes**
