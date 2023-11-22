@@ -121,6 +121,7 @@ protected:
     void onNetworkTimeSynchronized() override;
 
     void onRequestDumpData() override;
+    void onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) override;
 
     void onStartDumpData(int errorCode) override;
 
