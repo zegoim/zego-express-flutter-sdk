@@ -2022,7 +2022,7 @@ public class ZegoExpressEngineMethodHandler {
         // whiteboard
         HashMap<String, Object> whiteboardMap = call.argument("whiteboard");
         if (whiteboardMap != null && !whiteboardMap.isEmpty()) {
-            int whiteboardID = ZegoUtils.intValue((Number) whiteboardMap.get("whiteboardID"));
+            long whiteboardID = ZegoUtils.longValue((Number) whiteboardMap.get("whiteboardID"));
             if (whiteboardID != 0) {
                 ZegoMixerWhiteboard whiteboard = new ZegoMixerWhiteboard();
                 whiteboard.whiteboardID = whiteboardID;
