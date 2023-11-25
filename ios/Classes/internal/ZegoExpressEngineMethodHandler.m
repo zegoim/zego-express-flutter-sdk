@@ -1828,7 +1828,7 @@
     // whiteboard
     NSDictionary *whiteboardMap = call.arguments[@"whiteboard"];
     if (whiteboardMap && whiteboardMap.count > 0) {
-        int whiteboardID = [ZegoUtils intValue:whiteboardMap[@"whiteboardID"]];
+        unsigned long long whiteboardID = [ZegoUtils unsignedLongLongValue:whiteboardMap[@"whiteboardID"]];
         if (whiteboardID != 0) {
             ZegoMixerWhiteboard *whiteboard = [[ZegoMixerWhiteboard alloc] init];
             whiteboard.whiteboardID = whiteboardID;
