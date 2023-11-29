@@ -17,6 +17,7 @@
 #import "ZegoCustomVideoRenderManager.h"
 #import "ZegoCustomVideoProcessManager.h"
 #import "ZegoMediaPlayerVideoManager.h"
+#import "ZegoMediaPlayerAudioManager.h"
 #import "ZegoMediaPlayerBlockDataManager.h"
 
 #import "ZegoUtils.h"
@@ -3135,6 +3136,7 @@
         if (!self.enablePlatformView) {
             [mediaPlayer setVideoHandler:[ZegoTextureRendererController sharedInstance] format:ZegoVideoFrameFormatBGRA32 type:ZegoVideoBufferTypeCVPixelBuffer];
         }
+        [mediaPlayer setAudioHandler:(id<ZegoMediaPlayerAudioHandler>)[ZegoMediaPlayerAudioManager sharedInstance]];
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);
@@ -3680,6 +3682,23 @@
     }
 
     result(nil);
+}
+
+- (void)mediaPlayerEnableAudioData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
+        if (enable) {
+            [mediaPlayer setAudioHandler:(id<ZegoMediaPlayerAudioHandler>)[ZegoMediaPlayerAudioManager sharedInstance]];
+        } else {
+            [mediaPlayer setAudioHandler:nil];
+        }
+    }
+
+   result(nil);
 }
 
 - (void)mediaPlayerEnableVideoData:(FlutterMethodCall *)call result:(FlutterResult)result {

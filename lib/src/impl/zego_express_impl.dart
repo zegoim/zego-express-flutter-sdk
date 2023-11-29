@@ -2146,13 +2146,12 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onRequestDumpData!();
         break;
-      
+
       case 'onRequestUploadDumpData':
         if (ZegoExpressEngine.onRequestUploadDumpData == null) return;
 
         ZegoExpressEngine.onRequestUploadDumpData!(
-          map['dumpDir'], map['takePhoto']
-        );
+            map['dumpDir'], map['takePhoto']);
         break;
 
       case 'onStartDumpData':
@@ -3648,6 +3647,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetAudioTrackPublishIndex',
         {'index': _index, 'index_': index});
+  }
+
+  @override
+  Future<void> enableAudioData(bool enable) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableAudioData', {'index': _index, 'enable': enable});
   }
 
   @override

@@ -34,6 +34,7 @@ import java.util.Locale;
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
 import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
 import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
+import im.zego.zego_express_engine.ZegoMediaPlayerAudioManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerBlockDataManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
 import im.zego.zegoexpress.ZegoAIVoiceChanger;
@@ -3266,6 +3267,7 @@ public class ZegoExpressEngineMethodHandler {
 
             mediaPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
+            mediaPlayer.setAudioHandler(ZegoMediaPlayerAudioManager.getInstance());
 
             result.success(index);
         } else {
@@ -3968,6 +3970,25 @@ public class ZegoExpressEngineMethodHandler {
         if (mediaPlayer != null) {
             int index_ = ZegoUtils.intValue((Number) call.argument("index_"));
             mediaPlayer.setAudioTrackPublishIndex(index_);
+        }
+
+        result.success(null);
+    }
+
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableAudioData(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            if (enable) {
+                mediaPlayer.setAudioHandler(ZegoMediaPlayerAudioManager.getInstance());
+            } else {
+                mediaPlayer.setAudioHandler(null);
+            }
         }
 
         result.success(null);
