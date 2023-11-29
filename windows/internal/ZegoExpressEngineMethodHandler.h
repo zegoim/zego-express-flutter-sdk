@@ -232,6 +232,8 @@ class ZegoExpressEngineMethodHandler {
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setBeautifyOption(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableColorEnhancement(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void
     sendBroadcastMessage(flutter::EncodableMap &argument,

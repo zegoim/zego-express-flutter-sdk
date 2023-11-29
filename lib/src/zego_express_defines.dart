@@ -3949,6 +3949,27 @@ class ZegoAIVoiceChangerSpeakerInfo {
   ZegoAIVoiceChangerSpeakerInfo(this.id, this.name);
 }
 
+/// Color enhancement params.
+class ZegoColorEnhancementParams {
+  /// Description: color enhancement intensity. Value range: [0,1], the larger the value, the stronger the intensity of color enhancement. Default value: 0.
+  double intensity;
+
+  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 0.
+  double skinToneProtectionLevel;
+
+  /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
+  double lipColorProtectionLevel;
+
+  ZegoColorEnhancementParams(this.intensity, this.skinToneProtectionLevel,
+      this.lipColorProtectionLevel);
+
+  /// Constructs a color enhancement params object by default.
+  ZegoColorEnhancementParams.defaultParam()
+      : intensity = 0,
+        skinToneProtectionLevel = 1,
+        lipColorProtectionLevel = 0;
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///

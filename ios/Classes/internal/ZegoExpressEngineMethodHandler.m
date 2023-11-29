@@ -5746,6 +5746,23 @@
 
     result(nil);
 }
+- (void)enableColorEnhancement:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    
+    ZegoColorEnhancementParams *p = [[ZegoColorEnhancementParams alloc] init];
+    p.intensity = [ZegoUtils floatValue:paramsMap[@"intensity"]];
+    p.skinToneProtectionLevel = [ZegoUtils floatValue:paramsMap[@"skinToneProtectionLevel"]];
+    p.lipColorProtectionLevel = [ZegoUtils floatValue:paramsMap[@"lipColorProtectionLevel"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+        
+    [[ZegoExpressEngine sharedEngine] enableColorEnhancement:enable params:p channel:(ZegoPublishChannel)channel];
+    
+    result(nil);
+}
 
 #pragma mark - PlatformView Utils
 

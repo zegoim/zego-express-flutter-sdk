@@ -1489,6 +1489,20 @@ class ZegoExpressImpl {
         {'enable': enable, 'mode': mode.index, 'tonal': tonal});
   }
 
+  Future<void> enableColorEnhancement(
+      bool enable, ZegoColorEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableColorEnhancement', {
+      'enable': enable,
+      'params': {
+        'intensity': params.intensity,
+        'skinToneProtectionLevel': params.skinToneProtectionLevel,
+        'lipColorProtectionLevel': params.lipColorProtectionLevel
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   /* IM */
 
   static final Map<int, ZegoRealTimeSequentialDataManager>

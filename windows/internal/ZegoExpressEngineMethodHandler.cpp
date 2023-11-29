@@ -5819,3 +5819,18 @@ void ZegoExpressEngineMethodHandler::aiVoiceChangerGetSpeakerList(
 
     result->Success();
 }
+void ZegoExpressEngineMethodHandler::enableColorEnhancement(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result){
+    auto enable = std::get<bool>(argument[FTValue("enable")]);
+    auto params = std::get<FTMap>(argument[FTValue("params")]);
+    auto channel = std::get<int32_t>(argument[FTValue("channel")]);
+
+    EXPRESS::ZegoColorEnhancementParams p;
+    p.intensity = std::get<double>(params[FTValue("intensity")]);
+    p.skinToneProtectionLevel = std::get<double>(params[FTValue("skinToneProtectionLevel")]);
+    p.lipColorProtectionLevel = std::get<double>(params[FTValue("lipColorProtectionLevel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableColorEnhancement(enable, p, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
