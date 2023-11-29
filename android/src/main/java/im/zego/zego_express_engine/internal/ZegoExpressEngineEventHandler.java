@@ -1620,6 +1620,23 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
+
+        @Override
+        public void onMediaPlayerVideoSizeChanged(ZegoMediaPlayer mediaPlayer, int width, int height) {
+            super.onMediaPlayerVideoSizeChanged(mediaPlayer, width, height);
+            ZegoLog.log("[onMediaPlayerVideoSizeChanged] idx: %d, width: %d, height: %d", mediaPlayer.getIndex(), width, height);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerVideoSizeChanged");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("width", width);
+            map.put("height", height);
+
+            sink.success(map);
+        }
     };
 
 

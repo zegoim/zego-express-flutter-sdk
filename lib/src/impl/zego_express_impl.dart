@@ -3047,6 +3047,17 @@ class ZegoExpressImpl {
               mediaPlayer, map['millisecond']);
         }
         break;
+      case 'onMediaPlayerVideoSizeChanged':
+        if (ZegoExpressEngine.onMediaPlayerVideoSizeChanged == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerVideoSizeChanged!(
+              mediaPlayer, map['width'], map['height']);
+        }
+        break;
 
       /* AudioEffectPlayer */
 
