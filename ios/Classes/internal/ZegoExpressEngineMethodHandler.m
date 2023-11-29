@@ -159,7 +159,7 @@
         [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, scenario);
+    ZGLog(@"[createEngineWithProfile] platform:iOS, enablePlatformView:%@, appID:%u, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, scenario);
 
     result(nil);
 }
@@ -197,7 +197,7 @@
         [[ZegoTextureRendererController sharedInstance] initControllerWithMessenger:self.registrar.messenger];
     }
 
-    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, appSign:%@, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, appSign, isTestEnv ? @"true" : @"false", scenario);
+    ZGLog(@"[createEngine] platform:iOS, enablePlatformView:%@, appID:%u, isTestEnv:%@, scenario:%d", _enablePlatformView ? @"true" : @"false", appID, isTestEnv ? @"true" : @"false", scenario);
 
     result(nil);
 }
@@ -1828,7 +1828,7 @@
     // whiteboard
     NSDictionary *whiteboardMap = call.arguments[@"whiteboard"];
     if (whiteboardMap && whiteboardMap.count > 0) {
-        int whiteboardID = [ZegoUtils intValue:whiteboardMap[@"whiteboardID"]];
+        unsigned long long whiteboardID = [ZegoUtils unsignedLongLongValue:whiteboardMap[@"whiteboardID"]];
         if (whiteboardID != 0) {
             ZegoMixerWhiteboard *whiteboard = [[ZegoMixerWhiteboard alloc] init];
             whiteboard.whiteboardID = whiteboardID;
@@ -2017,6 +2017,8 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     taskObject.enableSoundLevel = enableSoundLevel;
+    // minPlayStreamBufferLength
+    taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
 
     [[ZegoExpressEngine sharedEngine] startAutoMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
 
@@ -2981,6 +2983,44 @@
     }
 
     [[ZegoExpressEngine sharedEngine] sendCustomCommand:command toUserList:userListObject roomID:roomID callback:^(int errorCode) {
+        result(@{
+            @"errorCode": @(errorCode)
+        });
+    }];
+}
+
+- (void)sendTransparentMessage:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *roomID = call.arguments[@"roomID"];
+    int senMode = [ZegoUtils intValue:call.arguments[@"sendMode"]];
+    int senType = [ZegoUtils intValue:call.arguments[@"sendType"]];
+    int timeOut = [ZegoUtils intValue:call.arguments[@"timeOut"]];
+
+    FlutterStandardTypedData *content = call.arguments[@"content"];
+
+    NSArray<NSDictionary *> *userListMap = call.arguments[@"recvUserList"];
+
+    NSMutableArray<ZegoUser *> *userListObject = nil;
+    if (userListMap && userListMap.count > 0) {
+        userListObject = [[NSMutableArray alloc] init];
+        for(NSDictionary *userMap in userListMap) {
+            NSString *uid =  userMap[@"userID"];
+            if(uid.length == 0)
+                continue;
+            ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
+            [userListObject addObject:userObject];
+        }
+    }
+
+    ZegoRoomSendTransparentMessage *message = [[ZegoRoomSendTransparentMessage alloc] init];
+    message.timeOut = timeOut;
+    message.sendMode = (ZegoRoomTransparentMessageMode)senMode;
+    message.sendType = (ZegoRoomTransparentMessageType)senType;
+    message.recvUserList = userListObject;
+    message.content = content.data;
+
+
+    [[ZegoExpressEngine sharedEngine] sendTransparentMessage:message roomID:roomID callback:^(int errorCode) {
         result(@{
             @"errorCode": @(errorCode)
         });
@@ -4015,6 +4055,40 @@
     }
 }
 
+- (void)audioEffectPlayerSetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPlayVolume:volume audioEffectID:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPlayVolume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPlayVolume` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetPublishVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPublishVolume:volume audioEffectID:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPublishVolume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPublishVolume` but can't find specific player" details:nil]);
+    }
+}
+
 - (void)audioEffectPlayerSetVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
@@ -4028,6 +4102,38 @@
 
     } else {
         result([FlutterError errorWithCode:[@"audioEffectPlayerSetVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetPlayVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPlayVolumeAll:volume];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPlayVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPlayVolumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetPublishVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPublishVolumeAll:volume];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPublishVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPublishVolumeAll` but can't find specific player" details:nil]);
     }
 }
 
@@ -4809,6 +4915,17 @@
         }];
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicDownload` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)copyrightedMusicCancelDownload:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSString *resourceID = call.arguments[@"resourceID"];
+        [self.copyrightedMusicInstance cancelDownload:resourceID];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicCancelDownload` but can't find specific instance" details:nil]);
     }
 }
 

@@ -228,6 +228,27 @@ enum ZegoRoomStateChangedReason {
   LogoutFailed
 }
 
+/// Room mode.
+enum ZegoRoomTransparentMessageMode {
+  /// Single room mode.
+  OnlyClient,
+
+  /// Multiple room mode.
+  OnlyServer,
+
+  /// Multiple room mode.
+  ClientAndServer
+}
+
+/// Room mode.
+enum ZegoRoomTransparentMessageType {
+  /// Single room mode.
+  ZegoRoomTransparentMessageNormal,
+
+  /// Multiple room mode.
+  ZegoRoomTransparentMessageSequence
+}
+
 /// Publish channel.
 enum ZegoPublishChannel {
   /// The main (default/first) publish channel.
@@ -2570,6 +2591,30 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
+  /// Accumulated audio break count (Available since 2.9.0)
+  int audioCumulativeBreakCount;
+
+  /// Accumulated audio break time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeBreakTime;
+
+  /// Accumulated audio break rate, in percentage, 0.0 ~ 100.0 (Available since 2.9.0)
+  double audioCumulativeBreakRate;
+
+  /// Accumulated audio decode time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeDecodeTime;
+
+  /// Accumulated video break count (Available since 2.9.0)
+  int videoCumulativeBreakCount;
+
+  /// Accumulated video break time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeBreakTime;
+
+  /// Accumulated video break rate, in percentage, 0.0 ~ 1.0 (Available since 2.9.0)
+  double videoCumulativeBreakRate;
+
+  /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeDecodeTime;
+
   ZegoPlayStreamQuality(
       this.videoRecvFPS,
       this.videoDejitterFPS,
@@ -2595,7 +2640,15 @@ class ZegoPlayStreamQuality {
       this.videoCodecID,
       this.totalRecvBytes,
       this.audioRecvBytes,
-      this.videoRecvBytes);
+      this.videoRecvBytes,
+      this.audioCumulativeBreakCount,
+      this.audioCumulativeBreakTime,
+      this.audioCumulativeBreakRate,
+      this.audioCumulativeDecodeTime,
+      this.videoCumulativeBreakCount,
+      this.videoCumulativeBreakTime,
+      this.videoCumulativeBreakRate,
+      this.videoCumulativeDecodeTime);
 }
 
 /// Cross APP playing stream configuration.
@@ -3203,19 +3256,17 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
+  /// Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.
+  int minPlayStreamBufferLength;
+
   /// Create a auto mix stream task object
   ZegoAutoMixerTask()
       : taskID = "",
         roomID = "",
         outputList = [],
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
-        enableSoundLevel = false {
-    taskID = "";
-    roomID = "";
-    outputList = [];
-    audioConfig = ZegoMixerAudioConfig.defaultConfig();
-    enableSoundLevel = false;
-  }
+        enableSoundLevel = false,
+        minPlayStreamBufferLength = -1;
 
   Map<String, dynamic> toMap() {
     return {
@@ -3223,7 +3274,8 @@ class ZegoAutoMixerTask {
       'roomID': this.roomID,
       'audioConfig': this.audioConfig.toMap(),
       'outputList': this.outputList,
-      'enableSoundLevel': this.enableSoundLevel
+      'enableSoundLevel': this.enableSoundLevel,
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
   }
 }
@@ -3266,6 +3318,42 @@ class ZegoBarrageMessageInfo {
 
   ZegoBarrageMessageInfo(
       this.message, this.messageID, this.sendTime, this.fromUser);
+}
+
+/// Transparent message info.
+///
+/// Room transparent message, including room id, message content, sending user, sending type, sending mode, timeout period
+class ZegoRoomSendTransparentMessage {
+  /// send mode
+  ZegoRoomTransparentMessageMode sendMode;
+
+  /// send type
+  ZegoRoomTransparentMessageType sendType;
+
+  /// Message send content.
+  Uint8List content;
+
+  /// Message receiver list, when sendType appointed ZegoRoomTransparentMessageModeOnlyServer don't fill in. When appointed ZegoRoomTransparentMessageModeClientAndServer or ZegoRoomTransparentMessageModeOnlyClient, empty room will be sent to all online users.
+  List<ZegoUser> recvUserList;
+
+  /// send message timeout, The default value is 10s.
+  int timeOut;
+
+  ZegoRoomSendTransparentMessage(this.sendMode, this.sendType, this.content,
+      this.recvUserList, this.timeOut);
+}
+
+/// Received a transparent message from the room.
+///
+/// Room transparent message, including message content, sending user, sending type, sending mode
+class ZegoRoomRecvTransparentMessage {
+  /// send message user
+  ZegoUser sendUser;
+
+  /// Message send content.
+  Uint8List content;
+
+  ZegoRoomRecvTransparentMessage(this.sendUser, this.content);
 }
 
 /// Parameter object for audio frame.
@@ -4446,6 +4534,28 @@ abstract class ZegoAudioEffectPlayer {
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolume(int audioEffectID, int volume);
 
+  /// Set local play volume for a single audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set local play volume for a single audio effect.
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPlayVolume(int audioEffectID, int volume);
+
+  /// Set publish volume for a single audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set publish volume for a single audio effect.
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPublishVolume(int audioEffectID, int volume);
+
   /// Set volume for all audio effect. Both the local play volume and the publish volume are set.
   ///
   /// Available since: 1.16.0
@@ -4455,6 +4565,26 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolumeAll(int volume);
+
+  /// Set local play volume for all audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set local play volume for all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPlayVolumeAll(int volume);
+
+  /// Set publish volume for all audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set publish volume for all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPublishVolumeAll(int volume);
 
   /// Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
   ///
@@ -4882,16 +5012,27 @@ abstract class ZegoCopyrightedMusic {
       ZegoCopyrightedMusicGetSharedConfig config,
       ZegoCopyrightedMusicResourceType type);
 
-  /// Download song or accompaniment.
+  /// Download music resource.
   ///
   /// Available since: 2.13.0
-  /// Description: Download a song or accompaniment. It can only be played after downloading successfully.
-  /// Use case: Get copyrighted accompaniment for local playback and sharing.
+  /// Description: Download music resource. It can only be played after downloading successfully.
+  /// Use case: After obtaining the music resource authorization, use this interface to download the corresponding resources.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  /// Caution: Loading songs or accompaniment resources is affected by the network.
+  /// Caution: Downloading copyrighted music resources is affected by the Internet.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<ZegoCopyrightedMusicDownloadResult> download(String resourceID);
+
+  /// Cancel download of music resource.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Cancel download of music resource.
+  /// Use case: After starting to download music resources, use this interface to cancel the corresponding download task.
+  /// When to call: After starting the download [download].
+  /// Caution: When a valid resourceID is passed in, only unfinished download tasks will be cancelled. When empty is passed in, all unfinished download tasks will be canceled.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<void> cancelDownload(String resourceID);
 
   /// Query the resource's cache is existed or not.
   ///
@@ -5396,6 +5537,16 @@ class ZegoIMSendCustomCommandResult {
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode);
+}
+
+/// Callback for sending custom command.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+class ZegoRoomSendTransparentMessageResult {
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  ZegoRoomSendTransparentMessageResult(this.errorCode);
 }
 
 /// Callback for media player loads resources.

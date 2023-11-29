@@ -106,4 +106,27 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
     return await ZegoExpressImpl.instance
         .sendCustomCommand(roomID, command, toUserList);
   }
+
+  /// Sends a transparent message in room.
+  ///
+  /// Available since: 1.2.1
+  /// Description: After calling this function, users in the same room who have entered the room can receive the message, the message is unreliable.
+  /// Use cases: Generally used in scenarios where there is a large number of messages sent and received in the room and the reliability of the messages is not required, such as live barrage.
+  /// When to call: After calling [loginRoom] to log in to the room.
+  /// Restrictions: Generally used when the number of people in the live room does not exceed 500.The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
+  /// Related callbacks: When sending a message, Mode is specified for ZegoRoomTransparentMessageModeOnlyClient or ZegoRoomTransparentMessageModeClientAndServer can pass [OnRecvRoomTransparentMessage] received sends the message content.
+  /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
+  ///
+  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  ///   Caution:
+  ///   1. room ID is defined by yourself.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
+  /// - [message] ZegoRoomSendTransparentMessage
+  /// - Returns Send command result callback.
+  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(
+      String roomID, ZegoRoomSendTransparentMessage message) async {
+    return await ZegoExpressImpl.instance
+        .sendTransparentMessage(roomID, message);
+  }
 }

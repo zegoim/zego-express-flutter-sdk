@@ -111,6 +111,20 @@
     }
 }
 
+- (void)onRequestUploadDumpData:(NSString *)dumpDir takePhoto:(BOOL)takePhoto {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestUploadDumpData",
+            @"dumpDir": dumpDir,
+            @"takePhoto": @(takePhoto),
+        });
+    }
+}
+
 - (void)onStartDumpData:(int)errorCode {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onStartDumpData]");
@@ -658,7 +672,15 @@
                 @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
                 @"audioRecvBytes": @(quality.audioRecvBytes),
-                @"videoRecvBytes": @(quality.videoRecvBytes)
+                @"videoRecvBytes": @(quality.videoRecvBytes),
+                @"audioCumulativeBreakCount": @(quality.audioCumulativeBreakCount),
+                @"videoCumulativeBreakCount": @(quality.videoCumulativeBreakCount),
+                @"audioCumulativeBreakTime": @(quality.audioCumulativeBreakTime),
+                @"videoCumulativeBreakTime": @(quality.videoCumulativeBreakTime),
+                @"audioCumulativeBreakRate": @(quality.audioCumulativeBreakRate),
+                @"videoCumulativeBreakRate": @(quality.videoCumulativeBreakRate),
+                @"audioCumulativeDecodeTime": @(quality.audioCumulativeDecodeTime),
+                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime)
             },
             @"streamID": streamID
         });
@@ -1184,6 +1206,26 @@
             @"fromUser": @{
                 @"userID": fromUser.userID,
                 @"userName": fromUser.userName
+            },
+            @"roomID": roomID
+        });
+    }
+}
+
+- (void)onRecvRoomTransparentMessage:(ZegoRoomRecvTransparentMessage *)message roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRecvRoomTransparentMessage] sendUserID: %@, sendUserName: %@, roomID: %@", message.sendUser.userID, message.sendUser.userName, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRecvRoomTransparentMessage",
+            @"message": @{
+                @"sendUser": @{
+                    @"userID": message.sendUser.userID,
+                    @"userName": message.sendUser.userName
+                },
+                @"content": message.content
             },
             @"roomID": roomID
         });

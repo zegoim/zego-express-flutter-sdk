@@ -242,6 +242,8 @@ class ZegoExpressEngineMethodHandler {
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void sendCustomCommand(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void ZegoExpressEngineMethodHandler::sendTransparentMessage(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result); 
     void enableCustomVideoCapture(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -487,7 +489,19 @@ class ZegoExpressEngineMethodHandler {
     void audioEffectPlayerSetVolume(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlayVolume(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPublishVolume(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerSetVolumeAll(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlayVolumeAll(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPublishVolumeAll(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerGetTotalDuration(
@@ -760,6 +774,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicDownload(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicCancelDownload(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicGetAverageScore(

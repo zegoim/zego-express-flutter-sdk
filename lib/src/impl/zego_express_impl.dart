@@ -16,7 +16,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.10.0";
+  static String pluginVersion = "3.10.3";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -1565,6 +1565,27 @@ class ZegoExpressImpl {
     return ZegoIMSendCustomCommandResult(map['errorCode']);
   }
 
+  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(
+      String roomID, ZegoRoomSendTransparentMessage message) async {
+    List<Map<String, dynamic>> recvuserMapList = [];
+
+    for (ZegoUser user in message.recvUserList) {
+      recvuserMapList.add({'userID': user.userID, 'userName': user.userName});
+    }
+
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('sendTransparentMessage', {
+      'roomID': roomID,
+      'sendMode': message.sendMode.index,
+      'sendType': message.sendType.index,
+      'content': message.content,
+      'recvUserList': recvuserMapList,
+      'timeOut': message.timeOut
+    });
+
+    return ZegoRoomSendTransparentMessageResult(map['errorCode']);
+  }
+
   /* MediaPlayer */
 
   static final Map<int, ZegoMediaPlayer> mediaPlayerMap = {};
@@ -2125,6 +2146,14 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onRequestDumpData!();
         break;
+      
+      case 'onRequestUploadDumpData':
+        if (ZegoExpressEngine.onRequestUploadDumpData == null) return;
+
+        ZegoExpressEngine.onRequestUploadDumpData!(
+          map['dumpDir'], map['takePhoto']
+        );
+        break;
 
       case 'onStartDumpData':
         if (ZegoExpressEngine.onStartDumpData == null) return;
@@ -2461,7 +2490,15 @@ class ZegoExpressImpl {
                     : map['quality']['videoCodecID']],
                 map['quality']['totalRecvBytes'],
                 map['quality']['audioRecvBytes'],
-                map['quality']['videoRecvBytes']));
+                map['quality']['videoRecvBytes'],
+                map['quality']['audioCumulativeBreakCount'],
+                map['quality']['audioCumulativeBreakTime'],
+                map['quality']['audioCumulativeBreakRate'],
+                map['quality']['audioCumulativeDecodeTime'],
+                map['quality']['videoCumulativeBreakCount'],
+                map['quality']['videoCumulativeBreakTime'],
+                map['quality']['videoCumulativeBreakRate'],
+                map['quality']['videoCumulativeDecodeTime']));
         break;
 
       case 'onPlayerMediaEvent':
@@ -2774,6 +2811,17 @@ class ZegoExpressImpl {
             map['roomID'],
             ZegoUser(map['fromUser']['userID'], map['fromUser']['userName']),
             map['command']);
+        break;
+
+      case 'onRecvRoomTransparentMessage':
+        if (ZegoExpressEngine.onRecvRoomTransparentMessage == null) return;
+
+        ZegoRoomRecvTransparentMessage message = ZegoRoomRecvTransparentMessage(
+            ZegoUser(map['message']['sendUser']['userID'],
+                map['message']['sendUser']['userName']),
+            map['message']['content']);
+
+        ZegoExpressEngine.onRecvRoomTransparentMessage!(map['roomID'], message);
         break;
 
       /* Utilities */
@@ -3754,9 +3802,37 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   }
 
   @override
+  Future<void> setPlayVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlayVolume',
+        {'index': _index, 'audioEffectID': audioEffectID, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPublishVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPublishVolume',
+        {'index': _index, 'audioEffectID': audioEffectID, 'volume': volume});
+  }
+
+  @override
   Future<void> setVolumeAll(int volume) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'audioEffectPlayerSetVolumeAll', {'index': _index, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPlayVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlayVolumeAll',
+        {'index': _index, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPublishVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPublishVolumeAll',
+        {'index': _index, 'volume': volume});
   }
 
   @override
@@ -4042,6 +4118,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicDownload', {'resourceID': resourceID});
     return ZegoCopyrightedMusicDownloadResult(map['errorCode']);
+  }
+
+  @override
+  Future<void> cancelDownload(String resourceID) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicCancelDownload', {'resourceID': resourceID});
   }
 
   @override
