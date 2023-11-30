@@ -13,8 +13,8 @@ public:
 private:
     std::shared_ptr<IZegoFlutterMediaPlayerAudioHandler> handler_ = nullptr;
 
-    void onAudioFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char ** data,
-                              unsigned int * dataLength, ZEGO::EXPRESS::ZegoAudioFrameParam param) override {
+    void onAudioFrame(ZEGO::EXPRESS::IZegoMediaPlayer * mediaPlayer, const unsigned char * data,
+                              unsigned int dataLength, ZEGO::EXPRESS::ZegoAudioFrameParam param) override {
         if (handler_) {
             ZGFlutterAudioFrameParam frameParam;
             frameParam.sampleRate = (ZGFlutterAudioSampleRate)param.sampleRate;
