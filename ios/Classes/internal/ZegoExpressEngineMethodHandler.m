@@ -3136,7 +3136,6 @@
         if (!self.enablePlatformView) {
             [mediaPlayer setVideoHandler:[ZegoTextureRendererController sharedInstance] format:ZegoVideoFrameFormatBGRA32 type:ZegoVideoBufferTypeCVPixelBuffer];
         }
-        [mediaPlayer setAudioHandler:(id<ZegoMediaPlayerAudioHandler>)[ZegoMediaPlayerAudioManager sharedInstance]];
         self.mediaPlayerMap[index] = mediaPlayer;
 
         result(index);
@@ -3690,7 +3689,6 @@
 
     if (mediaPlayer) {
         BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-        unsigned int blockSize = [ZegoUtils unsignedIntValue:call.arguments[@"blockSize"]];
         if (enable) {
             [mediaPlayer setAudioHandler:(id<ZegoMediaPlayerAudioHandler>)[ZegoMediaPlayerAudioManager sharedInstance]];
         } else {

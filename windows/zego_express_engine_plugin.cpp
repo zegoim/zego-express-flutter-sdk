@@ -306,6 +306,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerTakeSnapshot),
         EngineMethodHandler(mediaPlayerSetAudioTrackMode),
         EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex),
+        EngineMethodHandler(mediaPlayerEnableAudioData),
         EngineMethodHandler(mediaPlayerEnableVideoData),
         EngineMethodHandler(mediaPlayerEnableBlockData),
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),

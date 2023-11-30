@@ -3267,8 +3267,6 @@ public class ZegoExpressEngineMethodHandler {
 
             mediaPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
-            mediaPlayer.setAudioHandler(ZegoMediaPlayerAudioManager.getInstance());
-
             result.success(index);
         } else {
             result.success(-1);

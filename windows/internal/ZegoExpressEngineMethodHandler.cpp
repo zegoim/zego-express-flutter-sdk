@@ -14,6 +14,7 @@
 #include "zego_express_engine/ZegoCustomVideoProcessManager.h"
 #include "zego_express_engine/ZegoCustomVideoRenderManager.h"
 #include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
+#include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 
 void ZegoExpressEngineMethodHandler::initApiCalledCallback() {
@@ -2605,6 +2606,28 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetAudioTrackPublishIndex(
     result->Error("not_support_feature", "windows platform not support feature");
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableAudioData(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        if (enable) {
+            mediaPlayer->setAudioHandler(
+                ZegoMediaPlayerAudioManager::getInstance()->getHandler());
+        } else {
+            mediaPlayer->setAudioHandler(nullptr);
+        }
+        result->Success();
+    } else {
+        result->Error("mediaPlayerEnableAudioData_Can_not_find_player",
+                      "Invoke `mediaPlayerEnableAudioData` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -2622,8 +2645,8 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(
         }
         result->Success();
     } else {
-        result->Error("mediaPlayerTakeSnapshot_Can_not_find_player",
-                      "Invoke `mediaPlayerTakeSnapshot` but can't find specific player");
+        result->Error("mediaPlayerEnableVideoData_Can_not_find_player",
+                      "Invoke `mediaPlayerEnableVideoData` but can't find specific player");
     }
 }
 
