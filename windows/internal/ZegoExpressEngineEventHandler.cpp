@@ -831,7 +831,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFrequencySpectrumUpdate(
         retMap[FTValue("method")] = FTValue("onMediaPlayerFrequencySpectrumUpdate");
         retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
 
-        retMap[FTValue("soundLevel")] = FTValue(spectrumList);
+        retMap[FTValue("spectrumList")] = FTValue(spectrumList);
 
         eventSink_->Success(retMap);
     }
