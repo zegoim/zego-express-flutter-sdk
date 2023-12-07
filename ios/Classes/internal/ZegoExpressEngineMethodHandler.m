@@ -17,6 +17,7 @@
 #import "ZegoCustomVideoRenderManager.h"
 #import "ZegoCustomVideoProcessManager.h"
 #import "ZegoMediaPlayerVideoManager.h"
+#import "ZegoMediaPlayerAudioManager.h"
 #import "ZegoMediaPlayerBlockDataManager.h"
 
 #import "ZegoUtils.h"
@@ -1828,7 +1829,7 @@
     // whiteboard
     NSDictionary *whiteboardMap = call.arguments[@"whiteboard"];
     if (whiteboardMap && whiteboardMap.count > 0) {
-        int whiteboardID = [ZegoUtils intValue:whiteboardMap[@"whiteboardID"]];
+        unsigned long long whiteboardID = [ZegoUtils unsignedLongLongValue:whiteboardMap[@"whiteboardID"]];
         if (whiteboardID != 0) {
             ZegoMixerWhiteboard *whiteboard = [[ZegoMixerWhiteboard alloc] init];
             whiteboard.whiteboardID = whiteboardID;
@@ -3680,6 +3681,22 @@
     }
 
     result(nil);
+}
+
+- (void)mediaPlayerEnableAudioData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        if (enable) {
+            [mediaPlayer setAudioHandler:(id<ZegoMediaPlayerAudioHandler>)[ZegoMediaPlayerAudioManager sharedInstance]];
+        } else {
+            [mediaPlayer setAudioHandler:nil];
+        }
+    }
+
+   result(nil);
 }
 
 - (void)mediaPlayerEnableVideoData:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -5744,6 +5761,23 @@
         [aiVoiceChanger setSpeaker:speakerID];
     }
 
+    result(nil);
+}
+- (void)enableColorEnhancement:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    
+    ZegoColorEnhancementParams *p = [[ZegoColorEnhancementParams alloc] init];
+    p.intensity = [ZegoUtils floatValue:paramsMap[@"intensity"]];
+    p.skinToneProtectionLevel = [ZegoUtils floatValue:paramsMap[@"skinToneProtectionLevel"]];
+    p.lipColorProtectionLevel = [ZegoUtils floatValue:paramsMap[@"lipColorProtectionLevel"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+        
+    [[ZegoExpressEngine sharedEngine] enableColorEnhancement:enable params:p channel:(ZegoPublishChannel)channel];
+    
     result(nil);
 }
 

@@ -121,6 +121,7 @@ protected:
     void onNetworkTimeSynchronized() override;
 
     void onRequestDumpData() override;
+    void onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) override;
 
     void onStartDumpData(int errorCode) override;
 
@@ -221,6 +222,8 @@ public:
 
 protected:
     void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) override;
+
+    void onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) override;
 
 // MediaDataPublisher
 protected:

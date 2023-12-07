@@ -232,6 +232,8 @@ class ZegoExpressEngineMethodHandler {
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setBeautifyOption(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableColorEnhancement(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void
     sendBroadcastMessage(flutter::EncodableMap &argument,
@@ -631,6 +633,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerSetAudioTrackPublishIndex(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableAudioData(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerEnableVideoData(

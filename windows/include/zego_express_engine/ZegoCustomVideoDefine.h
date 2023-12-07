@@ -238,4 +238,56 @@ enum FLUTTER_PLUGIN_EXPORT ZGFlutterVideoFlipMode {
 
 };
 
+/// audio sample rate.
+enum FLUTTER_PLUGIN_EXPORT ZGFlutterAudioSampleRate {
+    /// Unknown
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_UNKNOWN = 0,
+
+    /// 8K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_8K = 8000,
+
+    /// 16K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_16K = 16000,
+
+    /// 22.05K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_22K = 22050,
+
+    /// 24K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_24K = 24000,
+
+    /// 32K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_32K = 32000,
+
+    /// 44.1K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_44K = 44100,
+
+    /// 48K
+    ZG_FLUTTER_AUDIO_SAMPLE_RATE_48K = 48000
+
+};
+
+/// Audio channel type.
+enum FLUTTER_PLUGIN_EXPORT ZGFlutterAudioChannel {
+    /// Unknown
+    ZG_FLUTTER_AUDIO_CHANNEL_UNKNOWN = 0,
+
+    /// Mono
+    ZG_FLUTTER_AUDIO_CHANNEL_MONO = 1,
+
+    /// Stereo
+    ZG_FLUTTER_AUDIO_CHANNEL_STEREO = 2
+
+};
+
+/// Parameter object for audio frame.
+///
+/// Including the sampling rate and channel of the audio frame
+struct FLUTTER_PLUGIN_EXPORT ZGFlutterAudioFrameParam {
+    /// Sampling Rate
+    ZGFlutterAudioSampleRate sampleRate;
+
+    /// Audio channel, default is Mono
+    ZGFlutterAudioChannel channel;
+};
+
 #endif  // ZEGO_CUSTOM_VIDEO_DEFINE_H_
