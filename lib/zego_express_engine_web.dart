@@ -485,6 +485,14 @@ class ZegoExpressEngineWeb {
                 ZegoVideoCodecID.values[quality['videoCodecID']],
                 0,
                 0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
                 0));
         break;
       case "onRemoteMicStateUpdate":

@@ -1489,6 +1489,20 @@ class ZegoExpressImpl {
         {'enable': enable, 'mode': mode.index, 'tonal': tonal});
   }
 
+  Future<void> enableColorEnhancement(
+      bool enable, ZegoColorEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableColorEnhancement', {
+      'enable': enable,
+      'params': {
+        'intensity': params.intensity,
+        'skinToneProtectionLevel': params.skinToneProtectionLevel,
+        'lipColorProtectionLevel': params.lipColorProtectionLevel
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   /* IM */
 
   static final Map<int, ZegoRealTimeSequentialDataManager>
@@ -2131,6 +2145,13 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onRequestDumpData == null) return;
 
         ZegoExpressEngine.onRequestDumpData!();
+        break;
+
+      case 'onRequestUploadDumpData':
+        if (ZegoExpressEngine.onRequestUploadDumpData == null) return;
+
+        ZegoExpressEngine.onRequestUploadDumpData!(
+            map['dumpDir'], map['takePhoto']);
         break;
 
       case 'onStartDumpData':
@@ -3025,6 +3046,17 @@ class ZegoExpressImpl {
               mediaPlayer, map['millisecond']);
         }
         break;
+      case 'onMediaPlayerVideoSizeChanged':
+        if (ZegoExpressEngine.onMediaPlayerVideoSizeChanged == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerVideoSizeChanged!(
+              mediaPlayer, map['width'], map['height']);
+        }
+        break;
 
       /* AudioEffectPlayer */
 
@@ -3615,6 +3647,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetAudioTrackPublishIndex',
         {'index': _index, 'index_': index});
+  }
+
+  @override
+  Future<void> enableAudioData(bool enable) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableAudioData', {'index': _index, 'enable': enable});
   }
 
   @override

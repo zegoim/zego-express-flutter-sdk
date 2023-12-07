@@ -1305,6 +1305,21 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onRequestUploadDumpData(String dumpDir, boolean takePhoto) {
+            super.onRequestUploadDumpData(dumpDir, takePhoto);
+            ZegoLog.log("[onRequestUploadDumpData]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRequestUploadDumpData");
+            map.put("dumpDir", dumpDir);
+            map.put("takePhoto", takePhoto);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onStartDumpData(int errorCode) {
             super.onStartDumpData(errorCode);
             ZegoLog.log("[onStartDumpData]");
@@ -1602,6 +1617,23 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onMediaPlayerRenderingProgress");
             map.put("mediaPlayerIndex", mediaPlayer.getIndex());
             map.put("millisecond", millisecond);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onMediaPlayerVideoSizeChanged(ZegoMediaPlayer mediaPlayer, int width, int height) {
+            super.onMediaPlayerVideoSizeChanged(mediaPlayer, width, height);
+            ZegoLog.log("[onMediaPlayerVideoSizeChanged] idx: %d, width: %d, height: %d", mediaPlayer.getIndex(), width, height);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerVideoSizeChanged");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("width", width);
+            map.put("height", height);
 
             sink.success(map);
         }

@@ -329,4 +329,22 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance
         .setElectronicEffects(enable, mode, tonal);
   }
+
+  /// Enable color enhancement.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Call this function to enable or disable color enhancement.
+  /// Use cases: Commonly used in video calling, live streaming, and similar scenarios.
+  /// Default value: When this function is not called, color enhancement is not enabled by default.
+  /// When to call: It needs to be called after [createEngine].
+  ///
+  /// - [enable] Whether to enable, true: enable, false: disable
+  /// - [params] Color enhancement parameters.
+  /// - [channel] Publish stream channel.
+  Future<void> enableColorEnhancement(
+      bool enable, ZegoColorEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableColorEnhancement(enable, params, channel: channel);
+  }
 }

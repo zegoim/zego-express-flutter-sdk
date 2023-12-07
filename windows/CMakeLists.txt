@@ -24,11 +24,13 @@ list(APPEND PLUGIN_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoCustomVideoDefine.h
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoCustomVideoProcessManager.h
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoCustomVideoRenderManager.h
+  ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoMediaPlayerAudioManager.h
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoMediaPlayerVideoManager.h
   ${CMAKE_CURRENT_LIST_DIR}/include/zego_express_engine/ZegoMediaPlayerBlockDataManager.h
   ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoCaptureManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoProcessManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoCustomVideoRenderManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerAudioManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerVideoManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerBlockDataManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.h

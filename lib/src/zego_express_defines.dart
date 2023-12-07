@@ -2067,7 +2067,7 @@ class ZegoVideoConfig {
   /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
   int fps;
 
-  /// Bit rate in kbps. The settings before and after publishing stream can be effective
+  /// Bit rate in kbps. The settings before and after publishing stream can be effective. The SDK will automatically set the bit rate suitable for the scenario selected by the developer. If the bit rate manually set by the developer exceeds the reasonable range, the SDK will automatically process the bit rate according to the reasonable range. If you need to configure a high bit rate due to business needs, please contact ZEGO Business.
   int bitrate;
 
   /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
@@ -2857,8 +2857,13 @@ class ZegoMixerOutputVideoConfig {
   /// The video encoding delay of mixed stream output, Valid value range [0, 2000], in milliseconds. The default value is 0.
   int encodeLatency;
 
+  /// Enable high definition low bitrate. Default is false.
+  bool enableLowBitrateHD;
+
   ZegoMixerOutputVideoConfig(this.videoCodecID, this.bitrate,
-      {this.encodeProfile = ZegoEncodeProfile.Default, this.encodeLatency = 0});
+      {this.encodeProfile = ZegoEncodeProfile.Default,
+      this.encodeLatency = 0,
+      this.enableLowBitrateHD = false});
 }
 
 /// Font style.
@@ -3000,9 +3005,16 @@ class ZegoMixerInput {
   /// Description: Video frame corner radius, in px. Required: False. Value range: Does not exceed the width and height of the video screen set by the [layout] parameter. Default value: 0.
   int? cornerRadius;
 
+  /// Set advanced configuration. Please contact ZEGO technical support.
+  Map<String, String>? advancedConfig;
+
   ZegoMixerInput(this.streamID, this.contentType, this.layout,
       this.soundLevelID, this.volume, this.isAudioFocus, this.audioDirection,
-      {this.label, this.renderMode, this.imageInfo, this.cornerRadius});
+      {this.label,
+      this.renderMode,
+      this.imageInfo,
+      this.cornerRadius,
+      this.advancedConfig});
 
   Map<String, dynamic> toMap() {
     return {
@@ -3019,7 +3031,8 @@ class ZegoMixerInput {
       'label': this.label?.toMap(),
       'renderMode': this.renderMode?.index,
       'imageInfo': this.imageInfo?.toMap(),
-      'cornerRadius': this.cornerRadius
+      'cornerRadius': this.cornerRadius,
+      'advancedConfig': this.advancedConfig
     };
   }
 
@@ -3174,7 +3187,7 @@ class ZegoMixerTask {
   /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.
   Map<String, String> advancedConfig;
 
-  /// Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request.
   int minPlayStreamBufferLength;
 
   /// Create a mix stream task object with TaskID
@@ -3256,7 +3269,7 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
-  /// Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request.
   int minPlayStreamBufferLength;
 
   /// Create a auto mix stream task object
@@ -3949,6 +3962,27 @@ class ZegoAIVoiceChangerSpeakerInfo {
   ZegoAIVoiceChangerSpeakerInfo(this.id, this.name);
 }
 
+/// Color enhancement params.
+class ZegoColorEnhancementParams {
+  /// Description: color enhancement intensity. Value range: [0,1], the larger the value, the stronger the intensity of color enhancement. Default value: 0.
+  double intensity;
+
+  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 0.
+  double skinToneProtectionLevel;
+
+  /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
+  double lipColorProtectionLevel;
+
+  ZegoColorEnhancementParams(this.intensity, this.skinToneProtectionLevel,
+      this.lipColorProtectionLevel);
+
+  /// Constructs a color enhancement params object by default.
+  ZegoColorEnhancementParams.defaultParam()
+      : intensity = 0,
+        skinToneProtectionLevel = 1,
+        lipColorProtectionLevel = 0;
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -4260,6 +4294,11 @@ abstract class ZegoMediaPlayer {
   ///
   /// - Returns Media player index.
   int getIndex();
+
+  /// Whether to audio data playback.
+  ///
+  /// - [enable] Audio data playback flag. The default is false.
+  Future<void> enableAudioData(bool enable);
 
   /// Whether to video data playback.
   ///

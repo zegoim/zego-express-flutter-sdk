@@ -611,7 +611,6 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Default value: Default is disable.
   /// When to call /Trigger: Called this function after calling [startPublishingStream] or [startPreview].
   /// Restrictions: None.
-  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [enable] Whether to mix engine playout
   Future<void> enableMixEnginePlayout(bool enable) async {

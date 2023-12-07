@@ -34,6 +34,7 @@ import java.util.Locale;
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
 import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
 import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
+import im.zego.zego_express_engine.ZegoMediaPlayerAudioManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerBlockDataManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
 import im.zego.zegoexpress.ZegoAIVoiceChanger;
@@ -208,6 +209,7 @@ import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerResource;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
+import im.zego.zegoexpress.entity.ZegoColorEnhancementParams;
 import im.zego.zegoexpress.entity.ZegoRoomSendTransparentMessage;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
@@ -2027,7 +2029,7 @@ public class ZegoExpressEngineMethodHandler {
         // whiteboard
         HashMap<String, Object> whiteboardMap = call.argument("whiteboard");
         if (whiteboardMap != null && !whiteboardMap.isEmpty()) {
-            int whiteboardID = ZegoUtils.intValue((Number) whiteboardMap.get("whiteboardID"));
+            long whiteboardID = ZegoUtils.longValue((Number) whiteboardMap.get("whiteboardID"));
             if (whiteboardID != 0) {
                 ZegoMixerWhiteboard whiteboard = new ZegoMixerWhiteboard();
                 whiteboard.whiteboardID = whiteboardID;
@@ -3265,7 +3267,6 @@ public class ZegoExpressEngineMethodHandler {
 
             mediaPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
-
             result.success(index);
         } else {
             result.success(-1);
@@ -3967,6 +3968,25 @@ public class ZegoExpressEngineMethodHandler {
         if (mediaPlayer != null) {
             int index_ = ZegoUtils.intValue((Number) call.argument("index_"));
             mediaPlayer.setAudioTrackPublishIndex(index_);
+        }
+
+        result.success(null);
+    }
+
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableAudioData(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            if (enable) {
+                mediaPlayer.setAudioHandler(ZegoMediaPlayerAudioManager.getInstance());
+            } else {
+                mediaPlayer.setAudioHandler(null);
+            }
         }
 
         result.success(null);
@@ -5852,6 +5872,22 @@ public class ZegoExpressEngineMethodHandler {
         if (aiVoiceChanger != null) {
             aiVoiceChanger.update();
         }
+
+        result.success(null);
+    }
+    @SuppressWarnings("unused")
+    public static void enableColorEnhancement(MethodCall call, Result result) {
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Object> paramsMap = call.argument("params");
+
+        ZegoColorEnhancementParams p = new ZegoColorEnhancementParams();
+        p.intensity = ZegoUtils.floatValue((Double)paramsMap.get("intensity"));
+        p.skinToneProtectionLevel = ZegoUtils.floatValue((Double)paramsMap.get("skinToneProtectionLevel"));
+        p.lipColorProtectionLevel = ZegoUtils.floatValue((Double)paramsMap.get("lipColorProtectionLevel"));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableColorEnhancement(enable, p, channel);
 
         result.success(null);
     }

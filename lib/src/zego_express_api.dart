@@ -1143,6 +1143,18 @@ class ZegoExpressEngine {
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
       onMediaPlayerRenderingProgress;
 
+  /// The callback triggered when when the resolution of the playback video changes.
+  ///
+  /// Available since: 3.11.0
+  /// Description: The callback triggered when when the resolution of the playback video changes.
+  /// Trigger: When the media player is playing a video resource, This callback will be triggered when playback starts and the resolution of the video changes.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [width] width.
+  /// - [height] height.
+  static void Function(ZegoMediaPlayer mediaPlayer, int width, int height)?
+      onMediaPlayerVideoSizeChanged;
+
   /// The callback triggered when the media player got media side info.
   ///
   /// Available since: 2.2.0
@@ -1364,6 +1376,15 @@ class ZegoExpressEngine {
   /// Available since: 3.10.0
   /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
   static void Function()? onRequestDumpData;
+
+  /// Request to dump data.
+  ///
+  /// Available since: 3.11.0
+  /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
+  ///
+  /// - [dumpDir] Dump data dir.
+  /// - [takePhoto] Need to take photo when uploading dump data
+  static void Function(String dumpDir, bool takePhoto)? onRequestUploadDumpData;
 
   /// Callback when starting to dump data.
   ///
