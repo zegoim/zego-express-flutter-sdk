@@ -3705,6 +3705,8 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicGetLrcLyricWithConfig(
         
         config.songID = std::get<std::string>(configMap[FTValue("songID")]);
         config.vendorID = std::get<int32_t>(configMap[FTValue("vendorID")]);
+        auto sharedPtrResult =
+            std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
         copyrightedMusic_->getLrcLyric(config, [=](int errorCode, std::string lyrics) {
                                                FTMap retMap;
                                                retMap[FTValue("errorCode")] = FTValue(errorCode);
