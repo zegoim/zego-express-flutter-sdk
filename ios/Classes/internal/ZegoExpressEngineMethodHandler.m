@@ -5443,7 +5443,7 @@
         config.sceneID = [ZegoUtils intValue:configMap[@"sceneID"]];
         config.resourceType = [ZegoUtils intValue:configMap[@"resourceType"]];
         
-        [self.copyrightedMusicInstance requestResourceV2: config callback:^(int errorCode, NSString *_Nonnull resource) {
+        [self.copyrightedMusicInstance requestResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
             NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
             resultMap[@"errorCode"] = @(errorCode);
             resultMap[@"resource"] = resource;
