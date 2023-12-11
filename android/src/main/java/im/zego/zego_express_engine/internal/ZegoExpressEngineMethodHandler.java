@@ -159,9 +159,13 @@ import im.zego.zegoexpress.entity.ZegoBeautifyOption;
 import im.zego.zegoexpress.entity.ZegoCDNConfig;
 import im.zego.zegoexpress.entity.ZegoCanvas;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicConfig;
+import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetLyricConfig;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicQueryCacheConfig;
+import im.zego.zegoexpress.entity.ZegoCopyrightedMusicQueryCacheConfigV2;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicRequestConfig;
+import im.zego.zegoexpress.entity.ZegoCopyrightedMusicRequestConfigV2;
 import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfig;
+import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfigV2;
 import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
@@ -5367,6 +5371,30 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void copyrightedMusicGetLrcLyricWithConfig(MethodCall call, final Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicGetLyricConfig config = new ZegoCopyrightedMusicGetLyricConfig();
+            config.songID = configMap.get("songID").toString();
+            config.vendorID =ZegoUtils.intValue((Number) configMap.get("vendorID"));
+
+            copyrightedMusicInstance.getLrcLyric(config, new IZegoCopyrightedMusicGetLrcLyricCallback() {
+
+                    @Override
+                    public void onGetLrcLyricCallback(int errorCode, String lyrics) {
+                        HashMap<String, Object> resultMap = new HashMap<>();
+                        resultMap.put("errorCode", errorCode);
+                        resultMap.put("lyrics", lyrics);
+                        result.success(resultMap);
+                    }
+                });
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetLrcLyricWithConfig` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void copyrightedMusicGetMusicByToken(MethodCall call, final Result result) {
 
         if (copyrightedMusicInstance != null) {
@@ -5507,6 +5535,27 @@ public class ZegoExpressEngineMethodHandler {
             result.success(isCache);
         } else {
             result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicQueryCacheWithConfig` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicQueryCacheWithConfigV2(MethodCall call, Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicQueryCacheConfigV2 config = new ZegoCopyrightedMusicQueryCacheConfigV2();
+
+            if (configMap != null) {
+                config.songID = configMap.get("songID").toString();
+                config.vendorID = ZegoUtils.intValue((Number) configMap.get("vendorID"));
+                config.resourceType = ZegoUtils.intValue((Number) configMap.get("resourceType"));
+                config.resourceQualityType = ZegoUtils.intValue((Number) configMap.get("resourceQualityType"));
+            }
+
+            boolean isCache = copyrightedMusicInstance.queryCache(config);
+            result.success(isCache);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicQueryCacheWithConfigV2` but can't find specific instance", null);
         }
     }
 
@@ -5700,6 +5749,31 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void copyrightedMusicGetSharedResourceV2(MethodCall call,final Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicGetSharedConfigV2 config = new ZegoCopyrightedMusicGetSharedConfigV2();
+            config.songID = configMap.get("songID").toString();
+            config.vendorID = ZegoUtils.intValue((Number) configMap.get("vendorID"));
+            config.roomID = configMap.get("roomID").toString();
+            config.resourceType = ZegoUtils.intValue((Number) configMap.get("resourceType"));
+            copyrightedMusicInstance.getSharedResource(config, new IZegoCopyrightedMusicGetSharedResourceCallback() {
+
+                @Override
+                public void onGetSharedResourceCallback(int errorCode,String resource) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("resource", resource);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicGetSharedResourceV2` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void copyrightedMusicRequestResource(MethodCall call,final Result result) {
 
         if (copyrightedMusicInstance != null) {
@@ -5714,6 +5788,36 @@ public class ZegoExpressEngineMethodHandler {
 
             ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
             copyrightedMusicInstance.requestResource(config, type, new IZegoCopyrightedMusicRequestResourceCallback() {
+
+                @Override
+                public void onRequestResourceCallback(int errorCode,String resource) {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("resource", resource);
+                    result.success(resultMap);
+                }
+            });
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicRequestResource` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicRequestResourceV2(MethodCall call,final Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            HashMap<String, Object> configMap = call.argument("config");
+            ZegoCopyrightedMusicRequestConfigV2 config = new ZegoCopyrightedMusicRequestConfigV2();
+            config.songID = configMap.get("songID").toString();
+            config.mode = ZegoUtils.intValue((Number) configMap.get("mode"));
+            config.vendorID = ZegoUtils.intValue((Number) configMap.get("vendorID"));
+            config.roomID = configMap.get("roomID").toString();
+            config.masterID = configMap.get("masterID").toString();
+            config.sceneID = ZegoUtils.intValue((Number) configMap.get("sceneID"));
+            config.resourceType = ZegoUtils.intValue((Number) configMap.get("resourceType"));
+
+            ZegoCopyrightedMusicResourceType type = ZegoCopyrightedMusicResourceType.getZegoCopyrightedMusicResourceType(ZegoUtils.intValue((Number) call.argument("type")));
+            copyrightedMusicInstance.requestResource(config, new IZegoCopyrightedMusicRequestResourceCallback() {
 
                 @Override
                 public void onRequestResourceCallback(int errorCode,String resource) {

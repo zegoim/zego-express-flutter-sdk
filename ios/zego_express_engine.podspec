@@ -20,7 +20,8 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.vendored_frameworks = 'libs/ZegoExpressEngine.xcframework'
+  #s.vendored_frameworks = 'libs/ZegoExpressEngine.xcframework'
+  s.vendored_frameworks = Dir.glob("libs/frameworks/*.xcframework")
   s.platform = :ios, '9.0'
 
   # Flutter.framework does not contain a i386 slice.
