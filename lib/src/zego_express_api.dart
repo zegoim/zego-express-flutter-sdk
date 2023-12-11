@@ -1660,6 +1660,20 @@ class ZegoExpressEngine {
   static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
       onAIVoiceChangerInit;
 
+  /// Update AI voice changer engine models progress callback.
+  ///
+  /// Available since: 3.12.0.
+  /// Description: Update AI voice changer engine models progress callback.
+  /// Trigger: The callback triggered when call [update] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [percent] Current file update progress.
+  /// - [fileIndex] Current update file index.
+  /// - [fileCount] Total update file count.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, double percent,
+      int fileIndex, int fileCount)? onAIVoiceChangerUpdateProgress;
+
   /// Update AI voice changer engine models status callback.
   ///
   /// Available since: 3.10.0.

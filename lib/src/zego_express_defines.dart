@@ -4413,6 +4413,11 @@ abstract class ZegoMediaPlayer {
   /// - Returns Media player index.
   int getIndex();
 
+  /// Whether to audio data playback.
+  ///
+  /// - [enable] Audio data playback flag. The default is false.
+  Future<void> enableAudioData(bool enable);
+
   /// Whether to video data playback.
   ///
   /// Available since: 2.1.0
