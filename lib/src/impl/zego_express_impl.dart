@@ -924,7 +924,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -958,7 +959,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -988,7 +990,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -1016,7 +1019,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {

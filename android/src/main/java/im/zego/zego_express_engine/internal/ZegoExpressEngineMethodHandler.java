@@ -1974,7 +1974,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2132,7 +2133,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2191,7 +2193,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2256,7 +2259,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }

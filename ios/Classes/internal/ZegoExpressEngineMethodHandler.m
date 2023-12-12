@@ -1768,8 +1768,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1942,8 +1943,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1992,8 +1994,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -2067,8 +2070,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];

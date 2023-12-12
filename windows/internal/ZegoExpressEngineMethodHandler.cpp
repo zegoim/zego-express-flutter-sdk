@@ -3071,6 +3071,8 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
                 std::get<int32_t>(videoConfigMap[FTValue("encodeLatency")]);
             output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)std::get<int32_t>(
                 videoConfigMap[FTValue("encodeProfile")]);
+            output.videoConfig.enableLowBitrateHD = std::get<bool>(
+                videoConfigMap[FTValue("enableLowBitrateHD")]);
 
             auto codecID = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
             if (codecID > 4) {
@@ -3193,6 +3195,8 @@ void ZegoExpressEngineMethodHandler::stopMixerTask(
                 std::get<int32_t>(videoConfigMap[FTValue("encodeLatency")]);
             output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)std::get<int32_t>(
                 videoConfigMap[FTValue("encodeProfile")]);
+            output.videoConfig.enableLowBitrateHD = std::get<bool>(
+                videoConfigMap[FTValue("enableLowBitrateHD")]);
 
             auto codecID = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
             if (codecID > 4) {
@@ -4454,6 +4458,8 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(
                 output.videoConfig.encodeProfile =
                     (ZEGO::EXPRESS::ZegoEncodeProfile)std::get<int32_t>(
                         videoConfigMap[FTValue("encodeProfile")]);
+                output.videoConfig.enableLowBitrateHD = std::get<bool>(
+                    videoConfigMap[FTValue("enableLowBitrateHD")]);
             }
             task.outputList.push_back(output);
         }
@@ -4513,6 +4519,8 @@ void ZegoExpressEngineMethodHandler::stopAutoMixerTask(
                 output.videoConfig.encodeProfile =
                     (ZEGO::EXPRESS::ZegoEncodeProfile)std::get<int32_t>(
                         videoConfigMap[FTValue("encodeProfile")]);
+                output.videoConfig.enableLowBitrateHD = std::get<bool>(
+                    videoConfigMap[FTValue("enableLowBitrateHD")]);
             }
             task.outputList.push_back(output);
         }
