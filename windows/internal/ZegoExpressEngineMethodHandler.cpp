@@ -460,6 +460,54 @@ void ZegoExpressEngineMethodHandler::setRoomExtraInfo(
     });
 }
 
+void ZegoExpressEngineMethodHandler::getRoomStreamList(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+
+    auto roomID = std::get<std::string>(argument[FTValue("roomID")]);
+
+    auto stream_list_type = std::get<int32_t>(argument[FTValue("streamListType")]);
+
+    EXPRESS::ZegoRoomStreamList streamList = EXPRESS::ZegoExpressSDK::getEngine()->getRoomStreamList(
+        roomID, (EXPRESS::ZegoRoomStreamListType)stream_list_type);
+    
+    FTMap retMap;
+
+    FTArray streamListPlayArray;
+    for (auto &stream : streamList.playStreamList) {
+        FTMap streamMap;
+        FTMap userMap;
+        userMap[FTValue("userID")] = FTValue(stream.user.userID);
+        userMap[FTValue("userName")] = FTValue(stream.user.userName);
+
+        streamMap[FTValue("streamID")] = FTValue(stream.streamID);
+        streamMap[FTValue("extraInfo")] = FTValue(stream.extraInfo);
+        streamMap[FTValue("user")] = FTValue(userMap);
+
+        streamListPlayArray.emplace_back(FTValue(streamMap));
+    }
+
+    retMap[FTValue("playStreamList")] = FTValue(streamListPlayArray);
+
+    FTArray streamListPublishArray;
+    for (auto &stream : streamList.publishStreamList) {
+        FTMap streamMap;
+        FTMap userMap;
+        userMap[FTValue("userID")] = FTValue(stream.user.userID);
+        userMap[FTValue("userName")] = FTValue(stream.user.userName);
+
+        streamMap[FTValue("streamID")] = FTValue(stream.streamID);
+        streamMap[FTValue("extraInfo")] = FTValue(stream.extraInfo);
+        streamMap[FTValue("user")] = FTValue(userMap);
+
+        streamListPublishArray.emplace_back(FTValue(streamMap));
+    }
+
+    retMap[FTValue("publishStreamList")] = FTValue(streamListPublishArray);
+
+    result->Success(retMap);
+}
+
 void ZegoExpressEngineMethodHandler::startPublishingStream(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
