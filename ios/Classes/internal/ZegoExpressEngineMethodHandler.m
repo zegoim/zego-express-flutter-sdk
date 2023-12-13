@@ -534,6 +534,66 @@
     }];
 }
 
+- (void)getRoomStreamList:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *roomID = call.arguments[@"roomID"];
+    int type = [ZegoUtils intValue:call.arguments[@"streamListType"]];
+    ZegoRoomStreamListType list_type = (ZegoRoomStreamListType)type;
+
+    ZegoRoomStreamList * stream_list = [[ZegoExpressEngine sharedEngine] getRoomStreamList:roomID streamListType:list_type];
+    
+    NSMutableArray *streamListPublishArray = [[NSMutableArray alloc] init];
+    for (ZegoStream *stream in stream_list.publishStreamList)
+    {
+        NSString *userID = @"";
+        NSString *userName = @"";
+        if (stream.user != nil && stream.user.userID != nil) {
+            userID = stream.user.userID;
+        }
+        
+        if (stream.user != nil && stream.user.userName != nil) {
+            userName = stream.user.userName;
+        }
+        
+        [streamListPublishArray addObject:@{
+            @"user": @{
+                @"userID": userID,
+                @"userName": userName
+            },
+            @"streamID": stream.streamID,
+            @"extraInfo": stream.extraInfo
+        }];
+    }
+    
+    NSMutableArray *streamListPlayArray = [[NSMutableArray alloc] init];
+    for (ZegoStream *stream in stream_list.playStreamList)
+    {
+        NSString *userID = @"";
+        NSString *userName = @"";
+        if (stream.user != nil && stream.user.userID != nil) {
+            userID = stream.user.userID;
+        }
+        
+        if (stream.user != nil && stream.user.userName != nil) {
+            userName = stream.user.userName;
+        }
+        
+        [streamListPlayArray addObject:@{
+            @"user": @{
+                @"userID": userID,
+                @"userName": userName
+            },
+            @"streamID": stream.streamID,
+            @"extraInfo": stream.extraInfo
+        }];
+    }
+    
+    result(@{
+        @"publishStreamList": streamListPublishArray,
+        @"playStreamList": streamListPlayArray
+    });
+
+}
 
 #pragma mark - Publisher
 

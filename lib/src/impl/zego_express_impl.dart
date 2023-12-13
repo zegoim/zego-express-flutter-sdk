@@ -297,6 +297,43 @@ class ZegoExpressImpl {
     return ZegoRoomSetRoomExtraInfoResult(map['errorCode']);
   }
 
+  Future<ZegoRoomStreamList> getRoomStreamList(
+      String roomID, ZegoRoomStreamListType streamListType) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod(
+        'getRoomStreamList',
+        {'roomID': roomID, 'streamListType': streamListType.index});
+
+    List<ZegoStream> publishStreamList = [];
+    List<dynamic> publishStreamMapList = map['publishStreamList'];
+
+    for (Map<dynamic, dynamic>? publish in publishStreamMapList) {
+      if (publish != null) {
+        ZegoUser user =
+            ZegoUser(publish['user']['userID'], publish['user']['userName']);
+        ZegoStream stream =
+            ZegoStream(user, publish['streamID'], publish['extraInfo']);
+        publishStreamList.add(stream);
+      }
+    }
+
+    List<ZegoStream> playStreamList = [];
+    List<dynamic> playStreamMapList = map['playStreamList'];
+    for (Map<dynamic, dynamic>? play in playStreamMapList) {
+      if (play != null) {
+        ZegoUser user =
+            ZegoUser(play['user']['userID'], play['user']['userName']);
+        ZegoStream stream =
+            ZegoStream(user, play['streamID'], play['extraInfo']);
+        playStreamList.add(stream);
+      }
+    }
+
+    ZegoRoomStreamList stream_list =
+        ZegoRoomStreamList(publishStreamList, playStreamList);
+
+    return stream_list;
+  }
+
   /* Publisher */
 
   Future<void> startPublishingStream(String streamID,
