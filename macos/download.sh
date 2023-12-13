@@ -36,8 +36,15 @@ fi
 curl -s "$DEPSURL" --output $LIBSDIR/sdk.zip
 unzip -q -o $LIBSDIR/sdk.zip -d $LIBSDIR
 
-rm -rf $LIBSDIR/ZegoExpressEngine.xcframework
-mv $LIBSDIR/release/Library/ZegoExpressEngine.xcframework $LIBSDIR
+#rm -rf $LIBSDIR/ZegoExpressEngine.xcframework
+#mv $LIBSDIR/release/Library/ZegoExpressEngine.xcframework $LIBSDIR
+
+rm -rf $LIBSDIR/*.xcframework
+for file in $LIBSDIR/release/Library/*.xcframework
+do
+    mv "$file" $LIBSDIR
+done
+
 mv -f $LIBSDIR/release/VERSION.txt $LIBSDIR
 
 rm -rf $LIBSDIR/release
