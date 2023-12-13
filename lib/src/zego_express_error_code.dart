@@ -706,9 +706,6 @@ class ZegoErrorCode {
   /// Description: the passed parameter is not in the valid value range. <br>Cause: error setting parameters. <br>Solutions: Review the interface comment and pass in a value within the legal range.
   static const int MediaPlayerParamValueRangeIllegal = 1008043;
 
-  /// Description: Failed to cache network resource file. <br>Cause: During playback, [seekTo] operation will cause cache failure, and network reasons or incomplete playback caused by active stop will also cause cache failure. <br>Solutions: Check whether there is a [seekTo] operation, whether the playback failed due to network reasons, or whether the playback stopped actively.
-  static const int MediaPlayerLocalCacheFailed = 1008044;
-
   /// Description: MediaPlayer internal error. <br>Cause: internal error. <br>Solutions: Contact Technical support.
   static const int MediaPlayerInnerError = 1008099;
 
@@ -1038,9 +1035,6 @@ class ZegoErrorCode {
 
   /// Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorNotSupportFunction = 1017053;
-
-  /// Description: The room ID is not logged in. <br>Cause: Room ID input error. <br>Solutions: If the copyright is not used in a multi room scenario, there is no need to pass in the roomID, otherwise please pass in the correct logged in room ID.
-  static const int CopyrightedMusicRoomNoLogin = 1017054;
 
   /// Description: Vendor ID invalid. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorIdInvalid = 1017071;
