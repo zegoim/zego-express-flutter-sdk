@@ -1637,6 +1637,24 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
+
+        @Override
+        public void onMediaPlayerLocalCache(ZegoMediaPlayer mediaPlayer, int errorCode, String resource, String cachedFile) {
+            super.onMediaPlayerLocalCache(mediaPlayer, errorCode, resource, cachedFile);
+            ZegoLog.log("[onMediaPlayerLocalCache] idx: %d, error: %d, resource: %s, cachedFile: %s", mediaPlayer.getIndex(), errorCode, resource, cachedFile);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onMediaPlayerLocalCache");
+            map.put("mediaPlayerIndex", mediaPlayer.getIndex());
+            map.put("errorCode", errorCode);
+            map.put("resource", resource);
+            map.put("cachedFile", cachedFile);
+
+            sink.success(map);
+        }
     };
 
 

@@ -3887,6 +3887,19 @@
     result(nil);
 }
 
+- (void)mediaPlayerEnableLocalCache:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        NSString *cacheDir = call.arguments[@"cacheDir"];
+        [mediaPlayer enableLocalCache:enable cacheDir:cacheDir];
+    }
+    
+    result(nil);
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {

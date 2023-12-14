@@ -1207,6 +1207,21 @@ class ZegoExpressEngine {
           ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerFirstFrameEvent event)?
       onMediaPlayerFirstFrameEvent;
 
+  /// The callback triggered when the media player caches http/https network resource locally.
+  ///
+  /// Available since: 3.12.0
+  /// Description: The callback triggered when the media player caches http/https network resource locally.
+  /// Trigger: This callback occurs after the media player caches http/https network resources.
+  /// Caution: This callback will not take effect until the [enableLocalCache] API is called and the http/https network resources are played.
+  /// Related APIs: Need to call the [enableLocalCache] interface.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [errorCode] Error code.
+  /// - [resource] Played resource
+  /// - [cachedFile] Cached file
+  static void Function(ZegoMediaPlayer mediaPlayer, int errorCode,
+      String resource, String cachedFile)? onMediaPlayerLocalCache;
+
   /// Audio effect playback state callback.
   ///
   /// Available since: 1.16.0

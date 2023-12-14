@@ -1462,6 +1462,22 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer localCacheError:(int)errorCode resource:(NSString *)resource cachedFile:(NSString *)cachedFile {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerLocalCache] idx: %d, error: %d, resource: %s, cached: %s", mediaPlayer.index.intValue, errorCode, resource, cachedFile);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerLocalCache",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"errorCode": @((int)errorCode),
+            @"resource": resource,
+            @"cachedFile": cachedFile,
+        });
+    }
+}
+
 #pragma mark - ZegoAudioEffectPlayerEventHandler
 
 - (void)audioEffectPlayer:(ZegoAudioEffectPlayer *)audioEffectPlayer audioEffectID:(unsigned int)audioEffectID playStateUpdate:(ZegoAudioEffectPlayState)state errorCode:(int)errorCode {
