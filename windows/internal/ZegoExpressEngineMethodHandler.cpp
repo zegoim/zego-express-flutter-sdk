@@ -3965,6 +3965,7 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest(
             std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
         copyrightedMusic_->sendExtendedRequest(
             command, params, [=](int errorCode, std::string command, std::string result) {
+                ZF::logInfo("*** Plugin OnSendExtendedRequestCallback");
                 FTMap retMap;
                 retMap[FTValue("errorCode")] = FTValue(errorCode);
                 retMap[FTValue("command")] = FTValue(command);
