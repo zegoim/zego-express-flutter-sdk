@@ -111,6 +111,20 @@
     }
 }
 
+- (void)onRequestUploadDumpData:(NSString *)dumpDir takePhoto:(BOOL)takePhoto {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestUploadDumpData",
+            @"dumpDir": dumpDir,
+            @"takePhoto": @(takePhoto),
+        });
+    }
+}
+
 - (void)onStartDumpData:(int)errorCode {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onStartDumpData]");
@@ -1198,6 +1212,26 @@
     }
 }
 
+- (void)onRecvRoomTransparentMessage:(ZegoRoomRecvTransparentMessage *)message roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRecvRoomTransparentMessage] sendUserID: %@, sendUserName: %@, roomID: %@", message.sendUser.userID, message.sendUser.userName, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRecvRoomTransparentMessage",
+            @"message": @{
+                @"sendUser": @{
+                    @"userID": message.sendUser.userID,
+                    @"userName": message.sendUser.userName
+                },
+                @"content": message.content
+            },
+            @"roomID": roomID
+        });
+    }
+}
+
 #pragma mark Utilities Callback
 
 - (void)onPerformanceStatusUpdate:(ZegoPerformanceStatus *)status {
@@ -1413,6 +1447,20 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer videoSizeChanged:(CGSize)size {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerVideoSizeChanged] idx: %d, width: %d, height: %d", mediaPlayer.index.intValue, (int)size.width, (int)size.height);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerVideoSizeChanged",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"width": @((int)size.width),
+            @"height": @((int)size.height),
+        });
+    }
+}
 
 #pragma mark - ZegoAudioEffectPlayerEventHandler
 

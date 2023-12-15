@@ -121,6 +121,7 @@ protected:
     void onNetworkTimeSynchronized() override;
 
     void onRequestDumpData() override;
+    void onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) override;
 
     void onStartDumpData(int errorCode) override;
 
@@ -177,6 +178,8 @@ protected:
     void onIMRecvBarrageMessage(const std::string & roomID, std::vector<EXPRESS::ZegoBarrageMessageInfo> messageList) override;
 
     void onIMRecvCustomCommand(const std::string & roomID, EXPRESS::ZegoUser fromUser, const std::string & command) override;
+    
+    void onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) override;
 
     void onPerformanceStatusUpdate(const EXPRESS::ZegoPerformanceStatus & status) override;
 
@@ -219,6 +222,8 @@ public:
 
 protected:
     void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) override;
+
+    void onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) override;
 
 // MediaDataPublisher
 protected:

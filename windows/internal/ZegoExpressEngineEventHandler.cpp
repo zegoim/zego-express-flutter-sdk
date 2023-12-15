@@ -831,7 +831,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFrequencySpectrumUpdate(
         retMap[FTValue("method")] = FTValue("onMediaPlayerFrequencySpectrumUpdate");
         retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
 
-        retMap[FTValue("soundLevel")] = FTValue(spectrumList);
+        retMap[FTValue("spectrumList")] = FTValue(spectrumList);
 
         eventSink_->Success(retMap);
     }
@@ -862,6 +862,21 @@ void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZeg
         retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
 
         retMap[FTValue("millisecond")] = FTValue((int64_t)millisecond);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) {
+    ZF::logInfo("[onMediaPlayerVideoSizeChanged] index: %d, width: %d, height: %d", mediaPlayer->getIndex(), width, height);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerVideoSizeChanged");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("width")] = FTValue(width);
+        retMap[FTValue("height")] = FTValue(height);
 
         eventSink_->Success(retMap);
     }
@@ -1092,6 +1107,19 @@ void ZegoExpressEngineEventHandler::onRequestDumpData() {
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onRequestDumpData");
+        
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) {
+    ZF::logInfo("[onRequestUploadDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRequestUploadDumpData");
+        retMap[FTValue("dumpDir")] = FTValue(dumpDir);
+        retMap[FTValue("takePhoto")] = FTValue(takePhoto);
         
         eventSink_->Success(retMap);
     }
@@ -1583,6 +1611,33 @@ void ZegoExpressEngineEventHandler::onIMRecvCustomCommand(const std::string &roo
         retMap[FTValue("fromUser")] = FTValue(userMap);
         retMap[FTValue("command")] = FTValue(command);
 
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) 
+{
+    ZF::logInfo("[onRecvRoomTransparentMessage] roomID: %s, userID: %s", roomID.c_str(), message.sendUser.userID.c_str());
+    
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRecvRoomTransparentMessage");
+        retMap[FTValue("roomID")] = FTValue(roomID);
+
+        FTMap userMap, messageMap;
+
+        userMap[FTValue("userID")] = FTValue(message.sendUser.userID);
+        userMap[FTValue("userName")] = FTValue(message.sendUser.userName);
+        messageMap[FTValue("sendUser")] = FTValue(userMap);
+
+        unsigned char* data =  (unsigned char* )message.content.data();
+        unsigned int data_length = (unsigned int)message.content.length();
+        std::vector<uint8_t> dataArray(data, data + data_length);
+        
+        messageMap[FTValue("content")] = FTValue(dataArray);
+
+        retMap[FTValue("message")] = FTValue(messageMap);
+        
         eventSink_->Success(retMap);
     }
 }
