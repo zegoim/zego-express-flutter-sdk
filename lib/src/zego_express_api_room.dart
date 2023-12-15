@@ -123,4 +123,22 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
       String roomID, String key, String value) async {
     return await ZegoExpressImpl.instance.setRoomExtraInfo(roomID, key, value);
   }
+
+  /// Get room stream list.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get room stream list.
+  /// Use cases: Get room stream list.
+  /// When to call /Trigger: After logging in the room successful.
+  /// Caution: This interface is to get a real-time internal stream list, which may be inaccurate when the room is disconnected from the service.
+  /// Related APIs: None.
+  ///
+  /// - [roomID] Room ID.
+  /// - [streamListType] Get type
+  /// - Returns return stream list
+  Future<ZegoRoomStreamList> getRoomStreamList(
+      String roomID, ZegoRoomStreamListType streamListType) async {
+    return await ZegoExpressImpl.instance
+        .getRoomStreamList(roomID, streamListType);
+  }
 }

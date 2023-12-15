@@ -775,6 +775,15 @@ enum ZegoUpdateType {
   Delete
 }
 
+/// Get room stream list type.
+enum ZegoRoomStreamListType {
+  /// Play stream list
+  Play,
+
+  /// Room publish and play stream list
+  All
+}
+
 /// State of CDN relay.
 enum ZegoStreamRelayCDNState {
   /// The state indicates that there is no CDN relay
@@ -2297,6 +2306,19 @@ class ZegoStream {
   String extraInfo;
 
   ZegoStream(this.user, this.streamID, this.extraInfo);
+}
+
+/// Room stream list.
+///
+/// Room stream list.
+class ZegoRoomStreamList {
+  /// Publish stream list
+  List<ZegoStream> publishStreamList;
+
+  /// Play stream list
+  List<ZegoStream> playStreamList;
+
+  ZegoRoomStreamList(this.publishStreamList, this.playStreamList);
 }
 
 /// Room extra information.
@@ -3909,6 +3931,46 @@ class ZegoMediaDataPublisherConfig {
   ZegoMediaDataPublisherMode mode;
 
   ZegoMediaDataPublisherConfig(this.channel, this.mode);
+}
+
+/// Media player play statistics.
+///
+/// Media player play statistics.
+class ZegoMediaPlayerStatisticsInfo {
+  /// Video source fps.
+  double videoSourceFps;
+
+  /// Video decode fps.
+  double videoDecodeFps;
+
+  /// Video render fps.
+  double videoRenderFps;
+
+  /// Audio source fps.
+  double audioSourceFps;
+
+  /// Audio decode fps.
+  double audioDecodeFps;
+
+  /// Audio render fps.
+  double audioRenderFps;
+
+  ZegoMediaPlayerStatisticsInfo(
+      this.videoSourceFps,
+      this.videoDecodeFps,
+      this.videoRenderFps,
+      this.audioSourceFps,
+      this.audioDecodeFps,
+      this.audioRenderFps);
+
+  /// Constructs a media player play statistics object by default.
+  ZegoMediaPlayerStatisticsInfo.defaultParam()
+      : videoSourceFps = 0,
+        videoDecodeFps = 0,
+        videoRenderFps = 0,
+        audioSourceFps = 0,
+        audioDecodeFps = 0,
+        audioRenderFps = 0;
 }
 
 /// Receive range configuration.

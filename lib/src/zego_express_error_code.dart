@@ -706,6 +706,9 @@ class ZegoErrorCode {
   /// Description: the passed parameter is not in the valid value range. <br>Cause: error setting parameters. <br>Solutions: Review the interface comment and pass in a value within the legal range.
   static const int MediaPlayerParamValueRangeIllegal = 1008043;
 
+  /// Description: Failed to cache network resource file. <br>Cause: During playback, [seekTo] operation will cause cache failure, and network reasons or incomplete playback caused by active stop will also cause cache failure. <br>Solutions: Check whether there is a [seekTo] operation, whether the playback failed due to network reasons, or whether the playback stopped actively.
+  static const int MediaPlayerLocalCacheFailed = 1008044;
+
   /// Description: MediaPlayer internal error. <br>Cause: internal error. <br>Solutions: Contact Technical support.
   static const int MediaPlayerInnerError = 1008099;
 

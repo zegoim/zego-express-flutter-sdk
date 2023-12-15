@@ -148,6 +148,7 @@ import im.zego.zegoexpress.constants.ZegoRangeAudioSpeakMode;
 import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
+import im.zego.zegoexpress.constants.ZegoRoomStreamListType;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -211,6 +212,8 @@ import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
 import im.zego.zegoexpress.entity.ZegoColorEnhancementParams;
 import im.zego.zegoexpress.entity.ZegoRoomSendTransparentMessage;
+import im.zego.zegoexpress.entity.ZegoRoomStreamList;
+import im.zego.zegoexpress.entity.ZegoStream;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
@@ -653,6 +656,62 @@ public class ZegoExpressEngineMethodHandler {
                 result.success(resultMap);
             }
         });
+    }
+
+    @SuppressWarnings("unused")
+    public static void getRoomStreamList(MethodCall call, final Result result) {
+
+        String roomID = call.argument("roomID");
+        int type = ZegoUtils.intValue((Number) call.argument("streamListType"));
+
+        ZegoRoomStreamList roomList = ZegoExpressEngine.getEngine().getRoomStreamList(roomID,ZegoRoomStreamListType.getZegoRoomStreamListType(type));
+        HashMap<String, Object> resultMap = new HashMap<>();
+        ArrayList<HashMap<String, Object>> publishStreamArrayList = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> playStreamListArrayList = new ArrayList<HashMap<String, Object>>();
+        if(null != roomList)
+        {
+            if(null != roomList.publishStreamList)
+            {
+                for(ZegoStream stream : roomList.publishStreamList)
+                {
+                    HashMap<String, Object> streamHashMap = new HashMap<>();
+
+                    HashMap<String, Object> userHashMap = new HashMap<>();
+                    userHashMap.put("userID", stream.user.userID);
+                    userHashMap.put("userName", stream.user.userName);
+                    streamHashMap.put("user", userHashMap);
+
+                    streamHashMap.put("streamID", stream.streamID);
+                    streamHashMap.put("extraInfo", stream.extraInfo);
+
+                    publishStreamArrayList.add(streamHashMap);
+                }
+            }
+
+            if(null != roomList.playStreamList)
+            {
+                for(ZegoStream stream : roomList.playStreamList)
+                {
+                    HashMap<String, Object> streamHashMap = new HashMap<>();
+
+                    HashMap<String, Object> userHashMap = new HashMap<>();
+                    userHashMap.put("userID", stream.user.userID);
+                    userHashMap.put("userName", stream.user.userName);
+                    streamHashMap.put("user", userHashMap);
+
+                    streamHashMap.put("streamID", stream.streamID);
+                    streamHashMap.put("extraInfo", stream.extraInfo);
+
+                    playStreamListArrayList.add(streamHashMap);
+                }
+            }
+
+        }
+
+        resultMap.put("publishStreamList", publishStreamArrayList);
+        resultMap.put("playStreamList", playStreamListArrayList);
+        
+        result.success(resultMap);
     }
 
 

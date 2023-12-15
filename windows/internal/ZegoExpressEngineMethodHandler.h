@@ -79,6 +79,8 @@ class ZegoExpressEngineMethodHandler {
                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomExtraInfo(flutter::EncodableMap &argument,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void getRoomStreamList(flutter::EncodableMap &argument,
+                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void
     startPublishingStream(flutter::EncodableMap &argument,

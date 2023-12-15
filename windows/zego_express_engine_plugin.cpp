@@ -70,6 +70,7 @@ static const std::map<
         EngineMethodHandler(switchRoom),
         EngineMethodHandler(renewToken),
         EngineMethodHandler(setRoomExtraInfo),
+        EngineMethodHandler(getRoomStreamList),
         EngineMethodHandler(startPublishingStream),
         EngineMethodHandler(stopPublishingStream),
         EngineMethodHandler(setStreamExtraInfo),
