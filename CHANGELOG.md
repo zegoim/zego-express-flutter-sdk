@@ -1,5 +1,103 @@
 # Change Log
 
+## 3.11.0
+
+### New Features
+
+#### 1. Support high-definition and low-code video in the cloud transcoding service
+
+Note: If you need to use this feature, please contact ZEGOCLOUD business personnel.
+
+By applying leading coding and decoding algorithms and other video pre-processing capabilities in the cloud transcoding service, we continuously optimize the smoothness and clarity of video playback, significantly improving the image quality. This feature is suitable for the following scenarios:
+
+- Showroom live streaming scenes with high viewership. It ensures stable video transmission and high quality while saving bandwidth costs; without affecting the image quality, it can reduce the bitrate by about 30%.
+
+- Danmaku game live streaming, sports live streaming, and other scenes with rich color and texture details in the video content. Under the same bitrate conditions, it can provide a higher definition viewing experience.
+
+For related API, please refer to ZegoMixerOutputVideoConfig > enableLowBitrateHD
+
+#### 2. Color enhancement is supported when publishing video-streams
+
+For various cameras and other devices that capture images, if the colors appear grayish or have low saturation, we support enhancing the colors while preserving the natural skin tones. This will make the images more vibrant and brighter, creating a more realistic visual experience for the human eye.
+
+For related API, please refer to enableColorEnhancement
+
+#### 3. All network requests support the IPv6 protocol
+
+#### 4. Real-time room messaging supports sending transparent messages
+
+Support sending real-time room messages to specified clients or client servers; message types are divided into normal and ordered, with the latter ensuring that messages are received strictly in order. This feature is suitable for scenarios where the anchor needs to manage the microphone positions in the room, for example:
+
+- Send messages to users who need to mute through the anchor client, and the receiving client will mute accordingly.
+
+- When the anchor wants to kick a user out of the room, send a message to the client server of the other party through the anchor client, and kick out the user.
+
+For related API, please refer to sendTransparentMessage
+
+#### 5. Hardware decoding acceleration supported for MJPEG format
+
+Note: This feature only supports pre-processing of screenshots and does not support other processing such as rotation or watermarking.
+
+When the video format output by the capture device is MJPEG, hardware decoding acceleration is enabled by default to prevent issues such as insufficient frame rate due to insufficient device performance.
+
+This feature is suitable for use on capture devices with a 4K resolution mainly.
+
+#### 6. Automatic mixing supports setting water level
+
+Note:
+
+- This feature is not enabled by default, meaning the server uses the default configuration values.
+
+- This feature may increase latency, so use it judiciously.
+
+The automatic stream mixing interface supports setting a watermark to control the lower limit of the range for adaptive adjustment of the mixing server's stream cache. This helps maintain a balance between mixing time and video stuttering caused by unstable streaming from the source. This feature only takes effect on new input streams and does not affect input streams that have already started mixing.
+
+For example, in a real-time karaoke KTV scenario, slight fluctuations in the streaming network from the source may cause mixing stuttering, which in turn increases the likelihood of stuttering for viewers. By adjusting the lower limit of the watermark, you can optimize the viewer's experience with stuttering, but this will increase latency.
+
+For related API, please refer to ZegoAutoMixerTask > minPlayStreamBufferLength
+
+#### 7. Support for using live streams as input streams for mixing
+
+Newly added support for using live streams as input streams for mixing; the URL of the live input stream supports both RTMP and HTTP-FLV protocols. This feature is suitable for mixing the RTC video streams of hosts' interactive broadcasting with cloud sports live streams, game live streams, etc., to achieve scenarios such as game or sports commentary in live broadcasting.
+
+#### 8. Custom audio offset value is supported for mixing
+
+When using custom audio and video capture function and the corresponding audio capture sources have inconsistent delays, you can customize the audio offset value during mixing to achieve audio-video synchronization after mixing output, ensuring a better experience for the audience.
+
+For related API, please refer to ZegoMixerInput > advancedConfig
+
+#### 9. The media player supports callbacks for video resolution change events
+
+The media player supports throwing relevant callback notifications to developers when the video resolution changes. This feature is suitable for scenarios where the resolution of the streaming screen changes multiple times and requires adjusting the encoding resolution on the streaming end and matching the rendering view size on the receiving end.
+
+For related API, please refer to onMediaPlayerVideoSizeChanged
+
+#### 10. The audio player supports separate settings for streaming volume and local volume
+
+The sound effect player supports setting the streaming volume and local playback volume separately, ensuring that the volume on both ends, local and remote, is within an appropriate range.
+
+For related API, please refer to ZegoAudioEffectPlayer > setPublishVolume, ZegoAudioEffectPlayer > setPlayVolume, ZegoAudioEffectPlayer > setPublishVolumeAll, ZegoAudioEffectPlayer > setPlayVolumeAll
+
+### Enhancements
+
+#### 1. Optimize server-side mixing and single-stream transcoding capabilities
+
+Optimize server-side mix streaming and single-stream transcoding capabilities to improve encoding efficiency and achieve a 5% or more increase in subjective and objective video quality at the same bitrate.
+
+#### 2. Optimize the AEC (Acoustic Echo Cancellation) algorithm to achieve better AEC performance
+
+#### 3. Optimize network connection strategies to enhance the experience of audio and video calls
+
+#### 4. Optimize the strategy of switching between the front and back end to solve the problem of collecting silence in certain specific scenarios or models
+
+#### 5. Optimize multi-device login logic
+
+After the user successfully logs in on device A, device A loses network connection. Then, the user logs in successfully on device B using the same userID. If the network connection on device A is restored and a reconnection is attempted, it will fail and throw error code 1002086, indicating that the userID is already logged in another device.
+
+### Bug Fixes
+
+#### 1. Fixed the issue that caused crashes in certain decoding scenarios
+
 ## 3.10.3
 
 ### **Bug Fixes**
