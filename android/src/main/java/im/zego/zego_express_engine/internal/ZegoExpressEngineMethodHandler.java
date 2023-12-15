@@ -34,6 +34,7 @@ import java.util.Locale;
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
 import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
 import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
+import im.zego.zego_express_engine.ZegoMediaPlayerAudioManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerBlockDataManager;
 import im.zego.zego_express_engine.ZegoMediaPlayerVideoManager;
 import im.zego.zegoexpress.ZegoAIVoiceChanger;
@@ -75,6 +76,7 @@ import im.zego.zegoexpress.callback.IZegoRoomLoginCallback;
 import im.zego.zegoexpress.callback.IZegoRoomLogoutCallback;
 import im.zego.zegoexpress.callback.IZegoRoomSetRoomExtraInfoCallback;
 import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataSentCallback;
+import im.zego.zegoexpress.callback.IZegoRoomSendTransparentMessageCallback;
 import im.zego.zegoexpress.constants.ZegoAECMode;
 import im.zego.zegoexpress.constants.ZegoANSMode;
 import im.zego.zegoexpress.constants.ZegoAudioCaptureStereoMode;
@@ -144,6 +146,8 @@ import im.zego.zegoexpress.constants.ZegoMultimediaLoadType;
 import im.zego.zegoexpress.constants.ZegoAlphaLayoutType;
 import im.zego.zegoexpress.constants.ZegoRangeAudioSpeakMode;
 import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
+import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageMode;
+import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -205,6 +209,9 @@ import im.zego.zegoexpress.entity.ZegoMixerWhiteboard;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerResource;
 import im.zego.zegoexpress.entity.ZegoEffectsBeautyParam;
 import im.zego.zegoexpress.entity.ZegoMixerImageInfo;
+import im.zego.zegoexpress.entity.ZegoColorEnhancementParams;
+import im.zego.zegoexpress.entity.ZegoRoomSendTransparentMessage;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -1967,7 +1974,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2125,7 +2133,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2184,7 +2193,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2208,6 +2218,8 @@ public class ZegoExpressEngineMethodHandler {
         // Enable SoundLevel
         boolean enableSoundLevel = ZegoUtils.boolValue((Boolean) call.argument("enableSoundLevel"));
         taskObject.enableSoundLevel = enableSoundLevel;
+        // minPlayStreamBufferLength
+        taskObject.minPlayStreamBufferLength = ZegoUtils.intValue((Number)call.argument("minPlayStreamBufferLength"));
 
         ZegoExpressEngine.getEngine().startAutoMixerTask(taskObject, new IZegoMixerStartCallback() {
             @Override
@@ -2247,7 +2259,8 @@ public class ZegoExpressEngineMethodHandler {
                     int bitrate = ZegoUtils.intValue((Number) videoConfigMap.get("bitrate"));
                     ZegoEncodeProfile encodeProfile = ZegoEncodeProfile.getZegoEncodeProfile(ZegoUtils.intValue((Number) videoConfigMap.get("encodeProfile")));
                     int encodeLatency = ZegoUtils.intValue((Number) videoConfigMap.get("encodeLatency"));
-                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency));
+                    boolean enableLowBitrateHD = ZegoUtils.boolValue((Boolean) videoConfigMap.get("enableLowBitrateHD"));
+                    outputObject.setVideoConfig(new ZegoMixerOutputVideoConfig(codecID, bitrate, encodeProfile, encodeLatency, enableLowBitrateHD));
                 }
                 outputListObject.add(outputObject);
             }
@@ -2935,6 +2948,50 @@ public class ZegoExpressEngineMethodHandler {
         });
     }
 
+    @SuppressWarnings("unused")
+    public static void sendTransparentMessage(MethodCall call, final Result result) {
+
+        ArrayList<ZegoUser> toUserList = new ArrayList<>();
+
+        ArrayList<HashMap<String, Object>> toUserMapList = call.argument("recvUserList");
+        if (toUserMapList != null)
+        {
+            for (HashMap<String, Object> userMap: toUserMapList) {
+                String userID = (String) userMap.get("userID");
+
+                if(userID.isEmpty())
+                    continue;
+
+                String userName = (String) userMap.get("userName");
+                ZegoUser user = new ZegoUser(userID, userName);
+                toUserList.add(user);
+            }
+        }
+
+        String roomID = call.argument("roomID");
+        int sendMode = ZegoUtils.intValue((Number) call.argument("sendMode"));
+        int sendType = ZegoUtils.intValue((Number) call.argument("sendType"));
+        int timeOut = ZegoUtils.intValue((Number) call.argument("timeOut"));
+        
+        byte[] content = call.argument("content");
+
+        ZegoRoomSendTransparentMessage message = new ZegoRoomSendTransparentMessage();
+        message.sendMode = ZegoRoomTransparentMessageMode.getZegoRoomTransparentMessageMode(sendMode);
+        message.sendType = ZegoRoomTransparentMessageType.getZegoRoomTransparentMessageType(sendType);
+        message.timeOut = timeOut;
+        message.recvUserList = toUserList;
+        message.content = content;
+
+        ZegoExpressEngine.getEngine().sendTransparentMessage(roomID, message,new IZegoRoomSendTransparentMessageCallback() {
+            @Override
+            public void onRoomSendTransparentMessageResult(int errorCode){
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("errorCode", errorCode);
+                result.success(resultMap);
+            }
+        });
+    }
+
     /* CustomVideoCapture */
     @SuppressWarnings("unused")
     public static void enableCustomVideoRender(MethodCall call, Result result) {
@@ -3214,7 +3271,6 @@ public class ZegoExpressEngineMethodHandler {
 
             mediaPlayer.setEventHandler(ZegoExpressEngineEventHandler.getInstance().mediaPlayerEventHandler);
             mediaPlayerHashMap.put(index, mediaPlayer);
-
             result.success(index);
         } else {
             result.success(-1);
@@ -3921,6 +3977,25 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableAudioData(MethodCall call, final Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            if (enable) {
+                mediaPlayer.setAudioHandler(ZegoMediaPlayerAudioManager.getInstance());
+            } else {
+                mediaPlayer.setAudioHandler(null);
+            }
+        }
+
+        result.success(null);
+    }
+
     @SuppressWarnings("unused")
     public static void mediaPlayerEnableVideoData(MethodCall call, final Result result) {
 
@@ -4274,6 +4349,42 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPlayVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = ZegoUtils.intValue((Number) call.argument("audioEffectID"));
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPlayVolume(audioEffectID, volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPlayVolume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPlayVolume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPublishVolume(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int audioEffectID = ZegoUtils.intValue((Number) call.argument("audioEffectID"));
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPublishVolume(audioEffectID, volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPublishVolume_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPublishVolume` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void audioEffectPlayerSetVolumeAll(MethodCall call, Result result) {
 
         Integer index = call.argument("index");
@@ -4287,6 +4398,40 @@ public class ZegoExpressEngineMethodHandler {
 
         } else {
             result.error("audioEffectPlayerSetVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPlayVolumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPlayVolumeAll(volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPlayVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPlayVolumeAll` but can't find specific player", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void audioEffectPlayerSetPublishVolumeAll(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoAudioEffectPlayer audioEffectPlayer = audioEffectPlayerHashMap.get(index);
+
+        if (audioEffectPlayer != null) {
+            int volume = ZegoUtils.intValue((Number) call.argument("volume"));
+            audioEffectPlayer.setPublishVolumeAll(volume);
+
+            result.success(null);
+
+        } else {
+            result.error("audioEffectPlayerSetPublishVolumeAll_Can_not_find_player".toUpperCase(), "Invoke `audioEffectPlayerSetPublishVolumeAll` but can't find specific player", null);
         }
     }
 
@@ -5112,6 +5257,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void copyrightedMusicCancelDownload(MethodCall call, final Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            String resourceID = call.argument("resourceID");
+            copyrightedMusicInstance.cancelDownload(resourceID);
+            result.success(null);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicCancelDownload` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void copyrightedMusicGetAverageScore(MethodCall call, Result result) {
 
         if (copyrightedMusicInstance != null) {
@@ -5719,6 +5876,22 @@ public class ZegoExpressEngineMethodHandler {
         if (aiVoiceChanger != null) {
             aiVoiceChanger.update();
         }
+
+        result.success(null);
+    }
+    @SuppressWarnings("unused")
+    public static void enableColorEnhancement(MethodCall call, Result result) {
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        HashMap<String, Object> paramsMap = call.argument("params");
+
+        ZegoColorEnhancementParams p = new ZegoColorEnhancementParams();
+        p.intensity = ZegoUtils.floatValue((Double)paramsMap.get("intensity"));
+        p.skinToneProtectionLevel = ZegoUtils.floatValue((Double)paramsMap.get("skinToneProtectionLevel"));
+        p.lipColorProtectionLevel = ZegoUtils.floatValue((Double)paramsMap.get("lipColorProtectionLevel"));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableColorEnhancement(enable, p, channel);
 
         result.success(null);
     }

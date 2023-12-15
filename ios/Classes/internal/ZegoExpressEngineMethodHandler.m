@@ -17,6 +17,7 @@
 #import "ZegoCustomVideoRenderManager.h"
 #import "ZegoCustomVideoProcessManager.h"
 #import "ZegoMediaPlayerVideoManager.h"
+#import "ZegoMediaPlayerAudioManager.h"
 #import "ZegoMediaPlayerBlockDataManager.h"
 
 #import "ZegoUtils.h"
@@ -1767,8 +1768,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1941,8 +1943,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -1991,8 +1994,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -2017,6 +2021,8 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     taskObject.enableSoundLevel = enableSoundLevel;
+    // minPlayStreamBufferLength
+    taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
 
     [[ZegoExpressEngine sharedEngine] startAutoMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
 
@@ -2064,8 +2070,9 @@
                 int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
                 int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
                 int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
                 ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency];
+                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
                 [outputObject setVideoConfig: videoConfig];
             }
             [outputListObject addObject:outputObject];
@@ -2987,6 +2994,44 @@
     }];
 }
 
+- (void)sendTransparentMessage:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *roomID = call.arguments[@"roomID"];
+    int senMode = [ZegoUtils intValue:call.arguments[@"sendMode"]];
+    int senType = [ZegoUtils intValue:call.arguments[@"sendType"]];
+    int timeOut = [ZegoUtils intValue:call.arguments[@"timeOut"]];
+
+    FlutterStandardTypedData *content = call.arguments[@"content"];
+
+    NSArray<NSDictionary *> *userListMap = call.arguments[@"recvUserList"];
+
+    NSMutableArray<ZegoUser *> *userListObject = nil;
+    if (userListMap && userListMap.count > 0) {
+        userListObject = [[NSMutableArray alloc] init];
+        for(NSDictionary *userMap in userListMap) {
+            NSString *uid =  userMap[@"userID"];
+            if(uid.length == 0)
+                continue;
+            ZegoUser *userObject = [[ZegoUser alloc] initWithUserID:userMap[@"userID"] userName:userMap[@"userName"]];
+            [userListObject addObject:userObject];
+        }
+    }
+
+    ZegoRoomSendTransparentMessage *message = [[ZegoRoomSendTransparentMessage alloc] init];
+    message.timeOut = timeOut;
+    message.sendMode = (ZegoRoomTransparentMessageMode)senMode;
+    message.sendType = (ZegoRoomTransparentMessageType)senType;
+    message.recvUserList = userListObject;
+    message.content = content.data;
+
+
+    [[ZegoExpressEngine sharedEngine] sendTransparentMessage:message roomID:roomID callback:^(int errorCode) {
+        result(@{
+            @"errorCode": @(errorCode)
+        });
+    }];
+}
+
 
 #pragma mark - CustomVideoCapture
 
@@ -3642,6 +3687,22 @@
     result(nil);
 }
 
+- (void)mediaPlayerEnableAudioData:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        if (enable) {
+            [mediaPlayer setAudioHandler:(id<ZegoMediaPlayerAudioHandler>)[ZegoMediaPlayerAudioManager sharedInstance]];
+        } else {
+            [mediaPlayer setAudioHandler:nil];
+        }
+    }
+
+   result(nil);
+}
+
 - (void)mediaPlayerEnableVideoData:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
@@ -4015,6 +4076,40 @@
     }
 }
 
+- (void)audioEffectPlayerSetPlayVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPlayVolume:volume audioEffectID:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPlayVolume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPlayVolume` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetPublishVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        unsigned int audioEffectID = [ZegoUtils unsignedIntValue:call.arguments[@"audioEffectID"]];
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPublishVolume:volume audioEffectID:audioEffectID];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPublishVolume_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPublishVolume` but can't find specific player" details:nil]);
+    }
+}
+
 - (void)audioEffectPlayerSetVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
@@ -4028,6 +4123,38 @@
 
     } else {
         result([FlutterError errorWithCode:[@"audioEffectPlayerSetVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetVolumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetPlayVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPlayVolumeAll:volume];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPlayVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPlayVolumeAll` but can't find specific player" details:nil]);
+    }
+}
+
+- (void)audioEffectPlayerSetPublishVolumeAll:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoAudioEffectPlayer *audioEffectPlayer = self.audioEffectPlayerMap[index];
+
+    if (audioEffectPlayer) {
+        int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+        [audioEffectPlayer setPublishVolumeAll:volume];
+
+        result(nil);
+
+    } else {
+        result([FlutterError errorWithCode:[@"audioEffectPlayerSetPublishVolumeAll_Can_not_find_player" uppercaseString] message:@"Invoke `audioEffectPlayerSetPublishVolumeAll` but can't find specific player" details:nil]);
     }
 }
 
@@ -4809,6 +4936,17 @@
         }];
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicDownload` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)copyrightedMusicCancelDownload:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSString *resourceID = call.arguments[@"resourceID"];
+        [self.copyrightedMusicInstance cancelDownload:resourceID];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicCancelDownload` but can't find specific instance" details:nil]);
     }
 }
 
@@ -5627,6 +5765,23 @@
         [aiVoiceChanger setSpeaker:speakerID];
     }
 
+    result(nil);
+}
+- (void)enableColorEnhancement:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    
+    ZegoColorEnhancementParams *p = [[ZegoColorEnhancementParams alloc] init];
+    p.intensity = [ZegoUtils floatValue:paramsMap[@"intensity"]];
+    p.skinToneProtectionLevel = [ZegoUtils floatValue:paramsMap[@"skinToneProtectionLevel"]];
+    p.lipColorProtectionLevel = [ZegoUtils floatValue:paramsMap[@"lipColorProtectionLevel"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+        
+    [[ZegoExpressEngine sharedEngine] enableColorEnhancement:enable params:p channel:(ZegoPublishChannel)channel];
+    
     result(nil);
 }
 

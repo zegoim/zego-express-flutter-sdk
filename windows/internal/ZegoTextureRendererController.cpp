@@ -1,4 +1,5 @@
 #include "ZegoTextureRendererController.h"
+#include "ZegoExpressEngineEventHandler.h"
 #include "../ZegoLog.h"
 #include <flutter/standard_method_codec.h>
 
@@ -17,6 +18,8 @@ ZegoTextureRendererController::~ZegoTextureRendererController()
         mediaPlayerRenderers_.clear();
         alphaRenders_.clear();
         videoSourceChannels_.clear();
+        capturedRenderFirstFrameMap_.clear();
+        meidaPlayerRenderFirstFrameMap_.clear();
     }
     
     renderers_.clear();
@@ -50,6 +53,8 @@ void ZegoTextureRendererController::uninit()
         mediaPlayerRenderers_.clear();
         alphaRenders_.clear();
         videoSourceChannels_.clear();
+        capturedRenderFirstFrameMap_.clear();
+        meidaPlayerRenderFirstFrameMap_.clear();
     }
     
     renderers_.clear();
@@ -107,6 +112,7 @@ void ZegoTextureRendererController::removeCapturedRenderer(ZEGO::EXPRESS::ZegoPu
 
     std::lock_guard<std::mutex> lock(rendersMutex_);
     capturedRenderers_.erase(channel);
+    capturedRenderFirstFrameMap_.erase(channel);
 }
 /// Called when dart invoke `startPlayingStream`
 bool ZegoTextureRendererController::addRemoteRenderer(int64_t textureID, std::string streamID, ZEGO::EXPRESS::ZegoViewMode viewMode)
@@ -166,6 +172,7 @@ void ZegoTextureRendererController::removeMediaPlayerRenderer(ZEGO::EXPRESS::IZe
     
     std::lock_guard<std::mutex> lock(rendersMutex_);
     mediaPlayerRenderers_.erase(mediaPlayer);
+    meidaPlayerRenderFirstFrameMap_.erase(mediaPlayer);
 }
 
 /// For video preview/play
@@ -211,6 +218,25 @@ void ZegoTextureRendererController::setVideoSourceChannel(ZEGO::EXPRESS::ZegoPub
     {
         std::lock_guard<std::mutex> lock(rendersMutex_);
         videoSourceChannels_.insert(std::pair<ZEGO::EXPRESS::ZegoPublishChannel , ZEGO::EXPRESS::ZegoVideoSourceType>(channel, sourceType));
+    }
+}
+
+void ZegoTextureRendererController::resetMediaPlayerRenderFirstFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer) {
+    ZF::logInfo("[resetMediaPlayerRenderFirstFrame] index: %d", mediaPlayer->getIndex());
+
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        meidaPlayerRenderFirstFrameMap_.erase(mediaPlayer);
+    }
+}
+
+void ZegoTextureRendererController::resetAllRenderFirstFrame() {
+    ZF::logInfo("[resetAllRenderFirstFrame]");
+
+    {
+        std::lock_guard<std::mutex> lock(rendersMutex_);
+        capturedRenderFirstFrameMap_.clear();
+        meidaPlayerRenderFirstFrameMap_.clear();
     }
 }
 
@@ -277,6 +303,13 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             }
 
             renderer->second->setUseMirrorEffect(isMirror);
+
+            auto firstFrameRender = capturedRenderFirstFrameMap_.find(channel);
+            if (firstFrameRender == capturedRenderFirstFrameMap_.end() || !firstFrameRender->second) {
+                ZegoExpressEngineEventHandler::getInstance()->onPublisherRenderVideoFirstFrame(
+                    channel);
+                capturedRenderFirstFrameMap_.insert(std::pair<ZEGO::EXPRESS::ZegoPublishChannel, bool>(channel, true));
+            }
             renderer->second->updateSrcFrameBuffer(data[0], dataLength[0], param);
         }
     }
@@ -361,6 +394,15 @@ void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer
                     map[flutter::EncodableValue("height")] =  flutter::EncodableValue(param.height);
                     eventSink_->Success(map);
                 }
+            }
+
+            auto firstFrameRender = meidaPlayerRenderFirstFrameMap_.find(mediaPlayer);
+            if (firstFrameRender == meidaPlayerRenderFirstFrameMap_.end() ||
+                !firstFrameRender->second) {
+                ZegoExpressEngineEventHandler::getInstance()->onMediaPlayerFirstFrameEvent(
+                    mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent::ZEGO_MEDIA_PLAYER_FIRST_FRAME_EVENT_VIDEO_RENDERED);
+                meidaPlayerRenderFirstFrameMap_.insert(
+                    std::pair<ZEGO::EXPRESS::IZegoMediaPlayer *, bool>(mediaPlayer, true));
             }
             renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
         }

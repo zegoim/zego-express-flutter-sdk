@@ -1030,6 +1030,20 @@ class ZegoExpressEngine {
   static void Function(ZegoRealTimeSequentialDataManager manager,
       Uint8List data, String streamID)? onReceiveRealTimeSequentialData;
 
+  /// The callback triggered when Barrage Messages are received.
+  ///
+  /// Available since: 1.5.0
+  /// Description: This callback is used to receive room passthrough messages sent by other users in the same room.
+  /// When to trigger: After calling [loginRoom] to login to the room, this callback is triggered if there is a user in the room who sends a message received by the specified client through the [sendTransparentMessage] function.
+  /// Restrictions: None
+  /// Caution: Barrage messages sent by users themselves will not be notified through this callback. When there are a large number of barrage messages in the room, the notification may be delayed, and some barrage messages may be lost.
+  /// Related callbacks: A bullet-screen message sent by the user himself is not notified by this callback. [sendTransparentMessage] specifies that only a server callback is used. This callback is not triggered.
+  ///
+  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes.
+  /// - [message] recv message.
+  static void Function(String roomID, ZegoRoomRecvTransparentMessage message)?
+      onRecvRoomTransparentMessage;
+
   /// The callback triggered when Broadcast Messages are received.
   ///
   /// Available since: 1.2.1
@@ -1128,6 +1142,18 @@ class ZegoExpressEngine {
   /// - [millisecond] Progress in milliseconds.
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
       onMediaPlayerRenderingProgress;
+
+  /// The callback triggered when when the resolution of the playback video changes.
+  ///
+  /// Available since: 3.11.0
+  /// Description: The callback triggered when when the resolution of the playback video changes.
+  /// Trigger: When the media player is playing a video resource, This callback will be triggered when playback starts and the resolution of the video changes.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [width] width.
+  /// - [height] height.
+  static void Function(ZegoMediaPlayer mediaPlayer, int width, int height)?
+      onMediaPlayerVideoSizeChanged;
 
   /// The callback triggered when the media player got media side info.
   ///
@@ -1350,6 +1376,15 @@ class ZegoExpressEngine {
   /// Available since: 3.10.0
   /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
   static void Function()? onRequestDumpData;
+
+  /// Request to dump data.
+  ///
+  /// Available since: 3.11.0
+  /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
+  ///
+  /// - [dumpDir] Dump data dir.
+  /// - [takePhoto] Need to take photo when uploading dump data
+  static void Function(String dumpDir, bool takePhoto)? onRequestUploadDumpData;
 
   /// Callback when starting to dump data.
   ///

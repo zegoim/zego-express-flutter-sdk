@@ -121,6 +121,7 @@ protected:
     void onNetworkTimeSynchronized() override;
 
     void onRequestDumpData() override;
+    void onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) override;
 
     void onStartDumpData(int errorCode) override;
 
@@ -134,8 +135,10 @@ protected:
 
     void onPublisherSendVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
+public:
     void onPublisherRenderVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
+protected:
     void onPublisherVideoSizeChanged(int width, int height, EXPRESS::ZegoPublishChannel channel) override;
 
     void onPublisherRelayCDNStateUpdate(const std::string & streamID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo> & infoList) override;
@@ -175,6 +178,8 @@ protected:
     void onIMRecvBarrageMessage(const std::string & roomID, std::vector<EXPRESS::ZegoBarrageMessageInfo> messageList) override;
 
     void onIMRecvCustomCommand(const std::string & roomID, EXPRESS::ZegoUser fromUser, const std::string & command) override;
+    
+    void onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) override;
 
     void onPerformanceStatusUpdate(const EXPRESS::ZegoPerformanceStatus & status) override;
 
@@ -212,9 +217,13 @@ protected:
 
     void onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList) override;
 
+public:
     void onMediaPlayerFirstFrameEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) override;
 
+protected:
     void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) override;
+
+    void onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) override;
 
 // MediaDataPublisher
 protected:
