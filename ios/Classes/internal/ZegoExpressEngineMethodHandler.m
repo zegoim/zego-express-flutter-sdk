@@ -5096,6 +5096,27 @@
     }
 }
 
+- (void)copyrightedMusicGetLrcLyricWithConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
+        
+        ZegoCopyrightedMusicGetLyricConfig *config = [[ZegoCopyrightedMusicGetLyricConfig alloc] init];
+        
+        config.songID = configMap[@"songID"];
+        config.vendorID = [ZegoUtils unsignedIntValue:configMap[@"vendorID"]];
+
+        [self.copyrightedMusicInstance getLrcLyricWithConfig:config callback:^(int errorCode, NSString *_Nonnull lyrics) {
+                NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+                resultMap[@"errorCode"] = @(errorCode);
+                resultMap[@"lyrics"] = lyrics;
+                result(resultMap);
+            }];
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetLrcLyricWithConfig` but can't find specific instance" details:nil]);
+    }
+}
+
 - (void)copyrightedMusicGetMusicByToken:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.copyrightedMusicInstance) {
@@ -5226,6 +5247,25 @@
         result(@(isQueryCache));
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicQueryCacheWithConfig` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)copyrightedMusicQueryCacheWithConfigV2:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
+        
+        ZegoCopyrightedMusicQueryCacheConfigV2 *config = [[ZegoCopyrightedMusicQueryCacheConfigV2 alloc] init];
+        
+        config.songID = configMap[@"songID"];
+        config.vendorID = [ZegoUtils unsignedIntValue:configMap[@"vendorID"]];
+        config.resourceType = [ZegoUtils unsignedIntValue:configMap[@"resourceType"]];
+        config.resourceQualityType = [ZegoUtils unsignedIntValue:configMap[@"resourceQualityType"]];
+        
+        BOOL isQueryCache = [self.copyrightedMusicInstance queryCacheV2:config];
+        result(@(isQueryCache));
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicQueryCacheWithConfigV2` but can't find specific instance" details:nil]);
     }
 }
 
@@ -5406,6 +5446,28 @@
     }
 }
 
+- (void)copyrightedMusicGetSharedResourceV2:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
+        
+        ZegoCopyrightedMusicGetSharedConfigV2 *config = [[ZegoCopyrightedMusicGetSharedConfigV2 alloc] init];
+        config.songID = configMap[@"songID"];
+        config.vendorID = [ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
+        config.resourceType = [ZegoUtils intValue:configMap[@"resourceType"]];
+        
+        [self.copyrightedMusicInstance getSharedResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+            NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+            resultMap[@"errorCode"] = @(errorCode);
+            resultMap[@"resource"] = resource;
+            result(resultMap);
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicGetSharedResourceV2` but can't find specific instance" details:nil]);
+    }
+}
+
 - (void)copyrightedMusicRequestResource:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.copyrightedMusicInstance) {
@@ -5428,6 +5490,31 @@
         }];
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestResource` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)copyrightedMusicRequestResourceV2:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        NSDictionary *configMap = call.arguments[@"config"];
+        
+        ZegoCopyrightedMusicRequestConfigV2 *config = [[ZegoCopyrightedMusicRequestConfigV2 alloc] init];
+        config.songID = configMap[@"songID"];
+        config.mode = [ZegoUtils intValue:configMap[@"mode"]];
+        config.vendorID =[ZegoUtils intValue:configMap[@"vendorID"]];
+        config.roomID = configMap[@"roomID"];
+        config.masterID = configMap[@"masterID"];
+        config.sceneID = [ZegoUtils intValue:configMap[@"sceneID"]];
+        config.resourceType = [ZegoUtils intValue:configMap[@"resourceType"]];
+        
+        [self.copyrightedMusicInstance requestResource: config callback:^(int errorCode, NSString *_Nonnull resource) {
+            NSMutableDictionary *resultMap = [[NSMutableDictionary alloc] init];
+            resultMap[@"errorCode"] = @(errorCode);
+            resultMap[@"resource"] = resource;
+            result(resultMap);
+        }];
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicRequestResourceV2` but can't find specific instance" details:nil]);
     }
 }
 

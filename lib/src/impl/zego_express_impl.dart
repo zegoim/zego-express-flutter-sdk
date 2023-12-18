@@ -4228,6 +4228,17 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyricWithConfig(
+      ZegoCopyrightedMusicGetLyricConfig config) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetLrcLyricWithConfig', {
+      'config': {'songID': config.songID, 'vendorID': config.vendorID ?? 0}
+    });
+    return ZegoCopyrightedMusicGetLrcLyricResult(
+        map['errorCode'], map['lyrics']);
+  }
+
+  @override
   Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
       String shareToken) async {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
@@ -4406,6 +4417,22 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResourceV2(
+      ZegoCopyrightedMusicGetSharedConfigV2 config) async {
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetSharedResourceV2', {
+      'config': {
+        'songID': config.songID,
+        'vendorID': config.vendorID ?? 0,
+        'roomID': config.roomID ?? '',
+        'resourceType': config.resourceType ?? 0
+      }
+    });
+    return ZegoCopyrightedMusicGetSharedResourceResult(
+        resultMap['errorCode'], resultMap['resource']);
+  }
+
+  @override
   Future<ZegoCopyrightedMusicRequestResourceResult> requestResource(
       ZegoCopyrightedMusicRequestConfig config,
       ZegoCopyrightedMusicResourceType type) async {
@@ -4428,6 +4455,25 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<ZegoCopyrightedMusicRequestResourceResult> requestResourceV2(
+      ZegoCopyrightedMusicRequestConfigV2 config) async {
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicRequestResourceV2', {
+      'config': {
+        'songID': config.songID,
+        'mode': config.mode,
+        'vendorID': config.vendorID ?? 0,
+        'roomID': config.roomID ?? '',
+        'masterID': config.masterID ?? '',
+        'sceneID': config.sceneID ?? 0,
+        'resourceType': config.resourceType ?? 0
+      }
+    });
+    return ZegoCopyrightedMusicRequestResourceResult(
+        resultMap['errorCode'], resultMap['resource']);
+  }
+
+  @override
   Future<bool> queryCacheWithConfig(
       ZegoCopyrightedMusicQueryCacheConfig config) async {
     return await ZegoExpressImpl._channel
@@ -4437,6 +4483,20 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         'resourceType': config.resourceType.index,
         'vendorID': config.vendorID.value,
         'resourceQualityType': config.resourceQualityType.index
+      }
+    });
+  }
+
+  @override
+  Future<bool> queryCacheWithConfigV2(
+      ZegoCopyrightedMusicQueryCacheConfigV2 config) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicQueryCacheWithConfigV2', {
+      'config': {
+        'songID': config.songID,
+        'resourceType': config.resourceType ?? 0,
+        'vendorID': config.vendorID ?? 0,
+        'resourceQualityType': config.resourceQualityType ?? 0
       }
     });
   }

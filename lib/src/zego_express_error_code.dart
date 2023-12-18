@@ -1039,6 +1039,9 @@ class ZegoErrorCode {
   /// Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorNotSupportFunction = 1017053;
 
+  /// Description: The room ID is not logged in. <br>Cause: Room ID input error. <br>Solutions: If the copyright is not used in a multi room scenario, there is no need to pass in the roomID, otherwise please pass in the correct logged in room ID.
+  static const int CopyrightedMusicRoomNoLogin = 1017054;
+
   /// Description: Vendor ID invalid. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorIdInvalid = 1017071;
 
