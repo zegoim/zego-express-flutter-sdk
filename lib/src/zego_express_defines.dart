@@ -3679,6 +3679,17 @@ class ZegoCopyrightedMusicConfig {
   ZegoCopyrightedMusicConfig(this.user);
 }
 
+/// The configuration of getting lyric.
+class ZegoCopyrightedMusicGetLyricConfig {
+  /// the ID of the song.
+  String songID;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  ZegoCopyrightedMusicGetLyricConfig(this.songID, {this.vendorID});
+}
+
 /// The configuration of requesting resource.
 class ZegoCopyrightedMusicRequestConfig {
   /// the ID of the song.
@@ -3703,6 +3714,37 @@ class ZegoCopyrightedMusicRequestConfig {
       {this.vendorID, this.roomID, this.masterID, this.sceneID});
 }
 
+/// The configuration of requesting resource.
+class ZegoCopyrightedMusicRequestConfigV2 {
+  /// the ID of the song.
+  String songID;
+
+  /// VOD billing mode.
+  int mode;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicate in which room to order song/accompaniment/accompaniment clip/accompaniment segment.
+  String? roomID;
+
+  /// The master ID, which must be passed when the billing mode is billed by host. Indicate which homeowner to order song/accompaniment/accompaniment clip/accompaniment segment.
+  String? masterID;
+
+  /// The scene ID, indicate the actual business. For details, please consult ZEGO technical support.
+  int? sceneID;
+
+  /// The resource type of music.
+  int? resourceType;
+
+  ZegoCopyrightedMusicRequestConfigV2(this.songID, this.mode,
+      {this.vendorID,
+      this.roomID,
+      this.masterID,
+      this.sceneID,
+      this.resourceType});
+}
+
 /// The configuration of getting shared resource.
 class ZegoCopyrightedMusicGetSharedConfig {
   /// the ID of the song.
@@ -3716,6 +3758,24 @@ class ZegoCopyrightedMusicGetSharedConfig {
 
   ZegoCopyrightedMusicGetSharedConfig(this.songID,
       {this.vendorID, this.roomID});
+}
+
+/// The configuration of getting shared resource.
+class ZegoCopyrightedMusicGetSharedConfigV2 {
+  /// the ID of the song.
+  String songID;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
+  String? roomID;
+
+  /// The resource type of music.
+  int? resourceType;
+
+  ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
+      {this.vendorID, this.roomID, this.resourceType});
 }
 
 /// The configuration of querying cache.
@@ -3734,6 +3794,24 @@ class ZegoCopyrightedMusicQueryCacheConfig {
 
   ZegoCopyrightedMusicQueryCacheConfig(
       this.songID, this.resourceType, this.resourceQualityType, this.vendorID);
+}
+
+/// The configuration of querying cache.
+class ZegoCopyrightedMusicQueryCacheConfigV2 {
+  /// the ID of the song.
+  String songID;
+
+  /// The resource type of music.
+  int? resourceType;
+
+  /// The resource quality type of music.
+  int? resourceQualityType;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  ZegoCopyrightedMusicQueryCacheConfigV2(this.songID,
+      {this.resourceType, this.resourceQualityType, this.vendorID});
 }
 
 /// Screen capture configuration parameters.
@@ -5046,6 +5124,17 @@ abstract class ZegoCopyrightedMusic {
   Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID,
       {ZegoCopyrightedMusicVendorID? vendorID});
 
+  /// Get lyrics in lrc format.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get lyrics in lrc format, support parsing lyrics line by line.
+  /// Use case: Used to display lyrics line by line.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// - [config] The configuration of get lyric.
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyricWithConfig(
+      ZegoCopyrightedMusicGetLyricConfig config);
+
   /// Get lyrics in krc format.
   ///
   /// Available since: 2.13.0
@@ -5076,6 +5165,23 @@ abstract class ZegoCopyrightedMusic {
       ZegoCopyrightedMusicRequestConfig config,
       ZegoCopyrightedMusicResourceType type);
 
+  /// Request music resource.
+  ///
+  /// Available since: 3.12.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
+  /// Use case: Get copyrighted songs for local playback and sharing.
+  /// Related APIs: After a user in the room successfully calls this interface to request a music resource, other users in the room can call the [getsharedresource] interface to get the music resource for free once.
+  /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
+  /// Note:
+  ///   1. Each resource has a unique resource ID.
+  ///   2. Every time this API is called, it will be billed once, please consult ZEGO business personnel for details.
+  ///   3. Each resource has a unique resource ID. The resources obtained by calling this API are time-sensitive, the valid duration is the minimum value between the SDK life cycle and 24-hour.
+  ///
+  /// - [config] The configuration of requesting music resource.
+  /// - Returns Result of requesting music resource.
+  Future<ZegoCopyrightedMusicRequestResourceResult> requestResourceV2(
+      ZegoCopyrightedMusicRequestConfigV2 config);
+
   /// Get shared music resource.
   ///
   /// Available since: 3.0.2
@@ -5091,6 +5197,20 @@ abstract class ZegoCopyrightedMusic {
   Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResource(
       ZegoCopyrightedMusicGetSharedConfig config,
       ZegoCopyrightedMusicResourceType type);
+
+  /// Get shared music resource.
+  ///
+  /// Available since: 3.12.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
+  /// Use case: Get copyrighted songs for local playback.
+  /// Related APIs: After a user in the room calls the [requestresource] interface to request a music resource successfully, other users in the room can call this interface to get the music resource for free once.
+  /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
+  /// Note: Each resource has a unique resource ID. The resources obtained by calling this API are time-sensitive, the valid duration is the minimum value between the SDK life cycle and 24-hour.
+  ///
+  /// - [config] The configuration of getting shared music resource.
+  /// - Returns Result of getting shared music resource.
+  Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResourceV2(
+      ZegoCopyrightedMusicGetSharedConfigV2 config);
 
   /// Download music resource.
   ///
@@ -5124,6 +5244,17 @@ abstract class ZegoCopyrightedMusic {
   /// - [config] The configuration of querying cache.
   Future<bool> queryCacheWithConfig(
       ZegoCopyrightedMusicQueryCacheConfig config);
+
+  /// Query the resource's cache is existed or not.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
+  /// Use case: Can be used to check the resource's cache is existed or not
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// - [config] The configuration of querying cache.
+  Future<bool> queryCacheWithConfigV2(
+      ZegoCopyrightedMusicQueryCacheConfigV2 config);
 
   /// Get the playing time of a song or accompaniment file.
   ///

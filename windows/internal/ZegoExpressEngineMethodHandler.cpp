@@ -3748,6 +3748,29 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicGetLrcLyric(
     }
 }
 
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetLrcLyricWithConfig(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicGetLyricConfig config;
+        
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.vendorID = std::get<int32_t>(configMap[FTValue("vendorID")]);
+        auto sharedPtrResult =
+            std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getLrcLyric(config, [=](int errorCode, std::string lyrics) {
+                                               FTMap retMap;
+                                               retMap[FTValue("errorCode")] = FTValue(errorCode);
+                                               retMap[FTValue("lyrics")] = FTValue(lyrics);
+                                               sharedPtrResult->Success(retMap);
+                                           });
+    } else {
+        result->Error("copyrightedMusicGetLrcLyric_Can_not_find_instance",
+                      "Invoke `copyrightedMusicGetLrcLyricWithConfig` but can't find specific instance");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::copyrightedMusicGetMusicByToken(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -3886,6 +3909,26 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCacheWithConfig(
     } else {
         result->Error("copyrightedMusicQueryCache_Can_not_find_instance",
                       "Invoke `copyrightedMusicQueryCacheWithConfig` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCacheWithConfigV2(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicQueryCacheConfigV2 config;
+        
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.vendorID = std::get<int32_t>(configMap[FTValue("vendorID")]);
+        config.resourceType = std::get<int32_t>(configMap[FTValue("resourceType")]);
+        config.resourceQualityType = std::get<int32_t>(configMap[FTValue("resourceQualityType")]);
+
+        bool ret = copyrightedMusic_->queryCache(config);
+        result->Success(FTValue(ret));
+    } else {
+        result->Error("copyrightedMusicQueryCache_Can_not_find_instance",
+                      "Invoke `copyrightedMusicQueryCacheWithConfigV2` but can't find specific instance");
     }
 }
 
@@ -4095,6 +4138,32 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicGetSharedResource(
     }
 }
 
+void ZegoExpressEngineMethodHandler::copyrightedMusicGetSharedResourceV2(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicGetSharedConfigV2 config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.vendorID = std::get<int32_t>(configMap[FTValue("vendorID")]);
+        config.roomID = std::get<std::string>(configMap[FTValue("roomID")]);
+        config.resourceType = std::get<int32_t>(configMap[FTValue("resourceType")]);
+        auto sharedPtrResult =
+            std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->getSharedResource(config, 
+                                             [=](int errorCode, std::string resource) {
+                                                 FTMap retMap;
+                                                 retMap[FTValue("errorCode")] = FTValue(errorCode);
+                                                 retMap[FTValue("resource")] = FTValue(resource);
+                                                 sharedPtrResult->Success(retMap);
+                                             });
+    } else {
+        result->Error(
+            "copyrightedMusicGetSharedResource_Can_not_find_instance",
+            "Invoke `copyrightedMusicGetSharedResource` but can't find specific instance");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::copyrightedMusicRequestResource(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -4122,6 +4191,33 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicRequestResource(
     } else {
         result->Error("copyrightedMusicRequestResource_Can_not_find_instance",
                       "Invoke `copyrightedMusicRequestResource` but can't find specific instance");
+    }
+}
+
+void ZegoExpressEngineMethodHandler::copyrightedMusicRequestResourceV2(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto configMap = std::get<FTMap>(argument[FTValue("config")]);
+        EXPRESS::ZegoCopyrightedMusicRequestConfigV2 config;
+        config.songID = std::get<std::string>(configMap[FTValue("songID")]);
+        config.mode = std::get<int32_t>(configMap[FTValue("mode")]);
+        config.vendorID = std::get<int32_t>(configMap[FTValue("vendorID")]);
+        config.roomID = std::get<std::string>(configMap[FTValue("roomID")]);
+        config.masterID = std::get<std::string>(configMap[FTValue("masterID")]);
+        config.sceneID = std::get<int32_t>(configMap[FTValue("sceneID")]);
+        config.resourceType = std::get<int32_t>(configMap[FTValue("resourceType")]);
+        auto sharedPtrResult =
+            std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+        copyrightedMusic_->requestResource(config, [=](int errorCode, std::string resource) {
+            FTMap retMap;
+            retMap[FTValue("errorCode")] = FTValue(errorCode);
+            retMap[FTValue("resource")] = FTValue(resource);
+            sharedPtrResult->Success(retMap);
+        });
+    } else {
+        result->Error("copyrightedMusicRequestResource_Can_not_find_instance",
+                      "Invoke `copyrightedMusicRequestResourceV2` but can't find specific instance");
     }
 }
 
