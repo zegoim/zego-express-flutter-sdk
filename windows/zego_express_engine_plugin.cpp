@@ -340,6 +340,7 @@ static const std::map<
         EngineMethodHandler(copyrightedMusicGetDuration),
         EngineMethodHandler(copyrightedMusicGetKrcLyricByToken),
         EngineMethodHandler(copyrightedMusicGetLrcLyric),
+        EngineMethodHandler(copyrightedMusicGetLrcLyricWithConfig),
         EngineMethodHandler(copyrightedMusicGetMusicByToken),
         EngineMethodHandler(copyrightedMusicGetPreviousScore),
         EngineMethodHandler(copyrightedMusicGetStandardPitch),
@@ -348,6 +349,7 @@ static const std::map<
         EngineMethodHandler(copyrightedMusicPauseScore),
         EngineMethodHandler(copyrightedMusicQueryCache),
         EngineMethodHandler(copyrightedMusicQueryCacheWithConfig),
+        EngineMethodHandler(copyrightedMusicQueryCacheWithConfigV2),
         EngineMethodHandler(copyrightedMusicRequestAccompaniment),
         EngineMethodHandler(copyrightedMusicRequestAccompanimentClip),
         EngineMethodHandler(copyrightedMusicRequestSong),
@@ -358,7 +360,9 @@ static const std::map<
         EngineMethodHandler(copyrightedMusicStopScore),
         EngineMethodHandler(copyrightedMusicGetFullScore),
         EngineMethodHandler(copyrightedMusicGetSharedResource),
+        EngineMethodHandler(copyrightedMusicGetSharedResourceV2),
         EngineMethodHandler(copyrightedMusicRequestResource),
+        EngineMethodHandler(copyrightedMusicRequestResourceV2),
 
         // rangeAudio
         EngineMethodHandler(createRangeAudio),
