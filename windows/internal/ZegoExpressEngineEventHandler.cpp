@@ -882,6 +882,21 @@ void ZegoExpressEngineEventHandler::onMediaPlayerVideoSizeChanged(EXPRESS::IZego
     }
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerLocalCache(IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) {
+    ZF::logInfo("[onMediaPlayerLocalCache] index: %d, error: %d, resource: %s, cachedFile: %s", mediaPlayer->getIndex(), errorCode, resource, cachedFile);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerLocalCache");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("resource")] = FTValue(resource);
+        retMap[FTValue("cachedFile")] = FTValue(cachedFile);
+
+        eventSink_->Success(retMap);
+    }
+}
 
 // MediaDataPublisher
 void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {

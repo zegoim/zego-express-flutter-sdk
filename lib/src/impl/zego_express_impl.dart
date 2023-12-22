@@ -3099,7 +3099,17 @@ class ZegoExpressImpl {
               mediaPlayer, map['width'], map['height']);
         }
         break;
+      case 'onMediaPlayerLocalCache':
+        if (ZegoExpressEngine.onMediaPlayerLocalCache == null) return;
 
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerLocalCache!(mediaPlayer,
+              map['errorCode'], map['resource'], map['cachedFile']);
+        }
+        break;
       /* AudioEffectPlayer */
 
       case 'onAudioEffectPlayStateUpdate':
@@ -3769,6 +3779,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetPlayMediaStreamType',
         {'index': _index, 'streamType': streamType.index});
+  }
+
+  Future<void> enableLocalCache(bool enable, String cacheDir) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableLocalCache',
+        {'index': _index, 'enable': enable, 'cacheDir': cacheDir});
   }
 }
 
