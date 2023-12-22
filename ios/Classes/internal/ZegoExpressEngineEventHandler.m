@@ -1464,7 +1464,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer localCacheError:(int)errorCode resource:(NSString *)resource cachedFile:(NSString *)cachedFile {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaPlayerLocalCache] idx: %d, error: %d, resource: %s, cached: %s", mediaPlayer.index.intValue, errorCode, resource, cachedFile);
+    ZGLog(@"[onMediaPlayerLocalCache] idx: %d, error: %d, resource: %@, cached: %@", mediaPlayer.index.intValue, errorCode, resource, cachedFile);
 
     GUARD_SINK
     if (sink) {
