@@ -882,7 +882,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerVideoSizeChanged(EXPRESS::IZego
     }
 }
 
-void ZegoExpressEngineEventHandler::onMediaPlayerLocalCache(IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) {
+void ZegoExpressEngineEventHandler::onMediaPlayerLocalCache(EXPRESS::IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) {
     ZF::logInfo("[onMediaPlayerLocalCache] index: %d, error: %d, resource: %s, cachedFile: %s", mediaPlayer->getIndex(), errorCode, resource, cachedFile);
 
     if (eventSink_) {
