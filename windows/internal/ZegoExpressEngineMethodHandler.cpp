@@ -2872,6 +2872,25 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayMediaStreamType(
     }
 }
 
+void mediaPlayerEnableLocalCache(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        std::string cacheDir = std::get<std::string>(argument[FTValue("cacheDir")]);
+
+        mediaPlayer->enableLocalCache(enable, cacheDir);
+
+        result->Success();
+    } else {
+        result->Error("mediaPlayerEnableLocalCache_Can_not_find_player",
+                      "Invoke `mediaPlayerEnableLocalCache` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

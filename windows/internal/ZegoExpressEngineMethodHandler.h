@@ -667,6 +667,9 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerSetPlayMediaStreamType(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableLocalCache(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     /* Media Data Publisher */
     void createMediaDataPublisher(
         flutter::EncodableMap &argument,

@@ -4207,6 +4207,20 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableLocalCache(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            String cacheDir = call.argument("cacheDir");
+
+            mediaPlayer.enableLocalCache(enable, cacheDir);
+        }
+        result.success(null);
+    }
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")

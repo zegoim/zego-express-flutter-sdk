@@ -4597,6 +4597,18 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Whether to enable live audio effect.
   /// - [mode] Live audio effect mode.
   Future<void> enableLiveAudioEffect(bool enable, ZegoLiveAudioEffectMode mode);
+
+  /// Enable local caching of http/https network resources.
+  ///
+  /// Available since: 3.12.0
+  /// Description: When playing http/https network resources, when the local cache is enabled, the network resources will be saved locally and the cache information will be called back through [onMediaPlayerLocalCache].
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer]. Called after [loadResource] or during playback, it will take effect next playback.
+  /// Caution: Only http/https single file type network resources are supported. If there is a [seek] operation during playback, the cache will fail.
+  ///
+  /// - [enable] Whether to enable local caching.
+  /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
+  Future<void> enableLocalCache(bool enable, String cacheDir);
+
 }
 
 abstract class ZegoAudioEffectPlayer {
