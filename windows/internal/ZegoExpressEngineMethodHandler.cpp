@@ -2872,7 +2872,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayMediaStreamType(
     }
 }
 
-void mediaPlayerEnableLocalCache(
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableLocalCache(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto index = std::get<int32_t>(argument[FTValue("index")]);
