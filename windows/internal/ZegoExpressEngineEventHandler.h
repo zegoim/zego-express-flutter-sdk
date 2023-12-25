@@ -225,7 +225,7 @@ protected:
 
     void onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) override;
 
-    void onMediaPlayerLocalCache(IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) override;
+    void onMediaPlayerLocalCache(EXPRESS::IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) override;
 
 // MediaDataPublisher
 protected:
