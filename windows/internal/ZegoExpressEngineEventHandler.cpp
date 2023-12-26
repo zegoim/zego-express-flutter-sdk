@@ -450,6 +450,8 @@ void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(
         qualityMap[FTValue("videoCumulativeBreakRate")] = FTValue(quality.videoCumulativeBreakRate);
         qualityMap[FTValue("audioCumulativeDecodeTime")] = FTValue((int32_t)quality.audioCumulativeDecodeTime);
         qualityMap[FTValue("videoCumulativeDecodeTime")] = FTValue((int32_t)quality.videoCumulativeDecodeTime);
+        qualityMap[FTValue("muteVideo")] = FTValue(quality.muteVideo);
+        qualityMap[FTValue("muteAudio")] = FTValue(quality.muteAudio);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 

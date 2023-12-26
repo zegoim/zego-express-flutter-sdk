@@ -680,7 +680,9 @@
                 @"audioCumulativeBreakRate": @(quality.audioCumulativeBreakRate),
                 @"videoCumulativeBreakRate": @(quality.videoCumulativeBreakRate),
                 @"audioCumulativeDecodeTime": @(quality.audioCumulativeDecodeTime),
-                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime)
+                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime),
+                @"muteVideo": @(quality.muteVideo),
+                @"muteAudio": @(quality.muteAudio)
             },
             @"streamID": streamID
         });
