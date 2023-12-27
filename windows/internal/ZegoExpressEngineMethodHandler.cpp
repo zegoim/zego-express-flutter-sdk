@@ -2489,8 +2489,9 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableAccurateSeek(
     if (mediaPlayer) {
         auto enable = std::get<bool>(argument[FTValue("enable")]);
         FTMap configMap = std::get<FTMap>(argument[FTValue("config")]);
+        auto timeout = std::get<int>(configMap[FTValue("timeout")]);
         EXPRESS::ZegoAccurateSeekConfig config;
-        config.timeout = argument[FTValue("config")].LongValue();
+        config.timeout = timeout;
         mediaPlayer->enableAccurateSeek(enable, &config);
 
         result->Success();
