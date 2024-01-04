@@ -2006,19 +2006,19 @@ class ZegoEngineConfig {
 ///
 /// Set proxy config.
 class ZegoProxyInfo {
-  /// ip.
+  /// ip. Under local proxy: local proxy ip configured by the developer. under cloud proxy: proxy ip provided by ZEGO (either  hostname or ip will do).
   String? ip;
 
-  /// port.
+  /// port. Under Local Proxy: Local proxy port configured by the developer. Under Cloud Proxy: Proxy port provided by ZEGO.
   int? port;
 
-  /// hostname.
+  /// hostname.Under Local Proxy: Local proxy hostname configured by the developer. Under cloud proxy: proxy hostname provided by ZEGO. proxy hostname (either hostname or ip will do).
   String? hostName;
 
-  /// userName.
+  /// userName.Under Local Proxy: the authentication username of the local Proxy configured by the developer, can be ignored if there is none. Under cloud proxy: can be ignored.
   String? userName;
 
-  /// password.
+  /// password.Under local proxy: authentication password of local proxy configured by developer, can be ignored if there is none. Under cloud proxy: can be ignored.
   String? password;
 
   ZegoProxyInfo(
@@ -2468,8 +2468,15 @@ class ZegoCDNConfig {
   /// customized httpdns service. This feature is only supported for playing stream currently.
   ZegoHttpDNSType? httpdns;
 
+  /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
+  int? quicConnectMode;
+
   ZegoCDNConfig(this.url,
-      {this.authParam, this.protocol, this.quicVersion, this.httpdns});
+      {this.authParam,
+      this.protocol,
+      this.quicVersion,
+      this.httpdns,
+      this.quicConnectMode});
 }
 
 /// Relay to CDN info.
@@ -4107,7 +4114,7 @@ class ZegoColorEnhancementParams {
   /// Description: color enhancement intensity. Value range: [0,1], the larger the value, the stronger the intensity of color enhancement. Default value: 0.
   double intensity;
 
-  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 0.
+  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 1.
   double skinToneProtectionLevel;
 
   /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
@@ -4593,6 +4600,7 @@ abstract class ZegoMediaPlayer {
   /// Description: When the live audio effect is turned on, the spatial sense is enhanced and the instrument sounds become more prominent, without any increase in delay.
   /// Use cases: It is commonly used in voice chat rooms and karaoke scenarios to enhance the live audio effects of the accompaniment.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: To enhance the live audio effect experience, it is recommended to configure dual-channel stereo encoding. Developers can achieve this configuration by using the [setAudioCaptureStereoMode] method. Failure to configure dual-channel stereo encoding may significantly diminish the effects of certain songs, as the left and right channel effects may cancel each other out when synthesizing mono audio, resulting in less noticeable effects.
   ///
   /// - [enable] Whether to enable live audio effect.
   /// - [mode] Live audio effect mode.
@@ -4608,7 +4616,6 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Whether to enable local caching.
   /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
   Future<void> enableLocalCache(bool enable, String cacheDir);
-
 }
 
 abstract class ZegoAudioEffectPlayer {

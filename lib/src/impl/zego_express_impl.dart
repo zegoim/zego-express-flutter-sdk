@@ -614,7 +614,8 @@ class ZegoExpressImpl {
               'authParam': config.authParam ?? '',
               'protocol': config.protocol ?? '',
               'quicVersion': config.quicVersion ?? '',
-              'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index
+              'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index,
+              'quicConnectMode': config.quicConnectMode ?? 0
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -782,7 +783,8 @@ class ZegoExpressImpl {
                       'protocol': config.cdnConfig?.protocol ?? "",
                       'quicVersion': config.cdnConfig?.quicVersion ?? "",
                       'httpdns': config.cdnConfig?.httpdns?.index ??
-                          ZegoHttpDNSType.None.index
+                          ZegoHttpDNSType.None.index,
+                      'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
                     }
                   : {},
               'roomID': config.roomID ?? '',

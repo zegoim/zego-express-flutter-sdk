@@ -1038,6 +1038,7 @@
         cdnConfig.authParam = authParam;
         cdnConfig.protocol = config[@"protocol"];
         cdnConfig.quicVersion = config[@"quicVersion"];
+        cdnConfig.quicConnectMode = [ZegoUtils intValue:config[@"quicConnectMode"]];
         
         int httpdnsIndex = [ZegoUtils intValue:config[@"httpdns"]];
         cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
@@ -1360,6 +1361,7 @@
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
+            cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
             
             int httpdnsIndex = [ZegoUtils intValue:cdnConfigMap[@"httpdns"]];
             cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;

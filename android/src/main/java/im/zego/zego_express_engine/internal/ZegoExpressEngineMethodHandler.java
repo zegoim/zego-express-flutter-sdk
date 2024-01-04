@@ -1218,6 +1218,7 @@ public class ZegoExpressEngineMethodHandler {
             config.authParam = (String) configMap.get("authParam");
             config.protocol = (String) configMap.get("protocol");
             config.quicVersion = (String) configMap.get("quicVersion");
+            config.quicConnectMode = ZegoUtils.intValue((Number) configMap.get("quicConnectMode"));
             config.httpdns = ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) configMap.get("httpdns")));
         }
 
@@ -1524,6 +1525,7 @@ public class ZegoExpressEngineMethodHandler {
                 cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
                 cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
                 cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
+                cdnConfig.quicConnectMode = ZegoUtils.intValue((Number) cdnConfigMap.get("quicConnectMode"));
                 cdnConfig.httpdns =
                         ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) cdnConfigMap.get("httpdns")));
                 playerConfig.cdnConfig = cdnConfig;

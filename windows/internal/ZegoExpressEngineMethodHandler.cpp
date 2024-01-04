@@ -1102,6 +1102,8 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
                     std::get<std::string>(cdnConfigMap[FTValue("quicVersion")]);
                 cdnConfigPtr->httpdns =
                     (EXPRESS::ZegoHttpDNSType)std::get<int32_t>(cdnConfigMap[FTValue("httpdns")]);
+
+                cdnConfigPtr->quicConnectMode = (int)std::get<int32_t>(cdnConfigMap[FTValue("quicConnectMode")]);
             }
         }
 
@@ -4356,6 +4358,7 @@ void ZegoExpressEngineMethodHandler::enablePublishDirectToCDN(
         config.protocol = std::get<std::string>(configMap[FTValue("protocol")]);
         config.quicVersion = std::get<std::string>(configMap[FTValue("quicVersion")]);
         config.httpdns = (EXPRESS::ZegoHttpDNSType)std::get<int32_t>(configMap[FTValue("httpdns")]);
+        config.quicConnectMode = (int)std::get<int32_t>(configMap[FTValue("quicConnectMode")]);
     }
 
     auto channel = std::get<int32_t>(argument[FTValue("channel")]);
