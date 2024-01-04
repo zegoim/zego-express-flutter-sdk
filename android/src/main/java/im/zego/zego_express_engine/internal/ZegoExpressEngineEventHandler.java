@@ -356,13 +356,7 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
-        @Override
-        public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
-            super.onPublisherQualityUpdate(streamID, quality);
-            // High frequency callbacks do not log
-
-            if (guardSink()) { return; }
-
+        private HashMap<String, Object> convertPublishStreamQuality(ZegoPublishStreamQuality quality) {
             HashMap<String, Object> qualityMap = new HashMap<>();
             qualityMap.put("videoCaptureFPS", quality.videoCaptureFPS);
             qualityMap.put("videoEncodeFPS", quality.videoEncodeFPS);
@@ -379,6 +373,18 @@ public class ZegoExpressEngineEventHandler {
             qualityMap.put("totalSendBytes", quality.totalSendBytes);
             qualityMap.put("audioSendBytes", quality.audioSendBytes);
             qualityMap.put("videoSendBytes", quality.videoSendBytes);
+
+            return qualityMap;
+        }
+
+        @Override
+        public void onPublisherQualityUpdate(String streamID, ZegoPublishStreamQuality quality) {
+            super.onPublisherQualityUpdate(streamID, quality);
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> qualityMap = convertPublishStreamQuality(quality);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -1801,9 +1807,12 @@ public class ZegoExpressEngineEventHandler {
 
             if (guardSink()) { return; }
 
+            HashMap<String, Object> qualityMap = convertPublishStreamQuality(progress.quality);
+
             HashMap<String, Object> progressMap = new HashMap<>();
             progressMap.put("duration", progress.duration);
             progressMap.put("currentFileSize", progress.currentFileSize);
+            progressMap.put("quality", qualityMap);
 
             HashMap<String, Object> configMap = new HashMap<>();
             configMap.put("filePath", config.filePath);

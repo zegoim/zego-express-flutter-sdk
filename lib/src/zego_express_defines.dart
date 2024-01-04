@@ -3511,7 +3511,10 @@ class ZegoDataRecordProgress {
   /// Current recording file size in byte
   int currentFileSize;
 
-  ZegoDataRecordProgress(this.duration, this.currentFileSize);
+  /// The quality of current recording file
+  ZegoPublishStreamQuality quality;
+
+  ZegoDataRecordProgress(this.duration, this.currentFileSize, this.quality);
 }
 
 /// Network probe config
