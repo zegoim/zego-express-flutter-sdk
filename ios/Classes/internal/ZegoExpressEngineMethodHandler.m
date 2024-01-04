@@ -1799,7 +1799,8 @@
             NSDictionary *imageInfoMap = inputMap[@"imageInfo"];
             if (imageInfoMap && ![ZegoUtils isNullObject:imageInfoMap]) {
                 NSString *url = imageInfoMap[@"url"];
-                inputObject.imageInfo = [[ZegoMixerImageInfo alloc] initWithURL:url];
+                int displayMode = [ZegoUtils intValue:imageInfoMap[@"displayMode"]];
+                inputObject.imageInfo = [[ZegoMixerImageInfo alloc] initWithURLAndDisplayMode:url displayMode:displayMode];
             }
 
             NSNumber *cornerRadius = inputMap[@"cornerRadius"];
