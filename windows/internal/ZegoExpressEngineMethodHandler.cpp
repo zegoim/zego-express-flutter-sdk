@@ -5950,7 +5950,7 @@ void ZegoExpressEngineMethodHandler::enableAudioCaptureScreenCaptureSource(
         (EXPRESS::ZegoAudioSampleRate)std::get<int32_t>(param[FTValue("sampleRate")]);
         nativeParam.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(param[FTValue("channel")]);
 
-        screenCaptureSource->enableAudioCapture(enable, param);
+        screenCaptureSource->enableAudioCapture(enable, nativeParam);
     }
 
     result->Success();
