@@ -2007,7 +2007,11 @@ public class ZegoExpressEngineMethodHandler {
                 if (inputMap.containsKey("imageInfo") && inputMap.get("imageInfo") != null) {
                     HashMap<String, Object> imageInfoMap = (HashMap<String, Object>) inputMap.get("imageInfo");
                     String url = (String) imageInfoMap.get("url");
-                    inputObject.imageInfo = new ZegoMixerImageInfo(url);
+                    int displayMode = 0;
+                    if (imageInfoMap.containsKey("displayMode") && imageInfoMap.get("displayMode") != null) {
+                        displayMode = (int) imageInfoMap.get("displayMode");
+                    }
+                    inputObject.imageInfo = new ZegoMixerImageInfo(url, displayMode);
                 }
 
                 if (inputMap.containsKey("cornerRadius") && inputMap.get("cornerRadius") != null) {

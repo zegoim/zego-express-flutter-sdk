@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineRecord on ZegoExpressEngine {
-
   /// Starts to record and directly save the data to a file.
   ///
   /// Available since: 1.10.0
@@ -17,8 +15,10 @@ extension ZegoExpressEngineRecord on ZegoExpressEngine {
   ///
   /// - [config] Record config.
   /// - [channel] Publishing stream channel.
-  Future<void> startRecordingCapturedData(ZegoDataRecordConfig config, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.startRecordingCapturedData(config, channel: channel);
+  Future<void> startRecordingCapturedData(ZegoDataRecordConfig config,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .startRecordingCapturedData(config, channel: channel);
   }
 
   /// Stops recording locally captured audio or video.
@@ -30,7 +30,7 @@ extension ZegoExpressEngineRecord on ZegoExpressEngine {
   ///
   /// - [channel] Publishing stream channel.
   Future<void> stopRecordingCapturedData({ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.stopRecordingCapturedData(channel: channel);
+    return await ZegoExpressImpl.instance
+        .stopRecordingCapturedData(channel: channel);
   }
-
 }

@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
-
   /// Enables or disables custom video rendering.
   ///
   /// Available since: 1.9.0
@@ -20,8 +18,10 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
   ///
   /// - [enable] enable or disable
   /// - [config] custom video render config
-  Future<void> enableCustomVideoRender(bool enable, ZegoCustomVideoRenderConfig config) async {
-    return await ZegoExpressImpl.instance.enableCustomVideoRender(enable, config);
+  Future<void> enableCustomVideoRender(
+      bool enable, ZegoCustomVideoRenderConfig config) async {
+    return await ZegoExpressImpl.instance
+        .enableCustomVideoRender(enable, config);
   }
 
   /// Enables or disables custom video capture (for the specified channel).
@@ -38,8 +38,11 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
   /// - [enable] enable or disable
   /// - [config] custom video capture config
   /// - [channel] publish channel
-  Future<void> enableCustomVideoCapture(bool enable, {ZegoCustomVideoCaptureConfig? config, ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.enableCustomVideoCapture(enable, config: config, channel: channel);
+  Future<void> enableCustomVideoCapture(bool enable,
+      {ZegoCustomVideoCaptureConfig? config,
+      ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableCustomVideoCapture(enable, config: config, channel: channel);
   }
 
   /// Enables or disables custom video processing, and support specifying the publish channel.
@@ -56,8 +59,10 @@ extension ZegoExpressEngineCustomVideoIO on ZegoExpressEngine {
   /// - [enable] enable or disable. Required: Yes.
   /// - [config] custom video processing configuration. Required: Yes.Caution: If NULL is passed, the platform default value is used.
   /// - [channel] Publishing stream channel.Required: No.Default value: Main publish channel.
-  Future<void> enableCustomVideoProcessing(bool enable, ZegoCustomVideoProcessConfig config, {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance.enableCustomVideoProcessing(enable, config, channel: channel);
+  Future<void> enableCustomVideoProcessing(
+      bool enable, ZegoCustomVideoProcessConfig config,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableCustomVideoProcessing(enable, config, channel: channel);
   }
-
 }

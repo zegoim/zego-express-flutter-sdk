@@ -78,6 +78,8 @@ class ZegoFlutterEngine {
   external setVideoSource(int source, int? instanceID, int? channel);
   external setAudioSource(int source, int? channel);
   external stopCaptureScreen(int index);
+  external startMixerTask(String config, dynamic success, dynamic fail);
+  external stopMixerTask(String taskId, dynamic success, dynamic fail);
 }
 
 @JS()

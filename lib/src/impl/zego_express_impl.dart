@@ -4658,7 +4658,8 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
   }
 
   @override
-  Future<void> enableAudioCapture(bool enable, ZegoAudioFrameParam audioParam) async {
+  Future<void> enableAudioCapture(
+      bool enable, ZegoAudioFrameParam audioParam) async {
     return await ZegoExpressImpl._channel
         .invokeMethod('enableAudioCaptureScreenCaptureSource', {
       'enable': enable,

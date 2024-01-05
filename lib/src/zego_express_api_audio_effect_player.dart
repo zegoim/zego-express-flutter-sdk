@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineAudioEffectPlayer on ZegoExpressEngine {
-
   /// Creates a audio effect player instance.
   ///
   /// Available since: 1.16.0
@@ -30,8 +28,9 @@ extension ZegoExpressEngineAudioEffectPlayer on ZegoExpressEngine {
   /// Related APIs: [createAudioEffectPlayer].
   ///
   /// - [audioEffectPlayer] The audio effect player instance object to be destroyed.
-  Future<void> destroyAudioEffectPlayer(ZegoAudioEffectPlayer audioEffectPlayer) async {
-    return await ZegoExpressImpl.instance.destroyAudioEffectPlayer(audioEffectPlayer);
+  Future<void> destroyAudioEffectPlayer(
+      ZegoAudioEffectPlayer audioEffectPlayer) async {
+    return await ZegoExpressImpl.instance
+        .destroyAudioEffectPlayer(audioEffectPlayer);
   }
-
 }

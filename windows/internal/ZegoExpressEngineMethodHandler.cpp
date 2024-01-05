@@ -3117,7 +3117,11 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         if (!inputMap[FTValue("imageInfo")].IsNull()) {
             auto imageInfoMap = std::get<flutter::EncodableMap>(inputMap[FTValue("imageInfo")]);
             auto url = std::get<std::string>(imageInfoMap[FTValue("url")]);
-            input.imageInfo = EXPRESS::ZegoMixerImageInfo(url);
+            int32_t displayMode = 0;
+            if (!imageInfoMap[FTValue("displayMode")].IsNull()) {
+                displayMode = std::get<int32_t>(imageInfoMap[FTValue("displayMode")]);
+            }
+            input.imageInfo = EXPRESS::ZegoMixerImageInfo(url, displayMode);
         }
 
         if (!inputMap[FTValue("cornerRadius")].IsNull()) {

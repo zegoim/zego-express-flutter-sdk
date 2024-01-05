@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEnginePlayer on ZegoExpressEngine {
-
   /// Starts playing a stream from ZEGO RTC server or from third-party CDN. Support multi-room mode.
   ///
   /// Available since: 1.1.0
@@ -22,8 +20,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///   Only support numbers, English characters and '-', '_'.
   /// - [canvas] The view used to display the play audio and video stream's image. When the view is set to [null], no video is displayed, only audio is played.
   /// - [config] Advanced player configuration Room [roomID] in [ZegoPlayerConfig] is the login roomID.
-  Future<void> startPlayingStream(String streamID, {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
-    return await ZegoExpressImpl.instance.startPlayingStream(streamID, canvas: canvas, config: config);
+  Future<void> startPlayingStream(String streamID,
+      {ZegoCanvas? canvas, ZegoPlayerConfig? config}) async {
+    return await ZegoExpressImpl.instance
+        .startPlayingStream(streamID, canvas: canvas, config: config);
   }
 
   /// Stops playing a stream.
@@ -53,7 +53,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [key] The decryption key, note that the key length only supports 16/24/32 bytes.
   Future<void> setPlayStreamDecryptionKey(String streamID, String key) async {
-    return await ZegoExpressImpl.instance.setPlayStreamDecryptionKey(streamID, key);
+    return await ZegoExpressImpl.instance
+        .setPlayStreamDecryptionKey(streamID, key);
   }
 
   /// Set up cross App playing stream information.
@@ -67,8 +68,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [info] Information for cross App playing stream.
-  Future<void> setPlayStreamCrossAppInfo(String streamID, ZegoCrossAppInfo info) async {
-    return await ZegoExpressImpl.instance.setPlayStreamCrossAppInfo(streamID, info);
+  Future<void> setPlayStreamCrossAppInfo(
+      String streamID, ZegoCrossAppInfo info) async {
+    return await ZegoExpressImpl.instance
+        .setPlayStreamCrossAppInfo(streamID, info);
   }
 
   /// Take a snapshot of the playing stream.
@@ -82,7 +85,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID to be snapshot.
   /// - Returns Results of take play stream snapshot.
-  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(String streamID) async {
+  Future<ZegoPlayerTakeSnapshotResult> takePlayStreamSnapshot(
+      String streamID) async {
     return await ZegoExpressImpl.instance.takePlayStreamSnapshot(streamID);
   }
 
@@ -126,8 +130,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [streamType] Video stream type.
-  Future<void> setPlayStreamVideoType(String streamID, ZegoVideoStreamType streamType) async {
-    return await ZegoExpressImpl.instance.setPlayStreamVideoType(streamID, streamType);
+  Future<void> setPlayStreamVideoType(
+      String streamID, ZegoVideoStreamType streamType) async {
+    return await ZegoExpressImpl.instance
+        .setPlayStreamVideoType(streamID, streamType);
   }
 
   /// Set the adaptive adjustment interval range of the buffer for playing stream.
@@ -142,8 +148,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [streamID] Stream ID.
   /// - [minBufferInterval] The lower limit of the buffer adaptation interval, in milliseconds. The default value is 0ms.
   /// - [maxBufferInterval] The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms.
-  Future<void> setPlayStreamBufferIntervalRange(String streamID, int minBufferInterval, int maxBufferInterval) async {
-    return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(streamID, minBufferInterval, maxBufferInterval);
+  Future<void> setPlayStreamBufferIntervalRange(
+      String streamID, int minBufferInterval, int maxBufferInterval) async {
+    return await ZegoExpressImpl.instance.setPlayStreamBufferIntervalRange(
+        streamID, minBufferInterval, maxBufferInterval);
   }
 
   /// Set the weight of the pull stream priority.
@@ -166,9 +174,9 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from designated remote users when pulling streams as needed. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
   /// Use cases: Call this function when developers need to quickly close and restore remote audio. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
   /// When to call: This function can be called after calling [createEngine].
-  /// Caution: 
-  ///  1. When used together with [muteAllPlayAudioStreams], they can override each other's configurations. 
-  ///  2. When used together with [muteAllPlayStreamAudio], this function only works when the [muteAllPlayStreamAudio] function is set to `false`. 
+  /// Caution:
+  ///  1. When used together with [muteAllPlayAudioStreams], they can override each other's configurations.
+  ///  2. When used together with [muteAllPlayStreamAudio], this function only works when the [muteAllPlayStreamAudio] function is set to `false`.
   ///  3. After stopping streaming, any properties previously set for this stream such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo] and other streaming-related configurations will become invalid and need to be reset before the next stream is pulled.
   /// Related APIs: You can call the [muteAllPlayStreamAudio] function to control whether to receive all audio data. When the two functions [muteAllPlayStreamAudio] and [mutePlayStreamAudio] are set to `false` at the same time, the local user can receive the audio data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamAudio(true)] function is called, it is globally effective, that is, local users will be prohibited from receiving all remote users' audio data. At this time, the [mutePlayStreamAudio] function will not take effect whether it is called before or after [muteAllPlayStreamAudio].2. When the [muteAllPlayStreamAudio(false)] function is called, the local user can receive the audio data of all remote users. At this time, the [mutePlayStreamAudio] function can be used to control whether to receive a single audio data. Calling the [mutePlayStreamAudio(true, streamID)] function allows the local user to receive audio data other than the `streamID`; calling the [mutePlayStreamAudio(false, streamID)] function allows the local user to receive all audio data.
   ///
@@ -184,10 +192,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive video data from designated remote users when pulling streams as needed. When the developer does not receive the video data, the hardware and network overhead can be reduced.
   /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
   /// When to call: This function can be called after calling [createEngine].
-  /// Caution: 
-  ///  1. When used together with [muteAllPlayVideoStreams], they can override each other's configurations. 
-  ///  2. When used together with [muteAllPlayStreamAudio], this function only works when the [muteAllPlayStreamVideo] function is set to `false`. 
-  ///  3. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support. 
+  /// Caution:
+  ///  1. When used together with [muteAllPlayVideoStreams], they can override each other's configurations.
+  ///  2. When used together with [muteAllPlayStreamAudio], this function only works when the [muteAllPlayStreamVideo] function is set to `false`.
+  ///  3. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
   ///  4. After stopping streaming, any properties previously set for this stream such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo] and other streaming-related configurations will become invalid and need to be reset before the next stream is pulled.
   /// Related APIs: You can call the [muteAllPlayStreamVideo] function to control whether to receive all video data. When the two functions [muteAllPlayStreamVideo] and [mutePlayStreamVideo] are set to `false` at the same time, the local user can receive the video data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamVideo(true)] function is called, it will take effect globally, that is, local users will be prohibited from receiving all remote users' video data. At this time, the [mutePlayStreamVideo] function will not take effect whether it is called before or after [muteAllPlayStreamVideo]. 2. When the [muteAllPlayStreamVideo(false)] function is called, the local user can receive the video data of all remote users. At this time, the [mutePlayStreamVideo] function can be used to control whether to receive a single video data. Call the [mutePlayStreamVideo(true, streamID)] function, the local user can receive other video data other than the `streamID`; call the [mutePlayStreamVideo(false, streamID)] function, the local user can receive all the video data.
   /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -232,8 +240,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
   /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
   /// When to call: This function can be called after calling [createEngine].
-  /// Caution: 
-  ///  1. This function cannot be used together with [muteAllPlayVideoStreams] throughout the SDK lifecycle. 
+  /// Caution:
+  ///  1. This function cannot be used together with [muteAllPlayVideoStreams] throughout the SDK lifecycle.
   ///  2. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
   /// Related APIs: You can call the [mutePlayStreamVideo] function to control whether to receive a single piece of video data. When the two functions [muteAllPlayStreamVideo] and [mutePlayStreamVideo] are set to `false` at the same time, the local user can receive the video data of the remote user when the stream is pulled: 1. When the [muteAllPlayStreamVideo(true)] function is called, it will take effect globally, that is, the local user will be prohibited from receiving all remote users' video data. At this time, the [mutePlayStreamVideo] function will not take effect whether it is called before or after [muteAllPlayStreamVideo]. 2. When the [muteAllPlayStreamVideo(false)] function is called, the local user can receive the video data of all remote users. At this time, the [mutePlayStreamVideo] function can be used to control whether to receive a single video data. Call the [mutePlayStreamVideo(true, streamID)] function, the local user can receive other video data other than the `streamID`; call the [mutePlayStreamVideo(false, streamID)] function, the local user can receive all the video data.
   /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -249,8 +257,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
   /// Use cases: This function can be called when developers need to quickly close and resume watching remote video. Compared to re-flow, it can greatly reduce the time and improve the interactive experience.
   /// When to call: This function can be called after calling [createEngine].
-  /// Caution: 
-  ///  1. This function cannot be used together with [muteAllPlayStreamVideo] throughout the SDK lifecycle. 
+  /// Caution:
+  ///  1. This function cannot be used together with [muteAllPlayStreamVideo] throughout the SDK lifecycle.
   ///  2. When you mute the video stream, the view remains at the last frame by default, if you need to clear the last frame, please contact ZEGO technical support.
   /// Related APIs: You can call the [mutePlayStreamVideo] function to control whether to receive a single piece of video data.
   /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -301,8 +309,10 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [codecID] Video codec id. Required: Yes.
   /// - [codecBackend] Backend implementation of decoder. Required: Yes.
   /// - Returns Whether the specified video decoding format is supported; 0 means not supported, and the decoding format cannot be used for play stream; 1 means support, you can use this decoding format for playing stream; 2 means not confirmed, it is recommended to call this interface later.
-  Future<int> isVideoDecoderSupported(ZegoVideoCodecID codecID, {ZegoVideoCodecBackend? codecBackend}) async {
-    return await ZegoExpressImpl.instance.isVideoDecoderSupported(codecID, codecBackend: codecBackend);
+  Future<int> isVideoDecoderSupported(ZegoVideoCodecID codecID,
+      {ZegoVideoCodecBackend? codecBackend}) async {
+    return await ZegoExpressImpl.instance
+        .isVideoDecoderSupported(codecID, codecBackend: codecBackend);
   }
 
   /// Set the play stream alignment properties.
@@ -315,7 +325,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Related APIs: Set the precise alignment parameter of the stream channel [setStreamAlignmentProperty].
   ///
   /// - [mode] Setting the stream alignment mode.
-  Future<void> setPlayStreamsAlignmentProperty(ZegoStreamAlignmentMode mode) async {
+  Future<void> setPlayStreamsAlignmentProperty(
+      ZegoStreamAlignmentMode mode) async {
     return await ZegoExpressImpl.instance.setPlayStreamsAlignmentProperty(mode);
   }
 
@@ -325,7 +336,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: Whether to enable video super resolution when playing stream, the resolution of the played video can be doubled at the stream playing end through video super resolution. For example, the original resolution is 640x360, and the super-resolution is 1280x720.
   /// Use cases: Live streaming scenario.
   /// When to call: Video super resolution is only valid for playing stream video. Needs to be called after [initVideoSuperResolution].
-  /// Caution: 
+  /// Caution:
   ///  1. This function requires a special package, please contact ZEGO technical support;
   ///  2. This function will consume extra system resources. In order to ensure user experience, ZEGO can only enable video super resolution for one stream, and the original video resolution is not recommended to exceed 640 × 360.
   /// Related callbacks: Developer can use the [onPlayerVideoSuperResolutionUpdate] callback to monitor the video super resolution status change.
@@ -333,7 +344,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// - [streamID] The ID of the stream that currently needs to turn on or off overscore.
   /// - [enable] Whether to enable super resolution, it is not enabled by default.
   Future<void> enableVideoSuperResolution(String streamID, bool enable) async {
-    return await ZegoExpressImpl.instance.enableVideoSuperResolution(streamID, enable);
+    return await ZegoExpressImpl.instance
+        .enableVideoSuperResolution(streamID, enable);
   }
 
   /// Init video super resolution.
@@ -342,7 +354,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Description: After the super resolution is initialized, the super resolution function can be used normally
   /// Use cases: Live streaming scenario.
   /// When to call: Video super resolution is only valid for playing stream video. Needs to be called after [createEngine].
-  /// Caution: 
+  /// Caution:
   ///  1. Initializing the video screen is divided into time-consuming operations, and frequent initialization and de-initialization are not recommended;
   ///  2. This function requires a special package, please contact ZEGO technical support.
   Future<void> initVideoSuperResolution() async {
@@ -378,5 +390,4 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   Future<int> updatePlayingCanvas(String streamID, ZegoCanvas canvas) async {
     return await ZegoExpressImpl.instance.updatePlayingCanvas(streamID, canvas);
   }
-
 }
