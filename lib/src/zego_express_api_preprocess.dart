@@ -1,3 +1,4 @@
+
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -5,12 +6,13 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
+
   /// Whether to enable acoustic echo cancellation (AEC).
   ///
   /// Available since: 1.1.0
   /// Description: Turning on echo cancellation, the SDK filters the collected audio data to reduce the echo component in the audio.
   /// Use case: When you need to reduce the echo to improve the call quality and user experience, you can turn on this feature.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
+  /// When to call: It needs to be called after [createEngine].
   /// Caution: The AEC function only supports the processing of sounds playbacked through the SDK, such as sounds played by the playing stream, media player, audio effect player, etc. Before this function is called, the SDK automatically determines whether to use AEC. Once this function is called, the SDK does not automatically determine whether to use AEC.
   /// Restrictions: None.
   /// Related APIs: Developers can use [enableHeadphoneAEC] to set whether to enable AEC when using headphones, and use [setAECMode] to set the echo cancellation mode.
@@ -43,7 +45,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: When [enableAEC] is used to enable echo cancellation, this function can be used to switch between different echo cancellation modes to control the degree of echo cancellation.
   /// Use case: When the default echo cancellation effect does not meet expectations, this function can be used to adjust the echo cancellation mode.
   /// Default value: When this function is not called, the default echo cancellation mode is [Aggressive].
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
+  /// When to call: It needs to be called after [createEngine].
   /// Restrictions: The value set by this function is valid only after the echo cancellation function is turned on.
   ///
   /// - [mode] Echo cancellation mode
@@ -56,7 +58,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: After turning on this function, the SDK can automatically adjust the microphone volume to adapt to near and far sound pickups and keep the volume stable.
   /// Use case: When you need to ensure volume stability to improve call quality and user experience, you can turn on this feature.
-  /// When to call: It needs to be called after [createEngine] and before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager]. Note that the Mac needs to be called after [startPreview] and before [startPublishingStream].
+  /// When to call: It needs to be called after [createEngine].
   /// Caution: Before this function is called, the SDK automatically determines whether to use AGC. Once this function is called, the SDK does not automatically determine whether to use AGC.
   /// Restrictions: None.
   ///
@@ -70,7 +72,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Enable the noise suppression can reduce the noise in the audio data and make the human voice clearer.
   /// Use case: When you need to suppress noise to improve call quality and user experience, you can turn on this feature.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
+  /// When to call: It needs to be called after [createEngine].
   /// Related APIs: This function has a better suppression effect on continuous noise (such as the sound of rain, white noise). If you need to turn on transient noise suppression, please use [enableTransientANS]. And the noise suppression mode can be set by [setANSMode].
   /// Caution: Before this function is called, the SDK automatically determines whether to use ANS. Once this function is called, the SDK does not automatically determine whether to use ANS.
   /// Restrictions: None.
@@ -86,7 +88,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: Enable the transient noise suppression can suppress the noises such as keyboard and desk knocks.
   /// Use case: When you need to suppress transient noise to improve call quality and user experience, you can turn on this feature.
   /// Default value: When this function is not called, this is disabled by default.
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
+  /// When to call: It needs to be called after [createEngine].
   /// Related APIs: This function will not suppress normal noise after it is turned on. If you need to turn on normal noise suppression, please use [enableANS].
   /// Restrictions: None.
   ///
@@ -101,7 +103,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Description: When [enableANS] is used to enable noise suppression, this function can be used to switch between different noise suppression modes to control the degree of noise suppression.
   /// Use case: When the default noise suppression effect does not meet expectations, this function can be used to adjust the noise suppression mode.
   /// Default value: When this function is not called, the default automatic noise suppression (ANS) mode is [Medium].
-  /// When to call: It needs to be called after [createEngine], before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager].
+  /// When to call: It needs to be called after [createEngine].
   /// Restrictions: The value set by this function is valid only after the noise suppression function is turned on.
   ///
   /// - [mode] Audio Noise Suppression mode
@@ -198,8 +200,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [bandIndex] Band frequency index, the value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
   /// - [bandGain] Band gain for the index, the value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
   Future<void> setAudioEqualizerGain(int bandIndex, double bandGain) async {
-    return await ZegoExpressImpl.instance
-        .setAudioEqualizerGain(bandIndex, bandGain);
+    return await ZegoExpressImpl.instance.setAudioEqualizerGain(bandIndex, bandGain);
   }
 
   /// Setting up the voice changer via preset enumeration.
@@ -304,10 +305,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [enable] true to turn on the virtual stereo, false to turn off the virtual stereo.
   /// - [angle] The angle of the sound source in virtual stereo in the range of 0 ~ 360, with 90 being directly in front, 0 / 180 / 270 corresponding to the rightmost and leftmost respectively.
   /// - [streamID] Stream ID.
-  Future<void> enablePlayStreamVirtualStereo(
-      bool enable, int angle, String streamID) async {
-    return await ZegoExpressImpl.instance
-        .enablePlayStreamVirtualStereo(enable, angle, streamID);
+  Future<void> enablePlayStreamVirtualStereo(bool enable, int angle, String streamID) async {
+    return await ZegoExpressImpl.instance.enablePlayStreamVirtualStereo(enable, angle, streamID);
   }
 
   /// Turn on or off the electronic sound effect.
@@ -324,10 +323,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [enable] true to turn on the electronic sound effect, false to turn off the electronic sound effect.
   /// - [mode] Mode of Electronic Effects reference.
   /// - [tonal] The starting pitch of an electric tone in a given mode, representing 12 semitones in one octave of the sound, in the range [0, 11].
-  Future<void> setElectronicEffects(
-      bool enable, ZegoElectronicEffectsMode mode, int tonal) async {
-    return await ZegoExpressImpl.instance
-        .setElectronicEffects(enable, mode, tonal);
+  Future<void> setElectronicEffects(bool enable, ZegoElectronicEffectsMode mode, int tonal) async {
+    return await ZegoExpressImpl.instance.setElectronicEffects(enable, mode, tonal);
   }
 
   /// Enable color enhancement.
@@ -341,10 +338,8 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// - [enable] Whether to enable, true: enable, false: disable
   /// - [params] Color enhancement parameters.
   /// - [channel] Publish stream channel.
-  Future<void> enableColorEnhancement(
-      bool enable, ZegoColorEnhancementParams params,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .enableColorEnhancement(enable, params, channel: channel);
+  Future<void> enableColorEnhancement(bool enable, ZegoColorEnhancementParams params, {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance.enableColorEnhancement(enable, params, channel: channel);
   }
+
 }

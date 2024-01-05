@@ -981,6 +981,9 @@ class ZegoExpressEngineMethodHandler {
     void getCaptureSourceRectScreenCaptureSource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAudioCaptureScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     // AIVoiceChanger
     void createAIVoiceChanger(

@@ -1,3 +1,4 @@
+
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -5,6 +6,7 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineIM on ZegoExpressEngine {
+
   /// Create the real time sequential data manager instance
   ///
   /// Available: since 2.14.0
@@ -16,10 +18,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///
   /// - [roomID] Fill in the room ID that has been logged in, and all related stuff will be do in this room.
   /// - Returns The real-time sequential data manager instance, null will be returned when the maximum number is exceeded.
-  Future<ZegoRealTimeSequentialDataManager?>
-      createRealTimeSequentialDataManager(String roomID) async {
-    return await ZegoExpressImpl.instance
-        .createRealTimeSequentialDataManager(roomID);
+  Future<ZegoRealTimeSequentialDataManager?> createRealTimeSequentialDataManager(String roomID) async {
+    return await ZegoExpressImpl.instance.createRealTimeSequentialDataManager(roomID);
   }
 
   /// Destroy the real time sequential data manager instance
@@ -32,10 +32,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Caution: None.
   ///
   /// - [manager] The real time sequential data manager instance to be destroyed.
-  Future<void> destroyRealTimeSequentialDataManager(
-      ZegoRealTimeSequentialDataManager manager) async {
-    return await ZegoExpressImpl.instance
-        .destroyRealTimeSequentialDataManager(manager);
+  Future<void> destroyRealTimeSequentialDataManager(ZegoRealTimeSequentialDataManager manager) async {
+    return await ZegoExpressImpl.instance.destroyRealTimeSequentialDataManager(manager);
   }
 
   /// Sends a Broadcast Message.
@@ -55,8 +53,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
   /// - Returns Send broadcast message result callback
-  Future<ZegoIMSendBroadcastMessageResult> sendBroadcastMessage(
-      String roomID, String message) async {
+  Future<ZegoIMSendBroadcastMessageResult> sendBroadcastMessage(String roomID, String message) async {
     return await ZegoExpressImpl.instance.sendBroadcastMessage(roomID, message);
   }
 
@@ -77,8 +74,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
   /// - Returns Send barrage message result callback.
-  Future<ZegoIMSendBarrageMessageResult> sendBarrageMessage(
-      String roomID, String message) async {
+  Future<ZegoIMSendBarrageMessageResult> sendBarrageMessage(String roomID, String message) async {
     return await ZegoExpressImpl.instance.sendBarrageMessage(roomID, message);
   }
 
@@ -101,10 +97,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// - [command] Custom command content. Required: Yes. Value range: The maximum length is 1024 bytes. Caution: To protect privacy, please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   /// - [toUserList] List of recipients of signaling. Required: Yes. Value range: user list or [null]. Caution: When it is [null], the SDK will send custom signaling back to all users in the room
   /// - Returns Send command result callback.
-  Future<ZegoIMSendCustomCommandResult> sendCustomCommand(
-      String roomID, String command, List<ZegoUser> toUserList) async {
-    return await ZegoExpressImpl.instance
-        .sendCustomCommand(roomID, command, toUserList);
+  Future<ZegoIMSendCustomCommandResult> sendCustomCommand(String roomID, String command, List<ZegoUser> toUserList) async {
+    return await ZegoExpressImpl.instance.sendCustomCommand(roomID, command, toUserList);
   }
 
   /// Sends a transparent message in room.
@@ -124,9 +118,8 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] ZegoRoomSendTransparentMessage
   /// - Returns Send command result callback.
-  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(
-      String roomID, ZegoRoomSendTransparentMessage message) async {
-    return await ZegoExpressImpl.instance
-        .sendTransparentMessage(roomID, message);
+  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(String roomID, ZegoRoomSendTransparentMessage message) async {
+    return await ZegoExpressImpl.instance.sendTransparentMessage(roomID, message);
   }
+
 }

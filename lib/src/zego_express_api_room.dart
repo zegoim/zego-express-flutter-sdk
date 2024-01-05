@@ -1,3 +1,4 @@
+
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -5,6 +6,7 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineRoom on ZegoExpressEngine {
+
   /// Log in to the room by configuring advanced properties, and return the login result through the callback parameter. You must log in to the room before pushing or pulling the stream.
   ///
   /// Available since: 2.18.0
@@ -36,10 +38,8 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
   /// - Returns The result of this login room
-  Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user,
-      {ZegoRoomConfig? config}) async {
-    return await ZegoExpressImpl.instance
-        .loginRoom(roomID, user, config: config);
+  Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user, {ZegoRoomConfig? config}) async {
+    return await ZegoExpressImpl.instance.loginRoom(roomID, user, config: config);
   }
 
   /// Exit the room of the specified room ID with callback.
@@ -81,10 +81,8 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [fromRoomID] Current roomID.
   /// - [toRoomID] The next roomID.
   /// - [config] Advanced room configuration.
-  Future<void> switchRoom(String fromRoomID, String toRoomID,
-      {ZegoRoomConfig? config}) async {
-    return await ZegoExpressImpl.instance
-        .switchRoom(fromRoomID, toRoomID, config: config);
+  Future<void> switchRoom(String fromRoomID, String toRoomID, {ZegoRoomConfig? config}) async {
+    return await ZegoExpressImpl.instance.switchRoom(fromRoomID, toRoomID, config: config);
   }
 
   /// Renew token.
@@ -119,8 +117,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [key] key of the extra info.
   /// - [value] value if the extra info.
   /// - Returns Set room extra info execution result notification
-  Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(
-      String roomID, String key, String value) async {
+  Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(String roomID, String key, String value) async {
     return await ZegoExpressImpl.instance.setRoomExtraInfo(roomID, key, value);
   }
 
@@ -130,15 +127,14 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Description: Get room stream list.
   /// Use cases: Get room stream list.
   /// When to call /Trigger: After logging in the room successful.
-  /// Caution: This interface is to get a real-time internal stream list, which may be inaccurate when the room is disconnected from the service.
+  /// Caution: This interface is to get a real-time internal stream list, which may be inaccurate when the room is disconnected from the service. Do not call this interface with high frequency.
   /// Related APIs: None.
   ///
   /// - [roomID] Room ID.
   /// - [streamListType] Get type
   /// - Returns return stream list
-  Future<ZegoRoomStreamList> getRoomStreamList(
-      String roomID, ZegoRoomStreamListType streamListType) async {
-    return await ZegoExpressImpl.instance
-        .getRoomStreamList(roomID, streamListType);
+  Future<ZegoRoomStreamList> getRoomStreamList(String roomID, ZegoRoomStreamListType streamListType) async {
+    return await ZegoExpressImpl.instance.getRoomStreamList(roomID, streamListType);
   }
+
 }

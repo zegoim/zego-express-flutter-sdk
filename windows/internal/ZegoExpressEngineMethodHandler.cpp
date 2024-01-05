@@ -5930,6 +5930,28 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(
     result->Success();
 }
 
+
+void ZegoExpressEngineMethodHandler::enableAudioCaptureScreenCaptureSource(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+        auto param = std::get<FTMap>(argument[FTValue("audioParam")]);
+
+        EXPRESS::ZegoAudioFrameParam nativeParam;
+        nativeParam.sampleRate =
+        (EXPRESS::ZegoAudioSampleRate)std::get<int32_t>(param[FTValue("sampleRate")]);
+        nativeParam.channel = (EXPRESS::ZegoAudioChannel)std::get<int32_t>(param[FTValue("channel")]);
+
+        screenCaptureSource->enableAudioCapture(enable, param);
+    }
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::createAIVoiceChanger(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
