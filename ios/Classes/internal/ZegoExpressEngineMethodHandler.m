@@ -3961,6 +3961,26 @@
     result(nil);
 }
 
+
+- (void)mediaPlayerGetPlaybackStatistics:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        ZegoMediaPlayerStatisticsInfo *info = [mediaPlayer getPlaybackStatistics];
+        result(@{
+            @"videoSourceFps" : @(info.videoSourceFps),
+            @"videoDecodeFps" : @(info.videoDecodeFps),
+            @"videoRenderFps" : @(info.videoRenderFps),
+            @"audioSourceFps" : @(info.audioSourceFps),
+            @"audioDecodeFps" : @(info.audioDecodeFps),
+            @"audioRenderFps" : @(info.audioRenderFps),
+        });
+    } else {
+        result(nil);
+    }
+}
+
 #pragma mark - AudioEffectPlayer
 
 - (void)createAudioEffectPlayer:(FlutterMethodCall *)call result:(FlutterResult)result {

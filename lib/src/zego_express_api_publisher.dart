@@ -1,4 +1,3 @@
-// ignore: unnecessary_import
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
@@ -135,6 +134,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set the stream config.
   /// When to call: This must take effect when the codecID specified in the call to [ZegoExpressEngine > setVideoConfig] is ZegoVideoCodecIDH264DualStream after [createEngine] is called.
   /// Restrictions: To take effect, the parameters of flow and small flow must be specified at the same time. The resolution ratio of flow and small flow must be the same. For example, both are 4:3 .
+  /// Caution: Width, height, resolution and bitrate are all greater than zero to take effect.
   ///
   /// - [configList] config info.
   /// - [channel] ZegoPublishChannel.
@@ -249,6 +249,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: This function can be called when publishing the stream to realize not publishing the audio data stream. The SDK still collects and processes the audio, but send muted audio frame packets to the network.
+  /// Use case: Users can call this interface when they do not want to publish any audio data. This interface does not affect [onBeforeAudioPrepAudioData].
   /// When to call: Called after the engine is created [createEngine] can take effect.
   /// Restrictions: None.
   /// Related callbacks: If you stop sending audio streams, the remote user that play stream of local user publishing stream can receive `Mute` status change notification by monitoring [onRemoteMicStateUpdate] callbacks.

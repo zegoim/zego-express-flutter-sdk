@@ -182,6 +182,7 @@ import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
 import im.zego.zegoexpress.entity.ZegoMediaDataPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerMediaInfo;
+import im.zego.zegoexpress.entity.ZegoMediaPlayerStatisticsInfo;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
 import im.zego.zegoexpress.entity.ZegoMixerOutput;
@@ -4225,6 +4226,28 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetPlaybackStatistics(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            ZegoMediaPlayerStatisticsInfo info = mediaPlayer.getPlaybackStatistics();
+            HashMap resultMap = new HashMap();
+            resultMap.put("videoSourceFps", info.videoSourceFps);
+            resultMap.put("videoDecodeFps", info.videoSourceFps);
+            resultMap.put("videoRenderFps", info.videoSourceFps);
+            resultMap.put("audioSourceFps", info.videoSourceFps);
+            resultMap.put("audioDecodeFps", info.videoSourceFps);
+            resultMap.put("audioRenderFps", info.videoSourceFps);
+            result.success(resultMap);
+        } else {
+            result.success(null);
+        }
+    }
+
+    /* MediaPlayer */
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")
@@ -5969,7 +5992,6 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     /* AI Voice Changer */
-    /* MediaPlayer */
 
     public static ZegoAIVoiceChanger getAIVoiceChanger(Integer index) {
         return aiVoiceChangerHashMap.get(index);

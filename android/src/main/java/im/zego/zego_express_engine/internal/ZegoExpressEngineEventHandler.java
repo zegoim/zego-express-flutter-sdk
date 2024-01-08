@@ -2179,5 +2179,24 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
+
+        @Override
+        public void onUpdateProgress(ZegoAIVoiceChanger aiVoiceChanger, double percent, int fileIndex, int fileCount) {
+            super.onUpdateProgress(aiVoiceChanger, percent, fileIndex, fileCount);
+
+            ZegoLog.log("[onAIVoiceChangerUpdateProgress] idx: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex(), percent, fileIndex, fileCount);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAIVoiceChangerUpdateProgress");
+            map.put("aiVoiceChangerIndex", aiVoiceChanger.getIndex());
+            map.put("percent", percent);
+            map.put("fileIndex", fileIndex);
+            map.put("fileCount", fileCount);
+
+            sink.success(map);
+        }
     };
 }

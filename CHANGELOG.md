@@ -1,5 +1,57 @@
 # Change Log
 
+## 3.12.3
+
+### New Features
+
+#### 1. Support Copyright-music plugin
+
+Note:
+
+Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+The plugin cannot be used alone and must be used with Express SDK.
+
+Support for copyright-music function pluginization, when the developer's business scenario only needs to update the copyright-music related, you can independently integrate the plugin without updating the Express SDK, which can smoothly migrate.
+
+#### 2. Support for getting a list of streams in the room from the client
+
+Note: The function retrieves a real-time stream list inside the room. If the room service is disconnected, the results obtained may not be accurate.
+
+Developers are supported to obtain the stream list inside the room from the client, which can be used to handle related business logic.
+
+For related API, please refer to getRoomStreamList
+
+#### 3. Support for adding silent frames to audio and video streams transcoded to CDN
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+Support is provided for adding silent frames to the audio and video streams that are pushed to the CDN. This can be used to avoid issues such as stuttering or audio-video synchronization problems caused by timestamp discrepancies.
+
+#### 4. The media player supports obtaining the real-time frame rate of the file
+
+Support for obtaining frame rate statistical information of the currently playing media file, which can be used for data display, anomaly monitoring, etc..
+
+For related API, please refer to getPlaybackStatistics
+
+#### 5. Media player supports caching network resources locally
+
+Support local caching of network resources, so that if the same network resource needs to be played, cached data will be prioritized, enhancing user experience.
+
+For related API, please refer to enableLocalCache, onMediaPlayerLocalCache
+
+### Bug Fixes
+
+1. Fix the issue where certain models would display stripes on the screen when motion is occurring after enabling the super resolution feature.
+
+2. Fix the issue of memory leak when destroying GPU resources in external filter blending mode for some phones.
+
+3. Fix the issue of stuck when playing and rendering streams on some devices.
+
+4. Fix the issue of crashing when playing audio or video with a sample rate higher than 48K on certain Android devices.
+
+5. Fix the issue of occasional crashes when calling the [enableAudioCaptureDevice] interface.
+
 ## 3.11.0
 
 ### New Features

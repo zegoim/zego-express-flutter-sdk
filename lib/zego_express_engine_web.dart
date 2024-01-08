@@ -1148,16 +1148,19 @@ class ZegoExpressEngineWeb {
   Future<void> stopCaptureScreen(int index) async {
     return _mediaSources[index].instance.stopCapture();
   }
-  Future<Map<dynamic, dynamic>> startMixerTask(Map<dynamic, dynamic> config) async {
+
+  Future<Map<dynamic, dynamic>> startMixerTask(
+      Map<dynamic, dynamic> config) async {
     config["userData"] = Utf8Decoder().convert(config["userData"]);
     var data = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance
-          .startMixerTask(jsonEncode(config), completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.startMixerTask(
+          jsonEncode(config), completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     return json.decode(data);
   }
+
   Future<Map<dynamic, dynamic>> stopMixerTask(String taskID) async {
     var data = await (() {
       Map completerMap = createCompleter();

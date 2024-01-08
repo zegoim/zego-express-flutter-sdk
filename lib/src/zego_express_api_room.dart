@@ -130,7 +130,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Description: Get room stream list.
   /// Use cases: Get room stream list.
   /// When to call /Trigger: After logging in the room successful.
-  /// Caution: This interface is to get a real-time internal stream list, which may be inaccurate when the room is disconnected from the service.
+  /// Caution: This interface is to get a real-time internal stream list, which may be inaccurate when the room is disconnected from the service. Do not call this interface with high frequency.
   /// Related APIs: None.
   ///
   /// - [roomID] Room ID.

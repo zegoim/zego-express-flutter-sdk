@@ -2006,19 +2006,19 @@ class ZegoEngineConfig {
 ///
 /// Set proxy config.
 class ZegoProxyInfo {
-  /// ip.
+  /// ip. Under local proxy: local proxy ip configured by the developer. under cloud proxy: proxy ip provided by ZEGO (either  hostname or ip will do).
   String? ip;
 
-  /// port.
+  /// port. Under Local Proxy: Local proxy port configured by the developer. Under Cloud Proxy: Proxy port provided by ZEGO.
   int? port;
 
-  /// hostname.
+  /// hostname.Under Local Proxy: Local proxy hostname configured by the developer. Under cloud proxy: proxy hostname provided by ZEGO. proxy hostname (either hostname or ip will do).
   String? hostName;
 
-  /// userName.
+  /// userName.Under Local Proxy: the authentication username of the local Proxy configured by the developer, can be ignored if there is none. Under cloud proxy: can be ignored.
   String? userName;
 
-  /// password.
+  /// password.Under local proxy: authentication password of local proxy configured by developer, can be ignored if there is none. Under cloud proxy: can be ignored.
   String? password;
 
   ZegoProxyInfo(
@@ -3006,10 +3006,10 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
-  /// Input stream volume, valid range [0, 200], default is 100. On web platforms, this property does not take effect
+  /// Input stream volume, valid range [0, 200], default is 100. On web platforms, this property does not take effect.
   int volume;
 
-  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled.On web platforms, this property does not take effect.
+  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled. On web platforms, this property does not take effect.
   bool isAudioFocus;
 
   /// The direction of the audio. Valid direction is between 0 to 360. Set -1 means disable. Default value is -1. On web platforms, this property does not take effect.
@@ -3200,16 +3200,16 @@ class ZegoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback. On web platforms, this property does not take effect.
   bool enableSoundLevel;
 
-  /// The stream mixing alignment mode On web platforms, this property does not take effect.
+  /// The stream mixing alignment mode. On web platforms, this property does not take effect.
   ZegoStreamAlignmentMode streamAlignmentMode;
 
   /// User data, the length of user data should not be more than 1000 bytes,After setting, the streaming party can obtain the SEI content by listening to the callback of [onPlayerRecvSEI].
   Uint8List userData;
 
-  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.On web platforms, this property does not take effect.
+  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support. On web platforms, this property does not take effect.
   Map<String, String> advancedConfig;
 
-  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request.On web platforms, this property does not take effect.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
   /// Create a mix stream task object with TaskID
@@ -3291,7 +3291,7 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
-  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
   /// Create a auto mix stream task object
@@ -4107,7 +4107,7 @@ class ZegoColorEnhancementParams {
   /// Description: color enhancement intensity. Value range: [0,1], the larger the value, the stronger the intensity of color enhancement. Default value: 0.
   double intensity;
 
-  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 0.
+  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 1.
   double skinToneProtectionLevel;
 
   /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
@@ -4593,6 +4593,7 @@ abstract class ZegoMediaPlayer {
   /// Description: When the live audio effect is turned on, the spatial sense is enhanced and the instrument sounds become more prominent, without any increase in delay.
   /// Use cases: It is commonly used in voice chat rooms and karaoke scenarios to enhance the live audio effects of the accompaniment.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: To enhance the live audio effect experience, it is recommended to configure dual-channel stereo encoding. Developers can achieve this configuration by using the [setAudioCaptureStereoMode] method. Failure to configure dual-channel stereo encoding may significantly diminish the effects of certain songs, as the left and right channel effects may cancel each other out when synthesizing mono audio, resulting in less noticeable effects.
   ///
   /// - [enable] Whether to enable live audio effect.
   /// - [mode] Live audio effect mode.
@@ -4609,6 +4610,13 @@ abstract class ZegoMediaPlayer {
   /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
   Future<void> enableLocalCache(bool enable, String cacheDir);
 
+  /// Get playback statistics.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get current playback statistics to monitor whether decoding and rendering anomalies occur in the player.
+  /// Use cases: Typically used in cloud-based media player scenarios.
+  /// When to call: Invoke after the [loadResource] callback succeeds.
+  Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics();
 }
 
 abstract class ZegoAudioEffectPlayer {

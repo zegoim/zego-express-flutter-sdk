@@ -1975,4 +1975,21 @@
     }
 }
 
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdateProgress:(double)percent fileIndex:(int)fileIndex fileCount:(int)fileCount {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerUpdateProgress], index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex, percent, fileIndex, fileCount);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerUpdateProgress",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"percent": @(percent),
+            @"fileIndex": @(fileIndex),
+            @"fileCount": @(fileCount)
+        });
+    }
+}
+
 @end

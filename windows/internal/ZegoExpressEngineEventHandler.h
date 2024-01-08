@@ -284,6 +284,9 @@ protected:
     void onGetSpeakerList(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode,
                           const std::vector<EXPRESS::ZegoAIVoiceChangerSpeakerInfo> &speakerList) override;
 
+    void onUpdateProgress(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
+                          int fileIndex, int fileCount) override;
+
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 
