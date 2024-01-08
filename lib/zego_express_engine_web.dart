@@ -1151,7 +1151,7 @@ class ZegoExpressEngineWeb {
 
   Future<Map<dynamic, dynamic>> startMixerTask(
       Map<dynamic, dynamic> config) async {
-    config["userData"] = Utf8Decoder().convert(config["userData"]);
+    config["userData"] = const Utf8Decoder().convert(config["userData"]);
     var data = await (() {
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.startMixerTask(

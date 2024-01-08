@@ -329,10 +329,10 @@ class ZegoExpressImpl {
       }
     }
 
-    ZegoRoomStreamList stream_list =
+    ZegoRoomStreamList streamList =
         ZegoRoomStreamList(publishStreamList, playStreamList);
 
-    return stream_list;
+    return streamList;
   }
 
   /* Publisher */
