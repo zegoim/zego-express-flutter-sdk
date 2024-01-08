@@ -3390,7 +3390,7 @@ class ZegoExpressImpl {
               aiVoiceChanger, map['errorCode'], speakerList);
         }
         break;
-      
+
       case 'onAIVoiceChangerUpdateProgress':
         if (ZegoExpressEngine.onAIVoiceChangerUpdateProgress == null) {
           return;
@@ -3398,7 +3398,8 @@ class ZegoExpressImpl {
         var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
         var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
         if (aiVoiceChanger != null) {
-          ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger, map['percent'], map['fileIndex'], map['fileCount']);
+          ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger,
+              map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
 
@@ -3798,12 +3799,18 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'mediaPlayerEnableLocalCache',
         {'index': _index, 'enable': enable, 'cacheDir': cacheDir});
   }
-  
+
   @override
   Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics() async {
-    Map<String, dynamic> infoMap = await ZegoExpressImpl._channel.invokeMethod(
-        'mediaPlayerGetPlaybackStatistics', {'index': _index});
-    return ZegoMediaPlayerStatisticsInfo(infoMap['videoSourceFps'], infoMap['videoDecodeFps'], infoMap['videoRenderFps'], infoMap['audioSourceFps'], infoMap['audioDecodeFps'], infoMap['audioRenderFps']);
+    Map<String, dynamic> infoMap = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetPlaybackStatistics', {'index': _index});
+    return ZegoMediaPlayerStatisticsInfo(
+        infoMap['videoSourceFps'],
+        infoMap['videoDecodeFps'],
+        infoMap['videoRenderFps'],
+        infoMap['audioSourceFps'],
+        infoMap['audioDecodeFps'],
+        infoMap['audioRenderFps']);
   }
 }
 
