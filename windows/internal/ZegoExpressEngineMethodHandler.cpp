@@ -2891,6 +2891,29 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableLocalCache(
     }
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerGetPlaybackStatistics(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        auto info = mediaPlayer->getPlaybackStatistics();
+        FTMap retMap;
+        retMap[FTValue("videoSourceFps")] = FTValue(info.videoSourceFps);
+        retMap[FTValue("videoDecodeFps")] = FTValue(info.videoDecodeFps);
+        retMap[FTValue("videoRenderFps")] = FTValue(info.videoRenderFps);
+        retMap[FTValue("audioSourceFps")] = FTValue(info.audioSourceFps);
+        retMap[FTValue("audioDecodeFps")] = FTValue(info.audioDecodeFps);
+        retMap[FTValue("audioRenderFps")] = FTValue(info.audioRenderFps);
+        result->Success(retMap);
+
+    } else {
+        result->Error("mediaPlayerGetPlaybackStatistics_Can_not_find_player",
+                      "Invoke `mediaPlayerGetPlaybackStatistics` but can't find specific player");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::createMediaDataPublisher(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -3116,7 +3139,11 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         if (!inputMap[FTValue("imageInfo")].IsNull()) {
             auto imageInfoMap = std::get<flutter::EncodableMap>(inputMap[FTValue("imageInfo")]);
             auto url = std::get<std::string>(imageInfoMap[FTValue("url")]);
-            input.imageInfo = EXPRESS::ZegoMixerImageInfo(url);
+            int32_t displayMode = 0;
+            if (!imageInfoMap[FTValue("displayMode")].IsNull()) {
+                displayMode = std::get<int32_t>(imageInfoMap[FTValue("displayMode")]);
+            }
+            input.imageInfo = EXPRESS::ZegoMixerImageInfo(url, displayMode);
         }
 
         if (!inputMap[FTValue("cornerRadius")].IsNull()) {
