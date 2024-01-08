@@ -77,7 +77,11 @@ public:
     /// Called when dart invoke `setVideoSource`
     void setVideoSourceChannel(ZEGO::EXPRESS::ZegoPublishChannel channel, ZEGO::EXPRESS::ZegoVideoSourceType sourceType);
 
-public:
+    void resetMediaPlayerRenderFirstFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer);
+
+    void resetAllRenderFirstFrame();
+
+ public:
     void sendScreenCapturedVideoFrameRawData(unsigned char ** data,
                                         unsigned int * dataLength,
                                         ZEGO::EXPRESS::ZegoVideoFrameParam param,
@@ -116,6 +120,11 @@ private:
     std::unordered_map<std::string , std::shared_ptr<ZegoTextureRenderer> > remoteRenderers_;
     std::unordered_map<ZEGO::EXPRESS::IZegoMediaPlayer * , std::shared_ptr<ZegoTextureRenderer> > mediaPlayerRenderers_;
     std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel , ZEGO::EXPRESS::ZegoVideoSourceType > videoSourceChannels_;
+    std::unordered_map<ZEGO::EXPRESS::ZegoPublishChannel, bool>
+        capturedRenderFirstFrameMap_;
+    std::unordered_map<ZEGO::EXPRESS::IZegoMediaPlayer *, bool>
+        meidaPlayerRenderFirstFrameMap_;
+
 
     std::atomic_bool isInit = false;
 

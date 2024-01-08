@@ -32,7 +32,7 @@ class ZegoErrorCode {
   /// Description: The input streamID contains invalid characters. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] contains invalid characters. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal, only support numbers, English characters and '-', '_'.
   static const int CommonStreamIdInvalidCharacter = 1000016;
 
-  /// Illegal param.
+  /// Description: Illegal param.<br>Cause: The parameter is empty, or the parameter is an illegal value. <br>Solutions: Please check param when entered function to make sure it is correct.
   static const int CommonIllegalParam = 1000017;
 
   /// Description: The Input CDN URL is too long. <br>Cause: The length of URL parameter passed in when calling [enablePublishDirectToCDN] or [startPlayingStream] exceeds the limit. <br>Solutions: URL length should be less than 1024 bytes.
@@ -296,7 +296,7 @@ class ZegoErrorCode {
   /// Description: Object segmentation parameter error.<br>Caution: Object segmentation is set to green screen type, background blur is not allowed.<br>Solutions: Please use the correct parameters to enable object segmentation.
   static const int PublisherObjectSegmentationParamError = 1003014;
 
-  /// Description: Object segmentation background image loading error.<br>Caution: The path of the background image is incorrect, or the content of the image is incorrect.<br>Solutions: Please set the correct background image.
+  /// Description: Object segmentation background loading error.<br>Caution: The background video or image path is incorrect, or the content is incorrect..<br>Solutions: Please set the correct background image or video.
   static const int PublisherObjectSegmentationImageLoadError = 1003015;
 
   /// Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal.
@@ -706,6 +706,9 @@ class ZegoErrorCode {
   /// Description: the passed parameter is not in the valid value range. <br>Cause: error setting parameters. <br>Solutions: Review the interface comment and pass in a value within the legal range.
   static const int MediaPlayerParamValueRangeIllegal = 1008043;
 
+  /// Description: Failed to cache network resource file. <br>Cause: During playback, [seekTo] operation will cause cache failure, and network reasons or incomplete playback caused by active stop will also cause cache failure. <br>Solutions: Check whether there is a [seekTo] operation, whether the playback failed due to network reasons, or whether the playback stopped actively.
+  static const int MediaPlayerLocalCacheFailed = 1008044;
+
   /// Description: MediaPlayer internal error. <br>Cause: internal error. <br>Solutions: Contact Technical support.
   static const int MediaPlayerInnerError = 1008099;
 
@@ -967,6 +970,9 @@ class ZegoErrorCode {
   /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid = 1017015;
 
+  /// Description: Download canceled. <br>Cause: Call [cancelDownload] to actively cancel the download.
+  static const int CopyrightedMusicDownloadCanceled = 1017016;
+
   /// Description: The resource_id unauthorized. <br>Cause: The resource ID is not obtained through [requestResource] [getSharedResource] function. <br>Solutions: Please call the [requestResource] [getSharedResource] function to get valid resource ID.
   static const int CopyrightedMusicResourceIdUnauthorized = 1017018;
 
@@ -1033,6 +1039,9 @@ class ZegoErrorCode {
   /// Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorNotSupportFunction = 1017053;
 
+  /// Description: The room ID is not logged in. <br>Cause: Room ID input error. <br>Solutions: If the copyright is not used in a multi room scenario, there is no need to pass in the roomID, otherwise please pass in the correct logged in room ID.
+  static const int CopyrightedMusicRoomNoLogin = 1017054;
+
   /// Description: Vendor ID invalid. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorIdInvalid = 1017071;
 
@@ -1053,6 +1062,9 @@ class ZegoErrorCode {
 
   /// Description: top ID invalid. <br>Cause: An unsupported top ID was passed in when fetching chart songs. <br>Solutions: Please pass in the correct top ID.
   static const int CopyrightedMusicTopIdInvalid = 1017077;
+
+  /// Description: Loading copyright music plugin failed. <br>Cause: The program runtime path does not include the copyright music plugin dynamic library. <br>Solutions: Please configure the copyright music plugin dynamic library dependency correctly.
+  static const int CopyrightedMusicLoadPluginFail = 1017094;
 
   /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicNotSupportMethod = 1017095;

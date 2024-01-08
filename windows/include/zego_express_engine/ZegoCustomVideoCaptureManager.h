@@ -49,6 +49,7 @@ public:
 
 namespace ZEGO::EXPRESS {
     class IZegoCustomVideoCaptureHandler;
+    class IZegoExpressEngine;
 };
 class ZegoCustomVideoCaptureHandler;
 
@@ -57,6 +58,8 @@ public:
     static std::shared_ptr<ZegoCustomVideoCaptureManager> getInstance();
 
     std::shared_ptr<ZEGO::EXPRESS::IZegoCustomVideoCaptureHandler> getHandler();
+
+    ZEGO::EXPRESS::IZegoExpressEngine *GetEngine();
     
     /// Sets the event callback handler for custom video capture.
     ///

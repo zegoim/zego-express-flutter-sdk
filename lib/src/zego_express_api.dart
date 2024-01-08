@@ -85,7 +85,7 @@ class ZegoExpressEngine {
   /// Caution: None.
   ///
   /// - [proxyList] proxy info.
-  /// - [token] token.
+  /// - [token] token. if use appsign auth, ignore.
   /// - [enable] enable proxy or not.
   static Future<void> setCloudProxyConfig(
       List<ZegoProxyInfo> proxyList, String token, bool enable) async {
@@ -806,7 +806,7 @@ class ZegoExpressEngine {
   /// Related callbacks: [OnMixerRelayCDNStateUpdate] can be used to get update notification of mixing stream repost CDN status.
   /// Related APIs: Develop can start a mixed flow task through [startMixerTask].
   ///
-  /// - [soundLevels] The sound key-value pair of each single stream in the mixed stream, the key is the soundLevelID of each single stream, and the value is the sound value of the corresponding single stream. Value range: The value range of value is 0.0 ~ 100.0.
+  /// - [soundLevels] The sound key-value pair of each single stream in the mixed stream, the key is the soundLevelID of each single stream, and the value is the sound value of the corresponding single stream. Value range: The value range of value is 0.0 ~ 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
   static void Function(Map<int, double> soundLevels)? onMixerSoundLevelUpdate;
 
   /// The callback triggered when the sound level of any input stream changes in the auto stream mixing process.
@@ -817,7 +817,7 @@ class ZegoExpressEngine {
   /// Trigger: Call [startPlayingStream] function to pull the stream.
   /// Related APIs: Users can call [startAutoMixerTask] function to start an auto stream mixing task.Users can call [stopAutoMixerTask] function to stop an auto stream mixing task.
   ///
-  /// - [soundLevels] Sound level hash map, key is the streamID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0.
+  /// - [soundLevels] Sound level hash map, key is the streamID of every single stream in this mixer stream, value is the sound level value of that single stream, value ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
   static void Function(Map<String, double> soundLevels)?
       onAutoMixerSoundLevelUpdate;
 
@@ -872,7 +872,7 @@ class ZegoExpressEngine {
   ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate]
   ///
-  /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0.
+  /// - [soundLevel] Locally captured sound level value, ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.) .
   static void Function(double soundLevel)? onCapturedSoundLevelUpdate;
 
   /// The local captured audio sound level callback, supported vad.
@@ -885,7 +885,7 @@ class ZegoExpressEngine {
   ///   2. This callback is a high-frequency callback, and it is recommended not to do complex logic processing inside the callback.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring remote played audio sound level by callback [onRemoteSoundLevelUpdate] or [onRemoteSoundLevelInfoUpdate].
   ///
-  /// - [soundLevelInfo] Locally captured sound level value, ranging from 0.0 to 100.0.
+  /// - [soundLevelInfo] Locally captured sound level value, ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
   static void Function(ZegoSoundLevelInfo soundLevelInfo)?
       onCapturedSoundLevelInfoUpdate;
 
@@ -897,7 +897,7 @@ class ZegoExpressEngine {
   /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring local captured audio sound by callback [onCapturedSoundLevelUpdate] or [onCapturedSoundLevelInfoUpdate].
   ///
-  /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0.
+  /// - [soundLevels] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
   static void Function(Map<String, double> soundLevels)?
       onRemoteSoundLevelUpdate;
 
@@ -909,7 +909,7 @@ class ZegoExpressEngine {
   /// Caution: The callback notification period is the parameter value set when the [startSoundLevelMonitor] is called.
   /// Related APIs: Start sound level monitoring via [startSoundLevelMonitor]. Monitoring local captured audio sound by callback [onCapturedSoundLevelUpdate] or [onCapturedSoundLevelInfoUpdate].
   ///
-  /// - [soundLevelInfos] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0.
+  /// - [soundLevelInfos] Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
   static void Function(Map<String, ZegoSoundLevelInfo> soundLevelInfos)?
       onRemoteSoundLevelInfoUpdate;
 
@@ -1030,6 +1030,20 @@ class ZegoExpressEngine {
   static void Function(ZegoRealTimeSequentialDataManager manager,
       Uint8List data, String streamID)? onReceiveRealTimeSequentialData;
 
+  /// The callback triggered when Barrage Messages are received.
+  ///
+  /// Available since: 1.5.0
+  /// Description: This callback is used to receive room passthrough messages sent by other users in the same room.
+  /// When to trigger: After calling [loginRoom] to login to the room, this callback is triggered if there is a user in the room who sends a message received by the specified client through the [sendTransparentMessage] function.
+  /// Restrictions: None
+  /// Caution: Barrage messages sent by users themselves will not be notified through this callback. When there are a large number of barrage messages in the room, the notification may be delayed, and some barrage messages may be lost.
+  /// Related callbacks: A bullet-screen message sent by the user himself is not notified by this callback. [sendTransparentMessage] specifies that only a server callback is used. This callback is not triggered.
+  ///
+  /// - [roomID] Room ID. Value range: The maximum length is 128 bytes.
+  /// - [message] recv message.
+  static void Function(String roomID, ZegoRoomRecvTransparentMessage message)?
+      onRecvRoomTransparentMessage;
+
   /// The callback triggered when Broadcast Messages are received.
   ///
   /// Available since: 1.2.1
@@ -1129,6 +1143,18 @@ class ZegoExpressEngine {
   static void Function(ZegoMediaPlayer mediaPlayer, int millisecond)?
       onMediaPlayerRenderingProgress;
 
+  /// The callback triggered when when the resolution of the playback video changes.
+  ///
+  /// Available since: 3.11.0
+  /// Description: The callback triggered when when the resolution of the playback video changes.
+  /// Trigger: When the media player is playing a video resource, This callback will be triggered when playback starts and the resolution of the video changes.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [width] width.
+  /// - [height] height.
+  static void Function(ZegoMediaPlayer mediaPlayer, int width, int height)?
+      onMediaPlayerVideoSizeChanged;
+
   /// The callback triggered when the media player got media side info.
   ///
   /// Available since: 2.2.0
@@ -1150,7 +1176,7 @@ class ZegoExpressEngine {
   /// Related APIs: To monitor this callback, you need to enable it through [EnableSoundLevelMonitor].
   ///
   /// - [mediaPlayer] Callback player object.
-  /// - [soundLevel] Sound level value, value range: [0.0, 100.0].
+  /// - [soundLevel] Sound level value, value range: [0.0, 100.0] (This value only represents the range of the sound level value returned by the callback, not the precision.).
   static void Function(ZegoMediaPlayer mediaPlayer, double soundLevel)?
       onMediaPlayerSoundLevelUpdate;
 
@@ -1180,6 +1206,21 @@ class ZegoExpressEngine {
   static void Function(
           ZegoMediaPlayer mediaPlayer, ZegoMediaPlayerFirstFrameEvent event)?
       onMediaPlayerFirstFrameEvent;
+
+  /// The callback triggered when the media player caches http/https network resource locally.
+  ///
+  /// Available since: 3.12.0
+  /// Description: The callback triggered when the media player caches http/https network resource locally.
+  /// Trigger: This callback occurs after the media player caches http/https network resources.
+  /// Caution: This callback will not take effect until the [enableLocalCache] API is called and the http/https network resources are played.
+  /// Related APIs: Need to call the [enableLocalCache] interface.
+  ///
+  /// - [mediaPlayer] Callback player object.
+  /// - [errorCode] Error code.
+  /// - [resource] Played resource
+  /// - [cachedFile] Cached file
+  static void Function(ZegoMediaPlayer mediaPlayer, int errorCode,
+      String resource, String cachedFile)? onMediaPlayerLocalCache;
 
   /// Audio effect playback state callback.
   ///
@@ -1351,6 +1392,15 @@ class ZegoExpressEngine {
   /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
   static void Function()? onRequestDumpData;
 
+  /// Request to dump data.
+  ///
+  /// Available since: 3.11.0
+  /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
+  ///
+  /// - [dumpDir] Dump data dir.
+  /// - [takePhoto] Need to take photo when uploading dump data
+  static void Function(String dumpDir, bool takePhoto)? onRequestUploadDumpData;
+
   /// Callback when starting to dump data.
   ///
   /// Available since: 3.10.0
@@ -1379,7 +1429,7 @@ class ZegoExpressEngine {
   /// Custom audio processing local captured PCM audio frame callback.
   ///
   /// Available: Since 2.13.0
-  /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
+  /// Description: In this callback, you can receive PCM audio frames collected locally by custom audio processing. The returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be modified. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
   /// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
   /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
@@ -1394,7 +1444,7 @@ class ZegoExpressEngine {
   /// Custom audio processing local captured PCM audio frame callback after used headphone monitor.
   ///
   /// Available: Since 2.13.0
-  /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
+  /// Description: In this callback, you can receive the PCM audio frame after the custom audio processing is locally collected and returned to the ear. The returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be changed.
   /// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
@@ -1424,7 +1474,7 @@ class ZegoExpressEngine {
   /// Custom audio processing remote playing stream PCM audio frame callback.
   ///
   /// Available: Since 2.13.0
-  /// Description: In this callback, you can receive the PCM audio frames of remote playing stream. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
+  /// Description: In this callback, you can receive custom audio processing remote streaming PCM audio frames, and the returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be changed.
   /// When to trigger: You need to call [enableCustomAudioRemoteProcessing] to enable the function first, and call [startPlayingStream] to trigger this callback function.
   /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
@@ -1444,7 +1494,7 @@ class ZegoExpressEngine {
   /// Custom audio processing SDK playback PCM audio frame callback.
   ///
   /// Available: Since 2.13.0
-  /// Description: In this callback, you can receive the SDK playback PCM audio frame. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
+  /// Description: In this callback, you can receive the PCM audio frame of the audio played by the custom audio processing SDK, and the returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be changed.
   /// When to trigger: You need to call [enableCustomAudioPlaybackProcessing] to enable the function first, and call [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer] or [createAudioEffectPlayer] to trigger this callback function.
   /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
@@ -1609,6 +1659,20 @@ class ZegoExpressEngine {
   /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
       onAIVoiceChangerInit;
+
+  /// Update AI voice changer engine models progress callback.
+  ///
+  /// Available since: 3.12.0.
+  /// Description: Update AI voice changer engine models progress callback.
+  /// Trigger: The callback triggered when call [update] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [percent] Current file update progress.
+  /// - [fileIndex] Current update file index.
+  /// - [fileCount] Total update file count.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, double percent,
+      int fileIndex, int fileCount)? onAIVoiceChangerUpdateProgress;
 
   /// Update AI voice changer engine models status callback.
   ///

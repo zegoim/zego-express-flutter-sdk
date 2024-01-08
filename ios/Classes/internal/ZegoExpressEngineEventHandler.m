@@ -81,6 +81,10 @@
             @"state": @(state)
         });
     }
+    
+    if (state == ZegoEngineStateStop) {
+        [[ZegoTextureRendererController sharedInstance] resetAllRenderFirstFrame];
+    }
 }
 
 - (void)onNetworkTimeSynchronized {
@@ -103,6 +107,20 @@
     if (sink) {
         sink(@{
             @"method": @"onRequestDumpData"
+        });
+    }
+}
+
+- (void)onRequestUploadDumpData:(NSString *)dumpDir takePhoto:(BOOL)takePhoto {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestUploadDumpData",
+            @"dumpDir": dumpDir,
+            @"takePhoto": @(takePhoto),
         });
     }
 }
@@ -654,7 +672,15 @@
                 @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
                 @"audioRecvBytes": @(quality.audioRecvBytes),
-                @"videoRecvBytes": @(quality.videoRecvBytes)
+                @"videoRecvBytes": @(quality.videoRecvBytes),
+                @"audioCumulativeBreakCount": @(quality.audioCumulativeBreakCount),
+                @"videoCumulativeBreakCount": @(quality.videoCumulativeBreakCount),
+                @"audioCumulativeBreakTime": @(quality.audioCumulativeBreakTime),
+                @"videoCumulativeBreakTime": @(quality.videoCumulativeBreakTime),
+                @"audioCumulativeBreakRate": @(quality.audioCumulativeBreakRate),
+                @"videoCumulativeBreakRate": @(quality.videoCumulativeBreakRate),
+                @"audioCumulativeDecodeTime": @(quality.audioCumulativeDecodeTime),
+                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime)
             },
             @"streamID": streamID
         });
@@ -1186,6 +1212,26 @@
     }
 }
 
+- (void)onRecvRoomTransparentMessage:(ZegoRoomRecvTransparentMessage *)message roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRecvRoomTransparentMessage] sendUserID: %@, sendUserName: %@, roomID: %@", message.sendUser.userID, message.sendUser.userName, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRecvRoomTransparentMessage",
+            @"message": @{
+                @"sendUser": @{
+                    @"userID": message.sendUser.userID,
+                    @"userName": message.sendUser.userName
+                },
+                @"content": message.content
+            },
+            @"roomID": roomID
+        });
+    }
+}
+
 #pragma mark Utilities Callback
 
 - (void)onPerformanceStatusUpdate:(ZegoPerformanceStatus *)status {
@@ -1297,6 +1343,10 @@
             @"errorCode": @(errorCode)
         });
     }
+    
+    if (state == ZegoMediaPlayerStateNoPlay || state == ZegoMediaPlayerStatePlayEnded) {
+        [[ZegoTextureRendererController sharedInstance] resetMediaRenderFirstFrame:mediaPlayer.index];
+    }
 }
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer networkEvent:(ZegoMediaPlayerNetworkEvent)networkEvent {
@@ -1397,6 +1447,36 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer videoSizeChanged:(CGSize)size {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerVideoSizeChanged] idx: %d, width: %d, height: %d", mediaPlayer.index.intValue, (int)size.width, (int)size.height);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerVideoSizeChanged",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"width": @((int)size.width),
+            @"height": @((int)size.height),
+        });
+    }
+}
+
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer localCacheError:(int)errorCode resource:(NSString *)resource cachedFile:(NSString *)cachedFile {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerLocalCache] idx: %d, error: %d, resource: %@, cached: %@", mediaPlayer.index.intValue, errorCode, resource, cachedFile);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerLocalCache",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"errorCode": @((int)errorCode),
+            @"resource": resource,
+            @"cachedFile": cachedFile,
+        });
+    }
+}
 
 #pragma mark - ZegoAudioEffectPlayerEventHandler
 
@@ -1891,6 +1971,23 @@
             @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
             @"errorCode": @(errorCode),
             @"speakerList": speakerArray
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdateProgress:(double)percent fileIndex:(int)fileIndex fileCount:(int)fileCount {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerUpdateProgress], index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex, percent, fileIndex, fileCount);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerUpdateProgress",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"percent": @(percent),
+            @"fileIndex": @(fileIndex),
+            @"fileCount": @(fileCount)
         });
     }
 }

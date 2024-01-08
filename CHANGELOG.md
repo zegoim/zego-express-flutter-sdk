@@ -1,5 +1,155 @@
 # Change Log
 
+## 3.12.3
+
+### New Features
+
+#### 1. Support Copyright-music plugin
+
+Note:
+
+Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+The plugin cannot be used alone and must be used with Express SDK.
+
+Support for copyright-music function pluginization, when the developer's business scenario only needs to update the copyright-music related, you can independently integrate the plugin without updating the Express SDK, which can smoothly migrate.
+
+#### 2. Support for getting a list of streams in the room from the client
+
+Note: The function retrieves a real-time stream list inside the room. If the room service is disconnected, the results obtained may not be accurate.
+
+Developers are supported to obtain the stream list inside the room from the client, which can be used to handle related business logic.
+
+For related API, please refer to getRoomStreamList
+
+#### 3. Support for adding silent frames to audio and video streams transcoded to CDN
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+Support is provided for adding silent frames to the audio and video streams that are pushed to the CDN. This can be used to avoid issues such as stuttering or audio-video synchronization problems caused by timestamp discrepancies.
+
+#### 4. The media player supports obtaining the real-time frame rate of the file
+
+Support for obtaining frame rate statistical information of the currently playing media file, which can be used for data display, anomaly monitoring, etc..
+
+For related API, please refer to getPlaybackStatistics
+
+#### 5. Media player supports caching network resources locally
+
+Support local caching of network resources, so that if the same network resource needs to be played, cached data will be prioritized, enhancing user experience.
+
+For related API, please refer to enableLocalCache, onMediaPlayerLocalCache
+
+### Bug Fixes
+
+1. Fix the issue where certain models would display stripes on the screen when motion is occurring after enabling the super resolution feature.
+
+2. Fix the issue of memory leak when destroying GPU resources in external filter blending mode for some phones.
+
+3. Fix the issue of stuck when playing and rendering streams on some devices.
+
+4. Fix the issue of crashing when playing audio or video with a sample rate higher than 48K on certain Android devices.
+
+5. Fix the issue of occasional crashes when calling the [enableAudioCaptureDevice] interface.
+
+## 3.11.0
+
+### New Features
+
+#### 1. Support high-definition and low-code video in the cloud transcoding service
+
+Note: If you need to use this feature, please contact ZEGOCLOUD business personnel.
+
+By applying leading coding and decoding algorithms and other video pre-processing capabilities in the cloud transcoding service, we continuously optimize the smoothness and clarity of video playback, significantly improving the image quality. This feature is suitable for the following scenarios:
+
+- Showroom live streaming scenes with high viewership. It ensures stable video transmission and high quality while saving bandwidth costs; without affecting the image quality, it can reduce the bitrate by about 30%.
+
+- Danmaku game live streaming, sports live streaming, and other scenes with rich color and texture details in the video content. Under the same bitrate conditions, it can provide a higher definition viewing experience.
+
+For related API, please refer to ZegoMixerOutputVideoConfig > enableLowBitrateHD
+
+#### 2. Color enhancement is supported when publishing video-streams
+
+For various cameras and other devices that capture images, if the colors appear grayish or have low saturation, we support enhancing the colors while preserving the natural skin tones. This will make the images more vibrant and brighter, creating a more realistic visual experience for the human eye.
+
+For related API, please refer to enableColorEnhancement
+
+#### 3. All network requests support the IPv6 protocol
+
+#### 4. Real-time room messaging supports sending transparent messages
+
+Support sending real-time room messages to specified clients or client servers; message types are divided into normal and ordered, with the latter ensuring that messages are received strictly in order. This feature is suitable for scenarios where the anchor needs to manage the microphone positions in the room, for example:
+
+- Send messages to users who need to mute through the anchor client, and the receiving client will mute accordingly.
+
+- When the anchor wants to kick a user out of the room, send a message to the client server of the other party through the anchor client, and kick out the user.
+
+For related API, please refer to sendTransparentMessage
+
+#### 5. Hardware decoding acceleration supported for MJPEG format
+
+Note: This feature only supports pre-processing of screenshots and does not support other processing such as rotation or watermarking.
+
+When the video format output by the capture device is MJPEG, hardware decoding acceleration is enabled by default to prevent issues such as insufficient frame rate due to insufficient device performance.
+
+This feature is suitable for use on capture devices with a 4K resolution mainly.
+
+#### 6. Automatic mixing supports setting water level
+
+Note:
+
+- This feature is not enabled by default, meaning the server uses the default configuration values.
+
+- This feature may increase latency, so use it judiciously.
+
+The automatic stream mixing interface supports setting a watermark to control the lower limit of the range for adaptive adjustment of the mixing server's stream cache. This helps maintain a balance between mixing time and video stuttering caused by unstable streaming from the source. This feature only takes effect on new input streams and does not affect input streams that have already started mixing.
+
+For example, in a real-time karaoke KTV scenario, slight fluctuations in the streaming network from the source may cause mixing stuttering, which in turn increases the likelihood of stuttering for viewers. By adjusting the lower limit of the watermark, you can optimize the viewer's experience with stuttering, but this will increase latency.
+
+For related API, please refer to ZegoAutoMixerTask > minPlayStreamBufferLength
+
+#### 7. Support for using live streams as input streams for mixing
+
+Newly added support for using live streams as input streams for mixing; the URL of the live input stream supports both RTMP and HTTP-FLV protocols. This feature is suitable for mixing the RTC video streams of hosts' interactive broadcasting with cloud sports live streams, game live streams, etc., to achieve scenarios such as game or sports commentary in live broadcasting.
+
+#### 8. Custom audio offset value is supported for mixing
+
+When using custom audio and video capture function and the corresponding audio capture sources have inconsistent delays, you can customize the audio offset value during mixing to achieve audio-video synchronization after mixing output, ensuring a better experience for the audience.
+
+For related API, please refer to ZegoMixerInput > advancedConfig
+
+#### 9. The media player supports callbacks for video resolution change events
+
+The media player supports throwing relevant callback notifications to developers when the video resolution changes. This feature is suitable for scenarios where the resolution of the streaming screen changes multiple times and requires adjusting the encoding resolution on the streaming end and matching the rendering view size on the receiving end.
+
+For related API, please refer to onMediaPlayerVideoSizeChanged
+
+#### 10. The audio player supports separate settings for streaming volume and local volume
+
+The sound effect player supports setting the streaming volume and local playback volume separately, ensuring that the volume on both ends, local and remote, is within an appropriate range.
+
+For related API, please refer to ZegoAudioEffectPlayer > setPublishVolume, ZegoAudioEffectPlayer > setPlayVolume, ZegoAudioEffectPlayer > setPublishVolumeAll, ZegoAudioEffectPlayer > setPlayVolumeAll
+
+### Enhancements
+
+#### 1. Optimize server-side mixing and single-stream transcoding capabilities
+
+Optimize server-side mix streaming and single-stream transcoding capabilities to improve encoding efficiency and achieve a 5% or more increase in subjective and objective video quality at the same bitrate.
+
+#### 2. Optimize the AEC (Acoustic Echo Cancellation) algorithm to achieve better AEC performance
+
+#### 3. Optimize network connection strategies to enhance the experience of audio and video calls
+
+#### 4. Optimize the strategy of switching between the front and back end to solve the problem of collecting silence in certain specific scenarios or models
+
+#### 5. Optimize multi-device login logic
+
+After the user successfully logs in on device A, device A loses network connection. Then, the user logs in successfully on device B using the same userID. If the network connection on device A is restored and a reconnection is attempted, it will fail and throw error code 1002086, indicating that the userID is already logged in another device.
+
+### Bug Fixes
+
+#### 1. Fixed the issue that caused crashes in certain decoding scenarios
+
 ## 3.10.3
 
 ### **Bug Fixes**
@@ -32,7 +182,7 @@ The current official website SDK does not include this function. If necessary, p
 
 New AI voice changing function, like the Conan's Bowtie in real-time calls, perfectly reproduces the timbre and rhythm of the target character, while retaining the user's speech speed, emotion, and intonation, and can switch timbre at will, with ultra-low latency allowing users Enjoy social chat, live broadcast, game voice and other scenarios.
 
-For related API, please refer to [createAIVoiceChanger](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/createAIVoiceChanger.html), [destroyAIVoiceChanger]((https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/destroyAIVoiceChanger.html))
+For related API, please refer to [createAIVoiceChanger](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/createAIVoiceChanger.html), [destroyAIVoiceChanger](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/destroyAIVoiceChanger.html)
 
 #### 2. The virtual background of subject segmentation supports video materials
 
@@ -390,7 +540,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     For related API, please refer to [switchRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/switchRoom.html)
 
-## **Enhancements**
+### **Enhancements**
 
 1. Significantly reduce the time-consuming time spent on video hard decoding of Huawei models.
 
@@ -402,7 +552,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     This optimization takes effect from version 3.5.0 and does not require additional interfaces.
 
-## **Bug Fixes**
+### **Bug Fixes**
 
 1. Fix the problem that the media player cannot make the playback progress jump to 0 through the seekTo interface in some m3u8 file formats.
 
@@ -474,7 +624,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     For related API, please refer to [sendExtendedRequest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/sendExtendedRequest.html)
 
-## **Enhancements**
+### **Enhancements**
 
 1. Optimize SDK memory usage
 
@@ -494,7 +644,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     For related API, please refer to [ZegoCopyrightedMusicVendorID](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusicVendorID.html)
 
-## **Bug Fixes**
+### **Bug Fixes**
 
 1. Fixed the issue of macOS platform screen sharing where the actual collection frame rate is lower than the set frame rate.
 
@@ -502,7 +652,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
 3. Fixed the issue of abnormal listening of game voice in certain situations.
 
-## **Deleted**
+### **Deleted**
 
 1. Starting from version 3.4.1, support for iOS 11.0 and below has been discontinued, and the iOS Deployment Target (minimum supported version) has been upgraded to iOS 11.0.
 For specific instructions, Please refer to [App Store submission requirement starts April 25](https://developer.apple.com/news/?id=jd9wcyov) and [Xcode 14 Release Notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-14-release-notes#Build-System).

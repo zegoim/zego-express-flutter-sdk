@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+// ignore: unused_import
 import 'dart:math';
 // ignore: unnecessary_import
 import 'dart:typed_data';
@@ -16,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.10.3";
+  static String pluginVersion = "3.11.0";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -295,6 +296,43 @@ class ZegoExpressImpl {
         'setRoomExtraInfo', {'roomID': roomID, 'key': key, 'value': value});
 
     return ZegoRoomSetRoomExtraInfoResult(map['errorCode']);
+  }
+
+  Future<ZegoRoomStreamList> getRoomStreamList(
+      String roomID, ZegoRoomStreamListType streamListType) async {
+    final Map<dynamic, dynamic> map = await _channel.invokeMethod(
+        'getRoomStreamList',
+        {'roomID': roomID, 'streamListType': streamListType.index});
+
+    List<ZegoStream> publishStreamList = [];
+    List<dynamic> publishStreamMapList = map['publishStreamList'];
+
+    for (Map<dynamic, dynamic>? publish in publishStreamMapList) {
+      if (publish != null) {
+        ZegoUser user =
+            ZegoUser(publish['user']['userID'], publish['user']['userName']);
+        ZegoStream stream =
+            ZegoStream(user, publish['streamID'], publish['extraInfo']);
+        publishStreamList.add(stream);
+      }
+    }
+
+    List<ZegoStream> playStreamList = [];
+    List<dynamic> playStreamMapList = map['playStreamList'];
+    for (Map<dynamic, dynamic>? play in playStreamMapList) {
+      if (play != null) {
+        ZegoUser user =
+            ZegoUser(play['user']['userID'], play['user']['userName']);
+        ZegoStream stream =
+            ZegoStream(user, play['streamID'], play['extraInfo']);
+        playStreamList.add(stream);
+      }
+    }
+
+    ZegoRoomStreamList streamList =
+        ZegoRoomStreamList(publishStreamList, playStreamList);
+
+    return streamList;
   }
 
   /* Publisher */
@@ -924,7 +962,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -958,7 +997,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -988,7 +1028,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -1016,7 +1057,8 @@ class ZegoExpressImpl {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index
+            'encodeProfile': output.videoConfig!.encodeProfile.index,
+            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
           }
         });
       } else {
@@ -1489,6 +1531,20 @@ class ZegoExpressImpl {
         {'enable': enable, 'mode': mode.index, 'tonal': tonal});
   }
 
+  Future<void> enableColorEnhancement(
+      bool enable, ZegoColorEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableColorEnhancement', {
+      'enable': enable,
+      'params': {
+        'intensity': params.intensity,
+        'skinToneProtectionLevel': params.skinToneProtectionLevel,
+        'lipColorProtectionLevel': params.lipColorProtectionLevel
+      },
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   /* IM */
 
   static final Map<int, ZegoRealTimeSequentialDataManager>
@@ -1549,6 +1605,27 @@ class ZegoExpressImpl {
         {'roomID': roomID, 'command': command, 'toUserList': userMapList});
 
     return ZegoIMSendCustomCommandResult(map['errorCode']);
+  }
+
+  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(
+      String roomID, ZegoRoomSendTransparentMessage message) async {
+    List<Map<String, dynamic>> recvuserMapList = [];
+
+    for (ZegoUser user in message.recvUserList) {
+      recvuserMapList.add({'userID': user.userID, 'userName': user.userName});
+    }
+
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('sendTransparentMessage', {
+      'roomID': roomID,
+      'sendMode': message.sendMode.index,
+      'sendType': message.sendType.index,
+      'content': message.content,
+      'recvUserList': recvuserMapList,
+      'timeOut': message.timeOut
+    });
+
+    return ZegoRoomSendTransparentMessageResult(map['errorCode']);
   }
 
   /* MediaPlayer */
@@ -2112,6 +2189,13 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onRequestDumpData!();
         break;
 
+      case 'onRequestUploadDumpData':
+        if (ZegoExpressEngine.onRequestUploadDumpData == null) return;
+
+        ZegoExpressEngine.onRequestUploadDumpData!(
+            map['dumpDir'], map['takePhoto']);
+        break;
+
       case 'onStartDumpData':
         if (ZegoExpressEngine.onStartDumpData == null) return;
 
@@ -2447,7 +2531,15 @@ class ZegoExpressImpl {
                     : map['quality']['videoCodecID']],
                 map['quality']['totalRecvBytes'],
                 map['quality']['audioRecvBytes'],
-                map['quality']['videoRecvBytes']));
+                map['quality']['videoRecvBytes'],
+                map['quality']['audioCumulativeBreakCount'],
+                map['quality']['audioCumulativeBreakTime'],
+                map['quality']['audioCumulativeBreakRate'],
+                map['quality']['audioCumulativeDecodeTime'],
+                map['quality']['videoCumulativeBreakCount'],
+                map['quality']['videoCumulativeBreakTime'],
+                map['quality']['videoCumulativeBreakRate'],
+                map['quality']['videoCumulativeDecodeTime']));
         break;
 
       case 'onPlayerMediaEvent':
@@ -2762,6 +2854,17 @@ class ZegoExpressImpl {
             map['command']);
         break;
 
+      case 'onRecvRoomTransparentMessage':
+        if (ZegoExpressEngine.onRecvRoomTransparentMessage == null) return;
+
+        ZegoRoomRecvTransparentMessage message = ZegoRoomRecvTransparentMessage(
+            ZegoUser(map['message']['sendUser']['userID'],
+                map['message']['sendUser']['userName']),
+            map['message']['content']);
+
+        ZegoExpressEngine.onRecvRoomTransparentMessage!(map['roomID'], message);
+        break;
+
       /* Utilities */
 
       case 'onPerformanceStatusUpdate':
@@ -2985,7 +3088,28 @@ class ZegoExpressImpl {
               mediaPlayer, map['millisecond']);
         }
         break;
+      case 'onMediaPlayerVideoSizeChanged':
+        if (ZegoExpressEngine.onMediaPlayerVideoSizeChanged == null) return;
 
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerVideoSizeChanged!(
+              mediaPlayer, map['width'], map['height']);
+        }
+        break;
+      case 'onMediaPlayerLocalCache':
+        if (ZegoExpressEngine.onMediaPlayerLocalCache == null) return;
+
+        int? mediaPlayerIndex = map['mediaPlayerIndex'];
+        ZegoMediaPlayer? mediaPlayer =
+            ZegoExpressImpl.mediaPlayerMap[mediaPlayerIndex!];
+        if (mediaPlayer != null) {
+          ZegoExpressEngine.onMediaPlayerLocalCache!(mediaPlayer,
+              map['errorCode'], map['resource'], map['cachedFile']);
+        }
+        break;
       /* AudioEffectPlayer */
 
       case 'onAudioEffectPlayStateUpdate':
@@ -3264,6 +3388,18 @@ class ZegoExpressImpl {
           }
           ZegoExpressEngine.onAIVoiceChangerGetSpeakerList!(
               aiVoiceChanger, map['errorCode'], speakerList);
+        }
+        break;
+
+      case 'onAIVoiceChangerUpdateProgress':
+        if (ZegoExpressEngine.onAIVoiceChangerUpdateProgress == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger,
+              map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
 
@@ -3578,6 +3714,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
+  Future<void> enableAudioData(bool enable) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableAudioData', {'index': _index, 'enable': enable});
+  }
+
+  @override
   Future<void> enableVideoData(bool enable, ZegoVideoFrameFormat format) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerEnableVideoData',
@@ -3649,6 +3791,26 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerSetPlayMediaStreamType',
         {'index': _index, 'streamType': streamType.index});
+  }
+
+  @override
+  Future<void> enableLocalCache(bool enable, String cacheDir) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableLocalCache',
+        {'index': _index, 'enable': enable, 'cacheDir': cacheDir});
+  }
+
+  @override
+  Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics() async {
+    Map<String, dynamic> infoMap = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetPlaybackStatistics', {'index': _index});
+    return ZegoMediaPlayerStatisticsInfo(
+        infoMap['videoSourceFps'],
+        infoMap['videoDecodeFps'],
+        infoMap['videoRenderFps'],
+        infoMap['audioSourceFps'],
+        infoMap['audioDecodeFps'],
+        infoMap['audioRenderFps']);
   }
 }
 
@@ -3740,9 +3902,37 @@ class ZegoAudioEffectPlayerImpl extends ZegoAudioEffectPlayer {
   }
 
   @override
+  Future<void> setPlayVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlayVolume',
+        {'index': _index, 'audioEffectID': audioEffectID, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPublishVolume(int audioEffectID, int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPublishVolume',
+        {'index': _index, 'audioEffectID': audioEffectID, 'volume': volume});
+  }
+
+  @override
   Future<void> setVolumeAll(int volume) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'audioEffectPlayerSetVolumeAll', {'index': _index, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPlayVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPlayVolumeAll',
+        {'index': _index, 'volume': volume});
+  }
+
+  @override
+  Future<void> setPublishVolumeAll(int volume) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'audioEffectPlayerSetPublishVolumeAll',
+        {'index': _index, 'volume': volume});
   }
 
   @override
@@ -4031,6 +4221,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<void> cancelDownload(String resourceID) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'copyrightedMusicCancelDownload', {'resourceID': resourceID});
+  }
+
+  @override
   Future<int> getAverageScore(String resourceID) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'copyrightedMusicGetAverageScore', {'resourceID': resourceID});
@@ -4070,6 +4266,17 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
     final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
         .invokeMethod('copyrightedMusicGetLrcLyric',
             {'songID': songID, 'vendorID': vendorID?.value});
+    return ZegoCopyrightedMusicGetLrcLyricResult(
+        map['errorCode'], map['lyrics']);
+  }
+
+  @override
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyricWithConfig(
+      ZegoCopyrightedMusicGetLyricConfig config) async {
+    final Map<dynamic, dynamic> map = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetLrcLyricWithConfig', {
+      'config': {'songID': config.songID, 'vendorID': config.vendorID ?? 0}
+    });
     return ZegoCopyrightedMusicGetLrcLyricResult(
         map['errorCode'], map['lyrics']);
   }
@@ -4253,6 +4460,22 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResourceV2(
+      ZegoCopyrightedMusicGetSharedConfigV2 config) async {
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetSharedResourceV2', {
+      'config': {
+        'songID': config.songID,
+        'vendorID': config.vendorID ?? 0,
+        'roomID': config.roomID ?? '',
+        'resourceType': config.resourceType ?? 0
+      }
+    });
+    return ZegoCopyrightedMusicGetSharedResourceResult(
+        resultMap['errorCode'], resultMap['resource']);
+  }
+
+  @override
   Future<ZegoCopyrightedMusicRequestResourceResult> requestResource(
       ZegoCopyrightedMusicRequestConfig config,
       ZegoCopyrightedMusicResourceType type) async {
@@ -4275,6 +4498,25 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<ZegoCopyrightedMusicRequestResourceResult> requestResourceV2(
+      ZegoCopyrightedMusicRequestConfigV2 config) async {
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicRequestResourceV2', {
+      'config': {
+        'songID': config.songID,
+        'mode': config.mode,
+        'vendorID': config.vendorID ?? 0,
+        'roomID': config.roomID ?? '',
+        'masterID': config.masterID ?? '',
+        'sceneID': config.sceneID ?? 0,
+        'resourceType': config.resourceType ?? 0
+      }
+    });
+    return ZegoCopyrightedMusicRequestResourceResult(
+        resultMap['errorCode'], resultMap['resource']);
+  }
+
+  @override
   Future<bool> queryCacheWithConfig(
       ZegoCopyrightedMusicQueryCacheConfig config) async {
     return await ZegoExpressImpl._channel
@@ -4284,6 +4526,20 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         'resourceType': config.resourceType.index,
         'vendorID': config.vendorID.value,
         'resourceQualityType': config.resourceQualityType.index
+      }
+    });
+  }
+
+  @override
+  Future<bool> queryCacheWithConfigV2(
+      ZegoCopyrightedMusicQueryCacheConfigV2 config) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicQueryCacheWithConfigV2', {
+      'config': {
+        'songID': config.songID,
+        'resourceType': config.resourceType ?? 0,
+        'vendorID': config.vendorID ?? 0,
+        'resourceQualityType': config.resourceQualityType ?? 0
       }
     });
   }
