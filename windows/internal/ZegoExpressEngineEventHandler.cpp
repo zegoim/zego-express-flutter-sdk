@@ -2010,3 +2010,20 @@ void ZegoExpressEngineEventHandler::onGetSpeakerList(
         eventSink_->Success(retMap);
     }
 }
+
+void ZegoExpressEngineEventHandler::onUpdateProgress(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
+    int fileIndex, int fileCount) {
+    ZF::logInfo("[onAIVoiceChangerUpdateProgress] index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger->getIndex(), percent, fileIndex, fileCount);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerUpdateProgress");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("percent")] = FTValue(percent);
+        retMap[FTValue("fileIndex")] = FTValue(fileIndex);
+        retMap[FTValue("fileCount")] = FTValue(fileCount);
+
+        eventSink_->Success(retMap);
+    }
+}
