@@ -4345,10 +4345,11 @@ void ZegoExpressEngineMethodHandler::addPublishCdnUrl(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto streamID = std::get<std::string>(argument[FTValue("streamID")]);
     auto targetURL = std::get<std::string>(argument[FTValue("targetURL")]);
+    auto timeout = std::get<int32_t>(argument[FTValue("timeout")]);
 
     auto sharedPtrResult =
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
-    EXPRESS::ZegoExpressSDK::getEngine()->addPublishCdnUrl(streamID, targetURL, [=](int errorCode) {
+    EXPRESS::ZegoExpressSDK::getEngine()->addPublishCdnUrl(streamID, targetURL, timeout, [=](int errorCode) {
         FTMap retMap;
         retMap[FTValue("errorCode")] = FTValue(errorCode);
         sharedPtrResult->Success(retMap);

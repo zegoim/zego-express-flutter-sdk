@@ -589,9 +589,10 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(
-      String streamID, String targetURL) async {
+      String streamID, String targetURL, int timeout) async {
     final Map<dynamic, dynamic> map = await _channel.invokeMethod(
-        'addPublishCdnUrl', {'streamID': streamID, 'targetURL': targetURL});
+        'addPublishCdnUrl',
+        {'streamID': streamID, 'targetURL': targetURL, 'timeout': timeout});
 
     return ZegoPublisherUpdateCdnUrlResult(map['errorCode']);
   }

@@ -434,10 +434,13 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [targetURL] CDN relay address, supported address format is rtmp, rtmps.
+  /// - [timeout] Timeout. Callback if it does not start in the time. Default is 0, which means no timeout. Valid range is [5, 600], in seconds.
   /// - Returns The execution result of update the relay CDN operation.
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(
-      String streamID, String targetURL) async {
-    return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
+      String streamID, String targetURL,
+      {int? timeout}) async {
+    return await ZegoExpressImpl.instance
+        .addPublishCdnUrl(streamID, targetURL, timeout ?? 0);
   }
 
   /// Deletes the specified CDN URL, which is used for relaying streams from ZEGO RTC server to CDN.
