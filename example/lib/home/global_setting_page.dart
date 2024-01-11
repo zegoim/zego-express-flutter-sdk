@@ -33,7 +33,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
 
   String _version = "";
 
-  ZegoScenario _scenario = ZegoScenario.General;
+  ZegoScenario _scenario = ZegoScenario.Default;
   bool _enablePlatformView = false;
 
   bool _isCameraPermissionGranted = false;
@@ -435,7 +435,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
                     .where(
                       (element) {
                         if (ZegoScenario.values.indexOf(element) >
-                            ZegoScenario.values.indexOf(ZegoScenario.Live)) {
+                            ZegoScenario.values.indexOf(ZegoScenario.Broadcast)) {
                           if (kIsWeb &&
                               (element == ZegoScenario.HighQualityChatroom ||
                                   element == ZegoScenario.Karaoke)) {
