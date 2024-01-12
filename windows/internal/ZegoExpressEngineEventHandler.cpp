@@ -264,6 +264,27 @@ void ZegoExpressEngineEventHandler::onPublisherStateUpdate(const std::string &st
     }
 }
 
+flutter::EncodableMap ZegoExpressEngineEventHandler::convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality) {
+    FTMap qualityMap;
+    qualityMap[FTValue("videoCaptureFPS")] = FTValue(quality.videoCaptureFPS);
+    qualityMap[FTValue("videoEncodeFPS")] = FTValue(quality.videoEncodeFPS);
+    qualityMap[FTValue("videoSendFPS")] = FTValue(quality.videoSendFPS);
+    qualityMap[FTValue("videoKBPS")] = FTValue(quality.videoKBPS);
+    qualityMap[FTValue("audioCaptureFPS")] = FTValue(quality.audioCaptureFPS);
+    qualityMap[FTValue("audioSendFPS")] = FTValue(quality.audioSendFPS);
+    qualityMap[FTValue("audioKBPS")] = FTValue(quality.audioKBPS);
+    qualityMap[FTValue("rtt")] = FTValue(quality.rtt);
+    qualityMap[FTValue("packetLostRate")] = FTValue(quality.packetLostRate);
+    qualityMap[FTValue("level")] = FTValue(quality.level);
+    qualityMap[FTValue("isHardwareEncode")] = FTValue(quality.isHardwareEncode);
+    qualityMap[FTValue("videoCodecID")] = FTValue(quality.videoCodecID);
+    qualityMap[FTValue("totalSendBytes")] = FTValue(quality.totalSendBytes);
+    qualityMap[FTValue("audioSendBytes")] = FTValue(quality.audioSendBytes);
+    qualityMap[FTValue("videoSendBytes")] = FTValue(quality.videoSendBytes);
+
+    return qualityMap;
+}
+
 void ZegoExpressEngineEventHandler::onPublisherQualityUpdate(
     const std::string &streamID, const EXPRESS::ZegoPublishStreamQuality &quality) {
     // High frequency callbacks do not log
@@ -273,22 +294,7 @@ void ZegoExpressEngineEventHandler::onPublisherQualityUpdate(
         retMap[FTValue("method")] = FTValue("onPublisherQualityUpdate");
         retMap[FTValue("streamID")] = FTValue(streamID);
 
-        FTMap qualityMap;
-        qualityMap[FTValue("videoCaptureFPS")] = FTValue(quality.videoCaptureFPS);
-        qualityMap[FTValue("videoEncodeFPS")] = FTValue(quality.videoEncodeFPS);
-        qualityMap[FTValue("videoSendFPS")] = FTValue(quality.videoSendFPS);
-        qualityMap[FTValue("videoKBPS")] = FTValue(quality.videoKBPS);
-        qualityMap[FTValue("audioCaptureFPS")] = FTValue(quality.audioCaptureFPS);
-        qualityMap[FTValue("audioSendFPS")] = FTValue(quality.audioSendFPS);
-        qualityMap[FTValue("audioKBPS")] = FTValue(quality.audioKBPS);
-        qualityMap[FTValue("rtt")] = FTValue(quality.rtt);
-        qualityMap[FTValue("packetLostRate")] = FTValue(quality.packetLostRate);
-        qualityMap[FTValue("level")] = FTValue(quality.level);
-        qualityMap[FTValue("isHardwareEncode")] = FTValue(quality.isHardwareEncode);
-        qualityMap[FTValue("videoCodecID")] = FTValue(quality.videoCodecID);
-        qualityMap[FTValue("totalSendBytes")] = FTValue(quality.totalSendBytes);
-        qualityMap[FTValue("audioSendBytes")] = FTValue(quality.audioSendBytes);
-        qualityMap[FTValue("videoSendBytes")] = FTValue(quality.videoSendBytes);
+        FTMap qualityMap = convertPublishQuality(quality);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 
@@ -1058,6 +1064,7 @@ void ZegoExpressEngineEventHandler::onCapturedDataRecordProgressUpdate(
 
         progressMap[FTValue("currentFileSize")] = FTValue((int32_t)progress.currentFileSize);
         progressMap[FTValue("duration")] = FTValue((int32_t)progress.duration);
+        progressMap[FTValue("quality")] = FTValue(convertPublishQuality(progress.quality));
 
         configMap[FTValue("filePath")] = FTValue(config.filePath);
         configMap[FTValue("recordType")] = FTValue(config.recordType);
