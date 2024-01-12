@@ -1007,8 +1007,9 @@
 
     NSString *targetURL = call.arguments[@"targetURL"];
     NSString *streamID = call.arguments[@"streamID"];
+    int timeout = [ZegoUtils intValue:call.arguments[@"timeout"]];
 
-    [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
+    [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID timeout:timeout callback:^(int errorCode) {
         result(@{@"errorCode": @(errorCode)});
     }];
 }

@@ -1180,8 +1180,9 @@ public class ZegoExpressEngineMethodHandler {
 
         String streamID = call.argument("streamID");
         String targetURL = call.argument("targetURL");
+        int timeout = ZegoUtils.intValue((Number) call.argument("timeout"));
 
-        ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, new IZegoPublisherUpdateCdnUrlCallback() {
+        ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, timeout, new IZegoPublisherUpdateCdnUrlCallback() {
             @Override
             public void onPublisherUpdateCdnUrlResult(int errorCode) {
                 HashMap<String, Object> resultMap = new HashMap<>();
