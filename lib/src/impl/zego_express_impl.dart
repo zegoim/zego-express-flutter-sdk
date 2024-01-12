@@ -3183,9 +3183,30 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onCapturedDataRecordProgressUpdate == null)
           return;
 
+        ZegoPublishStreamQuality quality = ZegoPublishStreamQuality(
+          map['progress']['quality']['videoCaptureFPS'],
+          map['progress']['quality']['videoEncodeFPS'],
+          map['progress']['quality']['videoSendFPS'],
+          map['progress']['quality']['videoKBPS'],
+          map['progress']['quality']['audioCaptureFPS'],
+          map['progress']['quality']['audioSendFPS'],
+          map['progress']['quality']['audioKBPS'],
+          map['progress']['quality']['rtt'],
+          map['progress']['quality']['packetLostRate'],
+          ZegoStreamQualityLevel.values[map['progress']['quality']['level']],
+          map['progress']['quality']['isHardwareEncode'],
+          ZegoVideoCodecID.values[map['progress']['quality']['videoCodecID'] >=
+                  ZegoVideoCodecID.values.length
+              ? ZegoVideoCodecID.values.length - 1
+              : map['progress']['quality']['videoCodecID']],
+          map['progress']['quality']['totalSendBytes'],
+          map['progress']['quality']['audioSendBytes'],
+          map['progress']['quality']['videoSendBytes'],
+        );
+
         ZegoExpressEngine.onCapturedDataRecordProgressUpdate!(
             ZegoDataRecordProgress(map['progress']['duration'],
-                map['progress']['currentFileSize']),
+                map['progress']['currentFileSize'], quality),
             ZegoDataRecordConfig(map['config']['filePath'],
                 ZegoDataRecordType.values[map['config']['recordType']]),
             ZegoPublishChannel.values[map['channel']]);
