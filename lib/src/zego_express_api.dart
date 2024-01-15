@@ -1259,7 +1259,7 @@ class ZegoExpressEngine {
   /// Restrictions: None.
   ///
   /// - [mediaDataPublisher] Callback publisher object
-  /// - [errorCode] error code. 0 means closing the file normally.
+  /// - [errorCode] error code. 0 means closing the file normally. -1 is a file error. -2 is a path exception. -3 is a decoding exception. -4 is an incorrect timestamp. -5 Unable to fix audio/video synchronization. -6 Unsupported audio sample rate. Contact technical support for details.
   /// - [path] Path of currently open file
   static void Function(ZegoMediaDataPublisher mediaDataPublisher, int errorCode,
       String path)? onMediaDataPublisherFileClose;
@@ -1659,20 +1659,6 @@ class ZegoExpressEngine {
   /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
       onAIVoiceChangerInit;
-
-  /// Update AI voice changer engine models progress callback.
-  ///
-  /// Available since: 3.12.0.
-  /// Description: Update AI voice changer engine models progress callback.
-  /// Trigger: The callback triggered when call [update] function.
-  /// Restrictions: None.
-  ///
-  /// - [aiVoiceChanger] Callback AI voice changer instance.
-  /// - [percent] Current file update progress.
-  /// - [fileIndex] Current update file index.
-  /// - [fileCount] Total update file count.
-  static void Function(ZegoAIVoiceChanger aiVoiceChanger, double percent,
-      int fileIndex, int fileCount)? onAIVoiceChangerUpdateProgress;
 
   /// Update AI voice changer engine models status callback.
   ///

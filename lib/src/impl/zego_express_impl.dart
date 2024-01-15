@@ -4704,6 +4704,20 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
       'index': _index
     });
   }
+
+  @override
+  Future<void> enableAudioCapture(
+      bool enable, ZegoAudioFrameParam audioParam) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('enableAudioCaptureScreenCaptureSource', {
+      'enable': enable,
+      'audioParam': {
+        'sampleRate': audioParam.sampleRate.value,
+        'channel': audioParam.channel.index
+      },
+      'index': _index
+    });
+  }
 }
 
 class ZegoAIVoiceChangerImpl extends ZegoAIVoiceChanger {

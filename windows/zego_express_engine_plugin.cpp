@@ -405,6 +405,7 @@ static const std::map<
         EngineMethodHandler(startCaptureScreenCaptureSource),
         EngineMethodHandler(stopCaptureScreenCaptureSource),
         EngineMethodHandler(getCaptureSourceRectScreenCaptureSource),
+        EngineMethodHandler(enableAudioCaptureScreenCaptureSource),
 
         // AIVoiceChanger
         EngineMethodHandler(createAIVoiceChanger),
