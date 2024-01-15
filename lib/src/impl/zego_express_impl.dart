@@ -589,10 +589,14 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(
-      String streamID, String targetURL, {int? timeout}) async {
+      String streamID, String targetURL,
+      {int? timeout}) async {
     final Map<dynamic, dynamic> map = await _channel.invokeMethod(
-        'addPublishCdnUrl',
-        {'streamID': streamID, 'targetURL': targetURL, 'timeout': timeout ?? 0});
+        'addPublishCdnUrl', {
+      'streamID': streamID,
+      'targetURL': targetURL,
+      'timeout': timeout ?? 0
+    });
 
     return ZegoPublisherUpdateCdnUrlResult(map['errorCode']);
   }
@@ -3410,18 +3414,6 @@ class ZegoExpressImpl {
           }
           ZegoExpressEngine.onAIVoiceChangerGetSpeakerList!(
               aiVoiceChanger, map['errorCode'], speakerList);
-        }
-        break;
-
-      case 'onAIVoiceChangerUpdateProgress':
-        if (ZegoExpressEngine.onAIVoiceChangerUpdateProgress == null) {
-          return;
-        }
-        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
-        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
-        if (aiVoiceChanger != null) {
-          ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger,
-              map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
 

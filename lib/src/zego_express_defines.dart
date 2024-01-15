@@ -5568,6 +5568,17 @@ abstract class ZegoScreenCaptureSource {
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
 
+  /// Whether to collect the sound of the window process during window collection
+  ///
+  /// Available since: 3.13.0
+  /// Description: Whether to collect the sound of the window process during window collection.
+  /// When to call: Before starting the collection [startScreencapture].
+  /// Restrictions: Only applicable to Windows 10 and above versions.
+  ///
+  /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.
+  /// - [audioParam] Audio collection parameters.
+  Future<void> enableAudioCapture(bool enable, ZegoAudioFrameParam audioParam);
+
   /// Get screen capture source index.
   ///
   /// - Returns Index of the screen capture source.

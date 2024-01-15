@@ -1168,6 +1168,9 @@ class ZegoErrorCode {
   /// Description: Failed to create screen capture source. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing screen capture instance or destroy the previous instance.
   static const int ScreenCaptureExceedMaxCount = 1020004;
 
+  /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int ScreenCaptureInnerError = 1020005;
+
   /// Description: The function call failed. <br>Cause: No AI voice changer instance has been created. <br>Solutions: Create an AI voice changer instance.
   static const int AIVoiceChangerNoInstance = 1021000;
 
