@@ -1007,8 +1007,9 @@
 
     NSString *targetURL = call.arguments[@"targetURL"];
     NSString *streamID = call.arguments[@"streamID"];
+    int timeout = [ZegoUtils intValue:call.arguments[@"timeout"]];
 
-    [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
+    [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID timeout:timeout callback:^(int errorCode) {
         result(@{@"errorCode": @(errorCode)});
     }];
 }
@@ -1801,7 +1802,8 @@
             NSDictionary *imageInfoMap = inputMap[@"imageInfo"];
             if (imageInfoMap && ![ZegoUtils isNullObject:imageInfoMap]) {
                 NSString *url = imageInfoMap[@"url"];
-                inputObject.imageInfo = [[ZegoMixerImageInfo alloc] initWithURL:url];
+                int displayMode = [ZegoUtils intValue:imageInfoMap[@"displayMode"]];
+                inputObject.imageInfo = [[ZegoMixerImageInfo alloc] initWithURLAndDisplayMode:url displayMode:displayMode];
             }
 
             NSNumber *cornerRadius = inputMap[@"cornerRadius"];
@@ -3960,6 +3962,26 @@
     }
     
     result(nil);
+}
+
+
+- (void)mediaPlayerGetPlaybackStatistics:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        ZegoMediaPlayerStatisticsInfo *info = [mediaPlayer getPlaybackStatistics];
+        result(@{
+            @"videoSourceFps" : @(info.videoSourceFps),
+            @"videoDecodeFps" : @(info.videoDecodeFps),
+            @"videoRenderFps" : @(info.videoRenderFps),
+            @"audioSourceFps" : @(info.audioSourceFps),
+            @"audioDecodeFps" : @(info.audioDecodeFps),
+            @"audioRenderFps" : @(info.audioRenderFps),
+        });
+    } else {
+        result(nil);
+    }
 }
 
 #pragma mark - AudioEffectPlayer

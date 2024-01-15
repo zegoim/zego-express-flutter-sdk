@@ -401,15 +401,8 @@
     }
 }
 
-- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
-    FlutterEventSink sink = _eventSink;
-    // High frequency callbacks do not log
-
-    GUARD_SINK
-    if (sink) {
-        sink(@{
-            @"method": @"onPublisherQualityUpdate",
-            @"quality": @{
+- (NSDictionary *)convertPublishQuality:(ZegoPublishStreamQuality *)quality {
+    return @{
                 @"videoCaptureFPS": @(quality.videoCaptureFPS),
                 @"videoEncodeFPS": @(quality.videoEncodeFPS),
                 @"videoSendFPS": @(quality.videoSendFPS),
@@ -425,7 +418,18 @@
                 @"totalSendBytes": @(quality.totalSendBytes),
                 @"audioSendBytes": @(quality.audioSendBytes),
                 @"videoSendBytes": @(quality.videoSendBytes)
-            },
+            };
+}
+
+- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherQualityUpdate",
+            @"quality": [self convertPublishQuality:quality],
             @"streamID": streamID
         });
     }
@@ -1607,7 +1611,8 @@
             @"method": @"onCapturedDataRecordProgressUpdate",
             @"progress": @{
                 @"duration": @(progress.duration),
-                @"currentFileSize": @(progress.currentFileSize)
+                @"currentFileSize": @(progress.currentFileSize),
+                @"quality": [self convertPublishQuality:progress.quality],
             },
             @"config": @{
                 @"filePath": config.filePath,
@@ -1971,6 +1976,23 @@
             @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
             @"errorCode": @(errorCode),
             @"speakerList": speakerArray
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdateProgress:(double)percent fileIndex:(int)fileIndex fileCount:(int)fileCount {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerUpdateProgress], index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex, percent, fileIndex, fileCount);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerUpdateProgress",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"percent": @(percent),
+            @"fileIndex": @(fileIndex),
+            @"fileCount": @(fileCount)
         });
     }
 }

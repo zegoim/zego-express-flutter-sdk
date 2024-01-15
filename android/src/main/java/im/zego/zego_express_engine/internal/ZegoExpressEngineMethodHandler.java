@@ -182,6 +182,7 @@ import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
 import im.zego.zegoexpress.entity.ZegoMediaDataPublisherConfig;
 import im.zego.zegoexpress.entity.ZegoMediaPlayerMediaInfo;
+import im.zego.zegoexpress.entity.ZegoMediaPlayerStatisticsInfo;
 import im.zego.zegoexpress.entity.ZegoMixerAudioConfig;
 import im.zego.zegoexpress.entity.ZegoMixerInput;
 import im.zego.zegoexpress.entity.ZegoMixerOutput;
@@ -1179,8 +1180,9 @@ public class ZegoExpressEngineMethodHandler {
 
         String streamID = call.argument("streamID");
         String targetURL = call.argument("targetURL");
+        int timeout = ZegoUtils.intValue((Number) call.argument("timeout"));
 
-        ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, new IZegoPublisherUpdateCdnUrlCallback() {
+        ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, timeout, new IZegoPublisherUpdateCdnUrlCallback() {
             @Override
             public void onPublisherUpdateCdnUrlResult(int errorCode) {
                 HashMap<String, Object> resultMap = new HashMap<>();
@@ -2009,7 +2011,11 @@ public class ZegoExpressEngineMethodHandler {
                 if (inputMap.containsKey("imageInfo") && inputMap.get("imageInfo") != null) {
                     HashMap<String, Object> imageInfoMap = (HashMap<String, Object>) inputMap.get("imageInfo");
                     String url = (String) imageInfoMap.get("url");
-                    inputObject.imageInfo = new ZegoMixerImageInfo(url);
+                    int displayMode = 0;
+                    if (imageInfoMap.containsKey("displayMode") && imageInfoMap.get("displayMode") != null) {
+                        displayMode = (int) imageInfoMap.get("displayMode");
+                    }
+                    inputObject.imageInfo = new ZegoMixerImageInfo(url, displayMode);
                 }
 
                 if (inputMap.containsKey("cornerRadius") && inputMap.get("cornerRadius") != null) {
@@ -4223,6 +4229,28 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void mediaPlayerGetPlaybackStatistics(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            ZegoMediaPlayerStatisticsInfo info = mediaPlayer.getPlaybackStatistics();
+            HashMap resultMap = new HashMap();
+            resultMap.put("videoSourceFps", info.videoSourceFps);
+            resultMap.put("videoDecodeFps", info.videoSourceFps);
+            resultMap.put("videoRenderFps", info.videoSourceFps);
+            resultMap.put("audioSourceFps", info.videoSourceFps);
+            resultMap.put("audioDecodeFps", info.videoSourceFps);
+            resultMap.put("audioRenderFps", info.videoSourceFps);
+            result.success(resultMap);
+        } else {
+            result.success(null);
+        }
+    }
+
+    /* MediaPlayer */
+
     /* AudioEffectPlayer */
 
     @SuppressWarnings("unused")
@@ -5967,7 +5995,6 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     /* AI Voice Changer */
-    /* MediaPlayer */
 
     public static ZegoAIVoiceChanger getAIVoiceChanger(Integer index) {
         return aiVoiceChangerHashMap.get(index);
