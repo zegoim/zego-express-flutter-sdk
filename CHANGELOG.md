@@ -1,5 +1,13 @@
 # Change Log
 
+## 3.12.4
+
+### **Bug Fixes**
+
+1. Fixed the issue where the UI would occasionally freeze if a network abnormality occurs when initializing the SDK.
+
+2. Fixed the issue where UI freezes may occur in a very low probability if the network is abnormal when switching networks.
+
 ## 3.12.3
 
 ### New Features
