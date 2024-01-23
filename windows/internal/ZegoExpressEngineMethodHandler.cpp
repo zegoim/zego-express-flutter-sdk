@@ -1011,11 +1011,11 @@ void ZegoExpressEngineMethodHandler::enableVideoObjectSegmentation(
         auto type = std::get<int32_t>(configMap[FTValue("objectSegmentationType")]);
         config.objectSegmentationType = (EXPRESS::ZegoObjectSegmentationType)type;
 
-        if (!argument[FTValue("backgroundConfig")].IsNull()) {
-            auto backgroundConfigMap = std::get<FTMap>(argument[FTValue("backgroundConfig")]);
+        if (!configMap[FTValue("backgroundConfig")].IsNull()) {
+            auto backgroundConfigMap = std::get<FTMap>(configMap[FTValue("backgroundConfig")]);
 
             EXPRESS::ZegoBackgroundConfig backgroundConfig;
-            backgroundConfig.processType = (EXPRESS::ZegoBackgroundProcessType)std::get<int32_t>(backgroundConfigMap[FTValue("processType")]);
+            backgroundConfig.processType = EXPRESS::ZegoBackgroundProcessType::ZEGO_BACKGROUND_PROCESS_TYPE_BLUR;
             backgroundConfig.blurLevel = (EXPRESS::ZegoBackgroundBlurLevel)std::get<int32_t>(backgroundConfigMap[FTValue("blurLevel")]);
             backgroundConfig.color = std::get<int32_t>(backgroundConfigMap[FTValue("color")]);
             backgroundConfig.imageURL = std::get<std::string>(backgroundConfigMap[FTValue("imageURL")]);
