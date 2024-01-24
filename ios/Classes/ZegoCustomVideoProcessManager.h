@@ -94,6 +94,25 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param timestamp Timestamp of this video frame.Required: Yes.
 - (void)sendProcessedCVPixelBuffer:(CVPixelBufferRef)buffer timestamp:(CMTime)timestamp channel:(ZGFlutterPublishChannel)channel;
 
+/// Send the [CVPixelBuffer] type video data after the custom video processing to the SDK (for the specified channel), and support specified data usage.
+///
+/// Available since: 3.14.0
+/// Description: When the custom video pre-processing is turned on, the [CVPixelBuffer] format video data after the custom video pre-processing is sent to the SDK, and other channels are supported.
+/// Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
+/// When to call: Must be called in the [onCapturedUnprocessedCVPixelbuffer] callback.
+/// Restrictions: This interface takes effect when [enableCustomVideoProcessing] is called to enable custom video pre-processing and the bufferType of config is passed in [ZegoVideoBufferTypeCVPixelBuffer] or [ZegoVideoBufferTypeNV12CVPixelBuffer].
+/// Platform differences: Only valid on Windows platform.
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param buffer CVPixelBuffer type video frame data to be sent to the SDK.
+/// @param timestamp Timestamp of this video frame.
+/// @param usage Data usage
+/// @param channel Publishing stream channel.
+- (void)sendCustomVideoProcessedCVPixelBuffer:(CVPixelBufferRef)buffer
+                                    timestamp:(CMTime)timestamp
+                                        usage:(ZGFlutterProcessedDataUsageType)usage
+                                      channel:(ZGFlutterPublishChannel)channel;
+
 @end
 
 NS_ASSUME_NONNULL_END

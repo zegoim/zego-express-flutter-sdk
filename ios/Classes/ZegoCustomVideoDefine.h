@@ -108,6 +108,15 @@ typedef NS_ENUM(NSUInteger, ZGFlutterAudioChannel) {
     ZGFlutterAudioChannelStereo = 2
 };
 
+/// Usage of Custom video processed data.
+typedef NS_ENUM(NSUInteger, ZGFlutterProcessedDataUsageType) {
+    /// Preview.
+    ZGFlutterProcessedDataUsageTypePreview = 0,
+    /// Publish.
+    ZGFlutterProcessedDataUsageTypePublish = 1,
+    /// Both preview and publish.
+    ZGFlutterProcessedDataUsageTypeBoth = 2
+};
 
 /// Object for video frame fieldeter.
 ///
