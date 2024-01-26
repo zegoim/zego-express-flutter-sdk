@@ -737,10 +737,14 @@ void ZegoExpressEngineMethodHandler::takePublishStreamSnapshot(
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
     EXPRESS::ZegoExpressSDK::getEngine()->takePublishStreamSnapshot(
         [=](int errorCode, void *image) {
-            auto tmpData = CreateFromHBITMAP((HBITMAP)image);
-            std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
-            delete[] tmpData.second;
-
+            std::vector<uint8_t> raw_image;
+            if(image)
+            {
+                auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+                raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
+            }
+        
             FTMap resultMap;
             resultMap[FTValue("errorCode")] = FTValue(errorCode);
             resultMap[FTValue("image")] = FTValue(raw_image);
@@ -1150,9 +1154,14 @@ void ZegoExpressEngineMethodHandler::takePlayStreamSnapshot(
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
     EXPRESS::ZegoExpressSDK::getEngine()->takePlayStreamSnapshot(
         streamID, [=](int errorCode, void *image) {
-            auto tmpData = CreateFromHBITMAP((HBITMAP)image);
-            std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
-            delete[] tmpData.second;
+            // TODO : prevent crash
+            std::vector<uint8_t> raw_image;
+            if(image)
+            {
+                auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+                raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
+            }
 
             FTMap resultMap;
             resultMap[FTValue("errorCode")] = FTValue(errorCode);
