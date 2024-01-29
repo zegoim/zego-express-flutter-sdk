@@ -9,6 +9,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: This function is used to control whether to use the collected audio data. Mute (turn off the microphone) will use the muted data to replace the audio data collected by the device for streaming. At this time, the microphone device will still be occupied.
+  /// Use case: Users can call this interface by only turning off the human voice collected by the microphone and not turning off the music sound of the media player. This interface affects [onBeforeAudioPrepAudioData].
   /// Default value: The default is `false`, which means no muting.
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.
@@ -241,7 +242,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Audio routing refers to the audio output device that an app uses to play audio, and common audio routes are: speakers, handsets, headphones, Bluetooth devices, and so on.
   /// When to call: After creating the engine [createEngine].
-  /// Restrictions: None.
+  /// Restrictions: Not supported under win or mac platforms.
   /// Related APIs: Set audio route to speaker [setAudioRouteToSpeaker].
   Future<ZegoAudioRoute> getAudioRouteType() async {
     return await ZegoExpressImpl.instance.getAudioRouteType();
@@ -252,7 +253,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Available since: 1.1.0
   /// Description: Whether to use the speaker to play audio, when you choose not to use the built-in speaker to play the sound, the SDK will select the audio output device with the highest current priority to play the sound according to the system schedule, and common audio routes are: handsets, headphones, Bluetooth devices, and so on.
   /// When to call: After creating the engine [createEngine].
-  /// Restrictions: None.
+  /// Restrictions: Only switching between the earpiece and the speaker is supported. If it is a Bluetooth headset or a wired headset, it does not support routing to the speaker through this interface.
   /// Related APIs: Get the current audio route [getAudioRouteType].
   ///
   /// - [defaultToSpeaker] Whether to use the built-in speaker to play sound, `true`: use the built-in speaker to play sound, `false`: use the highest priority audio output device scheduled by the current system to play sound

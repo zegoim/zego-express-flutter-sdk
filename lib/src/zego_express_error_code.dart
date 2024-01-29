@@ -32,7 +32,7 @@ class ZegoErrorCode {
   /// Description: The input streamID contains invalid characters. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] contains invalid characters. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal, only support numbers, English characters and '-', '_'.
   static const int CommonStreamIdInvalidCharacter = 1000016;
 
-  /// Illegal param.
+  /// Description: Illegal param.<br>Cause: The parameter is empty, or the parameter is an illegal value. <br>Solutions: Please check param when entered function to make sure it is correct.
   static const int CommonIllegalParam = 1000017;
 
   /// Description: The Input CDN URL is too long. <br>Cause: The length of URL parameter passed in when calling [enablePublishDirectToCDN] or [startPlayingStream] exceeds the limit. <br>Solutions: URL length should be less than 1024 bytes.
@@ -296,7 +296,7 @@ class ZegoErrorCode {
   /// Description: Object segmentation parameter error.<br>Caution: Object segmentation is set to green screen type, background blur is not allowed.<br>Solutions: Please use the correct parameters to enable object segmentation.
   static const int PublisherObjectSegmentationParamError = 1003014;
 
-  /// Description: Object segmentation background image loading error.<br>Caution: The path of the background image is incorrect, or the content of the image is incorrect.<br>Solutions: Please set the correct background image.
+  /// Description: Object segmentation background loading error.<br>Caution: The background video or image path is incorrect, or the content is incorrect..<br>Solutions: Please set the correct background image or video.
   static const int PublisherObjectSegmentationImageLoadError = 1003015;
 
   /// Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal.
@@ -1063,6 +1063,9 @@ class ZegoErrorCode {
   /// Description: top ID invalid. <br>Cause: An unsupported top ID was passed in when fetching chart songs. <br>Solutions: Please pass in the correct top ID.
   static const int CopyrightedMusicTopIdInvalid = 1017077;
 
+  /// Description: Loading copyright music plugin failed. <br>Cause: The program runtime path does not include the copyright music plugin dynamic library. <br>Solutions: Please configure the copyright music plugin dynamic library dependency correctly.
+  static const int CopyrightedMusicLoadPluginFail = 1017094;
+
   /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicNotSupportMethod = 1017095;
 
@@ -1164,6 +1167,9 @@ class ZegoErrorCode {
 
   /// Description: Failed to create screen capture source. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing screen capture instance or destroy the previous instance.
   static const int ScreenCaptureExceedMaxCount = 1020004;
+
+  /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int ScreenCaptureInnerError = 1020005;
 
   /// Description: The function call failed. <br>Cause: No AI voice changer instance has been created. <br>Solutions: Create an AI voice changer instance.
   static const int AIVoiceChangerNoInstance = 1021000;

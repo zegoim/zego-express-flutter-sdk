@@ -317,6 +317,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerGetCurrentRenderingProgress),
         EngineMethodHandler(mediaPlayerEnableLiveAudioEffect),
         EngineMethodHandler(mediaPlayerSetPlayMediaStreamType),
+        EngineMethodHandler(mediaPlayerGetPlaybackStatistics),
 
         // MediaDataPublihser
         EngineMethodHandler(createMediaDataPublisher),
@@ -404,6 +405,7 @@ static const std::map<
         EngineMethodHandler(startCaptureScreenCaptureSource),
         EngineMethodHandler(stopCaptureScreenCaptureSource),
         EngineMethodHandler(getCaptureSourceRectScreenCaptureSource),
+        EngineMethodHandler(enableAudioCaptureScreenCaptureSource),
 
         // AIVoiceChanger
         EngineMethodHandler(createAIVoiceChanger),

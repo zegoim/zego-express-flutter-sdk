@@ -118,6 +118,27 @@ public class ZegoExpressEngineEventHandler {
         return false;
     }
 
+    private HashMap<String, Object> convertPublishStreamQuality(ZegoPublishStreamQuality quality) {
+        HashMap<String, Object> qualityMap = new HashMap<>();
+        qualityMap.put("videoCaptureFPS", quality.videoCaptureFPS);
+        qualityMap.put("videoEncodeFPS", quality.videoEncodeFPS);
+        qualityMap.put("videoSendFPS", quality.videoSendFPS);
+        qualityMap.put("videoKBPS", quality.videoKBPS);
+        qualityMap.put("audioCaptureFPS", quality.audioCaptureFPS);
+        qualityMap.put("audioSendFPS", quality.audioSendFPS);
+        qualityMap.put("audioKBPS", quality.audioKBPS);
+        qualityMap.put("rtt", quality.rtt);
+        qualityMap.put("packetLostRate", quality.packetLostRate);
+        qualityMap.put("level", quality.level.value());
+        qualityMap.put("isHardwareEncode", quality.isHardwareEncode);
+        qualityMap.put("videoCodecID", quality.videoCodecID.value());
+        qualityMap.put("totalSendBytes", quality.totalSendBytes);
+        qualityMap.put("audioSendBytes", quality.audioSendBytes);
+        qualityMap.put("videoSendBytes", quality.videoSendBytes);
+
+        return qualityMap;
+    }
+
     IZegoApiCalledEventHandler apiCalledEventHandler = new IZegoApiCalledEventHandler() {
         @Override
         public void onApiCalledResult(int errorCode, String funcName, String info) {
@@ -363,22 +384,7 @@ public class ZegoExpressEngineEventHandler {
 
             if (guardSink()) { return; }
 
-            HashMap<String, Object> qualityMap = new HashMap<>();
-            qualityMap.put("videoCaptureFPS", quality.videoCaptureFPS);
-            qualityMap.put("videoEncodeFPS", quality.videoEncodeFPS);
-            qualityMap.put("videoSendFPS", quality.videoSendFPS);
-            qualityMap.put("videoKBPS", quality.videoKBPS);
-            qualityMap.put("audioCaptureFPS", quality.audioCaptureFPS);
-            qualityMap.put("audioSendFPS", quality.audioSendFPS);
-            qualityMap.put("audioKBPS", quality.audioKBPS);
-            qualityMap.put("rtt", quality.rtt);
-            qualityMap.put("packetLostRate", quality.packetLostRate);
-            qualityMap.put("level", quality.level.value());
-            qualityMap.put("isHardwareEncode", quality.isHardwareEncode);
-            qualityMap.put("videoCodecID", quality.videoCodecID.value());
-            qualityMap.put("totalSendBytes", quality.totalSendBytes);
-            qualityMap.put("audioSendBytes", quality.audioSendBytes);
-            qualityMap.put("videoSendBytes", quality.videoSendBytes);
+            HashMap<String, Object> qualityMap = convertPublishStreamQuality(quality);
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -1803,9 +1809,12 @@ public class ZegoExpressEngineEventHandler {
 
             if (guardSink()) { return; }
 
+            HashMap<String, Object> qualityMap = convertPublishStreamQuality(progress.quality);
+
             HashMap<String, Object> progressMap = new HashMap<>();
             progressMap.put("duration", progress.duration);
             progressMap.put("currentFileSize", progress.currentFileSize);
+            progressMap.put("quality", qualityMap);
 
             HashMap<String, Object> configMap = new HashMap<>();
             configMap.put("filePath", config.filePath);
@@ -2178,6 +2187,25 @@ public class ZegoExpressEngineEventHandler {
             map.put("aiVoiceChangerIndex", aiVoiceChanger.getIndex());
             map.put("errorCode", errorCode);
             map.put("speakerList", speakerMapList);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onUpdateProgress(ZegoAIVoiceChanger aiVoiceChanger, double percent, int fileIndex, int fileCount) {
+            super.onUpdateProgress(aiVoiceChanger, percent, fileIndex, fileCount);
+
+            ZegoLog.log("[onAIVoiceChangerUpdateProgress] idx: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex(), percent, fileIndex, fileCount);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAIVoiceChangerUpdateProgress");
+            map.put("aiVoiceChangerIndex", aiVoiceChanger.getIndex());
+            map.put("percent", percent);
+            map.put("fileIndex", fileIndex);
+            map.put("fileCount", fileCount);
 
             sink.success(map);
         }

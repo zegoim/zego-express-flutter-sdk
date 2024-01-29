@@ -670,6 +670,10 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerEnableLocalCache(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerGetPlaybackStatistics(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        
     /* Media Data Publisher */
     void createMediaDataPublisher(
         flutter::EncodableMap &argument,
@@ -979,6 +983,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void getCaptureSourceRectScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAudioCaptureScreenCaptureSource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 

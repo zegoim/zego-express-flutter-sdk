@@ -329,10 +329,10 @@ class ZegoExpressImpl {
       }
     }
 
-    ZegoRoomStreamList stream_list =
+    ZegoRoomStreamList streamList =
         ZegoRoomStreamList(publishStreamList, playStreamList);
 
-    return stream_list;
+    return streamList;
   }
 
   /* Publisher */
@@ -589,9 +589,14 @@ class ZegoExpressImpl {
   }
 
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(
-      String streamID, String targetURL) async {
+      String streamID, String targetURL,
+      {int? timeout}) async {
     final Map<dynamic, dynamic> map = await _channel.invokeMethod(
-        'addPublishCdnUrl', {'streamID': streamID, 'targetURL': targetURL});
+        'addPublishCdnUrl', {
+      'streamID': streamID,
+      'targetURL': targetURL,
+      'timeout': timeout ?? 0
+    });
 
     return ZegoPublisherUpdateCdnUrlResult(map['errorCode']);
   }
@@ -614,7 +619,8 @@ class ZegoExpressImpl {
               'authParam': config.authParam ?? '',
               'protocol': config.protocol ?? '',
               'quicVersion': config.quicVersion ?? '',
-              'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index
+              'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index,
+              'quicConnectMode': config.quicConnectMode ?? 0
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -782,7 +788,8 @@ class ZegoExpressImpl {
                       'protocol': config.cdnConfig?.protocol ?? "",
                       'quicVersion': config.cdnConfig?.quicVersion ?? "",
                       'httpdns': config.cdnConfig?.httpdns?.index ??
-                          ZegoHttpDNSType.None.index
+                          ZegoHttpDNSType.None.index,
+                      'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
                     }
                   : {},
               'roomID': config.roomID ?? '',
@@ -3184,9 +3191,30 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onCapturedDataRecordProgressUpdate == null)
           return;
 
+        ZegoPublishStreamQuality quality = ZegoPublishStreamQuality(
+          map['progress']['quality']['videoCaptureFPS'],
+          map['progress']['quality']['videoEncodeFPS'],
+          map['progress']['quality']['videoSendFPS'],
+          map['progress']['quality']['videoKBPS'],
+          map['progress']['quality']['audioCaptureFPS'],
+          map['progress']['quality']['audioSendFPS'],
+          map['progress']['quality']['audioKBPS'],
+          map['progress']['quality']['rtt'],
+          map['progress']['quality']['packetLostRate'],
+          ZegoStreamQualityLevel.values[map['progress']['quality']['level']],
+          map['progress']['quality']['isHardwareEncode'],
+          ZegoVideoCodecID.values[map['progress']['quality']['videoCodecID'] >=
+                  ZegoVideoCodecID.values.length
+              ? ZegoVideoCodecID.values.length - 1
+              : map['progress']['quality']['videoCodecID']],
+          map['progress']['quality']['totalSendBytes'],
+          map['progress']['quality']['audioSendBytes'],
+          map['progress']['quality']['videoSendBytes'],
+        );
+
         ZegoExpressEngine.onCapturedDataRecordProgressUpdate!(
             ZegoDataRecordProgress(map['progress']['duration'],
-                map['progress']['currentFileSize']),
+                map['progress']['currentFileSize'], quality),
             ZegoDataRecordConfig(map['config']['filePath'],
                 ZegoDataRecordType.values[map['config']['recordType']]),
             ZegoPublishChannel.values[map['channel']]);
@@ -3783,10 +3811,24 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         {'index': _index, 'streamType': streamType.index});
   }
 
+  @override
   Future<void> enableLocalCache(bool enable, String cacheDir) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'mediaPlayerEnableLocalCache',
         {'index': _index, 'enable': enable, 'cacheDir': cacheDir});
+  }
+
+  @override
+  Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics() async {
+    Map<String, dynamic> infoMap = await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerGetPlaybackStatistics', {'index': _index});
+    return ZegoMediaPlayerStatisticsInfo(
+        infoMap['videoSourceFps'],
+        infoMap['videoDecodeFps'],
+        infoMap['videoRenderFps'],
+        infoMap['audioSourceFps'],
+        infoMap['audioDecodeFps'],
+        infoMap['audioRenderFps']);
   }
 }
 
@@ -4654,6 +4696,20 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
         'y': rect.top,
         'width': rect.width,
         'height': rect.height,
+      },
+      'index': _index
+    });
+  }
+
+  @override
+  Future<void> enableAudioCapture(
+      bool enable, ZegoAudioFrameParam audioParam) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('enableAudioCaptureScreenCaptureSource', {
+      'enable': enable,
+      'audioParam': {
+        'sampleRate': audioParam.sampleRate.value,
+        'channel': audioParam.channel.index
       },
       'index': _index
     });

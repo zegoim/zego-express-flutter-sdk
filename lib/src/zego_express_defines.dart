@@ -1032,7 +1032,7 @@ enum ZegoMixerInputContentType {
   /// Mix stream for both audio and video
   Video,
 
-  /// Mix stream for video only
+  /// Mix stream for video only. On web platforms, this property does not take effect
   VideoOnly
 }
 
@@ -2468,8 +2468,15 @@ class ZegoCDNConfig {
   /// customized httpdns service. This feature is only supported for playing stream currently.
   ZegoHttpDNSType? httpdns;
 
+  /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
+  int? quicConnectMode;
+
   ZegoCDNConfig(this.url,
-      {this.authParam, this.protocol, this.quicVersion, this.httpdns});
+      {this.authParam,
+      this.protocol,
+      this.quicVersion,
+      this.httpdns,
+      this.quicConnectMode});
 }
 
 /// Relay to CDN info.
@@ -2802,7 +2809,7 @@ class ZegoMixerAudioConfig {
   /// codec ID, default is ZegoAudioCodecIDDefault
   ZegoAudioCodecID codecID;
 
-  /// Multi-channel audio stream mixing mode. If [ZegoAudioMixMode] is selected as [Focused], the SDK will select 4 input streams with [isAudioFocus] set as the focus voice highlight. If it is not selected or less than 4 channels are selected, it will automatically fill in 4 channels
+  /// Multi-channel audio stream mixing mode. If [ZegoAudioMixMode] is selected as [Focused], the SDK will select 4 input streams with [isAudioFocus] set as the focus voice highlight. If it is not selected or less than 4 channels are selected, it will automatically fill in 4 channels. On web platforms, this property does not take effect.
   ZegoAudioMixMode mixMode;
 
   ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID, this.mixMode);
@@ -2840,10 +2847,10 @@ class ZegoMixerVideoConfig {
   /// Video bitrate in kbps
   int bitrate;
 
-  /// Video quality, this value is valid when the video rate control mode parameter is set to constant quality. The valid value ranges from 0 to 51. The default value is 23. If you want better video quality, lower the quality value based on 23 to test the adjustment. If you want a smaller file size, test the adjustment by increasing the high quality value at the base of 23. Take the file size under the value x as an example. The file size under the value x + 6 is half the size of the file size under the value x, and the file size under the value x-6 is twice the size of the file size under the value x.
+  /// Video quality, this value is valid when the video rate control mode parameter is set to constant quality. The valid value ranges from 0 to 51. The default value is 23. If you want better video quality, lower the quality value based on 23 to test the adjustment. If you want a smaller file size, test the adjustment by increasing the high quality value at the base of 23. Take the file size under the value x as an example. The file size under the value x + 6 is half the size of the file size under the value x, and the file size under the value x-6 is twice the size of the file size under the value x. On web platforms, this property does not take effect.
   int quality;
 
-  /// Video bitrate control mode
+  /// Video bitrate control mode.  On web platforms, this property does not take effect.
   ZegoVideoRateControlMode rateControlMode;
 
   ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate,
@@ -2988,7 +2995,7 @@ class ZegoMixerImageInfo {
   /// The image path, if not empty, the image will be displayed, otherwise, the video will be displayed. JPG and PNG formats are supported. There are 2 ways to use it: 1. URI: Provide the picture to ZEGO technical support for configuration. After the configuration is complete, the picture URI will be provided, for example: preset-id://xxx.jpg. 2. URL: Only HTTP protocol is supported.
   String url;
 
-  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream is empty or not. Display image when the input stream is empty for 3 consecutive seconds. The default duration for determine a input stream is empty or not is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.
+  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream is empty or not. Display image when the input stream is empty for 3 consecutive seconds. The default duration for determine a input stream is empty or not is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.On web platforms, this property does not take effect.
   int? displayMode;
 
   ZegoMixerImageInfo(this.url, {this.displayMode});
@@ -3014,13 +3021,13 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
-  /// Input stream volume, valid range [0, 200], default is 100
+  /// Input stream volume, valid range [0, 200], default is 100. On web platforms, this property does not take effect.
   int volume;
 
-  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled
+  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled. On web platforms, this property does not take effect.
   bool isAudioFocus;
 
-  /// The direction of the audio. Valid direction is between 0 to 360. Set -1 means disable. Default value is -1
+  /// The direction of the audio. Valid direction is between 0 to 360. Set -1 means disable. Default value is -1. On web platforms, this property does not take effect.
   int audioDirection;
 
   /// Text watermark.
@@ -3035,7 +3042,7 @@ class ZegoMixerInput {
   /// Description: Video frame corner radius, in px. Required: False. Value range: Does not exceed the width and height of the video screen set by the [layout] parameter. Default value: 0.
   int? cornerRadius;
 
-  /// Set advanced configuration. Please contact ZEGO technical support.
+  /// Set advanced configuration. Please contact ZEGO technical support. On web platforms, this property does not take effect.
   Map<String, String>? advancedConfig;
 
   ZegoMixerInput(this.streamID, this.contentType, this.layout,
@@ -3087,7 +3094,7 @@ class ZegoMixerOutput {
   /// Mix stream output target, URL or stream ID, if set to be URL format, only RTMP URL surpported, for example rtmp://xxxxxxxx, addresses with two identical mixed-stream outputs cannot be passed in.
   String target;
 
-  /// Mix stream output video config
+  /// Mix stream output video config. On web platforms, this property does not take effect.
   ZegoMixerOutputVideoConfig? videoConfig;
 
   ZegoMixerOutput(this.target, {this.videoConfig});
@@ -3196,7 +3203,7 @@ class ZegoMixerTask {
   /// The watermark of the task
   ZegoWatermark watermark;
 
-  /// Mix stream whiteboard
+  /// Mix stream whiteboard. On web platforms, this property does not take effect.
   ZegoMixerWhiteboard whiteboard;
 
   /// Mix stream background color, The color value corresponding to RGBA is 0xRRGGBBAA, and setting the transparency of the background color is currently not supported. The AA in 0xRRGGBBAA is 00. For example, select RGB as \#87CEFA as the background color, this parameter passes 0x87CEFA00.
@@ -3205,19 +3212,19 @@ class ZegoMixerTask {
   /// The background image URL of the task
   String backgroundImageURL;
 
-  /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback.
+  /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback. On web platforms, this property does not take effect.
   bool enableSoundLevel;
 
-  /// The stream mixing alignment mode
+  /// The stream mixing alignment mode. On web platforms, this property does not take effect.
   ZegoStreamAlignmentMode streamAlignmentMode;
 
   /// User data, the length of user data should not be more than 1000 bytes,After setting, the streaming party can obtain the SEI content by listening to the callback of [onPlayerRecvSEI].
   Uint8List userData;
 
-  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.
+  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support. On web platforms, this property does not take effect.
   Map<String, String> advancedConfig;
 
-  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
   /// Create a mix stream task object with TaskID
@@ -3299,7 +3306,7 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
-  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
   /// Create a auto mix stream task object
@@ -3519,7 +3526,10 @@ class ZegoDataRecordProgress {
   /// Current recording file size in byte
   int currentFileSize;
 
-  ZegoDataRecordProgress(this.duration, this.currentFileSize);
+  /// The quality of current recording file
+  ZegoPublishStreamQuality quality;
+
+  ZegoDataRecordProgress(this.duration, this.currentFileSize, this.quality);
 }
 
 /// Network probe config
@@ -4617,6 +4627,13 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Whether to enable local caching.
   /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
   Future<void> enableLocalCache(bool enable, String cacheDir);
+  /// Get playback statistics.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get current playback statistics to monitor whether decoding and rendering anomalies occur in the player.
+  /// Use cases: Typically used in cloud-based media player scenarios.
+  /// When to call: Invoke after the [loadResource] callback succeeds.
+  Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics();
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -5564,6 +5581,17 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
+
+  /// Whether to collect the sound of the window process during window collection
+  ///
+  /// Available since: 3.13.0
+  /// Description: Whether to collect the sound of the window process during window collection.
+  /// When to call: Before starting the collection [startScreencapture].
+  /// Restrictions: Only applicable to Windows 10 and above versions.
+  ///
+  /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.
+  /// - [audioParam] Audio collection parameters.
+  Future<void> enableAudioCapture(bool enable, ZegoAudioFrameParam audioParam);
 
   /// Get screen capture source index.
   ///
