@@ -1439,7 +1439,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer renderingProgress:(unsigned long long)millisecond {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaPlayerRenderingProgress] idx: %d, event: %lld", mediaPlayer.index.intValue, millisecond);
+    // High frequency callbacks do not log
 
     GUARD_SINK
     if (sink) {

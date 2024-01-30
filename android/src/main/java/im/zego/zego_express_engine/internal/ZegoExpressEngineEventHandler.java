@@ -1614,7 +1614,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onMediaPlayerRenderingProgress(ZegoMediaPlayer mediaPlayer, long millisecond) {
             super.onMediaPlayerRenderingProgress(mediaPlayer, millisecond);
-            ZegoLog.log("[onMediaPlayerRenderingProgress] idx: %d, millisecond: %d", mediaPlayer.getIndex(), millisecond);
+            // High frequency callbacks do not log
 
             if (guardSink()) { return; }
 

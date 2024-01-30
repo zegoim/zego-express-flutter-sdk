@@ -860,7 +860,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
 }
 
 void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
-    ZF::logInfo("[onMediaPlayerRenderingProgress] index: %d, millisecond: %lld", mediaPlayer->getIndex(), millisecond);
+    // High frequency callbacks do not log
 
     if (eventSink_) {
         FTMap retMap;
