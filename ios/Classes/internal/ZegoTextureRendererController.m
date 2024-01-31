@@ -359,6 +359,7 @@
             @"width": @(param.size.width),
             @"height": @(param.size.height),
             @"isMirror": @(flipMode == ZegoVideoFlipModeX ? 1 : 0),
+            @"rotation": @(param.rotation),
             // TODO: Rotation & FlipModeY
         };
         if (self && self.eventSink != nil) {
