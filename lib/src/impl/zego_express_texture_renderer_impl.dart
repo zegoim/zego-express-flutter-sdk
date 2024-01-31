@@ -297,9 +297,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
 
       // rotation
       int? rotation = ZegoExpressTextureRenderer().getRotation(widget.textureID);
-      int? last_rotation = ZegoExpressTextureRenderer().getLastRotation(widget.textureID);
       if (rotation != null && rotation >= 0) {
-          ZegoExpressTextureRenderer().setLastRotation(widget.textureID, rotation);
           matrix4 = Matrix4.rotationZ(-pi/180*rotation);
       }
 
