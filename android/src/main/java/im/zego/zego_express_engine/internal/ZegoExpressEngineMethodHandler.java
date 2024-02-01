@@ -1518,6 +1518,7 @@ public class ZegoExpressEngineMethodHandler {
             playerConfig.sourceResourceType = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("sourceResourceType")));
             playerConfig.codecTemplateID = ZegoUtils.intValue((Number) playerConfigMap.get("codecTemplateID"));
             playerConfig.resourceSwitchMode = ZegoStreamResourceSwitchMode.getZegoStreamResourceSwitchMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceSwitchMode")));
+            playerConfig.resourceWhenStopPublish = ZegoStreamResourceType.getZegoStreamResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("resourceWhenStopPublish")));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
             if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {

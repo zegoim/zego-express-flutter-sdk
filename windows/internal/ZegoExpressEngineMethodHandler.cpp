@@ -1093,6 +1093,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
         config.codecTemplateID =
             (EXPRESS::ZegoResourceType)std::get<int32_t>(configMap[FTValue("codecTemplateID")]);
         config.resourceSwitchMode = (EXPRESS::ZegoStreamResourceSwitchMode)std::get<int32_t>(configMap[FTValue("resourceSwitchMode")]);
+        config.resourceWhenStopPublish = (EXPRESS::ZegoStreamResourceType)std::get<int32_t>(configMap[FTValue("resourceWhenStopPublish")]);
 
         std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
         if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("cdnConfig")])) {

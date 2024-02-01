@@ -1348,6 +1348,7 @@
         playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
         playerConfig.codecTemplateID = [ZegoUtils intValue:playerConfigMap[@"codecTemplateID"]];
         playerConfig.resourceSwitchMode = [ZegoUtils intValue:playerConfigMap[@"resourceSwitchMode"]];
+        playerConfig.resourceWhenStopPublish = [ZegoUtils intValue:playerConfigMap[@"resourceWhenStopPublish"]];
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
         if (videoCodecIDIndex > 4) {
