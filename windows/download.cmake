@@ -40,9 +40,9 @@ function(download_native_sdk WORKSPACE)
   # Download and extract the SDK
   file(DOWNLOAD "${DEPSURL}" "${LIBSDIR}/sdk.zip" TIMEOUT 60)
   execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf "${LIBSDIR}/sdk.zip" WORKING_DIRECTORY "${LIBSDIR}")
-  file(COPY "${LIBSDIR}/release/Library/x64" DESTINATION "${LIBSDIR}")
-  file(COPY "${LIBSDIR}/release/VERSION.txt" DESTINATION "${LIBSDIR}")
-  file(REMOVE_RECURSE "${LIBSDIR}/release")
+  file(COPY "${LIBSDIR}/debug/Library/x64" DESTINATION "${LIBSDIR}")
+  file(COPY "${LIBSDIR}/debug/VERSION.txt" DESTINATION "${LIBSDIR}")
+  file(REMOVE_RECURSE "${LIBSDIR}/debug")
   file(REMOVE "${LIBSDIR}/sdk.zip")
 
   message(NOTICE "[ZEGO][PLUGIN] Done!")
