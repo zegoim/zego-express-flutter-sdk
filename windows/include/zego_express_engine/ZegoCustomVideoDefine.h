@@ -290,4 +290,17 @@ struct FLUTTER_PLUGIN_EXPORT ZGFlutterAudioFrameParam {
     ZGFlutterAudioChannel channel;
 };
 
+/// Usage of Custom video processed data.
+enum ZGFlutterProcessedDataUsageType {
+    /// Preview.
+    ZG_FLUTTER_PROCESSED_DATA_USAGE_TYPE_PREVIEW = 0,
+
+    /// Publish.
+    ZG_FLUTTER_PROCESSED_DATA_USAGE_TYPE_PUBLISH = 1,
+
+    /// Both preview and publish.
+    ZG_FLUTTER_PROCESSED_DATA_USAGE_TYPE_BOTH = 2
+
+};
+
 #endif  // ZEGO_CUSTOM_VIDEO_DEFINE_H_

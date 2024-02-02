@@ -36,6 +36,16 @@
     [[ZegoExpressEngine sharedEngine] sendCustomVideoProcessedCVPixelBuffer:buffer timestamp:timestamp channel:(ZegoPublishChannel)channel];
 }
 
+- (void)sendCustomVideoProcessedCVPixelBuffer:(CVPixelBufferRef)buffer
+                                    timestamp:(CMTime)timestamp
+                                        usage:(ZGFlutterProcessedDataUsageType)usage
+                                      channel:(ZGFlutterPublishChannel)channel {
+    [[ZegoExpressEngine sharedEngine] sendCustomVideoProcessedCVPixelBuffer:buffer 
+                                                                  timestamp:timestamp 
+                                                                      usage:(ZegoProcessedDataUsageType)usage 
+                                                                    channel:(ZegoPublishChannel)channel];
+}
+
 # pragma mark ZegoCustomVideoProcessHandler
 - (void)onStart:(ZegoPublishChannel)channel {
     ZGLog(@"[CustomVideoProcess] onStart");

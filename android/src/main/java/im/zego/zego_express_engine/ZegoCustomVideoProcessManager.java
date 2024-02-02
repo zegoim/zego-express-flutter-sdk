@@ -67,6 +67,33 @@ public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandle
     }
 
     /**
+     * Send the [Texture] type video data after the pre-processing of the custom video to the SDK (for the specified channel), and support specified data usage.
+     *
+     * Available since: 3.14.0
+     * Description: When the custom video pre-processing is turned on, the [Texture] format video data after the custom video pre-processing is sent to the SDK, and other channels are supported.
+     * Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
+     * When to call: Must be called in the [onCapturedUnprocessedTextureData] callback.
+     * Restrictions: This interface takes effect when [enableCustomVideoProcessing] is called to enable custom video pre-processing and the bufferType of config is passed in [ZegoVideoBufferTypeGLTexture2D].
+     * Platform differences: Only valid on Android platform.
+     * Note: This function is only available in ZegoExpressVideo SDK!
+     *
+     * @param textureID texture ID.
+     * @param width Texture width.
+     * @param height Texture height.
+     * @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
+     * @param usage Data usage
+     * @param channel Publishing stream channel.
+     */
+    public void sendCustomVideoProcessedTextureData(int textureID, int width, int height,
+                                                             long referenceTimeMillisecond,
+                                                             ZGFlutterProcessedDataUsageType usage,
+                                                             ZGFlutterPublishChannel channel) {
+        ZegoExpressEngine.getEngine().sendCustomVideoProcessedTextureData(textureID, width, height, referenceTimeMillisecond, 
+            ZegoProcessedDataUsageType.getZegoProcessedDataUsageType(usage.value()),
+            ZegoPublishChannel.getZegoPublishChannel(channel.value()));
+    }
+
+    /**
      * Get SurfaceTexture for output data (for the specified channel).
      *
      * Available since: 2.2.0
