@@ -9,6 +9,7 @@ import im.zego.zego_express_engine.internal.ZegoLog;
 import im.zego.zegoexpress.callback.IZegoCustomVideoProcessHandler;
 import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import im.zego.zegoexpress.entity.ZegoVideoFrameParam;
+import im.zego.zegoexpress.constants.ZegoProcessedDataUsageType;
 
 public class ZegoCustomVideoProcessManager extends IZegoCustomVideoProcessHandler {
     private volatile static ZegoCustomVideoProcessManager singleton;
