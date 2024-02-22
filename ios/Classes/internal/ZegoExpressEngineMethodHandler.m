@@ -5424,6 +5424,17 @@
     }
 }
 
+- (void)copyrightedMusicSetScoringLevel:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        int level = [ZegoUtils intValue:call.arguments[@"level"]];
+        [self.copyrightedMusicInstance setScoringLevel: level];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicSetScoringLevel` but can't find specific instance" details:nil]);
+    }
+}
+
 - (void)copyrightedMusicStartScore:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (self.copyrightedMusicInstance) {

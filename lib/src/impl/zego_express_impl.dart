@@ -4443,6 +4443,12 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   }
 
   @override
+  Future<void> setScoringLevel(int level) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicSetScoringLevel', {'level': level});
+  }
+
+  @override
   Future<int> startScore(String resourceID, int pitchValueInterval) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'copyrightedMusicStartScore',

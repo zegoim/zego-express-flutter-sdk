@@ -5791,6 +5791,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void copyrightedMusicSetScoringLevel(MethodCall call, Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            int level = ZegoUtils.intValue((Number) call.argument("level"));
+            copyrightedMusicInstance.setScoringLevel(level);
+            result.success(null);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicSetScoringLevel` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
     public static void copyrightedMusicStartScore(MethodCall call, Result result) {
 
         if (copyrightedMusicInstance != null) {

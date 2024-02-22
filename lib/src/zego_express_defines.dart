@@ -5289,6 +5289,17 @@ abstract class ZegoCopyrightedMusic {
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getDuration(String resourceID);
 
+  /// Set the difficulty level of scoring.
+  ///
+  /// Available since: 2.22.0
+  /// Description: Users can set the scoring difficulty level through this function.
+  /// When to call: After calling [initCopyrightedMusic] to initialize copyrighted music successfully, call [startScore] to start scoring.
+  /// Default value: When this function is not called, the difficulty level of scoring is 4.
+  /// Restrictions: This function does not support dynamic settings. After calling this function successfully, the next call to [startScore] will take effect.
+  ///
+  /// - [level] The difficulty level of scoring. The level ranges from 0 to 4. The scoring difficulty decreases from 0 to 4.
+  Future<void> setScoringLevel(int level);
+
   /// Start scoring.
   ///
   /// Available since: 2.15.0
