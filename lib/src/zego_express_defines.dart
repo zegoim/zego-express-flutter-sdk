@@ -2661,6 +2661,12 @@ class ZegoPlayStreamQuality {
   /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
   int videoCumulativeDecodeTime;
 
+  /// Mute video
+  int muteVideo;
+
+  /// Mute audio
+  int muteAudio;
+
   ZegoPlayStreamQuality(
       this.videoRecvFPS,
       this.videoDejitterFPS,
@@ -2694,7 +2700,9 @@ class ZegoPlayStreamQuality {
       this.videoCumulativeBreakCount,
       this.videoCumulativeBreakTime,
       this.videoCumulativeBreakRate,
-      this.videoCumulativeDecodeTime);
+      this.videoCumulativeDecodeTime,
+      this.muteVideo,
+      this.muteAudio);
 }
 
 /// Cross APP playing stream configuration.
