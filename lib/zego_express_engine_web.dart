@@ -718,7 +718,7 @@ class ZegoExpressEngineWeb {
 
   Future<void> startPreview(dynamic canvas, int channel) async {
     previewView = document.getElementById("zego-view-${canvas["view"]}");
-    previewView.muted = true;
+    previewView?.muted = true;
     ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
 
     await (() {
