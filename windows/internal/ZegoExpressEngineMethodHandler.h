@@ -857,6 +857,9 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicSendExtendedRequest(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicSetScoringLevel(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicStartScore(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

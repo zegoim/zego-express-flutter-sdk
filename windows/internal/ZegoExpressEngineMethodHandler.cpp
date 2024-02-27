@@ -4129,6 +4129,19 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicSendExtendedRequest(
     }
 }
 
+void ZegoExpressEngineMethodHandler::copyrightedMusicSetScoringLevel(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    if (copyrightedMusic_) {
+        auto level = std::get<int32_t>(argument[FTValue("level")]);
+        copyrightedMusic_->setScoringLevel(level);
+        result->Success();
+    } else {
+        result->Error("copyrightedMusicSetScoringLevel_Can_not_find_instance",
+                      "Invoke `copyrightedMusicSetScoringLevel` but can't find specific instance");
+    }
+}
+
 void ZegoExpressEngineMethodHandler::copyrightedMusicStartScore(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

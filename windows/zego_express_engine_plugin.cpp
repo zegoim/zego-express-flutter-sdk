@@ -357,6 +357,7 @@ static const std::map<
         EngineMethodHandler(copyrightedMusicResetScore),
         EngineMethodHandler(copyrightedMusicResumeScore),
         EngineMethodHandler(copyrightedMusicSendExtendedRequest),
+        EngineMethodHandler(copyrightedMusicSetScoringLevel),
         EngineMethodHandler(copyrightedMusicStartScore),
         EngineMethodHandler(copyrightedMusicStopScore),
         EngineMethodHandler(copyrightedMusicGetFullScore),
