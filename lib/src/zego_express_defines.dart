@@ -766,6 +766,18 @@ enum ZegoStreamResourceSwitchMode {
   KeepOriginal
 }
 
+/// Stream Resource Type
+enum ZegoStreamResourceType {
+  /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
+  Default,
+
+  /// CDN resource.
+  CDN,
+
+  /// L3 resource.
+  L3
+}
+
 /// Update type.
 enum ZegoUpdateType {
   /// Add
@@ -2524,13 +2536,17 @@ class ZegoPlayerConfig {
   /// Play resource switching strategy mode, the default is ZegoStreamResourceSwitchModeDefault
   ZegoStreamResourceSwitchMode? resourceSwitchMode;
 
+  /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect when the user sets [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
+  ZegoStreamResourceType? resourceWhenStopPublish;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
       this.videoCodecID,
       this.sourceResourceType,
       this.codecTemplateID,
-      this.resourceSwitchMode});
+      this.resourceSwitchMode,
+      this.resourceWhenStopPublish});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -2538,7 +2554,8 @@ class ZegoPlayerConfig {
         videoCodecID = ZegoVideoCodecID.Unknown,
         sourceResourceType = ZegoResourceType.RTC,
         codecTemplateID = 0,
-        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default;
+        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default,
+        resourceWhenStopPublish = ZegoStreamResourceType.Default;
 }
 
 /// Played stream quality information.
@@ -4619,6 +4636,7 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Whether to enable local caching.
   /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
   Future<void> enableLocalCache(bool enable, String cacheDir);
+
   /// Get playback statistics.
   ///
   /// Available since: 3.12.0

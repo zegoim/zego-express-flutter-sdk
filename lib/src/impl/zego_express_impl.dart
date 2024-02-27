@@ -800,6 +800,8 @@ class ZegoExpressImpl {
               'codecTemplateID': config.codecTemplateID ?? 0,
               'resourceSwitchMode': config.resourceSwitchMode?.index ??
                   ZegoStreamResourceSwitchMode.Default.index,
+              'resourceWhenStopPublish': config.resourceWhenStopPublish?.index ??
+                  ZegoStreamResourceType.Default.index,
             }
           : {}
     });
