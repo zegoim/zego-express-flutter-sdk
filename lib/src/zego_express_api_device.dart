@@ -84,7 +84,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 1.1.0
   /// Description: Chooses to use the specified audio device.
-  /// When to call: After creating the engine [createEngine] and before call [startPublishingStream] or [startPlayingStream].
+  /// When to call: After creating the engine [createEngine].
   /// Restrictions: Only supports Windows / macOS / Linux
   ///
   /// - [deviceType] Audio device type

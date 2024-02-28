@@ -679,7 +679,10 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// When to call: After the engine is created [createEngine].
   /// Restrictions: Calling in publishing or preview is invalid when using the web platform.
   /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type.
-  ///  2. When using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main
+  ///  2. When using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main.
+  ///  3. Preemptive video sources are not allowed to be used on multiple channels at the same time, such as ZegoVideoSourceType.Camera and ZegoVideoSourceType.ScreenCapture.
+  ///  4. The other publish channel can copy the main publish channel only when the main publish channel uses internal video capture. A maximum of one copy is supported.
+  ///  5. When using ZegoVideoSourceType.Player video source type, please ensure that the ZegoMediaPlayer instance is created successfully.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [source] Video capture source.
@@ -700,7 +703,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Restrictions: Calling in publishing or preview is invalid when using the web platform.
   /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type.
   ///  2. When using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main.
-  ///  3. config applies only to the main channel ZegoPublishChannel.Main, This parameter is invalid when the channel is not the main channel.
+  ///  3. Preemptive audio sources are not allowed to be used on multiple channels at the same time, such as ZegoAudioSourceType.Microphone.
+  ///  4. When using ZegoAudioSourceType.MediaPlayer audio source type, please ensure that the ZegoMediaPlayer instance is created successfully.
   ///
   /// - [source] Audio capture source.
   /// - [config] Audio capture source mix config. This parameter applies only to the Main push channel ZegoPublishChannel. main. This parameter is invalid when channel is not the main push channel.

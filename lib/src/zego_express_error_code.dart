@@ -68,6 +68,15 @@ class ZegoErrorCode {
   /// Description: The room is logged in, this setting is not supported. <br>Cause: Only supports setting before logging into the room. <br>Solutions: Please set it before calling [loginRoom] or after calling [logoutRoom]. Note that if you log in to multiple rooms, you need to log out of all rooms before setting.
   static const int CommonConfigAfterRoomLoggedIn = 1000067;
 
+  /// Description: Failed to load SDK dynamic library. <br>Cause: Incorrect SDK dynamic path passed in. <br>Solutions: Please pass in the correct SDK dynamic library path.
+  static const int CommonLoadLibraryFailed = 1000070;
+
+  /// Description: Failed to obtain SDK export function when loading SDK dynamic library. <br>Cause: SDK dynamic library version does not match. <br>Solutions: Please load the matching version of the SDK dynamic library.
+  static const int CommonLoadLibraryFuncNotFound = 1000071;
+
+  /// Description: This call is not supported. <br>Cause: ZEGOEXP_EXPLICIT macro is not enabled. <br>Solutions: Please add the ZEGOEXP_EXPLICIT macro to the preprocessor.
+  static const int CommonLoadLibraryNotSupport = 1000072;
+
   /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Solutions: Please check whether the Android JVM environment is normal or contact ZEGO technical support.
   static const int CommonInnerNullptr = 1000090;
 
@@ -268,6 +277,9 @@ class ZegoErrorCode {
 
   /// Description: The user has logged in elsewhere.  <br>Solutions:  Check whether the user has logged in elsewhere.
   static const int RoomRoomLoginOther = 1002086;
+
+  /// Description: License authentication is used, and when using the relevant function, the license is configured with a functional limitation that does not allow the use of the function.  <br>Solutions:  Proofread the license's functionality limitations and use the functionality appropriately.
+  static const int RoomRoomLicenseFeatureLimit = 1002087;
 
   /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError = 1002099;

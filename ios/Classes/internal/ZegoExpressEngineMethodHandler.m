@@ -2086,6 +2086,11 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     taskObject.enableSoundLevel = enableSoundLevel;
+    
+    // Stream AlignmentMode
+    int streamAlignmentMode = [ZegoUtils intValue:call.arguments[@"streamAlignmentMode"]];
+    taskObject.streamAlignmentMode = (ZegoStreamAlignmentMode)streamAlignmentMode;
+
     // minPlayStreamBufferLength
     taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
 
