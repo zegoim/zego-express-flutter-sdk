@@ -2291,6 +2291,10 @@ public class ZegoExpressEngineMethodHandler {
         // Enable SoundLevel
         boolean enableSoundLevel = ZegoUtils.boolValue((Boolean) call.argument("enableSoundLevel"));
         taskObject.enableSoundLevel = enableSoundLevel;
+        
+        ZegoStreamAlignmentMode streamAlignmentMode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("streamAlignmentMode")));
+        taskObject.streamAlignmentMode = streamAlignmentMode;
+        
         // minPlayStreamBufferLength
         taskObject.minPlayStreamBufferLength = ZegoUtils.intValue((Number)call.argument("minPlayStreamBufferLength"));
 

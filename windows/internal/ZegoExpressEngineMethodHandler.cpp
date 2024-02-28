@@ -4694,6 +4694,9 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(
     }
     // Enable SoundLevel
     task.enableSoundLevel = std::get<bool>(argument[FTValue("enableSoundLevel")]);
+    // streamAlignmentMode
+    task.streamAlignmentMode = (EXPRESS::ZegoStreamAlignmentMode)std::get<int32_t>(
+        argument[FTValue("streamAlignmentMode")]);
     // minPlayStreamBufferLength
     task.minPlayStreamBufferLength =
         std::get<int32_t>(argument[FTValue("minPlayStreamBufferLength")]);

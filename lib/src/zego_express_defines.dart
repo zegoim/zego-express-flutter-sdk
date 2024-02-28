@@ -441,7 +441,13 @@ enum ZegoReverbPreset {
   GramoPhone,
 
   /// Enhanced KTV reverb effect. Provide KTV effect with more concentrated voice and better brightness. Compared with the original KTV reverb effect, the reverberation time is shortened and the dry-wet ratio is increased.
-  EnhancedKTV
+  EnhancedKTV,
+
+  /// Enhanced Rock reverb effect
+  EnhancedRock,
+
+  /// Enhanced misty reverb effect
+  EnhancedMisty
 }
 
 /// Mode of Electronic Effects.
@@ -2661,10 +2667,10 @@ class ZegoPlayStreamQuality {
   /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
   int videoCumulativeDecodeTime;
 
-  /// Mute video
+  /// Mute video (Available since 3.13.0)
   int muteVideo;
 
-  /// Mute audio
+  /// Mute audio (Available since 3.13.0)
   int muteAudio;
 
   ZegoPlayStreamQuality(
@@ -3323,6 +3329,9 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
+  /// Stream mixing alignment mode.
+  ZegoStreamAlignmentMode streamAlignmentMode;
+
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
@@ -3333,6 +3342,7 @@ class ZegoAutoMixerTask {
         outputList = [],
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
         enableSoundLevel = false,
+        streamAlignmentMode = ZegoStreamAlignmentMode.None,
         minPlayStreamBufferLength = -1;
 
   Map<String, dynamic> toMap() {
@@ -3342,6 +3352,7 @@ class ZegoAutoMixerTask {
       'audioConfig': this.audioConfig.toMap(),
       'outputList': this.outputList,
       'enableSoundLevel': this.enableSoundLevel,
+      'streamAlignmentMode': this.streamAlignmentMode.index,
       'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
   }
