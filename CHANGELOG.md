@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.12.5
+
+### **Bug Fixes**
+
+1. Fixed the issue where the video rendering black screen on Mac 14.1 safari.
+
 ## 3.12.4
 
 ### **Bug Fixes**
