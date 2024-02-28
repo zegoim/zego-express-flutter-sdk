@@ -119,6 +119,7 @@ import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceSwitchMode;
+import im.zego.zegoexpress.constants.ZegoStreamResourceType;
 import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
