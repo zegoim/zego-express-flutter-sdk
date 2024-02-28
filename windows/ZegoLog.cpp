@@ -16,8 +16,8 @@ void ZF::logInfo(const char* format, ...) {
 
     if (result >= 4096) {
         log_buf[4092] = '.';
-		log_buf[4093] = '.';
-		log_buf[4094] = '.';
+        log_buf[4093] = '.';
+        log_buf[4094] = '.';
         log_buf[4095] = '\0';
     }
 
