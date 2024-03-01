@@ -304,8 +304,8 @@ void ZegoExpressEngineMethodHandler::callExperimentalAPI(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     auto params = std::get<std::string>(argument[FTValue("params")]);
-    EXPRESS::ZegoExpressSDK::getEngine()->callExperimentalAPI(params);
-    result->Success();
+    auto resultStr = EXPRESS::ZegoExpressSDK::getEngine()->callExperimentalAPI(params);
+    result->Success(resultStr);
 }
 
 void ZegoExpressEngineMethodHandler::setDummyCaptureImagePath(
