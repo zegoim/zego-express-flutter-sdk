@@ -454,6 +454,7 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
 
 // static
 void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
+
     ZegoExpressEngineMethodHandler::getInstance().setPluginRegistrar(registrar);
 
     auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
@@ -480,7 +481,10 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWind
 
 ZegoExpressEnginePlugin::ZegoExpressEnginePlugin() {}
 
-ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {}
+ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {
+    ZegoExpressEngineEventHandler::getInstance()->clearEventSink();
+    ZegoExpressEngineMethodHandler::getInstance().clearPluginRegistrar();
+}
 
 std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>>
 ZegoExpressEnginePlugin::OnListenInternal(

@@ -17,6 +17,10 @@
 #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 
+void ZegoExpressEngineMethodHandler::clearPluginRegistrar() {
+    ZegoTextureRendererController::getInstance()->uninit();
+}
+
 void ZegoExpressEngineMethodHandler::initApiCalledCallback() {
     EXPRESS::ZegoExpressSDK::setApiCalledCallback(ZegoExpressEngineEventHandler::getInstance());
 }
