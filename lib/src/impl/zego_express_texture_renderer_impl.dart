@@ -134,7 +134,7 @@ class ZegoExpressTextureRenderer {
   static final Map<int, Color> _backgroundColorMap = {};
   static final Map<int, Size> _sizeMap = {};
   static final Map<int, int?> _mirrorMap = {};
-  static final Map<int, int> _rotationMap = {};
+  static final Map<int, int?> _rotationMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
