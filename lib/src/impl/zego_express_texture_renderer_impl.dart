@@ -200,7 +200,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
               ZegoViewMode.AspectFit;
 
       switch (viewMode) {
-        case ZegoViewMode.AspectFit:
+        case ZegoViewMode.AspectFill:
           {
             if (src_ar > dst_ar) {
               height_factor = dst_ar / src_ar;
@@ -223,7 +223,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
                 (rect.height * pixelRatio).toInt());
           }
           break;
-        case ZegoViewMode.AspectFill:
+        case ZegoViewMode.AspectFit:
           {
             double factor_y = 1.0;
             double w = 0.0;
