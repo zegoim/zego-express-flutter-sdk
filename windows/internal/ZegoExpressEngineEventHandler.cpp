@@ -1545,7 +1545,7 @@ void ZegoExpressEngineEventHandler::onRemoteSpeakerStateUpdate(
 void ZegoExpressEngineEventHandler::onAudioVADStateUpdate(
     EXPRESS::ZegoAudioVADStableStateMonitorType type, EXPRESS::ZegoAudioVADType state) {
 
-    ZF::logInfo("[onRemoteSpeakerStateUpdate] type: %d, state: %d", type, state);
+    ZF::logInfo("[onAudioVADStateUpdate] type: %d, state: %d", type, state);
 
     if (eventSink_) {
         FTMap retMap;
@@ -1561,7 +1561,7 @@ void ZegoExpressEngineEventHandler::onAudioVADStateUpdate(
 void ZegoExpressEngineEventHandler::onIMRecvBroadcastMessage(
     const std::string &roomID, std::vector<EXPRESS::ZegoBroadcastMessageInfo> messageList) {
 
-    ZF::logInfo("[onRemoteSpeakerStateUpdate] roomID: %s, messageListCount: %d", roomID.c_str(), messageList.size());
+    ZF::logInfo("[onIMRecvBroadcastMessage] roomID: %s, messageListCount: %d", roomID.c_str(), messageList.size());
 
     if (eventSink_) {
         FTMap retMap;
