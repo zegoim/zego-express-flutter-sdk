@@ -26,6 +26,7 @@ class ZegoExpressTextureRenderer {
     _mirrorMap.clear();
     _sizeMap.clear();
     _viewModeMap.clear();
+    _rotationMap.clear();
     if (!kIsWeb && !kIsAndroid) {
       await _streamSubscriptionTextureRendererController?.cancel();
       _streamSubscriptionTextureRendererController = null;
@@ -86,6 +87,7 @@ class ZegoExpressTextureRenderer {
   Color? getBackgroundColor(int textureID) => _backgroundColorMap[textureID];
   Size? getSize(int textureID) => _sizeMap[textureID];
   int? getMirror(int textureID) => _mirrorMap[textureID];
+  int? getRotation(int textureID) => _rotationMap[textureID];
 
   bool removeTexture(int textureID) {
     if (_viewModeMap.containsKey(textureID)) {
@@ -115,6 +117,7 @@ class ZegoExpressTextureRenderer {
           _sizeMap[textureID] = Size(double.parse(map['width'].toString()),
               double.parse(map['height'].toString()));
           _mirrorMap[textureID] = map['isMirror'];
+          _rotationMap[textureID] = map['rotation'];
           _updateController.sink
               .add({'textureID': textureID, 'type': 'update'});
       }
@@ -131,6 +134,7 @@ class ZegoExpressTextureRenderer {
   static final Map<int, Color> _backgroundColorMap = {};
   static final Map<int, Size> _sizeMap = {};
   static final Map<int, int?> _mirrorMap = {};
+  static final Map<int, int?> _rotationMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -179,65 +183,79 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
     super.dispose();
   }
 
-  Rect _calculateHeight(Size size, double width, double height) {
-    var textureWidth = width;
-    var textureHeight = textureWidth * size.height / size.width;
-    var x = (width - textureWidth) / 2;
-    var y = (height - textureHeight) / 2;
-    return Rect.fromLTWH(x, y, textureWidth, textureHeight);
-  }
-
-  Rect _calculateWidth(Size size, double width, double height) {
-    var textureHeight = height;
-    var textureWidth = textureHeight * size.width / size.height;
-    var x = (width - textureWidth) / 2;
-    var y = (height - textureHeight) / 2;
-    return Rect.fromLTWH(x, y, textureWidth, textureHeight);
-  }
-
-  Rect _viewModeCalculate(double width, double height) {
+  Rect _viewModeCalculate(
+      Size? size, double width, double height, int? rotation) {
     final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     var rect = Rect.fromLTWH(0, 0, width, height);
 
-    Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
     if (size != null && size.width > 0.0 && size.height > 0.0) {
+      double src_ar = size.width / size.height;
+      double dst_ar = width / height;
+      double width_factor = 1.0;
+      double height_factor = 1.0;
+      double factor_x = 1.0;
+
       var viewMode =
           ZegoExpressTextureRenderer().getViewMode(widget.textureID) ??
               ZegoViewMode.AspectFit;
 
       switch (viewMode) {
-        case ZegoViewMode.AspectFit:
+        case ZegoViewMode.AspectFill:
           {
-            if (size.width > size.height) {
-              rect = _calculateHeight(size, width, height);
-              if (rect.height > height) {
-                rect = _calculateWidth(size, width, height);
-              }
+            if (src_ar > dst_ar) {
+              height_factor = dst_ar / src_ar;
             } else {
-              rect = _calculateWidth(size, width, height);
-              if (rect.width > width) {
-                rect = _calculateHeight(size, width, height);
-              }
+              width_factor = src_ar / dst_ar;
             }
+
+            double w = width * width_factor;
+            double h = height * height_factor;
+
+            if (rotation != null && (rotation == 90 || rotation == 270)) {
+              factor_x = width / h;
+            }
+
+            rect = Rect.fromLTWH((width - w * factor_x) / 2,
+                (height - h * factor_x) / 2, w * factor_x, h * factor_x);
             widget.updateTextureRendererSize(
                 widget.textureID,
                 (rect.width * pixelRatio).toInt(),
                 (rect.height * pixelRatio).toInt());
           }
           break;
-        case ZegoViewMode.AspectFill:
+        case ZegoViewMode.AspectFit:
           {
-            if (size.width > size.height) {
-              rect = _calculateWidth(size, width, height);
-              if (rect.width < width) {
-                rect = _calculateHeight(size, width, height);
+            double factor_y = 1.0;
+            double w = 0.0;
+            double h = 0.0;
+            if (src_ar > dst_ar) {
+              width_factor = src_ar / dst_ar;
+              w = width * width_factor;
+              h = height * height_factor;
+
+              if (rotation != null && (rotation == 90 || rotation == 270)) {
+                factor_x = height / w;
+                factor_y = height / w;
               }
             } else {
-              rect = _calculateHeight(size, width, height);
-              if (rect.height < height) {
-                rect = _calculateWidth(size, width, height);
+              height_factor = dst_ar / src_ar;
+              w = width;
+              h = height * height_factor;
+
+              if (rotation != null && (rotation == 90 || rotation == 270)) {
+                if (1 / src_ar > dst_ar) {
+                  factor_x = height / w;
+                  factor_y = height / w;
+                } else {
+                  factor_x = src_ar;
+                  factor_y = src_ar;
+                }
               }
             }
+
+            rect = Rect.fromLTWH((width - w * factor_x) / 2,
+                (height - h * factor_y) / 2, w * factor_x, h * factor_y);
+
             widget.updateTextureRendererSize(
                 widget.textureID,
                 (rect.width * pixelRatio).toInt(),
@@ -245,6 +263,22 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
           }
           break;
         case ZegoViewMode.ScaleToFill:
+          {
+            double w = width;
+            double h = height;
+            double factor_y = 1.0;
+            if (rotation != null && (rotation == 90 || rotation == 270)) {
+              factor_x = height / w;
+              factor_y = width / h;
+            }
+
+            rect = Rect.fromLTWH((width - w * factor_x) / 2,
+                (height - h * factor_y) / 2, w * factor_x, h * factor_y);
+            widget.updateTextureRendererSize(
+                widget.textureID,
+                (rect.width * pixelRatio).toInt(),
+                (rect.height * pixelRatio).toInt());
+          }
           break;
       }
     } else {
@@ -257,33 +291,53 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: ((context, constraints) {
-      // Calculate the scaled size
-      var rect = _viewModeCalculate(
-          constraints.biggest.width, constraints.biggest.height);
-      var textureWidth = rect.width;
-      var textureHeight = rect.height;
-      var x = rect.left;
-      var y = rect.top;
+      Widget child = Texture(
+        textureId: widget.textureID,
+      );
+      Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
+      Matrix4 matrix4 = Matrix4.identity();
+      Matrix4 matrix4_1 = Matrix4.identity();
+
+      // rotation
+      int? rotation =
+          ZegoExpressTextureRenderer().getRotation(widget.textureID);
+      if (rotation != null && rotation >= 0) {
+        matrix4 = Matrix4.rotationZ(-pi / 180 * rotation);
+      }
 
       var backgroundColor =
           ZegoExpressTextureRenderer().getBackgroundColor(widget.textureID) ??
               Colors.black;
 
-      Widget child = Texture(
-        textureId: widget.textureID,
-      );
-      // mirror
+      // mirror rotation
       int? isMirror = ZegoExpressTextureRenderer().getMirror(widget.textureID);
       if (isMirror != null && isMirror == 1) {
-        var matrix4 = Matrix4.rotationY(pi);
-        matrix4.setTranslationRaw(textureWidth, 0, 0);
+        matrix4_1 = Matrix4.rotationY(pi);
+        // matrix4.setTranslationRaw(textureWidth, 0, 0);
+      }
+
+      // 矩阵相乘
+      Matrix4 result = matrix4.multiplied(matrix4_1);
+
+      if (result != null) {
         child = Transform(
-          transform: matrix4,
+          transform: result,
           child: Texture(
             textureId: widget.textureID,
           ),
+          alignment: Alignment.center,
         );
       }
+
+      // Calculate the scaled size
+      var rect = _viewModeCalculate(size, constraints.biggest.width,
+          constraints.biggest.height, rotation);
+
+      var textureWidth = rect.width;
+      var textureHeight = rect.height;
+      var x = rect.left;
+      var y = rect.top;
+
       return Stack(
         children: [
           Container(

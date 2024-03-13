@@ -69,3 +69,21 @@ void ZegoCustomVideoProcessManager::sendCustomVideoProcessedRawData(const unsign
     
     ZEGO::EXPRESS::ZegoExpressSDK::getEngine()->sendCustomVideoProcessedRawData(data, dataLength, zegoParam, referenceTimeMillisecond, (ZEGO::EXPRESS::ZegoPublishChannel)channel);
 }
+
+void ZegoCustomVideoProcessManager::sendCustomVideoProcessedRawData(
+        const unsigned char **data, unsigned int *dataLength, ZGFlutterVideoFrameParam params,
+        unsigned long long referenceTimeMillisecond, ZGFlutterProcessedDataUsageType usage,
+        ZGFlutterPublishChannel channel) {
+    ZEGO::EXPRESS::ZegoVideoFrameParam zegoParam;
+    zegoParam.format = (ZEGO::EXPRESS::ZegoVideoFrameFormat)params.format;
+    zegoParam.height = params.height;
+    zegoParam.width = params.width;
+    zegoParam.rotation = params.rotation;
+    for (size_t i = 0; i < 4; i++)
+    {
+        zegoParam.strides[i] = params.strides[i];
+    }
+    
+    ZEGO::EXPRESS::ZegoExpressSDK::getEngine()->sendCustomVideoProcessedRawData(data, dataLength, zegoParam, referenceTimeMillisecond,
+        (ZEGO::EXPRESS::ZegoProcessedDataUsageType)usage, (ZEGO::EXPRESS::ZegoPublishChannel)channel);
+}

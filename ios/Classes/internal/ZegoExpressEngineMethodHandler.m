@@ -1007,8 +1007,9 @@
 
     NSString *targetURL = call.arguments[@"targetURL"];
     NSString *streamID = call.arguments[@"streamID"];
+    int timeout = [ZegoUtils intValue:call.arguments[@"timeout"]];
 
-    [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID callback:^(int errorCode) {
+    [[ZegoExpressEngine sharedEngine] addPublishCdnUrl:targetURL streamID:streamID timeout:timeout callback:^(int errorCode) {
         result(@{@"errorCode": @(errorCode)});
     }];
 }
@@ -1038,6 +1039,7 @@
         cdnConfig.authParam = authParam;
         cdnConfig.protocol = config[@"protocol"];
         cdnConfig.quicVersion = config[@"quicVersion"];
+        cdnConfig.quicConnectMode = [ZegoUtils intValue:config[@"quicConnectMode"]];
         
         int httpdnsIndex = [ZegoUtils intValue:config[@"httpdns"]];
         cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
@@ -1346,6 +1348,7 @@
         playerConfig.sourceResourceType = (ZegoResourceType)[ZegoUtils intValue:playerConfigMap[@"sourceResourceType"]];
         playerConfig.codecTemplateID = [ZegoUtils intValue:playerConfigMap[@"codecTemplateID"]];
         playerConfig.resourceSwitchMode = [ZegoUtils intValue:playerConfigMap[@"resourceSwitchMode"]];
+        playerConfig.resourceWhenStopPublish = [ZegoUtils intValue:playerConfigMap[@"resourceWhenStopPublish"]];
         int videoCodecIDIndex = [ZegoUtils intValue:playerConfigMap[@"videoCodecID"]];
         playerConfig.videoCodecID = (ZegoVideoCodecID)videoCodecIDIndex;
         if (videoCodecIDIndex > 4) {
@@ -1360,6 +1363,7 @@
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
+            cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
             
             int httpdnsIndex = [ZegoUtils intValue:cdnConfigMap[@"httpdns"]];
             cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
@@ -2082,6 +2086,11 @@
     // Enable SoundLevel
     BOOL enableSoundLevel = [ZegoUtils boolValue:call.arguments[@"enableSoundLevel"]];
     taskObject.enableSoundLevel = enableSoundLevel;
+    
+    // Stream AlignmentMode
+    int streamAlignmentMode = [ZegoUtils intValue:call.arguments[@"streamAlignmentMode"]];
+    taskObject.streamAlignmentMode = (ZegoStreamAlignmentMode)streamAlignmentMode;
+
     // minPlayStreamBufferLength
     taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
 
@@ -5421,6 +5430,17 @@
         }];
     } else {
         result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicSendExtendedRequest` but can't find specific instance" details:nil]);
+    }
+}
+
+- (void)copyrightedMusicSetScoringLevel:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (self.copyrightedMusicInstance) {
+        int level = [ZegoUtils intValue:call.arguments[@"level"]];
+        [self.copyrightedMusicInstance setScoringLevel: level];
+        result(nil);
+    } else {
+        result([FlutterError errorWithCode:[@"copyrightedMusic_Can_not_find_Instance" uppercaseString] message:@"Invoke `copyrightedMusicSetScoringLevel` but can't find specific instance" details:nil]);
     }
 }
 

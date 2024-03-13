@@ -101,9 +101,7 @@ class ZegoTextureRenderer {
                                                                 size_t height);
 
   // Checks if texture registrar, texture id and texture are available.
-  bool TextureRegistered() {
-    return textureRegistrar_ && texture_ && textureID_ > -1;
-  }
+  bool TextureRegistered();
 
   template<typename T> void srcFrameFormatToFlutterFormat();
 

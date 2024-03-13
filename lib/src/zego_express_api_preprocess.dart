@@ -134,7 +134,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Default value: When this function is not called, the beauty environment is not activated by default.
   /// When to call: Must be called before calling [startPreview], [startPublishingStream]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
   /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
-  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​Effects SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
   /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   Future<void> startEffectsEnv() async {
@@ -148,7 +148,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// Use cases: It is often used in scenes such as video calls and live broadcasts.
   /// When to call: Must be called before calling [startPreview], [startPublishingStream]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
   /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
-  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] for best results.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​Effects SDK [ZegoEffects] for best results.
   /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   Future<void> stopEffectsEnv() async {
@@ -163,7 +163,7 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
   /// When to call: You must call [startEffectsEnv] to enable the beauty environment before calling this function.
   /// Default value: When this function is not called, the beauty effect is not enabled by default.
   /// Related APIs: You can call the [setBeautifyOption] function to adjust the beauty parameters.
-  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​vision SDK [ZegoEffects] for best results.
+  /// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI Effects SDK [ZegoEffects] for best results.
   /// Restrictions: If this function is used on the Android platform, it only supports 5.0 and above, SDK version 21 and above. Calling in publishing or preview is invalid when using the web platform.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///

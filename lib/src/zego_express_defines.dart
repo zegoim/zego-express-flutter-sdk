@@ -441,7 +441,13 @@ enum ZegoReverbPreset {
   GramoPhone,
 
   /// Enhanced KTV reverb effect. Provide KTV effect with more concentrated voice and better brightness. Compared with the original KTV reverb effect, the reverberation time is shortened and the dry-wet ratio is increased.
-  EnhancedKTV
+  EnhancedKTV,
+
+  /// Enhanced Rock reverb effect
+  EnhancedRock,
+
+  /// Enhanced misty reverb effect
+  EnhancedMisty
 }
 
 /// Mode of Electronic Effects.
@@ -764,6 +770,18 @@ enum ZegoStreamResourceSwitchMode {
 
   /// Keep using original resource when publishing, not switch to RTC resource.
   KeepOriginal
+}
+
+/// Stream Resource Type
+enum ZegoStreamResourceType {
+  /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
+  Default,
+
+  /// CDN resource.
+  CDN,
+
+  /// L3 resource.
+  L3
 }
 
 /// Update type.
@@ -2468,8 +2486,15 @@ class ZegoCDNConfig {
   /// customized httpdns service. This feature is only supported for playing stream currently.
   ZegoHttpDNSType? httpdns;
 
+  /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
+  int? quicConnectMode;
+
   ZegoCDNConfig(this.url,
-      {this.authParam, this.protocol, this.quicVersion, this.httpdns});
+      {this.authParam,
+      this.protocol,
+      this.quicVersion,
+      this.httpdns,
+      this.quicConnectMode});
 }
 
 /// Relay to CDN info.
@@ -2517,13 +2542,17 @@ class ZegoPlayerConfig {
   /// Play resource switching strategy mode, the default is ZegoStreamResourceSwitchModeDefault
   ZegoStreamResourceSwitchMode? resourceSwitchMode;
 
+  /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect when the user sets [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
+  ZegoStreamResourceType? resourceWhenStopPublish;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
       this.videoCodecID,
       this.sourceResourceType,
       this.codecTemplateID,
-      this.resourceSwitchMode});
+      this.resourceSwitchMode,
+      this.resourceWhenStopPublish});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -2531,7 +2560,8 @@ class ZegoPlayerConfig {
         videoCodecID = ZegoVideoCodecID.Unknown,
         sourceResourceType = ZegoResourceType.RTC,
         codecTemplateID = 0,
-        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default;
+        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default,
+        resourceWhenStopPublish = ZegoStreamResourceType.Default;
 }
 
 /// Played stream quality information.
@@ -2637,6 +2667,12 @@ class ZegoPlayStreamQuality {
   /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
   int videoCumulativeDecodeTime;
 
+  /// Mute video (Available since 3.13.0)
+  int muteVideo;
+
+  /// Mute audio (Available since 3.13.0)
+  int muteAudio;
+
   ZegoPlayStreamQuality(
       this.videoRecvFPS,
       this.videoDejitterFPS,
@@ -2670,7 +2706,9 @@ class ZegoPlayStreamQuality {
       this.videoCumulativeBreakCount,
       this.videoCumulativeBreakTime,
       this.videoCumulativeBreakRate,
-      this.videoCumulativeDecodeTime);
+      this.videoCumulativeDecodeTime,
+      this.muteVideo,
+      this.muteAudio);
 }
 
 /// Cross APP playing stream configuration.
@@ -3291,6 +3329,9 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
+  /// Stream mixing alignment mode.
+  ZegoStreamAlignmentMode streamAlignmentMode;
+
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
@@ -3301,6 +3342,7 @@ class ZegoAutoMixerTask {
         outputList = [],
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
         enableSoundLevel = false,
+        streamAlignmentMode = ZegoStreamAlignmentMode.None,
         minPlayStreamBufferLength = -1;
 
   Map<String, dynamic> toMap() {
@@ -3310,6 +3352,7 @@ class ZegoAutoMixerTask {
       'audioConfig': this.audioConfig.toMap(),
       'outputList': this.outputList,
       'enableSoundLevel': this.enableSoundLevel,
+      'streamAlignmentMode': this.streamAlignmentMode.index,
       'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
   }
@@ -3511,7 +3554,10 @@ class ZegoDataRecordProgress {
   /// Current recording file size in byte
   int currentFileSize;
 
-  ZegoDataRecordProgress(this.duration, this.currentFileSize);
+  /// The quality of current recording file
+  ZegoPublishStreamQuality quality;
+
+  ZegoDataRecordProgress(this.duration, this.currentFileSize, this.quality);
 }
 
 /// Network probe config
@@ -5286,6 +5332,17 @@ abstract class ZegoCopyrightedMusic {
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getDuration(String resourceID);
 
+  /// Set the difficulty level of scoring.
+  ///
+  /// Available since: 2.22.0
+  /// Description: Users can set the scoring difficulty level through this function.
+  /// When to call: After calling [initCopyrightedMusic] to initialize copyrighted music successfully, call [startScore] to start scoring.
+  /// Default value: When this function is not called, the difficulty level of scoring is 4.
+  /// Restrictions: This function does not support dynamic settings. After calling this function successfully, the next call to [startScore] will take effect.
+  ///
+  /// - [level] The difficulty level of scoring. The level ranges from 0 to 4. The scoring difficulty decreases from 0 to 4.
+  Future<void> setScoringLevel(int level);
+
   /// Start scoring.
   ///
   /// Available since: 2.15.0
@@ -5564,6 +5621,17 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
+
+  /// Whether to collect the sound of the window process during window collection
+  ///
+  /// Available since: 3.13.0
+  /// Description: Whether to collect the sound of the window process during window collection.
+  /// When to call: Before starting the collection [startScreencapture].
+  /// Restrictions: Only applicable to Windows 10 and above versions.
+  ///
+  /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.
+  /// - [audioParam] Audio collection parameters.
+  Future<void> enableAudioCapture(bool enable, ZegoAudioFrameParam audioParam);
 
   /// Get screen capture source index.
   ///
