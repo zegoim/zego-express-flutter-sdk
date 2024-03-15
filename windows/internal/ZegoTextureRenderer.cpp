@@ -50,8 +50,10 @@ bool ZegoTextureRenderer::updateSrcFrameBuffer(uint8_t *data, uint32_t data_leng
     srcVideoFrameFormat_ = frameParam.format;
 
     std::copy(data, data + data_length, srcBuffer_.data());
+
+    OnBufferUpdated();
   }
-  OnBufferUpdated();
+
   return true;
 };
 
@@ -61,6 +63,8 @@ void ZegoTextureRenderer::OnBufferUpdated() {
     textureRegistrar_->MarkTextureFrameAvailable(textureID_);
   }
 }
+
+bool ZegoTextureRenderer::TextureRegistered() { return textureRegistrar_ && texture_ && textureID_ > -1; }
 
 const FlutterDesktopPixelBuffer* ZegoTextureRenderer::ConvertPixelBufferForFlutter(
     size_t target_width, size_t target_height) {

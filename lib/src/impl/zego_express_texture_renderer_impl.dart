@@ -134,7 +134,7 @@ class ZegoExpressTextureRenderer {
   static final Map<int, Color> _backgroundColorMap = {};
   static final Map<int, Size> _sizeMap = {};
   static final Map<int, int?> _mirrorMap = {};
-  static final Map<int, int> _rotationMap = {};
+  static final Map<int, int?> _rotationMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -200,7 +200,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
               ZegoViewMode.AspectFit;
 
       switch (viewMode) {
-        case ZegoViewMode.AspectFit:
+        case ZegoViewMode.AspectFill:
           {
             if (src_ar > dst_ar) {
               height_factor = dst_ar / src_ar;
@@ -223,7 +223,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
                 (rect.height * pixelRatio).toInt());
           }
           break;
-        case ZegoViewMode.AspectFill:
+        case ZegoViewMode.AspectFit:
           {
             double factor_y = 1.0;
             double w = 0.0;

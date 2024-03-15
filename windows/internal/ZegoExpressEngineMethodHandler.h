@@ -18,6 +18,8 @@ class ZegoExpressEngineMethodHandler {
 
     void setPluginRegistrar(flutter::PluginRegistrarWindows *registrar) { registrar_ = registrar; }
 
+    void clearPluginRegistrar();
+
     void initApiCalledCallback();
 
     bool isEngineCreated();
