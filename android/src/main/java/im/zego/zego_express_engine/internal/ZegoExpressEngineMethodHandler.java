@@ -1490,6 +1490,17 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void setCameraStabilizationMode(MethodCall call, Result result) {
+
+        int mode = ZegoUtils.intValue((Number) call.argument("mode"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraStabilizationMode(mode, channel);
+
+        result.success(null);
+    }
+
     /* Player */
 
     @SuppressWarnings({"unused", "unchecked", "deprecation"})
