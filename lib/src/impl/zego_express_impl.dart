@@ -751,6 +751,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setCameraStabilizationMode(int mode,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setCameraStabilizationMode', {
+      'mode': mode,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,

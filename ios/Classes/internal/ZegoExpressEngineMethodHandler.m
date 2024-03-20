@@ -1328,6 +1328,17 @@
     result(nil);
 }
 
+- (void)setCameraStabilizationMode:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int mode = [ZegoUtils intValue:call.arguments[@"mode"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setCameraStabilizationMode:mode channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
