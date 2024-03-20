@@ -1,5 +1,93 @@
 # Change Log
 
+## 3.13.0
+
+### New Features
+
+#### 1. Added video stabilization feature (Only supports iPhone and Android)
+
+Note:
+
+This feature is only available for use during internal video capture.
+
+When this feature is enabled, there may be delays or cropping of the image, so please use it accordingly.
+
+The new video stabilization feature is added to reduce the impact of camera shake during internal video capture and improve the quality of video capture.
+
+For related API, please refer to [setCameraStabilizationMode]
+
+#### 2. When using the QUIC protocol for CDN streaming, it supports 0-RTT connection establishment
+
+Note:
+
+The security of this feature is slightly lower compared to traditional methods. Please use it with caution.
+
+When using this feature, set ZegoCDNConfig.protocol to quic.
+
+[ZegoCDNConfig] adds the [quicConnectMode] attribute, which allows developers to use the QUIC protocol for CDN streaming. Set quicConnectMode to 1 for QUIC connection mode, enabling 0-RTT connection and fast service activation. Currently compatible with CDN live streaming products from Huawei, Wangsu, Tencent, and other vendors.
+
+This feature is not enabled by default (quicConnectMode is set to 0, indicating normal connection establishment).
+
+For related API, please refer to ZegoCDNConfig > quicConnectMode
+
+#### 3. Support setting a timeout for CDN repushing to monitor the existence of a stream
+
+Note: This feature only takes effect when initiating a retweet. If there is a disconnection during the retweet process, the SDK will maintain the retry logic and there will be no callback notification in this case.
+
+When initiating a retweet task, you can set the timeout for the retweet CDN through the [addPublishCdnUrl] interface to monitor if the stream exists. For example, if the developer has initiated a retweet task but the stream has not started streaming yet, after the timeout set, the SDK will return a callback notification indicating that the stream does not exist.
+
+This callback notification will only be sent to the retweet initiator, not the streaming initiator. If the retweet initiator and the streaming initiator are not the same user, it is recommended for developers to initiate the retweet from the server side and receive this notification.
+
+For related API, please refer to addPublishCdnUrl
+
+#### 4. Support for callback local recording quality data
+
+[ZegoDataRecordProgress] adds the [quality] attribute, which can be used to callback the quality data of the recorded file, such as frame rate and bit rate, during the local recording process.
+
+For related API, please refer to onCapturedDataRecordProgressUpdate
+
+#### 5. Supports low-light enhancement and color enhancement when using external capturing
+
+Note: The external capture function and pre-processing function cannot be used at the same time, otherwise abnormal images may occur when playing streams.
+
+After enabling the external capture function, you can use the [setLowlightEnhancement] and [enableColorEnhancement] interfaces to separately enable low-light enhancement and color enhancement to adjust the captured images according to your business needs.
+
+For related API, please refer to setLowlightEnhancement, enableColorEnhancement
+
+#### 6. Support for H.265 automatic compatibility strategy
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+When some users in the room do not support the H.265 format, the streaming end that supports it will fall back to the H.264 format and republish stream.
+
+### Enhancements
+
+#### 1. Optimizing the callback notification logic of the media streamer
+
+Optimize the callback notification logic of the media streaming engine, add error callbacks for unsupported audio sampling rate (for example, not supporting a sampling rate of 24K), and help developers quickly locate problems.
+
+For related API, please refer to onMediaDataPublisherFileClose
+
+#### 2. Optimized color enhancement algorithm
+
+Optimized color enhancement algorithm performs better than previous versions in scenes with high color saturation.
+
+#### 3. For low-performance Android devices, optimize the fluency of voice and the effect of echo cancellation during background operation
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+#### 4. For KTV scenarios, optimize the alignment effect of Bluetooth earphones on vocals and accompaniment, enhancing the K-song experience
+
+### Bug Fixes
+
+1. Fix the problem of abnormal time consumption of interface calls caused by not deinitializing the SDK after long-term use.
+
+2. Fixed compatibility issues with hardware encoding and decoding, addressing occasional crashes.
+
+3. Fix known compatibility issues and null pointer problems.
+
+4. Fixing an issue where the engine occasionally initializes with incorrect states.
+
 ## 3.12.5
 
 ### **Bug Fixes**
@@ -8,7 +96,7 @@
 
 ## 3.12.4
 
-### **Bug Fixes**
+### Bug Fixes**
 
 1. Fixed the issue where the UI would occasionally freeze if a network abnormality occurs when initializing the SDK.
 
@@ -16,7 +104,7 @@
 
 ## 3.12.3
 
-### New Features
+### **New Features
 
 #### 1. Support Copyright-music plugin
 
@@ -54,7 +142,7 @@ Support local caching of network resources, so that if the same network resource
 
 For related API, please refer to enableLocalCache, onMediaPlayerLocalCache
 
-### Bug Fixes
+### **Bug Fixes
 
 1. Fix the issue where certain models would display stripes on the screen when motion is occurring after enabling the super resolution feature.
 
@@ -68,7 +156,7 @@ For related API, please refer to enableLocalCache, onMediaPlayerLocalCache
 
 ## 3.11.0
 
-### New Features
+### New Features**
 
 #### 1. Support high-definition and low-code video in the cloud transcoding service
 
@@ -144,7 +232,7 @@ The sound effect player supports setting the streaming volume and local playback
 
 For related API, please refer to ZegoAudioEffectPlayer > setPublishVolume, ZegoAudioEffectPlayer > setPlayVolume, ZegoAudioEffectPlayer > setPublishVolumeAll, ZegoAudioEffectPlayer > setPlayVolumeAll
 
-### Enhancements
+### Enhancements**
 
 #### 1. Optimize server-side mixing and single-stream transcoding capabilities
 
@@ -262,7 +350,7 @@ When using a media player to play audio and video files, the [setPlayMediaStream
 
 For related API, please refer to [setPlayMediaStreamType](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayMediaStreamType.html)
 
-### Bug Fixes
+### **Bug Fixes
 
 #### 1. Fixed the issue of occasional no sound when playing streams
 
@@ -272,7 +360,7 @@ For related API, please refer to [setPlayMediaStreamType](https://pub.dev/docume
 
 ## 3.9.0
 
-### New Features
+### **New Features**
 
 #### 1. ScreenCapture supports system WGC
 

@@ -723,8 +723,12 @@ class ZegoExpressEngineWeb {
 
     await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance
-        .startPreview(previewView, getPublishChannel(channel), false, completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.startPreview(
+          previewView,
+          getPublishChannel(channel),
+          false,
+          completerMap["success"],
+          completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     return Future.value();
