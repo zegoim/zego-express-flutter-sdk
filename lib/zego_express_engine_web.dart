@@ -497,6 +497,8 @@ class ZegoExpressEngineWeb {
                 0,
                 0,
                 0,
+                0,
+                0,
                 0));
         break;
       case "onRemoteMicStateUpdate":
