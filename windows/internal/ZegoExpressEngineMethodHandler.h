@@ -18,6 +18,8 @@ class ZegoExpressEngineMethodHandler {
 
     void setPluginRegistrar(flutter::PluginRegistrarWindows *registrar) { registrar_ = registrar; }
 
+    void clearPluginRegistrar();
+
     void initApiCalledCallback();
 
     bool isEngineCreated();
@@ -857,6 +859,9 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicSendExtendedRequest(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicSetScoringLevel(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicStartScore(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -983,6 +988,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void getCaptureSourceRectScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAudioCaptureScreenCaptureSource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 

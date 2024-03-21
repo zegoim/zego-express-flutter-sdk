@@ -119,6 +119,7 @@ import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceSwitchMode;
+import im.zego.zegoexpress.constants.ZegoStreamResourceType;
 import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
@@ -1180,8 +1181,9 @@ public class ZegoExpressEngineMethodHandler {
 
         String streamID = call.argument("streamID");
         String targetURL = call.argument("targetURL");
+        int timeout = ZegoUtils.intValue((Number) call.argument("timeout"));
 
-        ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, new IZegoPublisherUpdateCdnUrlCallback() {
+        ZegoExpressEngine.getEngine().addPublishCdnUrl(streamID, targetURL, timeout, new IZegoPublisherUpdateCdnUrlCallback() {
             @Override
             public void onPublisherUpdateCdnUrlResult(int errorCode) {
                 HashMap<String, Object> resultMap = new HashMap<>();
@@ -1219,6 +1221,7 @@ public class ZegoExpressEngineMethodHandler {
             config.authParam = (String) configMap.get("authParam");
             config.protocol = (String) configMap.get("protocol");
             config.quicVersion = (String) configMap.get("quicVersion");
+            config.quicConnectMode = ZegoUtils.intValue((Number) configMap.get("quicConnectMode"));
             config.httpdns = ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) configMap.get("httpdns")));
         }
 
@@ -1487,6 +1490,17 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void setCameraStabilizationMode(MethodCall call, Result result) {
+
+        int mode = ZegoUtils.intValue((Number) call.argument("mode"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setCameraStabilizationMode(mode, channel);
+
+        result.success(null);
+    }
+
     /* Player */
 
     @SuppressWarnings({"unused", "unchecked", "deprecation"})
@@ -1516,6 +1530,7 @@ public class ZegoExpressEngineMethodHandler {
             playerConfig.sourceResourceType = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("sourceResourceType")));
             playerConfig.codecTemplateID = ZegoUtils.intValue((Number) playerConfigMap.get("codecTemplateID"));
             playerConfig.resourceSwitchMode = ZegoStreamResourceSwitchMode.getZegoStreamResourceSwitchMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceSwitchMode")));
+            playerConfig.resourceWhenStopPublish = ZegoStreamResourceType.getZegoStreamResourceType(ZegoUtils.intValue((Number) playerConfigMap.get("resourceWhenStopPublish")));
 
             HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
             if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {
@@ -1525,6 +1540,7 @@ public class ZegoExpressEngineMethodHandler {
                 cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
                 cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
                 cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
+                cdnConfig.quicConnectMode = ZegoUtils.intValue((Number) cdnConfigMap.get("quicConnectMode"));
                 cdnConfig.httpdns =
                         ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) cdnConfigMap.get("httpdns")));
                 playerConfig.cdnConfig = cdnConfig;
@@ -2286,6 +2302,10 @@ public class ZegoExpressEngineMethodHandler {
         // Enable SoundLevel
         boolean enableSoundLevel = ZegoUtils.boolValue((Boolean) call.argument("enableSoundLevel"));
         taskObject.enableSoundLevel = enableSoundLevel;
+        
+        ZegoStreamAlignmentMode streamAlignmentMode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("streamAlignmentMode")));
+        taskObject.streamAlignmentMode = streamAlignmentMode;
+        
         // minPlayStreamBufferLength
         taskObject.minPlayStreamBufferLength = ZegoUtils.intValue((Number)call.argument("minPlayStreamBufferLength"));
 
@@ -5787,6 +5807,18 @@ public class ZegoExpressEngineMethodHandler {
             });
         } else {
             result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicSendExtendedRequest` but can't find specific instance", null);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void copyrightedMusicSetScoringLevel(MethodCall call, Result result) {
+
+        if (copyrightedMusicInstance != null) {
+            int level = ZegoUtils.intValue((Number) call.argument("level"));
+            copyrightedMusicInstance.setScoringLevel(level);
+            result.success(null);
+        } else {
+            result.error("copyrightedMusic_Can_not_find_instance".toUpperCase(), "Invoke `copyrightedMusicSetScoringLevel` but can't find specific instance", null);
         }
     }
 

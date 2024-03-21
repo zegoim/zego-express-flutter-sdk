@@ -401,15 +401,8 @@
     }
 }
 
-- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
-    FlutterEventSink sink = _eventSink;
-    // High frequency callbacks do not log
-
-    GUARD_SINK
-    if (sink) {
-        sink(@{
-            @"method": @"onPublisherQualityUpdate",
-            @"quality": @{
+- (NSDictionary *)convertPublishQuality:(ZegoPublishStreamQuality *)quality {
+    return @{
                 @"videoCaptureFPS": @(quality.videoCaptureFPS),
                 @"videoEncodeFPS": @(quality.videoEncodeFPS),
                 @"videoSendFPS": @(quality.videoSendFPS),
@@ -425,7 +418,18 @@
                 @"totalSendBytes": @(quality.totalSendBytes),
                 @"audioSendBytes": @(quality.audioSendBytes),
                 @"videoSendBytes": @(quality.videoSendBytes)
-            },
+            };
+}
+
+- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherQualityUpdate",
+            @"quality": [self convertPublishQuality:quality],
             @"streamID": streamID
         });
     }
@@ -680,7 +684,9 @@
                 @"audioCumulativeBreakRate": @(quality.audioCumulativeBreakRate),
                 @"videoCumulativeBreakRate": @(quality.videoCumulativeBreakRate),
                 @"audioCumulativeDecodeTime": @(quality.audioCumulativeDecodeTime),
-                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime)
+                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime),
+                @"muteVideo": @(quality.muteVideo),
+                @"muteAudio": @(quality.muteAudio)
             },
             @"streamID": streamID
         });
@@ -1435,7 +1441,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer renderingProgress:(unsigned long long)millisecond {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaPlayerRenderingProgress] idx: %d, event: %lld", mediaPlayer.index.intValue, millisecond);
+    // High frequency callbacks do not log
 
     GUARD_SINK
     if (sink) {
@@ -1607,7 +1613,8 @@
             @"method": @"onCapturedDataRecordProgressUpdate",
             @"progress": @{
                 @"duration": @(progress.duration),
-                @"currentFileSize": @(progress.currentFileSize)
+                @"currentFileSize": @(progress.currentFileSize),
+                @"quality": [self convertPublishQuality:progress.quality],
             },
             @"config": @{
                 @"filePath": config.filePath,

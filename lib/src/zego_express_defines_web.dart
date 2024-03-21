@@ -26,7 +26,8 @@ class ZegoFlutterEngine {
   external logoutRoom(String roomID);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);
-  external startPreview(dynamic canvas, int channel);
+  external startPreview(dynamic canvas, int channel, bool isPublish,
+      dynamic success, dynamic fail);
   external stopPreview(int channel);
   external startPublishingStream(String streamID, int? channel, dynamic config);
   external stopPublishingStream(int channel);

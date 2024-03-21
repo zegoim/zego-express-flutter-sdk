@@ -435,10 +435,13 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///
   /// - [streamID] Stream ID.
   /// - [targetURL] CDN relay address, supported address format is rtmp, rtmps.
+  /// - [timeout] Timeout. Callback if it does not start in the time. Default is 0, which means no timeout. Valid range is [5, 600], in seconds. Less than 0 will be reset to 0, 1 to 4 will be reset to 5, and a greater than 600 will be reset to 600.
   /// - Returns The execution result of update the relay CDN operation.
   Future<ZegoPublisherUpdateCdnUrlResult> addPublishCdnUrl(
-      String streamID, String targetURL) async {
-    return await ZegoExpressImpl.instance.addPublishCdnUrl(streamID, targetURL);
+      String streamID, String targetURL,
+      {int? timeout}) async {
+    return await ZegoExpressImpl.instance
+        .addPublishCdnUrl(streamID, targetURL, timeout: timeout);
   }
 
   /// Deletes the specified CDN URL, which is used for relaying streams from ZEGO RTC server to CDN.
@@ -677,7 +680,10 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// When to call: After the engine is created [createEngine].
   /// Restrictions: Calling in publishing or preview is invalid when using the web platform.
   /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type.
-  ///  2. When using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main
+  ///  2. When using ZegoVideoSourceType.Player and ZegoVideoSourceType.MainPublishChannel video source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main.
+  ///  3. Preemptive video sources are not allowed to be used on multiple channels at the same time, such as ZegoVideoSourceType.Camera and ZegoVideoSourceType.ScreenCapture.
+  ///  4. The other publish channel can copy the main publish channel only when the main publish channel uses internal video capture. A maximum of one copy is supported.
+  ///  5. When using ZegoVideoSourceType.Player video source type, please ensure that the ZegoMediaPlayer instance is created successfully.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [source] Video capture source.
@@ -698,7 +704,8 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Restrictions: Calling in publishing or preview is invalid when using the web platform.
   /// Caution: 1. Main push channel ZegoPublishChannel.Main does not support using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type.
   ///  2. When using ZegoAudioSourceType.MediaPlayer and ZegoAudioSourceType.MainPublishChannel audio source type in aux publish channel ZegoPublishChannel.Aux, must ensure that physical device works on main publish channel ZegoPublishChannel.Main.
-  ///  3. config applies only to the main channel ZegoPublishChannel.Main, This parameter is invalid when the channel is not the main channel.
+  ///  3. Preemptive audio sources are not allowed to be used on multiple channels at the same time, such as ZegoAudioSourceType.Microphone.
+  ///  4. When using ZegoAudioSourceType.MediaPlayer audio source type, please ensure that the ZegoMediaPlayer instance is created successfully.
   ///
   /// - [source] Audio capture source.
   /// - [config] Audio capture source mix config. This parameter applies only to the Main push channel ZegoPublishChannel. main. This parameter is invalid when channel is not the main push channel.
@@ -746,5 +753,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
       {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
         .enableAlphaChannelVideoEncoder(enable, alphaLayout, channel: channel);
+  }
+
+  /// Set the camera stabilization mode.
+  ///
+  /// Available since: 3.13.0
+  /// Description: Set the camera stabilization mode.
+  /// Use case: Users can use this function to set the camera stabilization mode to reduce the impact of camera shake on video collection.
+  /// When to call: Called after the engine is created [createEngine].
+  /// Restrictions: Only supports internal video capture.
+  /// Platform differences: Only supports iPhone and Android.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [mode] The camera stabilization mode. \niOS:See Apple AVCaptureVideoStabilizationMode definition for details. The default value is 0. \nAndroid:AUTO:-1, OFF:0. The default value is 0.
+  /// - [channel] Publish stream channel.
+  Future<void> setCameraStabilizationMode(int mode,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setCameraStabilizationMode(mode, channel: channel);
   }
 }

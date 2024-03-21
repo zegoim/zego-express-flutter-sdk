@@ -497,6 +497,8 @@ class ZegoExpressEngineWeb {
                 0,
                 0,
                 0,
+                0,
+                0,
                 0));
         break;
       case "onRemoteMicStateUpdate":
@@ -718,11 +720,19 @@ class ZegoExpressEngineWeb {
 
   Future<void> startPreview(dynamic canvas, int channel) async {
     previewView = document.getElementById("zego-view-${canvas["view"]}");
-    previewView.muted = true;
+    previewView?.muted = true;
     ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
-    ZegoFlutterEngine.instance
-        .startPreview(previewView, getPublishChannel(channel));
 
+    await (() {
+      Map completerMap = createCompleter();
+      ZegoFlutterEngine.instance.startPreview(
+          previewView,
+          getPublishChannel(channel),
+          false,
+          completerMap["success"],
+          completerMap["fail"]);
+      return completerMap["completer"].future;
+    })();
     return Future.value();
   }
 

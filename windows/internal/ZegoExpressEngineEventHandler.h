@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <flutter/event_channel.h>
+#include <flutter/encodable_value.h>
 
 #include <ZegoExpressSDK.h>
 using namespace ZEGO;
@@ -286,6 +287,9 @@ protected:
 
     void onUpdateProgress(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
                           int fileIndex, int fileCount) override;
+
+private:
+    flutter::EncodableMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
