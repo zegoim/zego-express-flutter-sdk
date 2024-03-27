@@ -2149,6 +2149,9 @@ public class ZegoExpressEngineMethodHandler {
         ZegoStreamAlignmentMode streamAlignmentMode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("streamAlignmentMode")));
         taskObject.setStreamAlignmentMode(streamAlignmentMode);
 
+        ZegoMixImageCheckMode mixImageCheckMode = ZegoMixImageCheckMode.getZegoMixImageCheckMode(ZegoUtils.intValue((Number) call.argument("mixImageCheckMode")));
+        taskObject.setMixImageCheckMode(mixImageCheckMode);
+
         byte[] userData = call.argument("userData");
         ByteBuffer userDataByteBuffer =  ByteBuffer.allocateDirect(userData.length);
         userDataByteBuffer = userDataByteBuffer.put(userData);

@@ -1276,6 +1276,18 @@ class ZegoExpressEngine {
   static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
       onMediaDataPublisherFileDataBegin;
 
+  /// The event callback that the media data publisher has completed a file stream publishing.
+  ///
+  /// Available since: 3.14.0
+  /// Description: The media data publisher has finished a file stream publishing.
+  /// Trigger: The callback triggered when the media data publisher has completed a file stream publishing.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object.
+  /// - [path] The path of the file that has completed stream publishing.
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileDataEnd;
+
   /// The callback triggered when the state of data recording (to a file) changes.
   ///
   /// Available since: 1.10.0

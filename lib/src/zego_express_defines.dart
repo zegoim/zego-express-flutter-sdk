@@ -670,6 +670,18 @@ enum ZegoStreamAlignmentMode {
   Try
 }
 
+/// Mixed stream sets the image parameter check mode.
+enum ZegoMixImageCheckMode {
+  /// Strictly perform image verification, set the background image, watermark, image path URI/URL, image size, image resource request is successful, can normally initiate mixed flow, otherwise fail to initiate mixed flow.
+  Normal,
+
+  /// Only verify image path URI/URL As long as the path is correct, the mixed flow is successfully initiated.
+  Path,
+
+  /// The mixed flow can be initiated successfully without checking the related parameters of the picture.
+  Nothing
+}
+
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
   /// Basic (Adaptive (reduce) video bitrate)
@@ -3250,6 +3262,9 @@ class ZegoMixerTask {
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
+  /// Set the mixed stream image check mode.
+  ZegoMixImageCheckMode mixImageCheckMode;
+
   /// Create a mix stream task object with TaskID
   ZegoMixerTask(this.taskID)
       : inputList = [],
@@ -3264,7 +3279,8 @@ class ZegoMixerTask {
         streamAlignmentMode = ZegoStreamAlignmentMode.None,
         userData = Uint8List.fromList([]),
         advancedConfig = {},
-        minPlayStreamBufferLength = -1;
+        minPlayStreamBufferLength = -1,
+        mixImageCheckMode = ZegoMixImageCheckMode.Normal;
 
   Map<String, dynamic> toMap() {
     return {
@@ -3281,7 +3297,8 @@ class ZegoMixerTask {
       'streamAlignmentMode': this.streamAlignmentMode.index,
       'userData': this.userData,
       'advancedConfig': this.advancedConfig,
-      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
+      'mixImageCheckMode': this.mixImageCheckMode.index 
     };
   }
 }
