@@ -22,15 +22,15 @@ class ZegoExpressTextureRenderer {
   }
 
   void uninit() async {
+    if (!kIsWeb && !kIsAndroid) {
+      await _streamSubscriptionTextureRendererController?.cancel();
+      _streamSubscriptionTextureRendererController = null;
+    }
     _backgroundColorMap.clear();
     _mirrorMap.clear();
     _sizeMap.clear();
     _viewModeMap.clear();
     _rotationMap.clear();
-    if (!kIsWeb && !kIsAndroid) {
-      await _streamSubscriptionTextureRendererController?.cancel();
-      _streamSubscriptionTextureRendererController = null;
-    }
   }
 
   /// Create a Texture renderer and return the texture ID
