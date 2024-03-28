@@ -1,5 +1,9 @@
 # Change Log
 
+## 3.13.1
+### Bug Fixes
+1. Fixed an issue where publishing a screen share stream on the web platform failed.
+
 ## 3.13.0
 
 ### New Features
