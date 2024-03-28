@@ -189,11 +189,11 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
     var rect = Rect.fromLTWH(0, 0, width, height);
 
     if (size != null && size.width > 0.0 && size.height > 0.0) {
-      double src_ar = size.width / size.height;
-      double dst_ar = width / height;
-      double width_factor = 1.0;
-      double height_factor = 1.0;
-      double factor_x = 1.0;
+      double srcAr = size.width / size.height;
+      double dstAr = width / height;
+      double widthFactor = 1.0;
+      double heightFactor = 1.0;
+      double factorX = 1.0;
 
       var viewMode =
           ZegoExpressTextureRenderer().getViewMode(widget.textureID) ??
@@ -202,21 +202,21 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       switch (viewMode) {
         case ZegoViewMode.AspectFill:
           {
-            if (src_ar > dst_ar) {
-              height_factor = dst_ar / src_ar;
+            if (srcAr > dstAr) {
+              heightFactor = dstAr / srcAr;
             } else {
-              width_factor = src_ar / dst_ar;
+              widthFactor = srcAr / dstAr;
             }
 
-            double w = width * width_factor;
-            double h = height * height_factor;
+            double w = width * widthFactor;
+            double h = height * heightFactor;
 
             if (rotation != null && (rotation == 90 || rotation == 270)) {
-              factor_x = width / h;
+              factorX = width / h;
             }
 
-            rect = Rect.fromLTWH((width - w * factor_x) / 2,
-                (height - h * factor_x) / 2, w * factor_x, h * factor_x);
+            rect = Rect.fromLTWH((width - w * factorX) / 2,
+                (height - h * factorX) / 2, w * factorX, h * factorX);
             widget.updateTextureRendererSize(
                 widget.textureID,
                 (rect.width * pixelRatio).toInt(),
@@ -225,36 +225,36 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
           break;
         case ZegoViewMode.AspectFit:
           {
-            double factor_y = 1.0;
+            double factorY = 1.0;
             double w = 0.0;
             double h = 0.0;
-            if (src_ar > dst_ar) {
-              width_factor = src_ar / dst_ar;
-              w = width * width_factor;
-              h = height * height_factor;
+            if (srcAr > dstAr) {
+              widthFactor = srcAr / dstAr;
+              w = width * widthFactor;
+              h = height * heightFactor;
 
               if (rotation != null && (rotation == 90 || rotation == 270)) {
-                factor_x = height / w;
-                factor_y = height / w;
+                factorX = height / w;
+                factorY = height / w;
               }
             } else {
-              height_factor = dst_ar / src_ar;
+              heightFactor = dstAr / srcAr;
               w = width;
-              h = height * height_factor;
+              h = height * heightFactor;
 
               if (rotation != null && (rotation == 90 || rotation == 270)) {
-                if (1 / src_ar > dst_ar) {
-                  factor_x = height / w;
-                  factor_y = height / w;
+                if (1 / srcAr > dstAr) {
+                  factorX = height / w;
+                  factorY = height / w;
                 } else {
-                  factor_x = src_ar;
-                  factor_y = src_ar;
+                  factorX = srcAr;
+                  factorY = srcAr;
                 }
               }
             }
 
-            rect = Rect.fromLTWH((width - w * factor_x) / 2,
-                (height - h * factor_y) / 2, w * factor_x, h * factor_y);
+            rect = Rect.fromLTWH((width - w * factorX) / 2,
+                (height - h * factorY) / 2, w * factorX, h * factorY);
 
             widget.updateTextureRendererSize(
                 widget.textureID,
@@ -266,14 +266,14 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
           {
             double w = width;
             double h = height;
-            double factor_y = 1.0;
+            double factorY = 1.0;
             if (rotation != null && (rotation == 90 || rotation == 270)) {
-              factor_x = height / w;
-              factor_y = width / h;
+              factorX = height / w;
+              factorY = width / h;
             }
 
-            rect = Rect.fromLTWH((width - w * factor_x) / 2,
-                (height - h * factor_y) / 2, w * factor_x, h * factor_y);
+            rect = Rect.fromLTWH((width - w * factorX) / 2,
+                (height - h * factorY) / 2, w * factorX, h * factorY);
             widget.updateTextureRendererSize(
                 widget.textureID,
                 (rect.width * pixelRatio).toInt(),
@@ -319,16 +319,14 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       // 矩阵相乘
       Matrix4 result = matrix4.multiplied(matrix4_1);
 
-      if (result != null) {
-        child = Transform(
-          transform: result,
-          child: Texture(
-            textureId: widget.textureID,
-          ),
-          alignment: Alignment.center,
-        );
-      }
-
+      child = Transform(
+        transform: result,
+        child: Texture(
+          textureId: widget.textureID,
+        ),
+        alignment: Alignment.center,
+      );
+    
       // Calculate the scaled size
       var rect = _viewModeCalculate(size, constraints.biggest.width,
           constraints.biggest.height, rotation);
