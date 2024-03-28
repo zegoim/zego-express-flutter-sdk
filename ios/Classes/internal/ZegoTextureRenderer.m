@@ -31,6 +31,10 @@
     return self;
 }
 
+- (void)dealloc {
+    [self destroy];
+}
+
 - (void)destroy {
     @synchronized (self) {
         // Release GPU Resource
