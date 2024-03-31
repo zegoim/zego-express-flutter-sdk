@@ -1,5 +1,10 @@
 # Change Log
 
+## 3.13.2
+### Bug Fixes
+1. Fixed the problem of data loss when reporting quality or billing failed.
+
+
 ## 3.13.1
 ### Bug Fixes
 1. Fixed an issue where publishing a screen share stream on the web platform failed.
