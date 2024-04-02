@@ -2223,6 +2223,21 @@ void ZegoExpressEngineMethodHandler::mediaPlayerMuteLocal(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableViewMirror(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        bool enable = std::get<bool>(argument[FTValue("enable")]);
+
+        mediaPlayer->enableViewMirror(enable);
+    }
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::mediaPlayerSetVolume(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

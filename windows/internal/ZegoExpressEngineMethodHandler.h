@@ -561,6 +561,9 @@ class ZegoExpressEngineMethodHandler {
     mediaPlayerMuteLocal(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
+    mediaPlayerEnableViewMirror(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
     mediaPlayerSetVolume(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerSetPlayVolume(
