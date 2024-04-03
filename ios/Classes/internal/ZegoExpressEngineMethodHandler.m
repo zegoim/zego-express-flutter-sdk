@@ -3981,6 +3981,18 @@
     result(nil);
 }
 
+- (void)mediaPlayerEnableViewMirror:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        [mediaPlayer enableViewMirror:enable];
+    }
+    
+    result(nil);
+}
+
 
 - (void)mediaPlayerGetPlaybackStatistics:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSNumber *index = call.arguments[@"index"];

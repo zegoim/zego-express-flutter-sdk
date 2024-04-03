@@ -3830,6 +3830,12 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
+  Future<void> enableViewMirror(bool enable) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'mediaPlayerEnableViewMirror', {'index': _index, 'enable': enable});
+  }
+
+  @override
   Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics() async {
     Map<String, dynamic> infoMap = await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerGetPlaybackStatistics', {'index': _index});

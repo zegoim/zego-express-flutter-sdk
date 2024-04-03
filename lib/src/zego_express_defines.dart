@@ -399,7 +399,31 @@ enum ZegoVoiceChangerPreset {
   LoudClear,
 
   /// Minions effect
-  Minions
+  Minions,
+
+  /// Sunshine effect, only support iOS
+  Sunshine,
+
+  /// Gentle effect, only support iOS
+  Gentle,
+
+  /// Sweet effect, only support iOS
+  Sweet,
+
+  /// Sweet male effect, only support iOS
+  SweetMale,
+
+  /// Sweet female effect, only support iOS
+  SweetFemale,
+
+  /// Bright effect, only support iOS
+  Bright,
+
+  /// Autobot effect
+  Autobot,
+
+  /// Out of power effect
+  OutOfPower
 }
 
 /// Reverberation preset value.
@@ -4655,6 +4679,15 @@ abstract class ZegoMediaPlayer {
   /// - [enable] Whether to enable local caching.
   /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
   Future<void> enableLocalCache(bool enable, String cacheDir);
+
+  /// Enable the view mirror.
+  ///
+  /// Available since: 3.14.0
+  /// Description: Enable view mirror.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  ///
+  /// - [enable] Whether to enable view mirror.
+  Future<void> enableViewMirror(bool enable);
 
   /// Get playback statistics.
   ///

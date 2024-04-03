@@ -4247,6 +4247,18 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void mediaPlayerEnableViewMirror(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            mediaPlayer.enableViewMirror(enable);
+        }
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mediaPlayerGetPlaybackStatistics(MethodCall call, final Result result) {
         Integer index = call.argument("index");
         ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
