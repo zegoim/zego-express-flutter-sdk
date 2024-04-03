@@ -672,7 +672,7 @@ enum ZegoStreamAlignmentMode {
 
 /// Mixed stream sets the image parameter check mode.
 enum ZegoMixImageCheckMode {
-  /// Strictly perform image verification, set the background image, watermark, image path URI/URL, image size, image resource request is successful, can normally initiate mixed flow, otherwise fail to initiate mixed flow.
+  /// Strictly perform image verification, set the background image, watermark will verify the image path, the image occupy set in the mixed flow input parameter will also verify whether the set image resource request is successful, in order to normally initiate mixed flow, otherwise fail to initiate mixed flow.
   Normal,
 
   /// Only verify image path URI/URL As long as the path is correct, the mixed flow is successfully initiated.
@@ -3298,7 +3298,7 @@ class ZegoMixerTask {
       'userData': this.userData,
       'advancedConfig': this.advancedConfig,
       'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
-      'mixImageCheckMode': this.mixImageCheckMode.index 
+      'mixImageCheckMode': this.mixImageCheckMode.index
     };
   }
 }
