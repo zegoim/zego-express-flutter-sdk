@@ -754,22 +754,4 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance
         .enableAlphaChannelVideoEncoder(enable, alphaLayout, channel: channel);
   }
-
-  /// Set the camera stabilization mode.
-  ///
-  /// Available since: 3.13.0
-  /// Description: Set the camera stabilization mode.
-  /// Use case: Users can use this function to set the camera stabilization mode to reduce the impact of camera shake on video collection.
-  /// When to call: Called after the engine is created [createEngine].
-  /// Restrictions: Only supports internal video capture.
-  /// Platform differences: Only supports iPhone and Android.
-  /// Note: This function is only available in ZegoExpressVideo SDK!
-  ///
-  /// - [mode] The camera stabilization mode. \niOS:See Apple AVCaptureVideoStabilizationMode definition for details. The default value is 0. \nAndroid:AUTO:-1, OFF:0. The default value is 0.
-  /// - [channel] Publish stream channel.
-  Future<void> setCameraStabilizationMode(int mode,
-      {ZegoPublishChannel? channel}) async {
-    return await ZegoExpressImpl.instance
-        .setCameraStabilizationMode(mode, channel: channel);
-  }
 }

@@ -3100,6 +3100,9 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
     task.streamAlignmentMode = (EXPRESS::ZegoStreamAlignmentMode)std::get<int32_t>(
         argument[FTValue("streamAlignmentMode")]);
 
+    task.mixImageCheckMode = (EXPRESS::ZegoMixImageCheckMode)std::get<int32_t>(
+        argument[FTValue("mixImageCheckMode")]);
+
     // userData
     auto userData = std::get<std::vector<uint8_t>>(argument[FTValue("userData")]);
     task.userData = userData.data();

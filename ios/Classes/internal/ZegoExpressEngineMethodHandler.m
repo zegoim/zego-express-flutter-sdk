@@ -1945,6 +1945,10 @@
     // Stream AlignmentMode
     int streamAlignmentMode = [ZegoUtils intValue:call.arguments[@"streamAlignmentMode"]];
     [taskObject setStreamAlignmentMode:(ZegoStreamAlignmentMode)streamAlignmentMode];
+
+    //check image mode
+    int mixImageCheckMode = [ZegoUtils intValue:call.arguments[@"mixImageCheckMode"]];
+    [taskObject setMixImageCheckMode:(ZegoMixImageCheckMode)mixImageCheckMode];
     
     // User Data
     FlutterStandardTypedData *userData = call.arguments[@"userData"];
