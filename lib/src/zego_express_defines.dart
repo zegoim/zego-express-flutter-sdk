@@ -715,10 +715,10 @@ class ZegoTrafficControlProperty {
   static const int AdaptiveFPS = 1;
 
   /// Adaptive (reduce) video resolution
-  static const int AdaptiveResolution = 1 << 1;
+  static const int AdaptiveResolution = 2;
 
   /// Adaptive (reduce) audio bitrate
-  static const int AdaptiveAudioBitrate = 1 << 2;
+  static const int AdaptiveAudioBitrate = 4;
 }
 
 /// Video transmission mode when current bitrate is lower than the set minimum bitrate.
@@ -831,10 +831,10 @@ enum ZegoUpdateType {
 
 /// Get room stream list type.
 enum ZegoRoomStreamListType {
-  /// Play stream list
+  /// List of all online streams in the current room, excluding your own streams
   Play,
 
-  /// Room publish and play stream list
+  /// List of all online streams in the current room, including your own streams
   All
 }
 
