@@ -200,7 +200,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
               ZegoViewMode.AspectFit;
 
       switch (viewMode) {
-        case ZegoViewMode.AspectFill:
+        case ZegoViewMode.AspectFit:
           {
             if (srcAr > dstAr) {
               heightFactor = dstAr / srcAr;
@@ -223,7 +223,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
                 (rect.height * pixelRatio).toInt());
           }
           break;
-        case ZegoViewMode.AspectFit:
+        case ZegoViewMode.AspectFill:
           {
             double factorY = 1.0;
             double w = 0.0;
@@ -291,10 +291,7 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: ((context, constraints) {
-      Widget child = Texture(
-        textureId: widget.textureID,
-      );
-      Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
+
       Matrix4 matrix4 = Matrix4.identity();
       Matrix4 matrix4_1 = Matrix4.identity();
 
@@ -304,10 +301,6 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       if (rotation != null && rotation >= 0) {
         matrix4 = Matrix4.rotationZ(-pi / 180 * rotation);
       }
-
-      var backgroundColor =
-          ZegoExpressTextureRenderer().getBackgroundColor(widget.textureID) ??
-              Colors.black;
 
       // mirror rotation
       int? isMirror = ZegoExpressTextureRenderer().getMirror(widget.textureID);
@@ -319,15 +312,20 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
       // 矩阵相乘
       Matrix4 result = matrix4.multiplied(matrix4_1);
 
-      child = Transform(
+      var backgroundColor =
+          ZegoExpressTextureRenderer().getBackgroundColor(widget.textureID) ??
+              Colors.black;
+
+      Widget child = Transform(
         transform: result,
         child: Texture(
           textureId: widget.textureID,
         ),
         alignment: Alignment.center,
       );
-    
+
       // Calculate the scaled size
+      Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
       var rect = _viewModeCalculate(size, constraints.biggest.width,
           constraints.biggest.height, rotation);
 
