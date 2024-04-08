@@ -3432,6 +3432,18 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onAIVoiceChangerUpdateProgress':
+        if (ZegoExpressEngine.onAIVoiceChangerUpdateProgress == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger,
+              map['percent'], map['fileIndex'], map['fileCount']);
+        }
+        break;
+
       default:
         // TODO: Unknown callback
         break;
