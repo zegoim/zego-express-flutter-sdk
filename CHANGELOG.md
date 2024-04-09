@@ -1,12 +1,21 @@
 # Change Log
 
-## 3.13.2
+## 3.13.3
+
 ### Bug Fixes
+
+1. Fixed the problem of using TextureView to render video frame on the iOS platform to set viewMode abnormally.
+
+## 3.13.2
+
+### *Bug Fixes
+
 1. Fixed the problem of data loss when reporting quality or billing failed.
 
-
 ## 3.13.1
-### Bug Fixes
+
+### Bug Fixes*
+
 1. Fixed an issue where publishing a screen share stream on the web platform failed.
 
 ## 3.13.0

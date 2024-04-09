@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.11.0";
+  static String pluginVersion = "3.13.3";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -3429,6 +3429,18 @@ class ZegoExpressImpl {
           }
           ZegoExpressEngine.onAIVoiceChangerGetSpeakerList!(
               aiVoiceChanger, map['errorCode'], speakerList);
+        }
+        break;
+
+      case 'onAIVoiceChangerUpdateProgress':
+        if (ZegoExpressEngine.onAIVoiceChangerUpdateProgress == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger,
+              map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
 
