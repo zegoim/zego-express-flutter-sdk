@@ -158,7 +158,8 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
 
     {
         std::lock_guard<std::mutex> lock(rendersMutex_);
-        mediaPlayerRenderers_.insert(std::pair(mediaPlayer, renderer->second));
+        // Fix update view
+        mediaPlayerRenderers_[mediaPlayer] = renderer->second;
     }
 
     return true;
