@@ -208,7 +208,7 @@ void ZegoTextureRendererController::enableTextureAlpha(bool enable, int64_t text
 
     {
         std::lock_guard<std::mutex> lock(rendersMutex_);
-        alphaRenders_.insert(std::pair<int64_t , bool>(textureID, enable));
+        alphaRenders_[textureID] = enable;
     }
 }
 
