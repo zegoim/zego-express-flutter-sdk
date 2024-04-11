@@ -883,7 +883,7 @@
     [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
-            if (image) {
+            if (errorCode == 0 && image) {
 #if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
 #elif TARGET_OS_OSX
@@ -1500,7 +1500,7 @@
     [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
-            if (image) {
+            if (errorCode == 0 && image) {
 #if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
 #elif TARGET_OS_OSX
@@ -3680,7 +3680,7 @@
         [mediaPlayer takeSnapshot:^(int errorCode, ZGImage * _Nullable image) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSData *imageData = nil;
-                if (image) {
+                if (errorCode == 0 && image) {
 #if TARGET_OS_IPHONE
                     imageData = UIImageJPEGRepresentation(image, 1);
 #elif TARGET_OS_OSX
