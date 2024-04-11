@@ -47,6 +47,8 @@ bool ZegoTextureRenderer::updateSrcFrameBuffer(uint8_t *data, uint32_t data_leng
 
     updateRenderSize(frameParam.width, frameParam.height);
 
+    srcStride_ = frameParam.strides[0];
+
     srcVideoFrameFormat_ = frameParam.format;
 
     std::copy(data, data + data_length, srcBuffer_.data());

@@ -58,6 +58,7 @@ public:
     /// Called when dart invoke `mediaPlayerTakeSnapshot`
     std::pair<int32_t, int32_t> getMediaPlayerSize(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer);
     const std::vector<uint8_t> *getMediaPlayerFrame(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer);
+    int32_t getMediaPlayerFrameStride(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer);
 
     /// For video preview/play
     void startRendering();

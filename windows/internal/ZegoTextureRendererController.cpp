@@ -441,3 +441,13 @@ const std::vector<uint8_t> *ZegoTextureRendererController::getMediaPlayerFrame(Z
     }
     return nullptr;
 }
+
+int32_t ZegoTextureRendererController::getMediaPlayerFrameStride(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
+{
+    std::lock_guard<std::mutex> lock(rendersMutex_);
+    auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
+    if (renderer != mediaPlayerRenderers_.end()) {
+        return renderer->second->getFrameStride();
+    }
+    return 0;
+}

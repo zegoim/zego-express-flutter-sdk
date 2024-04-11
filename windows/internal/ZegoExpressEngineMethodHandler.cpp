@@ -2630,9 +2630,10 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(
         auto pFrame =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
         auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
+        auto stride = ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
         FTMap resultMap;
         if (pFrame && size != std::pair(0, 0)) {
-            auto tmpData = makeBtimap(pFrame, size);
+            auto tmpData = makeBtimap(pFrame, size, stride);
             std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
             delete[] tmpData.second;
 
