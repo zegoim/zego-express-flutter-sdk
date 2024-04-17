@@ -3261,6 +3261,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
     EXPRESS::ZegoExpressSDK::getEngine()->startMixerTask(
         task, [=](int errorCode, std::string extendedData) {
+            ZF::logInfo("*** Plugin onMixerStartResult");
             FTMap retMap;
 
             retMap[FTValue("errorCode")] = FTValue(errorCode);
