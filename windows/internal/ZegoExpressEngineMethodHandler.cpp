@@ -1025,7 +1025,8 @@ void ZegoExpressEngineMethodHandler::enableVideoObjectSegmentation(
             EXPRESS::ZegoBackgroundConfig backgroundConfig;
             backgroundConfig.processType = (EXPRESS::ZegoBackgroundProcessType)std::get<int32_t>(backgroundConfigMap[FTValue("processType")]);
             backgroundConfig.blurLevel = (EXPRESS::ZegoBackgroundBlurLevel)std::get<int32_t>(backgroundConfigMap[FTValue("blurLevel")]);
-            backgroundConfig.color = std::get<int64_t>(backgroundConfigMap[FTValue("color")]);
+            // Note：注意这里巨坑，如果这里使用std::get<int64_t>处理传过来的0时会导致crash, 怀疑是flutter内部的bug
+            backgroundConfig.color = backgroundConfigMap[FTValue("color")].LongValue();
             backgroundConfig.imageURL = std::get<std::string>(backgroundConfigMap[FTValue("imageURL")]);
             backgroundConfig.videoURL = std::get<std::string>(backgroundConfigMap[FTValue("videoURL")]);
 

@@ -76,7 +76,7 @@ class ZegoExpressTextureRenderer {
   void setBackgroundColor(int textureID, int backgroundColor,
       {bool hasAlpha = false}) {
     if (hasAlpha) {
-      _backgroundColorMap[textureID] = Color(backgroundColor);
+      _backgroundColorMap[textureID] = Color(backgroundColor & 0x00000000);
     } else {
       _backgroundColorMap[textureID] = Color(backgroundColor | 0xff000000);
     }
