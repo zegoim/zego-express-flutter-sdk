@@ -435,7 +435,8 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
                     .where(
                       (element) {
                         if (ZegoScenario.values.indexOf(element) >
-                            ZegoScenario.values.indexOf(ZegoScenario.Broadcast)) {
+                            ZegoScenario.values
+                                .indexOf(ZegoScenario.Broadcast)) {
                           if (kIsWeb &&
                               (element == ZegoScenario.HighQualityChatroom ||
                                   element == ZegoScenario.Karaoke)) {
