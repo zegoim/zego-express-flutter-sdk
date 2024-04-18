@@ -791,7 +791,7 @@ class ZegoExpressEngine {
   /// Related callbacks: Develop can get the sound update notification of each single stream in the mixed stream through [OnMixerSoundLevelUpdate].
   /// Related APIs: Develop can start a mixed flow task through [startMixerTask].
   ///
-  /// - [taskID] The mixing task ID. Value range: the length does not exceed 256. Caution: This parameter is in string format and cannot contain URL keywords, such as 'http' and '?' etc., otherwise the push and pull flow will fail. Only supports numbers, English characters and'~','!','@','$','%','^','&','*','(',')','_' ,'+','=','-','`',';',''',',','.','<','>','/','\'.
+  /// - [taskID] The mixing task ID. Value range: the length does not exceed 256. Caution: This parameter is in string format and cannot contain URL keywords, such as 'http' and '?' etc., otherwise the push and pull flow will fail. Only supports numbers, English characters and'~','!','@','$','%','^','&','*','(',')','_' ,'+','=','-','`',';',''',',','.','<','>','\'.
   /// - [infoList] List of information that the current CDN is being mixed.
   static void Function(String taskID, List<ZegoStreamRelayCDNInfo> infoList)?
       onMixerRelayCDNStateUpdate;

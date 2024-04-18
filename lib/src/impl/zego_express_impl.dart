@@ -263,7 +263,12 @@ class ZegoExpressImpl {
       'user': {'userID': user.userID, 'userName': user.userName},
       'config': config?.toMap() ?? {}
     });
-    Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+    var extendedData = {};
+    try {
+      extendedData = jsonDecode(map['extendedData']);
+    } catch (e) {
+      extendedData = {};
+    }
     return ZegoRoomLoginResult(
         map['errorCode'], Map<String, dynamic>.from(extendedData));
   }
@@ -271,7 +276,12 @@ class ZegoExpressImpl {
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
     final Map<dynamic, dynamic> map =
         await _channel.invokeMethod('logoutRoom', {'roomID': roomID});
-    Map<String, dynamic> extendedData = jsonDecode(map['extendedData']);
+    var extendedData = {};
+    try {
+      extendedData = jsonDecode(map['extendedData']);
+    } catch (e) {
+      extendedData = {};
+    }
     return ZegoRoomLogoutResult(
         map['errorCode'], Map<String, dynamic>.from(extendedData));
   }
@@ -993,8 +1003,13 @@ class ZegoExpressImpl {
     final Map<dynamic, dynamic> result =
         await _channel.invokeMethod('startMixerTask', map);
 
-    return ZegoMixerStartResult(
-        result['errorCode'], jsonDecode(result['extendedData']));
+    var extendedData = {};
+    try {
+      extendedData = jsonDecode(result['extendedData']);
+    } catch (e) {
+      extendedData = {};
+    }
+    return ZegoMixerStartResult(result['errorCode'], extendedData);
   }
 
   Future<ZegoMixerStopResult> stopMixerTask(ZegoMixerTask task) async {
@@ -1059,8 +1074,13 @@ class ZegoExpressImpl {
     final Map<dynamic, dynamic> result =
         await _channel.invokeMethod('startAutoMixerTask', map);
 
-    return ZegoMixerStartResult(
-        result['errorCode'], jsonDecode(result['extendedData']));
+    var extendedData = {};
+    try {
+      extendedData = jsonDecode(result['extendedData']);
+    } catch (e) {
+      extendedData = {};
+    }
+    return ZegoMixerStartResult(result['errorCode'], extendedData);
   }
 
   Future<ZegoMixerStopResult> stopAutoMixerTask(ZegoAutoMixerTask task) async {
@@ -2237,7 +2257,12 @@ class ZegoExpressImpl {
       case 'onRoomStateUpdate':
         if (ZegoExpressEngine.onRoomStateUpdate == null) return;
 
-        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+        var extendedData = {};
+        try {
+          extendedData = jsonDecode(map['extendedData']);
+        } catch (e) {
+          extendedData = {};
+        }
 
         ZegoExpressEngine.onRoomStateUpdate!(
             map['roomID'],
@@ -2249,7 +2274,12 @@ class ZegoExpressImpl {
       case 'onRoomStateChanged':
         if (ZegoExpressEngine.onRoomStateChanged == null) return;
 
-        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+        var extendedData = {};
+        try {
+          extendedData = jsonDecode(map['extendedData']);
+        } catch (e) {
+          extendedData = {};
+        }
 
         ZegoExpressEngine.onRoomStateChanged!(
             map['roomID'],
@@ -2293,7 +2323,12 @@ class ZegoExpressImpl {
           streamList.add(stream);
         }
 
-        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+        var extendedData = {};
+        try {
+          extendedData = jsonDecode(map['extendedData']);
+        } catch (e) {
+          extendedData = {};
+        }
 
         ZegoExpressEngine.onRoomStreamUpdate!(
             map['roomID'],
@@ -2351,7 +2386,12 @@ class ZegoExpressImpl {
       case 'onPublisherStateUpdate':
         if (ZegoExpressEngine.onPublisherStateUpdate == null) return;
 
-        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+        var extendedData = {};
+        try {
+          extendedData = jsonDecode(map['extendedData']);
+        } catch (e) {
+          extendedData = {};
+        }
 
         ZegoExpressEngine.onPublisherStateUpdate!(
             map['streamID'],
@@ -2507,7 +2547,12 @@ class ZegoExpressImpl {
       case 'onPlayerStateUpdate':
         if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
 
-        Map<dynamic, dynamic> extendedData = jsonDecode(map['extendedData']);
+        var extendedData = {};
+        try {
+          extendedData = jsonDecode(map['extendedData']);
+        } catch (e) {
+          extendedData = {};
+        }
 
         ZegoExpressEngine.onPlayerStateUpdate!(
             map['streamID'],
@@ -4465,7 +4510,7 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         .invokeMethod('copyrightedMusicSendExtendedRequest',
             {'command': command, 'params': params});
     return ZegoCopyrightedMusicSendExtendedRequestResult(
-        map['errorCode'], map['command'], map['result']);
+        map['errorCode'] ?? 0, map['command'] ?? '', map['result'] ?? '');
   }
 
   @override
