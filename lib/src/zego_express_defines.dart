@@ -4460,13 +4460,6 @@ abstract class ZegoMediaPlayer {
   /// - [index] Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
   Future<void> setAudioTrackPublishIndex(int index);
 
-  /// Setting up the specific voice changer parameters.
-  ///
-  /// - [audioChannel] The audio channel to be voice changed
-  /// - [param] Voice changer parameters
-  Future<void> setVoiceChangerParam(
-      ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param);
-
   /// Enable voice changer, set up the specific voice changer parameters.
   ///
   /// - [audioChannel] The audio channel to be voice changed
@@ -4671,6 +4664,16 @@ abstract class ZegoMediaPlayer {
   /// Use cases: Typically used in cloud-based media player scenarios.
   /// When to call: Invoke after the [loadResource] callback succeeds.
   Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics();
+
+  /// [Deprecated] Setting up the specific voice changer parameters.
+  ///
+  /// @deprecated Deprecated since 3.15.0, please use [enableVoiceChanger] instead.
+  /// - [audioChannel] The audio channel to be voice changed
+  /// - [param] Voice changer parameters
+  @Deprecated(
+      'Deprecated since 3.15.0, please use [enableVoiceChanger] instead.')
+  Future<void> setVoiceChangerParam(
+      ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param);
 }
 
 abstract class ZegoAudioEffectPlayer {
