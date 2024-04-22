@@ -4467,6 +4467,14 @@ abstract class ZegoMediaPlayer {
   Future<void> setVoiceChangerParam(
       ZegoMediaPlayerAudioChannel audioChannel, ZegoVoiceChangerParam param);
 
+  /// Enable voice changer, set up the specific voice changer parameters.
+  ///
+  /// - [audioChannel] The audio channel to be voice changed
+  /// - [enable] Whether enable voice changer or not. True - enabled, false - disabled, default value is false.
+  /// - [param] Voice changer parameters
+  Future<void> enableVoiceChanger(ZegoMediaPlayerAudioChannel audioChannel,
+      bool enable, ZegoVoiceChangerParam param);
+
   /// Get the current playback status.
   ///
   /// - Returns current state

@@ -3817,6 +3817,32 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void mediaPlayerEnableVoiceChanger(MethodCall call, Result result) {
+
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            HashMap<String, Double> paramMap = call.argument("param");
+            if (paramMap == null || paramMap.isEmpty()) {
+                result.error("mediaPlayer_EnableVoiceChanger_Null_Param".toUpperCase(), "[mediaPlayerEnableVoiceChanger] Null param", null);
+                return;
+            }
+
+            ZegoMediaPlayerAudioChannel audioChannel = ZegoMediaPlayerAudioChannel.getZegoMediaPlayerAudioChannel(ZegoUtils.intValue((Number) call.argument("audioChannel")));
+
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+            ZegoVoiceChangerParam param = new ZegoVoiceChangerParam();
+            param.pitch = ZegoUtils.floatValue(paramMap.get("pitch"));
+
+            mediaPlayer.enableVoiceChanger(audioChannel, enable, param);
+        }
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void mediaPlayerGetCurrentState(MethodCall call, Result result) {
 
         Integer index = call.argument("index");

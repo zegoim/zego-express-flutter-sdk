@@ -3587,6 +3587,24 @@
     result(nil);
 }
 
+- (void)mediaPlayerEnableVoiceChanger:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    NSDictionary *paramMap = call.arguments[@"param"];
+    ZegoVoiceChangerParam *param = [[ZegoVoiceChangerParam alloc] init];
+    param.pitch = [ZegoUtils floatValue:paramMap[@"pitch"]];
+
+    int audioChannel = [ZegoUtils intValue:call.arguments[@"audioChannel"]];
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+
+    [mediaPlayer enableVoiceChanger:enable param:param audioChannel:audioChannel];
+
+    result(nil);
+}
+
 - (void)mediaPlayerGetCurrentState:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSNumber *index = call.arguments[@"index"];
