@@ -316,6 +316,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerSetHttpHeader),
         EngineMethodHandler(mediaPlayerGetCurrentRenderingProgress),
         EngineMethodHandler(mediaPlayerEnableLiveAudioEffect),
+        EngineMethodHandler(mediaPlayerEnableViewMirror),
         EngineMethodHandler(mediaPlayerSetPlayMediaStreamType),
         EngineMethodHandler(mediaPlayerGetPlaybackStatistics),
 

@@ -791,7 +791,7 @@ class ZegoExpressEngine {
   /// Related callbacks: Develop can get the sound update notification of each single stream in the mixed stream through [OnMixerSoundLevelUpdate].
   /// Related APIs: Develop can start a mixed flow task through [startMixerTask].
   ///
-  /// - [taskID] The mixing task ID. Value range: the length does not exceed 256. Caution: This parameter is in string format and cannot contain URL keywords, such as 'http' and '?' etc., otherwise the push and pull flow will fail. Only supports numbers, English characters and'~','!','@','$','%','^','&','*','(',')','_' ,'+','=','-','`',';',''',',','.','<','>','/','\'.
+  /// - [taskID] The mixing task ID. Value range: the length does not exceed 256. Caution: This parameter is in string format and cannot contain URL keywords, such as 'http' and '?' etc., otherwise the push and pull flow will fail. Only supports numbers, English characters and'~','!','@','$','%','^','&','*','(',')','_' ,'+','=','-','`',';',''',',','.','<','>','\'.
   /// - [infoList] List of information that the current CDN is being mixed.
   static void Function(String taskID, List<ZegoStreamRelayCDNInfo> infoList)?
       onMixerRelayCDNStateUpdate;
@@ -1275,6 +1275,18 @@ class ZegoExpressEngine {
   /// - [path] Path of currently open file
   static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
       onMediaDataPublisherFileDataBegin;
+
+  /// The event callback that the media data publisher has completed a file stream publishing.
+  ///
+  /// Available since: 3.14.0
+  /// Description: The media data publisher has finished a file stream publishing.
+  /// Trigger: The callback triggered when the media data publisher has completed a file stream publishing.
+  /// Restrictions: None.
+  ///
+  /// - [mediaDataPublisher] Callback publisher object.
+  /// - [path] The path of the file that has completed stream publishing.
+  static void Function(ZegoMediaDataPublisher mediaDataPublisher, String path)?
+      onMediaDataPublisherFileDataEnd;
 
   /// The callback triggered when the state of data recording (to a file) changes.
   ///

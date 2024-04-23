@@ -134,6 +134,7 @@ import im.zego.zegoexpress.constants.ZegoViewMode;
 import im.zego.zegoexpress.constants.ZegoVideoStreamType;
 import im.zego.zegoexpress.constants.ZegoVoiceChangerPreset;
 import im.zego.zegoexpress.constants.ZegoStreamAlignmentMode;
+import im.zego.zegoexpress.constants.ZegoMixImageCheckMode;
 import im.zego.zegoexpress.constants.ZegoCameraFocusMode;
 import im.zego.zegoexpress.constants.ZegoCameraExposureMode;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
@@ -2148,6 +2149,9 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoStreamAlignmentMode streamAlignmentMode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("streamAlignmentMode")));
         taskObject.setStreamAlignmentMode(streamAlignmentMode);
+
+        ZegoMixImageCheckMode mixImageCheckMode = ZegoMixImageCheckMode.getZegoMixImageCheckMode(ZegoUtils.intValue((Number) call.argument("mixImageCheckMode")));
+        taskObject.setMixImageCheckMode(mixImageCheckMode);
 
         byte[] userData = call.argument("userData");
         ByteBuffer userDataByteBuffer =  ByteBuffer.allocateDirect(userData.length);
@@ -4242,6 +4246,18 @@ public class ZegoExpressEngineMethodHandler {
             String cacheDir = call.argument("cacheDir");
 
             mediaPlayer.enableLocalCache(enable, cacheDir);
+        }
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void mediaPlayerEnableViewMirror(MethodCall call, final Result result) {
+        Integer index = call.argument("index");
+        ZegoMediaPlayer mediaPlayer = mediaPlayerHashMap.get(index);
+
+        if (mediaPlayer != null) {
+            boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+            mediaPlayer.enableViewMirror(enable);
         }
         result.success(null);
     }

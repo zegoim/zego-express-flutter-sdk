@@ -80,6 +80,10 @@ class ZegoTextureRenderer {
     return &srcBuffer_;
   }
 
+  inline uint32_t getFrameStride() {
+    return srcStride_;
+  }
+
   void setBackgroundColor(int colode) {}
   
   void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {
@@ -115,6 +119,7 @@ class ZegoTextureRenderer {
 
   std::vector<uint8_t> srcBuffer_;
   std::vector<uint8_t> destBuffer_;
+  uint32_t srcStride_ = 0;
   std::unique_ptr<flutter::TextureVariant> texture_;
   std::unique_ptr<FlutterDesktopPixelBuffer> flutterDesktopPixelBuffer_ =
       nullptr;
