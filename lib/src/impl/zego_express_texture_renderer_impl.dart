@@ -22,15 +22,15 @@ class ZegoExpressTextureRenderer {
   }
 
   void uninit() async {
+    if (!kIsWeb && !kIsAndroid) {
+      await _streamSubscriptionTextureRendererController?.cancel();
+      _streamSubscriptionTextureRendererController = null;
+    }
     _backgroundColorMap.clear();
     _mirrorMap.clear();
     _sizeMap.clear();
     _viewModeMap.clear();
     _rotationMap.clear();
-    if (!kIsWeb && !kIsAndroid) {
-      await _streamSubscriptionTextureRendererController?.cancel();
-      _streamSubscriptionTextureRendererController = null;
-    }
   }
 
   /// Create a Texture renderer and return the texture ID
@@ -76,7 +76,7 @@ class ZegoExpressTextureRenderer {
   void setBackgroundColor(int textureID, int backgroundColor,
       {bool hasAlpha = false}) {
     if (hasAlpha) {
-      _backgroundColorMap[textureID] = Color(backgroundColor);
+      _backgroundColorMap[textureID] = Color(backgroundColor & 0x00000000);
     } else {
       _backgroundColorMap[textureID] = Color(backgroundColor | 0xff000000);
     }
@@ -108,6 +108,14 @@ class ZegoExpressTextureRenderer {
     });
   }
 
+  void setStreamSubscription(int textureID, StreamSubscription? subscription) {
+    var oldSubscription = _subscriptionMap.remove(textureID);
+    oldSubscription?.cancel();
+    if (subscription != null) {
+      _subscriptionMap[textureID] = subscription;
+    }
+  }
+
   static void _textureRendererControllerEventListener(dynamic data) {
     func(data) {
       final Map<dynamic, dynamic> map = data;
@@ -135,6 +143,7 @@ class ZegoExpressTextureRenderer {
   static final Map<int, Size> _sizeMap = {};
   static final Map<int, int?> _mirrorMap = {};
   static final Map<int, int?> _rotationMap = {};
+  static final Map<int, StreamSubscription?> _subscriptionMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -169,18 +178,33 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   void initState() {
     super.initState();
-    widget.stream.listen((map) {
+    var subscription = widget.stream.listen((map) {
       if (_isInit) {
         setState(() {});
       }
     });
+    ZegoExpressTextureRenderer()
+        .setStreamSubscription(widget.textureID, subscription);
     _isInit = true;
   }
 
   @override
   void dispose() {
     _isInit = false;
+    ZegoExpressTextureRenderer().setStreamSubscription(widget.textureID, null);
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant ZegoTextureWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    ZegoExpressTextureRenderer()
+        .setStreamSubscription(oldWidget.textureID, null);
+    var subscription = widget.stream.listen((event) {
+      setState(() {});
+    });
+    ZegoExpressTextureRenderer()
+        .setStreamSubscription(widget.textureID, subscription);
   }
 
   Rect _viewModeCalculate(
@@ -291,7 +315,6 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: ((context, constraints) {
-
       Matrix4 matrix4 = Matrix4.identity();
       Matrix4 matrix4_1 = Matrix4.identity();
 

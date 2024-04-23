@@ -1191,4 +1191,19 @@ class ZegoErrorCode {
 
   /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int AIVoiceChangerInnerError = 1021002;
+
+  /// Description: AI voice changer was not initialized.<br>Cause: Did not initialize AI voice changer before use it.<br>Solutions: Use AI voice changer after initialize it.
+  static const int AIVoiceChangerNotInitError = 1021003;
+
+  /// Description: Initialize AI voie changer failed.<br>Cause: Did not set user ID before initialize AI voice changer, or AI voice changer service expired.<br>Solutions: Set user ID before initialize AI voice changer, or contact ZEGO technical support to deal with it.
+  static const int AIVoiceChangerInitFailedError = 1021004;
+
+  /// Description: No AI voice changer resource files.<br>Cause: AI voice changer resource files were not downloaded.<br>Solutions: Please make sure AI voice changer resource files downloaded before use it.
+  static const int AIVoiceChangerNoModelError = 1021005;
+
+  /// Description: Download AI voice changer resource files failed.<br>Cause: Poor network connection.<br>Solutions: Please check the network connection is ok.
+  static const int AIVoiceChangerModelDownloadFailedError = 1021006;
+
+  /// Description: Can not run AI voice changer on this device.<br>Cause: AI voice changer feature can not run on this device because of poor perforamance.<br>Solutions: Do not use AI voice changer feature on this device.
+  static const int AIVoiceChangerDeviceNotSupportedError = 1021007;
 }

@@ -883,7 +883,7 @@
     [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
-            if (image) {
+            if (errorCode == 0 && image) {
 #if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
 #elif TARGET_OS_OSX
@@ -1500,7 +1500,7 @@
     [[ZegoExpressEngine sharedEngine] takePlayStreamSnapshot:streamID callback:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
-            if (image) {
+            if (errorCode == 0 && image) {
 #if TARGET_OS_IPHONE
                 imageData = UIImageJPEGRepresentation(image, 1);
 #elif TARGET_OS_OSX
@@ -1945,6 +1945,10 @@
     // Stream AlignmentMode
     int streamAlignmentMode = [ZegoUtils intValue:call.arguments[@"streamAlignmentMode"]];
     [taskObject setStreamAlignmentMode:(ZegoStreamAlignmentMode)streamAlignmentMode];
+
+    //check image mode
+    int mixImageCheckMode = [ZegoUtils intValue:call.arguments[@"mixImageCheckMode"]];
+    [taskObject setMixImageCheckMode:(ZegoMixImageCheckMode)mixImageCheckMode];
     
     // User Data
     FlutterStandardTypedData *userData = call.arguments[@"userData"];
@@ -3676,7 +3680,7 @@
         [mediaPlayer takeSnapshot:^(int errorCode, ZGImage * _Nullable image) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSData *imageData = nil;
-                if (image) {
+                if (errorCode == 0 && image) {
 #if TARGET_OS_IPHONE
                     imageData = UIImageJPEGRepresentation(image, 1);
 #elif TARGET_OS_OSX
@@ -3976,6 +3980,18 @@
         BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
         NSString *cacheDir = call.arguments[@"cacheDir"];
         [mediaPlayer enableLocalCache:enable cacheDir:cacheDir];
+    }
+    
+    result(nil);
+}
+
+- (void)mediaPlayerEnableViewMirror:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoMediaPlayer *mediaPlayer = self.mediaPlayerMap[index];
+
+    if (mediaPlayer) {
+        BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+        [mediaPlayer enableViewMirror:enable];
     }
     
     result(nil);
