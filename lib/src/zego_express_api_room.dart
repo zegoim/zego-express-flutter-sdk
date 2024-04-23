@@ -31,7 +31,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
@@ -55,7 +55,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   2. If you need to communicate with the Web SDK, please do not use '%'.
   /// - Returns The result of this logout room
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {

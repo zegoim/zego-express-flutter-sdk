@@ -158,7 +158,8 @@ bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZE
 
     {
         std::lock_guard<std::mutex> lock(rendersMutex_);
-        mediaPlayerRenderers_.insert(std::pair(mediaPlayer, renderer->second));
+        // Fix update view
+        mediaPlayerRenderers_[mediaPlayer] = renderer->second;
     }
 
     return true;
@@ -207,7 +208,7 @@ void ZegoTextureRendererController::enableTextureAlpha(bool enable, int64_t text
 
     {
         std::lock_guard<std::mutex> lock(rendersMutex_);
-        alphaRenders_.insert(std::pair<int64_t , bool>(textureID, enable));
+        alphaRenders_[textureID] = enable;
     }
 }
 
@@ -439,4 +440,14 @@ const std::vector<uint8_t> *ZegoTextureRendererController::getMediaPlayerFrame(Z
         return renderer->second->getFrame();
     }
     return nullptr;
+}
+
+int32_t ZegoTextureRendererController::getMediaPlayerFrameStride(ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer)
+{
+    std::lock_guard<std::mutex> lock(rendersMutex_);
+    auto renderer = mediaPlayerRenderers_.find(mediaPlayer);
+    if (renderer != mediaPlayerRenderers_.end()) {
+        return renderer->second->getFrameStride();
+    }
+    return 0;
 }

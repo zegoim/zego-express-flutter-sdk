@@ -1025,7 +1025,8 @@ void ZegoExpressEngineMethodHandler::enableVideoObjectSegmentation(
             EXPRESS::ZegoBackgroundConfig backgroundConfig;
             backgroundConfig.processType = (EXPRESS::ZegoBackgroundProcessType)std::get<int32_t>(backgroundConfigMap[FTValue("processType")]);
             backgroundConfig.blurLevel = (EXPRESS::ZegoBackgroundBlurLevel)std::get<int32_t>(backgroundConfigMap[FTValue("blurLevel")]);
-            backgroundConfig.color = std::get<int32_t>(backgroundConfigMap[FTValue("color")]);
+            // Note：注意这里巨坑，如果这里使用std::get<int64_t>处理传过来的0时会导致crash, 怀疑是flutter内部的bug
+            backgroundConfig.color = backgroundConfigMap[FTValue("color")].LongValue();
             backgroundConfig.imageURL = std::get<std::string>(backgroundConfigMap[FTValue("imageURL")]);
             backgroundConfig.videoURL = std::get<std::string>(backgroundConfigMap[FTValue("videoURL")]);
 
@@ -2630,9 +2631,10 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(
         auto pFrame =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
         auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
+        auto stride = ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
         FTMap resultMap;
         if (pFrame && size != std::pair(0, 0)) {
-            auto tmpData = makeBtimap(pFrame, size);
+            auto tmpData = makeBtimap(pFrame, size, stride);
             std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
             delete[] tmpData.second;
 
@@ -3260,6 +3262,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
     EXPRESS::ZegoExpressSDK::getEngine()->startMixerTask(
         task, [=](int errorCode, std::string extendedData) {
+            ZF::logInfo("*** Plugin onMixerStartResult");
             FTMap retMap;
 
             retMap[FTValue("errorCode")] = FTValue(errorCode);
