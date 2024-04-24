@@ -596,6 +596,9 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerSetVoiceChangerParam(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableVoiceChanger(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerGetCurrentState(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);

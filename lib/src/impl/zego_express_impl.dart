@@ -3683,6 +3683,18 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
   }
 
   @override
+  Future<void> enableVoiceChanger(ZegoMediaPlayerAudioChannel audioChannel,
+      bool enable, ZegoVoiceChangerParam param) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('mediaPlayerEnableVoiceChanger', {
+      'index': _index,
+      'audioChannel': audioChannel.index,
+      'enable': enable,
+      'param': {'pitch': param.pitch}
+    });
+  }
+
+  @override
   Future<ZegoMediaPlayerState> getCurrentState() async {
     int state = await ZegoExpressImpl._channel
         .invokeMethod('mediaPlayerGetCurrentState', {'index': _index});
