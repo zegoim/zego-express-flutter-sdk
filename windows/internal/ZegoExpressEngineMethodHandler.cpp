@@ -17,10 +17,6 @@
 #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 
-#define ARGUMENTTYPE flutter::EncodableMap &
-#define RESPONSETYPE std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
-#define zg_value_get_int()
-
 void ZegoExpressEngineMethodHandler::clearPluginRegistrar() {
     ZegoTextureRendererController::getInstance()->uninit();
 }
@@ -2405,29 +2401,6 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetVoiceChangerParam(
         param.pitch = (float)pitch;
         mediaPlayer->setVoiceChangerParam((EXPRESS::ZegoMediaPlayerAudioChannel)audioChannel,
                                           param);
-    }
-
-    result->Success();
-}
-
-void ZegoExpressEngineMethodHandler::mediaPlayerEnableVoiceChanger(
-    flutter::EncodableMap &argument,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    auto index = std::get<int32_t>(argument[FTValue("index")]);
-    auto mediaPlayer = mediaPlayerMap_[index];
-
-    if (mediaPlayer) {
-        FTMap paramMap = std::get<FTMap>(argument[FTValue("param")]);
-        auto pitch = std::get<double>(paramMap[FTValue("pitch")]);
-
-        auto audioChannel = std::get<int32_t>(argument[FTValue("audioChannel")]);
-
-        auto enable = std::get<bool>(argument[FTValue("enable")]);
-
-        EXPRESS::ZegoVoiceChangerParam param;
-        param.pitch = (float)pitch;
-        mediaPlayer->enableVoiceChanger((EXPRESS::ZegoMediaPlayerAudioChannel)audioChannel,
-                                        enable, param);
     }
 
     result->Success();
