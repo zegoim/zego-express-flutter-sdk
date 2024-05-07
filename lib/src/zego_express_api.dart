@@ -1583,7 +1583,7 @@ class ZegoExpressEngine {
   /// Available since: 2.11.0
   /// Description: The status change notification of the microphone, starting to send audio is an asynchronous process, and the state switching in the middle is called back through this function.
   /// When to Trigger: After the [enableMicrophone] function.
-  /// Caution: It must be monitored before the [enableMicrophone] function is called.
+  /// Caution: 1. It must be monitored before the [enableMicrophone] function is called. 2. The callback is not triggered when the [enableMicrophone] is stopped normally, and the Off state is triggered only when the [enableMicrophone] is stopped abnormally.
   ///
   /// - [rangeAudio] Range audio instance that triggers this callback.
   /// - [state] The use state of the range audio.

@@ -6079,6 +6079,12 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void isAIVoiceChangerSupported(MethodCall call, Result result) {
+        boolean supported = ZegoExpressEngine.getEngine().isAIVoiceChangerSupported();
+        result.success(supported);
+    }
+
+    @SuppressWarnings("unused")
     public static void aiVoiceChangerGetSpeakerList(MethodCall call, Result result) {
 
         Integer index = call.argument("index");

@@ -29,4 +29,16 @@ extension ZegoExpressEngineAIVoiceChanger on ZegoExpressEngine {
   Future<void> destroyAIVoiceChanger(ZegoAIVoiceChanger aiVoiceChanger) async {
     return await ZegoExpressImpl.instance.destroyAIVoiceChanger(aiVoiceChanger);
   }
+
+  /// Check the device can run AI voice changer or not.
+  ///
+  /// Available since: 3.14.0
+  /// Description: Check the device can run AI voice changer or not.
+  /// Use case: Often used in live broadcasting, voice chatroom and KTV.
+  /// When to call: It can be called after the SDK by [createEngine] has been initialized.
+  ///
+  /// - Returns Return true if the device can run AI voice changer, otherwise return false.
+  Future<bool> isAIVoiceChangerSupported() async {
+    return await ZegoExpressImpl.instance.isAIVoiceChangerSupported();
+  }
 }

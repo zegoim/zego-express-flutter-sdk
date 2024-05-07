@@ -2173,6 +2173,10 @@ class ZegoExpressImpl {
     aiVoiceChangerMap.remove(index);
   }
 
+  Future<bool> isAIVoiceChangerSupported() async {
+    return await _channel.invokeMethod('isAIVoiceChangerSupported');
+  }
+
   /* EventHandler */
 
   static void _registerEventHandler() async {

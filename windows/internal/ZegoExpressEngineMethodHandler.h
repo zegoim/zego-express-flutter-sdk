@@ -1004,6 +1004,8 @@ class ZegoExpressEngineMethodHandler {
     void
     destroyAIVoiceChanger(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void isAIVoiceChangerSupported(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void aiVoiceChangerGetSpeakerList(
         flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
