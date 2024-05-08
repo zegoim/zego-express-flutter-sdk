@@ -413,6 +413,7 @@ static const std::map<
         // AIVoiceChanger
         EngineMethodHandler(createAIVoiceChanger),
         EngineMethodHandler(destroyAIVoiceChanger),
+        EngineMethodHandler(isAIVoiceChangerSupported),
         EngineMethodHandler(aiVoiceChangerGetSpeakerList),
         EngineMethodHandler(aiVoiceChangerInitEngine),
         EngineMethodHandler(aiVoiceChangerSetSpeaker),
