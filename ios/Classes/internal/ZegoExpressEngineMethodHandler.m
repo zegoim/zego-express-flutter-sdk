@@ -5965,6 +5965,11 @@
     result(nil);
 }
 
+- (void)isAIVoiceChangerSupported:(FlutterMethodCall *)call result:(FlutterResult)result {
+    BOOL supported = [[ZegoExpressEngine sharedEngine] isAIVoiceChangerSupported];
+    result(@(supported));
+}
+
 - (void)aiVoiceChangerGetSpeakerList:(FlutterMethodCall *)call result:(FlutterResult)result {
     
     NSNumber *index = call.arguments[@"index"];

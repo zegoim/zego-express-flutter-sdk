@@ -6090,6 +6090,13 @@ void ZegoExpressEngineMethodHandler::destroyAIVoiceChanger(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::isAIVoiceChangerSupported(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    bool supported = EXPRESS::ZegoExpressSDK::getEngine()->isAIVoiceChangerSupported();
+    result->Success(FTValue(supported));
+}
+
 void ZegoExpressEngineMethodHandler::aiVoiceChangerInitEngine(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

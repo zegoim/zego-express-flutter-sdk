@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.13.3";
+  static String pluginVersion = "3.14.5";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -2171,6 +2171,10 @@ class ZegoExpressImpl {
     await _channel.invokeMethod('destroyAIVoiceChanger', {'index': index});
 
     aiVoiceChangerMap.remove(index);
+  }
+
+  Future<bool> isAIVoiceChangerSupported() async {
+    return await _channel.invokeMethod('isAIVoiceChangerSupported');
   }
 
   /* EventHandler */

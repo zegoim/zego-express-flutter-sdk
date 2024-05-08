@@ -1,5 +1,65 @@
 # Change Log
 
+## 3.14.5
+
+### New Features
+
+#### 1. Support iOS 17.0 version
+
+Note: Starting with this release, iOS 11.0 and earlier versions are no longer supported.
+
+Starting from 2024-04-29, all apps on the App Store must support iOS 17.0 version. For details, please refer to Apple Developer Website Official Instructions.
+
+#### 2. Supports capturing video by using high frame rates of 60 fps
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+#### 3. Added two new sound effects
+
+ZegoVoiceChangerPreset added enumeration values for two voice-changing effects, Autobot and OutOfPower, to enrich the voice-changing effects.
+
+For related API, please refer to [setVoiceChangerPreset]
+
+#### 4. ZegoMediaPlayer supports video mirroring
+
+For related API, please refer to [enableViewMirror]
+
+#### 5. Supports initiating mixed-streaming tasks normally when image resource verification fails
+
+ZegoMixerTask added new parameter `mixImageCheckMode`, used to control whether backgroundImageURL, inputList.imageInfo.url, or watermark.imageURL image resources fail to verify whether the mixing task can be initiated normally.
+
+This function is not enabled by default (the default value of `mixImageCheckMode` is 0), which means that image verification is strictly performed, that is, the original restriction rules of parameters must be met before the mixed flow task can be initiated normally.
+
+For related API, please refer to [startMixerTask]
+
+#### 6. Supports determining in advance whether the device can run the AI voice changing function
+
+The AI voice changing function has certain requirements on the performance of the running device. You can use the [isAIVoiceChangerSupported] interface to determine in advance whether the device can support the AI voice changing function.
+
+For related API, please refer to [isAIVoiceChangerSupported]
+
+### Enhancements
+
+#### 1. Optimize the super-resolution function
+
+Optimize the super-resolution effect and reduce the sharpness of the algorithm, thereby improving the subjective quality when the original picture has noise, there are faces in the picture, etc. For example, the flaws on the anchor’s face will not be highlighted, and the anchor’s hairline will not become more obvious.
+
+Optimize the frame rate performance of the super-resolution algorithm on Qualcomm chips.
+
+### Bug Fixes
+
+1. Fixed an issue where the release timing of undefined global variables caused the process to exit abnormally.
+
+2. Fixed the issue where some models use AudioTrack to play audio, resulting in abnormal sound.
+
+3. Fixed the problem of using the AI voice changing function to occasionally cause the audio and video to be out of sync, and causing words to be swallowed instantly when starting and stopping.
+
+4. Fixed the issue where the iPad collects audio through the microphone and occasionally has no sound.
+
+5. Fixed the problem of multi-thread concurrency when destroying a camera, causing a crash when accessing a null pointer.
+
+6. Fixed the problem that the mediaPlayer takes a long time to open files in M3U8 format.
+
 ## 3.13.3
 
 ### Bug Fixes
