@@ -18,6 +18,8 @@ class ZegoExpressEngineMethodHandler {
 
     void setPluginRegistrar(flutter::PluginRegistrarWindows *registrar) { registrar_ = registrar; }
 
+    void clearPluginRegistrar();
+
     void initApiCalledCallback();
 
     bool isEngineCreated();
@@ -78,6 +80,8 @@ class ZegoExpressEngineMethodHandler {
     void renewToken(flutter::EncodableMap &argument,
                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setRoomExtraInfo(flutter::EncodableMap &argument,
+                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void getRoomStreamList(flutter::EncodableMap &argument,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void
@@ -151,6 +155,9 @@ class ZegoExpressEngineMethodHandler {
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     muteAllPlayStreamVideo(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    muteAllPlayVideoStreams(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void enableCheckPoc(flutter::EncodableMap &argument,
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -229,6 +236,8 @@ class ZegoExpressEngineMethodHandler {
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setBeautifyOption(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableColorEnhancement(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void
     sendBroadcastMessage(flutter::EncodableMap &argument,
@@ -237,6 +246,8 @@ class ZegoExpressEngineMethodHandler {
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void sendCustomCommand(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void ZegoExpressEngineMethodHandler::sendTransparentMessage(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result); 
     void enableCustomVideoCapture(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -292,6 +303,16 @@ class ZegoExpressEngineMethodHandler {
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void getNetworkTimeInfo(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+    void startDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void stopDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void uploadDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void removeDumpData(flutter::EncodableMap &argument,
+                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        
 
     void
     mutePublishStreamAudio(flutter::EncodableMap &argument,
@@ -352,6 +373,9 @@ class ZegoExpressEngineMethodHandler {
                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     muteAllPlayStreamAudio(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    muteAllPlayAudioStreams(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     enableHardwareDecoder(flutter::EncodableMap &argument,
@@ -469,7 +493,19 @@ class ZegoExpressEngineMethodHandler {
     void audioEffectPlayerSetVolume(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlayVolume(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPublishVolume(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerSetVolumeAll(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPlayVolumeAll(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void audioEffectPlayerSetPublishVolumeAll(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void audioEffectPlayerGetTotalDuration(
@@ -523,6 +559,9 @@ class ZegoExpressEngineMethodHandler {
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     mediaPlayerMuteLocal(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    mediaPlayerEnableViewMirror(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     mediaPlayerSetVolume(flutter::EncodableMap &argument,
@@ -603,6 +642,9 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerSetAudioTrackPublishIndex(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableAudioData(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void mediaPlayerEnableVideoData(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -624,6 +666,19 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerGetCurrentRenderingProgress(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableLiveAudioEffect(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerSetPlayMediaStreamType(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerEnableLocalCache(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void mediaPlayerGetPlaybackStatistics(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        
     /* Media Data Publisher */
     void createMediaDataPublisher(
         flutter::EncodableMap &argument,
@@ -738,6 +793,9 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicDownload(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicCancelDownload(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicGetAverageScore(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -754,6 +812,9 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicGetLrcLyric(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetLrcLyricWithConfig(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicGetMusicByToken(
@@ -777,6 +838,12 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicQueryCache(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicQueryCacheWithConfig(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicQueryCacheWithConfigV2(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicRequestAccompaniment(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -795,6 +862,9 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicSendExtendedRequest(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicSetScoringLevel(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicStartScore(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -807,7 +877,13 @@ class ZegoExpressEngineMethodHandler {
     void copyrightedMusicGetSharedResource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicGetSharedResourceV2(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void copyrightedMusicRequestResource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void copyrightedMusicRequestResourceV2(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
@@ -902,6 +978,9 @@ class ZegoExpressEngineMethodHandler {
     void updateCaptureRegionScreenCaptureSource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void updatePublishRegionScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void updateCaptureSourceScreenCaptureSource(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
@@ -912,6 +991,32 @@ class ZegoExpressEngineMethodHandler {
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void getCaptureSourceRectScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAudioCaptureScreenCaptureSource(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+    // AIVoiceChanger
+    void createAIVoiceChanger(
+        flutter::EncodableMap &argument,
+        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    destroyAIVoiceChanger(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void isAIVoiceChangerSupported(flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void aiVoiceChangerGetSpeakerList(
+        flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void aiVoiceChangerInitEngine(
+        flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void aiVoiceChangerSetSpeaker(
+        flutter::EncodableMap &argument,
+                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void
+    aiVoiceChangerUpdate(
         flutter::EncodableMap &argument,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
@@ -931,6 +1036,7 @@ class ZegoExpressEngineMethodHandler {
     std::unordered_map<int, EXPRESS::IZegoMediaDataPublisher *> mediaDataPublisherMap_;
     std::unordered_map<int, EXPRESS::IZegoScreenCaptureSource *> screenCaptureSourceMap_;
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
+    std::unordered_map<int, EXPRESS::IZegoAIVoiceChanger *> aiVoiceChangerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
 

@@ -70,6 +70,7 @@ static const std::map<
         EngineMethodHandler(switchRoom),
         EngineMethodHandler(renewToken),
         EngineMethodHandler(setRoomExtraInfo),
+        EngineMethodHandler(getRoomStreamList),
         EngineMethodHandler(startPublishingStream),
         EngineMethodHandler(stopPublishingStream),
         EngineMethodHandler(setStreamExtraInfo),
@@ -98,6 +99,7 @@ static const std::map<
         EngineMethodHandler(setPlayStreamFocusOn),
         EngineMethodHandler(mutePlayStreamVideo),
         EngineMethodHandler(muteAllPlayStreamVideo),
+        EngineMethodHandler(muteAllPlayVideoStreams),
         EngineMethodHandler(enableCheckPoc),
         EngineMethodHandler(isVideoDecoderSupported),
         EngineMethodHandler(setPlayStreamsAlignmentProperty),
@@ -133,6 +135,7 @@ static const std::map<
         EngineMethodHandler(sendBroadcastMessage),
         EngineMethodHandler(sendBarrageMessage),
         EngineMethodHandler(sendCustomCommand),
+        EngineMethodHandler(sendTransparentMessage),
         EngineMethodHandler(enableCustomVideoCapture),
         EngineMethodHandler(enableCustomVideoProcessing),
         EngineMethodHandler(enableCustomVideoRender),
@@ -179,6 +182,7 @@ static const std::map<
         EngineMethodHandler(setAllPlayStreamVolume),
         EngineMethodHandler(mutePlayStreamAudio),
         EngineMethodHandler(muteAllPlayStreamAudio),
+        EngineMethodHandler(muteAllPlayAudioStreams),
         EngineMethodHandler(enableHardwareDecoder),
         EngineMethodHandler(muteMicrophone),
         EngineMethodHandler(isMicrophoneMuted),
@@ -235,6 +239,11 @@ static const std::map<
         EngineMethodHandler(startAudioVADStableStateMonitor),
         EngineMethodHandler(stopAudioVADStableStateMonitor),
         EngineMethodHandler(getCurrentAudioDevice),
+        EngineMethodHandler(startDumpData),
+        EngineMethodHandler(stopDumpData),
+        EngineMethodHandler(uploadDumpData),
+        EngineMethodHandler(removeDumpData),
+        EngineMethodHandler(enableColorEnhancement),
 
         EngineMethodHandler(createAudioEffectPlayer),
         EngineMethodHandler(destroyAudioEffectPlayer),
@@ -247,7 +256,11 @@ static const std::map<
         EngineMethodHandler(audioEffectPlayerResumeAll),
         EngineMethodHandler(audioEffectPlayerSeekTo),
         EngineMethodHandler(audioEffectPlayerSetVolume),
+        EngineMethodHandler(audioEffectPlayerSetPlayVolume),
+        EngineMethodHandler(audioEffectPlayerSetPublishVolume),
         EngineMethodHandler(audioEffectPlayerSetVolumeAll),
+        EngineMethodHandler(audioEffectPlayerSetPlayVolumeAll),
+        EngineMethodHandler(audioEffectPlayerSetPublishVolumeAll),
         EngineMethodHandler(audioEffectPlayerGetTotalDuration),
         EngineMethodHandler(audioEffectPlayerGetCurrentProgress),
         EngineMethodHandler(audioEffectPlayerLoadResource),
@@ -294,6 +307,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerTakeSnapshot),
         EngineMethodHandler(mediaPlayerSetAudioTrackMode),
         EngineMethodHandler(mediaPlayerSetAudioTrackPublishIndex),
+        EngineMethodHandler(mediaPlayerEnableAudioData),
         EngineMethodHandler(mediaPlayerEnableVideoData),
         EngineMethodHandler(mediaPlayerEnableBlockData),
         EngineMethodHandler(mediaPlayerLoadResourceWithConfig),
@@ -301,6 +315,10 @@ static const std::map<
         EngineMethodHandler(mediaPlayerGetMediaInfo),
         EngineMethodHandler(mediaPlayerSetHttpHeader),
         EngineMethodHandler(mediaPlayerGetCurrentRenderingProgress),
+        EngineMethodHandler(mediaPlayerEnableLiveAudioEffect),
+        EngineMethodHandler(mediaPlayerEnableViewMirror),
+        EngineMethodHandler(mediaPlayerSetPlayMediaStreamType),
+        EngineMethodHandler(mediaPlayerGetPlaybackStatistics),
 
         // MediaDataPublihser
         EngineMethodHandler(createMediaDataPublisher),
@@ -317,12 +335,14 @@ static const std::map<
         EngineMethodHandler(destroyCopyrightedMusic),
         EngineMethodHandler(copyrightedMusicClearCache),
         EngineMethodHandler(copyrightedMusicDownload),
+        EngineMethodHandler(copyrightedMusicCancelDownload),
         EngineMethodHandler(copyrightedMusicGetAverageScore),
         EngineMethodHandler(copyrightedMusicGetCacheSize),
         EngineMethodHandler(copyrightedMusicGetCurrentPitch),
         EngineMethodHandler(copyrightedMusicGetDuration),
         EngineMethodHandler(copyrightedMusicGetKrcLyricByToken),
         EngineMethodHandler(copyrightedMusicGetLrcLyric),
+        EngineMethodHandler(copyrightedMusicGetLrcLyricWithConfig),
         EngineMethodHandler(copyrightedMusicGetMusicByToken),
         EngineMethodHandler(copyrightedMusicGetPreviousScore),
         EngineMethodHandler(copyrightedMusicGetStandardPitch),
@@ -330,17 +350,22 @@ static const std::map<
         EngineMethodHandler(copyrightedMusicInitCopyrightedMusic),
         EngineMethodHandler(copyrightedMusicPauseScore),
         EngineMethodHandler(copyrightedMusicQueryCache),
+        EngineMethodHandler(copyrightedMusicQueryCacheWithConfig),
+        EngineMethodHandler(copyrightedMusicQueryCacheWithConfigV2),
         EngineMethodHandler(copyrightedMusicRequestAccompaniment),
         EngineMethodHandler(copyrightedMusicRequestAccompanimentClip),
         EngineMethodHandler(copyrightedMusicRequestSong),
         EngineMethodHandler(copyrightedMusicResetScore),
         EngineMethodHandler(copyrightedMusicResumeScore),
         EngineMethodHandler(copyrightedMusicSendExtendedRequest),
+        EngineMethodHandler(copyrightedMusicSetScoringLevel),
         EngineMethodHandler(copyrightedMusicStartScore),
         EngineMethodHandler(copyrightedMusicStopScore),
         EngineMethodHandler(copyrightedMusicGetFullScore),
         EngineMethodHandler(copyrightedMusicGetSharedResource),
+        EngineMethodHandler(copyrightedMusicGetSharedResourceV2),
         EngineMethodHandler(copyrightedMusicRequestResource),
+        EngineMethodHandler(copyrightedMusicRequestResourceV2),
 
         // rangeAudio
         EngineMethodHandler(createRangeAudio),
@@ -377,10 +402,21 @@ static const std::map<
         EngineMethodHandler(enableWindowActivateScreenCaptureSource),
         EngineMethodHandler(setExcludeWindowListScreenCaptureSource),
         EngineMethodHandler(updateCaptureRegionScreenCaptureSource),
+        EngineMethodHandler(updatePublishRegionScreenCaptureSource),
         EngineMethodHandler(updateCaptureSourceScreenCaptureSource),
         EngineMethodHandler(startCaptureScreenCaptureSource),
         EngineMethodHandler(stopCaptureScreenCaptureSource),
         EngineMethodHandler(getCaptureSourceRectScreenCaptureSource),
+        EngineMethodHandler(enableAudioCaptureScreenCaptureSource),
+
+        // AIVoiceChanger
+        EngineMethodHandler(createAIVoiceChanger),
+        EngineMethodHandler(destroyAIVoiceChanger),
+        EngineMethodHandler(isAIVoiceChangerSupported),
+        EngineMethodHandler(aiVoiceChangerGetSpeakerList),
+        EngineMethodHandler(aiVoiceChangerInitEngine),
+        EngineMethodHandler(aiVoiceChangerSetSpeaker),
+        EngineMethodHandler(aiVoiceChangerUpdate),
 
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),
@@ -420,6 +456,7 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
 
 // static
 void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
+
     ZegoExpressEngineMethodHandler::getInstance().setPluginRegistrar(registrar);
 
     auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
@@ -446,7 +483,10 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWind
 
 ZegoExpressEnginePlugin::ZegoExpressEnginePlugin() {}
 
-ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {}
+ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {
+    ZegoExpressEngineEventHandler::getInstance()->clearEventSink();
+    ZegoExpressEngineMethodHandler::getInstance().clearPluginRegistrar();
+}
 
 std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>>
 ZegoExpressEnginePlugin::OnListenInternal(

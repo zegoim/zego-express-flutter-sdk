@@ -123,7 +123,10 @@ enum ZegoFeatureType {
   RangeScene,
 
   /// Screen capture feature. (3.1.0 and above support)
-  ScreenCapture
+  ScreenCapture,
+
+  /// AI voice changer feature. (3.8.0 and above support)
+  AIVoiceChanger
 }
 
 /// Language.
@@ -223,6 +226,27 @@ enum ZegoRoomStateChangedReason {
 
   /// Failed to log out of the room. Enter this state when calling [logoutRoom] fails to log out of the room or [switchRoom] fails to log out of the current room internally.
   LogoutFailed
+}
+
+/// Room mode.
+enum ZegoRoomTransparentMessageMode {
+  /// Single room mode.
+  OnlyClient,
+
+  /// Multiple room mode.
+  OnlyServer,
+
+  /// Multiple room mode.
+  ClientAndServer
+}
+
+/// Room mode.
+enum ZegoRoomTransparentMessageType {
+  /// Single room mode.
+  ZegoRoomTransparentMessageNormal,
+
+  /// Multiple room mode.
+  ZegoRoomTransparentMessageSequence
 }
 
 /// Publish channel.
@@ -375,7 +399,31 @@ enum ZegoVoiceChangerPreset {
   LoudClear,
 
   /// Minions effect
-  Minions
+  Minions,
+
+  /// Sunshine effect, only support iOS
+  Sunshine,
+
+  /// Gentle effect, only support iOS
+  Gentle,
+
+  /// Sweet effect, only support iOS
+  Sweet,
+
+  /// Sweet male effect, only support iOS
+  SweetMale,
+
+  /// Sweet female effect, only support iOS
+  SweetFemale,
+
+  /// Bright effect, only support iOS
+  Bright,
+
+  /// Autobot effect
+  Autobot,
+
+  /// Out of power effect
+  OutOfPower
 }
 
 /// Reverberation preset value.
@@ -417,7 +465,13 @@ enum ZegoReverbPreset {
   GramoPhone,
 
   /// Enhanced KTV reverb effect. Provide KTV effect with more concentrated voice and better brightness. Compared with the original KTV reverb effect, the reverberation time is shortened and the dry-wet ratio is increased.
-  EnhancedKTV
+  EnhancedKTV,
+
+  /// Enhanced Rock reverb effect
+  EnhancedRock,
+
+  /// Enhanced misty reverb effect
+  EnhancedMisty
 }
 
 /// Mode of Electronic Effects.
@@ -601,7 +655,10 @@ enum ZegoANSMode {
   Aggressive,
 
   /// AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-  AI
+  AI,
+
+  /// Balanced AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+  AIBalanced
 }
 
 /// video encode profile.
@@ -637,6 +694,18 @@ enum ZegoStreamAlignmentMode {
   Try
 }
 
+/// Mixed stream sets the image parameter check mode.
+enum ZegoMixImageCheckMode {
+  /// Strictly perform image verification, set the background image, watermark will verify the image path, the image occupy set in the mixed flow input parameter will also verify whether the set image resource request is successful, in order to normally initiate mixed flow, otherwise fail to initiate mixed flow.
+  Normal,
+
+  /// Only verify image path URI/URL As long as the path is correct, the mixed flow is successfully initiated.
+  Path,
+
+  /// The mixed flow can be initiated successfully without checking the related parameters of the picture.
+  Nothing
+}
+
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
   /// Basic (Adaptive (reduce) video bitrate)
@@ -646,10 +715,10 @@ class ZegoTrafficControlProperty {
   static const int AdaptiveFPS = 1;
 
   /// Adaptive (reduce) video resolution
-  static const int AdaptiveResolution = 1 << 1;
+  static const int AdaptiveResolution = 2;
 
   /// Adaptive (reduce) audio bitrate
-  static const int AdaptiveAudioBitrate = 1 << 2;
+  static const int AdaptiveAudioBitrate = 4;
 }
 
 /// Video transmission mode when current bitrate is lower than the set minimum bitrate.
@@ -739,6 +808,18 @@ enum ZegoStreamResourceSwitchMode {
   KeepOriginal
 }
 
+/// Stream Resource Type
+enum ZegoStreamResourceType {
+  /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
+  Default,
+
+  /// CDN resource.
+  CDN,
+
+  /// L3 resource.
+  L3
+}
+
 /// Update type.
 enum ZegoUpdateType {
   /// Add
@@ -746,6 +827,15 @@ enum ZegoUpdateType {
 
   /// Delete
   Delete
+}
+
+/// Get room stream list type.
+enum ZegoRoomStreamListType {
+  /// List of all online streams in the current room, excluding your own streams
+  Play,
+
+  /// List of all online streams in the current room, including your own streams
+  All
 }
 
 /// State of CDN relay.
@@ -829,7 +919,10 @@ enum ZegoDeviceType {
   Speaker,
 
   /// Audio device. (Other audio device that cannot be accurately classified into microphones or speakers.)
-  AudioDevice
+  AudioDevice,
+
+  /// Audio Session.
+  AudioSession
 }
 
 /// The exception type for the device.
@@ -868,7 +961,13 @@ enum ZegoDeviceExceptionType {
   SoundLevelTooLow,
 
   /// The device is being occupied, and maybe cause by iPad magnetic case (Apple platform only).
-  MagneticCase
+  MagneticCase,
+
+  /// Audio session deactive (Apple platform only).
+  AudioSessionDeactive,
+
+  /// Audio session category change (Apple platform only).
+  AudioSessionCategoryChange
 }
 
 /// Remote device status.
@@ -900,10 +999,10 @@ enum ZegoRemoteDeviceState {
   /// System media services stop, such as under the iOS platform, when the system detects that the current pressure is huge (such as playing a lot of animation), it is possible to disable all media related services.
   SystemMediaServicesLost,
 
-  /// The remote user calls [enableCamera] or [muteMicrophone] to disable the camera or microphone.
+  /// The remote user calls [enableCamera] or [enableAudioCaptureDevice] to disable the camera or microphone.
   Disable,
 
-  /// The remote user actively calls [mutePublishStreamAudio] or [mutePublishStreamVideo] to stop publish the audio or video stream.
+  /// The remote user actively calls [muteMicrophone] or [mutePublishStreamAudio] or [mutePublishStreamVideo] to stop publish the audio or video stream.
   Mute,
 
   /// The device is interrupted, such as a phone call interruption, etc.
@@ -987,7 +1086,7 @@ enum ZegoMixerInputContentType {
   /// Mix stream for both audio and video
   Video,
 
-  /// Mix stream for video only
+  /// Mix stream for video only. On web platforms, this property does not take effect
   VideoOnly
 }
 
@@ -1383,26 +1482,38 @@ enum ZegoCopyrightedMusicBillingMode {
 
 /// The music resource type. For [querycache] interface.
 enum ZegoCopyrightedMusicType {
-  /// Song.
+  /// Song. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicSong,
 
-  /// Song with high quality.
+  /// Song with high quality. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicSongHQ,
 
-  /// Song with super quality.
+  /// Song with super quality. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicSongSQ,
 
-  /// Song accompaniment.
+  /// Song accompaniment. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicAccompaniment,
 
-  /// Song accompaniment clip.
+  /// Song accompaniment clip. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicAccompanimentClip,
 
-  /// Song accompaniment segment.
+  /// Song accompaniment segment. Deprecated since version 3.9.0.
+  @Deprecated(
+      'Please use the [queryCache] interface that takes a ZegoCopyrightedMusicQueryCacheConfig as a parameter instead.')
   ZegoCopyrightedMusicAccompanimentSegment
 }
 
-/// The music resource type. For [ZegoCopyrightedMusicRequestConfig] and [ZegoCopyrightedMusicGetSharedConfig].
+/// The music resource type. For [ZegoCopyrightedMusicRequestConfig], [ZegoCopyrightedMusicGetSharedConfig] and [ZegoCopyrightedMusicQueryCacheConfig].
 enum ZegoCopyrightedMusicResourceType {
   /// Song.
   ZegoCopyrightedMusicResourceSong,
@@ -1430,6 +1541,18 @@ enum ZegoCopyrightedMusicVendorID {
 
   /// Third copyright provider.
   ZegoCopyrightedMusicVendor3
+}
+
+/// The music resource quality type. For [ZegoCopyrightedMusicQueryCacheConfig].
+enum ZegoCopyrightedMusicResourceQualityType {
+  /// Standard Definition Audio.
+  ZegoCopyrightedMusicResourceQualityNormal,
+
+  /// High Definition Audio.
+  ZegoCopyrightedMusicResourceQualityHQ,
+
+  /// Lossless Audio Quality.
+  ZegoCopyrightedMusicResourceQualitySQ
 }
 
 /// Font type.
@@ -1669,7 +1792,10 @@ enum ZegoScreenCaptureSourceExceptionType {
   Invalid,
 
   /// Failed to collect target, internal reasons of the system.
-  Failed
+  Failed,
+
+  /// The set publish region is invalid, and the publish region is not within the capture screen region.
+  PublishRegionInvalid
 }
 
 /// Screen capture source exception type. (only for Android)
@@ -1774,7 +1900,10 @@ enum ZegoBackgroundProcessType {
   Blur,
 
   /// The background is the specified image.
-  Image
+  Image,
+
+  /// The background is the specified video.
+  Video
 }
 
 /// Background blur level.
@@ -1796,6 +1925,39 @@ enum ZegoMediaDataPublisherMode {
 
   /// Only publish video.
   OnlyVideo
+}
+
+/// Live audio effect mode.
+enum ZegoLiveAudioEffectMode {
+  /// No audio effect.
+  None,
+
+  /// Only local play.
+  Local,
+
+  /// Only publish.
+  Publish,
+
+  /// Publish and local play.
+  All
+}
+
+/// Media stream type.
+enum ZegoMediaStreamType {
+  /// Media audio stream.
+  Audio,
+
+  /// Media video stream.
+  Video,
+
+  /// Media audio and video stream.
+  AV
+}
+
+/// Dump data type.
+enum ZegoDumpDataType {
+  /// Audio.
+  Audio
 }
 
 /// Log config.
@@ -1898,19 +2060,19 @@ class ZegoEngineConfig {
 ///
 /// Set proxy config.
 class ZegoProxyInfo {
-  /// ip.
+  /// ip. Under local proxy: local proxy ip configured by the developer. under cloud proxy: proxy ip provided by ZEGO (either  hostname or ip will do).
   String? ip;
 
-  /// port.
+  /// port. Under Local Proxy: Local proxy port configured by the developer. Under Cloud Proxy: Proxy port provided by ZEGO.
   int? port;
 
-  /// hostname.
+  /// hostname.Under Local Proxy: Local proxy hostname configured by the developer. Under cloud proxy: proxy hostname provided by ZEGO. proxy hostname (either hostname or ip will do).
   String? hostName;
 
-  /// userName.
+  /// userName.Under Local Proxy: the authentication username of the local Proxy configured by the developer, can be ignored if there is none. Under cloud proxy: can be ignored.
   String? userName;
 
-  /// password.
+  /// password.Under local proxy: authentication password of local proxy configured by developer, can be ignored if there is none. Under cloud proxy: can be ignored.
   String? password;
 
   ZegoProxyInfo(
@@ -1968,7 +2130,7 @@ class ZegoVideoConfig {
   /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
   int fps;
 
-  /// Bit rate in kbps. The settings before and after publishing stream can be effective
+  /// Bit rate in kbps. The settings before and after publishing stream can be effective. The SDK will automatically set the bit rate suitable for the scenario selected by the developer. If the bit rate manually set by the developer exceeds the reasonable range, the SDK will automatically process the bit rate according to the reasonable range. If you need to configure a high bit rate due to business needs, please contact ZEGO Business.
   int bitrate;
 
   /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
@@ -2170,7 +2332,7 @@ class ZegoReverbEchoParam {
 /// Note that the userID must be unique under the same appID, otherwise, there will be mutual kicks when logging in to the room.
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 class ZegoUser {
-  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.Do not use '%' if you need to communicate with the Web SDK.
+  /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'. Do not use '%' if you need to communicate with the Web SDK.
   String userID;
 
   /// User Name, a utf8 string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
@@ -2198,6 +2360,19 @@ class ZegoStream {
   String extraInfo;
 
   ZegoStream(this.user, this.streamID, this.extraInfo);
+}
+
+/// Room stream list.
+///
+/// Room stream list.
+class ZegoRoomStreamList {
+  /// Publish stream list
+  List<ZegoStream> publishStreamList;
+
+  /// Play stream list
+  List<ZegoStream> playStreamList;
+
+  ZegoRoomStreamList(this.publishStreamList, this.playStreamList);
 }
 
 /// Room extra information.
@@ -2347,8 +2522,15 @@ class ZegoCDNConfig {
   /// customized httpdns service. This feature is only supported for playing stream currently.
   ZegoHttpDNSType? httpdns;
 
+  /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
+  int? quicConnectMode;
+
   ZegoCDNConfig(this.url,
-      {this.authParam, this.protocol, this.quicVersion, this.httpdns});
+      {this.authParam,
+      this.protocol,
+      this.quicVersion,
+      this.httpdns,
+      this.quicConnectMode});
 }
 
 /// Relay to CDN info.
@@ -2396,13 +2578,17 @@ class ZegoPlayerConfig {
   /// Play resource switching strategy mode, the default is ZegoStreamResourceSwitchModeDefault
   ZegoStreamResourceSwitchMode? resourceSwitchMode;
 
+  /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect when the user sets [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
+  ZegoStreamResourceType? resourceWhenStopPublish;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
       this.videoCodecID,
       this.sourceResourceType,
       this.codecTemplateID,
-      this.resourceSwitchMode});
+      this.resourceSwitchMode,
+      this.resourceWhenStopPublish});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -2410,7 +2596,8 @@ class ZegoPlayerConfig {
         videoCodecID = ZegoVideoCodecID.Unknown,
         sourceResourceType = ZegoResourceType.RTC,
         codecTemplateID = 0,
-        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default;
+        resourceSwitchMode = ZegoStreamResourceSwitchMode.Default,
+        resourceWhenStopPublish = ZegoStreamResourceType.Default;
 }
 
 /// Played stream quality information.
@@ -2492,6 +2679,36 @@ class ZegoPlayStreamQuality {
   /// Number of video bytes received
   double videoRecvBytes;
 
+  /// Accumulated audio break count (Available since 2.9.0)
+  int audioCumulativeBreakCount;
+
+  /// Accumulated audio break time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeBreakTime;
+
+  /// Accumulated audio break rate, in percentage, 0.0 ~ 100.0 (Available since 2.9.0)
+  double audioCumulativeBreakRate;
+
+  /// Accumulated audio decode time, in milliseconds (Available since 2.9.0)
+  int audioCumulativeDecodeTime;
+
+  /// Accumulated video break count (Available since 2.9.0)
+  int videoCumulativeBreakCount;
+
+  /// Accumulated video break time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeBreakTime;
+
+  /// Accumulated video break rate, in percentage, 0.0 ~ 1.0 (Available since 2.9.0)
+  double videoCumulativeBreakRate;
+
+  /// Accumulated video decode time, in milliseconds (Available since 2.9.0)
+  int videoCumulativeDecodeTime;
+
+  /// Mute video (Available since 3.13.0)
+  int muteVideo;
+
+  /// Mute audio (Available since 3.13.0)
+  int muteAudio;
+
   ZegoPlayStreamQuality(
       this.videoRecvFPS,
       this.videoDejitterFPS,
@@ -2517,7 +2734,17 @@ class ZegoPlayStreamQuality {
       this.videoCodecID,
       this.totalRecvBytes,
       this.audioRecvBytes,
-      this.videoRecvBytes);
+      this.videoRecvBytes,
+      this.audioCumulativeBreakCount,
+      this.audioCumulativeBreakTime,
+      this.audioCumulativeBreakRate,
+      this.audioCumulativeDecodeTime,
+      this.videoCumulativeBreakCount,
+      this.videoCumulativeBreakTime,
+      this.videoCumulativeBreakRate,
+      this.videoCumulativeDecodeTime,
+      this.muteVideo,
+      this.muteAudio);
 }
 
 /// Cross APP playing stream configuration.
@@ -2529,6 +2756,20 @@ class ZegoCrossAppInfo {
   String token;
 
   ZegoCrossAppInfo(this.appID, this.token);
+}
+
+/// SEI Callback info.
+class ZegoMediaSideInfo {
+  /// Stream ID.
+  String streamID;
+
+  /// SEI data
+  Uint8List SEIData;
+
+  /// timestamp
+  int timestampNs;
+
+  ZegoMediaSideInfo(this.streamID, this.SEIData, this.timestampNs);
 }
 
 /// Device Info.
@@ -2627,7 +2868,7 @@ class ZegoMixerAudioConfig {
   /// codec ID, default is ZegoAudioCodecIDDefault
   ZegoAudioCodecID codecID;
 
-  /// Multi-channel audio stream mixing mode. If [ZegoAudioMixMode] is selected as [Focused], the SDK will select 4 input streams with [isAudioFocus] set as the focus voice highlight. If it is not selected or less than 4 channels are selected, it will automatically fill in 4 channels
+  /// Multi-channel audio stream mixing mode. If [ZegoAudioMixMode] is selected as [Focused], the SDK will select 4 input streams with [isAudioFocus] set as the focus voice highlight. If it is not selected or less than 4 channels are selected, it will automatically fill in 4 channels. On web platforms, this property does not take effect.
   ZegoAudioMixMode mixMode;
 
   ZegoMixerAudioConfig(this.bitrate, this.channel, this.codecID, this.mixMode);
@@ -2665,10 +2906,10 @@ class ZegoMixerVideoConfig {
   /// Video bitrate in kbps
   int bitrate;
 
-  /// Video quality, this value is valid when the video rate control mode parameter is set to constant quality. The valid value ranges from 0 to 51. The default value is 23. If you want better video quality, lower the quality value based on 23 to test the adjustment. If you want a smaller file size, test the adjustment by increasing the high quality value at the base of 23. Take the file size under the value x as an example. The file size under the value x + 6 is half the size of the file size under the value x, and the file size under the value x-6 is twice the size of the file size under the value x.
+  /// Video quality, this value is valid when the video rate control mode parameter is set to constant quality. The valid value ranges from 0 to 51. The default value is 23. If you want better video quality, lower the quality value based on 23 to test the adjustment. If you want a smaller file size, test the adjustment by increasing the high quality value at the base of 23. Take the file size under the value x as an example. The file size under the value x + 6 is half the size of the file size under the value x, and the file size under the value x-6 is twice the size of the file size under the value x. On web platforms, this property does not take effect.
   int quality;
 
-  /// Video bitrate control mode
+  /// Video bitrate control mode.  On web platforms, this property does not take effect.
   ZegoVideoRateControlMode rateControlMode;
 
   ZegoMixerVideoConfig(this.width, this.height, this.fps, this.bitrate,
@@ -2712,8 +2953,13 @@ class ZegoMixerOutputVideoConfig {
   /// The video encoding delay of mixed stream output, Valid value range [0, 2000], in milliseconds. The default value is 0.
   int encodeLatency;
 
+  /// Enable high definition low bitrate. Default is false.
+  bool enableLowBitrateHD;
+
   ZegoMixerOutputVideoConfig(this.videoCodecID, this.bitrate,
-      {this.encodeProfile = ZegoEncodeProfile.Default, this.encodeLatency = 0});
+      {this.encodeProfile = ZegoEncodeProfile.Default,
+      this.encodeLatency = 0,
+      this.enableLowBitrateHD = false});
 }
 
 /// Font style.
@@ -2808,7 +3054,7 @@ class ZegoMixerImageInfo {
   /// The image path, if not empty, the image will be displayed, otherwise, the video will be displayed. JPG and PNG formats are supported. There are 2 ways to use it: 1. URI: Provide the picture to ZEGO technical support for configuration. After the configuration is complete, the picture URI will be provided, for example: preset-id://xxx.jpg. 2. URL: Only HTTP protocol is supported.
   String url;
 
-  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream is empty or not. Display image when the input stream is empty for 3 consecutive seconds. The default duration for determine a input stream is empty or not is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.
+  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream is empty or not. Display image when the input stream is empty for 3 consecutive seconds. The default duration for determine a input stream is empty or not is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.On web platforms, this property does not take effect.
   int? displayMode;
 
   ZegoMixerImageInfo(this.url, {this.displayMode});
@@ -2834,13 +3080,13 @@ class ZegoMixerInput {
   /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
   int soundLevelID;
 
-  /// Input stream volume, valid range [0, 200], default is 100
+  /// Input stream volume, valid range [0, 200], default is 100. On web platforms, this property does not take effect.
   int volume;
 
-  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled
+  /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled. On web platforms, this property does not take effect.
   bool isAudioFocus;
 
-  /// The direction of the audio. Valid direction is between 0 to 360. Set -1 means disable. Default value is -1
+  /// The direction of the audio. Valid direction is between 0 to 360. Set -1 means disable. Default value is -1. On web platforms, this property does not take effect.
   int audioDirection;
 
   /// Text watermark.
@@ -2855,9 +3101,16 @@ class ZegoMixerInput {
   /// Description: Video frame corner radius, in px. Required: False. Value range: Does not exceed the width and height of the video screen set by the [layout] parameter. Default value: 0.
   int? cornerRadius;
 
+  /// Set advanced configuration. Please contact ZEGO technical support. On web platforms, this property does not take effect.
+  Map<String, String>? advancedConfig;
+
   ZegoMixerInput(this.streamID, this.contentType, this.layout,
       this.soundLevelID, this.volume, this.isAudioFocus, this.audioDirection,
-      {this.label, this.renderMode, this.imageInfo, this.cornerRadius});
+      {this.label,
+      this.renderMode,
+      this.imageInfo,
+      this.cornerRadius,
+      this.advancedConfig});
 
   Map<String, dynamic> toMap() {
     return {
@@ -2874,7 +3127,8 @@ class ZegoMixerInput {
       'label': this.label?.toMap(),
       'renderMode': this.renderMode?.index,
       'imageInfo': this.imageInfo?.toMap(),
-      'cornerRadius': this.cornerRadius
+      'cornerRadius': this.cornerRadius,
+      'advancedConfig': this.advancedConfig
     };
   }
 
@@ -2899,7 +3153,7 @@ class ZegoMixerOutput {
   /// Mix stream output target, URL or stream ID, if set to be URL format, only RTMP URL surpported, for example rtmp://xxxxxxxx, addresses with two identical mixed-stream outputs cannot be passed in.
   String target;
 
-  /// Mix stream output video config
+  /// Mix stream output video config. On web platforms, this property does not take effect.
   ZegoMixerOutputVideoConfig? videoConfig;
 
   ZegoMixerOutput(this.target, {this.videoConfig});
@@ -2909,7 +3163,7 @@ class ZegoMixerOutput {
 ///
 /// Configure a watermark image URL and the layout of the watermark in the screen.
 class ZegoWatermark {
-  /// The path of the watermark image. Support local file absolute path (file://xxx). The format supports png, jpg.
+  /// The path of the watermark image. Support local file absolute path (file://xxx). The format supports png, jpg. The maximum length is less than 512 bytes.
   String imageURL;
 
   /// Watermark image layout
@@ -3008,7 +3262,7 @@ class ZegoMixerTask {
   /// The watermark of the task
   ZegoWatermark watermark;
 
-  /// Mix stream whiteboard
+  /// Mix stream whiteboard. On web platforms, this property does not take effect.
   ZegoMixerWhiteboard whiteboard;
 
   /// Mix stream background color, The color value corresponding to RGBA is 0xRRGGBBAA, and setting the transparency of the background color is currently not supported. The AA in 0xRRGGBBAA is 00. For example, select RGB as \#87CEFA as the background color, this parameter passes 0x87CEFA00.
@@ -3017,20 +3271,23 @@ class ZegoMixerTask {
   /// The background image URL of the task
   String backgroundImageURL;
 
-  /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback.
+  /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the soundLevel of every stream in the inputlist by [onMixerSoundLevelUpdate] callback. On web platforms, this property does not take effect.
   bool enableSoundLevel;
 
-  /// The stream mixing alignment mode
+  /// The stream mixing alignment mode. On web platforms, this property does not take effect.
   ZegoStreamAlignmentMode streamAlignmentMode;
 
   /// User data, the length of user data should not be more than 1000 bytes,After setting, the streaming party can obtain the SEI content by listening to the callback of [onPlayerRecvSEI].
   Uint8List userData;
 
-  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support.
+  /// Set advanced configuration, such as specifying video encoding and others. If you need to use it, contact ZEGO technical support. On web platforms, this property does not take effect.
   Map<String, String> advancedConfig;
 
-  /// Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
+
+  /// Set the mixed stream image check mode.
+  ZegoMixImageCheckMode mixImageCheckMode;
 
   /// Create a mix stream task object with TaskID
   ZegoMixerTask(this.taskID)
@@ -3046,7 +3303,8 @@ class ZegoMixerTask {
         streamAlignmentMode = ZegoStreamAlignmentMode.None,
         userData = Uint8List.fromList([]),
         advancedConfig = {},
-        minPlayStreamBufferLength = -1;
+        minPlayStreamBufferLength = -1,
+        mixImageCheckMode = ZegoMixImageCheckMode.Normal;
 
   Map<String, dynamic> toMap() {
     return {
@@ -3063,7 +3321,8 @@ class ZegoMixerTask {
       'streamAlignmentMode': this.streamAlignmentMode.index,
       'userData': this.userData,
       'advancedConfig': this.advancedConfig,
-      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
+      'mixImageCheckMode': this.mixImageCheckMode.index
     };
   }
 }
@@ -3099,7 +3358,7 @@ class ZegoAutoMixerTask {
   /// The taskID of the auto mixer task.Description: Auto stream mixing task id, must be unique in a room.Use cases: User need to set this parameter when initiating an auto stream mixing task.Required: Yes.Recommended value: Set this parameter based on requirements.Value range: A string up to 256 bytes.Caution: When starting a new auto stream mixing task, only one auto stream mixing task ID can exist in a room, that is, to ensure the uniqueness of task ID. You are advised to associate task ID with room ID. You can directly use the room ID as the task ID.Cannot include URL keywords, for example, 'http' and '?' etc, otherwise publishing stream and playing stream will fail. Only support numbers, English characters and '~', '!', '@', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
   String taskID;
 
-  /// The roomID of the auto mixer task.Description: Auto stream mixing task id.Use cases: User need to set this parameter when initiating an auto stream mixing task.Required: Yes.Recommended value: Set this parameter based on requirements.Value range: A string up to 128 bytes.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.If you need to communicate with the Web SDK, please do not use '%'.
+  /// The roomID of the auto mixer task.Description: Auto stream mixing task id.Use cases: User need to set this parameter when initiating an auto stream mixing task.Required: Yes.Recommended value: Set this parameter based on requirements.Value range: A string up to 128 bytes.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.If you need to communicate with the Web SDK, please do not use '%'.
   String roomID;
 
   /// The audio config of the auto mixer task.Description: The audio config of the auto mixer task.Use cases: If user needs special requirements for the audio config of the auto stream mixing task, such as adjusting the audio bitrate, user can set this parameter as required. Otherwise, user do not need to set this parameter.Required: No.Default value: The default audio bitrate is `48 kbps`, the default audio channel is `ZEGO_AUDIO_CHANNEL_MONO`, the default encoding ID is `ZEGO_AUDIO_CODEC_ID_DEFAULT`, and the default multi-channel audio stream mixing mode is `ZEGO_AUDIO_MIX_MODE_RAW`.Recommended value: Set this parameter based on requirements.
@@ -3111,19 +3370,21 @@ class ZegoAutoMixerTask {
   /// Enable or disable sound level callback for the task. If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Description: Enable or disable sound level callback for the task.If enabled, then the remote player can get the sound level of every stream in the inputlist by [onAutoMixerSoundLevelUpdate] callback.Use cases: This parameter needs to be configured if user need the sound level information of every stream when an auto stream mixing task started.Required: No.Default value: `false`.Recommended value: Set this parameter based on requirements.
   bool enableSoundLevel;
 
+  /// Stream mixing alignment mode.
+  ZegoStreamAlignmentMode streamAlignmentMode;
+
+  /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
+  int minPlayStreamBufferLength;
+
   /// Create a auto mix stream task object
   ZegoAutoMixerTask()
       : taskID = "",
         roomID = "",
         outputList = [],
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
-        enableSoundLevel = false {
-    taskID = "";
-    roomID = "";
-    outputList = [];
-    audioConfig = ZegoMixerAudioConfig.defaultConfig();
-    enableSoundLevel = false;
-  }
+        enableSoundLevel = false,
+        streamAlignmentMode = ZegoStreamAlignmentMode.None,
+        minPlayStreamBufferLength = -1;
 
   Map<String, dynamic> toMap() {
     return {
@@ -3131,7 +3392,9 @@ class ZegoAutoMixerTask {
       'roomID': this.roomID,
       'audioConfig': this.audioConfig.toMap(),
       'outputList': this.outputList,
-      'enableSoundLevel': this.enableSoundLevel
+      'enableSoundLevel': this.enableSoundLevel,
+      'streamAlignmentMode': this.streamAlignmentMode.index,
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
     };
   }
 }
@@ -3174,6 +3437,42 @@ class ZegoBarrageMessageInfo {
 
   ZegoBarrageMessageInfo(
       this.message, this.messageID, this.sendTime, this.fromUser);
+}
+
+/// Transparent message info.
+///
+/// Room transparent message, including room id, message content, sending user, sending type, sending mode, timeout period
+class ZegoRoomSendTransparentMessage {
+  /// send mode
+  ZegoRoomTransparentMessageMode sendMode;
+
+  /// send type
+  ZegoRoomTransparentMessageType sendType;
+
+  /// Message send content.
+  Uint8List content;
+
+  /// Message receiver list, when sendType appointed ZegoRoomTransparentMessageModeOnlyServer don't fill in. When appointed ZegoRoomTransparentMessageModeClientAndServer or ZegoRoomTransparentMessageModeOnlyClient, empty room will be sent to all online users.
+  List<ZegoUser> recvUserList;
+
+  /// send message timeout, The default value is 10s.
+  int timeOut;
+
+  ZegoRoomSendTransparentMessage(this.sendMode, this.sendType, this.content,
+      this.recvUserList, this.timeOut);
+}
+
+/// Received a transparent message from the room.
+///
+/// Room transparent message, including message content, sending user, sending type, sending mode
+class ZegoRoomRecvTransparentMessage {
+  /// send message user
+  ZegoUser sendUser;
+
+  /// Message send content.
+  Uint8List content;
+
+  ZegoRoomRecvTransparentMessage(this.sendUser, this.content);
 }
 
 /// Parameter object for audio frame.
@@ -3296,7 +3595,10 @@ class ZegoDataRecordProgress {
   /// Current recording file size in byte
   int currentFileSize;
 
-  ZegoDataRecordProgress(this.duration, this.currentFileSize);
+  /// The quality of current recording file
+  ZegoPublishStreamQuality quality;
+
+  ZegoDataRecordProgress(this.duration, this.currentFileSize, this.quality);
 }
 
 /// Network probe config
@@ -3464,6 +3766,17 @@ class ZegoCopyrightedMusicConfig {
   ZegoCopyrightedMusicConfig(this.user);
 }
 
+/// The configuration of getting lyric.
+class ZegoCopyrightedMusicGetLyricConfig {
+  /// the ID of the song.
+  String songID;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  ZegoCopyrightedMusicGetLyricConfig(this.songID, {this.vendorID});
+}
+
 /// The configuration of requesting resource.
 class ZegoCopyrightedMusicRequestConfig {
   /// the ID of the song.
@@ -3488,6 +3801,37 @@ class ZegoCopyrightedMusicRequestConfig {
       {this.vendorID, this.roomID, this.masterID, this.sceneID});
 }
 
+/// The configuration of requesting resource.
+class ZegoCopyrightedMusicRequestConfigV2 {
+  /// the ID of the song.
+  String songID;
+
+  /// VOD billing mode.
+  int mode;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicate in which room to order song/accompaniment/accompaniment clip/accompaniment segment.
+  String? roomID;
+
+  /// The master ID, which must be passed when the billing mode is billed by host. Indicate which homeowner to order song/accompaniment/accompaniment clip/accompaniment segment.
+  String? masterID;
+
+  /// The scene ID, indicate the actual business. For details, please consult ZEGO technical support.
+  int? sceneID;
+
+  /// The resource type of music.
+  int? resourceType;
+
+  ZegoCopyrightedMusicRequestConfigV2(this.songID, this.mode,
+      {this.vendorID,
+      this.roomID,
+      this.masterID,
+      this.sceneID,
+      this.resourceType});
+}
+
 /// The configuration of getting shared resource.
 class ZegoCopyrightedMusicGetSharedConfig {
   /// the ID of the song.
@@ -3501,6 +3845,60 @@ class ZegoCopyrightedMusicGetSharedConfig {
 
   ZegoCopyrightedMusicGetSharedConfig(this.songID,
       {this.vendorID, this.roomID});
+}
+
+/// The configuration of getting shared resource.
+class ZegoCopyrightedMusicGetSharedConfigV2 {
+  /// the ID of the song.
+  String songID;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
+  String? roomID;
+
+  /// The resource type of music.
+  int? resourceType;
+
+  ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
+      {this.vendorID, this.roomID, this.resourceType});
+}
+
+/// The configuration of querying cache.
+class ZegoCopyrightedMusicQueryCacheConfig {
+  /// the ID of the song.
+  String songID;
+
+  /// The resource type of music.
+  ZegoCopyrightedMusicResourceType resourceType;
+
+  /// The resource quality type of music.
+  ZegoCopyrightedMusicResourceQualityType resourceQualityType;
+
+  /// Copyright music resource song copyright provider.
+  ZegoCopyrightedMusicVendorID vendorID;
+
+  ZegoCopyrightedMusicQueryCacheConfig(
+      this.songID, this.resourceType, this.resourceQualityType, this.vendorID);
+}
+
+/// The configuration of querying cache.
+class ZegoCopyrightedMusicQueryCacheConfigV2 {
+  /// the ID of the song.
+  String songID;
+
+  /// The resource type of music.
+  int? resourceType;
+
+  /// The resource quality type of music.
+  int? resourceQualityType;
+
+  /// Copyright music resource song copyright provider.
+  int? vendorID;
+
+  ZegoCopyrightedMusicQueryCacheConfigV2(this.songID,
+      {this.resourceType, this.resourceQualityType, this.vendorID});
 }
 
 /// Screen capture configuration parameters.
@@ -3628,17 +4026,21 @@ class ZegoBackgroundConfig {
   /// Background image URL.
   String imageURL;
 
+  /// Background video URL.
+  String videoURL;
+
   /// Background blur level.
   ZegoBackgroundBlurLevel blurLevel;
 
-  ZegoBackgroundConfig(
-      this.processType, this.color, this.imageURL, this.blurLevel);
+  ZegoBackgroundConfig(this.processType, this.color, this.imageURL,
+      this.videoURL, this.blurLevel);
 
   /// Constructs a background image configuration object by default.
   ZegoBackgroundConfig.defaultConfig()
       : processType = ZegoBackgroundProcessType.Transparent,
         color = 0,
         imageURL = '',
+        videoURL = '',
         blurLevel = ZegoBackgroundBlurLevel.Medium;
 }
 
@@ -3696,6 +4098,46 @@ class ZegoMediaDataPublisherConfig {
   ZegoMediaDataPublisherConfig(this.channel, this.mode);
 }
 
+/// Media player play statistics.
+///
+/// Media player play statistics.
+class ZegoMediaPlayerStatisticsInfo {
+  /// Video source fps.
+  double videoSourceFps;
+
+  /// Video decode fps.
+  double videoDecodeFps;
+
+  /// Video render fps.
+  double videoRenderFps;
+
+  /// Audio source fps.
+  double audioSourceFps;
+
+  /// Audio decode fps.
+  double audioDecodeFps;
+
+  /// Audio render fps.
+  double audioRenderFps;
+
+  ZegoMediaPlayerStatisticsInfo(
+      this.videoSourceFps,
+      this.videoDecodeFps,
+      this.videoRenderFps,
+      this.audioSourceFps,
+      this.audioDecodeFps,
+      this.audioRenderFps);
+
+  /// Constructs a media player play statistics object by default.
+  ZegoMediaPlayerStatisticsInfo.defaultParam()
+      : videoSourceFps = 0,
+        videoDecodeFps = 0,
+        videoRenderFps = 0,
+        audioSourceFps = 0,
+        audioDecodeFps = 0,
+        audioRenderFps = 0;
+}
+
 /// Receive range configuration.
 class ZegoReceiveRangeParam {
   /// The minimum distance at which the 3D sound effect starts to have attenuation effect, the value needs to be >= 0 and <= max, the default value is 0.
@@ -3726,6 +4168,46 @@ class ZegoVocalRangeParam {
   ZegoVocalRangeParam.defaultParam()
       : min = 0,
         max = 0;
+}
+
+/// Dump data config.
+class ZegoDumpDataConfig {
+  /// Data type.
+  ZegoDumpDataType dataType;
+
+  ZegoDumpDataConfig(this.dataType);
+}
+
+/// AI voice changer speaker detail.
+class ZegoAIVoiceChangerSpeakerInfo {
+  /// Speaker ID.
+  int id;
+
+  /// Speaker name.
+  String name;
+
+  ZegoAIVoiceChangerSpeakerInfo(this.id, this.name);
+}
+
+/// Color enhancement params.
+class ZegoColorEnhancementParams {
+  /// Description: color enhancement intensity. Value range: [0,1], the larger the value, the stronger the intensity of color enhancement. Default value: 0.
+  double intensity;
+
+  /// Description: Skin tone protection level. Value range: [0,1], the larger the value, the greater the level of skin protection. Default value: 1.
+  double skinToneProtectionLevel;
+
+  /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
+  double lipColorProtectionLevel;
+
+  ZegoColorEnhancementParams(this.intensity, this.skinToneProtectionLevel,
+      this.lipColorProtectionLevel);
+
+  /// Constructs a color enhancement params object by default.
+  ZegoColorEnhancementParams.defaultParam()
+      : intensity = 0,
+        skinToneProtectionLevel = 1,
+        lipColorProtectionLevel = 0;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -4040,6 +4522,11 @@ abstract class ZegoMediaPlayer {
   /// - Returns Media player index.
   int getIndex();
 
+  /// Whether to audio data playback.
+  ///
+  /// - [enable] Audio data playback flag. The default is false.
+  Future<void> enableAudioData(bool enable);
+
   /// Whether to video data playback.
   ///
   /// Available since: 2.1.0
@@ -4175,6 +4662,57 @@ abstract class ZegoMediaPlayer {
   ///
   /// - [headers] Headers info.
   Future<void> setHttpHeader(Map<String, String> headers);
+
+  /// Set play media stream type.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Configure the media stream type to be played. You can only play video streams or audio streams. This will take effect during the life cycle of the media player.
+  /// Use cases: When the network resource needs to set special header information.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: Changing the media stream type during playing will take effect in the next playing.
+  ///
+  /// - [streamType] Stream type.
+  Future<void> setPlayMediaStreamType(ZegoMediaStreamType streamType);
+
+  /// Enable live audio effect.
+  ///
+  /// Available since: 3.10.0
+  /// Description: When the live audio effect is turned on, the spatial sense is enhanced and the instrument sounds become more prominent, without any increase in delay.
+  /// Use cases: It is commonly used in voice chat rooms and karaoke scenarios to enhance the live audio effects of the accompaniment.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  /// Caution: To enhance the live audio effect experience, it is recommended to configure dual-channel stereo encoding. Developers can achieve this configuration by using the [setAudioCaptureStereoMode] method. Failure to configure dual-channel stereo encoding may significantly diminish the effects of certain songs, as the left and right channel effects may cancel each other out when synthesizing mono audio, resulting in less noticeable effects.
+  ///
+  /// - [enable] Whether to enable live audio effect.
+  /// - [mode] Live audio effect mode.
+  Future<void> enableLiveAudioEffect(bool enable, ZegoLiveAudioEffectMode mode);
+
+  /// Enable local caching of http/https network resources.
+  ///
+  /// Available since: 3.12.0
+  /// Description: When playing http/https network resources, when the local cache is enabled, the network resources will be saved locally and the cache information will be called back through [onMediaPlayerLocalCache].
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer]. Called after [loadResource] or during playback, it will take effect next playback.
+  /// Caution: Only http/https single file type network resources are supported. If there is a [seek] operation during playback, the cache will fail.
+  ///
+  /// - [enable] Whether to enable local caching.
+  /// - [cacheDir] Cache dir. If left blank, the directory specified internally by SDK will be used.
+  Future<void> enableLocalCache(bool enable, String cacheDir);
+
+  /// Enable the view mirror.
+  ///
+  /// Available since: 3.14.0
+  /// Description: Enable view mirror.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
+  ///
+  /// - [enable] Whether to enable view mirror.
+  Future<void> enableViewMirror(bool enable);
+
+  /// Get playback statistics.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get current playback statistics to monitor whether decoding and rendering anomalies occur in the player.
+  /// Use cases: Typically used in cloud-based media player scenarios.
+  /// When to call: Invoke after the [loadResource] callback succeeds.
+  Future<ZegoMediaPlayerStatisticsInfo> getPlaybackStatistics();
 }
 
 abstract class ZegoAudioEffectPlayer {
@@ -4270,6 +4808,28 @@ abstract class ZegoAudioEffectPlayer {
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolume(int audioEffectID, int volume);
 
+  /// Set local play volume for a single audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set local play volume for a single audio effect.
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPlayVolume(int audioEffectID, int volume);
+
+  /// Set publish volume for a single audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set publish volume for a single audio effect.
+  /// When to call: The specified [audioEffectID] is [start].
+  /// Restrictions: None.
+  ///
+  /// - [audioEffectID] ID for the audio effect.
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPublishVolume(int audioEffectID, int volume);
+
   /// Set volume for all audio effect. Both the local play volume and the publish volume are set.
   ///
   /// Available since: 1.16.0
@@ -4279,6 +4839,26 @@ abstract class ZegoAudioEffectPlayer {
   ///
   /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
   Future<void> setVolumeAll(int volume);
+
+  /// Set local play volume for all audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set local play volume for all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPlayVolumeAll(int volume);
+
+  /// Set publish volume for all audio effect.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Set publish volume for all audio effect.
+  /// When to call: It can be called after [createAudioEffectPlayer].
+  /// Restrictions: None.
+  ///
+  /// - [volume] Volume. <br>Value range: The range is 0 ~ 200. <br>Default value: The default is 100.
+  Future<void> setPublishVolumeAll(int volume);
 
   /// Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
   ///
@@ -4588,7 +5168,7 @@ abstract class ZegoRangeAudio {
   /// When to call: After initializing the range audio [createRangeAudio].
   /// Caution: There will be no distance limit for the sounds in the team, and there will be no 3D sound effects.
   ///
-  /// - [teamID] Team ID, empty to exit the team, a string of up to 64 bytes in length. Support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  /// - [teamID] Team ID, empty to exit the team, a string of up to 64 bytes in length. Support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   Future<void> setTeamID(String teamID);
 
   /// Whether can receive the audio data of the specified user.
@@ -4611,7 +5191,7 @@ abstract class ZegoCopyrightedMusic {
   ///
   /// Available since: 2.13.0
   /// Description: Initialize the copyrighted music so that you can use the function of the copyrighted music later.
-  /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
+  /// When to call: After call [createCopyrightedMusic] and [loginRoom].
   /// Caution: 1. The real user information must be passed in, otherwise the song resources cannot be obtained for playback. 2. The user ID set when initializing copyrighted music needs to be the same as the user ID set when logging in to the room.
   ///
   /// - [config] the copyrighted music configuration.
@@ -4660,6 +5240,17 @@ abstract class ZegoCopyrightedMusic {
   Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyric(String songID,
       {ZegoCopyrightedMusicVendorID? vendorID});
 
+  /// Get lyrics in lrc format.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get lyrics in lrc format, support parsing lyrics line by line.
+  /// Use case: Used to display lyrics line by line.
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// - [config] The configuration of get lyric.
+  Future<ZegoCopyrightedMusicGetLrcLyricResult> getLrcLyricWithConfig(
+      ZegoCopyrightedMusicGetLyricConfig config);
+
   /// Get lyrics in krc format.
   ///
   /// Available since: 2.13.0
@@ -4690,6 +5281,23 @@ abstract class ZegoCopyrightedMusic {
       ZegoCopyrightedMusicRequestConfig config,
       ZegoCopyrightedMusicResourceType type);
 
+  /// Request music resource.
+  ///
+  /// Available since: 3.12.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
+  /// Use case: Get copyrighted songs for local playback and sharing.
+  /// Related APIs: After a user in the room successfully calls this interface to request a music resource, other users in the room can call the [getsharedresource] interface to get the music resource for free once.
+  /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
+  /// Note:
+  ///   1. Each resource has a unique resource ID.
+  ///   2. Every time this API is called, it will be billed once, please consult ZEGO business personnel for details.
+  ///   3. Each resource has a unique resource ID. The resources obtained by calling this API are time-sensitive, the valid duration is the minimum value between the SDK life cycle and 24-hour.
+  ///
+  /// - [config] The configuration of requesting music resource.
+  /// - Returns Result of requesting music resource.
+  Future<ZegoCopyrightedMusicRequestResourceResult> requestResourceV2(
+      ZegoCopyrightedMusicRequestConfigV2 config);
+
   /// Get shared music resource.
   ///
   /// Available since: 3.0.2
@@ -4706,29 +5314,63 @@ abstract class ZegoCopyrightedMusic {
       ZegoCopyrightedMusicGetSharedConfig config,
       ZegoCopyrightedMusicResourceType type);
 
-  /// Download song or accompaniment.
+  /// Get shared music resource.
+  ///
+  /// Available since: 3.12.0
+  /// Description: In addition to obtaining the basic information of the song (duration, song name, singer, etc.), and the most important resource id that can be used for local playback, there are also some related authentications information.
+  /// Use case: Get copyrighted songs for local playback.
+  /// Related APIs: After a user in the room calls the [requestresource] interface to request a music resource successfully, other users in the room can call this interface to get the music resource for free once.
+  /// When to call: After initializing the copyrighted music [initCopyrightedMusic].
+  /// Note: Each resource has a unique resource ID. The resources obtained by calling this API are time-sensitive, the valid duration is the minimum value between the SDK life cycle and 24-hour.
+  ///
+  /// - [config] The configuration of getting shared music resource.
+  /// - Returns Result of getting shared music resource.
+  Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResourceV2(
+      ZegoCopyrightedMusicGetSharedConfigV2 config);
+
+  /// Download music resource.
   ///
   /// Available since: 2.13.0
-  /// Description: Download a song or accompaniment. It can only be played after downloading successfully.
-  /// Use case: Get copyrighted accompaniment for local playback and sharing.
+  /// Description: Download music resource. It can only be played after downloading successfully.
+  /// Use case: After obtaining the music resource authorization, use this interface to download the corresponding resources.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
-  /// Caution: Loading songs or accompaniment resources is affected by the network.
+  /// Caution: Downloading copyrighted music resources is affected by the Internet.
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<ZegoCopyrightedMusicDownloadResult> download(String resourceID);
 
+  /// Cancel download of music resource.
+  ///
+  /// Available since: 3.11.0
+  /// Description: Cancel download of music resource.
+  /// Use case: After starting to download music resources, use this interface to cancel the corresponding download task.
+  /// When to call: After starting the download [download].
+  /// Caution: When a valid resourceID is passed in, only unfinished download tasks will be cancelled. When empty is passed in, all unfinished download tasks will be canceled.
+  ///
+  /// - [resourceID] the resource ID corresponding to the song or accompaniment.
+  Future<void> cancelDownload(String resourceID);
+
   /// Query the resource's cache is existed or not.
   ///
-  /// Available since: 3.2.1
+  /// Available since: 3.9.0
   /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
   /// Use case: Can be used to check the resource's cache is existed or not
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
-  /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
-  /// - [type] the song resource type.
-  /// - [vendorID] Copyright music resource song copyright provider.
-  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type,
-      {ZegoCopyrightedMusicVendorID? vendorID});
+  /// - [config] The configuration of querying cache.
+  Future<bool> queryCacheWithConfig(
+      ZegoCopyrightedMusicQueryCacheConfig config);
+
+  /// Query the resource's cache is existed or not.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
+  /// Use case: Can be used to check the resource's cache is existed or not
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// - [config] The configuration of querying cache.
+  Future<bool> queryCacheWithConfigV2(
+      ZegoCopyrightedMusicQueryCacheConfigV2 config);
 
   /// Get the playing time of a song or accompaniment file.
   ///
@@ -4739,6 +5381,17 @@ abstract class ZegoCopyrightedMusic {
   ///
   /// - [resourceID] the resource ID corresponding to the song or accompaniment.
   Future<int> getDuration(String resourceID);
+
+  /// Set the difficulty level of scoring.
+  ///
+  /// Available since: 2.22.0
+  /// Description: Users can set the scoring difficulty level through this function.
+  /// When to call: After calling [initCopyrightedMusic] to initialize copyrighted music successfully, call [startScore] to start scoring.
+  /// Default value: When this function is not called, the difficulty level of scoring is 4.
+  /// Restrictions: This function does not support dynamic settings. After calling this function successfully, the next call to [startScore] will take effect.
+  ///
+  /// - [level] The difficulty level of scoring. The level ranges from 0 to 4. The scoring difficulty decreases from 0 to 4.
+  Future<void> setScoringLevel(int level);
 
   /// Start scoring.
   ///
@@ -4911,6 +5564,22 @@ abstract class ZegoCopyrightedMusic {
       'Deprecated since 3.0.2, please use the [getSharedResource] function instead.')
   Future<ZegoCopyrightedMusicGetMusicByTokenResult> getMusicByToken(
       String shareToken);
+
+  /// [Deprecated] Query the resource's cache is existed or not. Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.
+  ///
+  /// Available since: 3.2.1
+  /// Description: Query the resource is existed or not, query the Yinsuda resource cache by default
+  /// Use case: Can be used to check the resource's cache is existed or not
+  /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
+  ///
+  /// @deprecated Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.
+  /// - [songID] the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
+  /// - [type] the song resource type.
+  /// - [vendorID] Copyright music resource song copyright provider.
+  @Deprecated(
+      'Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.')
+  Future<bool> queryCache(String songID, ZegoCopyrightedMusicType type,
+      {ZegoCopyrightedMusicVendorID? vendorID});
 }
 
 abstract class ZegoScreenCaptureSource {
@@ -4962,6 +5631,17 @@ abstract class ZegoScreenCaptureSource {
   /// - [rect] The position of the area to be captured relative to the entire screen or window.
   Future<void> updateCaptureRegion(Rect rect);
 
+  /// Update the streaming area of ​​the screen capture.
+  ///
+  /// Available since: 3.8.0
+  /// Description: Update the streaming area of ​​the screen capture.
+  /// When to call: After updating the screen capture source [updateScreenCaptureSource].
+  /// Restrictions: Every time the screen capture source [updateScreenCaptureSource] is updated, the area will be cleared and needs to be reset, only support in Windows/macOS.
+  /// Caution: The set area cannot exceed the size returned by [onAvailableFrame], otherwise the setting will fail and the original frame will be pushed. The failure of the streaming area will be notified through [onExceptionOccurred].
+  ///
+  /// - [rect] The position of the area to be pushed relative to the upper left corner of the capture screen, the actual capture screen size can be obtained through [onAvailableFrame].
+  Future<void> updatePublishRegion(Rect rect);
+
   /// Sets the filtered list of windows.
   ///
   /// Available since: 3.1.0
@@ -4992,6 +5672,17 @@ abstract class ZegoScreenCaptureSource {
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
 
+  /// Whether to collect the sound of the window process during window collection
+  ///
+  /// Available since: 3.13.0
+  /// Description: Whether to collect the sound of the window process during window collection.
+  /// When to call: Before starting the collection [startScreencapture].
+  /// Restrictions: Only applicable to Windows 10 and above versions.
+  ///
+  /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.
+  /// - [audioParam] Audio collection parameters.
+  Future<void> enableAudioCapture(bool enable, ZegoAudioFrameParam audioParam);
+
   /// Get screen capture source index.
   ///
   /// - Returns Index of the screen capture source.
@@ -5016,6 +5707,27 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [config] Screen capture parameter configuration.
   Future<void> updateScreenCaptureConfig(ZegoScreenCaptureConfig config);
+}
+
+abstract class ZegoAIVoiceChanger {
+  /// Get AI voice changer instance index.
+  ///
+  /// - Returns AI voice changer instance index.
+  int getIndex();
+
+  /// Initialize AI voice changer engine.
+  Future<void> initEngine();
+
+  /// Update AI voice changer engine models.
+  Future<void> update();
+
+  /// Get AI voice changer speaker list.
+  Future<void> getSpeakerList();
+
+  /// Set AI voice changer speaker.
+  ///
+  /// - [speakerID] Speaker ID.
+  Future<void> setSpeaker(int speakerID);
 }
 
 /// Callback for setting room extra information.
@@ -5174,6 +5886,16 @@ class ZegoIMSendCustomCommandResult {
   int errorCode;
 
   ZegoIMSendCustomCommandResult(this.errorCode);
+}
+
+/// Callback for sending custom command.
+///
+/// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+class ZegoRoomSendTransparentMessageResult {
+  /// Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  int errorCode;
+
+  ZegoRoomSendTransparentMessageResult(this.errorCode);
 }
 
 /// Callback for media player loads resources.

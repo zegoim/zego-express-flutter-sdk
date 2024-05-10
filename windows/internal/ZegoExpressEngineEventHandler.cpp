@@ -70,6 +70,10 @@ void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState
 
         eventSink_->Success(retMap);
     }
+
+    if (state == EXPRESS::ZegoEngineState::ZEGO_ENGINE_STATE_STOP) {
+        ZegoTextureRendererController::getInstance()->resetAllRenderFirstFrame();
+    }
 }
 
 void ZegoExpressEngineEventHandler::onRoomStateUpdate(const std::string &roomID,
@@ -260,6 +264,27 @@ void ZegoExpressEngineEventHandler::onPublisherStateUpdate(const std::string &st
     }
 }
 
+flutter::EncodableMap ZegoExpressEngineEventHandler::convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality) {
+    FTMap qualityMap;
+    qualityMap[FTValue("videoCaptureFPS")] = FTValue(quality.videoCaptureFPS);
+    qualityMap[FTValue("videoEncodeFPS")] = FTValue(quality.videoEncodeFPS);
+    qualityMap[FTValue("videoSendFPS")] = FTValue(quality.videoSendFPS);
+    qualityMap[FTValue("videoKBPS")] = FTValue(quality.videoKBPS);
+    qualityMap[FTValue("audioCaptureFPS")] = FTValue(quality.audioCaptureFPS);
+    qualityMap[FTValue("audioSendFPS")] = FTValue(quality.audioSendFPS);
+    qualityMap[FTValue("audioKBPS")] = FTValue(quality.audioKBPS);
+    qualityMap[FTValue("rtt")] = FTValue(quality.rtt);
+    qualityMap[FTValue("packetLostRate")] = FTValue(quality.packetLostRate);
+    qualityMap[FTValue("level")] = FTValue(quality.level);
+    qualityMap[FTValue("isHardwareEncode")] = FTValue(quality.isHardwareEncode);
+    qualityMap[FTValue("videoCodecID")] = FTValue(quality.videoCodecID);
+    qualityMap[FTValue("totalSendBytes")] = FTValue(quality.totalSendBytes);
+    qualityMap[FTValue("audioSendBytes")] = FTValue(quality.audioSendBytes);
+    qualityMap[FTValue("videoSendBytes")] = FTValue(quality.videoSendBytes);
+
+    return qualityMap;
+}
+
 void ZegoExpressEngineEventHandler::onPublisherQualityUpdate(
     const std::string &streamID, const EXPRESS::ZegoPublishStreamQuality &quality) {
     // High frequency callbacks do not log
@@ -269,22 +294,7 @@ void ZegoExpressEngineEventHandler::onPublisherQualityUpdate(
         retMap[FTValue("method")] = FTValue("onPublisherQualityUpdate");
         retMap[FTValue("streamID")] = FTValue(streamID);
 
-        FTMap qualityMap;
-        qualityMap[FTValue("videoCaptureFPS")] = FTValue(quality.videoCaptureFPS);
-        qualityMap[FTValue("videoEncodeFPS")] = FTValue(quality.videoEncodeFPS);
-        qualityMap[FTValue("videoSendFPS")] = FTValue(quality.videoSendFPS);
-        qualityMap[FTValue("videoKBPS")] = FTValue(quality.videoKBPS);
-        qualityMap[FTValue("audioCaptureFPS")] = FTValue(quality.audioCaptureFPS);
-        qualityMap[FTValue("audioSendFPS")] = FTValue(quality.audioSendFPS);
-        qualityMap[FTValue("audioKBPS")] = FTValue(quality.audioKBPS);
-        qualityMap[FTValue("rtt")] = FTValue(quality.rtt);
-        qualityMap[FTValue("packetLostRate")] = FTValue(quality.packetLostRate);
-        qualityMap[FTValue("level")] = FTValue(quality.level);
-        qualityMap[FTValue("isHardwareEncode")] = FTValue(quality.isHardwareEncode);
-        qualityMap[FTValue("videoCodecID")] = FTValue(quality.videoCodecID);
-        qualityMap[FTValue("totalSendBytes")] = FTValue(quality.totalSendBytes);
-        qualityMap[FTValue("audioSendBytes")] = FTValue(quality.audioSendBytes);
-        qualityMap[FTValue("videoSendBytes")] = FTValue(quality.videoSendBytes);
+        FTMap qualityMap = convertPublishQuality(quality);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 
@@ -368,6 +378,21 @@ void ZegoExpressEngineEventHandler::onPublisherLowFpsWarning(EXPRESS::ZegoVideoC
     }
 }
 
+void ZegoExpressEngineEventHandler::onPublisherDummyCaptureImagePathError(int errorCode, const std::string& path, EXPRESS::ZegoPublishChannel channel) {
+    ZF::logInfo("[onPublisherDummyCaptureImagePathError] errorCode: %d, path: %s, channel: %d", errorCode, path.c_str(), channel);
+
+    if (eventSink_) {
+        FTMap retMap;
+
+        retMap[FTValue("method")] = FTValue("onPublisherDummyCaptureImagePathError");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("path")] = FTValue(path);
+        retMap[FTValue("channel")] = FTValue((int32_t)channel);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
@@ -423,6 +448,16 @@ void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(
         qualityMap[FTValue("totalRecvBytes")] = FTValue(quality.totalRecvBytes);
         qualityMap[FTValue("audioRecvBytes")] = FTValue(quality.audioRecvBytes);
         qualityMap[FTValue("videoRecvBytes")] = FTValue(quality.videoRecvBytes);
+        qualityMap[FTValue("audioCumulativeBreakCount")] = FTValue((int32_t)quality.audioCumulativeBreakCount);
+        qualityMap[FTValue("videoCumulativeBreakCount")] = FTValue((int32_t)quality.videoCumulativeBreakCount);
+        qualityMap[FTValue("audioCumulativeBreakTime")] = FTValue((int32_t)quality.audioCumulativeBreakTime);
+        qualityMap[FTValue("videoCumulativeBreakTime")] = FTValue((int32_t)quality.videoCumulativeBreakTime);
+        qualityMap[FTValue("audioCumulativeBreakRate")] = FTValue(quality.audioCumulativeBreakRate);
+        qualityMap[FTValue("videoCumulativeBreakRate")] = FTValue(quality.videoCumulativeBreakRate);
+        qualityMap[FTValue("audioCumulativeDecodeTime")] = FTValue((int32_t)quality.audioCumulativeDecodeTime);
+        qualityMap[FTValue("videoCumulativeDecodeTime")] = FTValue((int32_t)quality.videoCumulativeDecodeTime);
+        qualityMap[FTValue("muteVideo")] = FTValue(quality.muteVideo);
+        qualityMap[FTValue("muteAudio")] = FTValue(quality.muteAudio);
 
         retMap[FTValue("quality")] = FTValue(qualityMap);
 
@@ -473,6 +508,24 @@ void ZegoExpressEngineEventHandler::onPlayerRecvSEI(const std::string &streamID,
         std::vector<uint8_t> dataArray(nonConstData, nonConstData + dataLength);
 
         retMap[FTValue("data")] = FTValue(dataArray);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onPlayerRecvMediaSideInfo(const EXPRESS::ZegoMediaSideInfo & info) {
+    // High frequency callbacks do not log
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPlayerRecvMediaSideInfo");
+        retMap[FTValue("streamID")] = FTValue(info.streamID);
+        retMap[FTValue("timestampNs")] = FTValue(info.timestampNs);
+
+        auto nonConstData = const_cast<unsigned char *>(info.SEIData);
+        std::vector<uint8_t> dataArray(nonConstData, nonConstData + info.SEIDataLength);
+
+        retMap[FTValue("SEIData")] = FTValue(dataArray);
 
         eventSink_->Success(retMap);
     }
@@ -709,6 +762,10 @@ void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(EXPRESS::IZegoMedia
 
         eventSink_->Success(retMap);
     }
+
+    if (state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_NO_PLAY || state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_PLAY_ENDED) {
+        ZegoTextureRendererController::getInstance()->resetMediaPlayerRenderFirstFrame(mediaPlayer);
+    }
 }
 
 void ZegoExpressEngineEventHandler::onMediaPlayerNetworkEvent(
@@ -782,7 +839,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFrequencySpectrumUpdate(
         retMap[FTValue("method")] = FTValue("onMediaPlayerFrequencySpectrumUpdate");
         retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
 
-        retMap[FTValue("soundLevel")] = FTValue(spectrumList);
+        retMap[FTValue("spectrumList")] = FTValue(spectrumList);
 
         eventSink_->Success(retMap);
     }
@@ -805,7 +862,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerFirstFrameEvent(
 }
 
 void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) {
-    ZF::logInfo("[onMediaPlayerRenderingProgress] index: %d, millisecond: %lld", mediaPlayer->getIndex(), millisecond);
+    // High frequency callbacks do not log
 
     if (eventSink_) {
         FTMap retMap;
@@ -818,6 +875,36 @@ void ZegoExpressEngineEventHandler::onMediaPlayerRenderingProgress(EXPRESS::IZeg
     }
 }
 
+void ZegoExpressEngineEventHandler::onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) {
+    ZF::logInfo("[onMediaPlayerVideoSizeChanged] index: %d, width: %d, height: %d", mediaPlayer->getIndex(), width, height);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerVideoSizeChanged");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("width")] = FTValue(width);
+        retMap[FTValue("height")] = FTValue(height);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onMediaPlayerLocalCache(EXPRESS::IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) {
+    ZF::logInfo("[onMediaPlayerLocalCache] index: %d, error: %d, resource: %s, cachedFile: %s", mediaPlayer->getIndex(), errorCode, resource, cachedFile);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onMediaPlayerLocalCache");
+        retMap[FTValue("mediaPlayerIndex")] = FTValue(mediaPlayer->getIndex());
+
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("resource")] = FTValue(resource);
+        retMap[FTValue("cachedFile")] = FTValue(cachedFile);
+
+        eventSink_->Success(retMap);
+    }
+}
 
 // MediaDataPublisher
 void ZegoExpressEngineEventHandler::onMediaDataPublisherFileOpen(EXPRESS::IZegoMediaDataPublisher *mediaDataPublisher, const std::string &path) {
@@ -979,6 +1066,7 @@ void ZegoExpressEngineEventHandler::onCapturedDataRecordProgressUpdate(
 
         progressMap[FTValue("currentFileSize")] = FTValue((int32_t)progress.currentFileSize);
         progressMap[FTValue("duration")] = FTValue((int32_t)progress.duration);
+        progressMap[FTValue("quality")] = FTValue(convertPublishQuality(progress.quality));
 
         configMap[FTValue("filePath")] = FTValue(config.filePath);
         configMap[FTValue("recordType")] = FTValue(config.recordType);
@@ -1033,6 +1121,67 @@ void ZegoExpressEngineEventHandler::onNetworkTimeSynchronized() {
     if (eventSink_) {
         FTMap retMap;
         retMap[FTValue("method")] = FTValue("onNetworkTimeSynchronized");
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRequestDumpData() {
+    ZF::logInfo("[onRequestDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRequestDumpData");
+        
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) {
+    ZF::logInfo("[onRequestUploadDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRequestUploadDumpData");
+        retMap[FTValue("dumpDir")] = FTValue(dumpDir);
+        retMap[FTValue("takePhoto")] = FTValue(takePhoto);
+        
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onStartDumpData(int errorCode) {
+    ZF::logInfo("[onStartDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onStartDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onStopDumpData(int errorCode, const std::string& dumpDir) {
+     ZF::logInfo("[onStopDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onStopDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+        retMap[FTValue("dumpDir")] = FTValue(dumpDir);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUploadDumpData(int errorCode) {
+     ZF::logInfo("[onUploadDumpData]");
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onUploadDumpData");
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
         eventSink_->Success(retMap);
     }
 }
@@ -1396,7 +1545,7 @@ void ZegoExpressEngineEventHandler::onRemoteSpeakerStateUpdate(
 void ZegoExpressEngineEventHandler::onAudioVADStateUpdate(
     EXPRESS::ZegoAudioVADStableStateMonitorType type, EXPRESS::ZegoAudioVADType state) {
 
-    ZF::logInfo("[onRemoteSpeakerStateUpdate] type: %d, state: %d", type, state);
+    ZF::logInfo("[onAudioVADStateUpdate] type: %d, state: %d", type, state);
 
     if (eventSink_) {
         FTMap retMap;
@@ -1412,7 +1561,7 @@ void ZegoExpressEngineEventHandler::onAudioVADStateUpdate(
 void ZegoExpressEngineEventHandler::onIMRecvBroadcastMessage(
     const std::string &roomID, std::vector<EXPRESS::ZegoBroadcastMessageInfo> messageList) {
 
-    ZF::logInfo("[onRemoteSpeakerStateUpdate] roomID: %s, messageListCount: %d", roomID.c_str(), messageList.size());
+    ZF::logInfo("[onIMRecvBroadcastMessage] roomID: %s, messageListCount: %d", roomID.c_str(), messageList.size());
 
     if (eventSink_) {
         FTMap retMap;
@@ -1486,6 +1635,33 @@ void ZegoExpressEngineEventHandler::onIMRecvCustomCommand(const std::string &roo
         retMap[FTValue("fromUser")] = FTValue(userMap);
         retMap[FTValue("command")] = FTValue(command);
 
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) 
+{
+    ZF::logInfo("[onRecvRoomTransparentMessage] roomID: %s, userID: %s", roomID.c_str(), message.sendUser.userID.c_str());
+    
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onRecvRoomTransparentMessage");
+        retMap[FTValue("roomID")] = FTValue(roomID);
+
+        FTMap userMap, messageMap;
+
+        userMap[FTValue("userID")] = FTValue(message.sendUser.userID);
+        userMap[FTValue("userName")] = FTValue(message.sendUser.userName);
+        messageMap[FTValue("sendUser")] = FTValue(userMap);
+
+        unsigned char* data =  (unsigned char* )message.content.data();
+        unsigned int data_length = (unsigned int)message.content.length();
+        std::vector<uint8_t> dataArray(data, data + data_length);
+        
+        messageMap[FTValue("content")] = FTValue(dataArray);
+
+        retMap[FTValue("message")] = FTValue(messageMap);
+        
         eventSink_->Success(retMap);
     }
 }
@@ -1787,6 +1963,75 @@ void ZegoExpressEngineEventHandler::onRectChanged(EXPRESS::IZegoScreenCaptureSou
         rectMap[FTValue("height")] = FTValue(captureRect.height);
 
         retMap[FTValue("captureRect")] = rectMap;
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onInit(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger,
+                                           int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerInit] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerInit");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUpdate(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger,
+                                             int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerUpdate] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerUpdate");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onGetSpeakerList(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode,
+    const std::vector<EXPRESS::ZegoAIVoiceChangerSpeakerInfo> &speakerList) {
+    ZF::logInfo("[onAIVoiceChangerGetSpeakerList] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerGetSpeakerList");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        FTArray speakerListArray;
+        for (auto &speaker : speakerList) {
+            FTMap speakerMap;
+            speakerMap[FTValue("id")] = FTValue(speaker.id);
+            speakerMap[FTValue("name")] = FTValue(speaker.name);
+            speakerListArray.emplace_back(FTValue(speakerMap));
+        }
+        retMap[FTValue("speakerList")] = FTValue(speakerListArray);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onUpdateProgress(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
+    int fileIndex, int fileCount) {
+    ZF::logInfo("[onAIVoiceChangerUpdateProgress] index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger->getIndex(), percent, fileIndex, fileCount);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onAIVoiceChangerUpdateProgress");
+        retMap[FTValue("aiVoiceChangerIndex")] = FTValue(aiVoiceChanger->getIndex());
+        retMap[FTValue("percent")] = FTValue(percent);
+        retMap[FTValue("fileIndex")] = FTValue(fileIndex);
+        retMap[FTValue("fileCount")] = FTValue(fileCount);
 
         eventSink_->Success(retMap);
     }

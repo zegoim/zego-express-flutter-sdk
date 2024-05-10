@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <flutter/event_channel.h>
+#include <flutter/encodable_value.h>
 
 #include <ZegoExpressSDK.h>
 using namespace ZEGO;
@@ -23,6 +24,7 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoRangeAudioEventHandler
     , public EXPRESS::IZegoCustomAudioProcessHandler
     , public EXPRESS::IZegoScreenCaptureSourceEventHandler
+    , public EXPRESS::IZegoAIVoiceChangerEventHandler
 {
 public:
     ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
@@ -79,6 +81,8 @@ protected:
     void onVideoObjectSegmentationStateChanged(EXPRESS::ZegoObjectSegmentationState state, EXPRESS::ZegoPublishChannel channel, int errorCode) override;
 
     void onPublisherLowFpsWarning(EXPRESS::ZegoVideoCodecID codecID, EXPRESS::ZegoPublishChannel channel) override;
+    
+    void onPublisherDummyCaptureImagePathError(int errorCode, const std::string& path, EXPRESS::ZegoPublishChannel channel) override;
 
     void onPlayerStateUpdate(const std::string& streamID, EXPRESS::ZegoPlayerState state, int errorCode, const std::string& extendedData) override;
 
@@ -89,6 +93,8 @@ protected:
     void onPlayerRecvAudioFirstFrame(const std::string& streamID) override;
 
     void onPlayerRecvSEI(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
+
+    void onPlayerRecvMediaSideInfo(const EXPRESS::ZegoMediaSideInfo & info) override;
 
     void onPlayerRecvAudioSideInfo(const std::string& streamID, const unsigned char* data, unsigned int dataLength) override;
 
@@ -115,14 +121,25 @@ protected:
 
     void onNetworkTimeSynchronized() override;
 
+    void onRequestDumpData() override;
+    void onRequestUploadDumpData(const std::string &dumpDir, bool takePhoto) override;
+
+    void onStartDumpData(int errorCode) override;
+
+    void onStopDumpData(int errorCode, const std::string& dumpDir) override;
+    
+    void onUploadDumpData(int errorCode) override;
+
     void onRoomTokenWillExpire(const std::string & roomID, int remainTimeInSecond) override;
 
     void onPublisherCapturedVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
     void onPublisherSendVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
+public:
     void onPublisherRenderVideoFirstFrame(EXPRESS::ZegoPublishChannel channel) override;
 
+protected:
     void onPublisherVideoSizeChanged(int width, int height, EXPRESS::ZegoPublishChannel channel) override;
 
     void onPublisherRelayCDNStateUpdate(const std::string & streamID, const std::vector<EXPRESS::ZegoStreamRelayCDNInfo> & infoList) override;
@@ -162,6 +179,8 @@ protected:
     void onIMRecvBarrageMessage(const std::string & roomID, std::vector<EXPRESS::ZegoBarrageMessageInfo> messageList) override;
 
     void onIMRecvCustomCommand(const std::string & roomID, EXPRESS::ZegoUser fromUser, const std::string & command) override;
+    
+    void onRecvRoomTransparentMessage(const std::string & roomID, const EXPRESS::ZegoRoomRecvTransparentMessage& message) override;
 
     void onPerformanceStatusUpdate(const EXPRESS::ZegoPerformanceStatus & status) override;
 
@@ -199,9 +218,15 @@ protected:
 
     void onMediaPlayerFrequencySpectrumUpdate(EXPRESS::IZegoMediaPlayer* mediaPlayer, const EXPRESS::ZegoAudioSpectrum& spectrumList) override;
 
+public:
     void onMediaPlayerFirstFrameEvent(EXPRESS::IZegoMediaPlayer* mediaPlayer, EXPRESS::ZegoMediaPlayerFirstFrameEvent event) override;
 
+protected:
     void onMediaPlayerRenderingProgress(EXPRESS::IZegoMediaPlayer* mediaPlayer, unsigned long long millisecond) override;
+
+    void onMediaPlayerVideoSizeChanged(EXPRESS::IZegoMediaPlayer* mediaPlayer, int width, int height) override;
+
+    void onMediaPlayerLocalCache(EXPRESS::IZegoMediaPlayer * mediaPlayer, int errorCode, const std::string &resource, const std::string & cachedFile) override;
 
 // MediaDataPublisher
 protected:
@@ -250,6 +275,22 @@ protected:
     void onWindowStateChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureWindowState windowState, EXPRESS::ZegoRect windowRect) override;
 
     void onRectChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoRect captureRect) override;
+
+// AIVoiceChanger
+ protected:
+    void onInit(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) override;
+
+    void onUpdate(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) override;
+
+    void onGetSpeakerList(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode,
+                          const std::vector<EXPRESS::ZegoAIVoiceChangerSpeakerInfo> &speakerList) override;
+
+    void onUpdateProgress(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
+                          int fileIndex, int fileCount) override;
+
+private:
+    flutter::EncodableMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
+
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
 

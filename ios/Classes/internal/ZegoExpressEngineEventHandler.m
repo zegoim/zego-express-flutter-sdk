@@ -81,6 +81,10 @@
             @"state": @(state)
         });
     }
+    
+    if (state == ZegoEngineStateStop) {
+        [[ZegoTextureRendererController sharedInstance] resetAllRenderFirstFrame];
+    }
 }
 
 - (void)onNetworkTimeSynchronized {
@@ -91,6 +95,72 @@
     if (sink) {
         sink(@{
             @"method": @"onNetworkTimeSynchronized"
+        });
+    }
+}
+
+- (void)onRequestDumpData {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestDumpData"
+        });
+    }
+}
+
+- (void)onRequestUploadDumpData:(NSString *)dumpDir takePhoto:(BOOL)takePhoto {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRequestUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRequestUploadDumpData",
+            @"dumpDir": dumpDir,
+            @"takePhoto": @(takePhoto),
+        });
+    }
+}
+
+- (void)onStartDumpData:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onStartDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onStartDumpData",
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)onStopDumpData:(int)errorCode dumpDir:(NSString *)dumpDir {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onStopDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onStopDumpData",
+            @"errorCode": @(errorCode),
+            @"dumpDir": dumpDir
+        });
+    }
+}
+
+- (void)onUploadDumpData:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onUploadDumpData]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onUploadDumpData",
+            @"errorCode": @(errorCode)
         });
     }
 }
@@ -331,15 +401,8 @@
     }
 }
 
-- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
-    FlutterEventSink sink = _eventSink;
-    // High frequency callbacks do not log
-
-    GUARD_SINK
-    if (sink) {
-        sink(@{
-            @"method": @"onPublisherQualityUpdate",
-            @"quality": @{
+- (NSDictionary *)convertPublishQuality:(ZegoPublishStreamQuality *)quality {
+    return @{
                 @"videoCaptureFPS": @(quality.videoCaptureFPS),
                 @"videoEncodeFPS": @(quality.videoEncodeFPS),
                 @"videoSendFPS": @(quality.videoSendFPS),
@@ -355,7 +418,18 @@
                 @"totalSendBytes": @(quality.totalSendBytes),
                 @"audioSendBytes": @(quality.audioSendBytes),
                 @"videoSendBytes": @(quality.videoSendBytes)
-            },
+            };
+}
+
+- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    // High frequency callbacks do not log
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherQualityUpdate",
+            @"quality": [self convertPublishQuality:quality],
             @"streamID": streamID
         });
     }
@@ -525,6 +599,21 @@
     }
 }
 
+- (void)onPublisherDummyCaptureImagePathError:(int)errorCode path:(NSString *)path channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherDummyCaptureImagePathError] errorCode: %d, path: %@, channel: %d", errorCode, path, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPublisherDummyCaptureImagePathError",
+            @"errorCode": @(errorCode),
+            @"path": path,
+            @"channel": @((int)channel),
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -587,7 +676,17 @@
                 @"videoCodecID": @(quality.videoCodecID),
                 @"totalRecvBytes": @(quality.totalRecvBytes),
                 @"audioRecvBytes": @(quality.audioRecvBytes),
-                @"videoRecvBytes": @(quality.videoRecvBytes)
+                @"videoRecvBytes": @(quality.videoRecvBytes),
+                @"audioCumulativeBreakCount": @(quality.audioCumulativeBreakCount),
+                @"videoCumulativeBreakCount": @(quality.videoCumulativeBreakCount),
+                @"audioCumulativeBreakTime": @(quality.audioCumulativeBreakTime),
+                @"videoCumulativeBreakTime": @(quality.videoCumulativeBreakTime),
+                @"audioCumulativeBreakRate": @(quality.audioCumulativeBreakRate),
+                @"videoCumulativeBreakRate": @(quality.videoCumulativeBreakRate),
+                @"audioCumulativeDecodeTime": @(quality.audioCumulativeDecodeTime),
+                @"videoCumulativeDecodeTime": @(quality.videoCumulativeDecodeTime),
+                @"muteVideo": @(quality.muteVideo),
+                @"muteAudio": @(quality.muteAudio)
             },
             @"streamID": streamID
         });
@@ -663,8 +762,9 @@
 }
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)onPlayerRecvSEI:(NSData *)data streamID:(NSString *)streamID {
+#pragma clang diagnostic pop
     FlutterEventSink sink = _eventSink;
     // Do not log high frequency callback
 
@@ -677,7 +777,21 @@
         });
     }
 }
-#pragma clang diagnostic pop
+
+- (void)onPlayerRecvMediaSideInfo:(ZegoMediaSideInfo *)info {
+    FlutterEventSink sink = _eventSink;
+    // Do not log high frequency callback
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRecvMediaSideInfo",
+            @"SEIData": [FlutterStandardTypedData typedDataWithBytes:info.SEIData],
+            @"streamID": info.streamID,
+            @"timestampNs": @(info.timestampNs)
+        });
+    }
+}
 
 - (void)onPlayerRecvAudioSideInfo:(NSData *)data streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
@@ -1104,6 +1218,26 @@
     }
 }
 
+- (void)onRecvRoomTransparentMessage:(ZegoRoomRecvTransparentMessage *)message roomID:(NSString *)roomID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onRecvRoomTransparentMessage] sendUserID: %@, sendUserName: %@, roomID: %@", message.sendUser.userID, message.sendUser.userName, roomID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRecvRoomTransparentMessage",
+            @"message": @{
+                @"sendUser": @{
+                    @"userID": message.sendUser.userID,
+                    @"userName": message.sendUser.userName
+                },
+                @"content": message.content
+            },
+            @"roomID": roomID
+        });
+    }
+}
+
 #pragma mark Utilities Callback
 
 - (void)onPerformanceStatusUpdate:(ZegoPerformanceStatus *)status {
@@ -1215,6 +1349,10 @@
             @"errorCode": @(errorCode)
         });
     }
+    
+    if (state == ZegoMediaPlayerStateNoPlay || state == ZegoMediaPlayerStatePlayEnded) {
+        [[ZegoTextureRendererController sharedInstance] resetMediaRenderFirstFrame:mediaPlayer.index];
+    }
 }
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer networkEvent:(ZegoMediaPlayerNetworkEvent)networkEvent {
@@ -1303,7 +1441,7 @@
 
 - (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer renderingProgress:(unsigned long long)millisecond {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onMediaPlayerRenderingProgress] idx: %d, event: %lld", mediaPlayer.index.intValue, millisecond);
+    // High frequency callbacks do not log
 
     GUARD_SINK
     if (sink) {
@@ -1315,6 +1453,36 @@
     }
 }
 
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer videoSizeChanged:(CGSize)size {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerVideoSizeChanged] idx: %d, width: %d, height: %d", mediaPlayer.index.intValue, (int)size.width, (int)size.height);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerVideoSizeChanged",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"width": @((int)size.width),
+            @"height": @((int)size.height),
+        });
+    }
+}
+
+- (void)mediaPlayer:(ZegoMediaPlayer *)mediaPlayer localCacheError:(int)errorCode resource:(NSString *)resource cachedFile:(NSString *)cachedFile {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMediaPlayerLocalCache] idx: %d, error: %d, resource: %@, cached: %@", mediaPlayer.index.intValue, errorCode, resource, cachedFile);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMediaPlayerLocalCache",
+            @"mediaPlayerIndex": mediaPlayer.index,
+            @"errorCode": @((int)errorCode),
+            @"resource": resource,
+            @"cachedFile": cachedFile,
+        });
+    }
+}
 
 #pragma mark - ZegoAudioEffectPlayerEventHandler
 
@@ -1445,7 +1613,8 @@
             @"method": @"onCapturedDataRecordProgressUpdate",
             @"progress": @{
                 @"duration": @(progress.duration),
-                @"currentFileSize": @(progress.currentFileSize)
+                @"currentFileSize": @(progress.currentFileSize),
+                @"quality": [self convertPublishQuality:progress.quality],
             },
             @"config": @{
                 @"filePath": config.filePath,
@@ -1756,5 +1925,78 @@
     }
 }
 #endif
+
+#pragma mark - AI Voice Changer Handler
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onInit:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerInit], index: %d, errorCode: %d", aiVoiceChanger.getIndex, errorCode);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerInit",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdate:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerUpdate], index: %d, errorCode: %d", aiVoiceChanger.getIndex, errorCode);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerUpdate",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onGetSpeakerList:(int)errorCode speakers:(NSArray<ZegoAIVoiceChangerSpeakerInfo *> *)speakers {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerGetSpeakerList], index: %d, errorCode: %d, speakers.count:%td", aiVoiceChanger.getIndex, errorCode, speakers.count);
+    
+    GUARD_SINK
+    
+    NSMutableArray *speakerArray = [NSMutableArray array];
+    for (ZegoAIVoiceChangerSpeakerInfo *info in speakers) {
+        NSDictionary *infoMap = @{
+            @"name": info.name,
+            @"id": @(info.id)
+        };
+        [speakerArray addObject:infoMap];
+    }
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerGetSpeakerList",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode),
+            @"speakerList": speakerArray
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdateProgress:(double)percent fileIndex:(int)fileIndex fileCount:(int)fileCount {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerUpdateProgress], index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex, percent, fileIndex, fileCount);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerUpdateProgress",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"percent": @(percent),
+            @"fileIndex": @(fileIndex),
+            @"fileCount": @(fileCount)
+        });
+    }
+}
 
 @end

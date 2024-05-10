@@ -26,8 +26,8 @@
         _view.backgroundColor = [UIColor blackColor];
 #elif TARGET_OS_OSX
         _view = [[NSView alloc] initWithFrame:rect];
-        _view.wantsLayer = YES;
-        _view.layer.backgroundColor = [NSColor blackColor].CGColor;
+        // _view.wantsLayer = YES;
+        // _view.layer.backgroundColor = NSColor.clear.cgColor;
 #endif
         _viewID = viewID;
     }

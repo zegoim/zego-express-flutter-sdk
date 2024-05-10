@@ -31,6 +31,7 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// Description: Creates a screen capture source object based on the provided source ID and source type.
   /// Use cases: It is used when you need to record and share the screen or window.
   /// When to call: It needs to be called after [createEngine].
+  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [sourceId] The specified screen ID or window ID. Only macOS and windows platforms need to pass in this parameter.
   /// - [sourceType] The specified screen source type. Only macOS and windows platforms need to pass in this parameter.
@@ -48,6 +49,7 @@ extension ZegoExpressEngineScreenCapture on ZegoExpressEngine {
   /// Use cases: When you no longer need to use the screen capture function, you can use this function to destroy the instance object created by the [createScreenCaptureSource] function
   /// When to call: When you need to the screen capture source object needs to be destroyed
   /// Restrictions: After destroy the instance, you need to release the [ZegoScreenCaptureSource] instance object you hold by yourself, and don’t call the function of this instance object after the destruction.
+  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [source] The screen capture source instance to be destroyed.
   Future<void> destroyScreenCaptureSource(

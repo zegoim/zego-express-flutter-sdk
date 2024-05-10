@@ -31,7 +31,7 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [user] User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
   /// - [config] Advanced room configuration.
@@ -49,13 +49,13 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   /// Use cases: In the same room, users can conduct live broadcast, audio and video calls, etc.
   /// When to call /Trigger: After successfully logging in to the room, if the room is no longer used, the user can call the function [logoutRoom].
   /// Restrictions: None.
-  /// Caution: 1. Exiting the room will stop all publishing and playing streams for user, and inner audio and video engine will stop, and then SDK will auto stop local preview UI. If you want to keep the preview ability when switching rooms, please use the [switchRoom] method. 2. If the user logs in to the room, but the incoming 'roomID' is different from the logged-in room name, SDK will return failure.
+  /// Caution: 1. Exiting the room will stop all publishing and playing streams for user, and inner audio and video engine will stop, and then SDK will auto stop local preview UI. If you want to keep the preview ability when switching rooms, please use the [switchRoom] method. 2. If the user logs out to the room, but the incoming 'roomID' is different from the logged-in room name, SDK will return failure.
   /// Related callbacks: After calling this function, you will receive [onRoomStateChanged] (Not supported before 2.18.0, please use [onRoomStateUpdate]) callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification(On the premise of enabling isUserStatusNotify configuration).
   /// Related APIs: Users can use [loginRoom], [switchRoom] functions to log in or switch rooms.
   ///
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
-  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   2. If you need to communicate with the Web SDK, please do not use '%'.
   /// - Returns The result of this logout room
   Future<ZegoRoomLogoutResult> logoutRoom([String? roomID]) async {
@@ -122,5 +122,23 @@ extension ZegoExpressEngineRoom on ZegoExpressEngine {
   Future<ZegoRoomSetRoomExtraInfoResult> setRoomExtraInfo(
       String roomID, String key, String value) async {
     return await ZegoExpressImpl.instance.setRoomExtraInfo(roomID, key, value);
+  }
+
+  /// Get room stream list.
+  ///
+  /// Available since: 3.12.0
+  /// Description: Get room stream list.
+  /// Use cases: Get room stream list.
+  /// When to call /Trigger: After logging in the room successful.
+  /// Caution: This interface is to get a real-time internal stream list, which may be inaccurate when the room is disconnected from the service. Do not call this interface with high frequency.
+  /// Related APIs: None.
+  ///
+  /// - [roomID] Room ID.
+  /// - [streamListType] Get type
+  /// - Returns return stream list
+  Future<ZegoRoomStreamList> getRoomStreamList(
+      String roomID, ZegoRoomStreamListType streamListType) async {
+    return await ZegoExpressImpl.instance
+        .getRoomStreamList(roomID, streamListType);
   }
 }
