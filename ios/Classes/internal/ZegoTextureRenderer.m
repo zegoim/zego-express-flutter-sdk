@@ -31,6 +31,10 @@
     return self;
 }
 
+- (void)dealloc {
+    [self destroy];
+}
+
 - (void)destroy {
     @synchronized (self) {
         // Release GPU Resource
@@ -64,8 +68,10 @@
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
     ZGLog(@"[ZegoTextureRenderer] [unregistered] renderer:%p", texture);
-    if (_lastPixelBuffer) {
-        CVPixelBufferRelease(_lastPixelBuffer);
+    @synchronized (self) {
+        if (_lastPixelBuffer) {
+            CVPixelBufferRelease(_lastPixelBuffer);
+        }
     }
 }
 

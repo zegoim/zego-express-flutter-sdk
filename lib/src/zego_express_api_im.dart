@@ -51,7 +51,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
   /// - Returns Send broadcast message result callback
@@ -73,7 +73,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [message] The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
   /// - Returns Send barrage message result callback.
@@ -96,7 +96,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// - [roomID] Room ID, a string of up to 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
-  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '/', '\'.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
   ///   3. If you need to communicate with the Web SDK, please do not use '%'.
   /// - [command] Custom command content. Required: Yes. Value range: The maximum length is 1024 bytes. Caution: To protect privacy, please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   /// - [toUserList] List of recipients of signaling. Required: Yes. Value range: user list or [null]. Caution: When it is [null], the SDK will send custom signaling back to all users in the room
@@ -105,5 +105,28 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
       String roomID, String command, List<ZegoUser> toUserList) async {
     return await ZegoExpressImpl.instance
         .sendCustomCommand(roomID, command, toUserList);
+  }
+
+  /// Sends a transparent message in room.
+  ///
+  /// Available since: 1.2.1
+  /// Description: After calling this function, users in the same room who have entered the room can receive the message, the message is unreliable.
+  /// Use cases: It is generally used when the number of people in the live room is not more than 500. The frequency of custom messages sent to a single user in the same room cannot be higher than 200 /s .
+  /// When to call: After calling [loginRoom] to log in to the room.
+  /// Restrictions: Generally used when the number of people in the live room does not exceed 500.The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
+  /// Related callbacks: When sending a message, Mode is specified for ZegoRoomTransparentMessageModeOnlyClient or ZegoRoomTransparentMessageModeClientAndServer can pass [onRecvRoomTransparentMessage] received sends the message content.
+  /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
+  ///
+  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  ///   Caution:
+  ///   1. room ID is defined by yourself.
+  ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
+  ///   3. If you need to communicate with the Web SDK, please do not use '%'.
+  /// - [message] ZegoRoomSendTransparentMessage
+  /// - Returns Send command result callback.
+  Future<ZegoRoomSendTransparentMessageResult> sendTransparentMessage(
+      String roomID, ZegoRoomSendTransparentMessage message) async {
+    return await ZegoExpressImpl.instance
+        .sendTransparentMessage(roomID, message);
   }
 }

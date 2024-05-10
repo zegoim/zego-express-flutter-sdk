@@ -102,4 +102,54 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   Future<ZegoNetworkTimeInfo> getNetworkTimeInfo() async {
     return await ZegoExpressImpl.instance.getNetworkTimeInfo();
   }
+
+  /// Dump audio and video data.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Dump audio and video data. Currently, only audio data is supported.
+  /// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
+  /// When to call: It needs to be called after [createEngine].
+  /// Restrictions: None.
+  /// Caution: It will trigger the [onStartDumpData] callback when data dumping starts.
+  /// Related APIs: Call [stopDumpData] to stop dumping data.
+  ///
+  /// - [config] Dump data config.
+  Future<void> startDumpData(ZegoDumpDataConfig config) async {
+    return await ZegoExpressImpl.instance.startDumpData(config);
+  }
+
+  /// Stop dumping data.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Stop dumping data.
+  /// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
+  /// When to call: It needs to be called after [startDumpData].
+  /// Restrictions: None.
+  /// Caution: It will trigger the [onUploadDumpData] callback.
+  Future<void> stopDumpData() async {
+    return await ZegoExpressImpl.instance.stopDumpData();
+  }
+
+  /// Upload dumped data to the ZEGO server.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Upload dumped data to the ZEGO server.
+  /// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
+  /// When to call: It needs to be called after [stopDumpData].
+  /// Restrictions: None.
+  /// Caution: It will trigger the [onUploadDumpData] callback when dump data uploaded.
+  Future<void> uploadDumpData() async {
+    return await ZegoExpressImpl.instance.uploadDumpData();
+  }
+
+  /// Remove dumped data.
+  ///
+  /// Available since: 3.10.0
+  /// Description: Remove dumped data.
+  /// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
+  /// When to call: It needs to be called after [stopDumpData]. If the dump data is to be uploaded to the ZEGO server, it should be deleted after the upload is successful.
+  /// Restrictions: None.
+  Future<void> removeDumpData() async {
+    return await ZegoExpressImpl.instance.removeDumpData();
+  }
 }

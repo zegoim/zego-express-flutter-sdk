@@ -78,6 +78,46 @@ typedef NS_ENUM(NSUInteger, ZGFlutterViewMode) {
     ZGFlutterViewModeScaleToFill = 2
 };
 
+/// audio sample rate.
+typedef NS_ENUM(NSUInteger, ZGFlutterAudioSampleRate) {
+    /// Unknown
+    ZGFlutterAudioSampleRateUnknown = 0,
+    /// 8K
+    ZGFlutterAudioSampleRate8K = 8000,
+    /// 16K
+    ZGFlutterAudioSampleRate16K = 16000,
+    /// 22.05K
+    ZGFlutterAudioSampleRate22K = 22050,
+    /// 24K
+    ZGFlutterAudioSampleRate24K = 24000,
+    /// 32K
+    ZGFlutterAudioSampleRate32K = 32000,
+    /// 44.1K
+    ZGFlutterAudioSampleRate44K = 44100,
+    /// 48K
+    ZGFlutterAudioSampleRate48K = 48000
+};
+
+/// Audio channel type.
+typedef NS_ENUM(NSUInteger, ZGFlutterAudioChannel) {
+    /// Unknown
+    ZGFlutterAudioChannelUnknown = 0,
+    /// Mono
+    ZGFlutterAudioChannelMono = 1,
+    /// Stereo
+    ZGFlutterAudioChannelStereo = 2
+};
+
+/// Usage of Custom video processed data.
+typedef NS_ENUM(NSUInteger, ZGFlutterProcessedDataUsageType) {
+    /// Preview.
+    ZGFlutterProcessedDataUsageTypePreview = 0,
+    /// Publish.
+    ZGFlutterProcessedDataUsageTypePublish = 1,
+    /// Both preview and publish.
+    ZGFlutterProcessedDataUsageTypeBoth = 2
+};
+
 /// Object for video frame fieldeter.
 ///
 /// Including video frame format, width and height, etc.
@@ -130,6 +170,20 @@ typedef NS_ENUM(NSUInteger, ZGFlutterViewMode) {
 
 /// SEI data (Optional, if you don't need to send SEI, set it to null. Deprecated, use [sendSEI] instead). Useful when set format as [AVCC] or [AnnexB]
 @property (nonatomic, strong, nullable) NSData *SEIData;
+
+@end
+
+
+/// Parameter object for audio frame.
+///
+/// Including the sampling rate and channel of the audio frame
+@interface ZGFlutterAudioFrameParam : NSObject
+
+/// Sampling Rate
+@property (nonatomic, assign) ZGFlutterAudioSampleRate sampleRate;
+
+/// Audio channel, default is Mono
+@property (nonatomic, assign) ZGFlutterAudioChannel channel;
 
 @end
 

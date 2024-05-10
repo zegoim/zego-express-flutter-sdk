@@ -72,6 +72,27 @@ public:
                                     unsigned long long referenceTimeMillisecond,
                                     ZGFlutterPublishChannel channel = ZG_FLUTTER_PUBLISH_CHANNEL_MAIN);
 
+    /// Send the original video data after the pre-processing of the custom video to the SDK, support other channels to push the stream, and support specified data usage.
+    ///
+    /// Available since: 3.14.0
+    /// Description: When the developer opens the custom pre-processing, by calling [setCustomVideoProcessHandler], you can set the custom video pre-processing callback to obtain the original video data.
+    /// Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
+    /// When to call: Must be called in the [onCapturedUnprocessedCVPixelbuffer] callback.
+    /// Restrictions: None.
+    /// Platform differences: Only valid on Windows platform.
+    /// Note: This function is only available in ZegoExpressVideo SDK!
+    ///
+    /// @param data Raw video data. RGB format data storage location is data[0], YUV format data storage location is Y component：data[0], U component：data[1], V component：data[2].
+    /// @param dataLength Raw video data length. RGB format data length storage location is dataLength[0], YUV format data storage location respectively Y component length：dataLength[0], U component length：dataLength[1], V component length：dataLength[2].
+    /// @param params video frame param.
+    /// @param referenceTimeMillisecond video frame reference time, UNIX timestamp, in milliseconds.
+    /// @param usage Data usage
+    /// @param channel Publishing stream channel.Required: No.Default value: Main publish channel.
+    void sendCustomVideoProcessedRawData(
+        const unsigned char **data, unsigned int *dataLength, ZGFlutterVideoFrameParam params,
+        unsigned long long referenceTimeMillisecond, ZGFlutterProcessedDataUsageType usage,
+        ZGFlutterPublishChannel channel = ZG_FLUTTER_PUBLISH_CHANNEL_MAIN);
+
 private:
     friend class ZegoCustomVideoProcessHandler;
     std::shared_ptr<IZegoFlutterCustomVideoProcessHandler> handler_ = nullptr;

@@ -18,3 +18,7 @@
 @implementation ZGFlutterVideoFrameParam
 // 回调对象
 @end
+
+@implementation ZGFlutterAudioFrameParam
+
+@end

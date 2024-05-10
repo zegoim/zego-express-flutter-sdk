@@ -32,7 +32,7 @@ class ZegoErrorCode {
   /// Description: The input streamID contains invalid characters. <br>Cause: The streamID parameter passed in when calling [startPublishingStream] or [startPlayingStream] contains invalid characters. <br>Solutions: Check whether the streamID parameter passed in when calling the function is normal, only support numbers, English characters and '-', '_'.
   static const int CommonStreamIdInvalidCharacter = 1000016;
 
-  /// Illegal param.
+  /// Description: Illegal param.<br>Cause: The parameter is empty, or the parameter is an illegal value. <br>Solutions: Please check param when entered function to make sure it is correct.
   static const int CommonIllegalParam = 1000017;
 
   /// Description: The Input CDN URL is too long. <br>Cause: The length of URL parameter passed in when calling [enablePublishDirectToCDN] or [startPlayingStream] exceeds the limit. <br>Solutions: URL length should be less than 1024 bytes.
@@ -67,6 +67,15 @@ class ZegoErrorCode {
 
   /// Description: The room is logged in, this setting is not supported. <br>Cause: Only supports setting before logging into the room. <br>Solutions: Please set it before calling [loginRoom] or after calling [logoutRoom]. Note that if you log in to multiple rooms, you need to log out of all rooms before setting.
   static const int CommonConfigAfterRoomLoggedIn = 1000067;
+
+  /// Description: Failed to load SDK dynamic library. <br>Cause: Incorrect SDK dynamic path passed in. <br>Solutions: Please pass in the correct SDK dynamic library path.
+  static const int CommonLoadLibraryFailed = 1000070;
+
+  /// Description: Failed to obtain SDK export function when loading SDK dynamic library. <br>Cause: SDK dynamic library version does not match. <br>Solutions: Please load the matching version of the SDK dynamic library.
+  static const int CommonLoadLibraryFuncNotFound = 1000071;
+
+  /// Description: This call is not supported. <br>Cause: ZEGOEXP_EXPLICIT macro is not enabled. <br>Solutions: Please add the ZEGOEXP_EXPLICIT macro to the preprocessor.
+  static const int CommonLoadLibraryNotSupport = 1000072;
 
   /// Description: SDK internal null pointer error. <br>Cause: The Android JVM environment is abnormal. <br>Solutions: Please check whether the Android JVM environment is normal or contact ZEGO technical support.
   static const int CommonInnerNullptr = 1000090;
@@ -116,7 +125,7 @@ class ZegoErrorCode {
   /// Description: The input user ID is empty.<br>Cause: The input user ID is empty. <br>Solutions: Please check the input user ID is empty or not.
   static const int RoomUserIdNull = 1002005;
 
-  /// Description: The input user ID contains invalid characters.<br>Cause: The input user ID contains invalid characters. <br>Solutions: User ID can only contains numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', ',', '.', '<', '>', '/', '\'.
+  /// Description: The input user ID contains invalid characters.<br>Cause: The input user ID contains invalid characters. <br>Solutions: User ID can only contains numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', ',', '.', '<', '>', '\'.
   static const int RoomUserIdInvalidCharacter = 1002006;
 
   /// The input user ID is too long. <br>The length of the user ID input by the [loginRoom] function is greater than or equal to 64 bytes. <br>Please check the user ID entered when calling the [loginRoom] function to ensure that its length is less than 64 bytes.
@@ -134,7 +143,7 @@ class ZegoErrorCode {
   /// The input room ID is empty. <br>The room ID entered by the [loginRoom] function is empty. <br>Please check the room ID entered when calling the [loginRoom] function to make sure it is not empty.
   static const int RoomRoomidNull = 1002011;
 
-  /// The input room ID contains invalid characters. <br>The room ID entered by the [loginRoom] function contains illegal characters.<br>Please check the room ID entered when calling the [loginRoom] function to ensure that it is only contain numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', ',', '.', '<', '>', '/', '\'.
+  /// The input room ID contains invalid characters. <br>The room ID entered by the [loginRoom] function contains illegal characters.<br>Please check the room ID entered when calling the [loginRoom] function to ensure that it is only contain numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', ',', '.', '<', '>', '\'.
   static const int RoomRoomidInvalidCharacter = 1002012;
 
   /// The input room ID is too long. <br>The length of the room ID input by the [loginRoom] function is greater than or equal to 128 bytes. <br>Please check the room ID entered when calling the [loginRoom] function to ensure that its length is less than 128 bytes.
@@ -266,6 +275,12 @@ class ZegoErrorCode {
   /// Description: login room used license auth, but the license is expired.  <br>Solutions:  Contact ZEGO technical support to deal with it.
   static const int RoomRoomLoginLicenseExpired = 1002085;
 
+  /// Description: The user has logged in elsewhere.  <br>Solutions:  Check whether the user has logged in elsewhere.
+  static const int RoomRoomLoginOther = 1002086;
+
+  /// Description: License authentication is used, and when using the relevant function, the license is configured with a functional limitation that does not allow the use of the function.  <br>Solutions:  Proofread the license's functionality limitations and use the functionality appropriately.
+  static const int RoomRoomLicenseFeatureLimit = 1002087;
+
   /// Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
   static const int RoomInnerError = 1002099;
 
@@ -293,7 +308,7 @@ class ZegoErrorCode {
   /// Description: Object segmentation parameter error.<br>Caution: Object segmentation is set to green screen type, background blur is not allowed.<br>Solutions: Please use the correct parameters to enable object segmentation.
   static const int PublisherObjectSegmentationParamError = 1003014;
 
-  /// Description: Object segmentation background image loading error.<br>Caution: The path of the background image is incorrect, or the content of the image is incorrect.<br>Solutions: Please set the correct background image.
+  /// Description: Object segmentation background loading error.<br>Caution: The background video or image path is incorrect, or the content is incorrect..<br>Solutions: Please set the correct background image or video.
   static const int PublisherObjectSegmentationImageLoadError = 1003015;
 
   /// Description:Stream publishing is temporarily interrupted and is retrying. <br>Cause: The network fluctuates or the network signal is bad.<br>Solutions: Please wait or check whether the network is normal.
@@ -344,7 +359,7 @@ class ZegoErrorCode {
   /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path is empty. <br>Solutions: Incoming non-empty path.
   static const int PublisherWatermarkUrlNull = 1003055;
 
-  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path exceeds the byte size limit. <br>Solutions: The incoming watermark path should be less than 1024 bytes.
+  /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path exceeds the byte size limit. <br>Solutions: The incoming watermark path should be less than 512 bytes.
   static const int PublisherWatermarkUrlTooLong = 1003056;
 
   /// Description: Failed to set publish watermark. <br>Cause: The incoming watermark path was entered incorrectly or the image format is not supported. <br>Solutions: Incoming the correct watermark path, only `jpg` and `png` image formats are supported.
@@ -365,6 +380,9 @@ class ZegoErrorCode {
 
   /// Description: Push-pull flow authentication is incorrect. <br>Caution: An [appSign] error was passed when creating the engine, or a Token error or timeout was passed when logging into the room. <br>Solutions: Pass the correct [Token] upon login, or invoke [renewToken] when recive [onRoomTokenWillExpire] callback.
   static const int PublisherErrorDispatchAuthError = 1003072;
+
+  /// Description: The specified path for displaying static images when the camera is turned off is incorrect. <br>Caution: The path may be misspelled or there may be no read permission.<br>Solutions: Please check if the designated image path is correct and if there is read permission.
+  static const int PublisherDummyCaptureImagePathError = 1003073;
 
   /// Description: Unsupported video encoder.<br>Caution: There is no selected video encoder in the current SDK.<br>Solutions: Please contact ZEGO technical support.
   static const int PublisherVideoEncoderNoSupportted = 1003080;
@@ -532,6 +550,9 @@ class ZegoErrorCode {
   /// Description: Failed to start mixed stream. <br>Cause: The input watermark URL is illegal. <br>Solutions: The watermark URL must start with `preset-id://` and end with `.jpg` or `.png`.
   static const int MixerWatermarkUrlInvalid = 1005063;
 
+  /// Description: The mixed stream background image url is too long. <br>Cause: The length of the mixed stream background url parameter exceeds the limit. <br>Solution: Please make sure the background image url length does not exceed 1024 bytes.
+  static const int MixerBackgroundImageUrlTooLong = 1005066;
+
   /// Description: Failed to start mixed stream. <br>Cause: The URL of the background image entered is illegal. <br>Solutions: The URL of the background image must start with preset-id:// and end with `.jpg` or `.png`.
   static const int MixerBackgroundImageUrlInvalid = 1005067;
 
@@ -696,6 +717,9 @@ class ZegoErrorCode {
 
   /// Description: the passed parameter is not in the valid value range. <br>Cause: error setting parameters. <br>Solutions: Review the interface comment and pass in a value within the legal range.
   static const int MediaPlayerParamValueRangeIllegal = 1008043;
+
+  /// Description: Failed to cache network resource file. <br>Cause: During playback, [seekTo] operation will cause cache failure, and network reasons or incomplete playback caused by active stop will also cause cache failure. <br>Solutions: Check whether there is a [seekTo] operation, whether the playback failed due to network reasons, or whether the playback stopped actively.
+  static const int MediaPlayerLocalCacheFailed = 1008044;
 
   /// Description: MediaPlayer internal error. <br>Cause: internal error. <br>Solutions: Contact Technical support.
   static const int MediaPlayerInnerError = 1008099;
@@ -877,6 +901,24 @@ class ZegoErrorCode {
   /// Description: Login to the room causes the network test to stop. <br>Cause: Already logged in to the room. <br>Solutions: Since the network test will take up bandwidth, please do it before logging in to the room.
   static const int UtilitiesStopByLoginRoom = 1015032;
 
+  /// Description: Fail to dump data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesStartDumpAudioDataFailed = 1015033;
+
+  /// Description: Already start dumping data. <br>Cause:  Call [startDumpData] repeatedly. <br>Solutions: Stop or cancel the previous dump data task.
+  static const int UtilitiesAlreadyStartDumpDataError = 1015034;
+
+  /// Description: No dump data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesNoDumpDataError = 1015035;
+
+  /// Description: Failed to create dump data folder. <br>Cause: No read and write permission or the disk is full. <br>Solutions: Check to see if there is still space on the disk.
+  static const int UtilitiesCreateDumpDataFolderError = 1015036;
+
+  /// Description: Internal error of upload module. <br>Cause: Error occurred in upload module. <br>Solutions: Please contact ZEGO technical support.
+  static const int UtilitiesUploadModuleInnerError = 1015037;
+
+  /// Description: The dump data exceeding the maximum upload limit error. <br>Cause: The dump data is too large to exceed the limit of the upload module. <br>Solutions: Please contact ZEGO technical support and report to ZEGO manually.
+  static const int UtilitiesDumpDataExceedMaxSizeError = 1015038;
+
   /// Description: The function call failed. <br>Cause: No range auido instance has been created. <br>Solutions: Create a range audio instance.
   static const int RangeAudioNoInstance = 1016000;
 
@@ -939,6 +981,9 @@ class ZegoErrorCode {
 
   /// Description: Resource file invalid. <br>Cause: File is corrupted <br>Solutions: Please call [download] function to reload media resource.
   static const int CopyrightedMusicResourceFileInvalid = 1017015;
+
+  /// Description: Download canceled. <br>Cause: Call [cancelDownload] to actively cancel the download.
+  static const int CopyrightedMusicDownloadCanceled = 1017016;
 
   /// Description: The resource_id unauthorized. <br>Cause: The resource ID is not obtained through [requestResource] [getSharedResource] function. <br>Solutions: Please call the [requestResource] [getSharedResource] function to get valid resource ID.
   static const int CopyrightedMusicResourceIdUnauthorized = 1017018;
@@ -1006,6 +1051,9 @@ class ZegoErrorCode {
   /// Description: This vendor does not support this function. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorNotSupportFunction = 1017053;
 
+  /// Description: The room ID is not logged in. <br>Cause: Room ID input error. <br>Solutions: If the copyright is not used in a multi room scenario, there is no need to pass in the roomID, otherwise please pass in the correct logged in room ID.
+  static const int CopyrightedMusicRoomNoLogin = 1017054;
+
   /// Description: Vendor ID invalid. <br>Cause: Wrong vendor selection. <br>Solutions: Please pass in the correct vendor ID.
   static const int CopyrightedMusicVendorIdInvalid = 1017071;
 
@@ -1026,6 +1074,9 @@ class ZegoErrorCode {
 
   /// Description: top ID invalid. <br>Cause: An unsupported top ID was passed in when fetching chart songs. <br>Solutions: Please pass in the correct top ID.
   static const int CopyrightedMusicTopIdInvalid = 1017077;
+
+  /// Description: Loading copyright music plugin failed. <br>Cause: The program runtime path does not include the copyright music plugin dynamic library. <br>Solutions: Please configure the copyright music plugin dynamic library dependency correctly.
+  static const int CopyrightedMusicLoadPluginFail = 1017094;
 
   /// Description: The copyright music module does not support this method. <br>Cause: The copyright music module does not support this function under the current platform. <br>Solutions: Contact ZEGO technical support to deal with it.
   static const int CopyrightedMusicNotSupportMethod = 1017095;
@@ -1128,4 +1179,31 @@ class ZegoErrorCode {
 
   /// Description: Failed to create screen capture source. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing screen capture instance or destroy the previous instance.
   static const int ScreenCaptureExceedMaxCount = 1020004;
+
+  /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int ScreenCaptureInnerError = 1020005;
+
+  /// Description: The function call failed. <br>Cause: No AI voice changer instance has been created. <br>Solutions: Create an AI voice changer instance.
+  static const int AIVoiceChangerNoInstance = 1021000;
+
+  /// Description: Failed to create AI voice changer. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing AI voice changer instance or destroy the previous instance.
+  static const int AIVoiceChangerExceedMaxCount = 1021001;
+
+  /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
+  static const int AIVoiceChangerInnerError = 1021002;
+
+  /// Description: AI voice changer was not initialized.<br>Cause: Did not initialize AI voice changer before use it.<br>Solutions: Use AI voice changer after initialize it.
+  static const int AIVoiceChangerNotInitError = 1021003;
+
+  /// Description: Initialize AI voie changer failed.<br>Cause: Did not set user ID before initialize AI voice changer, or AI voice changer service expired.<br>Solutions: Set user ID before initialize AI voice changer, or contact ZEGO technical support to deal with it.
+  static const int AIVoiceChangerInitFailedError = 1021004;
+
+  /// Description: No AI voice changer resource files.<br>Cause: AI voice changer resource files were not downloaded.<br>Solutions: Please make sure AI voice changer resource files downloaded before use it.
+  static const int AIVoiceChangerNoModelError = 1021005;
+
+  /// Description: Download AI voice changer resource files failed.<br>Cause: Poor network connection.<br>Solutions: Please check the network connection is ok.
+  static const int AIVoiceChangerModelDownloadFailedError = 1021006;
+
+  /// Description: Can not run AI voice changer on this device.<br>Cause: AI voice changer feature can not run on this device because of poor perforamance.<br>Solutions: Do not use AI voice changer feature on this device.
+  static const int AIVoiceChangerDeviceNotSupportedError = 1021007;
 }

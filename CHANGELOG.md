@@ -1,5 +1,517 @@
 # Change Log
 
+## 3.14.5
+
+### New Features
+
+#### 1. Support iOS 17.0 version
+
+Note: Starting with this release, iOS 11.0 and earlier versions are no longer supported.
+
+Starting from 2024-04-29, all apps on the App Store must support iOS 17.0 version. For details, please refer to Apple Developer Website Official Instructions.
+
+#### 2. Supports capturing video by using high frame rates of 60 fps
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+#### 3. Added two new sound effects
+
+ZegoVoiceChangerPreset added enumeration values for two voice-changing effects, Autobot and OutOfPower, to enrich the voice-changing effects.
+
+For related API, please refer to [setVoiceChangerPreset]
+
+#### 4. ZegoMediaPlayer supports video mirroring
+
+For related API, please refer to [enableViewMirror]
+
+#### 5. Supports initiating mixed-streaming tasks normally when image resource verification fails
+
+ZegoMixerTask added new parameter `mixImageCheckMode`, used to control whether backgroundImageURL, inputList.imageInfo.url, or watermark.imageURL image resources fail to verify whether the mixing task can be initiated normally.
+
+This function is not enabled by default (the default value of `mixImageCheckMode` is 0), which means that image verification is strictly performed, that is, the original restriction rules of parameters must be met before the mixed flow task can be initiated normally.
+
+For related API, please refer to [startMixerTask]
+
+#### 6. Supports determining in advance whether the device can run the AI voice changing function
+
+The AI voice changing function has certain requirements on the performance of the running device. You can use the [isAIVoiceChangerSupported] interface to determine in advance whether the device can support the AI voice changing function.
+
+For related API, please refer to [isAIVoiceChangerSupported]
+
+### Enhancements
+
+#### 1. Optimize the super-resolution function
+
+Optimize the super-resolution effect and reduce the sharpness of the algorithm, thereby improving the subjective quality when the original picture has noise, there are faces in the picture, etc. For example, the flaws on the anchor’s face will not be highlighted, and the anchor’s hairline will not become more obvious.
+
+Optimize the frame rate performance of the super-resolution algorithm on Qualcomm chips.
+
+### Bug Fixes
+
+1. Fixed an issue where the release timing of undefined global variables caused the process to exit abnormally.
+
+2. Fixed the issue where some models use AudioTrack to play audio, resulting in abnormal sound.
+
+3. Fixed the problem of using the AI voice changing function to occasionally cause the audio and video to be out of sync, and causing words to be swallowed instantly when starting and stopping.
+
+4. Fixed the issue where the iPad collects audio through the microphone and occasionally has no sound.
+
+5. Fixed the problem of multi-thread concurrency when destroying a camera, causing a crash when accessing a null pointer.
+
+6. Fixed the problem that the mediaPlayer takes a long time to open files in M3U8 format.
+
+## 3.13.3
+
+### Bug Fixes
+
+1. Fixed the problem of using TextureView to render video frame on the iOS platform to set viewMode abnormally.
+
+## 3.13.2
+
+### *Bug Fixes
+
+1. Fixed the problem of data loss when reporting quality or billing failed.
+
+## 3.13.1
+
+### Bug Fixes*
+
+1. Fixed an issue where publishing a screen share stream on the web platform failed.
+
+## 3.13.0
+
+### New Features
+
+#### 1. Added video stabilization feature (Only supports iPhone and Android)
+
+Note:
+
+This feature is only available for use during internal video capture.
+
+When this feature is enabled, there may be delays or cropping of the image, so please use it accordingly.
+
+The new video stabilization feature is added to reduce the impact of camera shake during internal video capture and improve the quality of video capture.
+
+For related API, please refer to [setCameraStabilizationMode]
+
+#### 2. When using the QUIC protocol for CDN streaming, it supports 0-RTT connection establishment
+
+Note:
+
+The security of this feature is slightly lower compared to traditional methods. Please use it with caution.
+
+When using this feature, set ZegoCDNConfig.protocol to quic.
+
+[ZegoCDNConfig] adds the [quicConnectMode] attribute, which allows developers to use the QUIC protocol for CDN streaming. Set quicConnectMode to 1 for QUIC connection mode, enabling 0-RTT connection and fast service activation. Currently compatible with CDN live streaming products from Huawei, Wangsu, Tencent, and other vendors.
+
+This feature is not enabled by default (quicConnectMode is set to 0, indicating normal connection establishment).
+
+For related API, please refer to ZegoCDNConfig > quicConnectMode
+
+#### 3. Support setting a timeout for CDN repushing to monitor the existence of a stream
+
+Note: This feature only takes effect when initiating a retweet. If there is a disconnection during the retweet process, the SDK will maintain the retry logic and there will be no callback notification in this case.
+
+When initiating a retweet task, you can set the timeout for the retweet CDN through the [addPublishCdnUrl] interface to monitor if the stream exists. For example, if the developer has initiated a retweet task but the stream has not started streaming yet, after the timeout set, the SDK will return a callback notification indicating that the stream does not exist.
+
+This callback notification will only be sent to the retweet initiator, not the streaming initiator. If the retweet initiator and the streaming initiator are not the same user, it is recommended for developers to initiate the retweet from the server side and receive this notification.
+
+For related API, please refer to addPublishCdnUrl
+
+#### 4. Support for callback local recording quality data
+
+[ZegoDataRecordProgress] adds the [quality] attribute, which can be used to callback the quality data of the recorded file, such as frame rate and bit rate, during the local recording process.
+
+For related API, please refer to onCapturedDataRecordProgressUpdate
+
+#### 5. Supports low-light enhancement and color enhancement when using external capturing
+
+Note: The external capture function and pre-processing function cannot be used at the same time, otherwise abnormal images may occur when playing streams.
+
+After enabling the external capture function, you can use the [setLowlightEnhancement] and [enableColorEnhancement] interfaces to separately enable low-light enhancement and color enhancement to adjust the captured images according to your business needs.
+
+For related API, please refer to setLowlightEnhancement, enableColorEnhancement
+
+#### 6. Support for H.265 automatic compatibility strategy
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+When some users in the room do not support the H.265 format, the streaming end that supports it will fall back to the H.264 format and republish stream.
+
+### Enhancements
+
+#### 1. Optimizing the callback notification logic of the media streamer
+
+Optimize the callback notification logic of the media streaming engine, add error callbacks for unsupported audio sampling rate (for example, not supporting a sampling rate of 24K), and help developers quickly locate problems.
+
+For related API, please refer to onMediaDataPublisherFileClose
+
+#### 2. Optimized color enhancement algorithm
+
+Optimized color enhancement algorithm performs better than previous versions in scenes with high color saturation.
+
+#### 3. For low-performance Android devices, optimize the fluency of voice and the effect of echo cancellation during background operation
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+#### 4. For KTV scenarios, optimize the alignment effect of Bluetooth earphones on vocals and accompaniment, enhancing the K-song experience
+
+### Bug Fixes
+
+1. Fix the problem of abnormal time consumption of interface calls caused by not deinitializing the SDK after long-term use.
+
+2. Fixed compatibility issues with hardware encoding and decoding, addressing occasional crashes.
+
+3. Fix known compatibility issues and null pointer problems.
+
+4. Fixing an issue where the engine occasionally initializes with incorrect states.
+
+## 3.12.5
+
+### **Bug Fixes**
+
+1. Fixed the issue where the video rendering black screen on Mac10.15 safari 13.0.2.
+
+## 3.12.4
+
+### Bug Fixes**
+
+1. Fixed the issue where the UI would occasionally freeze if a network abnormality occurs when initializing the SDK.
+
+2. Fixed the issue where UI freezes may occur in a very low probability if the network is abnormal when switching networks.
+
+## 3.12.3
+
+### **New Features
+
+#### 1. Support Copyright-music plugin
+
+Note:
+
+Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+The plugin cannot be used alone and must be used with Express SDK.
+
+Support for copyright-music function pluginization, when the developer's business scenario only needs to update the copyright-music related, you can independently integrate the plugin without updating the Express SDK, which can smoothly migrate.
+
+#### 2. Support for getting a list of streams in the room from the client
+
+Note: The function retrieves a real-time stream list inside the room. If the room service is disconnected, the results obtained may not be accurate.
+
+Developers are supported to obtain the stream list inside the room from the client, which can be used to handle related business logic.
+
+For related API, please refer to getRoomStreamList
+
+#### 3. Support for adding silent frames to audio and video streams transcoded to CDN
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+Support is provided for adding silent frames to the audio and video streams that are pushed to the CDN. This can be used to avoid issues such as stuttering or audio-video synchronization problems caused by timestamp discrepancies.
+
+#### 4. The media player supports obtaining the real-time frame rate of the file
+
+Support for obtaining frame rate statistical information of the currently playing media file, which can be used for data display, anomaly monitoring, etc..
+
+For related API, please refer to getPlaybackStatistics
+
+#### 5. Media player supports caching network resources locally
+
+Support local caching of network resources, so that if the same network resource needs to be played, cached data will be prioritized, enhancing user experience.
+
+For related API, please refer to enableLocalCache, onMediaPlayerLocalCache
+
+### **Bug Fixes
+
+1. Fix the issue where certain models would display stripes on the screen when motion is occurring after enabling the super resolution feature.
+
+2. Fix the issue of memory leak when destroying GPU resources in external filter blending mode for some phones.
+
+3. Fix the issue of stuck when playing and rendering streams on some devices.
+
+4. Fix the issue of crashing when playing audio or video with a sample rate higher than 48K on certain Android devices.
+
+5. Fix the issue of occasional crashes when calling the [enableAudioCaptureDevice] interface.
+
+## 3.11.0
+
+### New Features**
+
+#### 1. Support high-definition and low-code video in the cloud transcoding service
+
+Note: If you need to use this feature, please contact ZEGOCLOUD business personnel.
+
+By applying leading coding and decoding algorithms and other video pre-processing capabilities in the cloud transcoding service, we continuously optimize the smoothness and clarity of video playback, significantly improving the image quality. This feature is suitable for the following scenarios:
+
+- Showroom live streaming scenes with high viewership. It ensures stable video transmission and high quality while saving bandwidth costs; without affecting the image quality, it can reduce the bitrate by about 30%.
+
+- Danmaku game live streaming, sports live streaming, and other scenes with rich color and texture details in the video content. Under the same bitrate conditions, it can provide a higher definition viewing experience.
+
+For related API, please refer to ZegoMixerOutputVideoConfig > enableLowBitrateHD
+
+#### 2. Color enhancement is supported when publishing video-streams
+
+For various cameras and other devices that capture images, if the colors appear grayish or have low saturation, we support enhancing the colors while preserving the natural skin tones. This will make the images more vibrant and brighter, creating a more realistic visual experience for the human eye.
+
+For related API, please refer to enableColorEnhancement
+
+#### 3. All network requests support the IPv6 protocol
+
+#### 4. Real-time room messaging supports sending transparent messages
+
+Support sending real-time room messages to specified clients or client servers; message types are divided into normal and ordered, with the latter ensuring that messages are received strictly in order. This feature is suitable for scenarios where the anchor needs to manage the microphone positions in the room, for example:
+
+- Send messages to users who need to mute through the anchor client, and the receiving client will mute accordingly.
+
+- When the anchor wants to kick a user out of the room, send a message to the client server of the other party through the anchor client, and kick out the user.
+
+For related API, please refer to sendTransparentMessage
+
+#### 5. Hardware decoding acceleration supported for MJPEG format
+
+Note: This feature only supports pre-processing of screenshots and does not support other processing such as rotation or watermarking.
+
+When the video format output by the capture device is MJPEG, hardware decoding acceleration is enabled by default to prevent issues such as insufficient frame rate due to insufficient device performance.
+
+This feature is suitable for use on capture devices with a 4K resolution mainly.
+
+#### 6. Automatic mixing supports setting water level
+
+Note:
+
+- This feature is not enabled by default, meaning the server uses the default configuration values.
+
+- This feature may increase latency, so use it judiciously.
+
+The automatic stream mixing interface supports setting a watermark to control the lower limit of the range for adaptive adjustment of the mixing server's stream cache. This helps maintain a balance between mixing time and video stuttering caused by unstable streaming from the source. This feature only takes effect on new input streams and does not affect input streams that have already started mixing.
+
+For example, in a real-time karaoke KTV scenario, slight fluctuations in the streaming network from the source may cause mixing stuttering, which in turn increases the likelihood of stuttering for viewers. By adjusting the lower limit of the watermark, you can optimize the viewer's experience with stuttering, but this will increase latency.
+
+For related API, please refer to ZegoAutoMixerTask > minPlayStreamBufferLength
+
+#### 7. Support for using live streams as input streams for mixing
+
+Newly added support for using live streams as input streams for mixing; the URL of the live input stream supports both RTMP and HTTP-FLV protocols. This feature is suitable for mixing the RTC video streams of hosts' interactive broadcasting with cloud sports live streams, game live streams, etc., to achieve scenarios such as game or sports commentary in live broadcasting.
+
+#### 8. Custom audio offset value is supported for mixing
+
+When using custom audio and video capture function and the corresponding audio capture sources have inconsistent delays, you can customize the audio offset value during mixing to achieve audio-video synchronization after mixing output, ensuring a better experience for the audience.
+
+For related API, please refer to ZegoMixerInput > advancedConfig
+
+#### 9. The media player supports callbacks for video resolution change events
+
+The media player supports throwing relevant callback notifications to developers when the video resolution changes. This feature is suitable for scenarios where the resolution of the streaming screen changes multiple times and requires adjusting the encoding resolution on the streaming end and matching the rendering view size on the receiving end.
+
+For related API, please refer to onMediaPlayerVideoSizeChanged
+
+#### 10. The audio player supports separate settings for streaming volume and local volume
+
+The sound effect player supports setting the streaming volume and local playback volume separately, ensuring that the volume on both ends, local and remote, is within an appropriate range.
+
+For related API, please refer to ZegoAudioEffectPlayer > setPublishVolume, ZegoAudioEffectPlayer > setPlayVolume, ZegoAudioEffectPlayer > setPublishVolumeAll, ZegoAudioEffectPlayer > setPlayVolumeAll
+
+### Enhancements**
+
+#### 1. Optimize server-side mixing and single-stream transcoding capabilities
+
+Optimize server-side mix streaming and single-stream transcoding capabilities to improve encoding efficiency and achieve a 5% or more increase in subjective and objective video quality at the same bitrate.
+
+#### 2. Optimize the AEC (Acoustic Echo Cancellation) algorithm to achieve better AEC performance
+
+#### 3. Optimize network connection strategies to enhance the experience of audio and video calls
+
+#### 4. Optimize the strategy of switching between the front and back end to solve the problem of collecting silence in certain specific scenarios or models
+
+#### 5. Optimize multi-device login logic
+
+After the user successfully logs in on device A, device A loses network connection. Then, the user logs in successfully on device B using the same userID. If the network connection on device A is restored and a reconnection is attempted, it will fail and throw error code 1002086, indicating that the userID is already logged in another device.
+
+### Bug Fixes
+
+#### 1. Fixed the issue that caused crashes in certain decoding scenarios
+
+## 3.10.3
+
+### **Bug Fixes**
+
+1. Fixed the problem of false positives in the mobile terminal sleep detection module, affecting room re-login and push-pull stream retry logic.
+
+## 3.10.2
+
+### **Bug Fixes**
+
+1. Fixed the issue of a black screen appearing after turning on low-light enhancement.
+
+## 3.10.1
+
+### **Bug Fixes**
+
+1. Remove print privacy information.
+
+## 3.10.0
+
+### New Features
+
+#### 1. Added real-time AI voice-changing function
+
+Note:
+
+The AI Voice-Changing function is a paid function. If you need to apply for a trial or inquire about the official charging standards, please contact ZEGOCLOUD business personnel.
+
+The current official website SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support for special packaging.
+
+New AI voice changing function, like the Conan's Bowtie in real-time calls, perfectly reproduces the timbre and rhythm of the target character, while retaining the user's speech speed, emotion, and intonation, and can switch timbre at will, with ultra-low latency allowing users Enjoy social chat, live broadcast, game voice and other scenarios.
+
+For related API, please refer to [createAIVoiceChanger](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/createAIVoiceChanger.html), [destroyAIVoiceChanger](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineAIVoiceChanger/destroyAIVoiceChanger.html)
+
+#### 2. The virtual background of subject segmentation supports video materials
+
+Note:
+
+The current official website SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support for special packaging.
+
+The video filling method of the virtual background is centered and proportionally scaled. When the video is too large, the excess part will be cropped.
+
+When using the subject segmentation function, the virtual background supports the use of video materials. The final frame rate of the video materials will be consistent with the encoding frame rate and played in a loop.
+
+For related API, please refer to [enableVideoObjectSegmentation](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableVideoObjectSegmentation.html)
+
+#### 3. Media player supports accompaniment sound quality enhancement
+
+The media player supports accompaniment sound quality enhancement, which improves the sound quality of the accompaniment and the atmosphere of the scene. It is suitable for chat rooms, karaoke and other scenes.
+
+For related API, please refer to [enableLiveAudioEffect](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/enableLiveAudioEffect.html)
+
+#### 4. Supports obtaining and uploading audio Dump files
+
+Note: Since audio dump files are sensitive privacy data of users, developers must read ZEGOCLOUD Privacy Policy carefully when implementing this capability. In addition, when collecting audio Dump files, please indicate the purpose of Express SDK collection when obtaining user authorization and consent.
+
+Supports saving and uploading audio data before and after processing, which can be used to locate audio-related problems, improve troubleshooting efficiency, and shorten access time.
+
+For related API, please refer to [startDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/startDumpData.html), [stopDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/stopDumpData.html), [uploadDumpdata](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/uploadDumpdata.html), [removeDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/removeDumpData.html), [onRequestDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onRequestDumpData.html), [onStartDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onStartDumpData.html), [onStopDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onStopDumpData.html), [onUploadDumpData](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onUploadDumpData.html)
+
+#### 5. Custom video capture supports transparent channel transmission
+
+Supports the extraction, encoding, and transmission of Alpha channel data in the RGBA channel collected by developers, thereby rendering the subject with a transparent background on the streaming side to achieve a more immersive and realistic video scene.
+
+For related API, please refer to [enableAlphaChannelVideoEncoder](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enableAlphaChannelVideoEncoder.html)
+
+### Enhancements
+
+#### 1. Optimized low-light enhancement function, smoother in automatic mode
+
+In the automatic mode with low illumination enhancement, the dynamic adjustment of brightness will be smoother and smoother, improving the user's visual experience.
+
+For related API, please refer to [setLowlightEnhancement](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setLowlightEnhancement.html)
+
+#### 2. Optimize the upper limit of expected publish and play stream bit rates for network speed testing
+
+Optimize the upper limit of expected publish and play streaming bit rates for network speed testing, increasing it to 15M. Developers can check how well the audio and video quality matches the current network before publishing and playing streams to ensure stable call quality.
+
+For related API, please refer to [startNetworkSpeedTest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineUtilities/startNetworkSpeedTest.html)
+
+#### 3. Optimize the [muteAll] interface logic for receiving audio and video data from remote users when playing streams
+
+Note: The new interfaces [muteAllPlayAudioStreams], [muteAllPlayVideoStreams] and the old interfaces [muteAllPlayStreamAudio], [muteAllPlayStreamVideo] cannot be mixed.
+
+New interfaces [muteAllPlayAudioStreams] and [muteAllPlayVideoStreams] are added to receive the audio and video data of all remote users when playing streams; at the same time, the [mutePlayStreamAudio] and [mutePlayStreamVideo] interfaces are used to individually control the specified streams.
+
+After the old interfaces [muteAllPlayStreamAudio] and [muteAllPlayStreamVideo] are called, the receiving status of the specified stream cannot be controlled individually.
+
+For related API, please refer to [muteAllPlayAudioStreams](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/muteAllPlayAudioStreams.html), [muteAllPlayVideoStreams](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/muteAllPlayVideoStreams.html), [mutePlayStreamAudio](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/mutePlayStreamAudio.html), [mutePlayStreamVideo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePlayer/mutePlayStreamVideo.html)
+
+#### 4. The media player supports only playing video or audio without consuming additional decoding performance
+
+Note: During playback, if the media stream type is modified, it will take effect the next time it is played.
+
+When using a media player to play audio and video files, the [setPlayMediaStreamType] interface can be used to set it to Audio-only or Video-only, which does not consume audio and video decoding performance.
+
+For related API, please refer to [setPlayMediaStreamType](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoMediaPlayer/setPlayMediaStreamType.html)
+
+### **Bug Fixes
+
+#### 1. Fixed the issue of occasional no sound when playing streams
+
+#### 2. Fixed the issue where the [logoutRoom] and [loginRoom] interfaces were called multiple times when multiple rooms were disconnected, resulting in subsequent failure to log in to the room
+
+#### 4. Fixed the problem of frequent retries when room reconnection fails
+
+## 3.9.0
+
+### **New Features**
+
+#### 1. ScreenCapture supports system WGC
+
+Note: This feature requires Windows 10.18362 or above.
+
+When the multi-source acquisition module performs screen capture, it supports system WGC, which also known as Windows Graphics Capture, and uses this mode by default, making the acquisition more efficient.
+
+#### 2. ScreenCapture supports setting publishing-stream area
+
+The multi-source collection module supports users to set independent preview and publishing-stream areas when performing screen capture.
+
+For related API, please refer to [updatePublishRegion](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoScreenCaptureSource/updatePublishRegion.html)
+
+#### 3. Added SEI callback with timestamp
+
+For related API, please refer to [onPlayerRecvMediaSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerRecvMediaSideInfo.html)
+
+#### 4. The single-stream transcoding function supports playing stream by RTC
+
+Note:
+
+If you need to use this function, please contact ZEGOCLOUD technical support.
+
+Transcoding will cause additional delays. It is not recommended if you use this function in your Live Streaming scenarios which playing stream by RTC.
+
+When RTC plays streams, it supports triggering single-stream transcoding tasks through preset transcoding templates, and outputs transcoded streams with different resolutions.
+
+This function can be used in scenarios such as live broadcasts. Viewers can choose streams of different resolutions to ensure smooth playback that based on network quality, terminal equipment, etc..
+
+For related API, please refer to [ZegoPlayerConfig > codecTemplateID](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoPlayerConfig/codecTemplateID.html)
+
+#### 5. Supports throwing [setDummyCaptureImagePath] exception callback
+
+For related API, please refer to [onPublisherDummyCaptureImagePathError](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherDummyCaptureImagePathError.html)
+
+#### 6. Direct-publish CDN supports updating the CDN address during publishing
+
+For related API, please refer to [enablePublishDirectToCdn](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/enablePublishDirectToCDN.html)
+
+#### 7. Supports AI-balanced noise reduction mode
+
+Note: The current official SDK does not include this function. If necessary, please contact ZEGOCLOUD technical support for special packaging.
+
+Support balanced AI noise reduction mode. Compared with the original mode, under the premise of the same human voice fidelity effect, the noise suppression effect is significantly improved, and can reach the level of clean and noise-free or non-disturbing; but the performance Consumption increased slightly. Suitable for noisy (low signal-to-noise ratio) outdoor environments such as streets, roads, markets, etc..
+
+For related API, please refer to [ZegoANSModeAIBalanced](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoANSMode/ZegoANSModeAIBalanced.html)
+
+### Enhancements
+
+#### 1. Optimize [setLogConfig] interface
+
+The life cycle of [setLogConfig] is expanded to the App life cycle, and its priority is higher than the configuration in [setEngineConfig].
+
+For related API, please refer to [setLogConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setLogConfig.html), [setEngineConfig](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/setLogConfig.html)
+
+#### 2. Optimize the retry rules when the App is dormant
+
+Optimize the retry rules when the App is sleeping. During the loginRoom and publishing-playing process, the App Sleep Time is also included in the Maximum Allowed Retry Time.
+
+### Bug Fixes
+
+1. Fixed the problem that the audio external collection module would cause silence when switching audio sources.
+
+2. Fixed the issue where no error message is thrown when the watermark path exceeds the maximum length set by [setPublishWatermark](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/setPublishWatermark.html).
+
+3. Fixed the issue of a very small probability of failure when sending a new stream.
+
+4. Fixed the issue of the sound effects player occasionally crashes.
+
+5. Fixed the problem that when calling the [sendAudioSideInfo](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEnginePublisher/sendAudioSideInfo.html) interface to send audio secondary messages, it takes about 10 seconds for the player to receive the message.
+
+6. Fix the problem that the time spent on TCP disconnection of WS CDN in the case of direct publishing is fixed at 500 ms
+
 ## 3.8.1
 
 ### New Features
@@ -17,8 +529,6 @@ Note: If you need to use this function, please contact ZEGOCLOUD technical suppo
 Added a low frame rate alarm callback that supports throwing encoding and hardware decoding. In 1v1 chats, live broadcasts and other scenarios, developers can adjust the streaming resolution and trigger transcoding based on this callback.
 
 For related API, please refer to [onPlayerLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerLowFpsWarning.html), [onPublisherLowFpsWarning](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPublisherLowFpsWarning.html)
-
-For related API, please refer to [onPlayerSyncRecvVideoFirstFrame](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngine/onPlayerSyncRecvVideoFirstFrame.html)
 
 #### 3. Mediaplayer supports setting Http Headers of network resources
 
@@ -210,7 +720,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     For related API, please refer to [switchRoom](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoExpressEngineRoom/switchRoom.html)
 
-## **Enhancements**
+### **Enhancements**
 
 1. Significantly reduce the time-consuming time spent on video hard decoding of Huawei models.
 
@@ -222,7 +732,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     This optimization takes effect from version 3.5.0 and does not require additional interfaces.
 
-## **Bug Fixes**
+### **Bug Fixes**
 
 1. Fix the problem that the media player cannot make the playback progress jump to 0 through the seekTo interface in some m3u8 file formats.
 
@@ -294,7 +804,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     For related API, please refer to [sendExtendedRequest](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusic/sendExtendedRequest.html)
 
-## **Enhancements**
+### **Enhancements**
 
 1. Optimize SDK memory usage
 
@@ -314,7 +824,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
     For related API, please refer to [ZegoCopyrightedMusicVendorID](https://pub.dev/documentation/zego_express_engine/latest/zego_express_engine/ZegoCopyrightedMusicVendorID.html)
 
-## **Bug Fixes**
+### **Bug Fixes**
 
 1. Fixed the issue of macOS platform screen sharing where the actual collection frame rate is lower than the set frame rate.
 
@@ -322,7 +832,7 @@ The applicationVolume and microphoneVolume fields in the [ZegoScreenCaptureConfi
 
 3. Fixed the issue of abnormal listening of game voice in certain situations.
 
-## **Deleted**
+### **Deleted**
 
 1. Starting from version 3.4.1, support for iOS 11.0 and below has been discontinued, and the iOS Deployment Target (minimum supported version) has been upgraded to iOS 11.0.
 For specific instructions, Please refer to [App Store submission requirement starts April 25](https://developer.apple.com/news/?id=jd9wcyov) and [Xcode 14 Release Notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-14-release-notes#Build-System).

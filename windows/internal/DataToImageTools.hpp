@@ -40,7 +40,7 @@ std::pair<long, BYTE *> CreateFromHBITMAP(HBITMAP hBitmap) {
 }
 
 std::pair<long, BYTE *> makeBtimap(const std::vector<uint8_t> *frame,
-                                   std::pair<int32_t, int32_t> size) {
+                                   std::pair<int32_t, int32_t> size, uint32_t stride) {
     auto bufferLen = frame->size();
     auto width = size.first;
     auto height = size.second;
@@ -49,18 +49,21 @@ std::pair<long, BYTE *> makeBtimap(const std::vector<uint8_t> *frame,
     {
         std::vector<uint8_t> srcBuffer_(*frame);
         destBuffer_.resize(bufferLen);
-        FlutterDesktopPixel *src = reinterpret_cast<FlutterDesktopPixel *>(srcBuffer_.data());
         VideoFormatBGRAPixel *dst = reinterpret_cast<VideoFormatBGRAPixel *>(destBuffer_.data());
 
-        for (uint32_t y = 0; y < height; y++) {
-            for (uint32_t x = 0; x < width; x++) {
-                uint32_t sp = (y * width) + x;
-                {
-                    dst[sp].r = src[sp].r;
-                    dst[sp].g = src[sp].g;
-                    dst[sp].b = src[sp].b;
-                    dst[sp].a = 255;
-                }
+        int theFixedStride = width << 2;
+        // flip  Y
+        int buf_index = 0;
+        int stat_copy_index = 0;
+        for (int h = height - 1; h >= 0; h--)
+        {
+            auto fix_stride = h * stride;
+            for (unsigned int w = 0; w < theFixedStride; w += 4)
+            {
+                dst[buf_index].b = srcBuffer_[fix_stride + w + 2]; // B
+                dst[buf_index].g = srcBuffer_[fix_stride + w + 1]; // G
+                dst[buf_index].r = srcBuffer_[fix_stride + w];     // R
+                dst[buf_index++].a = 255; 
             }
         }
     }
