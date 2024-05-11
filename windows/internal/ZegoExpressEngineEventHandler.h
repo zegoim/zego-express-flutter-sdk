@@ -2,14 +2,11 @@
 
 #include <memory>
 #include <flutter/event_channel.h>
-#include <flutter/encodable_value.h>
-
 #include <ZegoExpressSDK.h>
-using namespace ZEGO;
 
-#define FTValue(varName) flutter::EncodableValue(varName)
-#define FTMap flutter::EncodableMap
-#define FTArray flutter::EncodableList
+#include "../ZegoDataTypeConvert.h"
+
+using namespace ZEGO;
 
 class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
@@ -289,7 +286,7 @@ protected:
                           int fileIndex, int fileCount) override;
 
 private:
-    flutter::EncodableMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
+    FTMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
 
 private:
     std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;

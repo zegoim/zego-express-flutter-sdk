@@ -33,6 +33,8 @@ list(APPEND PLUGIN_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerAudioManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerVideoManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerBlockDataManager.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoDataTypeConvert.h
+  ${CMAKE_CURRENT_LIST_DIR}/ZegoDataTypeConvert.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.h
   ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/DataToImageTools.hpp

@@ -5,6 +5,8 @@
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 
+#include "../ZegoDataTypeConvert.h"
+
 using namespace ZEGO;
 
 class ZegoExpressEngineMethodHandler {
@@ -25,1007 +27,1007 @@ class ZegoExpressEngineMethodHandler {
     bool isEngineCreated();
 
   public:
-    void getVersion(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void isFeatureSupported(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setPluginVersion(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void getVersion(FTArgument &argument,
+                    FTResult result);
+    void isFeatureSupported(FTArgument &argument,
+                            FTResult result);
+    void setPluginVersion(FTArgument &argument,
+                          FTResult result);
     void
-    getAssetAbsolutePath(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void createEngine(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getAssetAbsolutePath(FTArgument &argument,
+                         FTResult result);
+    void createEngine(FTArgument &argument,
+                      FTResult result);
     void
-    createEngineWithProfile(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void destroyEngine(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setEngineConfig(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setLogConfig(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setLocalProxyConfig(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setCloudProxyConfig(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setRoomMode(flutter::EncodableMap &argument,
-                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setLicense(flutter::EncodableMap &argument,
-                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);                     
-    void setGeoFence(flutter::EncodableMap &argument,
-                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setRoomScenario(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void uploadLog(flutter::EncodableMap &argument,
-                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void submitLog(flutter::EncodableMap &argument,
-                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    createEngineWithProfile(FTArgument &argument,
+                            FTResult result);
+    void destroyEngine(FTArgument &argument,
+                       FTResult result);
+    void setEngineConfig(FTArgument &argument,
+                         FTResult result);
+    void setLogConfig(FTArgument &argument,
+                      FTResult result);
+    void setLocalProxyConfig(FTArgument &argument,
+                      FTResult result);
+    void setCloudProxyConfig(FTArgument &argument,
+                      FTResult result);
+    void setRoomMode(FTArgument &argument,
+                     FTResult result);
+    void setLicense(FTArgument &argument,
+                     FTResult result);                     
+    void setGeoFence(FTArgument &argument,
+                     FTResult result);
+    void setRoomScenario(FTArgument &argument,
+                         FTResult result);
+    void uploadLog(FTArgument &argument,
+                   FTResult result);
+    void submitLog(FTArgument &argument,
+                   FTResult result);
     void
-    enableDebugAssistant(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableDebugAssistant(FTArgument &argument,
+                         FTResult result);
     void
-    callExperimentalAPI(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    callExperimentalAPI(FTArgument &argument,
+                        FTResult result);
     void setDummyCaptureImagePath(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
-    void loginRoom(flutter::EncodableMap &argument,
-                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void logoutRoom(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void switchRoom(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void renewToken(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setRoomExtraInfo(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getRoomStreamList(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void loginRoom(FTArgument &argument,
+                   FTResult result);
+    void logoutRoom(FTArgument &argument,
+                    FTResult result);
+    void switchRoom(FTArgument &argument,
+                    FTResult result);
+    void renewToken(FTArgument &argument,
+                    FTResult result);
+    void setRoomExtraInfo(FTArgument &argument,
+                          FTResult result);
+    void getRoomStreamList(FTArgument &argument,
+                          FTResult result);
 
     void
-    startPublishingStream(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    startPublishingStream(FTArgument &argument,
+                          FTResult result);
     void
-    stopPublishingStream(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setStreamExtraInfo(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void startPreview(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopPreview(flutter::EncodableMap &argument,
-                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setVideoConfig(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getVideoConfig(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setPublishDualStreamConfig(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setVideoMirrorMode(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setAudioConfig(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getAudioConfig(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    stopPublishingStream(FTArgument &argument,
+                         FTResult result);
+    void setStreamExtraInfo(FTArgument &argument,
+                            FTResult result);
+    void startPreview(FTArgument &argument,
+                      FTResult result);
+    void stopPreview(FTArgument &argument,
+                     FTResult result);
+    void setVideoConfig(FTArgument &argument,
+                        FTResult result);
+    void getVideoConfig(FTArgument &argument,
+                        FTResult result);
+    void setPublishDualStreamConfig(FTArgument &argument,
+                        FTResult result);
+    void setVideoMirrorMode(FTArgument &argument,
+                            FTResult result);
+    void setAudioConfig(FTArgument &argument,
+                        FTResult result);
+    void getAudioConfig(FTArgument &argument,
+                        FTResult result);
     void setPublishStreamEncryptionKey(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void takePublishStreamSnapshot(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     void setMinVideoBitrateForTrafficControl(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void setMinVideoFpsForTrafficControl(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void setMinVideoResolutionForTrafficControl(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void setTrafficControlFocusOn(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void addPublishCdnUrl(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void addPublishCdnUrl(FTArgument &argument,
+                          FTResult result);
     void
-    removePublishCdnUrl(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    removePublishCdnUrl(FTArgument &argument,
+                        FTResult result);
     void enablePublishDirectToCDN(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    setPublishWatermark(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setPublishWatermark(FTArgument &argument,
+                        FTResult result);
     void setPlayStreamDecryptionKey(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    setPlayStreamVideoType(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setPlayStreamVideoType(FTArgument &argument,
+                           FTResult result);
     void setPlayStreamBufferIntervalRange(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    setPlayStreamFocusOn(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setPlayStreamFocusOn(FTArgument &argument,
+                         FTResult result);
     void
-    mutePlayStreamVideo(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mutePlayStreamVideo(FTArgument &argument,
+                        FTResult result);
     void
-    muteAllPlayStreamVideo(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    muteAllPlayStreamVideo(FTArgument &argument,
+                           FTResult result);
     void
-    muteAllPlayVideoStreams(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableCheckPoc(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    muteAllPlayVideoStreams(FTArgument &argument,
+                           FTResult result);
+    void enableCheckPoc(FTArgument &argument,
+                        FTResult result);
     void
-    isVideoDecoderSupported(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    isVideoDecoderSupported(FTArgument &argument,
+                            FTResult result);
     void setPlayStreamsAlignmentProperty(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableVideoSuperResolution(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void initVideoSuperResolution(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void uninitVideoSuperResolution(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void updatePlayingCanvas(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
-    void startAutoMixerTask(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopAutoMixerTask(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void startAutoMixerTask(FTArgument &argument,
+                            FTResult result);
+    void stopAutoMixerTask(FTArgument &argument,
+                           FTResult result);
     void
-    setAudioRouteToSpeaker(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getAudioRouteType(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void useFrontCamera(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setAudioRouteToSpeaker(FTArgument &argument,
+                           FTResult result);
+    void getAudioRouteType(FTArgument &argument,
+                           FTResult result);
+    void useFrontCamera(FTArgument &argument,
+                        FTResult result);
     void
-    isCameraFocusSupported(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setCameraFocusMode(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    isCameraFocusSupported(FTArgument &argument,
+                           FTResult result);
+    void setCameraFocusMode(FTArgument &argument,
+                            FTResult result);
     void setCameraFocusPointInPreview(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    setCameraExposureMode(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setCameraExposureMode(FTArgument &argument,
+                          FTResult result);
     void setCameraExposurePointInPreview(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void setCameraExposureCompensation(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    setCameraZoomFactor(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setCameraZoomFactor(FTArgument &argument,
+                        FTResult result);
     void
-    getCameraMaxZoomFactor(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getCameraMaxZoomFactor(FTArgument &argument,
+                           FTResult result);
     void startAudioSpectrumMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void stopAudioSpectrumMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableHeadphoneAEC(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void startEffectsEnv(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopEffectsEnv(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void enableHeadphoneAEC(FTArgument &argument,
+                            FTResult result);
+    void startEffectsEnv(FTArgument &argument,
+                         FTResult result);
+    void stopEffectsEnv(FTArgument &argument,
+                        FTResult result);
     void
-    enableEffectsBeauty(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableEffectsBeauty(FTArgument &argument,
+                        FTResult result);
     void
-    setEffectsBeautyParam(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableBeautify(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setBeautifyOption(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableColorEnhancement(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setEffectsBeautyParam(FTArgument &argument,
+                          FTResult result);
+    void enableBeautify(FTArgument &argument,
+                        FTResult result);
+    void setBeautifyOption(FTArgument &argument,
+                           FTResult result);
+    void enableColorEnhancement(FTArgument &argument,
+                           FTResult result);
 
     void
-    sendBroadcastMessage(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void sendBarrageMessage(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void sendCustomCommand(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void ZegoExpressEngineMethodHandler::sendTransparentMessage(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result); 
+    sendBroadcastMessage(FTArgument &argument,
+                         FTResult result);
+    void sendBarrageMessage(FTArgument &argument,
+                            FTResult result);
+    void sendCustomCommand(FTArgument &argument,
+                           FTResult result);
+    void ZegoExpressEngineMethodHandler::sendTransparentMessage(FTArgument &argument,
+                           FTResult result); 
     void enableCustomVideoCapture(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCustomVideoProcessing(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCustomVideoRender(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCustomAudioCaptureProcessing(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCustomAudioCaptureProcessingAfterHeadphoneMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableAlignedAudioAuxData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCustomAudioRemoteProcessing(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCustomAudioPlaybackProcessing(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    enableCustomAudioIO(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableCustomAudioIO(FTArgument &argument,
+                        FTResult result);
     void sendCustomAudioCaptureAACData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void sendCustomAudioCapturePCMData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void fetchCustomAudioRenderPCMData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     void
-    startPerformanceMonitor(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    startPerformanceMonitor(FTArgument &argument,
+                            FTResult result);
     void
-    stopPerformanceMonitor(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void startNetworkProbe(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopNetworkProbe(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    stopPerformanceMonitor(FTArgument &argument,
+                           FTResult result);
+    void startNetworkProbe(FTArgument &argument,
+                           FTResult result);
+    void stopNetworkProbe(FTArgument &argument,
+                          FTResult result);
     void
-    startNetworkSpeedTest(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    startNetworkSpeedTest(FTArgument &argument,
+                          FTResult result);
     void
-    stopNetworkSpeedTest(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getNetworkTimeInfo(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    stopNetworkSpeedTest(FTArgument &argument,
+                         FTResult result);
+    void getNetworkTimeInfo(FTArgument &argument,
+                            FTResult result);
 
-    void startDumpData(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopDumpData(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void uploadDumpData(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void removeDumpData(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void startDumpData(FTArgument &argument,
+                       FTResult result);
+    void stopDumpData(FTArgument &argument,
+                       FTResult result);
+    void uploadDumpData(FTArgument &argument,
+                       FTResult result);
+    void removeDumpData(FTArgument &argument,
+                       FTResult result);
         
 
     void
-    mutePublishStreamAudio(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mutePublishStreamAudio(FTArgument &argument,
+                           FTResult result);
     void
-    mutePublishStreamVideo(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setCaptureVolume(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mutePublishStreamVideo(FTArgument &argument,
+                           FTResult result);
+    void setCaptureVolume(FTArgument &argument,
+                          FTResult result);
     void setAudioCaptureStereoMode(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void sendSEI(flutter::EncodableMap &argument,
-                 std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void sendAudioSideInfo(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void sendSEI(FTArgument &argument,
+                 FTResult result);
+    void sendAudioSideInfo(FTArgument &argument,
+                           FTResult result);
     void
-    enableHardwareEncoder(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableHardwareEncoder(FTArgument &argument,
+                          FTResult result);
     void setCapturePipelineScaleMode(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableH265EncodeFallback(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    isVideoEncoderSupported(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    isVideoEncoderSupported(FTArgument &argument,
+                            FTResult result);
     void
-    setLowlightEnhancement(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setVideoSource(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setAudioSource(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableVideoObjectSegmentation(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableAlphaChannelVideoEncoder(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setLowlightEnhancement(FTArgument &argument,
+                           FTResult result);
+    void setVideoSource(FTArgument &argument,
+                        FTResult result);
+    void setAudioSource(FTArgument &argument,
+                        FTResult result);
+    void enableVideoObjectSegmentation(FTArgument &argument,
+                        FTResult result);
+    void enableAlphaChannelVideoEncoder(FTArgument &argument,
+                        FTResult result);
 
-    void startPlayingStream(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopPlayingStream(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void startPlayingStream(FTArgument &argument,
+                            FTResult result);
+    void stopPlayingStream(FTArgument &argument,
+                           FTResult result);
     void setPlayStreamCrossAppInfo(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    takePlayStreamSnapshot(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setPlayVolume(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    takePlayStreamSnapshot(FTArgument &argument,
+                           FTResult result);
+    void setPlayVolume(FTArgument &argument,
+                       FTResult result);
     void
-    setAllPlayStreamVolume(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setAllPlayStreamVolume(FTArgument &argument,
+                           FTResult result);
     void
-    mutePlayStreamAudio(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mutePlayStreamAudio(FTArgument &argument,
+                        FTResult result);
     void
-    muteAllPlayStreamAudio(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    muteAllPlayStreamAudio(FTArgument &argument,
+                           FTResult result);
     void
-    muteAllPlayAudioStreams(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    muteAllPlayAudioStreams(FTArgument &argument,
+                           FTResult result);
     void
-    enableHardwareDecoder(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableHardwareDecoder(FTArgument &argument,
+                          FTResult result);
 
-    void muteMicrophone(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void isMicrophoneMuted(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void muteSpeaker(flutter::EncodableMap &argument,
-                     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void isSpeakerMuted(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getAudioDeviceList(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void muteMicrophone(FTArgument &argument,
+                        FTResult result);
+    void isMicrophoneMuted(FTArgument &argument,
+                           FTResult result);
+    void muteSpeaker(FTArgument &argument,
+                     FTResult result);
+    void isSpeakerMuted(FTArgument &argument,
+                        FTResult result);
+    void getAudioDeviceList(FTArgument &argument,
+                            FTResult result);
     void
-    getDefaultAudioDeviceID(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void useAudioDevice(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-
-    void
-    startSoundLevelMonitor(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void
-    stopSoundLevelMonitor(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getDefaultAudioDeviceID(FTArgument &argument,
+                            FTResult result);
+    void useAudioDevice(FTArgument &argument,
+                        FTResult result);
 
     void
-    enableHeadphoneMonitor(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    startSoundLevelMonitor(FTArgument &argument,
+                           FTResult result);
+    void
+    stopSoundLevelMonitor(FTArgument &argument,
+                          FTResult result);
+
+    void
+    enableHeadphoneMonitor(FTArgument &argument,
+                           FTResult result);
     void setHeadphoneMonitorVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
-    void enableAEC(flutter::EncodableMap &argument,
-                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setAECMode(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableAGC(flutter::EncodableMap &argument,
-                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableANS(flutter::EncodableMap &argument,
-                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableTransientANS(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setANSMode(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void enableSpeechEnhance(flutter::EncodableMap &argument,
-                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableAEC(FTArgument &argument,
+                   FTResult result);
+    void setAECMode(FTArgument &argument,
+                    FTResult result);
+    void enableAGC(FTArgument &argument,
+                   FTResult result);
+    void enableANS(FTArgument &argument,
+                   FTResult result);
+    void enableTransientANS(FTArgument &argument,
+                            FTResult result);
+    void setANSMode(FTArgument &argument,
+                    FTResult result);
+    void enableSpeechEnhance(FTArgument &argument,
+                    FTResult result);
 
     void
-    setAudioEqualizerGain(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setAudioEqualizerGain(FTArgument &argument,
+                          FTResult result);
     void
-    setVoiceChangerPreset(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setVoiceChangerPreset(FTArgument &argument,
+                          FTResult result);
     void
-    setVoiceChangerParam(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setReverbPreset(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setVoiceChangerParam(FTArgument &argument,
+                         FTResult result);
+    void setReverbPreset(FTArgument &argument,
+                         FTResult result);
     void
-    setReverbAdvancedParam(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setReverbEchoParam(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setReverbAdvancedParam(FTArgument &argument,
+                           FTResult result);
+    void setReverbEchoParam(FTArgument &argument,
+                            FTResult result);
     void
-    enableVirtualStereo(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableVirtualStereo(FTArgument &argument,
+                        FTResult result);
     void enablePlayStreamVirtualStereo(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    setElectronicEffects(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setElectronicEffects(FTArgument &argument,
+                         FTResult result);
 
     /* Custom Audio IO */
     void
-    startAudioDataObserver(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    startAudioDataObserver(FTArgument &argument,
+                           FTResult result);
     void
-    stopAudioDataObserver(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    stopAudioDataObserver(FTArgument &argument,
+                          FTResult result);
     /* Audio Effects Player */
     void
-    createAudioEffectPlayer(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    createAudioEffectPlayer(FTArgument &argument,
+                            FTResult result);
     void destroyAudioEffectPlayer(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    audioEffectPlayerStart(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    audioEffectPlayerStart(FTArgument &argument,
+                           FTResult result);
     void
-    audioEffectPlayerStop(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    audioEffectPlayerStop(FTArgument &argument,
+                          FTResult result);
     void
-    audioEffectPlayerPause(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    audioEffectPlayerPause(FTArgument &argument,
+                           FTResult result);
     void
-    audioEffectPlayerResume(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    audioEffectPlayerResume(FTArgument &argument,
+                            FTResult result);
     void audioEffectPlayerStopAll(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerPauseAll(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerResumeAll(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    audioEffectPlayerSeekTo(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    audioEffectPlayerSeekTo(FTArgument &argument,
+                            FTResult result);
     void audioEffectPlayerSetVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerSetPlayVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerSetPublishVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerSetVolumeAll(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerSetPlayVolumeAll(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerSetPublishVolumeAll(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerGetTotalDuration(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerGetCurrentProgress(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerLoadResource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerUnloadResource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerSetPlaySpeed(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void audioEffectPlayerUpdatePosition(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     /* Media Player */
-    void createMediaPlayer(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void destroyMediaPlayer(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void createMediaPlayer(FTArgument &argument,
+                           FTResult result);
+    void destroyMediaPlayer(FTArgument &argument,
+                            FTResult result);
     void
-    mediaPlayerLoadResource(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerLoadResource(FTArgument &argument,
+                            FTResult result);
     void mediaPlayerLoadResourceFromMediaData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerLoadResourceWithPosition(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void mediaPlayerStart(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void mediaPlayerStop(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void mediaPlayerPause(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void mediaPlayerResume(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void mediaPlayerSeekTo(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void mediaPlayerStart(FTArgument &argument,
+                          FTResult result);
+    void mediaPlayerStop(FTArgument &argument,
+                         FTResult result);
+    void mediaPlayerPause(FTArgument &argument,
+                          FTResult result);
+    void mediaPlayerResume(FTArgument &argument,
+                           FTResult result);
+    void mediaPlayerSeekTo(FTArgument &argument,
+                           FTResult result);
     void
-    mediaPlayerEnableRepeat(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerEnableRepeat(FTArgument &argument,
+                            FTResult result);
     void
-    mediaPlayerEnableAux(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerEnableAux(FTArgument &argument,
+                         FTResult result);
     void
-    mediaPlayerMuteLocal(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerMuteLocal(FTArgument &argument,
+                         FTResult result);
     void
-    mediaPlayerEnableViewMirror(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerEnableViewMirror(FTArgument &argument,
+                         FTResult result);
     void
-    mediaPlayerSetVolume(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerSetVolume(FTArgument &argument,
+                         FTResult result);
     void mediaPlayerSetPlayVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetPublishVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetProgressInterval(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetPlayVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetPublishVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetTotalDuration(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetCurrentProgress(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetAudioTrackCount(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetAudioTrackIndex(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetVoiceChangerParam(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetCurrentState(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    mediaPlayerSetPlaySpeed(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerSetPlaySpeed(FTArgument &argument,
+                            FTResult result);
 
     void mediaPlayerEnableSoundLevelMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableFrequencySpectrumMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetNetWorkResourceMaxCache(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetNetWorkBufferThreshold(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetNetWorkResourceCache(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableAccurateSeek(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerLoadCopyrightedMusicResourceWithPosition(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    mediaPlayerClearView(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerClearView(FTArgument &argument,
+                         FTResult result);
     void mediaPlayerSetActiveAudioChannel(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetPlayerCanvas(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    mediaPlayerTakeSnapshot(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    mediaPlayerTakeSnapshot(FTArgument &argument,
+                            FTResult result);
     void mediaPlayerSetAudioTrackMode(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetAudioTrackPublishIndex(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableAudioData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableVideoData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableBlockData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerLoadResourceWithConfig(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerUpdatePosition(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetMediaInfo(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetHttpHeader(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetCurrentRenderingProgress(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableLiveAudioEffect(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerSetPlayMediaStreamType(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerEnableLocalCache(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaPlayerGetPlaybackStatistics(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
         
     /* Media Data Publisher */
     void createMediaDataPublisher(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void destroyMediaDataPublisher(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaDataPublisherAddMediaFilePath(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaDataPublisherGetCurrentDuration(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaDataPublisherGetTotalDuration(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaDataPublisherReset(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaDataPublisherSeekTo(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void mediaDataPublisherSetVideoSendDelayTime(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
-    void startMixerTask(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void stopMixerTask(flutter::EncodableMap &argument,
-                       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setSEIConfig(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void startMixerTask(FTArgument &argument,
+                        FTResult result);
+    void stopMixerTask(FTArgument &argument,
+                       FTResult result);
+    void setSEIConfig(FTArgument &argument,
+                      FTResult result);
     void
-    setAudioDeviceVolume(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setAudioDeviceVolume(FTArgument &argument,
+                         FTResult result);
     void
-    setSpeakerVolumeInAPP(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    setSpeakerVolumeInAPP(FTArgument &argument,
+                         FTResult result);
     void
-    getSpeakerVolumeInAPP(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getSpeakerVolumeInAPP(FTArgument &argument,
+                         FTResult result);
     void startAudioDeviceVolumeMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void stopAudioDeviceVolumeMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void muteAudioDevice(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void isAudioDeviceMuted(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void setAudioDeviceMode(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void muteAudioDevice(FTArgument &argument,
+                         FTResult result);
+    void isAudioDeviceMuted(FTArgument &argument,
+                            FTResult result);
+    void setAudioDeviceMode(FTArgument &argument,
+                            FTResult result);
     void
-    getAudioDeviceVolume(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getAudioDeviceVolume(FTArgument &argument,
+                         FTResult result);
     void enableAudioCaptureDevice(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    enableTrafficControl(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableTrafficControl(FTArgument &argument,
+                         FTResult result);
     void startRecordingCapturedData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void stopRecordingCapturedData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
-    void enableCamera(flutter::EncodableMap &argument,
-                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void enableCamera(FTArgument &argument,
+                      FTResult result);
     void
-    enableCameraAdaptiveFPS(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableCameraAdaptiveFPS(FTArgument &argument,
+                            FTResult result);
 
-    void useVideoDevice(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void getVideoDeviceList(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void useVideoDevice(FTArgument &argument,
+                        FTResult result);
+    void getVideoDeviceList(FTArgument &argument,
+                            FTResult result);
     void
-    getDefaultVideoDeviceID(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getDefaultVideoDeviceID(FTArgument &argument,
+                            FTResult result);
     void
-    enableMixSystemPlayout(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableMixSystemPlayout(FTArgument &argument,
+                           FTResult result);
     void setMixSystemPlayoutVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    enableMixEnginePlayout(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    enableMixEnginePlayout(FTArgument &argument,
+                           FTResult result);
     void startAudioVADStableStateMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void stopAudioVADStableStateMonitor(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    getCurrentAudioDevice(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    getCurrentAudioDevice(FTArgument &argument,
+                          FTResult result);
 
     /* Copyrighted Music*/
     void
-    createCopyrightedMusic(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    createCopyrightedMusic(FTArgument &argument,
+                           FTResult result);
     void
-    destroyCopyrightedMusic(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    destroyCopyrightedMusic(FTArgument &argument,
+                            FTResult result);
     void copyrightedMusicClearCache(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicDownload(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicCancelDownload(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetAverageScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetCacheSize(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetCurrentPitch(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetDuration(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetKrcLyricByToken(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetLrcLyric(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetLrcLyricWithConfig(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetMusicByToken(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetPreviousScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetStandardPitch(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetTotalScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicInitCopyrightedMusic(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicPauseScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicQueryCache(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicQueryCacheWithConfig(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicQueryCacheWithConfigV2(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicRequestAccompaniment(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicRequestAccompanimentClip(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicRequestSong(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicResetScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicResumeScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicSendExtendedRequest(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicSetScoringLevel(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicStartScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicStopScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetFullScore(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetSharedResource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicGetSharedResourceV2(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicRequestResource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void copyrightedMusicRequestResourceV2(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     // rangeAudio
-    void createRangeAudio(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void destroyRangeAudio(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void createRangeAudio(FTArgument &argument,
+                          FTResult result);
+    void destroyRangeAudio(FTArgument &argument,
+                           FTResult result);
     void rangeAudioEnableMicrophone(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void rangeAudioEnableSpatializer(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    rangeAudioEnableSpeaker(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    rangeAudioEnableSpeaker(FTArgument &argument,
+                            FTResult result);
     void rangeAudioSetAudioReceiveRange(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void rangeAudioSetMode(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void rangeAudioSetMode(FTArgument &argument,
+                           FTResult result);
     void
-    rangeAudioSetTeamID(flutter::EncodableMap &argument,
-                        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    rangeAudioSetTeamID(FTArgument &argument,
+                        FTResult result);
     void rangeAudioUpdateAudioSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void rangeAudioUpdateSelfPosition(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void rangeAudioMuteUser(flutter::EncodableMap &argument,
-                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
+    void rangeAudioMuteUser(FTArgument &argument,
+                            FTResult result);
     void rangeAudioSetPositionUpdateFrequency(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void rangeAudioSetRangeAudioVolume(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void rangeAudioSetStreamVocalRange(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void rangeAudioUpdateStreamPosition(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void rangeAudioSetRangeAudioCustomMode(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     // RealTimeSequentialDataManager
     void createRealTimeSequentialDataManager(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void destroyRealTimeSequentialDataManager(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void dataManagerSendRealTimeSequentialData(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void dataManagerStartBroadcasting(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void dataManagerStartSubscribing(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void dataManagerStopBroadcasting(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void dataManagerStopSubscribing(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     // ScreenCapture
     void getScreenCaptureSources(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void createScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void destroyScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableCursorVisibleScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableWindowActivateScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void setExcludeWindowListScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void updateCaptureRegionScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void updatePublishRegionScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void updateCaptureSourceScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void startCaptureScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void stopCaptureScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void getCaptureSourceRectScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void enableAudioCaptureScreenCaptureSource(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     // AIVoiceChanger
     void createAIVoiceChanger(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
     void
-    destroyAIVoiceChanger(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-    void isAIVoiceChangerSupported(flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    destroyAIVoiceChanger(FTArgument &argument,
+                         FTResult result);
+    void isAIVoiceChangerSupported(FTArgument &argument,
+                         FTResult result);
     void aiVoiceChangerGetSpeakerList(
-        flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+                         FTResult result);
     void aiVoiceChangerInitEngine(
-        flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+                         FTResult result);
     void aiVoiceChangerSetSpeaker(
-        flutter::EncodableMap &argument,
-                         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+                         FTResult result);
     void
     aiVoiceChangerUpdate(
-        flutter::EncodableMap &argument,
-        std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+        FTArgument &argument,
+        FTResult result);
 
     void
-    createTextureRenderer(flutter::EncodableMap &argument,
-                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    createTextureRenderer(FTArgument &argument,
+                          FTResult result);
     void
-    destroyTextureRenderer(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    destroyTextureRenderer(FTArgument &argument,
+                           FTResult result);
 
   private:
     ZegoExpressEngineMethodHandler() = default;
