@@ -93,6 +93,10 @@ class ZegoExpressImpl {
   // Private function
   static void Function(String api, String jsonArgs)? onFlutterApiCalledDetail;
 
+  static Future<void> sendCustomLogMessage(String message) async {
+    await _channel.invokeMethod('sendCustomLogMessage', {'message': message});
+  }
+
   /* Main */
 
   static Future<void> createEngineWithProfile(ZegoEngineProfile profile) async {

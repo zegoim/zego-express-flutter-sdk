@@ -63,6 +63,8 @@ class ZegoExpressTextureRenderer {
   }
 
   void setViewMode(int textureID, ZegoViewMode viewMode) {
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] setViewMode. widget: $textureID, viewMode: ${viewMode.toString()}');
     if (_viewModeMap.containsKey(textureID) &&
         _viewModeMap[textureID] != viewMode) {
       _updateController.sink.add({
@@ -75,6 +77,8 @@ class ZegoExpressTextureRenderer {
 
   void setBackgroundColor(int textureID, int backgroundColor,
       {bool hasAlpha = false}) {
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] setBackgroundColor. widget: $textureID, backgroundColor: $backgroundColor, hasAlpha: $hasAlpha');
     if (hasAlpha) {
       _backgroundColorMap[textureID] = Color(backgroundColor & 0x00000000);
     } else {
@@ -178,6 +182,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   void initState() {
     super.initState();
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] initState. widget: ${widget.textureID}');
     var subscription = widget.stream.listen((map) {
       if (_isInit) {
         setState(() {});
@@ -191,6 +197,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   void dispose() {
     _isInit = false;
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] dispose. widget: ${widget.textureID}');
     ZegoExpressTextureRenderer().setStreamSubscription(widget.textureID, null);
     super.dispose();
   }
@@ -198,6 +206,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   @override
   void didUpdateWidget(covariant ZegoTextureWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] didUpdateWidget. from old widget: ${oldWidget.textureID} to new widget: ${oldWidget.textureID}');
     ZegoExpressTextureRenderer()
         .setStreamSubscription(oldWidget.textureID, null);
     var subscription = widget.stream.listen((event) {
@@ -332,12 +342,22 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
         // matrix4.setTranslationRaw(textureWidth, 0, 0);
       }
 
-      // 矩阵相乘
-      Matrix4 result = matrix4.multiplied(matrix4_1);
+      // Calculate the scaled size
+      Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
 
       var backgroundColor =
           ZegoExpressTextureRenderer().getBackgroundColor(widget.textureID) ??
               Colors.black;
+
+      var viewMode =
+          ZegoExpressTextureRenderer().getViewMode(widget.textureID) ??
+              ZegoViewMode.AspectFit;
+
+      ZegoExpressImpl.sendCustomLogMessage(
+          '[WidgetState] build. widget: ${widget.textureID}, rotation: $rotation, viewMode: $viewMode, backgroundColor: $backgroundColor, isMirror: $isMirror, size: $size');
+
+      // 矩阵相乘
+      Matrix4 result = matrix4.multiplied(matrix4_1);
 
       Widget child = Transform(
         transform: result,
@@ -347,8 +367,6 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
         alignment: Alignment.center,
       );
 
-      // Calculate the scaled size
-      Size? size = ZegoExpressTextureRenderer().getSize(widget.textureID);
       var rect = _viewModeCalculate(size, constraints.biggest.width,
           constraints.biggest.height, rotation);
 
