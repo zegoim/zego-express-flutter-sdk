@@ -1,7 +1,15 @@
 #include "ZegoDataTypeConvert.h"
 
+bool zego_value_is_null(flutter::EncodableValue value) {
+    return value.IsNull();
+}
+
 int zego_value_get_int(flutter::EncodableValue value) {
     return std::get<int32_t>(value);
+}
+
+int zego_value_get_long(flutter::EncodableValue value) {
+    return value.LongValue();
 }
 
 bool zego_value_get_bool(flutter::EncodableValue value) {

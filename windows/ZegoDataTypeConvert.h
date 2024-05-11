@@ -10,7 +10,11 @@
 #define FTResult std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
 #define FTMoveResult(result) std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result))
 
+bool zego_value_is_null(flutter::EncodableValue value);
+
 int zego_value_get_int(flutter::EncodableValue value);
+
+int zego_value_get_long(flutter::EncodableValue value);
 
 bool zego_value_get_bool(flutter::EncodableValue value);
 

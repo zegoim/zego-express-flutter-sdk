@@ -84,7 +84,7 @@ void ZegoExpressEngineMethodHandler::createEngine(
                              {"thirdparty_framework_info", "flutter"}};
     EXPRESS::ZegoExpressSDK::setEngineConfig(config);
     // TODO: need to write getValue utils
-    unsigned int appID = argument[FTValue("appID")].LongValue();
+    unsigned int appID = zego_value_get_long(argument[FTValue("appID")]);
     std::string appSign = zego_value_get_string(argument[FTValue("appSign")]);
     bool isTestEnv = zego_value_get_bool(argument[FTValue("isTestEnv")]);
     int scenario = zego_value_get_int(argument[FTValue("scenario")]);
@@ -116,8 +116,8 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(
         EXPRESS::ZegoExpressSDK::setEngineConfig(config);
 
         EXPRESS::ZegoEngineProfile profilePtr;
-        profilePtr.appID = profileMap[FTValue("appID")].LongValue();
-        if (!profileMap[FTValue("appSign")].IsNull()) {
+        profilePtr.appID = zego_value_get_long(profileMap[FTValue("appID")]);
+        if (!zego_value_is_null(profileMap[FTValue("appSign")])) {
             profilePtr.appSign = zego_value_get_string(profileMap[FTValue("appSign")]);
         }
         profilePtr.scenario =
@@ -378,7 +378,7 @@ void ZegoExpressEngineMethodHandler::logoutRoom(
     FTResult result) {
     auto sharedPtrResult =
         FTMoveResult(result);
-    if (!argument[FTValue("roomID")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("roomID")])) {
         auto roomID = zego_value_get_string(argument[FTValue("roomID")]);
 
         EXPRESS::ZegoExpressSDK::getEngine()->logoutRoom(
@@ -424,7 +424,7 @@ void ZegoExpressEngineMethodHandler::switchRoom(
         if (configMap.size() > 0) {
             configPtr = std::make_unique<EXPRESS::ZegoRoomConfig>();
 
-            configPtr->maxMemberCount = configMap[FTValue("maxMemberCount")].LongValue();
+            configPtr->maxMemberCount = zego_value_get_long(configMap[FTValue("maxMemberCount")]);
             configPtr->isUserStatusNotify =
                 zego_value_get_bool(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = zego_value_get_string(configMap[FTValue("token")]);
@@ -584,7 +584,7 @@ void ZegoExpressEngineMethodHandler::startPreview(
     EXPRESS::ZegoCanvas canvas;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        auto viewID = canvasMap[FTValue("view")].LongValue();
+        auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
         auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
         ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
             (EXPRESS::ZegoPublishChannel)channel);
@@ -868,7 +868,7 @@ void ZegoExpressEngineMethodHandler::isVideoEncoderSupported(
     }
 
     int ret = 0;
-    if (!argument[FTValue("codecBackend")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("codecBackend")])) {
         auto codecBackend = zego_value_get_int(argument[FTValue("codecBackend")]);
         ret = EXPRESS::ZegoExpressSDK::getEngine()->isVideoEncoderSupported(
             (EXPRESS::ZegoVideoCodecID)codecID, (EXPRESS::ZegoVideoCodecBackend)codecBackend);
@@ -901,14 +901,14 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
 
     bool hasInstanceID = false;
     int instanceID = -1;
-    if (!argument[FTValue("instanceID")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("instanceID")])) {
         hasInstanceID = true;
         instanceID = zego_value_get_int(argument[FTValue("instanceID")]);
     }
 
     bool hasChannel = false;
     int channel = 0;
-    if (!argument[FTValue("channel")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("channel")])) {
         hasChannel = true;
         channel = zego_value_get_int(argument[FTValue("channel")]);
     }
@@ -940,7 +940,7 @@ void ZegoExpressEngineMethodHandler::setAudioSource(
 
     bool hasConfig = false;
     EXPRESS::ZegoAudioSourceMixConfig config;
-    if (!argument[FTValue("config")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         hasConfig = true;
         auto configMap = zego_value_get_map(argument[FTValue("config")]);
 
@@ -977,7 +977,7 @@ void ZegoExpressEngineMethodHandler::setAudioSource(
 
     bool hasChannel = false;
     int channel = -1;
-    if (!argument[FTValue("channel")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("channel")])) {
         hasChannel = true;
         channel = zego_value_get_int(argument[FTValue("channel")]);
     }
@@ -1013,20 +1013,20 @@ void ZegoExpressEngineMethodHandler::enableVideoObjectSegmentation(
     auto channel = zego_value_get_int(argument[FTValue("channel")]);
 
     EXPRESS::ZegoObjectSegmentationConfig config;
-    if (!argument[FTValue("config")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         auto configMap = zego_value_get_map(argument[FTValue("config")]);
 
         auto type = zego_value_get_int(configMap[FTValue("objectSegmentationType")]);
         config.objectSegmentationType = (EXPRESS::ZegoObjectSegmentationType)type;
 
-        if (!configMap[FTValue("backgroundConfig")].IsNull()) {
+        if (!zego_value_is_null(configMap[FTValue("backgroundConfig")])) {
             auto backgroundConfigMap = zego_value_get_map(configMap[FTValue("backgroundConfig")]);
 
             EXPRESS::ZegoBackgroundConfig backgroundConfig;
             backgroundConfig.processType = (EXPRESS::ZegoBackgroundProcessType)zego_value_get_int(backgroundConfigMap[FTValue("processType")]);
             backgroundConfig.blurLevel = (EXPRESS::ZegoBackgroundBlurLevel)zego_value_get_int(backgroundConfigMap[FTValue("blurLevel")]);
             // Note：注意这里巨坑，如果这里使用std::get<int64_t>处理传过来的0时会导致crash, 怀疑是flutter内部的bug
-            backgroundConfig.color = backgroundConfigMap[FTValue("color")].LongValue();
+            backgroundConfig.color = zego_value_get_long(backgroundConfigMap[FTValue("color")]);
             backgroundConfig.imageURL = zego_value_get_string(backgroundConfigMap[FTValue("imageURL")]);
             backgroundConfig.videoURL = zego_value_get_string(backgroundConfigMap[FTValue("videoURL")]);
 
@@ -1067,7 +1067,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
     EXPRESS::ZegoCanvas canvas;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        auto viewID = canvasMap[FTValue("view")].LongValue();
+        auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
         auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
 
         ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
@@ -1144,7 +1144,7 @@ void ZegoExpressEngineMethodHandler::setPlayStreamCrossAppInfo(
     auto streamID = zego_value_get_string(argument[FTValue("streamID")]);
     FTMap infoMap = zego_value_get_map(argument[FTValue("info")]);
     EXPRESS::ZegoCrossAppInfo info;
-    info.appID = infoMap[FTValue("appID")].LongValue();
+    info.appID = zego_value_get_long(infoMap[FTValue("appID")]);
     info.token = zego_value_get_string(infoMap[FTValue("token")]);
     EXPRESS::ZegoExpressSDK::getEngine()->setPlayStreamCrossAppInfo(streamID, info);
 
@@ -1752,7 +1752,7 @@ void ZegoExpressEngineMethodHandler::audioEffectPlayerSeekTo(
 
         unsigned int audioEffectID =
             (unsigned int)zego_value_get_int(argument[FTValue("audioEffectID")]);
-        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
+        unsigned long long millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
 
         auto sharedPtrResult =
             FTMoveResult(result);
@@ -2058,7 +2058,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceFromMediaData(
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        uint64_t startPosition = argument[FTValue("startPosition")].LongValue();
+        uint64_t startPosition = zego_value_get_long(argument[FTValue("startPosition")]);
 
         auto mediaData = zego_value_get_vector_uint8(argument[FTValue("mediaData")]);
 
@@ -2087,7 +2087,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithPosition(
 
     if (mediaPlayer) {
         std::string path = zego_value_get_string(argument[FTValue("path")]);
-        uint64_t startPosition = argument[FTValue("startPosition")].LongValue();
+        uint64_t startPosition = zego_value_get_long(argument[FTValue("startPosition")]);
 
         auto sharedPtrResult =
             FTMoveResult(result);
@@ -2164,7 +2164,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSeekTo(
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
+        unsigned long long millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
 
         auto sharedPtrResult =
             FTMoveResult(result);
@@ -2442,7 +2442,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableSoundLevelMonitor(
 
     if (mediaPlayer) {
         auto enable = zego_value_get_bool(argument[FTValue("enable")]);
-        auto millisecond = argument[FTValue("millisecond")].LongValue();
+        auto millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
         mediaPlayer->enableSoundLevelMonitor(enable, millisecond);
     }
 
@@ -2457,7 +2457,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableFrequencySpectrumMonitor(
 
     if (mediaPlayer) {
         auto enable = zego_value_get_bool(argument[FTValue("enable")]);
-        auto millisecond = argument[FTValue("millisecond")].LongValue();
+        auto millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
         mediaPlayer->enableFrequencySpectrumMonitor(enable, millisecond);
     }
 
@@ -2471,8 +2471,8 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetNetWorkResourceMaxCache(
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        auto time = argument[FTValue("time")].LongValue();
-        auto size = argument[FTValue("size")].LongValue();
+        auto time = zego_value_get_long(argument[FTValue("time")]);
+        auto size = zego_value_get_long(argument[FTValue("size")]);
         mediaPlayer->setNetWorkResourceMaxCache(time, size);
     }
 
@@ -2486,7 +2486,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetNetWorkBufferThreshold(
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        auto threshold = argument[FTValue("threshold")].LongValue();
+        auto threshold = zego_value_get_long(argument[FTValue("threshold")]);
         mediaPlayer->setNetWorkBufferThreshold(threshold);
     }
 
@@ -2541,7 +2541,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadCopyrightedMusicResourceWith
 
     if (mediaPlayer) {
         std::string resourceID = zego_value_get_string(argument[FTValue("resourceID")]);
-        uint64_t startPosition = argument[FTValue("startPosition")].LongValue();
+        uint64_t startPosition = zego_value_get_long(argument[FTValue("startPosition")]);
 
         auto sharedPtrResult =
             FTMoveResult(result);
@@ -2606,7 +2606,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayerCanvas(
 
         EXPRESS::ZegoCanvas canvas;
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        auto viewID = canvasMap[FTValue("view")].LongValue();
+        auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
         if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(
                 viewID, mediaPlayer, viewMode)) {
             result->Success();
@@ -2741,7 +2741,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableBlockData(
 
     if (mediaPlayer) {
         auto enable = zego_value_get_bool(argument[FTValue("enable")]);
-        unsigned int blockSize = argument[FTValue("blockSize")].LongValue();
+        unsigned int blockSize = zego_value_get_long(argument[FTValue("blockSize")]);
         if (enable) {
             mediaPlayer->setBlockDataHandler(ZegoMediaPlayerBlockDataManager::getInstance()->getHandler(), blockSize);
         } else {
@@ -2768,7 +2768,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithConfig(
             (EXPRESS::ZegoMultimediaLoadType)zego_value_get_int(resourceMap[FTValue("loadType")]);
         resource.alphaLayout =
             (EXPRESS::ZegoAlphaLayoutType)zego_value_get_int(resourceMap[FTValue("alphaLayout")]);
-        resource.startPosition = resourceMap[FTValue("startPosition")].LongValue();
+        resource.startPosition = zego_value_get_long(resourceMap[FTValue("startPosition")]);
         resource.filePath = zego_value_get_string(resourceMap[FTValue("filePath")]);
         auto memory = zego_value_get_vector_uint8(resourceMap[FTValue("memory")]);
         resource.memory = memory.data();
@@ -3048,7 +3048,7 @@ void ZegoExpressEngineMethodHandler::mediaDataPublisherSeekTo(
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto publisher = mediaDataPublisherMap_[index];
     if (publisher) {
-        unsigned long long millisecond = argument[FTValue("millisecond")].LongValue();
+        unsigned long long millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
         publisher->seekTo(millisecond);
         result->Success();
     } else {
@@ -3150,7 +3150,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         input.isAudioFocus = zego_value_get_bool(inputMap[FTValue("isAudioFocus")]);
         input.audioDirection = zego_value_get_int(inputMap[FTValue("audioDirection")]);
 
-        if (!inputMap[FTValue("label")].IsNull()) {
+        if (!zego_value_is_null(inputMap[FTValue("label")])) {
             auto labelMap = zego_value_get_map(inputMap[FTValue("label")]);
             auto text = zego_value_get_string(labelMap[FTValue("text")]);
             EXPRESS::ZegoLabelInfo labelInfo(text);
@@ -3168,22 +3168,22 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
             input.label = labelInfo;
         }
 
-        if (!inputMap[FTValue("renderMode")].IsNull()) {
+        if (!zego_value_is_null(inputMap[FTValue("renderMode")])) {
             input.renderMode =
                 (EXPRESS::ZegoMixRenderMode)zego_value_get_int(inputMap[FTValue("renderMode")]);
         }
 
-        if (!inputMap[FTValue("imageInfo")].IsNull()) {
+        if (!zego_value_is_null(inputMap[FTValue("imageInfo")])) {
             auto imageInfoMap = zego_value_get_map(inputMap[FTValue("imageInfo")]);
             auto url = zego_value_get_string(imageInfoMap[FTValue("url")]);
             int32_t displayMode = 0;
-            if (!imageInfoMap[FTValue("displayMode")].IsNull()) {
+            if (!zego_value_is_null(imageInfoMap[FTValue("displayMode")])) {
                 displayMode = zego_value_get_int(imageInfoMap[FTValue("displayMode")]);
             }
             input.imageInfo = EXPRESS::ZegoMixerImageInfo(url, displayMode);
         }
 
-        if (!inputMap[FTValue("cornerRadius")].IsNull()) {
+        if (!zego_value_is_null(inputMap[FTValue("cornerRadius")])) {
             input.cornerRadius = zego_value_get_int(inputMap[FTValue("cornerRadius")]);
         }
 
@@ -3194,7 +3194,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
         FTMap outputMap = zego_value_get_map(outputIter);
         output.target = zego_value_get_string(outputMap[FTValue("target")]);
 
-        if (!outputMap[FTValue("videoConfig")].IsNull()) {
+        if (!zego_value_is_null(outputMap[FTValue("videoConfig")])) {
             auto videoConfigMap =
                 zego_value_get_map(outputMap[FTValue("videoConfig")]);
             output.videoConfig.bitrate = zego_value_get_int(videoConfigMap[FTValue("bitrate")]);
@@ -3217,7 +3217,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
 
     // Water mark
     EXPRESS::ZegoWatermark watermark;
-    if (!argument[FTValue("watermark")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("watermark")])) {
         auto watermarkMap = zego_value_get_map(argument[FTValue("watermark")]);
         std::string imageURL = zego_value_get_string(watermarkMap[FTValue("imageURL")]);
         if (!imageURL.empty()) {    
@@ -3235,9 +3235,9 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
 
     // whiteboard
     EXPRESS::ZegoMixerWhiteboard whiteboard;
-    if (!argument[FTValue("whiteboard")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("whiteboard")])) {
         auto whiteboardMap = zego_value_get_map(argument[FTValue("whiteboard")]);
-        int64_t whiteboardID = whiteboardMap[FTValue("whiteboardID")].LongValue();
+        int64_t whiteboardID = zego_value_get_long(whiteboardMap[FTValue("whiteboardID")]);
         if (whiteboardID != 0) {
             whiteboard.whiteboardID = whiteboardID;
             whiteboard.horizontalRatio =
@@ -3319,7 +3319,7 @@ void ZegoExpressEngineMethodHandler::stopMixerTask(
         FTMap outputMap = zego_value_get_map(outputIter);
         output.target = zego_value_get_string(outputMap[FTValue("target")]);
 
-        if (!outputMap[FTValue("videoConfig")].IsNull()) {
+        if (!zego_value_is_null(outputMap[FTValue("videoConfig")])) {
             auto videoConfigMap =
                 zego_value_get_map(outputMap[FTValue("videoConfig")]);
             output.videoConfig.bitrate = zego_value_get_int(videoConfigMap[FTValue("bitrate")]);
@@ -3624,7 +3624,7 @@ void ZegoExpressEngineMethodHandler::startAudioVADStableStateMonitor(
     FTResult result) {
 
     auto type = zego_value_get_int(argument[FTValue("type")]);
-    if (argument[FTValue("millisecond")].IsNull()) {
+    if (zego_value_is_null(argument[FTValue("millisecond")])) {
         EXPRESS::ZegoExpressSDK::getEngine()->startAudioVADStableStateMonitor(
             (EXPRESS::ZegoAudioVADStableStateMonitorType)type);
     } else {
@@ -3808,7 +3808,7 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicGetLrcLyric(
         auto songID = zego_value_get_string(argument[FTValue("songID")]);
         auto sharedPtrResult =
             FTMoveResult(result);
-        if (argument[FTValue("vendorID")].IsNull()) {
+        if (zego_value_is_null(argument[FTValue("vendorID")])) {
             copyrightedMusic_->getLrcLyric(songID, [=](int errorCode, std::string lyrics) {
                 FTMap retMap;
                 retMap[FTValue("errorCode")] = FTValue(errorCode);
@@ -3962,7 +3962,7 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicQueryCache(
         auto songID = zego_value_get_string(argument[FTValue("songID")]);
         auto type = zego_value_get_int(argument[FTValue("type")]);
         bool ret = false;
-        if (argument[FTValue("vendorID")].IsNull()) {
+        if (zego_value_is_null(argument[FTValue("vendorID")])) {
             ret = copyrightedMusic_->queryCache(songID, (EXPRESS::ZegoCopyrightedMusicType)type);
         } else {
             int vendorID = zego_value_get_int(argument[FTValue("vendorID")]);
@@ -4333,7 +4333,7 @@ void ZegoExpressEngineMethodHandler::createTextureRenderer(
 void ZegoExpressEngineMethodHandler::destroyTextureRenderer(
     FTArgument &argument,
     FTResult result) {
-    auto textureID = argument[FTValue("textureID")].LongValue();
+    auto textureID = zego_value_get_long(argument[FTValue("textureID")]);
     bool state = ZegoTextureRendererController::getInstance()->destroyTextureRenderer(textureID);
 
     result->Success(FTValue(state));
@@ -4584,7 +4584,7 @@ void ZegoExpressEngineMethodHandler::isVideoDecoderSupported(
     }
 
     int ret = 0;
-    if (!argument[FTValue("codecBackend")].IsNull()) {
+    if (!zego_value_is_null(argument[FTValue("codecBackend")])) {
         auto codecBackend = zego_value_get_int(argument[FTValue("codecBackend")]);
         ret = EXPRESS::ZegoExpressSDK::getEngine()->isVideoDecoderSupported(
             (EXPRESS::ZegoVideoCodecID)codecID, (EXPRESS::ZegoVideoCodecBackend)codecBackend);
@@ -4654,7 +4654,7 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
         auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
 
-        viewID = canvasMap[FTValue("view")].LongValue();
+        viewID = zego_value_get_long(canvasMap[FTValue("view")]);
         ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
         isSuccess = ZegoTextureRendererController::getInstance()->addRemoteRenderer(
             viewID, streamID, viewMode);
@@ -4855,7 +4855,7 @@ void ZegoExpressEngineMethodHandler::getCameraMaxZoomFactor(
 void ZegoExpressEngineMethodHandler::startAudioSpectrumMonitor(
     FTArgument &argument,
     FTResult result) {
-    auto millisecond = argument[FTValue("millisecond")].LongValue();
+    auto millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->startAudioSpectrumMonitor(millisecond);
 
@@ -5210,10 +5210,10 @@ void ZegoExpressEngineMethodHandler::sendCustomAudioCaptureAACData(
     FTArgument &argument,
     FTResult result) {
     auto byteData = zego_value_get_vector_uint8(argument[FTValue("data")]);
-    auto dataLength = argument[FTValue("dataLength")].LongValue();
-    auto configLength = argument[FTValue("configLength")].LongValue();
-    auto referenceTimeMillisecond = argument[FTValue("configLength")].LongValue();
-    auto samples = argument[FTValue("samples")].LongValue();
+    auto dataLength = zego_value_get_long(argument[FTValue("dataLength")]);
+    auto configLength = zego_value_get_long(argument[FTValue("configLength")]);
+    auto referenceTimeMillisecond = zego_value_get_long(argument[FTValue("configLength")]);
+    auto samples = zego_value_get_long(argument[FTValue("samples")]);
     auto paramMap = zego_value_get_map(argument[FTValue("param")]);
     EXPRESS::ZegoAudioFrameParam param;
     param.channel = (EXPRESS::ZegoAudioChannel)zego_value_get_int(paramMap[FTValue("channel")]);
@@ -5232,7 +5232,7 @@ void ZegoExpressEngineMethodHandler::sendCustomAudioCapturePCMData(
     FTArgument &argument,
     FTResult result) {
     auto byteData = zego_value_get_vector_uint8(argument[FTValue("data")]);
-    auto dataLength = argument[FTValue("dataLength")].LongValue();
+    auto dataLength = zego_value_get_long(argument[FTValue("dataLength")]);
     auto paramMap = zego_value_get_map(argument[FTValue("param")]);
     EXPRESS::ZegoAudioFrameParam param;
     param.channel = (EXPRESS::ZegoAudioChannel)zego_value_get_int(paramMap[FTValue("channel")]);
@@ -5250,7 +5250,7 @@ void ZegoExpressEngineMethodHandler::fetchCustomAudioRenderPCMData(
     FTArgument &argument,
     FTResult result) {
     auto byteData = zego_value_get_vector_uint8(argument[FTValue("data")]);
-    auto dataLength = argument[FTValue("dataLength")].LongValue();
+    auto dataLength = zego_value_get_long(argument[FTValue("dataLength")]);
     auto paramMap = zego_value_get_map(argument[FTValue("param")]);
     EXPRESS::ZegoAudioFrameParam param;
     param.channel = (EXPRESS::ZegoAudioChannel)zego_value_get_int(paramMap[FTValue("channel")]);
@@ -5266,7 +5266,7 @@ void ZegoExpressEngineMethodHandler::fetchCustomAudioRenderPCMData(
 void ZegoExpressEngineMethodHandler::startPerformanceMonitor(
     FTArgument &argument,
     FTResult result) {
-    auto millisecond = argument[FTValue("millisecond")].LongValue();
+    auto millisecond = zego_value_get_long(argument[FTValue("millisecond")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->startPerformanceMonitor(millisecond);
 
@@ -5346,7 +5346,7 @@ void ZegoExpressEngineMethodHandler::startNetworkSpeedTest(
     config.testDownlink = zego_value_get_bool(configMap[FTValue("testDownlink")]);
     config.expectedDownlinkBitrate =
         zego_value_get_int(configMap[FTValue("expectedDownlinkBitrate")]);
-    auto interval = argument[FTValue("interval")].LongValue();
+    auto interval = zego_value_get_long(argument[FTValue("interval")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->startNetworkSpeedTest(config, interval);
 
@@ -5831,7 +5831,7 @@ void ZegoExpressEngineMethodHandler::createScreenCaptureSource(
     FTArgument &argument,
     FTResult result) {
     void *sourceId =
-        reinterpret_cast<void *>(static_cast<intptr_t>(argument[FTValue("sourceId")].LongValue()));
+        reinterpret_cast<void *>(static_cast<intptr_t>(zego_value_get_long(argument[FTValue("sourceId")])));
     auto sourceType = zego_value_get_int(argument[FTValue("sourceType")]);
     auto screenCaptureSource = EXPRESS::ZegoExpressSDK::getEngine()->createScreenCaptureSource(
         sourceId, (EXPRESS::ZegoScreenCaptureSourceType)sourceType);
@@ -5958,7 +5958,7 @@ void ZegoExpressEngineMethodHandler::updateCaptureSourceScreenCaptureSource(
 
     if (screenCaptureSource) {
         void *sourceId = reinterpret_cast<void *>(
-            static_cast<intptr_t>(argument[FTValue("sourceId")].LongValue()));
+            static_cast<intptr_t>(zego_value_get_long(argument[FTValue("sourceId")])));
         auto sourceType = zego_value_get_int(argument[FTValue("sourceType")]);
         screenCaptureSource->updateCaptureSource(sourceId,
                                                  (EXPRESS::ZegoScreenCaptureSourceType)sourceType);
