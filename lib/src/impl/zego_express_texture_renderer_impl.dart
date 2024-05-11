@@ -112,12 +112,22 @@ class ZegoExpressTextureRenderer {
     });
   }
 
-  void setStreamSubscription(int textureID, StreamSubscription? subscription) {
-    var oldSubscription = _subscriptionMap.remove(textureID);
+  void setStateStreamSubscription(String code, StreamSubscription? subscription) {
+    var oldSubscription = _subscriptionMap.remove(code);
     oldSubscription?.cancel();
     if (subscription != null) {
-      _subscriptionMap[textureID] = subscription;
+      _subscriptionMap[code] = subscription;
     }
+  }
+
+  void clearWidgetStreamSubscription(String code) {
+    _subscriptionMap.removeWhere((key, value) {
+      if (key.startsWith(code)) {
+        value?.cancel();
+        return true;
+      }
+      return false;
+    });
   }
 
   static void _textureRendererControllerEventListener(dynamic data) {
@@ -147,7 +157,7 @@ class ZegoExpressTextureRenderer {
   static final Map<int, Size> _sizeMap = {};
   static final Map<int, int?> _mirrorMap = {};
   static final Map<int, int?> _rotationMap = {};
-  static final Map<int, StreamSubscription?> _subscriptionMap = {};
+  static final Map<String, StreamSubscription?> _subscriptionMap = {};
 
   static final StreamController<Map<String, dynamic>> _updateController =
       StreamController<Map<String, dynamic>>.broadcast();
@@ -183,14 +193,14 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   void initState() {
     super.initState();
     ZegoExpressImpl.sendCustomLogMessage(
-        '[WidgetState] initState. widget: ${widget.textureID}');
+        '[WidgetState] initState. widget: ${widget.textureID}, state hashCode: $hashCode');
     var subscription = widget.stream.listen((map) {
       if (_isInit) {
         setState(() {});
       }
     });
     ZegoExpressTextureRenderer()
-        .setStreamSubscription(widget.textureID, subscription);
+        .setStateStreamSubscription('${widget.textureID}#$hashCode', subscription);
     _isInit = true;
   }
 
@@ -198,8 +208,8 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
   void dispose() {
     _isInit = false;
     ZegoExpressImpl.sendCustomLogMessage(
-        '[WidgetState] dispose. widget: ${widget.textureID}');
-    ZegoExpressTextureRenderer().setStreamSubscription(widget.textureID, null);
+        '[WidgetState] dispose. widget: ${widget.textureID}, state hashCode: $hashCode');
+    ZegoExpressTextureRenderer().setStateStreamSubscription('${widget.textureID}#$hashCode', null);
     super.dispose();
   }
 
@@ -209,12 +219,12 @@ class _ZegoTextureWidgetState extends State<ZegoTextureWidget> {
     ZegoExpressImpl.sendCustomLogMessage(
         '[WidgetState] didUpdateWidget. from old widget: ${oldWidget.textureID} to new widget: ${oldWidget.textureID}');
     ZegoExpressTextureRenderer()
-        .setStreamSubscription(oldWidget.textureID, null);
+        .clearWidgetStreamSubscription('${oldWidget.textureID}#');
     var subscription = widget.stream.listen((event) {
       setState(() {});
     });
     ZegoExpressTextureRenderer()
-        .setStreamSubscription(widget.textureID, subscription);
+        .setStateStreamSubscription('${widget.textureID}#$hashCode', subscription);
   }
 
   Rect _viewModeCalculate(
