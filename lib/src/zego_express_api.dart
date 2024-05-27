@@ -823,8 +823,11 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
   ///
-  /// Only supports desktop.
-  /// This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
+  /// Available since: 1.1.0
+  /// Description: By listening to this callback, users can update the sound collection or output using a specific device when necessary.
+  /// When to trigger: This callback is triggered when an audio device is added or removed from the system.
+  /// Restrictions: None.
+  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceType] Audio device type
