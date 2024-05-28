@@ -422,10 +422,12 @@
         unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
         BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
         NSString *token = configMap[@"token"];
+        unsigned int capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
 
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
+        configObject.capabilityNegotiationTypes = capabilityNegotiationTypes;
     }
 
     [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
@@ -504,6 +506,7 @@
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
+        configObject.capabilityNegotiationTypes = capabilityNegotiationTypes;
 
         [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID config:configObject];
     } else {
@@ -610,6 +613,7 @@
         config.roomID = configMap[@"roomID"];
         config.forceSynchronousNetworkTime = [ZegoUtils intValue:configMap[@"forceSynchronousNetworkTime"]];
         config.streamCensorshipMode = (ZegoStreamCensorshipMode)[ZegoUtils intValue:configMap[@"streamCensorshipMode"]];
+        config.codecNegotiationType = (ZegoCapabilityNegotiationType)[ZegoUtils intValue:configMap[@"codecNegotiationType"]];
     }
 
     if (config) {

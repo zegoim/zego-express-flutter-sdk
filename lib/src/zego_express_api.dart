@@ -652,7 +652,7 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRecvAudioFirstFrame;
 
-  /// The callback triggered when the first video frame is received. Except for Linux systems, this callback is thrown from the ui thread by default.
+  /// The callback triggered when the first video frame is received.
   ///
   /// Available since: 1.1.0
   /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
@@ -710,7 +710,7 @@ class ZegoExpressEngine {
   /// Description: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI (such as directly calling [sendSEI], audio mixing with SEI data, and sending custom video capture encoded data with SEI, etc.), the local end will receive this callback.
   /// Trigger: After the [startPlayingStream] function is called successfully, when the remote stream sends SEI, the local end will receive this callback.
   /// Caution:
-  ///  1. This function will switch the UI thread callback data, and the customer can directly operate the UI control in this callback function.
+  ///  1.The customer can directly operate the UI control in this callback function.
   ///  2. Since the video encoder itself generates an SEI with a payload type of 5, or when a video file is used for publishing, such SEI may also exist in the video file. Therefore, if the developer needs to filter out this type of SEI, it can be before [createEngine] Call [ZegoEngineConfig.advancedConfig("unregister_sei_filter", "XXXXX")]. Among them, unregister_sei_filter is the key, and XXXXX is the uuid filter string to be set.
   ///  3. When [mutePlayStreamVideo] or [muteAllPlayStreamVideo] is called to set only the audio stream to be pulled, the SEI will not be received.
   ///
@@ -823,8 +823,11 @@ class ZegoExpressEngine {
 
   /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
   ///
-  /// Only supports desktop.
-  /// This callback is triggered when an audio device is added or removed from the system. By listening to this callback, users can update the sound collection or output using a specific device when necessary.
+  /// Available since: 1.1.0
+  /// Description: By listening to this callback, users can update the sound collection or output using a specific device when necessary.
+  /// When to trigger: This callback is triggered when an audio device is added or removed from the system.
+  /// Restrictions: None.
+  /// Platform differences: Only supports Windows and macOS.
   ///
   /// - [updateType] Update type (add/delete)
   /// - [deviceType] Audio device type

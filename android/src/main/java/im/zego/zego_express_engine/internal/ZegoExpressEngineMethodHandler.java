@@ -576,6 +576,7 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
+            roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number)configMap.get("capabilityNegotiationTypes"));
             
         }
 
@@ -629,6 +630,7 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
+            roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number)configMap.get("capabilityNegotiationTypes"));
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID, roomConfig);
         } else {
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
@@ -739,6 +741,7 @@ public class ZegoExpressEngineMethodHandler {
             config.roomID = (String) configMap.get("roomID");
             config.forceSynchronousNetworkTime = ZegoUtils.intValue((Number)configMap.get("forceSynchronousNetworkTime"));
             config.streamCensorshipMode = ZegoStreamCensorshipMode.getZegoStreamCensorshipMode(ZegoUtils.intValue((Number)configMap.get("streamCensorshipMode")));
+            config.codecNegotiationType = ZegoCapabilityNegotiationType.getZegoCapabilityNegotiationType(ZegoUtils.intValue((Number)configMap.get("codecNegotiationType")));
         }
 
         if (config != null) {

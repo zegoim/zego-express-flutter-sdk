@@ -357,6 +357,8 @@ void ZegoExpressEngineMethodHandler::loginRoom(
             (unsigned int)std::get<int32_t>(configMap[FTValue("maxMemberCount")]);
         config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
         config.token = std::get<std::string>(configMap[FTValue("token")]);
+        config.capabilityNegotiationTypes =
+            (unsigned int)std::get<int32_t>(configMap[FTValue("capabilityNegotiationTypes")]);
     }
     auto sharedPtrResult =
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
@@ -428,6 +430,7 @@ void ZegoExpressEngineMethodHandler::switchRoom(
             configPtr->isUserStatusNotify =
                 std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = std::get<std::string>(configMap[FTValue("token")]);
+            configPtr->capabilityNegotiationTypes = configMap[FTValue("capabilityNegotiationTypes")].LongValue();
         }
     }
 
@@ -529,6 +532,8 @@ void ZegoExpressEngineMethodHandler::startPublishingStream(
                 std::get<int32_t>(configMap[FTValue("forceSynchronousNetworkTime")]);
             config.streamCensorshipMode = (EXPRESS::ZegoStreamCensorshipMode)std::get<int32_t>(
                 configMap[FTValue("streamCensorshipMode")]);
+            config.codecNegotiationType = (EXPRESS::ZegoCapabilityNegotiationType)std::get<int32_t>(
+                configMap[FTValue("codecNegotiationType")]);
 
             EXPRESS::ZegoExpressSDK::getEngine()->startPublishingStream(
                 streamID, config, (EXPRESS::ZegoPublishChannel)channel);
