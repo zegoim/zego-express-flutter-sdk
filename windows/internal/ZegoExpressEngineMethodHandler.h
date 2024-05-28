@@ -355,6 +355,7 @@ class ZegoExpressEngineMethodHandler {
 
     void startPlayingStream(flutter::EncodableMap &argument,
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void switchPlayingStream(flutter::EncodableMap &argument, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void stopPlayingStream(flutter::EncodableMap &argument,
                            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setPlayStreamCrossAppInfo(

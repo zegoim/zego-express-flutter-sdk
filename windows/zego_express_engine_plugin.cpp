@@ -175,6 +175,7 @@ static const std::map<
         EngineMethodHandler(enableAlphaChannelVideoEncoder),
 
         EngineMethodHandler(startPlayingStream),
+        EngineMethodHandler(switchPlayingStream),
         EngineMethodHandler(stopPlayingStream),
         EngineMethodHandler(setPlayStreamCrossAppInfo),
         EngineMethodHandler(takePlayStreamSnapshot),
