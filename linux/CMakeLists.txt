@@ -19,7 +19,14 @@ download_native_sdk("${CMAKE_CURRENT_LIST_DIR}")
 list(APPEND PLUGIN_SOURCES
   "zego_express_engine_plugin.cc"
   "ZegoDataTypeConvert.cpp"
+  "ZegoDataTypeConvert.h"
+  "ZegoLog.h"
+  "ZegoLog.cpp"
+  # "internal/DataToImageTools.hpp"
   "internal/ZegoExpressEngineMethodHandler.cpp"
+  "internal/ZegoExpressEngineMethodHandler.h"
+  "internal/ZegoExpressEngineEventHandler.h"
+  "internal/ZegoExpressEngineEventHandler.cpp"
 )
 
 # Define the plugin library target. Its name must not be changed (see comment
@@ -42,18 +49,15 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
-target_include_directories(${PLUGIN_NAME} INTERFACE
+target_include_directories(${PLUGIN_NAME} PUBLIC
   "${CMAKE_CURRENT_LIST_DIR}/include"
   "${CMAKE_CURRENT_LIST_DIR}/libs/x86_64/include"
   "${CMAKE_CURRENT_LIST_DIR}/libs/x86_64/include/internal"
 )
 
-# link_directories("${CMAKE_CURRENT_LIST_DIR}/libs/x86_64")
-
 target_link_libraries(${PLUGIN_NAME} PRIVATE 
   flutter
   PkgConfig::GTK
-  # ZegoExpressEngine
   ${CMAKE_CURRENT_LIST_DIR}/libs/x86_64/libZegoExpressEngine.so
 )
 

@@ -7,6 +7,14 @@ FlValue* zego_value_new(int value) {
     return fl_value_new_int(value);
 }
 
+FlValue* zego_value_new(int64_t value) {
+    return fl_value_new_int(value);
+}
+
+FlValue* zego_value_new(long long value) {
+    return fl_value_new_int(value);
+}
+
 FlValue* zego_value_new(bool value) {
     return fl_value_new_bool(value);
 }
@@ -17,6 +25,18 @@ FlValue* zego_value_new(double value) {
 
 FlValue* zego_value_new(const char* value) {
     return fl_value_new_string(value);
+}
+
+FlValue* zego_value_new(std::string value) {
+    return fl_value_new_string(value.c_str());
+}
+
+FlValue* zego_value_new(std::vector<uint8_t> value) {
+    return fl_value_new_uint8_list(value.data(), value.size());
+}
+
+FlValue* zego_value_new(std::vector<float> value) {
+    return fl_value_new_float32_list(value.data(), value.size());
 }
 
 FlValue* zego_value_list_new() {
