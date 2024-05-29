@@ -292,6 +292,7 @@ static const std::map<
         EngineMethodHandler(mediaPlayerGetAudioTrackCount),
         EngineMethodHandler(mediaPlayerSetAudioTrackIndex),
         EngineMethodHandler(mediaPlayerSetVoiceChangerParam),
+        EngineMethodHandler(mediaPlayerEnableVoiceChanger),
         EngineMethodHandler(mediaPlayerGetCurrentState),
         EngineMethodHandler(mediaPlayerEnableAccurateSeek),
         EngineMethodHandler(mediaPlayerGetNetWorkResourceCache),

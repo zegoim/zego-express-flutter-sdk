@@ -2406,6 +2406,29 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetVoiceChangerParam(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableVoiceChanger(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    auto index = std::get<int32_t>(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        FTMap paramMap = std::get<FTMap>(argument[FTValue("param")]);
+        auto pitch = std::get<double>(paramMap[FTValue("pitch")]);
+
+        auto audioChannel = std::get<int32_t>(argument[FTValue("audioChannel")]);
+
+        auto enable = std::get<bool>(argument[FTValue("enable")]);
+
+        EXPRESS::ZegoVoiceChangerParam param;
+        param.pitch = (float)pitch;
+        mediaPlayer->enableVoiceChanger((EXPRESS::ZegoMediaPlayerAudioChannel)audioChannel,
+                                        enable, param);
+    }
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::mediaPlayerGetCurrentState(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
