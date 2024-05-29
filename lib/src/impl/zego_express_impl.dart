@@ -826,6 +826,31 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> switchPlayingStream(
+      String fromStreamID, String toStreamID, ZegoPlayerConfig config) async {
+    return await _channel.invokeMethod('switchPlayingStream', {
+      'fromStreamID': fromStreamID,
+      'toStreamID': toStreamID,
+      'config': {
+        'resourceMode': config.resourceMode.index,
+        'cdnConfig': config.cdnConfig != null
+            ? {
+                'url': config.cdnConfig?.url,
+                'authParam': config.cdnConfig?.authParam ?? "",
+                'protocol': config.cdnConfig?.protocol ?? "",
+                'quicVersion': config.cdnConfig?.quicVersion ?? "",
+                'httpdns': config.cdnConfig?.httpdns?.index ??
+                    ZegoHttpDNSType.None.index,
+                'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
+              }
+            : {},
+        'roomID': config.roomID ?? '',
+        'resourceSwitchMode': config.resourceSwitchMode?.index ??
+            ZegoStreamResourceSwitchMode.Default.index,
+      }
+    });
+  }
+
   Future<void> stopPlayingStream(String streamID) async {
     return await _channel
         .invokeMethod('stopPlayingStream', {'streamID': streamID});

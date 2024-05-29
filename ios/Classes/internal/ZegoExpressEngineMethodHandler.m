@@ -1458,6 +1458,46 @@
     result(nil);
 }
 
+- (void)switchPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.19.0
+
+    NSString *fromStreamID = call.arguments[@"fromStreamID"];
+    NSString *toStreamID = call.arguments[@"toStreamID"];
+
+    // Handle ZegoPlayerConfig
+
+    ZegoPlayerConfig *playerConfig = nil;
+
+    NSDictionary *playerConfigMap = call.arguments[@"config"];
+
+    if (playerConfigMap && playerConfigMap.count > 0) {
+
+        playerConfig = [[ZegoPlayerConfig alloc] init];
+        playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
+        playerConfig.resourceSwitchMode = [ZegoUtils intValue:playerConfigMap[@"resourceSwitchMode"]];
+        playerConfig.roomID = playerConfigMap[@"roomID"];
+        NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
+
+        if (cdnConfigMap && cdnConfigMap.count > 0) {
+            ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
+            cdnConfig.url = cdnConfigMap[@"url"];
+            cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.protocol = cdnConfigMap[@"protocol"];
+            cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
+            cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
+            
+            int httpdnsIndex = [ZegoUtils intValue:cdnConfigMap[@"httpdns"]];
+            cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
+            
+            playerConfig.cdnConfig = cdnConfig;
+        }
+    }
+
+    [[ZegoExpressEngine sharedEngine] switchPlayingStream:fromStreamID toStreamID:toStreamID config:playerConfig];
+
+    result(nil);
+}
+
 - (void)stopPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     NSString *streamID = call.arguments[@"streamID"];
