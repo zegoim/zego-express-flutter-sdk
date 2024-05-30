@@ -501,6 +501,7 @@
         unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
         BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
         NSString *token = configMap[@"token"];
+        unsigned int capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
 
         ZegoRoomConfig *configObject = [[ZegoRoomConfig alloc] init];
         configObject.maxMemberCount = maxMemberCount;
