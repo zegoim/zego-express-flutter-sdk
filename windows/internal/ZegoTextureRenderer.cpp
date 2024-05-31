@@ -35,10 +35,10 @@ bool ZegoTextureRenderer::updateSrcFrameBuffer(uint8_t *data, uint32_t data_leng
                                                ZEGO::EXPRESS::ZegoVideoFrameParam frameParam) {
   // Scoped lock guard.
   {
-    const std::lock_guard<std::mutex> lock(bufferMutex_);
     if (!TextureRegistered()) {
       return false;
     }
+    const std::lock_guard<std::mutex> lock(bufferMutex_);
 
     if (srcBuffer_.size() != data_length) {
       // Update source buffer size.
@@ -80,10 +80,10 @@ const FlutterDesktopPixelBuffer* ZegoTextureRenderer::ConvertPixelBufferForFlutt
   // to detect size changes.
 
   // Lock buffer mutex to protect texture processing
-  std::unique_lock<std::mutex> buffer_lock(bufferMutex_);
   if (!TextureRegistered()) {
     return nullptr;
   }
+  std::unique_lock<std::mutex> buffer_lock(bufferMutex_);
 
   const uint32_t bytes_per_pixel = 4;
   const uint32_t pixels_total = width_ * height_;
