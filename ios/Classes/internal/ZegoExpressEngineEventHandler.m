@@ -643,6 +643,20 @@
     }
 }
 
+- (void)onPlayerSwitched:(int)errorCode streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerSwitched] errorCode: %d, streamID: %@", errorCode, streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerSwitched",
+            @"streamID": streamID,
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
 - (void)onPlayerQualityUpdate:(ZegoPlayStreamQuality *)quality streamID:(NSString *)streamID {
     FlutterEventSink sink = _eventSink;
     // High frequency callbacks do not log

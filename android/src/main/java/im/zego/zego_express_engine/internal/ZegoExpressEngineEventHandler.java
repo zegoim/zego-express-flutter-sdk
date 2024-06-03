@@ -603,6 +603,22 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onPlayerSwitched(String streamID, int errorCode) {
+            super.onPlayerSwitched(streamID, errorCode);
+            ZegoLog.log("[onPlayerSwitched] streamID: %s, errorCode: %d", streamID, errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerSwitched");
+            map.put("streamID", streamID);
+            map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
             super.onPlayerQualityUpdate(streamID, quality);
             // High frequency callbacks do not log
