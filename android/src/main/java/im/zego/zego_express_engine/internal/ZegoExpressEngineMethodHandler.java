@@ -4691,6 +4691,7 @@ public class ZegoExpressEngineMethodHandler {
             audioEffectPlayer.loadResource(audioEffectID, path, new IZegoAudioEffectPlayerLoadResourceCallback() {
                 @Override
                 public void onLoadResourceCallback(int errorCode) {
+                    ZegoLog.log("[audioEffectPlayerLoadResource][onLoadResourceCallback] errorCode: %d", errorCode);
                     HashMap<String, Object> resultMap = new HashMap<>();
                     resultMap.put("errorCode", errorCode);
                     result.success(resultMap);
