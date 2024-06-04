@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.14.5";
+  static String pluginVersion = "3.15.0";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -823,6 +823,31 @@ class ZegoExpressImpl {
                       ZegoStreamResourceType.Default.index,
             }
           : {}
+    });
+  }
+
+  Future<void> switchPlayingStream(
+      String fromStreamID, String toStreamID, ZegoPlayerConfig config) async {
+    return await _channel.invokeMethod('switchPlayingStream', {
+      'fromStreamID': fromStreamID,
+      'toStreamID': toStreamID,
+      'config': {
+        'resourceMode': config.resourceMode.index,
+        'cdnConfig': config.cdnConfig != null
+            ? {
+                'url': config.cdnConfig?.url,
+                'authParam': config.cdnConfig?.authParam ?? "",
+                'protocol': config.cdnConfig?.protocol ?? "",
+                'quicVersion': config.cdnConfig?.quicVersion ?? "",
+                'httpdns': config.cdnConfig?.httpdns?.index ??
+                    ZegoHttpDNSType.None.index,
+                'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
+              }
+            : {},
+        'roomID': config.roomID ?? '',
+        'resourceSwitchMode': config.resourceSwitchMode?.index ??
+            ZegoStreamResourceSwitchMode.Default.index,
+      }
     });
   }
 
