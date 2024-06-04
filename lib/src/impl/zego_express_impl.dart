@@ -2591,6 +2591,14 @@ class ZegoExpressImpl {
             map['errorCode'],
             Map<String, dynamic>.from(extendedData));
         break;
+      
+      case 'onPlayerSwitched':
+        if (ZegoExpressEngine.onPlayerSwitched == null) return;
+
+        ZegoExpressEngine.onPlayerSwitched!(
+            map['streamID'],
+            map['errorCode']);
+        break;
 
       case 'onPlayerQualityUpdate':
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
