@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.15.1
+
+### Bug Fixes
+
+1. Fixed MediaPlayer error.
+
 ## 3.15.0
 
 ### New Features
