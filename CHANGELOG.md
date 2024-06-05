@@ -38,6 +38,8 @@ Optimize video hardware encoding and decoding, increase the range of compatible 
 
 5. Fixed the issue of accessing a wild pointer during camera enumeration.
 
+6. Web removes use of innerHTML interface to reduce security risks.
+
 ### Deleted
 
 #### 1. Deprecate the media player [setVoiceChangerParam] interface
