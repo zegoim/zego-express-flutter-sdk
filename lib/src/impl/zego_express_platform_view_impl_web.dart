@@ -18,7 +18,9 @@ class ZegoExpressPlatformViewImpl {
         key: key,
         viewType: webcamPushElement,
         onPlatformViewCreated: (int viewID) {
-          onViewCreated(viewID);
+          Future.delayed(const Duration(milliseconds: 10), () {
+            onViewCreated(viewID);
+          });
         });
   }
 }
