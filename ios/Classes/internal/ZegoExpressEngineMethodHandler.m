@@ -6098,6 +6098,14 @@
     result(nil);
 }
 
+- (void)sendCustomLogMessage:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *message = call.arguments[@"message"];
+
+    ZGLog(message);
+    
+    result(nil);
+}
+
 void convertFloatArray(float *position, FlutterStandardTypedData *list) {
     const float* tmp = list.data.bytes;
     for (int i = 0; i < list.elementCount; i++) {
