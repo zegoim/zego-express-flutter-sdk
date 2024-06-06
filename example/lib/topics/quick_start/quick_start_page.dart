@@ -382,7 +382,7 @@ class _QuickStartPageState extends State<QuickStartPage> {
           Stack(children: [
             Container(
               color: Colors.grey,
-              child: _previewViewWidget,
+              child: _playViewWidget,
             ),
             Text('Remote Play View', style: TextStyle(color: Colors.white))
           ], alignment: AlignmentDirectional.topCenter),
