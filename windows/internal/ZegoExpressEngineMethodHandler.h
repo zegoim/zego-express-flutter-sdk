@@ -31,6 +31,8 @@ class ZegoExpressEngineMethodHandler {
                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void setPluginVersion(flutter::EncodableMap &argument,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    void sendCustomLogMessage(flutter::EncodableMap &argument,
+                              std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
     void
     getAssetAbsolutePath(flutter::EncodableMap &argument,
                          std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
