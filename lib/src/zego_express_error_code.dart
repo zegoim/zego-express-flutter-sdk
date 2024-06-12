@@ -514,7 +514,7 @@ class ZegoErrorCode {
   /// Description: Mixed input text watermark is too long. <br>Cause: The length of the text watermark of the mixed stream input parameter exceeds the limit. <br>Solutions: Please make sure the input text watermark length does not exceed 512 bytes.
   static const int MixerInputLabelTextTooLong = 1005028;
 
-  /// Description: Mixed stream output target is too long. <br>Cause: The length of the target parameter of the mixed stream output exceeds the limit. <br>Solutions: Please make sure that the output destination length does not exceed 1024 bytes.
+  /// Description: Mixed stream output target is too long. <br>Cause: The length of the target parameter of the mixed stream output exceeds the limit. <br>Solutions: Please make sure that the output destination length does less than 1024 bytes.
   static const int MixerOutputTargetTooLongError = 1005029;
 
   /// Description: Failed to start mixed stream. <br>Cause: Exceeding the maximum number of output streams. <br>Solutions: Support up to 3 output streams.

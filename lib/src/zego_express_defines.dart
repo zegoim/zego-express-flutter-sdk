@@ -1164,7 +1164,7 @@ enum ZegoVideoBufferType {
   /// D3D Texture2D type video frame
   D3DTexture2D,
 
-  /// CVPixelBuffer type nv12 format video frame
+  /// CVPixelBuffer type nv12 format video frame. Only for custom video processing
   NV12CVPixelBuffer
 }
 
@@ -1780,7 +1780,10 @@ enum ZegoVideoSourceType {
   /// [Deprecated] Same as [ScreenCapture], that is, video source from screen capture, this video source type has been deprecated since version 3.2.0.
   @Deprecated(
       'Same as [ScreenCapture], that is, video source from screen capture')
-  ZegoVideoSourceScreenCapture
+  ZegoVideoSourceScreenCapture,
+
+  /// Video source from secondary camera, only support iOS.
+  SecondaryCamera
 }
 
 /// Screen capture source exception type.
@@ -4502,6 +4505,10 @@ abstract class ZegoMediaPlayer {
   Future<void> setAudioTrackPublishIndex(int index);
 
   /// Enable voice changer, set up the specific voice changer parameters.
+  ///
+  /// Available since: 3.15.0
+  /// Description: Enable voice changer, set up the specific voice changer parameters.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   ///
   /// - [audioChannel] The audio channel to be voice changed
   /// - [enable] Whether enable voice changer or not. True - enabled, false - disabled, default value is false.
