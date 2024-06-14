@@ -199,6 +199,7 @@ class _GlobalSettingPageState extends State<GlobalSettingPage> {
         ],
       ),
       body: SafeArea(
+          // ignore: deprecated_member_use
           child: WillPopScope(
               onWillPop: () async {
                 if (!_needAskSave) {
