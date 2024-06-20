@@ -33,8 +33,11 @@
 
 - (void)destroy {
     @synchronized (self) {
-        // Release GPU Resource
-        [self.registry unregisterTexture:_textureID];
+        if (_textureID != 0) {
+            // Release GPU Resource
+            [self.registry unregisterTexture:_textureID];
+            _textureID = 0;
+        }
     }
 
     ZGLog(@"[ZegoTextureRenderer] [release] renderer:%p", self);
