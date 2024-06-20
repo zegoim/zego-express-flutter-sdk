@@ -1,7 +1,7 @@
 #include "ZegoExpressEngineEventHandler.h"
 #include "../ZegoLog.h"
 #include "ZegoExpressEngineMethodHandler.h"
-// #include "ZegoTextureRendererController.h"
+#include "ZegoTextureRendererController.h"
 #include <memory>
 
 std::shared_ptr<ZegoExpressEngineEventHandler> ZegoExpressEngineEventHandler::m_instance = nullptr;
@@ -70,7 +70,7 @@ void ZegoExpressEngineEventHandler::onEngineStateUpdate(EXPRESS::ZegoEngineState
     }
 
     if (state == EXPRESS::ZegoEngineState::ZEGO_ENGINE_STATE_STOP) {
-        // ZegoTextureRendererController::getInstance()->resetAllRenderFirstFrame();
+        ZegoTextureRendererController::getInstance()->resetAllRenderFirstFrame();
     }
 }
 
@@ -762,7 +762,7 @@ void ZegoExpressEngineEventHandler::onMediaPlayerStateUpdate(EXPRESS::IZegoMedia
     }
 
     if (state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_NO_PLAY || state == EXPRESS::ZegoMediaPlayerState::ZEGO_MEDIA_PLAYER_STATE_PLAY_ENDED) {
-        // ZegoTextureRendererController::getInstance()->resetMediaPlayerRenderFirstFrame(mediaPlayer);
+        ZegoTextureRendererController::getInstance()->resetMediaPlayerRenderFirstFrame(mediaPlayer);
     }
 }
 
@@ -1901,9 +1901,9 @@ void ZegoExpressEngineEventHandler::onAvailableFrame(EXPRESS::IZegoScreenCapture
                                                      EXPRESS::ZegoVideoFrameParam param) {
 
     // High frequency callbacks do not log
-    // unsigned char *rgb_data = (unsigned char *)data;
-    // ZegoTextureRendererController::getInstance()->sendScreenCapturedVideoFrameRawData(
-    //     &rgb_data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE);
+    unsigned char *rgb_data = (unsigned char *)data;
+    ZegoTextureRendererController::getInstance()->sendScreenCapturedVideoFrameRawData(
+        &rgb_data, &dataLength, param, ZEGO::EXPRESS::ZEGO_VIDEO_FLIP_MODE_NONE);
 }
 
 void ZegoExpressEngineEventHandler::onExceptionOccurred(

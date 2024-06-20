@@ -1,7 +1,25 @@
 #include "ZegoTextureRendererController.h"
 #include "ZegoExpressEngineEventHandler.h"
 #include "../ZegoLog.h"
+#ifdef _WIN32
 #include <flutter/standard_method_codec.h>
+#endif
+
+#ifdef __linux__
+G_GNUC_UNUSED
+static FlMethodErrorResponse *listen_cb(FlEventChannel *channel, FlValue *args,
+                                        gpointer user_data) {
+    std::unique_ptr<FlEventSink> events(new FlEventSink(channel));
+    ZegoTextureRendererController::getInstance()->setEventSink(std::move(events));
+    return NULL;
+}
+G_GNUC_UNUSED
+static FlMethodErrorResponse *cancel_cb(FlEventChannel *channel, FlValue *args,
+                                        gpointer user_data) {
+    ZegoTextureRendererController::getInstance()->clearEventSink();
+    return NULL;
+}
+#endif
 
 using namespace ZEGO::EXPRESS;
 
@@ -35,8 +53,7 @@ void ZegoTextureRendererController::init(FTBinaryMessenger *messenger)
             (messenger, "plugins.zego.im/zego_texture_renderer_controller_event_handler", &flutter::StandardMethodCodec::GetInstance());
         eventChannel->SetStreamHandler(std::make_unique<ZegoTextureRendererControllerEventChannel>());
         #else
-        FlEventChannel *event_channel = fl_event_channel_new(
-            messenger, "plugins.zego.im/zego_texture_renderer_controller_event_handler", FL_METHOD_CODEC(fl_standard_method_codec_new()));
+        FlEventChannel *event_channel = fl_event_channel_new(messenger, "plugins.zego.im/zego_texture_renderer_controller_event_handler", FL_METHOD_CODEC(fl_standard_method_codec_new()));
         fl_event_channel_set_stream_handlers(event_channel, listen_cb, cancel_cb, NULL, NULL);
         #endif
 
@@ -67,11 +84,11 @@ void ZegoTextureRendererController::uninit()
     isInit = false;
 }
 
-int64_t ZegoTextureRendererController::createTextureRenderer(FTTextureRegistrar* texture_registrar, uint32_t width, uint32_t height)
+int64_t ZegoTextureRendererController::createTextureRenderer(FTTextureRegistrar *texture, uint32_t width, uint32_t height)
 {
-    auto textureRenderer = std::make_shared<ZegoTextureRenderer>(texture_registrar, width, height);
+    auto textureRenderer = std::make_shared<ZegoTextureRenderer>(texture, width, height);
 
-    ZF::logInfo("[createTextureRenderer] textureID: %d, width: %d, height: %d", textureRenderer->getTextureID(), width, height);
+    ZF::logInfo("[createTextureRenderer] textureID: %ld, width: %d, height: %d", textureRenderer->getTextureID(), width, height);
 
     renderers_.insert(std::pair<int64_t , std::shared_ptr<ZegoTextureRenderer> >(textureRenderer->getTextureID(), textureRenderer));
 
@@ -80,7 +97,7 @@ int64_t ZegoTextureRendererController::createTextureRenderer(FTTextureRegistrar*
 
 bool ZegoTextureRendererController::destroyTextureRenderer(int64_t textureID)
 {
-    ZF::logInfo("[destroyTextureRenderer] textureID: %d", textureID);
+    ZF::logInfo("[destroyTextureRenderer] textureID: %ld", textureID);
 
     auto renderer = renderers_.find(textureID);
     if (renderer != renderers_.end()) {
@@ -94,7 +111,7 @@ bool ZegoTextureRendererController::destroyTextureRenderer(int64_t textureID)
 /// Called when dart invoke `startPreview`
 bool ZegoTextureRendererController::addCapturedRenderer(int64_t textureID, ZEGO::EXPRESS::ZegoPublishChannel channel, ZEGO::EXPRESS::ZegoViewMode viewMode)
 {
-    ZF::logInfo("[addCapturedRenderer] textureID: %d, channel: %d, viewMode: %d", textureID, channel, viewMode);
+    ZF::logInfo("[addCapturedRenderer] textureID: %ld, channel: %d, viewMode: %d", textureID, channel, viewMode);
 
     auto renderer = renderers_.find(textureID);
 
@@ -123,7 +140,7 @@ void ZegoTextureRendererController::removeCapturedRenderer(ZEGO::EXPRESS::ZegoPu
 /// Called when dart invoke `startPlayingStream`
 bool ZegoTextureRendererController::addRemoteRenderer(int64_t textureID, std::string streamID, ZEGO::EXPRESS::ZegoViewMode viewMode)
 {
-    ZF::logInfo("[addRemoteRenderer] textureID: %d, streamID: %s, viewMode: %d", textureID, streamID.c_str(), viewMode);
+    ZF::logInfo("[addRemoteRenderer] textureID: %ld, streamID: %s, viewMode: %d", textureID, streamID.c_str(), viewMode);
 
     auto renderer = renderers_.find(textureID);
 
@@ -152,7 +169,7 @@ void ZegoTextureRendererController::removeRemoteRenderer(std::string streamID)
 /// Called when dart invoke `mediaPlayer.setPlayerCanvas`
 bool ZegoTextureRendererController::addMediaPlayerRenderer(int64_t textureID, ZEGO::EXPRESS::IZegoMediaPlayer *mediaPlayer, ZEGO::EXPRESS::ZegoViewMode viewMode)
 {
-    ZF::logInfo("[addMediaPlayerRenderer] textureID: %d, index: %d, viewMode: %d", textureID, mediaPlayer->getIndex(), viewMode);
+    ZF::logInfo("[addMediaPlayerRenderer] textureID: %ld, index: %d, viewMode: %d", textureID, mediaPlayer->getIndex(), viewMode);
 
     auto renderer = renderers_.find(textureID);
 
@@ -204,7 +221,7 @@ void ZegoTextureRendererController::setCustomVideoRenderHandler(std::shared_ptr<
 }
 
 void ZegoTextureRendererController::enableTextureAlpha(bool enable, int64_t textureID) {
-    ZF::logInfo("[enableTextureAlpha] textureID: %d, enable: %d", textureID, enable);
+    ZF::logInfo("[enableTextureAlpha] textureID: %ld, enable: %d", textureID, enable);
 
     auto renderer = renderers_.find(textureID);
 
@@ -294,17 +311,17 @@ void ZegoTextureRendererController::onCapturedVideoFrameRawData(unsigned char **
             /// alpha premultiply
             auto alphaBlend = alphaRenders_.find(renderer->second->getTextureID());
             if (alphaBlend != alphaRenders_.end() && alphaBlend->second) {
-                UINT cbStride = param.width * 4;
-                UINT cbBufferSize = cbStride * param.height;
+                uint cbStride = param.width * 4;
+                // uint cbBufferSize = cbStride * param.height;
 
-                for (UINT y = 0; y < param.height; y++) {
-                    BYTE* pRow = *data + y * cbStride;
-                    for (UINT x = 0; x < param.width; x++) {
-                        BYTE* pPixel = pRow + x * 4;
-                        BYTE alpha = pPixel[3];
-                        pPixel[0] = static_cast<BYTE>((pPixel[0] * alpha + 127) / 255);
-                        pPixel[1] = static_cast<BYTE>((pPixel[1] * alpha + 127) / 255);
-                        pPixel[2] = static_cast<BYTE>((pPixel[2] * alpha + 127) / 255);
+                for (uint y = 0; y < param.height; y++) {
+                    unsigned char* pRow = *data + y * cbStride;
+                    for (uint x = 0; x < param.width; x++) {
+                        unsigned char* pPixel = pRow + x * 4;
+                        unsigned char alpha = pPixel[3];
+                        pPixel[0] = static_cast<unsigned char>((pPixel[0] * alpha + 127) / 255);
+                        pPixel[1] = static_cast<unsigned char>((pPixel[1] * alpha + 127) / 255);
+                        pPixel[2] = static_cast<unsigned char>((pPixel[2] * alpha + 127) / 255);
                     }
                 }
             }
@@ -337,7 +354,7 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** d
             if (eventSink_) {
                 auto size = renderer->second->getSize();
                 if (size.first != param.width || size.second != param.height) {
-                    flutter::EncodableMap map;
+                    FTMap map;
                     map[FTValue("type")] =  FTValue("update");
                     map[FTValue("textureID")] =  FTValue(renderer->second->getTextureID());
                     map[FTValue("width")] =  FTValue(param.width);
@@ -350,7 +367,7 @@ void ZegoTextureRendererController::onRemoteVideoFrameRawData(unsigned char ** d
             auto alphaBlend = alphaRenders_.find(renderer->second->getTextureID());
             if (alphaBlend != alphaRenders_.end() && alphaBlend->second) {
                 uint cbStride = param.width * 4;
-                uint cbBufferSize = cbStride * param.height;
+                // uint cbBufferSize = cbStride * param.height;
 
                 for (uint y = 0; y < param.height; y++) {
                     unsigned char* pRow = *data + y * cbStride;
@@ -394,7 +411,7 @@ void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer
             if (eventSink_) {
                 auto size = renderer->second->getSize();
                 if (size.first != param.width || size.second != param.height) {
-                    flutter::EncodableMap map;
+                    FTMap map;
                     map[FTValue("type")] =  FTValue("update");
                     map[FTValue("textureID")] =  FTValue(renderer->second->getTextureID());
                     map[FTValue("width")] =  FTValue(param.width);

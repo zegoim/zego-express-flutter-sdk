@@ -1,8 +1,5 @@
 #include "ZegoDataTypeConvert.h"
 
-
-// FlValueMap::
-
 FlValue* zego_value_new(int value) {
     return fl_value_new_int(value);
 }
@@ -51,11 +48,11 @@ bool zego_value_is_null(FlValue* value) {
     return fl_value_get_type(value) == FL_VALUE_TYPE_NULL;
 }
 
-int zego_value_get_int(FlValue* value) {
+int64_t zego_value_get_int(FlValue* value) {
     return fl_value_get_int(value);
 }
 
-int zego_value_get_long(FlValue* value) {
+int64_t zego_value_get_long(FlValue* value) {
     return fl_value_get_int(value);
 }
 

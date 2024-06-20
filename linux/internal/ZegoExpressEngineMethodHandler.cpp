@@ -1,6 +1,12 @@
 #include "ZegoExpressEngineMethodHandler.h"
 #include "ZegoExpressEngineEventHandler.h"
-// #include "ZegoTextureRendererController.h"
+#include "ZegoTextureRendererController.h"
+
+#ifdef _WIN32
+#include <flutter/encodable_value.h>
+#include <flutter/plugin_registrar_windows.h>
+#include "DataToImageTools.hpp"
+#endif
 
 #include <functional>
 #include <variant>
@@ -8,8 +14,9 @@
 #include <unordered_map>
 #include <sstream>
 
+// #include <Windows.h>
 #include "../ZegoLog.h"
-// #include "DataToImageTools.hpp"
+#include "ZegoUtils.h"
 // #include "zego_express_engine/ZegoCustomVideoCaptureManager.h"
 // #include "zego_express_engine/ZegoCustomVideoProcessManager.h"
 // #include "zego_express_engine/ZegoCustomVideoRenderManager.h"
@@ -18,7 +25,7 @@
 // #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 
 void ZegoExpressEngineMethodHandler::clearPluginRegistrar() {
-    // ZegoTextureRendererController::getInstance()->uninit();
+    ZegoTextureRendererController::getInstance()->uninit();
 }
 
 void ZegoExpressEngineMethodHandler::initApiCalledCallback() {
@@ -59,18 +66,14 @@ void ZegoExpressEngineMethodHandler::getAssetAbsolutePath(
     FTArgument argument,
     FTResult result) {
     std::string assetPath = zego_value_get_string(argument[FTValue("assetPath")]);
-    // wchar_t exePath[MAX_PATH] = {0};
-    // ::GetModuleFileName(NULL, exePath, MAX_PATH);
-    // std::wstring exePathStrW{exePath};
-    // std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
-    // exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
-    // if (!exePathStr.empty()) {
-    //     assetPath = exePathStr + "\\data\\flutter_assets\\" + assetPath;
-    // } else {
-    //     result->Error("getAssetAbsolutePath_get_exe_path_fail",
-    //                   "Failed to get the directory where the application is located");
-    //     return;
-    // }
+    std::string flutterAssetsPath = GetFlutterAssetsPath();
+    if (!flutterAssetsPath.empty()) {
+        assetPath = flutterAssetsPath + assetPath;
+    } else {
+        result->Error("getAssetAbsolutePath_get_exe_path_fail",
+                      "Failed to get the directory where the application is located");
+        return;
+    }
     result->Success(FTValue(assetPath));
 }
 
@@ -97,7 +100,7 @@ void ZegoExpressEngineMethodHandler::createEngine(
     engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
 
-    // ZegoTextureRendererController::getInstance()->init(registrar_->messenger());
+    ZegoTextureRendererController::getInstance()->init(messenger_);
 
     result->Success();
 }
@@ -129,7 +132,7 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
 
-        // ZegoTextureRendererController::getInstance()->init(registrar_->messenger());
+        ZegoTextureRendererController::getInstance()->init(messenger_);
     }
     result->Success();
 }
@@ -140,7 +143,7 @@ void ZegoExpressEngineMethodHandler::destroyEngine(
     auto engine = EXPRESS::ZegoExpressSDK::getEngine();
 
     if (engine) {
-        // ZegoTextureRendererController::getInstance()->uninit();
+        ZegoTextureRendererController::getInstance()->uninit();
         auto sharedPtrResult =
             FTMoveResult(result);
         EXPRESS::ZegoExpressSDK::destroyEngine(engine, [=]() { sharedPtrResult->Success(); });
@@ -317,22 +320,18 @@ void ZegoExpressEngineMethodHandler::setDummyCaptureImagePath(
     FTArgument argument,
     FTResult result) {
     auto filePath = zego_value_get_string(argument[FTValue("filePath")]);
-    // const std::string flutterAssertTaget = "flutter-asset://";
-    // if (filePath.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
-    //     filePath.replace(0, flutterAssertTaget.size(), "");
-    //     wchar_t exePath[MAX_PATH] = {0};
-    //     ::GetModuleFileName(NULL, exePath, MAX_PATH);
-    //     std::wstring exePathStrW{exePath};
-    //     std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
-    //     exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
-    //     if (!exePathStr.empty()) {
-    //         filePath = exePathStr + "\\data\\flutter_assets\\" + filePath;
-    //     } else {
-    //         result->Error("setDummyCaptureImagePath_get_exe_path_fail",
-    //                       "Failed to get the directory where the application is located");
-    //         return;
-    //     }
-    // }
+    const std::string flutterAssertTaget = "flutter-asset://";
+    if (filePath.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+        filePath.replace(0, flutterAssertTaget.size(), "");
+        std::string flutterAssetsPath = GetFlutterAssetsPath();
+        if (!flutterAssetsPath.empty()) {
+            filePath = flutterAssetsPath + filePath;
+        } else {
+            result->Error("setDummyCaptureImagePath_get_exe_path_fail",
+                          "Failed to get the directory where the application is located");
+            return;
+        }
+    }
     auto channel = (EXPRESS::ZegoPublishChannel)zego_value_get_int(argument[FTValue("channel")]);
     EXPRESS::ZegoExpressSDK::getEngine()->setDummyCaptureImagePath(filePath, channel);
     result->Success();
@@ -348,7 +347,7 @@ void ZegoExpressEngineMethodHandler::loginRoom(
                            zego_value_get_string(userMap[FTValue("userName")])};
 
     FTMap configMap;
-    if (zego_value_is_null(argument[FTValue("config")])) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         configMap = zego_value_get_map(argument[FTValue("config")]);
     }
 
@@ -419,7 +418,7 @@ void ZegoExpressEngineMethodHandler::switchRoom(
     auto toRoomID = zego_value_get_string(argument[FTValue("toRoomID")]);
 
     std::unique_ptr<EXPRESS::ZegoRoomConfig> configPtr = nullptr;
-    if (zego_value_is_null(argument[FTValue("config")])) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         auto configMap = zego_value_get_map(argument[FTValue("config")]);
 
         if (configMap.size() > 0) {
@@ -519,7 +518,7 @@ void ZegoExpressEngineMethodHandler::startPublishingStream(
     auto streamID = zego_value_get_string(argument[FTValue("streamID")]);
     auto channel = zego_value_get_int(argument[FTValue("channel")]);
 
-    if (zego_value_is_null(argument[FTValue("config")])) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         auto configMap = zego_value_get_map(argument[FTValue("config")]);
 
         if (configMap.size() > 0) {
@@ -578,20 +577,20 @@ void ZegoExpressEngineMethodHandler::startPreview(
     auto channel = zego_value_get_int(argument[FTValue("channel")]);
 
     FTMap canvasMap;
-    if (zego_value_is_null(argument[FTValue("canvas")])) {
+    if (!zego_value_is_null(argument[FTValue("canvas")])) {
         canvasMap = zego_value_get_map(argument[FTValue("canvas")]);
     }
 
     EXPRESS::ZegoCanvas canvas;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
-        // auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        // auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
-        // auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
-        // ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
-        //     (EXPRESS::ZegoPublishChannel)channel);
-        // ZegoTextureRendererController::getInstance()->addCapturedRenderer(
-        //     viewID, (EXPRESS::ZegoPublishChannel)channel, viewMode);
-        // ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
+        int64_t viewID = zego_value_get_long(canvasMap[FTValue("view")]);
+        auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
+        ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
+            (EXPRESS::ZegoPublishChannel)channel);
+        ZegoTextureRendererController::getInstance()->addCapturedRenderer(
+            viewID, (EXPRESS::ZegoPublishChannel)channel, viewMode);
+        ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
     }
     EXPRESS::ZegoExpressSDK::getEngine()->startPreview(nullptr,
                                                        (EXPRESS::ZegoPublishChannel)channel);
@@ -602,8 +601,8 @@ void ZegoExpressEngineMethodHandler::stopPreview(
     FTArgument argument,
     FTResult result) {
     auto channel = zego_value_get_int(argument[FTValue("channel")]);
-    // ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
-    //     (EXPRESS::ZegoPublishChannel)channel);
+    ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
+        (EXPRESS::ZegoPublishChannel)channel);
     EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
@@ -914,7 +913,7 @@ void ZegoExpressEngineMethodHandler::setVideoSource(
         channel = zego_value_get_int(argument[FTValue("channel")]);
     }
 
-    // ZegoTextureRendererController::getInstance()->setVideoSourceChannel((EXPRESS::ZegoPublishChannel)channel, (EXPRESS::ZegoVideoSourceType)source);
+    ZegoTextureRendererController::getInstance()->setVideoSourceChannel((EXPRESS::ZegoPublishChannel)channel, (EXPRESS::ZegoVideoSourceType)source);
 
     int ret = 0;
     if (!hasChannel && !hasInstanceID) {
@@ -1061,23 +1060,23 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
     auto streamID = zego_value_get_string(argument[FTValue("streamID")]);
 
     FTMap canvasMap;
-    if (zego_value_is_null(argument[FTValue("canvas")])) {
+    if (!zego_value_is_null(argument[FTValue("canvas")])) {
         canvasMap = zego_value_get_map(argument[FTValue("canvas")]);
     }
 
     EXPRESS::ZegoCanvas canvas;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
-        // auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        // auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
-        // auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
+        auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
+        auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
+        auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
 
-        // ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
-        // ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
-        // ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+        ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
+        ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
     }
 
     FTMap configMap;
-    if (zego_value_is_null(argument[FTValue("config")])) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         configMap = zego_value_get_map(argument[FTValue("config")]);
     }
 
@@ -1102,7 +1101,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
         config.resourceWhenStopPublish = (EXPRESS::ZegoStreamResourceType)zego_value_get_int(configMap[FTValue("resourceWhenStopPublish")]);
 
         std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
-        if (zego_value_is_null(configMap[FTValue("cdnConfig")])) {
+        if (!zego_value_is_null(configMap[FTValue("cdnConfig")])) {
             auto cdnConfigMap = zego_value_get_map(configMap[FTValue("cdnConfig")]);
             if (cdnConfigMap.size() > 0) {
                 cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
@@ -1133,7 +1132,7 @@ void ZegoExpressEngineMethodHandler::stopPlayingStream(
     FTResult result) {
     auto streamID = zego_value_get_string(argument[FTValue("streamID")]);
 
-    // ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+    ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
     EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
 
     result->Success();
@@ -1319,7 +1318,7 @@ void ZegoExpressEngineMethodHandler::startSoundLevelMonitor(
     FTArgument argument,
     FTResult result) {
     FTMap configMap;
-    if (zego_value_is_null(argument[FTValue("config")])) {
+    if (!zego_value_is_null(argument[FTValue("config")])) {
         configMap = zego_value_get_map(argument[FTValue("config")]);
     }
 
@@ -2001,8 +2000,8 @@ void ZegoExpressEngineMethodHandler::createMediaPlayer(
         auto index = mediaPlayer->getIndex();
 
         mediaPlayer->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
-        // mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(),
-        //                              ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
+        mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(),
+                                     ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
         mediaPlayerMap_[index] = mediaPlayer;
 
         result->Success(FTValue(index));
@@ -2019,7 +2018,7 @@ void ZegoExpressEngineMethodHandler::destroyMediaPlayer(
 
     if (mediaPlayer) {
         mediaPlayer->setEventHandler(nullptr);
-        // ZegoTextureRendererController::getInstance()->removeMediaPlayerRenderer(mediaPlayer);
+        ZegoTextureRendererController::getInstance()->removeMediaPlayerRenderer(mediaPlayer);
         EXPRESS::ZegoExpressSDK::getEngine()->destroyMediaPlayer(mediaPlayer);
     }
 
@@ -2602,20 +2601,20 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayerCanvas(
 
     if (mediaPlayer) {
 
-        // FTMap canvasMap =
-        //     zego_value_get_map(argument[FTValue("canvas")]);
+        FTMap canvasMap =
+            zego_value_get_map(argument[FTValue("canvas")]);
 
-        // EXPRESS::ZegoCanvas canvas;
-        // auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        // auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
-        // if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(
-        //         viewID, mediaPlayer, viewMode)) {
-            // result->Success();
-        // } else {
+        EXPRESS::ZegoCanvas canvas;
+        auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
+        auto viewID = zego_value_get_long(canvasMap[FTValue("view")]);
+        if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(
+                viewID, mediaPlayer, viewMode)) {
+            result->Success();
+        } else {
             result->Error(
                 "mediaPlayerSetPlayerCanvas_Canvas_error",
                 "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check canvas");
-        // }
+        }
     } else {
         result->Error("mediaPlayerSetPlayerCanvas_Can_not_find_player",
                       "Invoke `mediaPlayerSetPlayerCanvas` but can't find specific player");
@@ -2635,14 +2634,14 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(
         // auto stride = ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
         FTMap resultMap;
         // if (pFrame && size != std::pair<int, int>(0, 0)) {
-        //     auto tmpData = makeBtimap(pFrame, size, stride);
-        //     std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
-        //     delete[] tmpData.second;
+            // auto tmpData = makeBtimap(pFrame, size, stride);
+            // std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
+            // delete[] tmpData.second;
 
-        //     resultMap[FTValue("image")] = FTValue(raw_image);
-        //     resultMap[FTValue("errorCode")] = FTValue(0);
+            // resultMap[FTValue("image")] = FTValue(raw_image);
+            // resultMap[FTValue("errorCode")] = FTValue(0);
         // } else {
-        //     resultMap[FTValue("errorCode")] = FTValue(-1);
+            resultMap[FTValue("errorCode")] = FTValue(-1);
         // }
         result->Success(resultMap);
     } else {
@@ -2724,7 +2723,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(
             // ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(
             //     ZegoMediaPlayerVideoManager::getInstance()->getHandler());
         } else {
-            // ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
+            ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
         }
         result->Success();
     } else {
@@ -4322,22 +4321,22 @@ void ZegoExpressEngineMethodHandler::copyrightedMusicRequestResourceV2(
 void ZegoExpressEngineMethodHandler::createTextureRenderer(
     FTArgument argument,
     FTResult result) {
-    // auto width = zego_value_get_int(argument[FTValue("width")]);
-    // auto height = zego_value_get_int(argument[FTValue("height")]);
+    auto width = zego_value_get_int(argument[FTValue("width")]);
+    auto height = zego_value_get_int(argument[FTValue("height")]);
 
-    // auto textureID = ZegoTextureRendererController::getInstance()->createTextureRenderer(
-    //     registrar_->texture_registrar(), width, height);
+    auto textureID = ZegoTextureRendererController::getInstance()->createTextureRenderer(
+        texture_, width, height);
 
-    result->Success(FTValue(0));
+    result->Success(FTValue(textureID));
 }
 
 void ZegoExpressEngineMethodHandler::destroyTextureRenderer(
     FTArgument argument,
     FTResult result) {
-    // auto textureID = zego_value_get_long(argument[FTValue("textureID")]);
-    // bool state = ZegoTextureRendererController::getInstance()->destroyTextureRenderer(textureID);
+    auto textureID = zego_value_get_long(argument[FTValue("textureID")]);
+    bool state = ZegoTextureRendererController::getInstance()->destroyTextureRenderer(textureID);
 
-    result->Success(FTValue(0));
+    result->Success(FTValue(state));
 }
 
 void ZegoExpressEngineMethodHandler::setMinVideoBitrateForTrafficControl(
@@ -4453,32 +4452,27 @@ void ZegoExpressEngineMethodHandler::setPublishWatermark(
     EXPRESS::ZegoWatermark *watermark = nullptr;
     EXPRESS::ZegoWatermark watermarkTemp;
     if (watermarkMap.size() > 0) {
-    //     watermarkTemp.imageURL = zego_value_get_string(watermarkMap[FTValue("imageURL")]);
-    //     watermarkTemp.layout.x = zego_value_get_int(watermarkMap[FTValue("left")]);
-    //     watermarkTemp.layout.y = zego_value_get_int(watermarkMap[FTValue("top")]);
-    //     watermarkTemp.layout.width =
-    //         zego_value_get_int(watermarkMap[FTValue("right")]) - watermarkTemp.layout.x;
-    //     watermarkTemp.layout.height =
-    //         zego_value_get_int(watermarkMap[FTValue("bottom")]) - watermarkTemp.layout.y;
+        watermarkTemp.imageURL = zego_value_get_string(watermarkMap[FTValue("imageURL")]);
+        watermarkTemp.layout.x = zego_value_get_int(watermarkMap[FTValue("left")]);
+        watermarkTemp.layout.y = zego_value_get_int(watermarkMap[FTValue("top")]);
+        watermarkTemp.layout.width =
+            zego_value_get_int(watermarkMap[FTValue("right")]) - watermarkTemp.layout.x;
+        watermarkTemp.layout.height =
+            zego_value_get_int(watermarkMap[FTValue("bottom")]) - watermarkTemp.layout.y;
 
-    //     const std::string flutterAssertTaget = "flutter-asset://";
-    //     if (watermarkTemp.imageURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
-    //         watermarkTemp.imageURL.replace(0, flutterAssertTaget.size(), "");
-
-    //         wchar_t exePath[MAX_PATH] = {0};
-    //         ::GetModuleFileName(NULL, exePath, MAX_PATH);
-    //         std::wstring exePathStrW{exePath};
-    //         std::string exePathStr(exePathStrW.begin(), exePathStrW.end());
-    //         exePathStr = std::string(exePathStr, 0, exePathStr.find_last_of("\\"));
-    //         if (!exePathStr.empty()) {
-    //             watermarkTemp.imageURL =
-    //                 "file:///" + exePathStr + "\\data\\flutter_assets\\" + watermarkTemp.imageURL;
-    //         } else {
-    //             result->Error("setPublishWatermark_get_exe_path_fail",
-    //                           "Failed to get the directory where the application is located");
-    //             return;
-    //         }
-    //     }
+        const std::string flutterAssertTaget = "flutter-asset://";
+        if (watermarkTemp.imageURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+            watermarkTemp.imageURL.replace(0, flutterAssertTaget.size(), "");
+            std::string flutterAsssetsPath = GetFlutterAssetsPath();
+            if (!flutterAsssetsPath.empty()) {
+                watermarkTemp.imageURL =
+                    "file:///" + flutterAsssetsPath + watermarkTemp.imageURL;
+            } else {
+                result->Error("setPublishWatermark_get_exe_path_fail",
+                              "Failed to get the directory where the application is located");
+                return;
+            }
+        }
         watermark = &watermarkTemp;
     }
     auto isPreviewVisible = zego_value_get_bool(argument[FTValue("isPreviewVisible")]);
@@ -4644,7 +4638,7 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(
     auto streamID = zego_value_get_string(argument[FTValue("streamID")]);
 
     FTMap canvasMap;
-    if (zego_value_is_null(argument[FTValue("canvas")])) {
+    if (!zego_value_is_null(argument[FTValue("canvas")])) {
         canvasMap = zego_value_get_map(argument[FTValue("canvas")]);
     }
 
@@ -4652,15 +4646,15 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(
     bool isSuccess = false;
     int64_t viewID = 0;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
-        // auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
-        // auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
+        auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[FTValue("viewMode")]);
+        auto alphaBlend = zego_value_get_bool(canvasMap[FTValue("alphaBlend")]);
 
         viewID = zego_value_get_long(canvasMap[FTValue("view")]);
-        // ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
-        // isSuccess = ZegoTextureRendererController::getInstance()->addRemoteRenderer(
-        //     viewID, streamID, viewMode);
+        ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+        isSuccess = ZegoTextureRendererController::getInstance()->addRemoteRenderer(
+            viewID, streamID, viewMode);
 
-        // ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
     }
 
     if (isSuccess) {
@@ -5103,8 +5097,8 @@ void ZegoExpressEngineMethodHandler::enableCustomVideoRender(
             config.frameFormatSeries = EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_SERIES_RGB;
             EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(true, &config);
 
-            // EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(
-            //     ZegoTextureRendererController::getInstance());
+            EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(
+                ZegoTextureRendererController::getInstance());
             // ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(
             //     ZegoCustomVideoRenderManager::getInstance()->getHandler());
         } else {
@@ -5114,7 +5108,7 @@ void ZegoExpressEngineMethodHandler::enableCustomVideoRender(
         }
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(false, &config);
-        // ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(nullptr);
+        ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(nullptr);
     }
 
     result->Success();

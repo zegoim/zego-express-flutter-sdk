@@ -209,39 +209,21 @@ class FlValueList {
 };
 
 FlValue *zego_value_new(int value);
-
 FlValue *zego_value_new(int64_t value);
-
 FlValue *zego_value_new(long long value);
-
 FlValue *zego_value_new(bool value);
-
 FlValue *zego_value_new(double value);
-
 FlValue *zego_value_new(const char *value);
-
 FlValue *zego_value_new(std::string value);
-
 FlValue *zego_value_new(std::vector<uint8_t> value);
-
 FlValue *zego_value_new(std::vector<float> value);
-
 bool zego_value_is_null(FlValue *value);
-
-int zego_value_get_int(FlValue *value);
-
-int zego_value_get_long(FlValue *value);
-
+int64_t zego_value_get_int(FlValue *value);
+int64_t zego_value_get_long(FlValue *value);
 bool zego_value_get_bool(FlValue *value);
-
 double zego_value_get_double(FlValue *value);
-
 std::string zego_value_get_string(FlValue *value);
-
 std::vector<float> zego_value_get_vector_float(FlValue *value);
-
 std::vector<uint8_t> zego_value_get_vector_uint8(FlValue *value);
-
 FTMap zego_value_get_map(FlValue *value);
-
 FTArray zego_value_get_list(FlValue *value);

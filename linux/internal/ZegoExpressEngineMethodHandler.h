@@ -22,7 +22,10 @@ class ZegoExpressEngineMethodHandler {
         static ZegoExpressEngineMethodHandler m_instance;
         return m_instance;
     }
-    void setPluginRegistrar(FTPluginRegistrar *registrar) { registrar_ = registrar; }
+    
+    void setPluginBinaryMessenger(FTBinaryMessenger *messenger) { messenger_ = messenger; }
+
+    void setPluginTexture(FTTextureRegistrar *texture) { texture_ = texture; }
 
     void clearPluginRegistrar();
 
@@ -1046,5 +1049,7 @@ class ZegoExpressEngineMethodHandler {
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
 
-    FTPluginRegistrar *registrar_;
+    FTBinaryMessenger *messenger_;
+
+    FTTextureRegistrar *texture_;
 };

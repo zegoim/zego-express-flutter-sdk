@@ -2,11 +2,12 @@
 
 #include <mutex>
 #include <unordered_map>
+#include <atomic>
 #ifdef _WIN32
 #include <flutter/event_channel.h>
 #endif
 
-// #include "ZegoTextureRenderer.h"
+#include "ZegoTextureRenderer.h"
 
 class ZegoTextureRendererControllerEventChannel;
 
@@ -15,7 +16,7 @@ class ZegoTextureRendererController : public ZEGO::EXPRESS::IZegoCustomVideoRend
 {
 public:
     ZegoTextureRendererController(/* args */);
-    ZegoTextureRendererController(const ZegoTextureRendererController &old) = default;
+    ZegoTextureRendererController(const ZegoTextureRendererController &old) = delete;
     virtual ~ZegoTextureRendererController();
 
     static std::shared_ptr<ZegoTextureRendererController> getInstance()
@@ -31,10 +32,10 @@ public:
         eventSink_.reset();
     }
 
-    void init(FTBinaryMessenger *message);
+    void init(FTBinaryMessenger *messenger);
     void uninit();
 
-    int64_t createTextureRenderer(FTTextureRegistrar* texture_registrar, uint32_t width, uint32_t height);
+    int64_t createTextureRenderer(FTTextureRegistrar *texture, uint32_t width, uint32_t height);
 
     bool destroyTextureRenderer(int64_t textureID);
 
@@ -161,18 +162,5 @@ protected:
             return nullptr;
         }
 };
-#else
-static FlMethodErrorResponse *listen_cb(FlEventChannel *channel, FlValue *args,
-                                        gpointer user_data) {
-    std::unique_ptr<FlEventSink> events(new FlEventSink(channel));
-    ZegoTextureRendererController::getInstance()->setEventSink(std::move(events));
-    return NULL;
-}
-
-static FlMethodErrorResponse *cancel_cb(FlEventChannel *channel, FlValue *args,
-                                        gpointer user_data) {
-    ZegoTextureRendererController::getInstance()->clearEventSink();
-    return NULL;
-}
 #endif
 
