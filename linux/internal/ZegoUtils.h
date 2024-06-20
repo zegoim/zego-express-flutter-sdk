@@ -1,3 +1,4 @@
+#pragma once
 
 #include <limits.h>
 #ifdef _WIN32

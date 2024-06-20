@@ -8,7 +8,7 @@
 
 #include <ZegoExpressSDK.h>
 
-#include "../ZegoDataTypeConvert.h"
+#include "ZegoDataUtils.h"
 #include "ZegoTexture.h"
 
 // Describes flutter desktop pixelbuffers pixel data order.
@@ -51,76 +51,65 @@ struct VideoFormatABGRPixel {
 // Handles the registration of Flutter textures, pixel buffers, and the
 // conversion of texture formats.
 class ZegoTextureRenderer {
- public:
-  ZegoTextureRenderer(FTTextureRegistrar* texture_registrar, uint32_t width, uint32_t height);
-      
-  virtual ~ZegoTextureRenderer();
+  public:
+    ZegoTextureRenderer(FTTextureRegistrar *texture_registrar, uint32_t width, uint32_t height);
 
-  // Prevent copying.
-  ZegoTextureRenderer(ZegoTextureRenderer const&) = delete;
-  ZegoTextureRenderer& operator=(ZegoTextureRenderer const&) = delete;
+    virtual ~ZegoTextureRenderer();
 
-  // Updates source data buffer with given data.
-  bool updateSrcFrameBuffer(uint8_t *data, uint32_t data_length,
-                            ZEGO::EXPRESS::ZegoVideoFrameParam frameParam);
+    // Prevent copying.
+    ZegoTextureRenderer(ZegoTextureRenderer const &) = delete;
+    ZegoTextureRenderer &operator=(ZegoTextureRenderer const &) = delete;
 
-  // Registers texture and updates given texture_id pointer value.
-  int64_t getTextureID() {
-    return textureID_;
-  }
+    // Updates source data buffer with given data.
+    bool updateSrcFrameBuffer(uint8_t *data, uint32_t data_length,
+                              ZEGO::EXPRESS::ZegoVideoFrameParam frameParam);
 
-  // Updates current preview texture size.
-  void updateRenderSize(uint32_t width, uint32_t height) {
-    width_ = width;
-    height_ = height;
-  }
+    // Registers texture and updates given texture_id pointer value.
+    int64_t getTextureID() { return textureID_; }
 
-  inline std::pair<int32_t, int32_t> getSize() {
-    return std::pair<int32_t, int32_t>(width_, height_);
-  }
+    // Updates current preview texture size.
+    void updateRenderSize(uint32_t width, uint32_t height) {
+        width_ = width;
+        height_ = height;
+    }
 
-  inline const std::vector<uint8_t> *getFrame() {
-    return &srcBuffer_;
-  }
+    inline std::pair<int32_t, int32_t> getSize() {
+        return std::pair<int32_t, int32_t>(width_, height_);
+    }
 
-  inline uint32_t getFrameStride() {
-    return srcStride_;
-  }
+    inline const std::vector<uint8_t> *getFrame() { return &srcBuffer_; }
 
-  void setBackgroundColor(int colode) {}
-  
-  void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) {
-    viewMode_ = mode;
-  }
+    inline uint32_t getFrameStride() { return srcStride_; }
 
-  inline bool getUseMirrorEffect() {
-    return isUseMirror_;
-  }
+    void setBackgroundColor(int colode) {}
 
-  void setUseMirrorEffect(bool mirror) { isUseMirror_ = mirror; }
+    void setViewMode(ZEGO::EXPRESS::ZegoViewMode mode) { viewMode_ = mode; }
 
- private:
+    inline bool getUseMirrorEffect() { return isUseMirror_; }
 
-  // Checks if texture registrar, texture id and texture are available.
-  bool TextureRegistered();
+    void setUseMirrorEffect(bool mirror) { isUseMirror_ = mirror; }
 
-  template<typename T> void srcFrameFormatToFlutterFormat();
-  
-  FTTextureRegistrar* textureRegistrar_ = nullptr;
+  private:
+    // Checks if texture registrar, texture id and texture are available.
+    bool TextureRegistered();
 
-  std::vector<uint8_t> srcBuffer_;
-  std::vector<uint8_t> destBuffer_;
+    template <typename T> void srcFrameFormatToFlutterFormat();
 
-  bool isUseMirror_ = true;
-  int64_t textureID_ = -1;
-  uint32_t width_ = 0;
-  uint32_t height_ = 0;
-  ZEGO::EXPRESS::ZegoViewMode viewMode_ = ZEGO::EXPRESS::ZegoViewMode::ZEGO_VIEW_MODE_ASPECT_FIT;
+    FTTextureRegistrar *textureRegistrar_ = nullptr;
 
-  uint32_t srcStride_ = 0;
+    std::vector<uint8_t> srcBuffer_;
+    std::vector<uint8_t> destBuffer_;
 
-  ZegoTexture* texture_;
-  VideoOutput* video_output_;
+    bool isUseMirror_ = true;
+    int64_t textureID_ = -1;
+    uint32_t width_ = 0;
+    uint32_t height_ = 0;
+    ZEGO::EXPRESS::ZegoViewMode viewMode_ = ZEGO::EXPRESS::ZegoViewMode::ZEGO_VIEW_MODE_ASPECT_FIT;
 
-  std::mutex bufferMutex_;
+    uint32_t srcStride_ = 0;
+
+    ZegoTexture *texture_;
+    VideoOutput *video_output_;
+
+    std::mutex bufferMutex_;
 };

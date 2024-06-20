@@ -1,8 +1,10 @@
+#pragma once
+
 #include <map>
 #include <functional>
 #include <string>
 
-#include "../ZegoDataTypeConvert.h"
+#include "../ZegoDataUtils.h"
 
 #define EngineMethodHandler(funcName)                                                              \
     {                                                                                              \

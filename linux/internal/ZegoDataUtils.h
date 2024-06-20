@@ -1,11 +1,22 @@
 #pragma once
 
+#ifdef _WIN32
+
+#define FTValue(varName) flutter::EncodableValue(varName)
+#define FTMap flutter::EncodableMap
+#define FTArray flutter::EncodableList
+
+#define FTArgument flutter::EncodableMap
+#define FTResult std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
+#define FTEventSink std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>
+#define FTMoveResult(result) std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result))
+
+#define FTPluginRegistrar flutter::PluginRegistrarWindows
+#define FTBinaryMessenger flutter::BinaryMessenger
+#define FTTextureRegistrar flutter::TextureRegistrar
+
+#elif defined(__linux__)
 #include <flutter_linux/flutter_linux.h>
-#include <functional>
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
 
 #define FTValue(varName) zego_value_new(varName)
 #define FTMap FlValueMap
@@ -13,38 +24,33 @@
 
 #define FTArgument FlValueMap &
 #define FTResult std::unique_ptr<FlResult>
-#define FTMoveResult(result) std::shared_ptr<FlResult>(std::move(result))
 #define FTEventSink std::unique_ptr<FlEventSink>
+#define FTMoveResult(result) std::shared_ptr<FlResult>(std::move(result))
 
 #define FTPluginRegistrar FlPluginRegistrar
 #define FTBinaryMessenger FlBinaryMessenger
 #define FTTextureRegistrar FlTextureRegistrar
 
+#endif
+#include <functional>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#ifdef __linux__
 class FlResult {
   private:
     FlMethodCall *method_call;
 
   public:
-    FlResult(FlMethodCall *method) {
-        method_call = static_cast<FlMethodCall *>(g_object_ref(method));
-    };
-
-    ~FlResult() {
-        g_object_unref(method_call);
-    }
-
-    void Success() { Success(nullptr); }
-    void Success(FlValue *value) { fl_method_call_respond_success(method_call, value, nullptr); }
-
-    void NotImplemented() { fl_method_call_respond_not_implemented(method_call, nullptr); }
-
-    void Error(const std::string &code, const std::string &message, FlValue *value) {
-        fl_method_call_respond_error(method_call, code.c_str(), message.c_str(), value, nullptr);
-    }
-
-    void Error(const std::string &code, const std::string &message = "") {
-        Error(code, message, nullptr);
-    }
+    FlResult(FlMethodCall *method);
+    ~FlResult();
+    void Success();
+    void Success(FlValue *value);
+    void NotImplemented();
+    void Error(const std::string &code, const std::string &message, FlValue *value);
+    void Error(const std::string &code, const std::string &message);
 };
 
 class FlEventSink {
@@ -52,28 +58,9 @@ class FlEventSink {
     FlEventChannel *event_channel;
 
   public:
-    FlEventSink(FlEventChannel *event) : event_channel(event){};
-
-    void Success() { Success(nullptr); }
-    void Success(FlValue *value) {
-        if (g_main_context_get_thread_default() != g_main_context_default()) {
-          IdleValue* idle_value = new IdleValue{event_channel, value};
-          g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, func, idle_value, nullptr);
-        } else {
-          fl_event_channel_send(event_channel, value, nullptr, nullptr);
-        }
-    }
-  private:
-    typedef struct {
-        FlEventChannel* channel;
-        FlValue* value;
-    } IdleValue;
-    static gboolean func(gpointer user_data) {
-      IdleValue* data = static_cast<IdleValue*>(user_data);
-      fl_event_channel_send(data->channel, data->value, nullptr, nullptr);
-      delete data;
-      return FALSE;
-    }
+    FlEventSink(FlEventChannel *event);
+    void Success();
+    void Success(FlValue *value);
 };
 
 class FlValueMap {
@@ -82,14 +69,12 @@ class FlValueMap {
 
   public:
     FlValueMap() : map(fl_value_new_map()) {}
-
     FlValueMap(FlValue *value) : map(value) {}
 
     class Iterator {
       private:
         FlValueMap &owner_;
         size_t index;
-
       public:
         Iterator(FlValueMap &owner, size_t idx) : owner_(owner), index(idx) {}
 
@@ -97,7 +82,6 @@ class FlValueMap {
         std::pair<FlValue *, FlValue *> operator*() {
             FlValue *key = fl_value_get_map_key(owner_.map, index);
             FlValue *value = fl_value_get_map_value(owner_.map, index);
-            ;
             return {key, value};
         }
 
@@ -112,7 +96,6 @@ class FlValueMap {
     };
 
     Iterator begin() { return Iterator(*this, 0); }
-
     Iterator end() { return Iterator(*this, fl_value_get_length(map)); }
 
     class MapProxy {
@@ -130,12 +113,9 @@ class FlValueMap {
 
         ~MapProxy() { fl_value_unref(value_); }
 
-        // 赋值操作
         MapProxy &operator=(FlValue *val) {
-            // 更新 map
             value_ = val;
             fl_value_set(owner_.map, key_, value_);
-
             return *this;
         }
 
@@ -148,10 +128,8 @@ class FlValueMap {
         bool exists_;
     };
 
-    // 提供 operator[] 以创建 MapProxy 实例
     MapProxy operator[](FlValue *key) { return MapProxy(*this, key); }
 
-    // 获取列表长度
     size_t size() const { return fl_value_get_length(map); }
 
     operator FlValue *() { return map; }
@@ -163,25 +141,18 @@ class FlValueList {
 
   public:
     FlValueList() : list(fl_value_new_list()) {}
-
     FlValueList(FlValue *value) : list(value) {}
 
-    ~FlValueList() {}
-
-    // 提供 operator[] 以创建 ListProxy 实例
     FlValue *operator[](size_t index) { return fl_value_get_list_value(list, index); }
 
-    // 添加元素到列表尾部
     void push_back(FlValue *value) { fl_value_append_take(list, value); }
 
     void emplace_back(FlValue *value) { fl_value_append_take(list, value); }
 
-    // 获取列表长度
     size_t size() const { return fl_value_get_length(list); }
 
     operator FlValue *() { return list; }
 
-    // 获取指定索引处的元素
     FlValue *at(size_t index) { return fl_value_get_list_value(list, index); }
 
     class Iterator {
@@ -192,7 +163,6 @@ class FlValueList {
       public:
         Iterator(FlValueList &owner, size_t idx) : owner_(owner), index(idx) {}
 
-        // 解引用运算符返回键值对
         FlValue *operator*() { return fl_value_get_list_value(owner_.list, index); }
 
         Iterator &operator++() {
@@ -204,9 +174,9 @@ class FlValueList {
     };
 
     Iterator begin() { return Iterator(*this, 0); }
-
     Iterator end() { return Iterator(*this, fl_value_get_length(list)); }
 };
+#endif
 
 FlValue *zego_value_new(int value);
 FlValue *zego_value_new(int64_t value);
