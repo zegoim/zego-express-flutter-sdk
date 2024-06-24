@@ -1,5 +1,59 @@
 # Change Log
 
+## 3.15.1
+
+### Bug Fixes
+
+1. Fixed MediaPlayer error.
+
+## 3.15.0
+
+### New Features
+
+#### 1. Supports the earback sound data to be played through the speaker
+
+Note: Please contact ZEGOCLOUD technical support if you need to use this feature.
+
+Sound data that supports in-ear monitoring can be played from the speakers.
+
+#### 2. Supports enabling voice changer effects for the audio output of the media player
+
+The media player has added the [enableVoiceChanger] interface, which supports enabling voice changer effects for the audio output of the media player, and allows selection of the desired pitch-shifting effects.
+
+For related API, please refer to ZegoMediaPlayer > enableVoiceChanger
+
+### Enhancements
+
+#### 1. Optimize the noise reduction effect of "Balance Mode" in AI scene-based noise reduction
+
+Optimize the noise reduction effect of "Balance Mode" in AI scene-based noise reduction, further enhancing the clarity and stability of the human voice without compromising performance, and achieving cleaner noise suppression.
+
+#### 2. Expand the support scope of video hardware encoding and decoding
+
+Optimize video hardware encoding and decoding, increase the range of compatible devices, and enhance the performance of encoding and decoding at high resolutions and high frame rates.
+
+### Bug Fixes
+
+1. Fixed the issue of probabilistic crashes when stopping the audio and video engine with the input source from the auxiliary stream in the case of using the main stream for pushing.
+
+2. Fixed the occasional playback failure issue when playing network materials with the media player.
+
+3. Fixed the issue of probabilistic crashes during hardware encoding initialization.
+
+4. Fixed the issue of playback problems when hardware decoding CDN live video streams containing B-frames.
+
+5. Fixed the issue of accessing a wild pointer during camera enumeration.
+
+6. Web removes use of innerHTML interface to reduce security risks.
+
+### Deleted
+
+#### 1. Deprecate the media player [setVoiceChangerParam] interface
+
+To enhance the playback experience during voice changing, the media player [ZegoMediaPlayer.setVoiceChangerParam] interface is deprecated. Please use [ZegoMediaPlayer.enableVoiceChanger] instead.
+
+For related API, please refer to ZegoMediaPlayer > enableVoiceChanger
+
 ## 3.14.5
 
 ### New Features

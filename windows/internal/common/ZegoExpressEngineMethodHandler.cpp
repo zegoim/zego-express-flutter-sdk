@@ -55,6 +55,15 @@ void ZegoExpressEngineMethodHandler::setPluginVersion(FTArgument argument, FTRes
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::sendCustomLogMessage(FTArgument argument, FTResult result) {
+    std::string version = zego_value_get_string(argument[FTValue("message")]);
+
+    ZF::logInfo(version.c_str());
+
+    result->Success();
+}
+
+
 void ZegoExpressEngineMethodHandler::getAssetAbsolutePath(FTArgument argument, FTResult result) {
     std::string assetPath = zego_value_get_string(argument[FTValue("assetPath")]);
     std::string flutterAssetsPath = GetFlutterAssetsPath();
@@ -2161,6 +2170,28 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetVoiceChangerParam(FTArgument 
         param.pitch = (float)pitch;
         mediaPlayer->setVoiceChangerParam((EXPRESS::ZegoMediaPlayerAudioChannel)audioChannel,
                                           param);
+    }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::mediaPlayerEnableVoiceChanger(FTArgument argument,
+                                                                FTResult result) {
+    auto index = zego_value_get_int(argument[FTValue("index")]);
+    auto mediaPlayer = mediaPlayerMap_[index];
+
+    if (mediaPlayer) {
+        FTMap paramMap = zego_value_get_map(argument[FTValue("param")]);
+        auto pitch = zego_value_get_double(paramMap[FTValue("pitch")]);
+
+        auto audioChannel = zego_value_get_int(argument[FTValue("audioChannel")]);
+
+        auto enable = zego_value_get_bool(argument[FTValue("enable")]);
+
+        EXPRESS::ZegoVoiceChangerParam param;
+        param.pitch = (float)pitch;
+        mediaPlayer->enableVoiceChanger((EXPRESS::ZegoMediaPlayerAudioChannel)audioChannel,
+                                        enable, param);
     }
 
     result->Success();

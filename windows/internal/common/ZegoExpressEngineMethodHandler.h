@@ -37,6 +37,7 @@ class ZegoExpressEngineMethodHandler {
     void getVersion(FTArgument argument, FTResult result);
     void isFeatureSupported(FTArgument argument, FTResult result);
     void setPluginVersion(FTArgument argument, FTResult result);
+    void sendCustomLogMessage(FTArgument argument, FTResult result);
     void getAssetAbsolutePath(FTArgument argument, FTResult result);
     void createEngine(FTArgument argument, FTResult result);
     void createEngineWithProfile(FTArgument argument, FTResult result);
@@ -266,6 +267,7 @@ class ZegoExpressEngineMethodHandler {
     void mediaPlayerGetAudioTrackCount(FTArgument argument, FTResult result);
     void mediaPlayerSetAudioTrackIndex(FTArgument argument, FTResult result);
     void mediaPlayerSetVoiceChangerParam(FTArgument argument, FTResult result);
+    void mediaPlayerEnableVoiceChanger(FTArgument argument, FTResult result);
     void mediaPlayerGetCurrentState(FTArgument argument, FTResult result);
     void mediaPlayerSetPlaySpeed(FTArgument argument, FTResult result);
 
