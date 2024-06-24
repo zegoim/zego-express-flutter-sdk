@@ -1,9 +1,15 @@
 #include "ZegoExpressEngineMethodHandler.h"
-#include "ZegoExpressEngineEventHandler.h"
 #include "../ZegoTextureRendererController.h"
+#include "ZegoExpressEngineEventHandler.h"
 
 #ifdef _WIN32
 #include "../DataToImageTools.hpp"
+#include "zego_express_engine/ZegoCustomVideoCaptureManager.h"
+#include "zego_express_engine/ZegoCustomVideoProcessManager.h"
+#include "zego_express_engine/ZegoCustomVideoRenderManager.h"
+#include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
+#include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
+#include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #endif
@@ -16,12 +22,6 @@
 
 #include "../../ZegoLog.h"
 #include "../ZegoUtils.h"
-// #include "zego_express_engine/ZegoCustomVideoCaptureManager.h"
-// #include "zego_express_engine/ZegoCustomVideoProcessManager.h"
-// #include "zego_express_engine/ZegoCustomVideoRenderManager.h"
-// #include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
-// #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
-// #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 
 void ZegoExpressEngineMethodHandler::clearPluginRegistrar() {
     ZegoTextureRendererController::getInstance()->uninit();
@@ -665,9 +665,11 @@ void ZegoExpressEngineMethodHandler::takePublishStreamSnapshot(FTArgument argume
         [=](int errorCode, void *image) {
             std::vector<uint8_t> raw_image;
             if (image) {
-                // auto tmpData = CreateFromHBITMAP((HBITMAP)image);
-                // raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
-                // delete[] tmpData.second;
+#ifdef _WIN32
+                auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+                raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
+#endif
             }
 
             FTMap resultMap;
@@ -1058,14 +1060,16 @@ void ZegoExpressEngineMethodHandler::takePlayStreamSnapshot(FTArgument argument,
             // TODO : prevent crash
             std::vector<uint8_t> raw_image;
             if (image) {
-                // auto tmpData = CreateFromHBITMAP((HBITMAP)image);
-                // raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
-                // delete[] tmpData.second;
+#ifdef _WIN32
+                auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+                raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
+#endif
             }
 
             FTMap resultMap;
             resultMap[FTValue("errorCode")] = FTValue(errorCode);
-            // resultMap[FTValue("image")] = FTValue(raw_image);
+            resultMap[FTValue("image")] = FTValue(raw_image);
             sharedPtrResult->Success(resultMap);
         });
 }
@@ -2366,21 +2370,24 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(FTArgument argument
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        // auto pFrame =
-        //     ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
-        // auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
-        // auto stride = ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
+#ifdef _WIN32
+        auto pFrame =
+            ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
+        auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
+        auto stride =
+            ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
         FTMap resultMap;
-        // if (pFrame && size != std::pair<int, int>(0, 0)) {
-        // auto tmpData = makeBtimap(pFrame, size, stride);
-        // std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
-        // delete[] tmpData.second;
+        if (pFrame && size != std::pair<int, int>(0, 0)) {
+            auto tmpData = makeBtimap(pFrame, size, stride);
+            std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
+            delete[] tmpData.second;
 
-        // resultMap[FTValue("image")] = FTValue(raw_image);
-        // resultMap[FTValue("errorCode")] = FTValue(0);
-        // } else {
-        resultMap[FTValue("errorCode")] = FTValue(-1);
-        // }
+            resultMap[FTValue("image")] = FTValue(raw_image);
+            resultMap[FTValue("errorCode")] = FTValue(0);
+        } else {
+            resultMap[FTValue("errorCode")] = FTValue(-1);
+        }
+#endif
         result->Success(resultMap);
     } else {
         result->Error("mediaPlayerTakeSnapshot_Can_not_find_player",
@@ -2433,8 +2440,9 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableAudioData(FTArgument argum
     if (mediaPlayer) {
         auto enable = zego_value_get_bool(argument[FTValue("enable")]);
         if (enable) {
-            // mediaPlayer->setAudioHandler(
-            //     ZegoMediaPlayerAudioManager::getInstance()->getHandler());
+#ifdef _WIN32
+            mediaPlayer->setAudioHandler(ZegoMediaPlayerAudioManager::getInstance()->getHandler());
+#endif
         } else {
             mediaPlayer->setAudioHandler(nullptr);
         }
@@ -2454,8 +2462,10 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(FTArgument argum
     if (mediaPlayer) {
         auto enable = zego_value_get_bool(argument[FTValue("enable")]);
         if (enable) {
-            // ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(
-            //     ZegoMediaPlayerVideoManager::getInstance()->getHandler());
+#ifdef _WIN32
+            ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(
+                ZegoMediaPlayerVideoManager::getInstance()->getHandler());
+#endif
         } else {
             ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
         }
@@ -2476,7 +2486,10 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableBlockData(FTArgument argum
         auto enable = zego_value_get_bool(argument[FTValue("enable")]);
         unsigned int blockSize = zego_value_get_long(argument[FTValue("blockSize")]);
         if (enable) {
-            // mediaPlayer->setBlockDataHandler(ZegoMediaPlayerBlockDataManager::getInstance()->getHandler(), blockSize);
+#ifdef _WIN32
+            mediaPlayer->setBlockDataHandler(
+                ZegoMediaPlayerBlockDataManager::getInstance()->getHandler(), blockSize);
+#endif
         } else {
             mediaPlayer->setBlockDataHandler(nullptr, blockSize);
         }
@@ -4567,8 +4580,10 @@ void ZegoExpressEngineMethodHandler::enableCustomVideoCapture(FTArgument argumen
     auto channel = zego_value_get_int(argument[FTValue("channel")]);
 
     if (enable) {
-        // EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoCaptureHandler(
-        //     ZegoCustomVideoCaptureManager::getInstance()->getHandler());
+#ifdef _WIN32
+        EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoCaptureHandler(
+            ZegoCustomVideoCaptureManager::getInstance()->getHandler());
+#endif
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoCaptureHandler(nullptr);
     }
@@ -4592,8 +4607,10 @@ void ZegoExpressEngineMethodHandler::enableCustomVideoProcessing(FTArgument argu
     auto channel = zego_value_get_int(argument[FTValue("channel")]);
 
     if (enable) {
-        // EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoProcessHandler(
-        //     ZegoCustomVideoProcessManager::getInstance()->getHandler());
+#ifdef _WIN32
+        EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoProcessHandler(
+            ZegoCustomVideoProcessManager::getInstance()->getHandler());
+#endif
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoProcessHandler(nullptr);
     }
@@ -4625,12 +4642,16 @@ void ZegoExpressEngineMethodHandler::enableCustomVideoRender(FTArgument argument
 
             EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(
                 ZegoTextureRendererController::getInstance());
-            // ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(
-            //     ZegoCustomVideoRenderManager::getInstance()->getHandler());
+#ifdef _WIN32
+            ZegoTextureRendererController::getInstance()->setCustomVideoRenderHandler(
+                ZegoCustomVideoRenderManager::getInstance()->getHandler());
+#endif
         } else {
             EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(true, &config);
-            // EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(
-            //     ZegoCustomVideoRenderManager::getInstance()->getHandler());
+#ifdef _WIN32
+            EXPRESS::ZegoExpressSDK::getEngine()->setCustomVideoRenderHandler(
+                ZegoCustomVideoRenderManager::getInstance()->getHandler());
+#endif
         }
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->enableCustomVideoRender(false, &config);
@@ -5239,6 +5260,7 @@ void ZegoExpressEngineMethodHandler::dataManagerStopSubscribing(FTArgument argum
 }
 
 void ZegoExpressEngineMethodHandler::getScreenCaptureSources(FTArgument argument, FTResult result) {
+#ifdef _WIN32
     auto thumbnailWidth = zego_value_get_int(argument[FTValue("thumbnailWidth")]);
     auto thumbnailHeight = zego_value_get_int(argument[FTValue("thumbnailHeight")]);
     auto iconWidth = zego_value_get_int(argument[FTValue("iconWidth")]);
@@ -5254,33 +5276,37 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(FTArgument argument
         infoMap[FTValue("sourceName")] = FTValue(info.sourceName);
 
         if (info.thumbnailImage.length >= 0 && info.thumbnailImage.buffer != nullptr) {
-            // auto thumbnailImageData = makeBtimapByBGRABuffer(
-            //     info.thumbnailImage.buffer, info.thumbnailImage.length,
-            //     std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
-            // std::vector<uint8_t> thumbnailImage(
-            //     thumbnailImageData.second, thumbnailImageData.second + thumbnailImageData.first);
-            // delete[] thumbnailImageData.second;
-            // infoMap[FTValue("thumbnailImage")] = FTValue(thumbnailImage);
+            auto thumbnailImageData = makeBtimapByBGRABuffer(
+                info.thumbnailImage.buffer, info.thumbnailImage.length,
+                std::pair(info.thumbnailImage.width, info.thumbnailImage.height));
+            std::vector<uint8_t> thumbnailImage(
+                thumbnailImageData.second, thumbnailImageData.second + thumbnailImageData.first);
+            delete[] thumbnailImageData.second;
+            infoMap[FTValue("thumbnailImage")] = FTValue(thumbnailImage);
         }
 
         if (info.iconImage.length >= 0 && info.iconImage.buffer != nullptr) {
-            // auto iconImageData =
-            //     makeIconByBGRABuffer(info.iconImage.buffer, info.iconImage.length,
-            //                          std::pair(info.iconImage.width, info.iconImage.height));
-            // std::vector<uint8_t> iconImage(iconImageData.second,
-            //                                iconImageData.second + iconImageData.first);
-            // delete[] iconImageData.second;
-            // infoMap[FTValue("iconImage")] = FTValue(iconImage);
+            auto iconImageData =
+                makeIconByBGRABuffer(info.iconImage.buffer, info.iconImage.length,
+                                     std::pair(info.iconImage.width, info.iconImage.height));
+            std::vector<uint8_t> iconImage(iconImageData.second,
+                                           iconImageData.second + iconImageData.first);
+            delete[] iconImageData.second;
+            infoMap[FTValue("iconImage")] = FTValue(iconImage);
         }
 
         resultArray.emplace_back(FTValue(infoMap));
     }
 
     result->Success(resultArray);
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::createScreenCaptureSource(FTArgument argument,
                                                                FTResult result) {
+#ifdef _WIN32
     void *sourceId = reinterpret_cast<void *>(
         static_cast<intptr_t>(zego_value_get_long(argument[FTValue("sourceId")])));
     auto sourceType = zego_value_get_int(argument[FTValue("sourceType")]);
@@ -5296,10 +5322,14 @@ void ZegoExpressEngineMethodHandler::createScreenCaptureSource(FTArgument argume
     } else {
         result->Success(FTValue(-1));
     }
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::destroyScreenCaptureSource(FTArgument argument,
                                                                 FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5310,10 +5340,14 @@ void ZegoExpressEngineMethodHandler::destroyScreenCaptureSource(FTArgument argum
     screenCaptureSourceMap_.erase(index);
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::enableCursorVisibleScreenCaptureSource(FTArgument argument,
                                                                             FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5323,10 +5357,14 @@ void ZegoExpressEngineMethodHandler::enableCursorVisibleScreenCaptureSource(FTAr
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(FTArgument argument,
                                                                              FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5336,10 +5374,14 @@ void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(FTA
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::setExcludeWindowListScreenCaptureSource(FTArgument argument,
                                                                              FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5357,10 +5399,14 @@ void ZegoExpressEngineMethodHandler::setExcludeWindowListScreenCaptureSource(FTA
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::updateCaptureRegionScreenCaptureSource(FTArgument argument,
                                                                             FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5375,10 +5421,14 @@ void ZegoExpressEngineMethodHandler::updateCaptureRegionScreenCaptureSource(FTAr
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::updatePublishRegionScreenCaptureSource(FTArgument argument,
                                                                             FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5393,10 +5443,14 @@ void ZegoExpressEngineMethodHandler::updatePublishRegionScreenCaptureSource(FTAr
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::updateCaptureSourceScreenCaptureSource(FTArgument argument,
                                                                             FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5409,10 +5463,14 @@ void ZegoExpressEngineMethodHandler::updateCaptureSourceScreenCaptureSource(FTAr
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::startCaptureScreenCaptureSource(FTArgument argument,
                                                                      FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5421,10 +5479,14 @@ void ZegoExpressEngineMethodHandler::startCaptureScreenCaptureSource(FTArgument 
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::stopCaptureScreenCaptureSource(FTArgument argument,
                                                                     FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5433,10 +5495,14 @@ void ZegoExpressEngineMethodHandler::stopCaptureScreenCaptureSource(FTArgument a
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(FTArgument argument,
                                                                              FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5451,10 +5517,14 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(FTA
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::enableAudioCaptureScreenCaptureSource(FTArgument argument,
                                                                            FTResult result) {
+#ifdef _WIN32
     auto index = zego_value_get_int(argument[FTValue("index")]);
     auto screenCaptureSource = screenCaptureSourceMap_[index];
 
@@ -5472,6 +5542,9 @@ void ZegoExpressEngineMethodHandler::enableAudioCaptureScreenCaptureSource(FTArg
     }
 
     result->Success();
+#elif
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
 }
 
 void ZegoExpressEngineMethodHandler::createAIVoiceChanger(FTArgument argument, FTResult result) {
