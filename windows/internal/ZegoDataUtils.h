@@ -1,6 +1,7 @@
 #pragma once
 
 #include <flutter/encodable_value.h>
+#include <flutter/event_channel.h>
 #include <memory>
 
 #define FTValue(varName) flutter::EncodableValue(varName)
@@ -18,7 +19,7 @@
 
 bool zego_value_is_null(flutter::EncodableValue value);
 
-int64_t zego_value_get_int(flutter::EncodableValue value);
+int32_t zego_value_get_int(flutter::EncodableValue value);
 
 int64_t zego_value_get_long(flutter::EncodableValue value);
 

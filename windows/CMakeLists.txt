@@ -33,20 +33,21 @@ list(APPEND PLUGIN_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerAudioManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerVideoManager.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoMediaPlayerBlockDataManager.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/ZegoDataUtils.h
-  ${CMAKE_CURRENT_LIST_DIR}/ZegoDataUtils.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoDataUtils.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoDataUtils.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.h
   ${CMAKE_CURRENT_LIST_DIR}/ZegoLog.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoUtils.h
   ${CMAKE_CURRENT_LIST_DIR}/internal/DataToImageTools.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/internal/universal/ZegoExpressEngineEventHandler.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/internal/universal/ZegoExpressEngineEventHandler.h
-  ${CMAKE_CURRENT_LIST_DIR}/internal/universal/ZegoExpressEngineMethodHandler.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/internal/universal/ZegoExpressEngineMethodHandler.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/common/ZegoExpressEngineEventHandler.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/common/ZegoExpressEngineEventHandler.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/common/ZegoExpressEngineMethodHandler.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/internal/common/ZegoExpressEngineMethodHandler.h
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRenderer.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRenderer.h
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRendererController.cpp
   ${CMAKE_CURRENT_LIST_DIR}/internal/ZegoTextureRendererController.h
-  ${CMAKE_CURRENT_LIST_DIR}/internal/universal/ZegoExpressEngineInterface.h
+  ${CMAKE_CURRENT_LIST_DIR}/internal/common/ZegoExpressEngineInterface.h
 )
 
 # Define the plugin library target. Its name must not be changed (see comment

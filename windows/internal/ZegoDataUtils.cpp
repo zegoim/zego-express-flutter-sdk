@@ -4,11 +4,11 @@ bool zego_value_is_null(flutter::EncodableValue value) {
     return value.IsNull();
 }
 
-int zego_value_get_int(flutter::EncodableValue value) {
+int32_t zego_value_get_int(flutter::EncodableValue value) {
     return std::get<int32_t>(value);
 }
 
-int zego_value_get_long(flutter::EncodableValue value) {
+int64_t zego_value_get_long(flutter::EncodableValue value) {
     return value.LongValue();
 }
 

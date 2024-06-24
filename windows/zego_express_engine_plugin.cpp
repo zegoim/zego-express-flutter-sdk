@@ -14,9 +14,9 @@
 #include <sstream>
 
 #include "ZegoLog.h"
-#include "internal/ZegoExpressEngineEventHandler.h"
-#include "internal/ZegoExpressEngineMethodHandler.h"
-#include "internal/ZegoExpressEngineInterface.h"
+#include "internal/common/ZegoExpressEngineEventHandler.h"
+#include "internal/common/ZegoExpressEngineMethodHandler.h"
+#include "internal/common/ZegoExpressEngineInterface.h"
 
 class ZegoExpressEnginePlugin : public flutter::Plugin,
                                 public flutter::StreamHandler<flutter::EncodableValue> {
@@ -52,7 +52,8 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
 // static
 void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
 
-    ZegoExpressEngineMethodHandler::getInstance().setPluginRegistrar(registrar);
+    ZegoExpressEngineMethodHandler::getInstance().setPluginBinaryMessenger(registrar->messenger());
+    ZegoExpressEngineMethodHandler::getInstance().setPluginTexture(registrar->texture_registrar());
 
     auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
 

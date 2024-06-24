@@ -3,7 +3,7 @@
 #include "../ZegoTextureRendererController.h"
 
 #ifdef _WIN32
-#include "DataToImageTools.hpp"
+#include "../DataToImageTools.hpp"
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #endif

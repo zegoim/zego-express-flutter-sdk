@@ -5,9 +5,9 @@
 #include <sys/utsname.h>
 
 #include "ZegoLog.h"
-#include "internal/universal/ZegoExpressEngineEventHandler.h"
-#include "internal/universal/ZegoExpressEngineMethodHandler.h"
-#include "internal/universal/ZegoExpressEngineInterface.h"
+#include "internal/common/ZegoExpressEngineEventHandler.h"
+#include "internal/common/ZegoExpressEngineMethodHandler.h"
+#include "internal/common/ZegoExpressEngineInterface.h"
 
 #define ZEGO_EXPRESS_ENGINE_PLUGIN(obj)                                                            \
     (G_TYPE_CHECK_INSTANCE_CAST((obj), zego_express_engine_plugin_get_type(),                      \

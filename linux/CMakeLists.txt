@@ -15,9 +15,9 @@ set(PLUGIN_NAME "zego_express_engine_plugin")
 include(${CMAKE_CURRENT_LIST_DIR}/download.cmake)
 download_native_sdk("${CMAKE_CURRENT_LIST_DIR}")
 
-# Copy universal code
+# Copy common code
 include(${CMAKE_CURRENT_LIST_DIR}/setup.cmake)
-copy_universal_code("${CMAKE_CURRENT_LIST_DIR}")
+copy_common_code("${CMAKE_CURRENT_LIST_DIR}")
 
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
@@ -25,11 +25,11 @@ list(APPEND PLUGIN_SOURCES
   "ZegoLog.h"
   "ZegoLog.cpp"
   # "internal/DataToImageTools.hpp"
-  "internal/universal/ZegoExpressEngineInterface.h"
-  "internal/universal/ZegoExpressEngineMethodHandler.cpp"
-  "internal/universal/ZegoExpressEngineMethodHandler.h"
-  "internal/universal/ZegoExpressEngineEventHandler.h"
-  "internal/universal/ZegoExpressEngineEventHandler.cpp"
+  "internal/common/ZegoExpressEngineInterface.h"
+  "internal/common/ZegoExpressEngineMethodHandler.cpp"
+  "internal/common/ZegoExpressEngineMethodHandler.h"
+  "internal/common/ZegoExpressEngineEventHandler.h"
+  "internal/common/ZegoExpressEngineEventHandler.cpp"
   "internal/ZegoTextureRendererController.h"
   "internal/ZegoTextureRendererController.cpp"
   "internal/ZegoTextureRenderer.h"
