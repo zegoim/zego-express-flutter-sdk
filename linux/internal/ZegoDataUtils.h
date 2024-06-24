@@ -187,6 +187,7 @@ FlValue *zego_value_new(const char *value);
 FlValue *zego_value_new(std::string value);
 FlValue *zego_value_new(std::vector<uint8_t> value);
 FlValue *zego_value_new(std::vector<float> value);
+FlValue *zego_value_new(FlValue *value);
 bool zego_value_is_null(FlValue *value);
 int64_t zego_value_get_int(FlValue *value);
 int64_t zego_value_get_long(FlValue *value);

@@ -15,6 +15,8 @@ FlValue *zego_value_new(std::vector<float> value) {
     return fl_value_new_float32_list(value.data(), value.size());
 }
 
+FlValue *zego_value_new(FlValue *value) { return value; }
+
 FlValue *zego_value_list_new() { return fl_value_new_list(); }
 FlValue *zego_value_map_new() { return fl_value_new_map(); }
 

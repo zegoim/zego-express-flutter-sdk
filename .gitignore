@@ -30,3 +30,4 @@ example/windows/flutter/generated_plugin_registrant.h
 
 # Linux
 linux/libs/*
+linux/internal/common
