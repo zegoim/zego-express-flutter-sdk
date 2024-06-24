@@ -5299,7 +5299,7 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(FTArgument argument
     }
 
     result->Success(resultArray);
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5322,7 +5322,7 @@ void ZegoExpressEngineMethodHandler::createScreenCaptureSource(FTArgument argume
     } else {
         result->Success(FTValue(-1));
     }
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5340,7 +5340,7 @@ void ZegoExpressEngineMethodHandler::destroyScreenCaptureSource(FTArgument argum
     screenCaptureSourceMap_.erase(index);
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5357,7 +5357,7 @@ void ZegoExpressEngineMethodHandler::enableCursorVisibleScreenCaptureSource(FTAr
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5374,7 +5374,7 @@ void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(FTA
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5399,7 +5399,7 @@ void ZegoExpressEngineMethodHandler::setExcludeWindowListScreenCaptureSource(FTA
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5421,7 +5421,7 @@ void ZegoExpressEngineMethodHandler::updateCaptureRegionScreenCaptureSource(FTAr
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5443,7 +5443,7 @@ void ZegoExpressEngineMethodHandler::updatePublishRegionScreenCaptureSource(FTAr
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5463,7 +5463,7 @@ void ZegoExpressEngineMethodHandler::updateCaptureSourceScreenCaptureSource(FTAr
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5479,7 +5479,7 @@ void ZegoExpressEngineMethodHandler::startCaptureScreenCaptureSource(FTArgument 
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5495,7 +5495,7 @@ void ZegoExpressEngineMethodHandler::stopCaptureScreenCaptureSource(FTArgument a
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5517,7 +5517,7 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(FTA
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
@@ -5542,7 +5542,7 @@ void ZegoExpressEngineMethodHandler::enableAudioCaptureScreenCaptureSource(FTArg
     }
 
     result->Success();
-#elif
+#else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif
 }
