@@ -67,13 +67,13 @@ target_include_directories(${PLUGIN_NAME} PUBLIC
   "${CMAKE_CURRENT_LIST_DIR}/libs/x86_64/include/internal"
 )
 
-target_link_libraries(${PLUGIN_NAME} PRIVATE 
-  flutter
-  PkgConfig::GTK
-  ${CMAKE_CURRENT_LIST_DIR}/libs/x86_64/libZegoExpressEngine.so
-)
+# target_link_libraries(${PLUGIN_NAME} PRIVATE 
+#   flutter
+#   PkgConfig::GTK
+#   ${CMAKE_CURRENT_LIST_DIR}/libs/x86_64/libZegoExpressEngine.so
+# )
 
-# target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK ZegoExpressEngine)
+target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK ZegoExpressEngine)
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
