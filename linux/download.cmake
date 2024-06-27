@@ -24,7 +24,9 @@ function(download_native_sdk WORKSPACE)
   file(MAKE_DIRECTORY "${LIBSDIR}")
 
   # Check if the specific version SDK exists
-  if(EXISTS "${LIBSDIR}/VERSION.txt" AND EXISTS "${LIBSDIR}/x86_64/libZegoExpressEngine.so")
+  if(EXISTS "${LIBSDIR}/VERSION.txt" AND 
+    EXISTS "${LIBSDIR}/linux-x64/libZegoExpressEngine.so" AND 
+    EXISTS "${LIBSDIR}/linux-arm64/libZegoExpressEngine.so")
     file(STRINGS "${LIBSDIR}/VERSION.txt" LINES)
     list(POP_FRONT LINES VERSION)
     string(STRIP ${VERSION} VERSION)
@@ -45,7 +47,17 @@ function(download_native_sdk WORKSPACE)
   else ()
       set(LIBSDIR_PATH "${LIBSDIR}/debug")
   endif()
-  file(COPY "${LIBSDIR_PATH}/Library/x86_64" DESTINATION "${LIBSDIR}")
+
+  file(GLOB LIBSDIR_PATH_FILES "${LIBSDIR_PATH}/Library/x86_64/*")
+  foreach(FILE ${LIBSDIR_PATH_FILES})
+    file(COPY ${FILE} DESTINATION "${LIBSDIR}/linux-x64")
+  endforeach()
+
+  file(GLOB LIBSDIR_PATH_FILES "${LIBSDIR_PATH}/Library/aarch64/*")
+  foreach(FILE ${LIBSDIR_PATH_FILES})
+    file(COPY ${FILE} DESTINATION "${LIBSDIR}/linux-arm64")
+  endforeach()
+
   file(COPY "${LIBSDIR_PATH}/VERSION.txt" DESTINATION "${LIBSDIR}")
   file(REMOVE_RECURSE "${LIBSDIR_PATH}")
   file(REMOVE "${LIBSDIR}/sdk.zip")
