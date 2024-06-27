@@ -1119,7 +1119,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
         config.cdnConfig = cdnConfigPtr.get();
 
         config.adaptiveSwitch = std::get<int32_t>(configMap[FTValue("adaptiveSwitch")]);
-        auto adaptiveList = std::get<FTArray>(argument[FTValue("adaptiveTemplateIDList")]);
+        auto adaptiveList = std::get<FTArray>(configMap[FTValue("adaptiveTemplateIDList")]);
         for (auto adaptive : adaptiveList) {
             config.adaptiveTemplateIDList.push_back(std::get<int32_t>(adaptive));
         }
