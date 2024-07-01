@@ -67,36 +67,31 @@ target_include_directories(${PLUGIN_NAME} PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/libs/${FLUTTER_TARGET_PLATFORM}/include/internal"
 )
 
-set(libZegoExpressEngine "${CMAKE_CURRENT_SOURCE_DIR}/libs/${FLUTTER_TARGET_PLATFORM}/libZegoExpressEngine.so")
-set(libZegoExpressCopyrightedPlugin "${CMAKE_CURRENT_SOURCE_DIR}/libs/${FLUTTER_TARGET_PLATFORM}/libZegoExpressVideoCopyrightedMusicPlugin.so")
-
 target_link_libraries(${PLUGIN_NAME} PRIVATE
   flutter
   PkgConfig::GTK 
-  ${libZegoExpressEngine}
 )
 
-if(EXISTS ${ZegoExpressCopyrightedPlugin})
-  target_link_libraries(${PLUGIN_NAME} PRIVATE
-    ${ZegoExpressCopyrightedPlugin}
-  )
-endif()
+file(GLOB LIBRARY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/libs/${FLUTTER_TARGET_PLATFORM}/*")
+
+foreach(LIB_FILE ${LIBRARY_FILES})
+  if(LIB_FILE MATCHES ".*\\.so.*")
+    # 链接库文件到目标
+    target_link_libraries(${PLUGIN_NAME} PRIVATE ${LIB_FILE})
+
+    # 添加库文件路径到变量
+    list(APPEND zego_express_engine_bundled_libraries ${LIB_FILE})
+  endif()
+endforeach()
 
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
 set(zego_express_engine_bundled_libraries
-  ${libZegoExpressEngine}
+  ${zego_express_engine_bundled_libraries}
   PARENT_SCOPE
 )
-
-if(EXISTS ${ZegoExpressCopyrightedPlugin})
-  set(zego_express_engine_bundled_libraries
-    ${ZegoExpressCopyrightedPlugin}
-    PARENT_SCOPE
-  )
-endif()
 
 # Add $ORIGIN to RPATH so that lib/libzego_express_engine_plugin.so can find lib/libZegoExpressEngine.so at runtime
 set_property(
