@@ -1154,13 +1154,13 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(
     }
 
     EXPRESS::ZegoPlayerConfig config;
+    std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr;
     if (configMap.size() > 0) {
         config.resourceMode =
             (EXPRESS::ZegoStreamResourceMode)std::get<int32_t>(configMap[FTValue("resourceMode")]);
         config.roomID = std::get<std::string>(configMap[FTValue("roomID")]);
         config.resourceSwitchMode = (EXPRESS::ZegoStreamResourceSwitchMode)std::get<int32_t>(configMap[FTValue("resourceSwitchMode")]);
 
-        std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr = nullptr;
         if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("cdnConfig")])) {
             auto cdnConfigMap = std::get<flutter::EncodableMap>(configMap[FTValue("cdnConfig")]);
             if (cdnConfigMap.size() > 0) {
@@ -1174,11 +1174,10 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(
                     (EXPRESS::ZegoHttpDNSType)std::get<int32_t>(cdnConfigMap[FTValue("httpdns")]);
 
                 cdnConfigPtr->quicConnectMode = (int)std::get<int32_t>(cdnConfigMap[FTValue("quicConnectMode")]);
-            }
-        }
-        config.cdnConfig = cdnConfigPtr.get();
 
-        
+                config.cdnConfig = cdnConfigPtr.get();
+            }
+        }        
     } 
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);
