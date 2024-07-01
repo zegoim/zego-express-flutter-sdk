@@ -47,6 +47,7 @@ static const std::map<
         EngineStaticMethodHandler(getVersion),
         EngineStaticMethodHandler(isFeatureSupported),
         EngineStaticMethodHandler(setPluginVersion),
+        EngineStaticMethodHandler(sendCustomLogMessage),
         EngineStaticMethodHandler(getAssetAbsolutePath),
         EngineStaticMethodHandler(createEngine),
         EngineStaticMethodHandler(createEngineWithProfile),

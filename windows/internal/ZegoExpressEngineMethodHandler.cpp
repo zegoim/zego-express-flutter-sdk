@@ -55,6 +55,16 @@ void ZegoExpressEngineMethodHandler::setPluginVersion(
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::sendCustomLogMessage(
+    flutter::EncodableMap &argument,
+    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    std::string version = std::get<std::string>(argument[FTValue("message")]);
+
+    ZF::logInfo(version.c_str());
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::getAssetAbsolutePath(
     flutter::EncodableMap &argument,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

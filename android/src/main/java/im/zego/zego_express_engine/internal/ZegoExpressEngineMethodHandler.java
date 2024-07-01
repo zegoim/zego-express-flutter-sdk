@@ -6344,6 +6344,14 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void sendCustomLogMessage(MethodCall call, Result result) {
+        String message = call.argument("message");
+        ZegoLog.log("%s", message);
+        
+        result.success(null);
+    }
+
     private static void reportPluginInfo() {
 
         if (pluginReported) { return; }
