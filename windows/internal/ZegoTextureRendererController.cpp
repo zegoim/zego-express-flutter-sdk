@@ -63,7 +63,8 @@ void ZegoTextureRendererController::uninit()
 
 int64_t ZegoTextureRendererController::createTextureRenderer(flutter::TextureRegistrar* texture_registrar, uint32_t width, uint32_t height)
 {
-    auto textureRenderer = std::make_shared<ZegoTextureRenderer>(texture_registrar, width, height);
+    auto textureRenderer = std::make_shared<ZegoTextureRenderer>();
+    textureRenderer->CreateTexture(texture_registrar, width, height);
 
     ZF::logInfo("[createTextureRenderer] textureID: %d, width: %d, height: %d", textureRenderer->getTextureID(), width, height);
 
