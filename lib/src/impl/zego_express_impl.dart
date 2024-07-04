@@ -3467,6 +3467,12 @@ class ZegoExpressImpl {
             ZegoScreenCaptureExceptionType.values[map['exceptionType']]);
         break;
 
+      case 'onMobileScreenCaptureStart':
+        if (ZegoExpressEngine.onMobileScreenCaptureStart == null) return;
+
+        ZegoExpressEngine.onMobileScreenCaptureStart!();
+        break;
+
       /* AI Voice Changer */
       case 'onAIVoiceChangerInit':
         if (ZegoExpressEngine.onAIVoiceChangerInit == null) {
