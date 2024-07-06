@@ -1416,6 +1416,19 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onScreenCaptureStart() {
+            super.onScreenCaptureStart();
+            ZegoLog.log("[onMobileScreenCaptureStart]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onMobileScreenCaptureStart");
+
+            sink.success(map);
+        }
+
         /* Private Utils */
 
         private ArrayList<HashMap<String, Object>> mapListFromUserList(ArrayList<ZegoUser> users) {

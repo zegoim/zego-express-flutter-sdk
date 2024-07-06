@@ -279,6 +279,18 @@ enum ZegoStreamCensorshipMode {
   AudioAndVideo
 }
 
+/// Type of capability negotiation for publish stream references.
+enum ZegoCapabilityNegotiationType {
+  /// no reference to the outcome of the capability negotiation.
+  None,
+
+  /// refer to the outcome of the capability negotiation of all user in the room.
+  All,
+
+  /// refer to the outcome of the capability negotiation of publisher in the room.
+  Publisher
+}
+
 /// Video rendering fill mode.
 enum ZegoViewMode {
   /// The proportional scaling up, there may be black borders
@@ -838,6 +850,15 @@ enum ZegoRoomStreamListType {
   All
 }
 
+/// Capability negotiation enable bitmask enumeration.
+class ZegoRoomCapabilityNegotiationTypesBitMask {
+  /// The mask bit of this field corresponds to enable the capability negotiation of all user in the room.
+  static const int All = 1 << 0;
+
+  /// The mask bit of this field corresponds to enable the capability negotiation of publisher in the room.
+  static const int ZegoRoomCapabilityNegotiationTypesPublisher = 1 << 1;
+}
+
 /// State of CDN relay.
 enum ZegoStreamRelayCDNState {
   /// The state indicates that there is no CDN relay
@@ -1164,7 +1185,7 @@ enum ZegoVideoBufferType {
   /// D3D Texture2D type video frame
   D3DTexture2D,
 
-  /// CVPixelBuffer type nv12 format video frame
+  /// CVPixelBuffer type nv12 format video frame. Only for custom video processing
   NV12CVPixelBuffer
 }
 
@@ -1780,7 +1801,10 @@ enum ZegoVideoSourceType {
   /// [Deprecated] Same as [ScreenCapture], that is, video source from screen capture, this video source type has been deprecated since version 3.2.0.
   @Deprecated(
       'Same as [ScreenCapture], that is, video source from screen capture')
-  ZegoVideoSourceScreenCapture
+  ZegoVideoSourceScreenCapture,
+
+  /// Video source from secondary camera, only support iOS.
+  SecondaryCamera
 }
 
 /// Screen capture source exception type.
@@ -2092,19 +2116,25 @@ class ZegoRoomConfig {
   /// The token issued by the developer's business server is used to ensure security. For the generation rules, please refer to [Using Token Authentication](https://doc-zh.zego.im/article/10360), the default is an empty string, that is, no authentication. In versions 2.17.0 and above, if appSign is not passed in when calling the [createEngine] API to create an engine, or if appSign is empty, this parameter must be set for authentication when logging in to a room.
   String token;
 
-  ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token);
+  /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
+  int capabilityNegotiationTypes;
+
+  ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token,
+      this.capabilityNegotiationTypes);
 
   /// Create a default room configuration
   ZegoRoomConfig.defaultConfig()
       : maxMemberCount = 0,
         isUserStatusNotify = false,
-        token = "";
+        token = "",
+        capabilityNegotiationTypes = 0;
 
   Map<String, dynamic> toMap() {
     return {
       'maxMemberCount': this.maxMemberCount,
       'isUserStatusNotify': this.isUserStatusNotify,
-      'token': this.token
+      'token': this.token,
+      'capabilityNegotiationTypes': this.capabilityNegotiationTypes
     };
   }
 }
@@ -2430,10 +2460,14 @@ class ZegoPublisherConfig {
   /// When pushing a flow, review the pattern of the flow. By default, no audit is performed. If you want to use this function, contact ZEGO technical support.
   ZegoStreamCensorshipMode? streamCensorshipMode;
 
+  /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
+  ZegoCapabilityNegotiationType? codecNegotiationType;
+
   ZegoPublisherConfig(
       {this.roomID,
       this.forceSynchronousNetworkTime,
-      this.streamCensorshipMode});
+      this.streamCensorshipMode,
+      this.codecNegotiationType});
 }
 
 /// Published stream quality information.
@@ -4502,6 +4536,10 @@ abstract class ZegoMediaPlayer {
   Future<void> setAudioTrackPublishIndex(int index);
 
   /// Enable voice changer, set up the specific voice changer parameters.
+  ///
+  /// Available since: 3.15.0
+  /// Description: Enable voice changer, set up the specific voice changer parameters.
+  /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   ///
   /// - [audioChannel] The audio channel to be voice changed
   /// - [enable] Whether enable voice changer or not. True - enabled, false - disabled, default value is false.

@@ -362,7 +362,9 @@ class ZegoExpressImpl {
               'forceSynchronousNetworkTime':
                   config.forceSynchronousNetworkTime ?? 0,
               'streamCensorshipMode': config.streamCensorshipMode?.index ??
-                  ZegoStreamCensorshipMode.None.index
+                  ZegoStreamCensorshipMode.None.index,
+              'codecNegotiationType': config.codecNegotiationType?.index ??
+                  ZegoCapabilityNegotiationType.None.index
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -3466,6 +3468,12 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onMobileScreenCaptureExceptionOccurred!(
             ZegoScreenCaptureExceptionType.values[map['exceptionType']]);
+        break;
+
+      case 'onMobileScreenCaptureStart':
+        if (ZegoExpressEngine.onMobileScreenCaptureStart == null) return;
+
+        ZegoExpressEngine.onMobileScreenCaptureStart!();
         break;
 
       /* AI Voice Changer */

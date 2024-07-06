@@ -139,6 +139,7 @@ import im.zego.zegoexpress.constants.ZegoCameraFocusMode;
 import im.zego.zegoexpress.constants.ZegoCameraExposureMode;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
 import im.zego.zegoexpress.constants.ZegoEncodeProfile;
+import im.zego.zegoexpress.constants.ZegoCapabilityNegotiationType;
 import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
 import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
 import im.zego.zegoexpress.constants.ZegoVideoSourceType;
@@ -576,6 +577,7 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
+            roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number)configMap.get("capabilityNegotiationTypes"));
             
         }
 
@@ -629,6 +631,7 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
+            roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number)configMap.get("capabilityNegotiationTypes"));
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID, roomConfig);
         } else {
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
@@ -739,6 +742,7 @@ public class ZegoExpressEngineMethodHandler {
             config.roomID = (String) configMap.get("roomID");
             config.forceSynchronousNetworkTime = ZegoUtils.intValue((Number)configMap.get("forceSynchronousNetworkTime"));
             config.streamCensorshipMode = ZegoStreamCensorshipMode.getZegoStreamCensorshipMode(ZegoUtils.intValue((Number)configMap.get("streamCensorshipMode")));
+            config.codecNegotiationType = ZegoCapabilityNegotiationType.getZegoCapabilityNegotiationType(ZegoUtils.intValue((Number)configMap.get("codecNegotiationType")));
         }
 
         if (config != null) {
