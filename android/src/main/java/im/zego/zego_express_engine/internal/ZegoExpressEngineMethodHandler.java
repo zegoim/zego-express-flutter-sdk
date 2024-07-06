@@ -577,7 +577,9 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
-            roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number)configMap.get("capabilityNegotiationTypes"));
+            if (configMap.containsKey("capabilityNegotiationTypes") && configMap.get("capabilityNegotiationTypes") != null) {
+                roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number) configMap.get("capabilityNegotiationTypes"));
+            }
             
         }
 
@@ -631,7 +633,9 @@ public class ZegoExpressEngineMethodHandler {
             roomConfig.isUserStatusNotify = ZegoUtils.boolValue((Boolean)configMap.get("isUserStatusNotify"));
             roomConfig.maxMemberCount = ZegoUtils.intValue((Number)configMap.get("maxMemberCount"));
             roomConfig.token = (String)configMap.get("token");
-            roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number)configMap.get("capabilityNegotiationTypes"));
+            if (configMap.containsKey("capabilityNegotiationTypes") && configMap.get("capabilityNegotiationTypes") != null) {
+                roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number) configMap.get("capabilityNegotiationTypes"));
+            }
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID, roomConfig);
         } else {
             ZegoExpressEngine.getEngine().switchRoom(fromRoomID, toRoomID);
