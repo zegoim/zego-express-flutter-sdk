@@ -2117,10 +2117,10 @@ class ZegoRoomConfig {
   String token;
 
   /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
-  int capabilityNegotiationTypes;
+  int? capabilityNegotiationTypes;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token,
-      this.capabilityNegotiationTypes);
+      {this.capabilityNegotiationTypes});
 
   /// Create a default room configuration
   ZegoRoomConfig.defaultConfig()

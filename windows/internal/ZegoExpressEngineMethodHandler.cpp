@@ -367,8 +367,10 @@ void ZegoExpressEngineMethodHandler::loginRoom(
             (unsigned int)std::get<int32_t>(configMap[FTValue("maxMemberCount")]);
         config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
         config.token = std::get<std::string>(configMap[FTValue("token")]);
-        config.capabilityNegotiationTypes =
-            (unsigned int)std::get<int32_t>(configMap[FTValue("capabilityNegotiationTypes")]);
+        if (config.find(FTValue("capabilityNegotiationTypes")) != config.end()) {
+            config.capabilityNegotiationTypes =
+                (unsigned int)std::get<int32_t>(configMap[FTValue("capabilityNegotiationTypes")]);
+        }
     }
     auto sharedPtrResult =
         std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
@@ -440,7 +442,9 @@ void ZegoExpressEngineMethodHandler::switchRoom(
             configPtr->isUserStatusNotify =
                 std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = std::get<std::string>(configMap[FTValue("token")]);
-            configPtr->capabilityNegotiationTypes = configMap[FTValue("capabilityNegotiationTypes")].LongValue();
+            if (configMap.find(FTValue("capabilityNegotiationTypes")) != configMap.end()) {
+                configPtr->capabilityNegotiationTypes = configMap[FTValue("capabilityNegotiationTypes")].LongValue();
+            }
         }
     }
 
