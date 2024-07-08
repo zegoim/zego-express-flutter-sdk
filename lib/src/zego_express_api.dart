@@ -616,6 +616,17 @@ class ZegoExpressEngine {
   static void Function(String streamID, ZegoPlayerState state, int errorCode,
       Map<String, dynamic> extendedData)? onPlayerStateUpdate;
 
+  /// Switch playing stream callback.
+  ///
+  /// Available since: 1.1.0
+  /// Description: After calling the [switchPlayingStream] successfully, the result of switching streams can be obtained through this callback function.
+  /// When to trigger:  After calling the [switchPlayingStream], this callback is triggered when a switch stream request ultimately succeeds or fails.
+  /// Related callbacks: After the stream switching is successful or failed, you can obtain the current streaming status through the callback function [onPlayerStateUpdate].
+  ///
+  /// - [streamID] stream ID.
+  /// - [errorCode] The error code corresponding to the result of the switch stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(String streamID, int errorCode)? onPlayerSwitched;
+
   /// Callback for current stream playing quality.
   ///
   /// Available since: 1.1.0

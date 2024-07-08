@@ -827,6 +827,8 @@ class ZegoExpressImpl {
               'resourceWhenStopPublish':
                   config.resourceWhenStopPublish?.index ??
                       ZegoStreamResourceType.Default.index,
+              'adaptiveSwitch': config.adaptiveSwitch ?? 0,
+              'adaptiveTemplateIDList': config.adaptiveTemplateIDList ?? [],
             }
           : {}
     });
@@ -2594,6 +2596,12 @@ class ZegoExpressImpl {
             ZegoPlayerState.values[map['state']],
             map['errorCode'],
             Map<String, dynamic>.from(extendedData));
+        break;
+
+      case 'onPlayerSwitched':
+        if (ZegoExpressEngine.onPlayerSwitched == null) return;
+
+        ZegoExpressEngine.onPlayerSwitched!(map['streamID'], map['errorCode']);
         break;
 
       case 'onPlayerQualityUpdate':

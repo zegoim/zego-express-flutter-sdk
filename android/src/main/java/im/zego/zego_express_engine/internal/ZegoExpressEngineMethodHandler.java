@@ -1554,6 +1554,14 @@ public class ZegoExpressEngineMethodHandler {
                         ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) cdnConfigMap.get("httpdns")));
                 playerConfig.cdnConfig = cdnConfig;
             }
+
+            playerConfig.adaptiveSwitch = ZegoUtils.intValue((Number) playerConfigMap.get("adaptiveSwitch"));
+            ArrayList<Integer> adaptiveList = (ArrayList<Integer>)playerConfigMap.get("adaptiveTemplateIDList");
+            int[] adaptiveList_ = new int[adaptiveList.size()];
+            for (int i = 0; i < adaptiveList.size(); i++) {
+                adaptiveList_[i] = adaptiveList.get(i);
+            }
+            playerConfig.adaptiveTemplateIDList = adaptiveList_;
         }
 
         // Handle ZegoCanvas
@@ -1630,6 +1638,44 @@ public class ZegoExpressEngineMethodHandler {
             // Play audio only
             ZegoExpressEngine.getEngine().startPlayingStream(streamID, null, playerConfig);
         }
+
+        result.success(null);
+    }
+
+    public static void switchPlayingStream(MethodCall call, Result result) {
+
+        String fromStreamID = call.argument("fromStreamID");
+        String toStreamID = call.argument("toStreamID");
+
+        // Handle ZegoPlayerConfig
+
+        ZegoPlayerConfig playerConfig = null;
+
+        HashMap<String, Object> playerConfigMap = call.argument("config");
+
+        if (playerConfigMap != null && !playerConfigMap.isEmpty()) {
+
+            playerConfig = new ZegoPlayerConfig();
+            playerConfig.resourceMode = ZegoStreamResourceMode.getZegoStreamResourceMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceMode")));
+            playerConfig.roomID = (String) playerConfigMap.get("roomID");
+            playerConfig.resourceSwitchMode = ZegoStreamResourceSwitchMode.getZegoStreamResourceSwitchMode(ZegoUtils.intValue((Number) playerConfigMap.get("resourceSwitchMode")));
+
+            HashMap<String, Object> cdnConfigMap = (HashMap<String, Object>) playerConfigMap.get("cdnConfig");
+            if (cdnConfigMap != null && !cdnConfigMap.isEmpty()) {
+
+                ZegoCDNConfig cdnConfig = new ZegoCDNConfig();
+                cdnConfig.url = (String) cdnConfigMap.get("url");
+                cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
+                cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
+                cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
+                cdnConfig.quicConnectMode = ZegoUtils.intValue((Number) cdnConfigMap.get("quicConnectMode"));
+                cdnConfig.httpdns =
+                        ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) cdnConfigMap.get("httpdns")));
+                playerConfig.cdnConfig = cdnConfig;
+            }
+        }
+
+        ZegoExpressEngine.getEngine().switchPlayingStream(fromStreamID, toStreamID, playerConfig);
 
         result.success(null);
     }

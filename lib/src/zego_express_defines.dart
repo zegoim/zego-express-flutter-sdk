@@ -2615,6 +2615,12 @@ class ZegoPlayerConfig {
   /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect when the user sets [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
   ZegoStreamResourceType? resourceWhenStopPublish;
 
+  /// Whether to enable adaptive switching of streams, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  int? adaptiveSwitch;
+
+  /// Stream adaptive transcoding template ID list, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  List<int>? adaptiveTemplateIDList;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
@@ -2622,7 +2628,9 @@ class ZegoPlayerConfig {
       this.sourceResourceType,
       this.codecTemplateID,
       this.resourceSwitchMode,
-      this.resourceWhenStopPublish});
+      this.resourceWhenStopPublish,
+      this.adaptiveSwitch,
+      this.adaptiveTemplateIDList});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -2631,7 +2639,8 @@ class ZegoPlayerConfig {
         sourceResourceType = ZegoResourceType.RTC,
         codecTemplateID = 0,
         resourceSwitchMode = ZegoStreamResourceSwitchMode.Default,
-        resourceWhenStopPublish = ZegoStreamResourceType.Default;
+        resourceWhenStopPublish = ZegoStreamResourceType.Default,
+        adaptiveSwitch = 0;
 }
 
 /// Played stream quality information.
