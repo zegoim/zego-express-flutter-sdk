@@ -618,7 +618,7 @@ class ZegoExpressEngine {
 
   /// Switch playing stream callback.
   ///
-  /// Available since: 1.1.0
+  /// Available since: 3.16.0
   /// Description: After calling the [switchPlayingStream] successfully, the result of switching streams can be obtained through this callback function.
   /// When to trigger:  After calling the [switchPlayingStream], this callback is triggered when a switch stream request ultimately succeeds or fails.
   /// Related callbacks: After the stream switching is successful or failed, you can obtain the current streaming status through the callback function [onPlayerStateUpdate].

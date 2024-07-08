@@ -670,7 +670,10 @@ enum ZegoANSMode {
   AI,
 
   /// Balanced AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-  AIBalanced
+  AIBalanced,
+
+  /// Low latency AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+  AILowLatency
 }
 
 /// video encode profile.
@@ -2460,6 +2463,9 @@ class ZegoPublisherConfig {
   /// When pushing a flow, review the pattern of the flow. By default, no audit is performed. If you want to use this function, contact ZEGO technical support.
   ZegoStreamCensorshipMode? streamCensorshipMode;
 
+  /// Inspect flag, works with ZEGO censor SDK. If you want to use this function, contact ZEGO technical support.
+  int? streamCensorFlag;
+
   /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
   ZegoCapabilityNegotiationType? codecNegotiationType;
 
@@ -2467,6 +2473,7 @@ class ZegoPublisherConfig {
       {this.roomID,
       this.forceSynchronousNetworkTime,
       this.streamCensorshipMode,
+      this.streamCensorFlag,
       this.codecNegotiationType});
 }
 
