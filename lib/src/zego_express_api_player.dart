@@ -28,7 +28,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
 
   /// Switch from playing a certain stream to playing another stream.
   ///
-  /// Available since: 3.13.0
+  /// Available since: 3.16.0
   /// Description: Smoothly switch from one flv stream to another flv stream.
   /// Use cases: For the same stream, there may be multiple streams with different resolutions. When the network quality deteriorates, in order to ensure the streaming quality, the streaming end can choose to switch from a high-resolution stream to a low-resolution stream..
   /// When to call: After [startPlayingStream].
