@@ -422,12 +422,13 @@
         unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
         BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
         NSString *token = configMap[@"token"];
-        unsigned int capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
 
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
-        configObject.capabilityNegotiationTypes = capabilityNegotiationTypes;
+        if (configMap[@"capabilityNegotiationTypes"]) {
+            configObject.capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
+        }
     }
 
     [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
@@ -501,13 +502,14 @@
         unsigned int maxMemberCount = [ZegoUtils unsignedIntValue:configMap[@"maxMemberCount"]];
         BOOL isUserStatusNotify = [ZegoUtils boolValue:configMap[@"isUserStatusNotify"]];
         NSString *token = configMap[@"token"];
-        unsigned int capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
 
         ZegoRoomConfig *configObject = [[ZegoRoomConfig alloc] init];
         configObject.maxMemberCount = maxMemberCount;
         configObject.isUserStatusNotify = isUserStatusNotify;
         configObject.token = token;
-        configObject.capabilityNegotiationTypes = capabilityNegotiationTypes;
+        if (configMap[@"capabilityNegotiationTypes"]) {
+            configObject.capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
+        }
 
         [[ZegoExpressEngine sharedEngine] switchRoom:fromRoomID toRoomID:toRoomID config:configObject];
     } else {
@@ -1386,6 +1388,9 @@
             
             playerConfig.cdnConfig = cdnConfig;
         }
+
+        playerConfig.adaptiveSwitch = [ZegoUtils intValue:playerConfigMap[@"adaptiveSwitch"]];
+        playerConfig.adaptiveTemplateIDList = playerConfigMap[@"adaptiveTemplateIDList"];
     }
 
     // Handle ZegoCanvas
@@ -1459,6 +1464,46 @@
             [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:nil];
         }
     }
+
+    result(nil);
+}
+
+- (void)switchPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // TODO: Deprecated since 1.19.0
+
+    NSString *fromStreamID = call.arguments[@"fromStreamID"];
+    NSString *toStreamID = call.arguments[@"toStreamID"];
+
+    // Handle ZegoPlayerConfig
+
+    ZegoPlayerConfig *playerConfig = nil;
+
+    NSDictionary *playerConfigMap = call.arguments[@"config"];
+
+    if (playerConfigMap && playerConfigMap.count > 0) {
+
+        playerConfig = [[ZegoPlayerConfig alloc] init];
+        playerConfig.resourceMode = (ZegoStreamResourceMode)[ZegoUtils intValue:playerConfigMap[@"resourceMode"]];
+        playerConfig.resourceSwitchMode = [ZegoUtils intValue:playerConfigMap[@"resourceSwitchMode"]];
+        playerConfig.roomID = playerConfigMap[@"roomID"];
+        NSDictionary * cdnConfigMap = playerConfigMap[@"cdnConfig"];
+
+        if (cdnConfigMap && cdnConfigMap.count > 0) {
+            ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
+            cdnConfig.url = cdnConfigMap[@"url"];
+            cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.protocol = cdnConfigMap[@"protocol"];
+            cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
+            cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
+            
+            int httpdnsIndex = [ZegoUtils intValue:cdnConfigMap[@"httpdns"]];
+            cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
+            
+            playerConfig.cdnConfig = cdnConfig;
+        }
+    }
+
+    [[ZegoExpressEngine sharedEngine] switchPlayingStream:fromStreamID toStreamID:toStreamID config:playerConfig];
 
     result(nil);
 }

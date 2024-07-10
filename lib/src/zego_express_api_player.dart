@@ -26,6 +26,32 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
         .startPlayingStream(streamID, canvas: canvas, config: config);
   }
 
+  /// Switch from playing a certain stream to playing another stream.
+  ///
+  /// Available since: 3.16.0
+  /// Description: Smoothly switch from one flv stream to another flv stream.
+  /// Use cases: For the same stream, there may be multiple streams with different resolutions. When the network quality deteriorates, in order to ensure the streaming quality, the streaming end can choose to switch from a high-resolution stream to a low-resolution stream..
+  /// When to call: After [startPlayingStream].
+  /// Restrictions: Only supports flv protocol stream.
+  /// Caution:
+  ///  1. The result of the switching request can be obtained through the [onPlayerSwitched] event.
+  ///  2. When the stream is switched successfully, the current streaming status can be known through the [onPlayerStateUpdate] event.
+  ///  3. When switching streams fails, there may not necessarily be an [onPlayerStateUpdate] event notification.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [fromStreamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   Only support numbers, English characters and '-', '_'.
+  /// - [toStreamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   Only support numbers, English characters and '-', '_'.
+  /// - [config] Advanced player configuration.
+  Future<void> switchPlayingStream(
+      String fromStreamID, String toStreamID, ZegoPlayerConfig config) async {
+    return await ZegoExpressImpl.instance
+        .switchPlayingStream(fromStreamID, toStreamID, config);
+  }
+
   /// Stops playing a stream.
   ///
   /// Available since: 1.1.0

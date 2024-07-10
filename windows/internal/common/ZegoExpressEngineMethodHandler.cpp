@@ -323,6 +323,9 @@ void ZegoExpressEngineMethodHandler::loginRoom(FTArgument argument, FTResult res
             (unsigned int)zego_value_get_int(configMap[FTValue("maxMemberCount")]);
         config.isUserStatusNotify = zego_value_get_bool(configMap[FTValue("isUserStatusNotify")]);
         config.token = zego_value_get_string(configMap[FTValue("token")]);
+        if (!zego_value_is_null(FTValue("capabilityNegotiationTypes"))) {
+            config->capabilityNegotiationTypes = zego_value_get_long(configMap[FTValue("capabilityNegotiationTypes")]);
+        }
     }
     auto sharedPtrResult = FTMoveResult(result);
     EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(
@@ -388,6 +391,9 @@ void ZegoExpressEngineMethodHandler::switchRoom(FTArgument argument, FTResult re
             configPtr->isUserStatusNotify =
                 zego_value_get_bool(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = zego_value_get_string(configMap[FTValue("token")]);
+            if (!zego_value_is_null(FTValue("capabilityNegotiationTypes"))) {
+                configPtr->capabilityNegotiationTypes = zego_value_get_long(configMap[FTValue("capabilityNegotiationTypes")]);
+            }
         }
     }
 
@@ -1031,10 +1037,57 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(FTArgument argument, FTR
 
         config.cdnConfig = cdnConfigPtr.get();
 
+        config.adaptiveSwitch = zego_value_get_int(configMap[FTValue("adaptiveSwitch")]);
+        auto adaptiveList = zego_value_get_list(configMap[FTValue("adaptiveTemplateIDList")]);
+        for (const auto adaptive : adaptiveList) {
+            config.adaptiveTemplateIDList.push_back(zego_value_get_int(adaptive));
+        }
+
         EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr, config);
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr);
     }
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::switchPlayingStream(FTArgument argument, FTResult result) {
+    auto fromStreamID = zego_value_get_string(argument[FTValue("fromStreamID")]);
+    auto toStreamID = zego_value_get_string(argument[FTValue("toStreamID")]);
+
+    FTMap configMap;
+    if (!zego_value_is_null(argument[FTValue("config")])) {
+        configMap = zego_value_get_map(argument[FTValue("config")]);
+    }
+
+    EXPRESS::ZegoPlayerConfig config;
+    std::unique_ptr<EXPRESS::ZegoCDNConfig> cdnConfigPtr;
+    if (configMap.size() > 0) {
+        config.resourceMode =
+            (EXPRESS::ZegoStreamResourceMode)zego_value_get_int(configMap[FTValue("resourceMode")]);
+        config.roomID = zego_value_get_string(configMap[FTValue("roomID")]);
+        config.resourceSwitchMode = (EXPRESS::ZegoStreamResourceSwitchMode)zego_value_get_int(configMap[FTValue("resourceSwitchMode")]);
+
+        if (!zego_value_is_null(configMap[FTValue("cdnConfig")])) {
+            auto cdnConfigMap = zego_value_get_map(configMap[FTValue("cdnConfig")]);
+            if (cdnConfigMap.size() > 0) {
+                cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
+                cdnConfigPtr->url = zego_value_get_string(cdnConfigMap[FTValue("url")]);
+                cdnConfigPtr->authParam = zego_value_get_string(cdnConfigMap[FTValue("authParam")]);
+                cdnConfigPtr->protocol = zego_value_get_string(cdnConfigMap[FTValue("protocol")]);
+                cdnConfigPtr->quicVersion =
+                    zego_value_get_string(cdnConfigMap[FTValue("quicVersion")]);
+                cdnConfigPtr->httpdns =
+                    (EXPRESS::ZegoHttpDNSType)zego_value_get_int(cdnConfigMap[FTValue("httpdns")]);
+
+                cdnConfigPtr->quicConnectMode = (int)zego_value_get_int(cdnConfigMap[FTValue("quicConnectMode")]);
+
+                config.cdnConfig = cdnConfigPtr.get();
+            }
+        }        
+    } 
+
+    EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);
 
     result->Success();
 }

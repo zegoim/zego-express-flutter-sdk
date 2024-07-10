@@ -172,6 +172,7 @@ class ZegoExpressEngineMethodHandler {
     void enableAlphaChannelVideoEncoder(FTArgument argument, FTResult result);
 
     void startPlayingStream(FTArgument argument, FTResult result);
+    void switchPlayingStream(FTArgument argument, FTResult result);
     void stopPlayingStream(FTArgument argument, FTResult result);
     void setPlayStreamCrossAppInfo(FTArgument argument, FTResult result);
     void takePlayStreamSnapshot(FTArgument argument, FTResult result);

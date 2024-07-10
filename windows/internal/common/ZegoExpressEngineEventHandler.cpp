@@ -428,6 +428,20 @@ void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &strea
     }
 }
 
+void ZegoExpressEngineEventHandler::onPlayerSwitched(const std::string& streamID, int errorCode) {
+
+    ZF::logInfo("[onPlayerSwitched] streamID: %s, errorCode: %d", streamID.c_str(), errorCode);
+
+    if (eventSink_) {
+        FTMap retMap;
+        retMap[FTValue("method")] = FTValue("onPlayerSwitched");
+        retMap[FTValue("streamID")] = FTValue(streamID);
+        retMap[FTValue("errorCode")] = FTValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onPlayerQualityUpdate(
     const std::string &streamID, const EXPRESS::ZegoPlayStreamQuality &quality) {
     // High frequency callbacks do not log

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <functional>
+#include <map>
 #include <string>
 
 #include "../ZegoDataUtils.h"
@@ -26,10 +26,12 @@
         }                                                                                          \
     }
 
-static bool send_events = false;
-static const std::map<std::string,
-                      std::pair<std::function<void(FTArgument argument, FTResult result)>, bool>>
-
+static const std::map<
+    std::string,
+    std::pair<
+        std::function<void(flutter::EncodableMap &argument,
+                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)>,
+        bool>>
     G_MethodMap = {
         EngineStaticMethodHandler(getVersion),
         EngineStaticMethodHandler(isFeatureSupported),
@@ -163,6 +165,7 @@ static const std::map<std::string,
         EngineMethodHandler(enableAlphaChannelVideoEncoder),
 
         EngineMethodHandler(startPlayingStream),
+        EngineMethodHandler(switchPlayingStream),
         EngineMethodHandler(stopPlayingStream),
         EngineMethodHandler(setPlayStreamCrossAppInfo),
         EngineMethodHandler(takePlayStreamSnapshot),

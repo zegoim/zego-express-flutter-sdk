@@ -670,7 +670,10 @@ enum ZegoANSMode {
   AI,
 
   /// Balanced AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-  AIBalanced
+  AIBalanced,
+
+  /// Low latency AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+  AILowLatency
 }
 
 /// video encode profile.
@@ -2117,10 +2120,10 @@ class ZegoRoomConfig {
   String token;
 
   /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
-  int capabilityNegotiationTypes;
+  int? capabilityNegotiationTypes;
 
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token,
-      this.capabilityNegotiationTypes);
+      {this.capabilityNegotiationTypes});
 
   /// Create a default room configuration
   ZegoRoomConfig.defaultConfig()
@@ -2460,6 +2463,9 @@ class ZegoPublisherConfig {
   /// When pushing a flow, review the pattern of the flow. By default, no audit is performed. If you want to use this function, contact ZEGO technical support.
   ZegoStreamCensorshipMode? streamCensorshipMode;
 
+  /// Inspect flag, works with ZEGO censor SDK. If you want to use this function, contact ZEGO technical support.
+  int? streamCensorFlag;
+
   /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
   ZegoCapabilityNegotiationType? codecNegotiationType;
 
@@ -2467,6 +2473,7 @@ class ZegoPublisherConfig {
       {this.roomID,
       this.forceSynchronousNetworkTime,
       this.streamCensorshipMode,
+      this.streamCensorFlag,
       this.codecNegotiationType});
 }
 
@@ -2615,6 +2622,12 @@ class ZegoPlayerConfig {
   /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect when the user sets [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
   ZegoStreamResourceType? resourceWhenStopPublish;
 
+  /// Whether to enable adaptive switching of streams, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  int? adaptiveSwitch;
+
+  /// Stream adaptive transcoding template ID list, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  List<int>? adaptiveTemplateIDList;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
@@ -2622,7 +2635,9 @@ class ZegoPlayerConfig {
       this.sourceResourceType,
       this.codecTemplateID,
       this.resourceSwitchMode,
-      this.resourceWhenStopPublish});
+      this.resourceWhenStopPublish,
+      this.adaptiveSwitch,
+      this.adaptiveTemplateIDList});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -2631,7 +2646,8 @@ class ZegoPlayerConfig {
         sourceResourceType = ZegoResourceType.RTC,
         codecTemplateID = 0,
         resourceSwitchMode = ZegoStreamResourceSwitchMode.Default,
-        resourceWhenStopPublish = ZegoStreamResourceType.Default;
+        resourceWhenStopPublish = ZegoStreamResourceType.Default,
+        adaptiveSwitch = 0;
 }
 
 /// Played stream quality information.

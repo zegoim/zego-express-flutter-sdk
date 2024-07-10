@@ -17,6 +17,8 @@ struct _ZegoExpressEnginePlugin {
     GObject parent_instance;
 };
 
+static bool send_events = false;
+
 G_DEFINE_TYPE(ZegoExpressEnginePlugin, zego_express_engine_plugin, g_object_get_type())
 
 // Called when a method call is received from Flutter.
