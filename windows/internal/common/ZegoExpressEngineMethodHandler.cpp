@@ -323,7 +323,7 @@ void ZegoExpressEngineMethodHandler::loginRoom(FTArgument argument, FTResult res
             (unsigned int)zego_value_get_int(configMap[FTValue("maxMemberCount")]);
         config.isUserStatusNotify = zego_value_get_bool(configMap[FTValue("isUserStatusNotify")]);
         config.token = zego_value_get_string(configMap[FTValue("token")]);
-        if (!zego_value_is_null(FTValue("capabilityNegotiationTypes"))) {
+        if (!zego_value_is_null(configMap[FTValue("capabilityNegotiationTypes")])) {
             config->capabilityNegotiationTypes = zego_value_get_long(configMap[FTValue("capabilityNegotiationTypes")]);
         }
     }
