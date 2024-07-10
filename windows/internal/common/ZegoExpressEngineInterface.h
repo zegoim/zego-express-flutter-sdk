@@ -26,12 +26,9 @@
         }                                                                                          \
     }
 
-static const std::map<
-    std::string,
-    std::pair<
-        std::function<void(flutter::EncodableMap &argument,
-                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)>,
-        bool>>
+static const std::map<std::string,
+                      std::pair<std::function<void(FTArgument argument, FTResult result)>, bool>>
+
     G_MethodMap = {
         EngineStaticMethodHandler(getVersion),
         EngineStaticMethodHandler(isFeatureSupported),
