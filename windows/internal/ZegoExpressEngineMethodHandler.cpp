@@ -367,7 +367,7 @@ void ZegoExpressEngineMethodHandler::loginRoom(
             (unsigned int)std::get<int32_t>(configMap[FTValue("maxMemberCount")]);
         config.isUserStatusNotify = std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
         config.token = std::get<std::string>(configMap[FTValue("token")]);
-        if (configMap.find(FTValue("capabilityNegotiationTypes")) != configMap.end()) {
+        if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("capabilityNegotiationTypes")])) {
             config.capabilityNegotiationTypes =
                 (unsigned int)std::get<int32_t>(configMap[FTValue("capabilityNegotiationTypes")]);
         }
@@ -442,8 +442,10 @@ void ZegoExpressEngineMethodHandler::switchRoom(
             configPtr->isUserStatusNotify =
                 std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = std::get<std::string>(configMap[FTValue("token")]);
-            if (configMap.find(FTValue("capabilityNegotiationTypes")) != configMap.end()) {
-                configPtr->capabilityNegotiationTypes = configMap[FTValue("capabilityNegotiationTypes")].LongValue();
+            if (std::holds_alternative<flutter::EncodableMap>(
+                    configMap[FTValue("capabilityNegotiationTypes")])) {
+                configPtr->capabilityNegotiationTypes =
+                    configMap[FTValue("capabilityNegotiationTypes")].LongValue();
             }
         }
     }
@@ -4777,7 +4779,7 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(
             EXPRESS::ZegoMixerOutput output;
 
             output.target = std::get<std::string>(outputMap[FTValue("target")]);
-            if (outputMap.find(FTValue("videoConfig")) != outputMap.end()) {
+            if (std::holds_alternative<flutter::EncodableMap>(outputMap[FTValue("videoConfig")])) {
                 auto videoConfigMap = std::get<FTMap>(outputMap[FTValue("videoConfig")]);
 
                 auto codecIDIndex = std::get<int32_t>(videoConfigMap[FTValue("videoCodecID")]);
