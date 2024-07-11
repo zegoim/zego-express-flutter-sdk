@@ -31,13 +31,9 @@
     return self;
 }
 
-- (void)dealloc {
-    [self destroy];
-}
-
 - (void)destroy {
     @synchronized (self) {
-        if (_textureID != 0) {
+        if (_textureID != 0 && self.registry) {
             // Release GPU Resource
             [self.registry unregisterTexture:_textureID];
             _textureID = 0;
