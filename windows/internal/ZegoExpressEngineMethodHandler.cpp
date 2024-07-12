@@ -443,7 +443,7 @@ void ZegoExpressEngineMethodHandler::switchRoom(
                 std::get<bool>(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = std::get<std::string>(configMap[FTValue("token")]);
             if (std::holds_alternative<int32_t>(configMap[FTValue("capabilityNegotiationTypes")])) {
-                config.capabilityNegotiationTypes =
+                configPtr->capabilityNegotiationTypes =
                     (unsigned int)std::get<int32_t>(configMap[FTValue("capabilityNegotiationTypes")]);
             }
         }
