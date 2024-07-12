@@ -2285,7 +2285,7 @@ class ZegoSEIConfig {
 ///
 /// Developer can use the built-in presets of the SDK to change the parameters of the voice changer.
 class ZegoVoiceChangerParam {
-  /// Pitch parameter, value range [-12.0, 12.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note the tone-shifting sound effect is only effective for the sound played by the media player, and does not change the tone collected by the microphone. Note that on v2.18.0 and older version, the value range is [-8.0, 8.0].
+  /// Pitch parameter, value range [-12.0, 12.0], the larger the value, the sharper the sound, set it to 0.0 to turn off. Note that on v2.18.0 and older version, the value range is [-8.0, 8.0].
   double pitch;
 
   ZegoVoiceChangerParam(this.pitch);
