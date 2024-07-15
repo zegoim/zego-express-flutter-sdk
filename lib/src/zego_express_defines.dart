@@ -807,7 +807,8 @@ enum ZegoStreamResourceMode {
   /// Playing stream only from RTC.
   OnlyRTC,
 
-  /// CDN Plus mode. The SDK will automatically select the streaming resource according to the network condition.
+  /// [Deprecated] CDN Plus mode. The SDK will automatically select the streaming resource according to the network condition.
+  @Deprecated('Legacy CDN Plus')
   CDNPlus
 }
 
