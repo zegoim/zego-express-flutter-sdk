@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)initControllerWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
 /// Called when dart invoke `destroyEngine`
-- (void)uninitController;
+- (void)uninitController:(BOOL)exit;
 
 /// Called when dart invoke `startPreview`
 - (BOOL)bindCapturedChannel:(NSNumber *)channel withTexture:(int64_t)textureID;
