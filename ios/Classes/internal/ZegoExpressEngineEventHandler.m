@@ -1973,7 +1973,7 @@
 
 - (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onGetSpeakerList:(int)errorCode speakers:(NSArray<ZegoAIVoiceChangerSpeakerInfo *> *)speakers {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onAIVoiceChangerGetSpeakerList], index: %d, errorCode: %d, speakers.count:%td", aiVoiceChanger.getIndex, errorCode, speakers.count);
+    ZGLog(@"[onAIVoiceChangerGetSpeakerList], index: %d, errorCode: %d, speakers.count:%d", aiVoiceChanger.getIndex, errorCode, speakers.count);
     
     GUARD_SINK
     
@@ -1998,7 +1998,7 @@
 
 - (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onUpdateProgress:(double)percent fileIndex:(int)fileIndex fileCount:(int)fileCount {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onAIVoiceChangerUpdateProgress], index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex, percent, fileIndex, fileCount);
+    // Do not print log
     
     GUARD_SINK
     
