@@ -1807,7 +1807,7 @@ enum ZegoVideoSourceType {
       'Same as [ScreenCapture], that is, video source from screen capture')
   ZegoVideoSourceScreenCapture,
 
-  /// Video source from secondary camera, only support iOS.
+  /// Video source from secondary camera, the rear camera when [useFrontCamera] is set to true, otherwise the front camera, only support iOS.
   SecondaryCamera
 }
 
@@ -2620,7 +2620,7 @@ class ZegoPlayerConfig {
   /// Play resource switching strategy mode, the default is ZegoStreamResourceSwitchModeDefault
   ZegoStreamResourceSwitchMode? resourceSwitchMode;
 
-  /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect when the user sets [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
+  /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect only if the user sets [resourceMode] to ZegoStreamResourceModeDefaut and [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
   ZegoStreamResourceType? resourceWhenStopPublish;
 
   /// Whether to enable adaptive switching of streams, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
@@ -4074,10 +4074,10 @@ class ZegoBackgroundConfig {
   /// Background color, the format is 0xRRGGBB, default is black, which is 0x000000
   int color;
 
-  /// Background image URL.
+  /// Background image URL. Support local file absolute path (file://xxx). The format supports png, jpg.
   String imageURL;
 
-  /// Background video URL.
+  /// Background video URL. Caution: 1. The video will be played in a loop. 2. Support local file absolute path (file://xxx). 3. The format supports MP4, FLV, MKV, AVI. 4. The maximum resolution should not exceed 4096px, and it is recommended to be within 1920px. 5. The maximum video duration should not exceed 30 seconds, and it is recommended to be within 15 seconds. 6. The maximum video size should not exceed 50MB, and 10MB is recommended.
   String videoURL;
 
   /// Background blur level.
@@ -4442,7 +4442,9 @@ abstract class ZegoMediaPlayer {
   /// Restrictions: None.
   /// Related APIs: Resources can be loaded through the [loadResource] function.
   ///
-  /// - [speed] The speed of play. The range is 0.5 ~ 4.0. The default is 1.0.
+  /// - [speed] The speed of play. The default is 1.0.
+  ///   Versions 2.12.0 to 3.15.1: The range is 0.5 ~ 4.0.
+  ///   Versions 3.16.0 and above: The range is 0.3 ~ 4.0.
   Future<void> setPlaySpeed(double speed);
 
   /// Whether to mix the player's sound into the stream being published.
