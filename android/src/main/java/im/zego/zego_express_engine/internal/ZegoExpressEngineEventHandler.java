@@ -2195,7 +2195,7 @@ public class ZegoExpressEngineEventHandler {
         public void onUpdateProgress(ZegoAIVoiceChanger aiVoiceChanger, double percent, int fileIndex, int fileCount) {
             super.onUpdateProgress(aiVoiceChanger, percent, fileIndex, fileCount);
 
-            ZegoLog.log("[onAIVoiceChangerUpdateProgress] idx: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger.getIndex(), percent, fileIndex, fileCount);
+            // Do not print log
 
             if (guardSink()) { return; }
 
