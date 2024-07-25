@@ -1867,7 +1867,10 @@ enum ZegoAlphaLayoutType {
   Right,
 
   /// Alpha channel data is to the bottom of RGB/YUV data.
-  Bottom
+  Bottom,
+
+  /// Alpha channel data is to the upper right of RGB/YUV data.
+  RightTop
 }
 
 /// Object segmentation type.
