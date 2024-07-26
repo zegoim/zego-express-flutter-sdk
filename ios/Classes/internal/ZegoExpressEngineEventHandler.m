@@ -315,8 +315,8 @@
         for (ZegoStream *stream in streamList) {
             [streamListArray addObject:@{
                 @"user": @{
-                    @"userID": stream.user.userID,
-                    @"userName": stream.user.userName
+                    @"userID": stream.user.userID == nil ? @"" : stream.user.userID,
+                    @"userName": stream.user.userName == nil ? @"" : stream.user.userName
                 },
                 @"streamID": stream.streamID,
                 @"extraInfo": stream.extraInfo
@@ -343,8 +343,8 @@
                 @"key": info.key,
                 @"value": info.value,
                 @"updateUser": @{
-                    @"userID": info.updateUser.userID,
-                    @"userName": info.updateUser.userName
+                    @"userID": info.updateUser.userID == nil ? @"" : info.updateUser.userID,
+                    @"userName": info.updateUser.userName == nil ? @"" : info.updateUser.userName
                 },
                 @"updateTime": @(info.updateTime)
             }];
@@ -639,6 +639,20 @@
             @"errorCode": @(errorCode),
             @"extendedData": extendedDataJsonString,
             @"streamID": streamID
+        });
+    }
+}
+
+- (void)onPlayerSwitched:(int)errorCode streamID:(NSString *)streamID {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerSwitched] errorCode: %d, streamID: %@", errorCode, streamID);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerSwitched",
+            @"streamID": streamID,
+            @"errorCode": @(errorCode)
         });
     }
 }
@@ -1159,8 +1173,8 @@
                 @"messageID": @(info.messageID),
                 @"sendTime": @(info.sendTime),
                 @"fromUser": @{
-                    @"userID": info.fromUser.userID,
-                    @"userName": info.fromUser.userName
+                    @"userID": info.fromUser.userID == nil ? @"" : info.fromUser.userID,
+                    @"userName": info.fromUser.userName == nil ? @"" : info.fromUser.userName
                 }
             }];
         }
@@ -1186,8 +1200,8 @@
                 @"messageID": info.messageID,
                 @"sendTime": @(info.sendTime),
                 @"fromUser": @{
-                    @"userID": info.fromUser.userID,
-                    @"userName": info.fromUser.userName
+                    @"userID": info.fromUser.userID == nil ? @"" : info.fromUser.userID,
+                    @"userName": info.fromUser.userName == nil ? @"" : info.fromUser.userName
                 }
             }];
         }
@@ -1210,8 +1224,8 @@
             @"method": @"onIMRecvCustomCommand",
             @"command": command,
             @"fromUser": @{
-                @"userID": fromUser.userID,
-                @"userName": fromUser.userName
+                @"userID": fromUser.userID == nil ? @"" : fromUser.userID,
+                @"userName": fromUser.userName == nil ? @"" : fromUser.userName
             },
             @"roomID": roomID
         });
@@ -1228,8 +1242,8 @@
             @"method": @"onRecvRoomTransparentMessage",
             @"message": @{
                 @"sendUser": @{
-                    @"userID": message.sendUser.userID,
-                    @"userName": message.sendUser.userName
+                    @"userID": message.sendUser.userID == nil ? @"" : message.sendUser.userID,
+                    @"userName": message.sendUser.userName == nil ? @"" : message.sendUser.userName
                 },
                 @"content": message.content
             },

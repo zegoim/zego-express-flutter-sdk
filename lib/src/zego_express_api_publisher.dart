@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
@@ -280,13 +281,13 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .mutePublishStreamVideo(mute, channel: channel);
   }
 
-  /// Enable or disable the stream mixing precision alignment function.
+  /// Enable or disable the stream precision alignment function.
   ///
   /// Available since: 2.11.0.
   /// Description: Use this interface to enable stream alignment, the SDK will attach network time information to the stream when publishing it for accurate stream alignment.
   /// Use case: Generally used in scenarios such as KTV where stream mixing alignment is required.
   /// When to call: After the engine is created [createEngine].
-  /// Caution: If mixed flow need time for alignment, the flow through the network push flow need to call startPublishingStream and ZegoPublisherConfig.forceSynchronousNetworkTime = 1, for open network time synchronization.
+  /// Caution: If you need to align each stream through network time when playing multiple streams or mixed streams, you need to call [startPublishingStream] to publish the stream and [forceSynchronousNetworkTime] in [ZegoPublisherConfig] is 1 to enable network time synchronization.
   /// Related APIs: [startMixerTask], [startAutoMixerTask]
   ///
   /// - [alignment] Whether to enable the stream mixing precision alignment function.

@@ -163,7 +163,12 @@
     }
 }
 
-- (void)uninitController {
+- (void)uninitController:(BOOL)exit {
+    if (!exit) {
+        [self.renderers enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, ZegoTextureRenderer * _Nonnull obj, BOOL * _Nonnull stop) {
+            [obj destroy];
+        }];
+    }
     @synchronized (self) {
         [self resetAllRenderFirstFrame];
         [self.renderers removeAllObjects];

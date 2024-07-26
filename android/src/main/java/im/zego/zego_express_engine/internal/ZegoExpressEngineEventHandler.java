@@ -603,6 +603,22 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onPlayerSwitched(String streamID, int errorCode) {
+            super.onPlayerSwitched(streamID, errorCode);
+            ZegoLog.log("[onPlayerSwitched] streamID: %s, errorCode: %d", streamID, errorCode);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onPlayerSwitched");
+            map.put("streamID", streamID);
+            map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onPlayerQualityUpdate(String streamID, ZegoPlayStreamQuality quality) {
             super.onPlayerQualityUpdate(streamID, quality);
             // High frequency callbacks do not log
@@ -1412,6 +1428,19 @@ public class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onMobileScreenCaptureExceptionOccurred");
             map.put("exceptionType", exceptionType.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onScreenCaptureStart() {
+            super.onScreenCaptureStart();
+            ZegoLog.log("[onMobileScreenCaptureStart]");
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onMobileScreenCaptureStart");
 
             sink.success(map);
         }
