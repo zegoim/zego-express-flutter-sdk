@@ -21,7 +21,10 @@ ZegoTextureRendererController::~ZegoTextureRendererController()
         capturedRenderFirstFrameMap_.clear();
         meidaPlayerRenderFirstFrameMap_.clear();
     }
-    
+
+    for (auto render : renderers_) {
+        render.second->DestroyTexture();
+    }
     renderers_.clear();
     isInit = false;
 }
@@ -57,13 +60,20 @@ void ZegoTextureRendererController::uninit()
         meidaPlayerRenderFirstFrameMap_.clear();
     }
     
+    for (auto render : renderers_)
+    {
+        render.second->DestroyTexture();
+    }
+
     renderers_.clear();
+
     isInit = false;
 }
 
 int64_t ZegoTextureRendererController::createTextureRenderer(flutter::TextureRegistrar* texture_registrar, uint32_t width, uint32_t height)
 {
-    auto textureRenderer = std::make_shared<ZegoTextureRenderer>(texture_registrar, width, height);
+    auto textureRenderer = std::make_shared<ZegoTextureRenderer>();
+    textureRenderer->CreateTexture(texture_registrar, width, height);
 
     ZF::logInfo("[createTextureRenderer] textureID: %d, width: %d, height: %d", textureRenderer->getTextureID(), width, height);
 
@@ -78,7 +88,7 @@ bool ZegoTextureRendererController::destroyTextureRenderer(int64_t textureID)
 
     auto renderer = renderers_.find(textureID);
     if (renderer != renderers_.end()) {
-        renderer->second.reset();
+        renderer->second->DestroyTexture();
         renderers_.erase(textureID);
         return true;
     }

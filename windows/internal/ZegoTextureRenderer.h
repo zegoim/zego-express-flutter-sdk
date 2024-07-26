@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <flutter/texture_registrar.h>
 
@@ -47,15 +47,22 @@ struct VideoFormatABGRPixel {
 
 // Handles the registration of Flutter textures, pixel buffers, and the
 // conversion of texture formats.
-class ZegoTextureRenderer {
+class ZegoTextureRenderer : public std::enable_shared_from_this<ZegoTextureRenderer>  {
  public:
-  ZegoTextureRenderer(flutter::TextureRegistrar* texture_registrar, uint32_t width, uint32_t height);
+  ZegoTextureRenderer();
       
   virtual ~ZegoTextureRenderer();
+
+  //must call after construct ZegoTextureRenderer
+  void CreateTexture(flutter::TextureRegistrar *texture_registrar, uint32_t width, uint32_t height);
+
+   void DestroyTexture();
+
 
   // Prevent copying.
   ZegoTextureRenderer(ZegoTextureRenderer const&) = delete;
   ZegoTextureRenderer& operator=(ZegoTextureRenderer const&) = delete;
+
 
   // Updates source data buffer with given data.
   bool updateSrcFrameBuffer(uint8_t *data, uint32_t data_length,
@@ -97,6 +104,7 @@ class ZegoTextureRenderer {
   void setUseMirrorEffect(bool mirror) { isUseMirror_ = mirror; }
 
  private:
+
   // Informs flutter texture registrar of updated texture.
   void OnBufferUpdated();
 

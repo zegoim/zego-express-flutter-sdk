@@ -26,6 +26,32 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
         .startPlayingStream(streamID, canvas: canvas, config: config);
   }
 
+  /// Switch from playing a certain stream to playing another stream.
+  ///
+  /// Available since: 3.16.0
+  /// Description: Smoothly switch from one flv stream to another flv stream.
+  /// Use cases: For the same stream, there may be multiple streams with different resolutions. When the network quality deteriorates, in order to ensure the streaming quality, the streaming end can choose to switch from a high-resolution stream to a low-resolution stream..
+  /// When to call: After [startPlayingStream].
+  /// Restrictions: Only supports flv protocol stream.
+  /// Related callbacks:
+  ///  1. The result of the switching request can be obtained through the [onPlayerSwitched] event.
+  ///  2. When the stream is switched successfully, the current streaming status can be known through the [onPlayerStateUpdate] event.
+  ///  3. When switching streams fails, there may not necessarily be an [onPlayerStateUpdate] event notification.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [fromStreamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   Only support numbers, English characters and '-', '_'.
+  /// - [toStreamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   Only support numbers, English characters and '-', '_'.
+  /// - [config] Advanced player configuration.
+  Future<void> switchPlayingStream(
+      String fromStreamID, String toStreamID, ZegoPlayerConfig config) async {
+    return await ZegoExpressImpl.instance
+        .switchPlayingStream(fromStreamID, toStreamID, config);
+  }
+
   /// Stops playing a stream.
   ///
   /// Available since: 1.1.0
@@ -319,7 +345,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   ///
   /// Available since: 2.14.0
   /// Description: When playing at the streaming end, control whether the playing RTC stream needs to be accurately aligned. If necessary, all the streams that contain precise alignment parameters will be aligned; if not, all streams are not aligned.
-  /// Use case: It is often used in scenes that require mixed stream alignment such as KTV to ensure that users can switch between singing anchors, ordinary Maishangyu chat anchors, and Maixia audiences at any time during use.
+  /// Use case: It is often used in scenes that require to play multiple streams alignment such as KTV to ensure that users can switch between singing anchors, ordinary Maishangyu chat anchors, and Maixia audiences at any time during use.
   /// Default value: If this interface is not called, the default is not aligned.
   /// When to call: Called after [createEngine]. Call the interface repeatedly, and the latest setting is valid.
   /// Related APIs: Set the precise alignment parameter of the stream channel [setStreamAlignmentProperty].

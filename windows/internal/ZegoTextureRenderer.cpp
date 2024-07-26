@@ -1,44 +1,63 @@
-#include "ZegoTextureRenderer.h"
+﻿#include "ZegoTextureRenderer.h"
 
 #include <cassert>
 #include <iostream>
 
-ZegoTextureRenderer::ZegoTextureRenderer(flutter::TextureRegistrar* texture_registrar, uint32_t width, uint32_t height)
-    : textureRegistrar_(texture_registrar), width_(width), height_(height) {
+ZegoTextureRenderer::ZegoTextureRenderer() {
+}
 
+ZegoTextureRenderer::~ZegoTextureRenderer() { }
+
+void ZegoTextureRenderer::CreateTexture(flutter::TextureRegistrar *texture_registrar, uint32_t width, uint32_t height)
+{
     // Create flutter desktop pixelbuffer texture;
-    texture_ =
-        std::make_unique<flutter::TextureVariant>(flutter::PixelBufferTexture(
-            [this](size_t width, size_t height) -> const FlutterDesktopPixelBuffer* {
-                return this->ConvertPixelBufferForFlutter(width, height);
+    //not need lock,  because CreateTexture is called by after create ZegoTextureRenderer. 
+    //shared_from_this can not called in ZegoTextureRenderer construct function so need CreateTexture
+    textureRegistrar_ = texture_registrar;
+    width_ = width;
+    height_ = height;
+
+    std::weak_ptr<ZegoTextureRenderer> weakSelf = shared_from_this();
+
+    texture_ = std::make_unique<flutter::TextureVariant>(flutter::PixelBufferTexture([=](size_t width, size_t height) -> const FlutterDesktopPixelBuffer * 
+        {
+            auto self = weakSelf.lock();
+            if (!self) {
+                return nullptr;
+            }
+
+            return ConvertPixelBufferForFlutter(width, height);
         }));
 
     textureID_ = textureRegistrar_->RegisterTexture(texture_.get());
 }
 
-ZegoTextureRenderer::~ZegoTextureRenderer() {
-  // Texture might still be processed while destructor is called.
-  // Lock mutex for safe destruction
-  const std::lock_guard<std::mutex> lock(bufferMutex_);
-  if (textureRegistrar_ && textureID_ > 0) {
-    std::shared_ptr<flutter::TextureVariant> share_texture = std::move(texture_);
-    textureRegistrar_->UnregisterTexture(textureID_, [share_texture]() mutable {
-      share_texture.reset();
-    });
-  }
-  textureID_ = -1;
-  //texture_ = nullptr;
-  textureRegistrar_ = nullptr;
+void ZegoTextureRenderer::DestroyTexture()
+{
+    // Texture might still be processed while destructor is called.
+    // Lock mutex for safe destruction
+
+    const std::lock_guard<std::mutex> lock(bufferMutex_);
+    if (textureRegistrar_ && textureID_ > 0) {
+        std::shared_ptr<flutter::TextureVariant> share_texture = std::move(texture_);
+        textureRegistrar_->UnregisterTexture(textureID_,
+                                             [share_texture]() mutable { share_texture.reset(); });
+    }
+    textureID_ = -1;
+    //texture_ = nullptr;
+    textureRegistrar_ = nullptr;
 }
 
 bool ZegoTextureRenderer::updateSrcFrameBuffer(uint8_t *data, uint32_t data_length,
                                                ZEGO::EXPRESS::ZegoVideoFrameParam frameParam) {
   // Scoped lock guard.
   {
+    std::lock_guard<std::mutex> lock(bufferMutex_);
+
     if (!TextureRegistered()) {
       return false;
     }
-    const std::lock_guard<std::mutex> lock(bufferMutex_);
+    
 
     if (srcBuffer_.size() != data_length) {
       // Update source buffer size.
@@ -80,10 +99,12 @@ const FlutterDesktopPixelBuffer* ZegoTextureRenderer::ConvertPixelBufferForFlutt
   // to detect size changes.
 
   // Lock buffer mutex to protect texture processing
+  std::unique_lock<std::mutex> buffer_lock(bufferMutex_);
+
   if (!TextureRegistered()) {
     return nullptr;
   }
-  std::unique_lock<std::mutex> buffer_lock(bufferMutex_);
+  
 
   const uint32_t bytes_per_pixel = 4;
   const uint32_t pixels_total = width_ * height_;

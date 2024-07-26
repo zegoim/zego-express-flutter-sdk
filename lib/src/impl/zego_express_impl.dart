@@ -361,7 +361,9 @@ class ZegoExpressImpl {
               'forceSynchronousNetworkTime':
                   config.forceSynchronousNetworkTime ?? 0,
               'streamCensorshipMode': config.streamCensorshipMode?.index ??
-                  ZegoStreamCensorshipMode.None.index
+                  ZegoStreamCensorshipMode.None.index,
+              'codecNegotiationType': config.codecNegotiationType?.index ??
+                  ZegoCapabilityNegotiationType.None.index
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -825,6 +827,8 @@ class ZegoExpressImpl {
               'resourceWhenStopPublish':
                   config.resourceWhenStopPublish?.index ??
                       ZegoStreamResourceType.Default.index,
+              'adaptiveSwitch': config.adaptiveSwitch ?? 0,
+              'adaptiveTemplateIDList': config.adaptiveTemplateIDList ?? [],
             }
           : {}
     });
@@ -2594,6 +2598,12 @@ class ZegoExpressImpl {
             Map<String, dynamic>.from(extendedData));
         break;
 
+      case 'onPlayerSwitched':
+        if (ZegoExpressEngine.onPlayerSwitched == null) return;
+
+        ZegoExpressEngine.onPlayerSwitched!(map['streamID'], map['errorCode']);
+        break;
+
       case 'onPlayerQualityUpdate':
         if (ZegoExpressEngine.onPlayerQualityUpdate == null) return;
 
@@ -3465,6 +3475,12 @@ class ZegoExpressImpl {
 
         ZegoExpressEngine.onMobileScreenCaptureExceptionOccurred!(
             ZegoScreenCaptureExceptionType.values[map['exceptionType']]);
+        break;
+
+      case 'onMobileScreenCaptureStart':
+        if (ZegoExpressEngine.onMobileScreenCaptureStart == null) return;
+
+        ZegoExpressEngine.onMobileScreenCaptureStart!();
         break;
 
       /* AI Voice Changer */
