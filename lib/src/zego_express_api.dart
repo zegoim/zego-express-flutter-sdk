@@ -623,7 +623,7 @@ class ZegoExpressEngine {
   /// When to trigger:  After calling the [switchPlayingStream], this callback is triggered when a switch stream request ultimately succeeds or fails.
   /// Related callbacks: After the stream switching is successful or failed, you can obtain the current streaming status through the callback function [onPlayerStateUpdate].
   ///
-  /// - [streamID] stream ID.
+  /// - [streamID] The stream ID currently playing.
   /// - [errorCode] The error code corresponding to the result of the switch stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
   static void Function(String streamID, int errorCode)? onPlayerSwitched;
 
@@ -1662,7 +1662,7 @@ class ZegoExpressEngine {
   static void Function(ZegoScreenCaptureSource source, Rect captureRect)?
       onRectChanged;
 
-  /// The callback triggered when a screen capture source exception occurred
+  /// The callback triggered when a screen capture source exception occurred.
   ///
   /// Available since: 3.6.0
   /// Description: The callback triggered when the mobile screen capture source exception occurred.
@@ -1674,7 +1674,7 @@ class ZegoExpressEngine {
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
       onMobileScreenCaptureExceptionOccurred;
 
-  /// The callback triggered when start screen capture
+  /// The callback triggered when start screen capture.
   ///
   /// Available since: 3.16.0
   /// Description: The callback triggered when calling the start mobile screen capture.

@@ -2037,7 +2037,7 @@ void ZegoExpressEngineEventHandler::onGetSpeakerList(
 void ZegoExpressEngineEventHandler::onUpdateProgress(
     EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
     int fileIndex, int fileCount) {
-    ZF::logInfo("[onAIVoiceChangerUpdateProgress] index: %d, percent: %lf, fileIndex: %d, fileCount: %d", aiVoiceChanger->getIndex(), percent, fileIndex, fileCount);
+    // Do not print log
 
     if (eventSink_) {
         FTMap retMap;
