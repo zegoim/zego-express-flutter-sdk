@@ -33,7 +33,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Use cases: For the same stream, there may be multiple streams with different resolutions. When the network quality deteriorates, in order to ensure the streaming quality, the streaming end can choose to switch from a high-resolution stream to a low-resolution stream..
   /// When to call: After [startPlayingStream].
   /// Restrictions: Only supports flv protocol stream.
-  /// Caution:
+  /// Related callbacks:
   ///  1. The result of the switching request can be obtained through the [onPlayerSwitched] event.
   ///  2. When the stream is switched successfully, the current streaming status can be known through the [onPlayerStateUpdate] event.
   ///  3. When switching streams fails, there may not necessarily be an [onPlayerStateUpdate] event notification.

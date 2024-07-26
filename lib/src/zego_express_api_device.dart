@@ -290,7 +290,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] [ZegoVideoSourceTypeCamera] if or not use front camera, `true`: use the front camera, `false`: use the the rear camera.
-  /// - [channel] Publishing stream channel
+  /// - [channel] Publishing stream channel.
   Future<void> useFrontCamera(bool enable,
       {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance

@@ -1762,7 +1762,7 @@ enum ZegoVideoSourceType {
   /// No capture, i.e. no video data.
   None,
 
-  /// Video source from camera.
+  /// The video source comes from the camera (main channel default, and front camera is captured by default). The default is front camera, which can be adjusted to rear via [useFrontCamera].
   Camera,
 
   /// Video source from custom capture. The web platform does not currently support.
@@ -2464,7 +2464,7 @@ class ZegoPublisherConfig {
   /// When pushing a flow, review the pattern of the flow. By default, no audit is performed. If you want to use this function, contact ZEGO technical support.
   ZegoStreamCensorshipMode? streamCensorshipMode;
 
-  /// Inspect flag, works with ZEGO censor SDK. If you want to use this function, contact ZEGO technical support.
+  /// Inspect flag. If you want to use this function, contact ZEGO technical support.
   int? streamCensorFlag;
 
   /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
@@ -2623,10 +2623,10 @@ class ZegoPlayerConfig {
   /// Play resource type when stop publish, the default is ZegoStreamResourceTypeDefault. This setting takes effect only if the user sets [resourceMode] to ZegoStreamResourceModeDefaut and [resourceSwitchMode] to ZegoStreamResourceSwitchModeDefault or ZegoStreamResourceSwitchModeSwitchToRTC.
   ZegoStreamResourceType? resourceWhenStopPublish;
 
-  /// Whether to enable adaptive switching of streams, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  /// Whether to enable adaptive switching of streams, 1 means on, 0 means off. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   int? adaptiveSwitch;
 
-  /// Stream adaptive transcoding template ID list, please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  /// Stream adaptive transcoding template ID list. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   List<int>? adaptiveTemplateIDList;
 
   ZegoPlayerConfig(this.resourceMode,
