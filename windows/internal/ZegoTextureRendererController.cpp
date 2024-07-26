@@ -21,7 +21,10 @@ ZegoTextureRendererController::~ZegoTextureRendererController()
         capturedRenderFirstFrameMap_.clear();
         meidaPlayerRenderFirstFrameMap_.clear();
     }
-    
+
+    for (auto render : renderers_) {
+        render.second->DestroyTexture();
+    }
     renderers_.clear();
     isInit = false;
 }
@@ -57,7 +60,13 @@ void ZegoTextureRendererController::uninit()
         meidaPlayerRenderFirstFrameMap_.clear();
     }
     
+    for (auto render : renderers_)
+    {
+        render.second->DestroyTexture();
+    }
+
     renderers_.clear();
+
     isInit = false;
 }
 
@@ -79,7 +88,7 @@ bool ZegoTextureRendererController::destroyTextureRenderer(int64_t textureID)
 
     auto renderer = renderers_.find(textureID);
     if (renderer != renderers_.end()) {
-        renderer->second.reset();
+        renderer->second->DestroyTexture();
         renderers_.erase(textureID);
         return true;
     }
