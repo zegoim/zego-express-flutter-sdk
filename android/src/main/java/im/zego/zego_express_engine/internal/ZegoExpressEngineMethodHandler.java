@@ -6083,6 +6083,16 @@ public class ZegoExpressEngineMethodHandler {
                 audioFrameParam.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) audioParamMap.get("channel")));
                 config.audioParam = audioFrameParam;
             }
+
+            HashMap<String, Object> cropRectMap = (HashMap<String, Object>) configMap.get("cropRect");
+            if (cropRectMap != null) {
+                Rect cropRect = new Rect();
+                cropRect.left = ZegoUtils.intValue((Number) cropRectMap.get("x"));
+                cropRect.top = ZegoUtils.intValue((Number) cropRectMap.get("y"));
+                cropRect.right = ZegoUtils.intValue((Number) cropRectMap.get("width")) + cropRect.left;
+                cropRect.bottom = ZegoUtils.intValue((Number) cropRectMap.get("height")) + cropRect.top;
+                config.cropRect = cropRect;
+            }
         }
         ZegoExpressEngine.getEngine().startScreenCapture(config);
 
@@ -6113,6 +6123,16 @@ public class ZegoExpressEngineMethodHandler {
                 audioFrameParam.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) audioParamMap.get("sampleRate")));
                 audioFrameParam.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) audioParamMap.get("channel")));
                 config.audioParam = audioFrameParam;
+            }
+
+            HashMap<String, Object> cropRectMap = (HashMap<String, Object>) configMap.get("cropRect");
+            if (cropRectMap != null) {
+                Rect cropRect = new Rect();
+                cropRect.left = ZegoUtils.intValue((Number) cropRectMap.get("x"));
+                cropRect.top = ZegoUtils.intValue((Number) cropRectMap.get("y"));
+                cropRect.right = ZegoUtils.intValue((Number) cropRectMap.get("width")) + cropRect.left;
+                cropRect.bottom = ZegoUtils.intValue((Number) cropRectMap.get("height")) + cropRect.top;
+                config.cropRect = cropRect;
             }
         }
         ZegoExpressEngine.getEngine().updateScreenCaptureConfig(config);
