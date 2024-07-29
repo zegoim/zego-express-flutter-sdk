@@ -1,5 +1,81 @@
 # Change Log
 
+## 3.16.0
+
+### New Features
+
+1. Support for simultaneous video capture from front and rear cameras (Only iOS)
+
+Note:
+- This feature is only available on iOS 13 and above. To use this feature, please contact ZEGO technical support.
+- This feature consumes significant device performance, so please use it with caution.
+- Developers can determine if simultaneous front and rear camera use is supported by reading the system library interface [AVCaptureMultiCamSession.multiCamSupported].
+- A new enumeration value `ZegoVideoSourceTypeSecondaryCamera` is introduced to identify the video from the second camera. It supports setting both front and rear cameras as video sources and streaming them separately using the [setVideoSource] interface. Developers can use [useFrontCamera] to switch the front and rear views corresponding to `ZegoVideoSourceTypeCamera` and `ZegoVideoSourceTypeSecondaryCamera`. This capability can be applied to scenarios such as dual-camera live streaming. For more information, refer to Multi-source Capture.
+Relevant APIs: setVideoSource, useFrontCamera, ZegoVideoSourceType > ZegoVideoSourceTypeSecondaryCamera, ZegoVideoSourceType > ZegoVideoSourceTypeCamera.
+
+2. Automatic selection of the clearest camera for video capture on phones with three rear cameras (iOS)
+
+Note:
+- This feature is only available on iOS 14 and above. To use this feature, please contact ZEGO technical support.
+- You can use the system interface [AVCaptureDeviceDiscoverySession] to determine if the device supports three rear cameras.
+- When a device has three rear cameras (ultra-wide, main, and telephoto), enabling this feature will automatically select the clearest camera for video capture based on the zoom factor updated via [setCameraZoomFactor].
+Relevant APIs: setCameraZoomFactor.
+
+3. New callback notification for screen capture permission results (Only Android)
+
+- Developers can handle subsequent business logic, including UI prompts or application redirects, based on the callback results. For more information, refer to Screen Sharing.
+Relevant APIs: onScreenCaptureStart.
+
+4. Video super-resolution support for 1.33x and 1.5x magnification (Android & iOS)
+
+Note:
+- To use this feature, please contact ZEGO technical support.
+- Configure this feature before initializing video super-resolution.
+- Using video resolutions higher than the device's supported limit can cause additional damage and reduce video quality. Therefore, 1.33x and 1.5x magnifications are added to adapt to the best effects on different devices. For more information, refer to Super Resolution.
+Relevant APIs: [setSuperResolution].
+
+5. New low-latency mode for AI noise reduction
+
+Note:
+- To use this feature, please contact ZEGO technical support.
+- It maintains pure noise reduction and high-fidelity voice quality with a 10ms delay, suitable for latency-sensitive scenarios such as game voice chat, game teams, and real-time chorus. AI noise reduction now supports balanced mode, low-latency mode, and lightweight mode. For more details, refer to Scenario-based AI Noise Reduction.
+Relevant APIs: setANSMode.
+
+6. Control whether a stream is allowed for review during streaming
+
+Note:
+- If a stream is set to allow review and the developer does not initiate a review task, the stream will not be reviewed.
+- By default, when calling the review interface, all streams in the room are reviewed. If the client wants to control a specific stream to not be reviewed, set the review flag [streamCensorFlag] parameter to 1 (not allowed) when calling the [startPublishingStream] interface.
+Relevant APIs: startPublishingStream, ZegoPublisherConfig > streamCensorFlag.
+
+7. Media player playback speed now supports a minimum of 0.3x speed
+
+- The playback speed range of the media player is expanded from [0.5, 4.0] to [0.3, 4.0]. For more details, refer to Media Player.
+Relevant APIs: setPlaySpeed.
+
+8. New user-level negotiation scope for H.265 client encoding compatibility strategy
+
+Note:
+- To use this feature, please contact ZEGO technical support.
+- Control the local client encoding compatibility range for all users in the room or all users. If a user within the specified range does not support H.265, the local client encoding will dynamically fall back.
+Relevant APIs: loginRoom, startPublishingStream, ZegoPublisherConfig > codecNegotiationType, ZegoRoomConfig > capabilityNegotiationTypes.
+
+### Bug Fixes
+
+1. Fixed the issue where multiple SPS and PPS files occasionally caused severe device heating during hardware decoding.
+2. Fixed the issue where the device audio output remained on the speaker after plugging in headphones.
+3. Fixed crashes caused by Bluetooth-related permissions.
+4. Fixed occasional JNI exceptions in the renderer.
+5. Fixed crashes caused by `dlopen` intercepting `libnativewindow` on some phones.
+6. Fixed the crash caused by a deadlock in custom filters when switching between foreground and background.
+
+### Deprecated and Removed
+
+1. Deprecated the CDN Plus configuration in the stream pulling interface
+
+- Discontinued the Smooth Live concept and deprecated CDN Plus live streaming related interfaces. For live streaming, it is recommended to use ZEGO's self-developed ultra-low latency live streaming product for a higher quality live streaming experience.
+Relevant APIs: ZegoStreamResourceModeCDNPlus.
+
 ## 3.15.1
 
 ### Bug Fixes
