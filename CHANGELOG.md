@@ -4,7 +4,7 @@
 
 ### New Features
 
-1. Support for simultaneous video capture from front and rear cameras (iOS)
+1. Support for simultaneous video capture from front and rear cameras (Only iOS)
 
 Note:
 - This feature is only available on iOS 13 and above. To use this feature, please contact ZEGO technical support.
@@ -21,12 +21,12 @@ Note:
 - When a device has three rear cameras (ultra-wide, main, and telephoto), enabling this feature will automatically select the clearest camera for video capture based on the zoom factor updated via [setCameraZoomFactor].
 Relevant APIs: setCameraZoomFactor.
 
-3. New callback notification for screen capture permission results (Android)
+3. New callback notification for screen capture permission results (Only Android)
 
 - Developers can handle subsequent business logic, including UI prompts or application redirects, based on the callback results. For more information, refer to Screen Sharing.
 Relevant APIs: onScreenCaptureStart.
 
-4. Video super-resolution support for 1.33x and 1.5x magnification
+4. Video super-resolution support for 1.33x and 1.5x magnification (Android & iOS)
 
 Note:
 - To use this feature, please contact ZEGO technical support.
