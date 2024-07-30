@@ -829,6 +829,14 @@ class ZegoExpressImpl {
                       ZegoStreamResourceType.Default.index,
               'adaptiveSwitch': config.adaptiveSwitch ?? 0,
               'adaptiveTemplateIDList': config.adaptiveTemplateIDList ?? [],
+              'customResourceConfig': config.customResourceConfig != null
+                  ? {
+                      'beforePublish':
+                          config.customResourceConfig?.beforePublish,
+                      'publishing': config.customResourceConfig?.publishing,
+                      'afterPublish': config.customResourceConfig?.afterPublish
+                    }
+                  : {},
             }
           : {}
     });
@@ -855,6 +863,13 @@ class ZegoExpressImpl {
         'roomID': config.roomID ?? '',
         'resourceSwitchMode': config.resourceSwitchMode?.index ??
             ZegoStreamResourceSwitchMode.Default.index,
+        'customResourceConfig': config.customResourceConfig != null
+            ? {
+                'beforePublish': config.customResourceConfig?.beforePublish,
+                'publishing': config.customResourceConfig?.publishing,
+                'afterPublish': config.customResourceConfig?.afterPublish
+              }
+            : {},
       }
     });
   }

@@ -1144,6 +1144,15 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(
             config.adaptiveTemplateIDList.push_back(std::get<int32_t>(adaptive));
         }
 
+        if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("customResourceConfig")])) {
+            auto customResourceConfigMap = std::get<flutter::EncodableMap>(configMap[FTValue("customResourceConfig")]);
+            if (customResourceConfigMap.size() > 0) {
+                config.customResourceConfig.beforePublish = (EXPRESS::ZegoResourceType)std::get<int32_t>(customResourceConfigMap[FTValue("beforePublish")]);
+                config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)std::get<int32_t>(customResourceConfigMap[FTValue("publishing")]);
+                config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)std::get<int32_t>(customResourceConfigMap[FTValue("afterPublish")]);
+            }
+        }
+
         EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr, config);
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr);
@@ -1187,7 +1196,16 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(
 
                 config.cdnConfig = cdnConfigPtr.get();
             }
-        }        
+        }
+
+        if (std::holds_alternative<flutter::EncodableMap>(configMap[FTValue("customResourceConfig")])) {
+            auto customResourceConfigMap = std::get<flutter::EncodableMap>(configMap[FTValue("customResourceConfig")]);
+            if (customResourceConfigMap.size() > 0) {
+                config.customResourceConfig.beforePublish = (EXPRESS::ZegoResourceType)std::get<int32_t>(customResourceConfigMap[FTValue("beforePublish")]);
+                config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)std::get<int32_t>(customResourceConfigMap[FTValue("publishing")]);
+                config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)std::get<int32_t>(customResourceConfigMap[FTValue("afterPublish")]);
+            }
+        }     
     } 
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);
