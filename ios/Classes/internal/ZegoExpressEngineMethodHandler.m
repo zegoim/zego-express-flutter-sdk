@@ -72,7 +72,7 @@
 
     // Uninit texture renderer
     if (!self.enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] uninitController];
+        [[ZegoTextureRendererController sharedInstance] uninitController:true];
     }
 }
 
@@ -209,7 +209,7 @@
 
     // Uninit texture renderer
     if (!self.enablePlatformView) {
-        [[ZegoTextureRendererController sharedInstance] uninitController];
+        [[ZegoTextureRendererController sharedInstance] uninitController:false];
     }
 
     result(nil);

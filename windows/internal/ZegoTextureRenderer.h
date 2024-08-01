@@ -56,6 +56,8 @@ class ZegoTextureRenderer : public std::enable_shared_from_this<ZegoTextureRende
   //must call after construct ZegoTextureRenderer
   void CreateTexture(flutter::TextureRegistrar *texture_registrar, uint32_t width, uint32_t height);
 
+   void DestroyTexture();
+
 
   // Prevent copying.
   ZegoTextureRenderer(ZegoTextureRenderer const&) = delete;
@@ -102,8 +104,6 @@ class ZegoTextureRenderer : public std::enable_shared_from_this<ZegoTextureRende
   void setUseMirrorEffect(bool mirror) { isUseMirror_ = mirror; }
 
  private:
-
-  void DestroyTexture();
 
   // Informs flutter texture registrar of updated texture.
   void OnBufferUpdated();
