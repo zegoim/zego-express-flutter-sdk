@@ -173,6 +173,7 @@ import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfigV2;
 import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
+import im.zego.zegoexpress.entity.ZegoCustomPlayerResourceConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoRenderConfig;
