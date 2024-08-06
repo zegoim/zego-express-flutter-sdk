@@ -832,9 +832,11 @@ class ZegoExpressImpl {
               'customResourceConfig': config.customResourceConfig != null
                   ? {
                       'beforePublish':
-                          config.customResourceConfig?.beforePublish,
-                      'publishing': config.customResourceConfig?.publishing,
-                      'afterPublish': config.customResourceConfig?.afterPublish
+                          config.customResourceConfig?.beforePublish.index,
+                      'publishing':
+                          config.customResourceConfig?.publishing.index,
+                      'afterPublish':
+                          config.customResourceConfig?.afterPublish.index
                     }
                   : {},
             }
@@ -865,9 +867,10 @@ class ZegoExpressImpl {
             ZegoStreamResourceSwitchMode.Default.index,
         'customResourceConfig': config.customResourceConfig != null
             ? {
-                'beforePublish': config.customResourceConfig?.beforePublish,
-                'publishing': config.customResourceConfig?.publishing,
-                'afterPublish': config.customResourceConfig?.afterPublish
+                'beforePublish':
+                    config.customResourceConfig?.beforePublish.index,
+                'publishing': config.customResourceConfig?.publishing.index,
+                'afterPublish': config.customResourceConfig?.afterPublish.index
               }
             : {},
       }
