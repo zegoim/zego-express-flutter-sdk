@@ -1,5 +1,12 @@
 # Change Log
 
+## 3.16.1
+
+### Bug Fixes
+
+1. Fixed the issue of occasional crash on iOS when pushing/stopping streaming frequently.
+2. Fixed an issue where screen recording permissions would not automatically stop after the app is killed when recording on some models.
+
 ## 3.16.0
 
 ### New Features
