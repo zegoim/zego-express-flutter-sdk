@@ -68,7 +68,7 @@
 
 - (void)unInit {
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = nil;
-    [ZegoExpressEngine destroyEngine:nil];
+    // [ZegoExpressEngine destroyEngine:nil];
 
     // Uninit texture renderer
     if (!self.enablePlatformView) {
