@@ -1,5 +1,13 @@
 # Change Log
 
+## 3.16.2
+
+### Bug Fixes
+
+1. Fixed the problem that the camera cannot be opened in certain Android scenes
+2. Fixed the problem that when recording the screen of some Android models, the screen recording permission will not be automatically stopped after the application is killed.
+3. Fixed the issue of iOS crashing when frequent streaming/stopping streaming.
+
 ## 3.16.0
 
 ### New Features
