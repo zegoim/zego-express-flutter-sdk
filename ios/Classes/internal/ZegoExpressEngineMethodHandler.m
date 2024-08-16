@@ -46,6 +46,8 @@
 
 @property (nonatomic, assign) BOOL pluginReported;
 
+@property (nonatomic, assign) BOOL destroyWhenKilled;
+
 @end
 
 @implementation ZegoExpressEngineMethodHandler
@@ -59,6 +61,15 @@
     return instance;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.destroyWhenKilled = true;
+    }
+    return self;
+}
+
 - (void)setRegistrar:(id<FlutterPluginRegistrar>)registrar eventSink:(FlutterEventSink)sink {
     ZGLog(@"[setRegistrar] registrar:%p, sink:%p", registrar, sink);
     _registrar = registrar;
@@ -68,7 +79,9 @@
 
 - (void)unInit {
     [ZegoExpressEngineEventHandler sharedInstance].eventSink = nil;
-    [ZegoExpressEngine destroyEngine:nil];
+    if (self.destroyWhenKilled) {
+         [ZegoExpressEngine destroyEngine:nil];
+    }
 
     // Uninit texture renderer
     if (!self.enablePlatformView) {
@@ -227,6 +240,10 @@
 
         configObject = [[ZegoEngineConfig alloc] init];
         configObject.advancedConfig = configMap[@"advancedConfig"];
+        if (configObject.advancedConfig[@"destroy_when_killed"]) {
+            NSString* value = configObject.advancedConfig[@"destroy_when_killed"];
+            self.destroyWhenKilled = ![value isEqualToString: @"false"];
+        }
 
         NSDictionary *logConfigMap = configMap[@"logConfig"];
         ZegoLogConfig *logConfigObject = nil;
