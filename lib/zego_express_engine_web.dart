@@ -308,7 +308,7 @@ class ZegoExpressEngineWeb {
         final data = jsonDecode(map["data"]);
         var state, extendedData;
 
-        switch (data["state"]) {
+        switch (data["reason"]) {
           case "LOGINING":
             state = 0;
             break;
