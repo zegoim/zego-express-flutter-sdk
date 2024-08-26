@@ -282,15 +282,15 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Switches to the front or the rear camera (for the specified channel).
   ///
   /// Available since: 1.1.0
-  /// Description: This function is used to control the use of the front camera or the rear camera (only supported by Android and iOS).
+  /// Description: This function controls whether [ZegoVideoSourceTypeCamera] uses the front camera or the rear camera (only supported by Android and iOS).
   /// Default value: The default is `true` which means the front camera is used.
   /// When to call: After creating the engine [createEngine].
   /// Restrictions: None.
   /// Caution: When the custom video capture function [enableCustomVideoCapture] is turned on, since the developer has taken over the video data capture, the SDK is no longer responsible for the video data capture, and this function is no longer valid.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
-  /// - [enable] Whether to use the front camera, `true`: use the front camera, `false`: use the the rear camera.
-  /// - [channel] Publishing stream channel
+  /// - [enable] [ZegoVideoSourceTypeCamera] if or not use front camera, `true`: use the front camera, `false`: use the the rear camera.
+  /// - [channel] Publishing stream channel.
   Future<void> useFrontCamera(bool enable,
       {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance

@@ -6,7 +6,7 @@
 ZegoTextureRenderer::ZegoTextureRenderer() {
 }
 
-ZegoTextureRenderer::~ZegoTextureRenderer() { DestroyTexture(); }
+ZegoTextureRenderer::~ZegoTextureRenderer() { }
 
 void ZegoTextureRenderer::CreateTexture(flutter::TextureRegistrar *texture_registrar, uint32_t width, uint32_t height)
 {

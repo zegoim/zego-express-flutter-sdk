@@ -97,4 +97,12 @@ file(GLOB zego_express_engine_bundled_libraries
      "${CMAKE_CURRENT_LIST_DIR}/libs/x64/*.dll"
 )
 
+file(GLOB LIBRARY_FILES "${CMAKE_CURRENT_LIST_DIR}/libs/x64/*")
+foreach(LIB_FILE ${LIBRARY_FILES})
+  if(LIB_FILE MATCHES "cacert\.pem")
+    # 添加库文件路径到变量
+    list(APPEND zego_express_engine_bundled_libraries ${LIB_FILE})
+  endif()
+endforeach()
+
 set(zego_express_engine_bundled_libraries ${zego_express_engine_bundled_libraries} PARENT_SCOPE)
