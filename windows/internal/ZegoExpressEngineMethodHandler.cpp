@@ -3336,6 +3336,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(
             whiteboard.verticalRatio = std::get<int32_t>(whiteboardMap[FTValue("verticalRatio")]);
             whiteboard.isPPTAnimation = std::get<bool>(whiteboardMap[FTValue("isPPTAnimation")]);
             whiteboard.zOrder = std::get<int32_t>(whiteboardMap[FTValue("zOrder")]);
+            whiteboard.backgroundColor = std::get<int32_t>(whiteboardMap[FTValue("backgroundColor")]);
 
             auto layoutMap = std::get<flutter::EncodableMap>(whiteboardMap[FTValue("layout")]);
             whiteboard.layout.x = std::get<int32_t>(layoutMap[FTValue("left")]);
