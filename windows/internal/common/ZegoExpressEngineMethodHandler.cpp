@@ -3059,6 +3059,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(FTArgument argument, FTResul
             whiteboard.isPPTAnimation =
                 zego_value_get_bool(whiteboardMap[FTValue("isPPTAnimation")]);
             whiteboard.zOrder = zego_value_get_int(whiteboardMap[FTValue("zOrder")]);
+            whiteboard.backgroundColor = zego_value_get_int(whiteboardMap[FTValue("backgroundColor")]);
 
             auto layoutMap = zego_value_get_map(whiteboardMap[FTValue("layout")]);
             whiteboard.layout.x = zego_value_get_int(layoutMap[FTValue("left")]);
