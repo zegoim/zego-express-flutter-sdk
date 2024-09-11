@@ -12,7 +12,7 @@ function(download_native_sdk WORKSPACE)
     message(NOTICE "[ZEGO][PLUGIN][DEV] 'DEPS' env was found: ${DEPSURL}")
   else()
     file(STRINGS "${WORKSPACE}/../DEPS.yaml" DEPSYAML)
-    string(REGEX MATCH "windows: .+ZegoExpressVideo-win-shared-cpp\.zip\\?version=[0-9]+(\.[0-9]+)+" DEPSURL ${DEPSYAML})
+    string(REGEX MATCH "windows: .+$" DEPSURL ${DEPSYAML})
     string(REGEX REPLACE "windows: " "" DEPSURL ${DEPSURL})
   endif()
 

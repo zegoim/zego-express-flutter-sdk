@@ -127,7 +127,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
         Platform.isAndroid ||
         Platform.isWindows ||
         Platform.isMacOS ||
-        Platform.isLinux ||
         kIsWeb) {
       ZegoExpressEngine.instance.createCanvasView((viewID) {
         _previewViewID = viewID;
@@ -180,7 +179,6 @@ class _QuickStartPageState extends State<QuickStartPage> {
         Platform.isAndroid ||
         Platform.isWindows ||
         Platform.isMacOS ||
-        Platform.isLinux ||
         kIsWeb) {
       print('📥 Start playing stream, streamID');
       ZegoExpressEngine.instance.createCanvasView((viewID) {
