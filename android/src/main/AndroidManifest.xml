@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="im.zego.zego_express_engine">
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
   <application>
     <activity
