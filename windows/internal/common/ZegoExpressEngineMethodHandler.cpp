@@ -391,7 +391,7 @@ void ZegoExpressEngineMethodHandler::switchRoom(FTArgument argument, FTResult re
             configPtr->isUserStatusNotify =
                 zego_value_get_bool(configMap[FTValue("isUserStatusNotify")]);
             configPtr->token = zego_value_get_string(configMap[FTValue("token")]);
-            if (!zego_value_is_null(FTValue("capabilityNegotiationTypes"))) {
+            if (!zego_value_is_null(configMap[FTValue("capabilityNegotiationTypes")])) {
                 configPtr->capabilityNegotiationTypes = zego_value_get_long(configMap[FTValue("capabilityNegotiationTypes")]);
             }
         }
