@@ -1,15 +1,11 @@
 #pragma once
 
 #include <memory>
-#include <flutter/event_channel.h>
-#include <flutter/encodable_value.h>
-
+#include <iostream>
 #include <ZegoExpressSDK.h>
-using namespace ZEGO;
+#include "../ZegoDataUtils.h"
 
-#define FTValue(varName) flutter::EncodableValue(varName)
-#define FTMap flutter::EncodableMap
-#define FTArray flutter::EncodableList
+using namespace ZEGO;
 
 class ZegoExpressEngineEventHandler
     : public EXPRESS::IZegoEventHandler
@@ -27,7 +23,7 @@ class ZegoExpressEngineEventHandler
     , public EXPRESS::IZegoAIVoiceChangerEventHandler
 {
 public:
-    ~ZegoExpressEngineEventHandler(){ std::cout << "event handler destroy" << std::endl;  }
+    ~ZegoExpressEngineEventHandler() { std::cout << "event handler destroy" << std::endl;  }
     ZegoExpressEngineEventHandler() { std::cout << "event handler create" << std::endl; }
 
     static std::shared_ptr<ZegoExpressEngineEventHandler>& getInstance()
@@ -38,8 +34,7 @@ public:
 
         return m_instance;
     }
-
-    void setEventSink(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> &&eventSink);
+    void setEventSink(FTEventSink &&eventSink);
     void clearEventSink();
 
 private:
@@ -112,7 +107,7 @@ protected:
 
     void onAudioDeviceStateChanged(EXPRESS::ZegoUpdateType updateType, EXPRESS::ZegoAudioDeviceType deviceType, const EXPRESS::ZegoDeviceInfo& deviceInfo) override;
 
-    void onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume);
+    void onAudioDeviceVolumeChanged(EXPRESS::ZegoAudioDeviceType deviceType, const std::string& deviceID, int volume) override;
 
     void onCapturedSoundLevelUpdate(float soundLevel) override;
 
@@ -291,9 +286,9 @@ protected:
                           int fileIndex, int fileCount) override;
 
 private:
-    flutter::EncodableMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
+    FTMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
 
 private:
-    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> eventSink_;
+    FTEventSink eventSink_;
 
 };

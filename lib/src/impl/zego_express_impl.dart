@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.16.0";
+  static String pluginVersion = "3.16.2";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -71,6 +71,7 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
+    use &= !kIsLinux;
 
     if (kIsMacOS) {
       try {

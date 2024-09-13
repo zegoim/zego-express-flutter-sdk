@@ -697,6 +697,12 @@ class ZegoErrorCode {
   /// Description: The copyrighted music resource ID is too long. <br>Cause: The copyrighted music resource ID is too long. The maximum length should be less than 512 bytes. <br> Solutions: Please copyrighted music resource ID less than 1024 bytes.
   static const int MediaPlayerResourceIdTooLong = 1008012;
 
+  /// Description: User cancel. <br>Cause: After calling [Load] to load the resource, call [Stop] to stop the player. <br> Solutions: Expected behavior when calling [Stop] while loading a resource.
+  static const int MediaPlayerUserCancel = 1008013;
+
+  /// Description: The MediaPlayer is already start. <br>Cause: [Load] has been called. <br> Solutions: Please call [Stop] first, then call [Load].
+  static const int MediaPlayerAlreadyStart = 1008014;
+
   /// Description: The MediaPlayer failed to seek. <br>Cause: The file hasn't been loaded yet. <br> Solutions: The media player loads the media resource [loadResource] before seeking [seekTo].
   static const int MediaPlayerSeekError = 1008016;
 
