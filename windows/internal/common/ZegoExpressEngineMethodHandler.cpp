@@ -2461,7 +2461,9 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(FTArgument argument
         auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
         auto stride =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
+        ZF::logInfo("[mediaPlayerTakeSnapshot] windows");
         if (pFrame && size != std::pair<int, int>(0, 0)) {
+            ZF::logInfo("[mediaPlayerTakeSnapshot] windows pFrame");
             auto tmpData = makeBtimap(pFrame, size, stride);
             std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
             delete[] tmpData.second;
