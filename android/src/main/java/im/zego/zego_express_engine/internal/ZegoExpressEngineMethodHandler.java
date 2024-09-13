@@ -173,6 +173,7 @@ import im.zego.zegoexpress.entity.ZegoCopyrightedMusicGetSharedConfigV2;
 import im.zego.zegoexpress.entity.ZegoCrossAppInfo;
 import im.zego.zegoexpress.entity.ZegoCustomAudioConfig;
 import im.zego.zegoexpress.entity.ZegoCustomAudioProcessConfig;
+import im.zego.zegoexpress.entity.ZegoCustomPlayerResourceConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoRenderConfig;
@@ -1562,6 +1563,15 @@ public class ZegoExpressEngineMethodHandler {
                 adaptiveList_[i] = adaptiveList.get(i);
             }
             playerConfig.adaptiveTemplateIDList = adaptiveList_;
+
+            HashMap<String, Object> customResourceConfigMap = (HashMap<String, Object>) playerConfigMap.get("customResourceConfig");
+            if (customResourceConfigMap != null && !customResourceConfigMap.isEmpty()) {
+                ZegoCustomPlayerResourceConfig customResourceConfig = new ZegoCustomPlayerResourceConfig();
+                customResourceConfig.beforePublish = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("beforePublish")));
+                customResourceConfig.publishing = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("publishing")));
+                customResourceConfig.afterPublish = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("afterPublish")));
+                playerConfig.customResourceConfig = customResourceConfig;
+            }
         }
 
         // Handle ZegoCanvas
@@ -1672,6 +1682,15 @@ public class ZegoExpressEngineMethodHandler {
                 cdnConfig.httpdns =
                         ZegoHttpDNSType.getZegoHttpDNSType(ZegoUtils.intValue((Number) cdnConfigMap.get("httpdns")));
                 playerConfig.cdnConfig = cdnConfig;
+            }
+
+            HashMap<String, Object> customResourceConfigMap = (HashMap<String, Object>) playerConfigMap.get("customResourceConfig");
+            if (customResourceConfigMap != null && !customResourceConfigMap.isEmpty()) {
+                ZegoCustomPlayerResourceConfig customResourceConfig = new ZegoCustomPlayerResourceConfig();
+                customResourceConfig.beforePublish = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("beforePublish")));
+                customResourceConfig.publishing = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("publishing")));
+                customResourceConfig.afterPublish = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("afterPublish")));
+                playerConfig.customResourceConfig = customResourceConfig;
             }
         }
 

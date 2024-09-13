@@ -1043,6 +1043,15 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(FTArgument argument, FTR
             config.adaptiveTemplateIDList.push_back(zego_value_get_int(adaptive));
         }
 
+        if (!zego_value_is_null(configMap[FTValue("customResourceConfig")])) {
+            auto customResourceConfigMap = zego_value_get_map(configMap[FTValue("customResourceConfig")]);
+            if (customResourceConfigMap.size() > 0) {
+                config.customResourceConfig.beforePublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("beforePublish")]);
+                config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("publishing")]);
+                config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("afterPublish")]);
+            }
+        }
+
         EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr, config);
     } else {
         EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr);
@@ -1084,7 +1093,16 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(FTArgument argument, FT
 
                 config.cdnConfig = cdnConfigPtr.get();
             }
-        }        
+        }
+
+        if (!zego_value_is_null(configMap[FTValue("customResourceConfig")])) {
+            auto customResourceConfigMap = zego_value_get_map(configMap[FTValue("customResourceConfig")]);
+            if (customResourceConfigMap.size() > 0) {
+                config.customResourceConfig.beforePublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("beforePublish")]);
+                config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("publishing")]);
+                config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("afterPublish")]);
+            }
+        } 
     } 
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);
