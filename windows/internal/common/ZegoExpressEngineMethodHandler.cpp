@@ -2455,15 +2455,14 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(FTArgument argument
 
     if (mediaPlayer) {
         FTMap resultMap;
+        resultMap[FTValue("errorCode")] = FTValue(-1);
 #ifdef _WIN32
         auto pFrame =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
         auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
         auto stride =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
-        ZF::logInfo("[mediaPlayerTakeSnapshot] windows");
         if (pFrame && size != std::pair<int, int>(0, 0)) {
-            ZF::logInfo("[mediaPlayerTakeSnapshot] windows pFrame");
             auto tmpData = makeBtimap(pFrame, size, stride);
             std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
             delete[] tmpData.second;
@@ -2474,7 +2473,6 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(FTArgument argument
             resultMap[FTValue("errorCode")] = FTValue(-1);
         }
 #endif
-        resultMap[FTValue("errorCode")] = FTValue(-1);
         result->Success(resultMap);
     } else {
         result->Error("mediaPlayerTakeSnapshot_Can_not_find_player",

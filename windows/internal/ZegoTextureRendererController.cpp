@@ -415,7 +415,6 @@ void ZegoTextureRendererController::onVideoFrame(ZEGO::EXPRESS::IZegoMediaPlayer
                 meidaPlayerRenderFirstFrameMap_.insert(
                     std::pair<ZEGO::EXPRESS::IZegoMediaPlayer *, bool>(mediaPlayer, true));
             }
-            ZF::logInfo("[onVideoFrame]");
             renderer->second->updateSrcFrameBuffer((uint8_t *)data[0], dataLength[0], param);
         }
     }
