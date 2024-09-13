@@ -2455,6 +2455,7 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(FTArgument argument
 
     if (mediaPlayer) {
         FTMap resultMap;
+        resultMap[FTValue("errorCode")] = FTValue(-1);
 #ifdef _WIN32
         auto pFrame =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
@@ -2472,7 +2473,6 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(FTArgument argument
             resultMap[FTValue("errorCode")] = FTValue(-1);
         }
 #endif
-        resultMap[FTValue("errorCode")] = FTValue(-1);
         result->Success(resultMap);
     } else {
         result->Error("mediaPlayerTakeSnapshot_Can_not_find_player",
