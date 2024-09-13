@@ -1043,7 +1043,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(FTArgument argument, FTR
             config.adaptiveTemplateIDList.push_back(zego_value_get_int(adaptive));
         }
 
-        if (zego_value_is_null(configMap[FTValue("customResourceConfig")])) {
+        if (!zego_value_is_null(configMap[FTValue("customResourceConfig")])) {
             auto customResourceConfigMap = zego_value_get_map(configMap[FTValue("customResourceConfig")]);
             if (customResourceConfigMap.size() > 0) {
                 config.customResourceConfig.beforePublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("beforePublish")]);
@@ -1095,7 +1095,7 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(FTArgument argument, FT
             }
         }
 
-        if (zego_value_is_null(configMap[FTValue("customResourceConfig")])) {
+        if (!zego_value_is_null(configMap[FTValue("customResourceConfig")])) {
             auto customResourceConfigMap = zego_value_get_map(configMap[FTValue("customResourceConfig")]);
             if (customResourceConfigMap.size() > 0) {
                 config.customResourceConfig.beforePublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[FTValue("beforePublish")]);
