@@ -27,7 +27,3 @@ windows/deps/lib/*
 example/windows/flutter/generated_plugins.cmake
 example/windows/flutter/generated_plugin_registrant.cc
 example/windows/flutter/generated_plugin_registrant.h
-
-# Linux
-linux/libs/*
-linux/internal/common

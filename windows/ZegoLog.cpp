@@ -21,7 +21,7 @@ void ZF::logInfo(const char* format, ...) {
         log_buf[4095] = '\0';
     }
 
-    // printf("flutter: %s\n", log_buf);
+    printf("flutter: %s\n", log_buf);
 
     zego_express_custom_log(log_buf, __MODULE__);
 }
