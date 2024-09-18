@@ -71,7 +71,6 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
-    use &= !kIsLinux;
 
     if (kIsMacOS) {
       try {
