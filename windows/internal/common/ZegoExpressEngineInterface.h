@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include "ZegoDataUtils.h"
+#include "../ZegoDataUtils.h"
 
 #define EngineMethodHandler(funcName)                                                              \
     {                                                                                              \

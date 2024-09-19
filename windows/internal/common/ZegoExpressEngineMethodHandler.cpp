@@ -1,9 +1,9 @@
 #include "ZegoExpressEngineMethodHandler.h"
-#include "ZegoTextureRendererController.h"
+#include "../ZegoTextureRendererController.h"
 #include "ZegoExpressEngineEventHandler.h"
 
 #ifdef _WIN32
-#include "DataToImageTools.hpp"
+#include "../DataToImageTools.hpp"
 #include "zego_express_engine/ZegoCustomVideoCaptureManager.h"
 #include "zego_express_engine/ZegoCustomVideoProcessManager.h"
 #include "zego_express_engine/ZegoCustomVideoRenderManager.h"
@@ -20,8 +20,8 @@
 #include <unordered_map>
 #include <variant>
 
-#include "ZegoLog.h"
-#include "ZegoUtils.h"
+#include "../../ZegoLog.h"
+#include "../ZegoUtils.h"
 
 void ZegoExpressEngineMethodHandler::clearPluginRegistrar() {
     ZegoTextureRendererController::getInstance()->uninit();

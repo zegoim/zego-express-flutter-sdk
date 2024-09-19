@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include <ZegoExpressSDK.h>
-#include "ZegoDataUtils.h"
+#include "../ZegoDataUtils.h"
 
 using namespace ZEGO;
 

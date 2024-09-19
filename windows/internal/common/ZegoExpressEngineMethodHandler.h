@@ -10,7 +10,7 @@
 #include <flutter_linux/flutter_linux.h>
 #endif
 
-#include "ZegoDataUtils.h"
+#include "../ZegoDataUtils.h"
 
 using namespace ZEGO;
 

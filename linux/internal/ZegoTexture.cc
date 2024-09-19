@@ -1,5 +1,5 @@
 #include "ZegoTexture.h"
-#include "ZegoLog.h"
+#include "../ZegoLog.h"
 
 struct _ZegoTexture {
     FlPixelBufferTexture parent_instance;
