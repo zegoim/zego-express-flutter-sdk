@@ -52,9 +52,14 @@ struct VideoFormatABGRPixel {
 // conversion of texture formats.
 class ZegoTextureRenderer {
   public:
-    ZegoTextureRenderer(FTTextureRegistrar *texture_registrar, uint32_t width, uint32_t height);
+    ZegoTextureRenderer();
 
     virtual ~ZegoTextureRenderer();
+
+    //must call after construct ZegoTextureRenderer
+    void CreateTexture(ZFTextureRegistrar *texture_registrar, uint32_t width, uint32_t height);
+
+    void DestroyTexture();
 
     // Prevent copying.
     ZegoTextureRenderer(ZegoTextureRenderer const &) = delete;
@@ -95,7 +100,7 @@ class ZegoTextureRenderer {
 
     template <typename T> void srcFrameFormatToFlutterFormat();
 
-    FTTextureRegistrar *textureRegistrar_ = nullptr;
+    ZFTextureRegistrar *textureRegistrar_ = nullptr;
 
     std::vector<uint8_t> srcBuffer_;
     std::vector<uint8_t> destBuffer_;

@@ -3,7 +3,7 @@
 #include <memory>
 #include <iostream>
 #include <ZegoExpressSDK.h>
-#include "../ZegoDataUtils.h"
+#include "ZegoDataUtils.h"
 
 using namespace ZEGO;
 
@@ -34,7 +34,7 @@ public:
 
         return m_instance;
     }
-    void setEventSink(FTEventSink &&eventSink);
+    void setEventSink(ZFEventSink &&eventSink);
     void clearEventSink();
 
 private:
@@ -286,9 +286,9 @@ protected:
                           int fileIndex, int fileCount) override;
 
 private:
-    FTMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
+    ZFMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
 
 private:
-    FTEventSink eventSink_;
+    ZFEventSink eventSink_;
 
 };

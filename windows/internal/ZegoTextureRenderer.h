@@ -7,6 +7,7 @@
 #include <string>
 
 #include <ZegoExpressSDK.h>
+#include "ZegoDataUtils.h"
 
 // Describes flutter desktop pixelbuffers pixel data order.
 struct FlutterDesktopPixel {
@@ -56,7 +57,7 @@ class ZegoTextureRenderer : public std::enable_shared_from_this<ZegoTextureRende
   //must call after construct ZegoTextureRenderer
   void CreateTexture(flutter::TextureRegistrar *texture_registrar, uint32_t width, uint32_t height);
 
-   void DestroyTexture();
+  void DestroyTexture();
 
 
   // Prevent copying.
