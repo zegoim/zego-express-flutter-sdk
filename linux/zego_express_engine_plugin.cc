@@ -4,10 +4,10 @@
 #include <gtk/gtk.h>
 #include <sys/utsname.h>
 
-#include "ZegoLog.h"
-#include "internal/common/ZegoExpressEngineEventHandler.h"
-#include "internal/common/ZegoExpressEngineMethodHandler.h"
-#include "internal/common/ZegoExpressEngineInterface.h"
+#include "internal/ZegoLog.h"
+#include "internal/ZegoExpressEngineEventHandler.h"
+#include "internal/ZegoExpressEngineMethodHandler.h"
+#include "internal/ZegoExpressEngineInterface.h"
 
 #define ZEGO_EXPRESS_ENGINE_PLUGIN(obj)                                                            \
     (G_TYPE_CHECK_INSTANCE_CAST((obj), zego_express_engine_plugin_get_type(),                      \
@@ -17,22 +17,20 @@ struct _ZegoExpressEnginePlugin {
     GObject parent_instance;
 };
 
-static bool send_events = false;
-
 G_DEFINE_TYPE(ZegoExpressEnginePlugin, zego_express_engine_plugin, g_object_get_type())
 
 // Called when a method call is received from Flutter.
 static void zego_express_engine_plugin_handle_method_call(ZegoExpressEnginePlugin *self,
                                                           FlMethodCall *method_call) {
 
-    std::unique_ptr<FlResult> result(new FlResult(method_call));
+    std::unique_ptr<ZFlResult> result(new ZFlResult(method_call));
 
     const gchar *method = fl_method_call_get_name(method_call);
 
     ZF::logInfo("[DartCall][%s]", method);
 
     FlValue *args = fl_method_call_get_args(method_call);
-    FlValueMap argument(args);
+    ZFMap argument(args);
 
     auto pair = G_MethodMap.find(std::string(method));
     if (pair != G_MethodMap.end()) {
@@ -82,15 +80,13 @@ static void method_call_cb(FlMethodChannel *channel, FlMethodCall *method_call,
 
 static FlMethodErrorResponse *listen_cb(FlEventChannel *channel, FlValue *args,
                                         gpointer user_data) {
-    send_events = TRUE;
-    std::unique_ptr<FlEventSink> events(new FlEventSink(channel));
+    std::unique_ptr<ZFlEventSink> events(new ZFlEventSink(channel));
     ZegoExpressEngineEventHandler::getInstance()->setEventSink(std::move(events));
     return NULL;
 }
 
 static FlMethodErrorResponse *cancel_cb(FlEventChannel *channel, FlValue *args,
                                         gpointer user_data) {
-    send_events = FALSE;
     ZegoExpressEngineEventHandler::getInstance()->clearEventSink();
     return NULL;
 }
