@@ -2,8 +2,8 @@
 
 #include "ZegoExpressEngineEventHandler.h"
 #include "ZegoExpressEngineMethodHandler.h"
-#include "../ZegoTextureRendererController.h"
-#include "../../ZegoLog.h"
+#include "ZegoTextureRendererController.h"
+#include "ZegoLog.h"
 
 std::shared_ptr<ZegoExpressEngineEventHandler> ZegoExpressEngineEventHandler::m_instance = nullptr;
 
