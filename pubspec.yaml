@@ -40,6 +40,8 @@ flutter:
         pluginClass: ZegoExpressEnginePlugin
       windows:
         pluginClass: ZegoExpressEnginePlugin
+      linux:
+        pluginClass: ZegoExpressEnginePlugin
       web:
         pluginClass: ZegoExpressEngineWeb
         fileName: zego_express_engine_web.dart
