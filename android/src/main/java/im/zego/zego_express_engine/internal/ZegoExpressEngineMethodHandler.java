@@ -2196,6 +2196,7 @@ public class ZegoExpressEngineMethodHandler {
                 whiteboard.verticalRatio = ZegoUtils.intValue((Number) whiteboardMap.get("verticalRatio"));
                 whiteboard.isPPTAnimation = ZegoUtils.boolValue((Boolean) whiteboardMap.get("isPPTAnimation"));
                 whiteboard.zOrder = ZegoUtils.intValue((Number) whiteboardMap.get("zOrder"));
+                whiteboard.backgroundColor = ZegoUtils.intValue((Number) whiteboardMap.get("backgroundColor"));
                 HashMap<String, Object> layoutMap = (HashMap<String, Object>)whiteboardMap.get("layout");
                 if (layoutMap != null && !layoutMap.isEmpty()) {
                     whiteboard.layout = new Rect();
