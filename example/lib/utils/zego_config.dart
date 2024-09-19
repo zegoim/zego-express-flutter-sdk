@@ -4,10 +4,10 @@ class ZegoConfig {
   static final ZegoConfig instance = ZegoConfig._internal();
   ZegoConfig._internal();
 
-  int appID = 245697902;
+  int appID = 0;
 
   // It is for native only, do not use it for web!
-  String appSign = "39011cbb0e6b9afd6b3aed4449a467e514b2975fba484daad3e3f217589751df";
+  String appSign = "";
 
   // It is required for web and is recommended for native but not required.
   String token = "";
@@ -15,8 +15,8 @@ class ZegoConfig {
   ZegoScenario scenario = ZegoScenario.Default;
   bool enablePlatformView = false;
 
-  String userID = "linux_test";
-  String userName = "linux_test";
+  String userID = "";
+  String userName = "";
 
   bool isPreviewMirror = true;
   bool isPublishMirror = false;
