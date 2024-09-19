@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include "../ZegoDataUtils.h"
+#include "ZegoDataUtils.h"
 
 #define EngineMethodHandler(funcName)                                                              \
     {                                                                                              \
@@ -27,7 +27,7 @@
     }
 
 static const std::map<std::string,
-                      std::pair<std::function<void(FTArgument argument, FTResult result)>, bool>>
+                      std::pair<std::function<void(ZFArgument argument, ZFResult result)>, bool>>
 
     G_MethodMap = {
         EngineStaticMethodHandler(getVersion),

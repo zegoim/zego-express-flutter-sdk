@@ -13,10 +13,10 @@
 #include <memory>
 #include <sstream>
 
-#include "ZegoLog.h"
-#include "internal/common/ZegoExpressEngineEventHandler.h"
-#include "internal/common/ZegoExpressEngineMethodHandler.h"
-#include "internal/common/ZegoExpressEngineInterface.h"
+#include "internal/ZegoLog.h"
+#include "internal/ZegoExpressEngineEventHandler.h"
+#include "internal/ZegoExpressEngineMethodHandler.h"
+#include "internal/ZegoExpressEngineInterface.h"
 
 class ZegoExpressEnginePlugin : public flutter::Plugin,
                                 public flutter::StreamHandler<flutter::EncodableValue> {
