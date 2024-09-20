@@ -2,7 +2,10 @@
 
 bool zego_value_is_null(flutter::EncodableValue value) { return value.IsNull(); }
 
-int32_t zego_value_get_int(flutter::EncodableValue value) { return std::get<int32_t>(value); }
+int32_t zego_value_get_int(flutter::EncodableValue value) {
+    // dart 没有 int32_t int64_t 区分，这里处理了 int32 最高位为 1（负数）的 case
+    return (int32_t)zego_value_get_long(value);
+}
 
 int64_t zego_value_get_long(flutter::EncodableValue value) { return std::get<int64_t>(value); }
 
