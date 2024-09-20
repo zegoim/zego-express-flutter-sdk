@@ -2928,7 +2928,7 @@ void ZegoExpressEngineMethodHandler::startMixerTask(ZFArgument argument, ZFResul
     task.enableSoundLevel = zego_value_get_bool(argument[ZFValue("enableSoundLevel")]);
 
     // backgroundColor
-    task.backgroundColor = zego_value_get_int(argument[ZFValue("backgroundColor")]);
+    task.backgroundColor = zego_value_get_long(argument[ZFValue("backgroundColor")]);
 
     // streamAlignmentMode
     task.streamAlignmentMode = (EXPRESS::ZegoStreamAlignmentMode)zego_value_get_int(
