@@ -10,6 +10,10 @@ ZegoTextureRenderer::~ZegoTextureRenderer() {}
 void ZegoTextureRenderer::CreateTexture(ZFTextureRegistrar *texture_registrar, uint32_t width,
                                         uint32_t height) {
 
+    textureRegistrar_ = texture_registrar;
+    width_ = width;
+    height_ = height;
+
     video_output_ = new VideoOutput();
     texture_ = zego_texture_new(video_output_);
     FL_PIXEL_BUFFER_TEXTURE_GET_CLASS(texture_)->copy_pixels = zego_texture_copy_pixels;
