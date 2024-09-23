@@ -67,7 +67,7 @@ static gboolean func(gpointer user_data) {
     return FALSE;
 }
 ZFlEventSink::ZFlEventSink(FlEventChannel *event_channel) : event_channel(event_channel) {}
-ZFlEventSink::~ZFlEventSink() { g_object_unref(event_channel); }
+ZFlEventSink::~ZFlEventSink() {}
 void ZFlEventSink::Success(FlValue *value) {
     if (g_main_context_get_thread_default() != g_main_context_default()) {
         IdleValue *idle_value = new IdleValue{event_channel, value};
