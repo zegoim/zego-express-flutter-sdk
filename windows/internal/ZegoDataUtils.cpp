@@ -7,7 +7,7 @@ int32_t zego_value_get_int(flutter::EncodableValue value) {
     return (int32_t)zego_value_get_long(value);
 }
 
-int64_t zego_value_get_long(flutter::EncodableValue value) { return std::get<int64_t>(value); }
+int64_t zego_value_get_long(flutter::EncodableValue value) { return value.LongValue(); }
 
 bool zego_value_get_bool(flutter::EncodableValue value) { return std::get<bool>(value); }
 

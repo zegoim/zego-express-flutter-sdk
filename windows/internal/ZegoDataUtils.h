@@ -8,7 +8,7 @@
 #define ZFMap flutter::EncodableMap
 #define ZFArray flutter::EncodableList
 
-#define ZFArgument flutter::EncodableMap
+#define ZFArgument flutter::EncodableMap &
 #define ZFResult std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
 #define ZFEventSink std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>
 #define ZFMoveResult(result) std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result))
