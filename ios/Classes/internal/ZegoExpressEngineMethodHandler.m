@@ -2001,7 +2001,9 @@
             whiteboard.verticalRatio = [ZegoUtils intValue:whiteboardMap[@"verticalRatio"]];
             whiteboard.isPPTAnimation = [ZegoUtils boolValue:whiteboardMap[@"isPPTAnimation"]];
             whiteboard.zOrder = [ZegoUtils intValue:whiteboardMap[@"zOrder"]];
-            whiteboard.backgroundColor = [ZegoUtils intValue:whiteboardMap[@"backgroundColor"]];
+            if (whiteboardMap[@"backgroundColor"]) {
+                whiteboard.backgroundColor = [ZegoUtils intValue:whiteboardMap[@"backgroundColor"]];
+            }
             
             NSDictionary *layoutMap = whiteboardMap[@"layout"];
             if (layoutMap && layoutMap.count > 0) {
