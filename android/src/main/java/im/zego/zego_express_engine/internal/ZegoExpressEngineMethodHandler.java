@@ -1229,6 +1229,7 @@ public class ZegoExpressEngineMethodHandler {
             config = new ZegoCDNConfig();
             config.url = (String) configMap.get("url");
             config.authParam = (String) configMap.get("authParam");
+            config.customParams = (String) configMap.get("customParams");
             config.protocol = (String) configMap.get("protocol");
             config.quicVersion = (String) configMap.get("quicVersion");
             config.quicConnectMode = ZegoUtils.intValue((Number) configMap.get("quicConnectMode"));
@@ -1548,6 +1549,7 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoCDNConfig cdnConfig = new ZegoCDNConfig();
                 cdnConfig.url = (String) cdnConfigMap.get("url");
                 cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
+                cdnConfig.customParams = (String) cdnConfigMap.get("customParams");
                 cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
                 cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
                 cdnConfig.quicConnectMode = ZegoUtils.intValue((Number) cdnConfigMap.get("quicConnectMode"));
@@ -1676,6 +1678,7 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoCDNConfig cdnConfig = new ZegoCDNConfig();
                 cdnConfig.url = (String) cdnConfigMap.get("url");
                 cdnConfig.authParam = (String) cdnConfigMap.get("authParam");
+                cdnConfig.customParams = (String) cdnConfigMap.get("customParams");
                 cdnConfig.protocol = (String) cdnConfigMap.get("protocol");
                 cdnConfig.quicVersion = (String) cdnConfigMap.get("quicVersion");
                 cdnConfig.quicConnectMode = ZegoUtils.intValue((Number) cdnConfigMap.get("quicConnectMode"));

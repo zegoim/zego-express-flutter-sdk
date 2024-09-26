@@ -2573,12 +2573,16 @@ class ZegoCDNConfig {
   /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
   int? quicConnectMode;
 
+  /// custom param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+  String? customParams;
+
   ZegoCDNConfig(this.url,
       {this.authParam,
       this.protocol,
       this.quicVersion,
       this.httpdns,
-      this.quicConnectMode});
+      this.quicConnectMode,
+      this.customParams});
 }
 
 /// Relay to CDN info.
