@@ -338,7 +338,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the minimum video frame rate threshold for traffic control.
   ///
   /// Available since: 2.17.0
-  /// Description: Set the control policy when the video frame rate reaches the lowest threshold when flow control.
+  /// Description: When enabling traffic control [enableTrafficControl], and its parameter [property] includes the attribute AdaptiveFPS, the minimum frame rate of the video will not be lower than the value set by the [setMinVideoFpsForTrafficControl] interface. A value of 0 indicates no limit.
   /// Default value: There is no control effect of the lowest threshold of video frame rate.
   /// When to call: The call takes effect after the engine [createEngine] is created.
   /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveFPS, Please refer to [ZegoTrafficControlProperty] for details.
@@ -357,7 +357,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the minimum video resolution threshold for traffic control.
   ///
   /// Available since: 2.17.0
-  /// Description: Set the control policy when the video resolution reaches the lowest threshold when flow control.
+  /// Description: When enabling traffic control [enableTrafficControl], and its parameter [property] includes the attribute AdaptiveResolution, the minimum resolution of the video will not be lower than the value set by the [setMinVideoResolutionForTrafficControl] interface. A value of 0 indicates no limit.
   /// Default value: There is no control effect of the lowest threshold of video resolution.
   /// When to call: The call takes effect after the engine [createEngine] is created.
   /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveResolution, Please refer to [ZegoTrafficControlProperty] for details.
@@ -597,6 +597,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
   ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
   ///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
+  ///   5. UniApp: Only absolute paths are supported. You need to add a "file:" prefix, such as: "file:/sdcard/image.png".
   ///
   /// - [filePath] Picture file path
   /// - [channel] Publish channel.
