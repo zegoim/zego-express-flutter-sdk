@@ -59,7 +59,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Use cases: In the real-time scenario, developers can listen to the [onRoomStreamUpdate] event callback to obtain the delete stream information in the room where they are located, and call this interface to pass in streamID for stop play streams.
   /// When to call: After [loginRoom].
   /// Restrictions: None.
-  /// Caution: When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
+  /// Caution: 1. When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
+  ///  2. After stopping pulling, the iOS platform view will clear the last frame by default and keep the background color of the view. The Android platform view remains at the last frame by default. If you need to clear the last frame, please contact ZEGO technical support.
   ///
   /// - [streamID] Stream ID.
   Future<void> stopPlayingStream(String streamID) async {
@@ -403,7 +404,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Available: since 3.4.0
   /// Description: This interface will update playing view.
   /// Use case: The user can call this function to update canvas display video.
-  /// When to call: After receiving a successful playing stream from the [onPlayerStateUpdate] or [onUserStreamStateUpdate] callback.
+  /// When to call: After calling the [startPlayingStream] interface.
   /// Restrictions: None.
   /// Caution: None.
   /// Note: This function is only available in ZegoExpressVideo SDK!
