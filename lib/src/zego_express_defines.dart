@@ -809,7 +809,10 @@ enum ZegoStreamResourceMode {
 
   /// [Deprecated] CDN Plus mode. The SDK will automatically select the streaming resource according to the network condition.
   @Deprecated('Legacy CDN Plus')
-  CDNPlus
+  CDNPlus,
+
+  /// Custom mode. The SDK selects the streaming resource based on the customResourceConfig parameter of the streaming settings.
+  Custom
 }
 
 /// Stream Switch Resource Mode
@@ -1895,7 +1898,10 @@ enum ZegoAlphaLayoutType {
   Right,
 
   /// Alpha channel data is to the bottom of RGB/YUV data.
-  Bottom
+  Bottom,
+
+  /// Alpha channel data is to the upper right of RGB/YUV data.
+  RightTop
 }
 
 /// Object segmentation type.
@@ -2595,6 +2601,23 @@ class ZegoStreamRelayCDNInfo {
       this.url, this.state, this.updateReason, this.stateTime);
 }
 
+/// Custom play stream resource type configuration.
+///
+/// Custom play stream resource type configuration.
+class ZegoCustomPlayerResourceConfig {
+  /// The resource type selected by the play stream before starting the publish stream.
+  ZegoResourceType beforePublish;
+
+  /// The type of resource selected by the play stream in the publish stream.
+  ZegoResourceType publishing;
+
+  /// The type of resource selected by the play stream after stopping the publish stream.
+  ZegoResourceType afterPublish;
+
+  ZegoCustomPlayerResourceConfig(
+      this.beforePublish, this.publishing, this.afterPublish);
+}
+
 /// Advanced player configuration.
 ///
 /// Configure stream resource mode, CDN configuration and other advanced configurations.
@@ -2629,6 +2652,9 @@ class ZegoPlayerConfig {
   /// Stream adaptive transcoding template ID list. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   List<int>? adaptiveTemplateIDList;
 
+  /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
+  ZegoCustomPlayerResourceConfig? customResourceConfig;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
@@ -2638,7 +2664,8 @@ class ZegoPlayerConfig {
       this.resourceSwitchMode,
       this.resourceWhenStopPublish,
       this.adaptiveSwitch,
-      this.adaptiveTemplateIDList});
+      this.adaptiveTemplateIDList,
+      this.customResourceConfig});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()

@@ -71,6 +71,7 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
+    use &= !kIsLinux;
 
     if (kIsMacOS) {
       try {
@@ -829,6 +830,16 @@ class ZegoExpressImpl {
                       ZegoStreamResourceType.Default.index,
               'adaptiveSwitch': config.adaptiveSwitch ?? 0,
               'adaptiveTemplateIDList': config.adaptiveTemplateIDList ?? [],
+              'customResourceConfig': config.customResourceConfig != null
+                  ? {
+                      'beforePublish':
+                          config.customResourceConfig?.beforePublish.index,
+                      'publishing':
+                          config.customResourceConfig?.publishing.index,
+                      'afterPublish':
+                          config.customResourceConfig?.afterPublish.index
+                    }
+                  : {},
             }
           : {}
     });
@@ -855,6 +866,14 @@ class ZegoExpressImpl {
         'roomID': config.roomID ?? '',
         'resourceSwitchMode': config.resourceSwitchMode?.index ??
             ZegoStreamResourceSwitchMode.Default.index,
+        'customResourceConfig': config.customResourceConfig != null
+            ? {
+                'beforePublish':
+                    config.customResourceConfig?.beforePublish.index,
+                'publishing': config.customResourceConfig?.publishing.index,
+                'afterPublish': config.customResourceConfig?.afterPublish.index
+              }
+            : {},
       }
     });
   }

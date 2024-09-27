@@ -27,3 +27,16 @@ windows/deps/lib/*
 example/windows/flutter/generated_plugins.cmake
 example/windows/flutter/generated_plugin_registrant.cc
 example/windows/flutter/generated_plugin_registrant.h
+
+# Linux
+linux/libs/*
+linux/internal/ZegoExpressEngineEventHandler.cpp
+linux/internal/ZegoExpressEngineEventHandler.h
+linux/internal/ZegoExpressEngineInterface.h
+linux/internal/ZegoExpressEngineMethodHandler.cpp
+linux/internal/ZegoExpressEngineMethodHandler.h
+linux/internal/ZegoLog.cpp
+linux/internal/ZegoLog.h
+linux/internal/ZegoTextureRendererController.cpp
+linux/internal/ZegoTextureRendererController.h
+linux/internal/ZegoUtils.h
