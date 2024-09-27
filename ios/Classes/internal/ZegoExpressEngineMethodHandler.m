@@ -1408,6 +1408,16 @@
 
         playerConfig.adaptiveSwitch = [ZegoUtils intValue:playerConfigMap[@"adaptiveSwitch"]];
         playerConfig.adaptiveTemplateIDList = playerConfigMap[@"adaptiveTemplateIDList"];
+        
+        NSDictionary * customResourceConfigMap = playerConfigMap[@"customResourceConfig"];
+        if (customResourceConfigMap && customResourceConfigMap.count > 0) {
+            ZegoCustomPlayerResourceConfig *customResourceConfig = [[ZegoCustomPlayerResourceConfig alloc] init];
+            customResourceConfig.beforePublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"beforePublish"]];
+            customResourceConfig.publishing = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"publishing"]];
+            customResourceConfig.afterPublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"afterPublish"]];
+            
+            playerConfig.customResourceConfig = customResourceConfig;
+        }
     }
 
     // Handle ZegoCanvas
@@ -1517,6 +1527,16 @@
             cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
             
             playerConfig.cdnConfig = cdnConfig;
+        }
+        
+        NSDictionary * customResourceConfigMap = playerConfigMap[@"customResourceConfig"];
+        if (customResourceConfigMap && customResourceConfigMap.count > 0) {
+            ZegoCustomPlayerResourceConfig *customResourceConfig = [[ZegoCustomPlayerResourceConfig alloc] init];
+            customResourceConfig.beforePublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"beforePublish"]];
+            customResourceConfig.publishing = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"publishing"]];
+            customResourceConfig.afterPublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"afterPublish"]];
+            
+            playerConfig.customResourceConfig = customResourceConfig;
         }
     }
 
@@ -1981,6 +2001,9 @@
             whiteboard.verticalRatio = [ZegoUtils intValue:whiteboardMap[@"verticalRatio"]];
             whiteboard.isPPTAnimation = [ZegoUtils boolValue:whiteboardMap[@"isPPTAnimation"]];
             whiteboard.zOrder = [ZegoUtils intValue:whiteboardMap[@"zOrder"]];
+            if (whiteboardMap[@"backgroundColor"]) {
+                whiteboard.backgroundColor = [ZegoUtils intValue:whiteboardMap[@"backgroundColor"]];
+            }
             
             NSDictionary *layoutMap = whiteboardMap[@"layout"];
             if (layoutMap && layoutMap.count > 0) {

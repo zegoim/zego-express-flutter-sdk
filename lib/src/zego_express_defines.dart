@@ -809,7 +809,10 @@ enum ZegoStreamResourceMode {
 
   /// [Deprecated] CDN Plus mode. The SDK will automatically select the streaming resource according to the network condition.
   @Deprecated('Legacy CDN Plus')
-  CDNPlus
+  CDNPlus,
+
+  /// Custom mode. The SDK selects the streaming resource based on the customResourceConfig parameter of the streaming settings.
+  Custom
 }
 
 /// Stream Switch Resource Mode
@@ -1492,16 +1495,16 @@ enum ZegoNetworkSpeedTestType {
 
 /// VOD billing mode.
 enum ZegoCopyrightedMusicBillingMode {
-  /// Pay-per-use.Each time a user obtains a song resource, a charge is required, that is, the user will be charged for each time based on the actual call to obtain the song resource interface (such as [requestSong], [requestAccompaniment], etc.).
+  /// Pay-per-use.Each time a user obtains a song resource, a charge is required, that is, the user will be charged for each time based on the actual call to obtain the song resource interface (such as [requestResource] etc.).
   Count,
 
-  /// Monthly billing by user.Billing for a single user is based on the monthly dimension, that is, the statistics call to obtain song resources (such as [requestSong], [requestAccompaniment], etc.) and the parameters are the user ID of the monthly subscription, and the charging is based on the monthly dimension.
+  /// Monthly billing by user.Billing for a single user is based on the monthly dimension, that is, the statistics call to obtain song resources (such as [requestResource], etc.) and the parameters are the user ID of the monthly subscription, and the charging is based on the monthly dimension.
   User,
 
-  /// Monthly billing by room.The room users are billed on a monthly basis, that is, statistical calls to obtain song resources (such as [requestSong], [requestAccompaniment], etc.) are passed as Roomid for a monthly subscription of the room, and fees are charged on a monthly basis.
+  /// Monthly billing by room.The room users are billed on a monthly basis, that is, statistical calls to obtain song resources (such as [requestResource], etc.) are passed as Roomid for a monthly subscription of the room, and fees are charged on a monthly basis.
   Room,
 
-  /// Monthly billing by master. Every time a user obtains a resource, it is counted as the owner’s acquisition of resources, that is, according to the actual call to obtain the song resource interface (such as [requestSong], [requestAccompaniment], etc.), the parameters are passed as the Roomid of the room and the Masterid of the owner, and the fee is charged according to the owner.
+  /// Monthly billing by master. Every time a user obtains a resource, it is counted as the owner’s acquisition of resources, that is, according to the actual call to obtain the song resource interface (such as [requestResource], etc.), the parameters are passed as the Roomid of the room and the Masterid of the owner, and the fee is charged according to the owner.
   Master
 }
 
@@ -2598,6 +2601,23 @@ class ZegoStreamRelayCDNInfo {
       this.url, this.state, this.updateReason, this.stateTime);
 }
 
+/// Custom play stream resource type configuration.
+///
+/// Custom play stream resource type configuration.
+class ZegoCustomPlayerResourceConfig {
+  /// The resource type selected by the play stream before starting the publish stream.
+  ZegoResourceType beforePublish;
+
+  /// The type of resource selected by the play stream in the publish stream.
+  ZegoResourceType publishing;
+
+  /// The type of resource selected by the play stream after stopping the publish stream.
+  ZegoResourceType afterPublish;
+
+  ZegoCustomPlayerResourceConfig(
+      this.beforePublish, this.publishing, this.afterPublish);
+}
+
 /// Advanced player configuration.
 ///
 /// Configure stream resource mode, CDN configuration and other advanced configurations.
@@ -2632,6 +2652,9 @@ class ZegoPlayerConfig {
   /// Stream adaptive transcoding template ID list. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   List<int>? adaptiveTemplateIDList;
 
+  /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
+  ZegoCustomPlayerResourceConfig? customResourceConfig;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
@@ -2641,7 +2664,8 @@ class ZegoPlayerConfig {
       this.resourceSwitchMode,
       this.resourceWhenStopPublish,
       this.adaptiveSwitch,
-      this.adaptiveTemplateIDList});
+      this.adaptiveTemplateIDList,
+      this.customResourceConfig});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -3108,7 +3132,7 @@ class ZegoMixerImageInfo {
   /// The image path, if not empty, the image will be displayed, otherwise, the video will be displayed. JPG and PNG formats are supported. There are 2 ways to use it: 1. URI: Provide the picture to ZEGO technical support for configuration. After the configuration is complete, the picture URI will be provided, for example: preset-id://xxx.jpg. 2. URL: Only HTTP protocol is supported.
   String url;
 
-  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream is empty or not. Display image when the input stream is empty for 3 consecutive seconds. The default duration for determine a input stream is empty or not is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.On web platforms, this property does not take effect.
+  /// Image display mode. 0: Default. Use image to replace video content when url is not null. 1: Display image based on camera status. Display image when camera is turned off. Display video content when camera is turned on (no need to clear the url parameter). 2: Display image based on the input stream has video data or not. Display image when there is no video data in the input stream for 3 consecutive seconds. The default duration for judging that there is no video data is 3 seconds. If you need change this setting, please contact ZEGO technical support. Display video content when the input stream has video data.
   int? displayMode;
 
   ZegoMixerImageInfo(this.url, {this.displayMode});
@@ -4347,6 +4371,7 @@ abstract class ZegoMediaPlayer {
   /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Related APIs: Resources can be loaded through the [loadResourceWithPosition] or [loadResourceFromMediaData] function.
+  /// Caution: If the mediaplayer has already loaded resources or is in the process of playing, please first call the [stop] interface to halt the playback, and then proceed to call the interface to load the media resources; failure to do so will result in an unsuccessful load.
   ///
   /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
   /// - Returns Callback result of loading media resource.
@@ -4359,7 +4384,8 @@ abstract class ZegoMediaPlayer {
   /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Related APIs: Resources can be loaded through the [loadResource] or [loadResourceFromMediaData] function.
-  /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  /// Caution: 1.When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  ///  2.If the mediaplayer has already loaded resources or is in the process of playing, please first call the [stop] interface to halt the playback, and then proceed to call the interface to load the media resources; failure to do so will result in an unsuccessful load.
   ///
   /// - [path] The absolute resource path or the URL of the network resource and cannot be null or "". Android can set this path string with Uri.
   /// - [startPosition] The progress at which the playback started.
@@ -4374,7 +4400,8 @@ abstract class ZegoMediaPlayer {
   /// Use case: Developers do not want to cache the audio data locally, and directly transfer the audio binary data to the media player, directly load and play the audio.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Related APIs: Resources can be loaded through the [loadResource] or [loadResourceWithPosition] function.
-  /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  /// Caution: 1.When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  ///  2.If the mediaplayer has already loaded resources or is in the process of playing, please first call the [stop] interface to halt the playback, and then proceed to call the interface to load the media resources; failure to do so will result in an unsuccessful load.
   ///
   /// - [mediaData] Binary audio data.
   /// - [startPosition] Position of starting playback, in milliseconds.
@@ -4388,7 +4415,8 @@ abstract class ZegoMediaPlayer {
   /// Description: Load media resources, and specify the progress, in milliseconds, at which playback begins.
   /// Use case: Developers can load the resource ID of copyrighted music.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
-  /// Caution: When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  /// Caution: 1.When [startPosition] exceeds the total playing time, it will start playing from the beginning.
+  ///  2.If the mediaplayer has already loaded resources or is in the process of playing, please first call the [stop] interface to halt the playback, and then proceed to call the interface to load the media resources; failure to do so will result in an unsuccessful load.
   ///
   /// - [resourceID] The resource ID obtained from the copyrighted music module.
   /// - [startPosition] The progress at which the playback started.
@@ -4404,6 +4432,7 @@ abstract class ZegoMediaPlayer {
   /// Use case: Developers can load the absolute path to the local resource or the URL of the network resource incoming.
   /// When to call: Called after the engine [createEngine] has been initialized and the media player [createMediaPlayer] has been created.
   /// Related APIs: Support for loading resources through the [loadResourceWithPosition] or [loadResourceFromMediaData] interface.
+  /// Caution: If the mediaplayer has already loaded resources or is in the process of playing, please first call the [stop] interface to halt the playback, and then proceed to call the interface to load the media resources; failure to do so will result in an unsuccessful load.
   ///
   /// - [resource] Multimedia resources that need to be loaded.
   /// - Returns Callback result of loading media resource.
@@ -5329,7 +5358,7 @@ abstract class ZegoCopyrightedMusic {
   /// Use case: Used to display lyrics word by word.
   /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
   ///
-  /// - [krcToken] The krcToken obtained by calling requestAccompaniment.
+  /// - [krcToken] The krcToken obtained when calling [requestResource] for accompaniment or climax clips, or when obtaining shared resources through the [getSharedResource] interface. For more details, please refer to https://doc-zh.zego.im/article/15079#2_2
   Future<ZegoCopyrightedMusicGetKrcLyricByTokenResult> getKrcLyricByToken(
       String krcToken);
 

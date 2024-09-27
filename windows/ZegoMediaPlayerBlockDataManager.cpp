@@ -1,5 +1,5 @@
 #include "include/zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
-#include "ZegoLog.h"
+#include "internal/ZegoLog.h"
 #include <ZegoExpressSDK.h>
 
 static std::shared_ptr<ZegoMediaPlayerBlockDataManager> instance_ = nullptr;
