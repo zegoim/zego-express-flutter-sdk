@@ -1024,6 +1024,7 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFR
                 cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
                 cdnConfigPtr->url = zego_value_get_string(cdnConfigMap[ZFValue("url")]);
                 cdnConfigPtr->authParam = zego_value_get_string(cdnConfigMap[ZFValue("authParam")]);
+                cdnConfigPtr->customParams = zego_value_get_string(cdnConfigMap[ZFValue("customParams")]);
                 cdnConfigPtr->protocol = zego_value_get_string(cdnConfigMap[ZFValue("protocol")]);
                 cdnConfigPtr->quicVersion =
                     zego_value_get_string(cdnConfigMap[ZFValue("quicVersion")]);
@@ -1083,6 +1084,7 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(ZFArgument argument, ZF
                 cdnConfigPtr = std::make_unique<EXPRESS::ZegoCDNConfig>();
                 cdnConfigPtr->url = zego_value_get_string(cdnConfigMap[ZFValue("url")]);
                 cdnConfigPtr->authParam = zego_value_get_string(cdnConfigMap[ZFValue("authParam")]);
+                cdnConfigPtr->customParams = zego_value_get_string(cdnConfigMap[ZFValue("customParams")]);
                 cdnConfigPtr->protocol = zego_value_get_string(cdnConfigMap[ZFValue("protocol")]);
                 cdnConfigPtr->quicVersion =
                     zego_value_get_string(cdnConfigMap[ZFValue("quicVersion")]);
@@ -4159,6 +4161,7 @@ void ZegoExpressEngineMethodHandler::enablePublishDirectToCDN(ZFArgument argumen
     if (configMap.size() > 0) {
         config.url = zego_value_get_string(configMap[ZFValue("url")]);
         config.authParam = zego_value_get_string(configMap[ZFValue("authParam")]);
+        config.customParams = zego_value_get_string(configMap[ZFValue("customParams")]);
         config.protocol = zego_value_get_string(configMap[ZFValue("protocol")]);
         config.quicVersion = zego_value_get_string(configMap[ZFValue("quicVersion")]);
         config.httpdns =

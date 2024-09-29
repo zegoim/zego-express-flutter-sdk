@@ -637,7 +637,8 @@ class ZegoExpressImpl {
               'protocol': config.protocol ?? '',
               'quicVersion': config.quicVersion ?? '',
               'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index,
-              'quicConnectMode': config.quicConnectMode ?? 0
+              'quicConnectMode': config.quicConnectMode ?? 0,
+              'customParams': config.customParams ?? ''
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -814,7 +815,8 @@ class ZegoExpressImpl {
                       'quicVersion': config.cdnConfig?.quicVersion ?? "",
                       'httpdns': config.cdnConfig?.httpdns?.index ??
                           ZegoHttpDNSType.None.index,
-                      'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
+                      'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0,
+                      'customParams': config.cdnConfig?.customParams ?? ""
                     }
                   : {},
               'roomID': config.roomID ?? '',
@@ -860,7 +862,8 @@ class ZegoExpressImpl {
                 'quicVersion': config.cdnConfig?.quicVersion ?? "",
                 'httpdns': config.cdnConfig?.httpdns?.index ??
                     ZegoHttpDNSType.None.index,
-                'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
+                'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0,
+                'customParams': config.cdnConfig?.customParams ?? ""
               }
             : {},
         'roomID': config.roomID ?? '',
