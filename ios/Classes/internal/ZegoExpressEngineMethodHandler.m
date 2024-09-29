@@ -1057,10 +1057,12 @@
     if (config && config.count > 0) {
         NSString *url = config[@"url"];
         NSString *authParam = config[@"authParam"];
+        NSString *customParams = config[@"customParams"];
 
         cdnConfig = [[ZegoCDNConfig alloc] init];
         cdnConfig.url = url;
         cdnConfig.authParam = authParam;
+        cdnConfig.customParams = customParams;
         cdnConfig.protocol = config[@"protocol"];
         cdnConfig.quicVersion = config[@"quicVersion"];
         cdnConfig.quicConnectMode = [ZegoUtils intValue:config[@"quicConnectMode"]];
@@ -1396,6 +1398,7 @@
             ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
             cdnConfig.url = cdnConfigMap[@"url"];
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.customParams = cdnConfigMap[@"customParams"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
             cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
@@ -1519,6 +1522,7 @@
             ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
             cdnConfig.url = cdnConfigMap[@"url"];
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.customParams = cdnConfigMap[@"customParams"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
             cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
