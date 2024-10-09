@@ -4,73 +4,58 @@
 
 ### New Features
 
-1. Media player supports Alpha data layout above the RGB data on the right side when playing transparent effects
+1. **Support for Linux Platform in Flutter Framework**
 
-When the media player plays transparent effects, a new ZegoAlphaLayoutType>ZegoAlphaLayoutTypeRightTop enumeration is added to support Alpha data being concatenated above the RGB data on the right side. When setting this enumeration, only a 0.5x zoom factor is supported.
+   - Supports Debian 10 or higher, Ubuntu 20.04 LTS, 22.04 LTS, 24.04 LTS.
 
-For related API, please refer to loadResourceWithConfig, ZegoAlphaLayoutTypeRightTop
+2. **Support for Alpha Data Layout on Top-Right of RGB Data in Media Player**
 
-2. Supports customizing the stream resource type before and after the audience joins the stage
+   - When playing transparent effects, the media player now supports an enum `ZegoAlphaLayoutType > RightTop`, allowing the alpha data to be placed on the top-right of the RGB data. When using this enum, only a 0.5x scale ratio is supported.
+   
+   - Relevant APIs: `loadResourceWithConfig`, `ZegoStreamResourceMode > Custom`, `ZegoAlphaLayoutType > RightTop`.
 
-Supports setting the stream resource type separately before and after the audience joins the stage, making the streaming method more flexible. It can be set to any of the following，RTC streaming, ultra-low latency live streaming (L3), or CDN streaming. For example, it can be used to implement a live streaming scenario where the audience defaults to L3 streaming before joining the stage, switches to RTC streaming during the interaction, and resumes L3 streaming after leaving the stage.
+3. **Support for Custom Stream Resource Types Before and After Audience Join/Leave**
 
-For related API, please refer to startPlayingStream, ZegoStreamResourceModeCustom, ZegoPlayerConfig > customResourceConfig
+   - Allows setting different stream resource types before and after an audience member joins or leaves the stage, providing more flexible stream handling. You can choose from RTC streaming, ultra-low latency live streaming (L3), or CDN streaming.
+   
+   - For example, in live streaming with audience interaction, the audience can use L3 streaming before joining the stage, switch to RTC streaming when interacting, and revert to L3 streaming after leaving the stage.
+   
+   - Relevant APIs: `startPlayingStream`, `ZegoPlayerConfig > customResourceConfig`.
 
-### Enhancements
+### Improvements & Optimizations
 
-1. Express SDK upgrades NDK dependency to NDK r25c
+1. **Removal of Default Screen Sharing Permissions in AndroidManifest.xml**
 
-Note: After the upgrade, developers need to perform compatibility testing to prevent incompatibility issues. If you need to use the old version, please contact ZEGO technical support.
+   - Note: After version 3.17.0, if you implement screen sharing functionality without declaring the required permissions, you must now manually declare them to avoid compatibility issues. For any compatibility concerns in live applications, please contact ZEGO technical support.
+   
+   - To align with privacy regulations, the default screen sharing permission has been removed from the `AndroidManifest.xml`. Developers must manually declare permissions:
+     
+     - If the target Android SDK version is below 34.0.0, you need to declare the `FOREGROUND_SERVICE` permission.
+     - If the target Android SDK version is 34.0.0 or later, you must declare both `FOREGROUND_SERVICE` and `FOREGROUND_SERVICE_MEDIA_PROJECTION` permissions.
+   
+   - Refer to the **Screen Sharing** documentation for more details.
 
-To fix known issues, Express SDK upgrades NDK dependency to NDK r25c.
+2. **`userName` Field in `loginRoom` Now Optional**
 
-2. Remove the default screen sharing permissions declared in the AndroidManifest.xml file
+   - When calling the `loginRoom` API to enter a room, the `userName` field is now optional, previously it was a required field.
+   
+   - Relevant APIs: `loginRoom`.
 
-Note:
+3. **Improved Stereo Voice Changing Effects and Enhanced Music Pitch Quality**
 
-If developers do not declare permissions when implementing screen sharing after version 3.17.0, they must actively declare permissions after this update, otherwise compatibility issues may arise.
-
-If compatibility issues are encountered online, please contact ZEGO technical support.
-
-To better comply with privacy regulations, the default screen sharing permissions declared in the AndroidManifest.xml file have been removed, and developers need to actively declare:
-
-If the target Android SDK version is lower than 34.0.0, the FOREGROUND_SERVICE permission declaration is required.
-
-If the target Android SDK version is 34.0.0 and later, the FOREGROUND_SERVICE and FOREGROUND_SERVICE_MEDIA_PROJECTION permission declarations are required.
-
-3. The userName field is changed to an optional field when logging in to the room
-
-When calling the loginRoom interface to log in to the room, the userName was originally a required field, and it has been optimized to be an optional field.
-
-For related API, please refer to loginRoom
-
-4. Adapt to the 16KB memory page size of Android 15
-
-To ensure the performance and compatibility of Express SDK on the Android 15 system, the 16KB memory page size of Android 15 has been adapted.
-
-5. Optimize dual-channel voice change effects and enhance the sound quality of music tuning
-
-For related API, please refer to setVoiceChangerParam
-
-6. Support actively monitoring camera status and automatically restarting when available when the camera is interrupted
-
-7. Optimize memory overhead when rendering YUV420
+   - Relevant APIs: `setVoiceChangerParam`.
 
 ### Bug Fixes
 
-1. Fix the issue of not being able to parse the abnormal cropping area in the H.265 stream
+1. **Fixed Issue with Parsing H.265 Streams Containing Abnormal Cropping Regions**
 
-2. Fix the issue of probability not restoring when switching front and back cameras in picture-in-picture mode
+2. **Resolved a Crash in the Monitoring Module During Deinitialization, Which Caused the Main Thread to Hang**
 
-3. Fix the issue of the monitoring module crashing and causing the main thread to freeze during de-initialization
+3. **Fixed a Crash That Might Occur When Starting Scoring for Copyrighted Music**
 
-4. Fix the issue of possible crashes when starting to score copyrighted music
+4. **Adjusted Lifecycle and Fixed Known Crash Issues**
 
-5. Adjust the lifecycle to fix known crash issues
-
-6. Fix known issues with the media player
-
-7. Fix the issue of white stripes appearing in sampling under D3D11 rendering texture
+5. **Fixed Known Issues in the Media Player**
 
 ## 3.16.2
 
