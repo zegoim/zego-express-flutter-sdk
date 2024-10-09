@@ -1,5 +1,77 @@
 # Change Log
 
+## 3.17.0
+
+### New Features
+
+1. Media player supports Alpha data layout above the RGB data on the right side when playing transparent effects
+
+When the media player plays transparent effects, a new ZegoAlphaLayoutType>ZegoAlphaLayoutTypeRightTop enumeration is added to support Alpha data being concatenated above the RGB data on the right side. When setting this enumeration, only a 0.5x zoom factor is supported.
+
+For related API, please refer to loadResourceWithConfig, ZegoAlphaLayoutTypeRightTop
+
+2. Supports customizing the stream resource type before and after the audience joins the stage
+
+Supports setting the stream resource type separately before and after the audience joins the stage, making the streaming method more flexible. It can be set to any of the following，RTC streaming, ultra-low latency live streaming (L3), or CDN streaming. For example, it can be used to implement a live streaming scenario where the audience defaults to L3 streaming before joining the stage, switches to RTC streaming during the interaction, and resumes L3 streaming after leaving the stage.
+
+For related API, please refer to startPlayingStream, ZegoStreamResourceModeCustom, ZegoPlayerConfig > customResourceConfig
+
+### Enhancements
+
+1. Express SDK upgrades NDK dependency to NDK r25c
+
+Note: After the upgrade, developers need to perform compatibility testing to prevent incompatibility issues. If you need to use the old version, please contact ZEGO technical support.
+
+To fix known issues, Express SDK upgrades NDK dependency to NDK r25c.
+
+2. Remove the default screen sharing permissions declared in the AndroidManifest.xml file
+
+Note:
+
+If developers do not declare permissions when implementing screen sharing after version 3.17.0, they must actively declare permissions after this update, otherwise compatibility issues may arise.
+
+If compatibility issues are encountered online, please contact ZEGO technical support.
+
+To better comply with privacy regulations, the default screen sharing permissions declared in the AndroidManifest.xml file have been removed, and developers need to actively declare:
+
+If the target Android SDK version is lower than 34.0.0, the FOREGROUND_SERVICE permission declaration is required.
+
+If the target Android SDK version is 34.0.0 and later, the FOREGROUND_SERVICE and FOREGROUND_SERVICE_MEDIA_PROJECTION permission declarations are required.
+
+3. The userName field is changed to an optional field when logging in to the room
+
+When calling the loginRoom interface to log in to the room, the userName was originally a required field, and it has been optimized to be an optional field.
+
+For related API, please refer to loginRoom
+
+4. Adapt to the 16KB memory page size of Android 15
+
+To ensure the performance and compatibility of Express SDK on the Android 15 system, the 16KB memory page size of Android 15 has been adapted.
+
+5. Optimize dual-channel voice change effects and enhance the sound quality of music tuning
+
+For related API, please refer to setVoiceChangerParam
+
+6. Support actively monitoring camera status and automatically restarting when available when the camera is interrupted
+
+7. Optimize memory overhead when rendering YUV420
+
+### Bug Fixes
+
+1. Fix the issue of not being able to parse the abnormal cropping area in the H.265 stream
+
+2. Fix the issue of probability not restoring when switching front and back cameras in picture-in-picture mode
+
+3. Fix the issue of the monitoring module crashing and causing the main thread to freeze during de-initialization
+
+4. Fix the issue of possible crashes when starting to score copyrighted music
+
+5. Adjust the lifecycle to fix known crash issues
+
+6. Fix known issues with the media player
+
+7. Fix the issue of white stripes appearing in sampling under D3D11 rendering texture
+
 ## 3.16.2
 
 ### Bug Fixes
