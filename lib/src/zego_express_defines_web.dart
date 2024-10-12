@@ -34,9 +34,9 @@ class ZegoFlutterEngine {
   external startPlayingStream(
       String streamID, dynamic remoteVideo, String s, dynamic config);
   external stopPlayingStream(String streamID);
-  external sendBroadcastMessage(String roomID, String message);
-  external sendBarrageMessage(String roomID, String message);
-  external sendCustomCommand(String roomID, String message, List toUserList);
+  external sendBroadcastMessage(String roomID, String message, dynamic success, dynamic error);
+  external sendBarrageMessage(String roomID, String message, dynamic success, dynamic error);
+  external sendCustomCommand(String roomID, String message, List toUserList, dynamic success, dynamic error);
   external setSEIConfig(int config);
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
@@ -58,7 +58,7 @@ class ZegoFlutterEngine {
   external static setEngineConfig(dynamic config);
   external setStreamExtraInfo(String extraInfo, int channel);
   external sendSEI(dynamic data, int dataLength, int channel);
-  external setRoomExtraInfo(String roomID, String key, String value);
+  external setRoomExtraInfo(String roomID, String key, String value, void Function(dynamic data) success, void Function(dynamic err) error);
   external createMediaPlayer();
   external setStyleByCanvas(dynamic canvas);
   external mediaPlayerSetPlayerCanvas(
