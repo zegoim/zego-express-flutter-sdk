@@ -1512,6 +1512,16 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void enableAuxBgmBalance(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableAuxBgmBalance(enable);
+
+        result.success(null);
+    }
+
     /* Player */
 
     @SuppressWarnings({"unused", "unchecked", "deprecation"})

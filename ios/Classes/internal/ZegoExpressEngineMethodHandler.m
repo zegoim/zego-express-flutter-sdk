@@ -1364,6 +1364,14 @@
     result(nil);
 }
 
+- (void)enableAuxBgmBalance:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableAuxBgmBalance:enable];
+
+    result(nil);
+}
 
 #pragma mark - Player
 

@@ -971,6 +971,15 @@ void ZegoExpressEngineMethodHandler::enableAlphaChannelVideoEncoder(ZFArgument a
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::enableAuxBgmBalance(ZFArgument argument,
+                                                                    ZFResult result) {
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAuxBgmBalance(enable);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFResult result) {
     auto streamID = zego_value_get_string(argument[ZFValue("streamID")]);
 

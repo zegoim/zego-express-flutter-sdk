@@ -777,6 +777,11 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> enableAuxBgmBalance(bool enable) async {
+    return await _channel
+        .invokeMethod('enableAuxBgmBalance', {'enable': enable});
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,
