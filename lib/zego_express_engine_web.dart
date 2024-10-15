@@ -881,6 +881,7 @@ class ZegoExpressEngineWeb {
 
   Future<Map<dynamic, dynamic>> sendCustomCommand(
       String roomID, String message, List toUserList) async {
+    print("sendCustomCommand ${roomID}");
     List useridList = [];
     for (var item in toUserList) {
       useridList.add(item["userID"]);
@@ -888,10 +889,13 @@ class ZegoExpressEngineWeb {
     final Map<dynamic, dynamic> map = {};
     try {
       await sendCustomCommandInvoke(roomID, message, useridList);
-       map["errorCode"] = 0;
+      print("sendCustomCommand ok");
+      map["errorCode"] = 0;
     }catch(e) {
+      print("sendCustomCommand error ${e}");
       map["errorCode"] = e;
     }
+    print("sendCustomCommand return");
     return Future.value(map);
   }
 
