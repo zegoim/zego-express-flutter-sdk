@@ -1221,6 +1221,19 @@
     result(nil);
 }
 
+- (void)setVideoDenoiseParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoVideoDenoiseParams *p = [[ZegoVideoDenoiseParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    p.mode = [ZegoUtils intValue:paramsMap[@"mode"]];
+    p.strength = [ZegoUtils intValue:paramsMap[@"strength"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setVideoDenoiseParams:p channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)setVideoSource:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int source = [ZegoUtils intValue:call.arguments[@"source"]];

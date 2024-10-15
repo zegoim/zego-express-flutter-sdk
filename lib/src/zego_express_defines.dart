@@ -1751,6 +1751,30 @@ enum ZegoLowlightEnhancementMode {
   Auto
 }
 
+/// Video denoise mode.
+enum ZegoVideoDenoiseMode {
+  /// Turn off video denoise.
+  Off,
+
+  /// Turn on video denoise.
+  On,
+
+  /// Automatic video denoise.
+  Auto
+}
+
+/// Video denoise strength.
+enum ZegoVideoDenoiseStrength {
+  /// Light denoise strength.
+  Light,
+
+  /// Medium denoise strength.
+  Medium,
+
+  /// Heavy denoise strength.
+  Heavy
+}
+
 /// Super resolution mode.
 enum ZegoSuperResolutionState {
   /// Super resolution turned off.
@@ -4290,6 +4314,22 @@ class ZegoColorEnhancementParams {
       : intensity = 0,
         skinToneProtectionLevel = 1,
         lipColorProtectionLevel = 0;
+}
+
+/// Video denoise params.
+class ZegoVideoDenoiseParams {
+  /// Description: Video denoise mode. Default value: Off.
+  ZegoVideoDenoiseMode mode;
+
+  /// Description: Video denoise strength. Default value: Light.
+  ZegoVideoDenoiseStrength strength;
+
+  ZegoVideoDenoiseParams(this.mode, this.strength);
+
+  /// Constructs a video denoise params object by default.
+  ZegoVideoDenoiseParams.defaultParam()
+      : mode = ZegoVideoDenoiseMode.Off,
+        strength = ZegoVideoDenoiseStrength.Light;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
