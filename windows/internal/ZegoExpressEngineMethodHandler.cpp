@@ -972,7 +972,7 @@ void ZegoExpressEngineMethodHandler::enableAlphaChannelVideoEncoder(ZFArgument a
 }
 
 void ZegoExpressEngineMethodHandler::enableAuxBgmBalance(ZFArgument argument,
-                                                                    ZFResult result) {
+                                                         ZFResult result) {
     auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
 
     EXPRESS::ZegoExpressSDK::getEngine()->enableAuxBgmBalance(enable);
