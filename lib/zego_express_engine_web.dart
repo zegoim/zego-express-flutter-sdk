@@ -260,10 +260,12 @@ class ZegoExpressEngineWeb {
     return {
       'completer': completer,
       "success": allowInterop((res) {
-        completer.complete(res);
+        completer.complete(0);
       }),
       "fail": allowInterop((err) {
-        completer.completeError(err);
+        // err: {code:1002xxx, msg: 'desc'}
+        print("createCompleter error: ${err.code}");
+        completer.completeError(err.code);
       })
     };
   }
@@ -887,14 +889,34 @@ class ZegoExpressEngineWeb {
       useridList.add(item["userID"]);
     }
     final Map<dynamic, dynamic> map = {};
+
     try {
-      await sendCustomCommandInvoke(roomID, message, useridList);
-      print("sendCustomCommand ok");
-      map["errorCode"] = 0;
+        await (() {
+              Completer c = Completer();
+              ZegoFlutterEngine.instance.sendCustomCommand(roomID, message, toUserList, allowInterop((data){
+                print("sendCustomCommand ok");
+                c.complete(0);
+              }), allowInterop((err) {
+                print("sendCustomCommand error ${err.errorCode}");
+                c.completeError(err.errorCode);
+              }));
+              return c.future;
+            })();
+            map["errorCode"] = 0;
     }catch(e) {
       print("sendCustomCommand error ${e}");
       map["errorCode"] = e;
     }
+
+
+    // try {
+    //   await sendCustomCommandInvoke(roomID, message, useridList);
+    //   print("sendCustomCommand ok");
+    //   map["errorCode"] = 0;
+    // }catch(e) {
+    //   print("sendCustomCommand error ${e}");
+    //   map["errorCode"] = e;
+    // }
     print("sendCustomCommand return");
     return Future.value(map);
   }
