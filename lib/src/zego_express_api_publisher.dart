@@ -678,6 +678,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set video denoise parameters, including mode and strength.
   /// Default value: Off.
   /// When to call: After creating the engine [createEngine].
+  /// Platform differences: Only supports iPhone and Android.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [params] Video denoise params.
