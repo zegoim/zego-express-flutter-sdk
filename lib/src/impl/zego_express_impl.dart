@@ -64,6 +64,8 @@ class ZegoExpressImpl {
   // enablePlatformView
   static bool _enablePlatformView = false;
 
+  static int _androidVersionCode = 0;
+
   static bool shouldUsePlatformView() {
     bool use = ZegoExpressImpl._enablePlatformView;
     // Web only supports PlatformView
@@ -88,6 +90,28 @@ class ZegoExpressImpl {
       }
     }
 
+    /**
+     * https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
+     * https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
+     */
+    if (kIsAndroid && _androidVersionCode < 23) {
+      try {
+        String dartVersion = Platform.version.split(' ')[0];
+        int? major = int.tryParse(dartVersion.split('.')[0]);
+        int? minor = int.tryParse(dartVersion.split('.')[1]);
+        // Flutter v3.19.0 <==> Dart v3.3.0
+        if (major == null || minor == null) {
+          use = false;
+        } else if (major == 3 && minor >= 3) {
+          use = false;
+        } else if (major > 3) {
+          use = false;
+        }
+      } catch (e) {
+        use = false;
+      }
+    }
+
     return use;
   }
 
@@ -104,6 +128,10 @@ class ZegoExpressImpl {
     _registerEventHandler();
 
     _enablePlatformView = profile.enablePlatformView ?? false;
+
+    if (kIsAndroid) {
+      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+    }
 
     await _channel.invokeMethod('createEngineWithProfile', {
       'profile': {
@@ -126,6 +154,10 @@ class ZegoExpressImpl {
     _registerEventHandler();
 
     _enablePlatformView = enablePlatformView ?? false;
+
+    if (kIsAndroid) {
+      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+    }
 
     await _channel.invokeMethod('createEngine', {
       'appID': appID,
