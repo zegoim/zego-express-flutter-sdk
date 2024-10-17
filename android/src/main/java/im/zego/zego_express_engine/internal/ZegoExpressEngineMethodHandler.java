@@ -14,6 +14,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -6375,6 +6376,11 @@ public class ZegoExpressEngineMethodHandler {
         ZegoLog.log("*** Plugin Version: %s", version);
         
         result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void getAndroidBuildVersionCode(MethodCall call, Result result) {
+        result.success(Build.VERSION.SDK_INT);
     }
 
     @SuppressWarnings("unused")
