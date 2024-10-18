@@ -260,12 +260,10 @@ class ZegoExpressEngineWeb {
     return {
       'completer': completer,
       "success": allowInterop((res) {
-        completer.complete(0);
+        completer.complete(res);
       }),
       "fail": allowInterop((err) {
-        // err: {code:1002xxx, msg: 'desc'}
-        print("createCompleter error: ${err.code}");
-        completer.completeError(err.code);
+        completer.completeError(err);
       })
     };
   }
@@ -822,124 +820,94 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-   Future sendBroadcastMessageInvoke(
+   Future sendBroadcastMessageWithCallback(
    String roomID, String message) {
       Completer c = Completer();
-      ZegoFlutterEngine.instance.sendBroadcastMessage(roomID, message, allowInterop((data){
-        c.complete(data.errorCode);
-    }), allowInterop((err){
-      c.completeError(err.errorCode);
+      ZegoFlutterEngine.instance.sendBroadcastMessage(roomID, message, allowInterop((errorCode, messageID){
+        final Map<dynamic, dynamic> map = {};
+        map["errorCode"] = errorCode;
+        map["messageID"] = messageID;
+        c.complete(map);
+    }), allowInterop((errorCode){
+      c.completeError(errorCode);
     }));
     return c.future;
   }
 
   Future<Map<dynamic, dynamic>> sendBroadcastMessage(
       String roomID, String message) async {
-    final Map<dynamic, dynamic> map = {};
-    map["messageID"] = 0; // fixme
     try {
-      await sendBroadcastMessageInvoke(roomID, message);
-       map["errorCode"] = 0;
-    }catch(e) {
-      map["errorCode"] = e;
+      final Map<dynamic, dynamic> res = await sendBroadcastMessageWithCallback(roomID, message);
+      return Future.value(res);
+    }catch(errorCode) {
+      final Map<dynamic, dynamic> map = {};
+      map["messageID"] = 0; // fixme
+      map["errorCode"] = errorCode;
+      return Future.value(map);
     }
-    return Future.value(map);
   }
 
-  Future sendBarrageMessageInvoke(
+  Future sendBarrageMessageWitchCallback(
    String roomID, String message) {
       Completer c = Completer();
-      ZegoFlutterEngine.instance.sendBarrageMessage(roomID, message, allowInterop((data){
-        c.complete(data.errorCode);
-    }), allowInterop((err){
-      c.completeError(err.errorCode);
+      ZegoFlutterEngine.instance.sendBarrageMessage(roomID, message, allowInterop((errorCode, messageID){
+        final Map<dynamic, dynamic> map = {};
+        map["errorCode"] = errorCode;
+        map["messageID"] = messageID;
+        c.complete(map);
+    }), allowInterop((errorCode){
+      c.completeError(errorCode);
     }));
     return c.future;
   }
 
   Future<Map<dynamic, dynamic>> sendBarrageMessage(
       String roomID, String message) async {
-    final Map<dynamic, dynamic> map = {};
-    map["messageID"] = ''; // fixme
     try {
-      await sendBarrageMessageInvoke(roomID, message);
-       map["errorCode"] = 0;
-    }catch(e) {
-      map["errorCode"] = e;
+      final Map<dynamic, dynamic> map = await sendBarrageMessageWitchCallback(roomID, message);
+       return Future.value(map);
+    }catch(errorCode) {
+       final Map<dynamic, dynamic> map = {};
+       map["messageID"] = ''; // fixme
+       map["errorCode"] = errorCode;
+       return Future.value(map);
     }
-    return Future.value(map);
-  }
-
-  Future sendCustomCommandInvoke(
-   String roomID, String message, List toUserList) {
-      Completer c = Completer();
-      ZegoFlutterEngine.instance.sendCustomCommand(roomID, message, toUserList, allowInterop((data){
-        c.complete(data.errorCode);
-    }), allowInterop((err){
-      c.completeError(err.errorCode);
-    }));
-    return c.future;
   }
 
   Future<Map<dynamic, dynamic>> sendCustomCommand(
       String roomID, String message, List toUserList) async {
-    print("sendCustomCommand ${roomID}");
     List useridList = [];
     for (var item in toUserList) {
       useridList.add(item["userID"]);
     }
     final Map<dynamic, dynamic> map = {};
-
     try {
-        await (() {
-              Completer c = Completer();
-              ZegoFlutterEngine.instance.sendCustomCommand(roomID, message, toUserList, allowInterop((data){
-                print("sendCustomCommand ok");
-                c.complete(0);
-              }), allowInterop((err) {
-                print("sendCustomCommand error ${err.errorCode}");
-                c.completeError(err.errorCode);
-              }));
-              return c.future;
-            })();
-            map["errorCode"] = 0;
-    }catch(e) {
-      print("sendCustomCommand error ${e}");
+        final result = await (() {
+          Map completerMap = createCompleter();
+          ZegoFlutterEngine.instance.sendCustomCommand(roomID, message, useridList,
+              completerMap["success"], completerMap["fail"]);
+          return completerMap["completer"].future;
+        })();
+        map["errorCode"] = result;
+    } catch(e) {
       map["errorCode"] = e;
     }
-
-
-    // try {
-    //   await sendCustomCommandInvoke(roomID, message, useridList);
-    //   print("sendCustomCommand ok");
-    //   map["errorCode"] = 0;
-    // }catch(e) {
-    //   print("sendCustomCommand error ${e}");
-    //   map["errorCode"] = e;
-    // }
-    print("sendCustomCommand return");
     return Future.value(map);
-  }
-
-  Future setRoomExtraInfoInvoke(
-    String roomID, String key, String value) {
-      Completer c = Completer();
-      ZegoFlutterEngine.instance.setRoomExtraInfo(roomID, key, value, allowInterop((data){
-        c.complete(data.errorCode);
-    }), allowInterop((err){
-      c.completeError(err.errorCode);
-    }));
-    return c.future;
   }
 
   Future<Map<dynamic, dynamic>> setRoomExtraInfo(
       String roomID, String key, String value) async {
     final Map<dynamic, dynamic> map = {};
     try {
-      await setRoomExtraInfoInvoke(roomID, key, value);
-       map["errorCode"] = 0;
-    }catch(e) {
-      map["errorCode"] = e;
+        final result = await (() {
+          Map completerMap = createCompleter();
+           ZegoFlutterEngine.instance.setRoomExtraInfo(roomID, key, value,
+              completerMap["success"], completerMap["fail"]);
+          return completerMap["completer"].future;
+        })();
+        map["errorCode"] = result;
+    } catch(errorCode) {
+      map["errorCode"] = errorCode;
     }
     return Future.value(map);
   }
