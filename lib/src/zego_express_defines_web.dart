@@ -22,7 +22,7 @@ class ZegoFlutterEngine {
   external static createEngineWithProfile(dynamic profile);
   external static setEventHandler(Function handler);
   external loginRoom(String roomID, dynamic user, dynamic config,
-      dynamic success, dynamic fail);
+      void Function(int errorCode) success, void Function(int errorCode) fail);
   external logoutRoom(String roomID);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);

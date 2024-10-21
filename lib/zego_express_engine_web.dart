@@ -712,18 +712,19 @@ class ZegoExpressEngineWeb {
         maxMemberCount: config["maxMemberCount"],
         token: config["token"],
         isUserStatusNotify: config["isUserStatusNotify"]);
-    var result;
-    result = await (() {
-      Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig,
-          completerMap["success"], completerMap["fail"]);
-      return completerMap["completer"].future;
-    })();
+
     final map = {};
-    map["errorCode"] = 0;
     map["extendedData"] = "{}";
-    if (result == false) {
-      map["errorCode"] = 1;
+    try {
+      final result = await (() {
+        Map completerMap = createCompleter();
+        ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig,
+            completerMap["success"], completerMap["fail"]);
+        return completerMap["completer"].future;
+      })();
+      map["errorCode"] = result;
+    }catch(errorCode) {
+      map["errorCode"] = errorCode;
     }
     return Future.value(map);
   }
@@ -734,7 +735,6 @@ class ZegoExpressEngineWeb {
     final map = {};
     map["errorCode"] = 0;
     map["extendedData"] = "{}";
-
     return Future.value(map);
   }
 
