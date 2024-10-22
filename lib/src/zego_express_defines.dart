@@ -652,7 +652,10 @@ enum ZegoAECMode {
   Medium,
 
   /// Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening.
-  Soft
+  Soft,
+
+  /// AI mode AEC.
+  AI
 }
 
 /// Active Noise Suppression mode.
