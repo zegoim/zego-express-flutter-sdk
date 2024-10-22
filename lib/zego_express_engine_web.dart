@@ -716,7 +716,7 @@ class ZegoExpressEngineWeb {
     final map = {};
     map["extendedData"] = "{}";
     try {
-      final result = await (() {
+        final result = await (() {
         Map completerMap = createCompleter();
         ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig,
             completerMap["success"], completerMap["fail"]);
@@ -729,11 +729,17 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<Map<dynamic, dynamic>> logoutRoom(String? roomID) {
-    roomID ??= "";
-    ZegoFlutterEngine.instance.logoutRoom(roomID);
-    final map = {};
-    map["errorCode"] = 0;
+  Future<Map<dynamic, dynamic>> logoutRoom(String? roomID) async {
+    final result = await (() {
+       Completer c = Completer();
+      ZegoFlutterEngine.instance.logoutRoom(allowInterop((errorCode, msg){
+          c.complete(errorCode);
+      }), roomID);
+      return c.future;
+    })();
+
+    final Map<dynamic, dynamic> map = {};
+    map["errorCode"] = result;
     map["extendedData"] = "{}";
     return Future.value(map);
   }

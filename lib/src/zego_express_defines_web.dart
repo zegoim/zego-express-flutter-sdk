@@ -23,7 +23,7 @@ class ZegoFlutterEngine {
   external static setEventHandler(Function handler);
   external loginRoom(String roomID, dynamic user, dynamic config,
       void Function(int errorCode) success, void Function(int errorCode) fail);
-  external logoutRoom(String roomID);
+  external logoutRoom(void Function(int errorCode, String msg) onresult, String? roomID);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);
   external startPreview(dynamic canvas, int channel, bool isPublish,
