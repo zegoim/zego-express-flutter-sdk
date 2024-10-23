@@ -13,14 +13,17 @@ library ZegoFlutterEngine;
 
 import 'package:js/js.dart';
 
+
 @JS()
 class ZegoFlutterEngine {
   external dynamic zegoEntity;
-  external static ZegoFlutterEngine instance;
+  external static  ZegoFlutterEngine instance;
+  external static dynamic copyMusic;
   external static destroyEngine();
   external static getVersion();
   external static createEngineWithProfile(dynamic profile);
   external static setEventHandler(Function handler);
+  external static use(dynamic module);
   external loginRoom(String roomID, dynamic user, dynamic config,
       void Function(int errorCode) success, void Function(int errorCode) fail);
   external logoutRoom(void Function(int errorCode, String msg) onresult, String? roomID);
@@ -81,6 +84,8 @@ class ZegoFlutterEngine {
   external stopCaptureScreen(int index);
   external startMixerTask(String config, dynamic success, dynamic fail);
   external stopMixerTask(String taskId, dynamic success, dynamic fail);
+  external createCopyrightedMusic();
+  external destroyCopyrightedMusic();
 }
 
 @JS()

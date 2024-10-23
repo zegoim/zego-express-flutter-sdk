@@ -44,6 +44,10 @@ class ZegoExpressEngineWeb {
       _eventListener(event);
     });
 
+    var musicEl = ScriptElement()
+      ..src = 'assets/packages/zego_express_engine/assets/copyrighted-music.js'
+      ..type = 'application/javascript';
+    document.body!.append(musicEl);
     var element = ScriptElement()
       ..src =
           'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
@@ -241,6 +245,10 @@ class ZegoExpressEngineWeb {
         return startMixerTask(call.arguments);
       case 'stopMixerTask':
         return stopMixerTask(call.arguments["taskID"]);
+      case 'createCopyrightedMusic':
+        return createCopyrightedMusic();
+      case 'destroyCopyrightedMusic':
+        return destroyCopyrightedMusic(call.arguments["copyrightedMusic"]);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -1282,4 +1290,24 @@ class ZegoExpressEngineWeb {
     })();
     return json.decode(data);
   }
+
+  Future<int> createCopyrightedMusic() async {
+    ZegoFlutterEngine.copyMusic =
+        ZegoFlutterEngine.instance.createCopyrightedMusic();
+    if (ZegoFlutterEngine.copyMusic != null) {
+      return 0;
+    } else {
+      return 1; // TODO: 错误码处理
+    }
+  }
+
+  Future<void> destroyCopyrightedMusic(dynamic copyrightedMusic) async {
+    ZegoFlutterEngine.instance.destroyCopyrightedMusic();
+    ZegoFlutterEngine.copyMusic = null;
+  }
+
+  // Future<ZegoCopyrightedMusicSendExtendedRequestResult>
+  //     copMusicSendExtendedRequest(String command, String params) {
+  //   ZegoFlutterEngine.copyMusic?.SendExtendedRequest(command, params);
+  // }
 }
