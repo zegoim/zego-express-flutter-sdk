@@ -8,10 +8,12 @@ import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:js';
+import 'dart:js_util';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:zego_express_engine/src/zego_express_defines_web.dart';
+import 'package:zego_express_engine/src/utils/web_api.dart';
 
 import 'zego_express_engine.dart';
 
@@ -249,6 +251,35 @@ class ZegoExpressEngineWeb {
         return createCopyrightedMusic();
       case 'destroyCopyrightedMusic':
         return destroyCopyrightedMusic(call.arguments["copyrightedMusic"]);
+      case 'copyrightedMusicInitCopyrightedMusic':
+        return copyrightedMusicInitCopyrightedMusic(call.arguments["config"]);
+      case 'copyrightedMusicSendExtendedRequest':
+        return copyrightedMusicSendExtendedRequest(
+            call.arguments["command"], call.arguments["params"]);
+      case 'copyrightedMusicRequestResource':
+        return copyrightedMusicRequestResource(
+            call.arguments["config"], call.arguments["type"]);
+      case 'copyrightedMusicRequestResourceV2':
+        return copyrightedMusicRequestResourceV2(
+            call.arguments["config"]);
+      case 'copyrightedMusicGetSharedResource':
+        return copyrightedMusicGetSharedResource(
+            call.arguments["config"], call.arguments["type"]);
+      case 'copyrightedMusicGetLrcLyric':
+        return copyrightedMusicGetLrcLyric(
+            call.arguments["songID"], call.arguments["vendorID"]);
+      case 'copyrightedMusicGetKrcLyricByToken':
+        return copyrightedMusicGetKrcLyricByToken(call.arguments["krcToken"]);
+      case 'copyrightedMusicDownload':
+        return copyrightedMusicDownload(call.arguments["resourceID"]);
+      case 'copyrightedMusicClearCache':
+        return copyrightedMusicClearCache();
+      case 'copyrightedMusicGetStandardPitch':
+        return copyrightedMusicGetStandardPitch(call.arguments["resourceID"]);
+      case 'copyrightedMusicGetCurrentPitch':
+        return copyrightedMusicGetCurrentPitch(call.arguments["resourceID"]);
+      case 'copyrightedMusicSetScoringLevel':
+        return copyrightedMusicSetScoringLevel(call.arguments["level"]);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -724,14 +755,14 @@ class ZegoExpressEngineWeb {
     final map = {};
     map["extendedData"] = "{}";
     try {
-        final result = await (() {
+      final result = await (() {
         Map completerMap = createCompleter();
         ZegoFlutterEngine.instance.loginRoom(roomID, webUser, webConfig,
             completerMap["success"], completerMap["fail"]);
         return completerMap["completer"].future;
       })();
       map["errorCode"] = result;
-    }catch(errorCode) {
+    } catch (errorCode) {
       map["errorCode"] = errorCode;
     }
     return Future.value(map);
@@ -739,9 +770,9 @@ class ZegoExpressEngineWeb {
 
   Future<Map<dynamic, dynamic>> logoutRoom(String? roomID) async {
     final result = await (() {
-       Completer c = Completer();
-      ZegoFlutterEngine.instance.logoutRoom(allowInterop((errorCode, msg){
-          c.complete(errorCode);
+      Completer c = Completer();
+      ZegoFlutterEngine.instance.logoutRoom(allowInterop((errorCode, msg) {
+        c.complete(errorCode);
       }), roomID);
       return c.future;
     })();
@@ -834,15 +865,15 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-   Future sendBroadcastMessageWithCallback(
-   String roomID, String message) {
-      Completer c = Completer();
-      ZegoFlutterEngine.instance.sendBroadcastMessage(roomID, message, allowInterop((errorCode, messageID){
-        final Map<dynamic, dynamic> map = {};
-        map["errorCode"] = errorCode;
-        map["messageID"] = messageID;
-        c.complete(map);
-    }), allowInterop((errorCode){
+  Future sendBroadcastMessageWithCallback(String roomID, String message) {
+    Completer c = Completer();
+    ZegoFlutterEngine.instance.sendBroadcastMessage(roomID, message,
+        allowInterop((errorCode, messageID) {
+      final Map<dynamic, dynamic> map = {};
+      map["errorCode"] = errorCode;
+      map["messageID"] = messageID;
+      c.complete(map);
+    }), allowInterop((errorCode) {
       c.completeError(errorCode);
     }));
     return c.future;
@@ -851,9 +882,10 @@ class ZegoExpressEngineWeb {
   Future<Map<dynamic, dynamic>> sendBroadcastMessage(
       String roomID, String message) async {
     try {
-      final Map<dynamic, dynamic> res = await sendBroadcastMessageWithCallback(roomID, message);
+      final Map<dynamic, dynamic> res =
+          await sendBroadcastMessageWithCallback(roomID, message);
       return Future.value(res);
-    }catch(errorCode) {
+    } catch (errorCode) {
       final Map<dynamic, dynamic> map = {};
       map["messageID"] = 0; // fixme
       map["errorCode"] = errorCode;
@@ -861,15 +893,15 @@ class ZegoExpressEngineWeb {
     }
   }
 
-  Future sendBarrageMessageWitchCallback(
-   String roomID, String message) {
-      Completer c = Completer();
-      ZegoFlutterEngine.instance.sendBarrageMessage(roomID, message, allowInterop((errorCode, messageID){
-        final Map<dynamic, dynamic> map = {};
-        map["errorCode"] = errorCode;
-        map["messageID"] = messageID;
-        c.complete(map);
-    }), allowInterop((errorCode){
+  Future sendBarrageMessageWitchCallback(String roomID, String message) {
+    Completer c = Completer();
+    ZegoFlutterEngine.instance.sendBarrageMessage(roomID, message,
+        allowInterop((errorCode, messageID) {
+      final Map<dynamic, dynamic> map = {};
+      map["errorCode"] = errorCode;
+      map["messageID"] = messageID;
+      c.complete(map);
+    }), allowInterop((errorCode) {
       c.completeError(errorCode);
     }));
     return c.future;
@@ -878,13 +910,14 @@ class ZegoExpressEngineWeb {
   Future<Map<dynamic, dynamic>> sendBarrageMessage(
       String roomID, String message) async {
     try {
-      final Map<dynamic, dynamic> map = await sendBarrageMessageWitchCallback(roomID, message);
-       return Future.value(map);
-    }catch(errorCode) {
-       final Map<dynamic, dynamic> map = {};
-       map["messageID"] = ''; // fixme
-       map["errorCode"] = errorCode;
-       return Future.value(map);
+      final Map<dynamic, dynamic> map =
+          await sendBarrageMessageWitchCallback(roomID, message);
+      return Future.value(map);
+    } catch (errorCode) {
+      final Map<dynamic, dynamic> map = {};
+      map["messageID"] = ''; // fixme
+      map["errorCode"] = errorCode;
+      return Future.value(map);
     }
   }
 
@@ -896,14 +929,14 @@ class ZegoExpressEngineWeb {
     }
     final Map<dynamic, dynamic> map = {};
     try {
-        final result = await (() {
-          Map completerMap = createCompleter();
-          ZegoFlutterEngine.instance.sendCustomCommand(roomID, message, useridList,
-              completerMap["success"], completerMap["fail"]);
-          return completerMap["completer"].future;
-        })();
-        map["errorCode"] = result;
-    } catch(e) {
+      final result = await (() {
+        Map completerMap = createCompleter();
+        ZegoFlutterEngine.instance.sendCustomCommand(roomID, message,
+            useridList, completerMap["success"], completerMap["fail"]);
+        return completerMap["completer"].future;
+      })();
+      map["errorCode"] = result;
+    } catch (e) {
       map["errorCode"] = e;
     }
     return Future.value(map);
@@ -913,14 +946,14 @@ class ZegoExpressEngineWeb {
       String roomID, String key, String value) async {
     final Map<dynamic, dynamic> map = {};
     try {
-        final result = await (() {
-          Map completerMap = createCompleter();
-           ZegoFlutterEngine.instance.setRoomExtraInfo(roomID, key, value,
-              completerMap["success"], completerMap["fail"]);
-          return completerMap["completer"].future;
-        })();
-        map["errorCode"] = result;
-    } catch(errorCode) {
+      final result = await (() {
+        Map completerMap = createCompleter();
+        ZegoFlutterEngine.instance.setRoomExtraInfo(
+            roomID, key, value, completerMap["success"], completerMap["fail"]);
+        return completerMap["completer"].future;
+      })();
+      map["errorCode"] = result;
+    } catch (errorCode) {
       map["errorCode"] = errorCode;
     }
     return Future.value(map);
@@ -1306,8 +1339,121 @@ class ZegoExpressEngineWeb {
     ZegoFlutterEngine.copyMusic = null;
   }
 
-  // Future<ZegoCopyrightedMusicSendExtendedRequestResult>
-  //     copMusicSendExtendedRequest(String command, String params) {
-  //   ZegoFlutterEngine.copyMusic?.SendExtendedRequest(command, params);
-  // }
+  Future<Map<dynamic, dynamic>> copyrightedMusicInitCopyrightedMusic(
+      dynamic config) async {
+    dynamic obj = dartObjToJSON(config);
+    final promise = ZegoFlutterEngine.copyMusic?.initCopyrightedMusic(obj);
+    int code = await promiseToFuture(promise);
+
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = code;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicSendExtendedRequest(
+      String command, String params) async {
+    final promise = ZegoFlutterEngine.copyMusic
+        ?.sendExtendedRequest(command, parseJSON(params));
+    final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = result.errorCode;
+    map['command'] = command;
+    final reqResult = result.result;
+    map['result'] = stringifyJSON(reqResult);
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicRequestResource(
+      dynamic config, int type) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+  Future<dynamic> copyrightedMusicRequestResourceV2(
+      dynamic config) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicGetSharedResource(
+      dynamic config, int type) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicGetLrcLyric(
+      String songID, int vendorID) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicGetKrcLyricByToken(String krcToken) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicDownload(String resourceID) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicClearCache() async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  // 打分相关接口
+  Future<dynamic> copyrightedMusicGetStandardPitch(String resourceID) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicGetCurrentPitch(String resourceID) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
+
+  Future<dynamic> copyrightedMusicSetScoringLevel(int level) async {
+    // final promise = ZegoFlutterEngine.copyMusic
+    //     ?.sendExtendedRequest(command, parseJSON(params));
+    // final result = await promiseToFuture(promise);
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = -1; // result.errorCode;
+    return map;
+  }
 }

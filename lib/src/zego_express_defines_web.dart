@@ -13,11 +13,10 @@ library ZegoFlutterEngine;
 
 import 'package:js/js.dart';
 
-
 @JS()
 class ZegoFlutterEngine {
   external dynamic zegoEntity;
-  external static  ZegoFlutterEngine instance;
+  external static ZegoFlutterEngine instance;
   external static dynamic copyMusic;
   external static destroyEngine();
   external static getVersion();
@@ -26,7 +25,8 @@ class ZegoFlutterEngine {
   external static use(dynamic module);
   external loginRoom(String roomID, dynamic user, dynamic config,
       void Function(int errorCode) success, void Function(int errorCode) fail);
-  external logoutRoom(void Function(int errorCode, String msg) onresult, String? roomID);
+  external logoutRoom(
+      void Function(int errorCode, String msg) onresult, String? roomID);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);
   external startPreview(dynamic canvas, int channel, bool isPublish,
@@ -37,9 +37,18 @@ class ZegoFlutterEngine {
   external startPlayingStream(
       String streamID, dynamic remoteVideo, String s, dynamic config);
   external stopPlayingStream(String streamID);
-  external sendBroadcastMessage(String roomID, String message, void Function(int errorCode, int messageID) success,  void Function(int errorCode) error);
-  external sendBarrageMessage(String roomID, String message, void Function(int errorCode, String messageID) success,  void Function(int errorCode) error);
-  external sendCustomCommand(String roomID, String message, List toUserList, void Function(int errorCode) success, void Function(int errorCode) error);
+  external sendBroadcastMessage(
+      String roomID,
+      String message,
+      void Function(int errorCode, int messageID) success,
+      void Function(int errorCode) error);
+  external sendBarrageMessage(
+      String roomID,
+      String message,
+      void Function(int errorCode, String messageID) success,
+      void Function(int errorCode) error);
+  external sendCustomCommand(String roomID, String message, List toUserList,
+      void Function(int errorCode) success, void Function(int errorCode) error);
   external setSEIConfig(int config);
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
@@ -61,7 +70,8 @@ class ZegoFlutterEngine {
   external static setEngineConfig(dynamic config);
   external setStreamExtraInfo(String extraInfo, int channel);
   external sendSEI(dynamic data, int dataLength, int channel);
-  external setRoomExtraInfo(String roomID, String key, String value, void Function(int errorCode) success, void Function(int errorCode) error);
+  external setRoomExtraInfo(String roomID, String key, String value,
+      void Function(int errorCode) success, void Function(int errorCode) error);
   external createMediaPlayer();
   external setStyleByCanvas(dynamic canvas);
   external mediaPlayerSetPlayerCanvas(
@@ -120,6 +130,14 @@ class ZegoUserWeb {
   external String get userID;
   external String get userName;
 }
+
+@JS()
+@anonymous
+class ZegoCopMusicInitConfigWeb {
+  external factory ZegoCopMusicInitConfigWeb({ZegoUserWeb user});
+  external ZegoUserWeb get user;
+}
+
 
 @JS()
 @anonymous
