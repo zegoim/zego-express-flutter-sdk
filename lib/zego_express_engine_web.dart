@@ -260,11 +260,12 @@ class ZegoExpressEngineWeb {
         return copyrightedMusicRequestResource(
             call.arguments["config"], call.arguments["type"]);
       case 'copyrightedMusicRequestResourceV2':
-        return copyrightedMusicRequestResourceV2(
-            call.arguments["config"]);
+        return copyrightedMusicRequestResourceV2(call.arguments["config"]);
       case 'copyrightedMusicGetSharedResource':
         return copyrightedMusicGetSharedResource(
             call.arguments["config"], call.arguments["type"]);
+      case 'copyrightedMusicGetSharedResourceV2':
+        return copyrightedMusicGetSharedResourceV2(call.arguments["config"]);
       case 'copyrightedMusicGetLrcLyric':
         return copyrightedMusicGetLrcLyric(
             call.arguments["songID"], call.arguments["vendorID"]);
@@ -1365,49 +1366,65 @@ class ZegoExpressEngineWeb {
 
   Future<dynamic> copyrightedMusicRequestResource(
       dynamic config, int type) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
+    final promise = ZegoFlutterEngine.copyMusic
+        ?.requestResource(dartObjToJSON(config), type);
+    final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
+    map['errorCode'] = result.errorCode;
+    map['resource'] = stringifyJSON(result.resource);
     return map;
   }
-  Future<dynamic> copyrightedMusicRequestResourceV2(
-      dynamic config) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
-    final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
-    return map;
+
+  Future<dynamic> copyrightedMusicRequestResourceV2(dynamic config) async {
+    int resourceType = 0;
+    if (config['resourceType'] != null) {
+      resourceType = config['resourceType'];
+    }
+    return copyrightedMusicRequestResource(config, resourceType);
   }
 
   Future<dynamic> copyrightedMusicGetSharedResource(
       dynamic config, int type) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
+    try {
+      final promise = ZegoFlutterEngine.copyMusic
+          ?.getSharedResource(dartObjToJSON(config), type);
+      final result = await promiseToFuture(promise);
+      map['errorCode'] = result.errorCode;
+      map['resource'] = stringifyJSON(result.resource);
+    } catch (e) {
+      dynamic error = e;
+      if (error.errorCode) {
+        map['errorCode'] = error.errorCode;
+      }
+    }
     return map;
+  }
+
+  Future<dynamic> copyrightedMusicGetSharedResourceV2(dynamic config) {
+    int resourceType = 0;
+    if (config['resourceType'] != null) {
+      resourceType = config['resourceType'];
+    }
+    return copyrightedMusicGetSharedResource(config, resourceType);
   }
 
   Future<dynamic> copyrightedMusicGetLrcLyric(
       String songID, int vendorID) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
+    final promise = ZegoFlutterEngine.copyMusic?.getLrcLyric(songID, vendorID);
+    final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
+    map['errorCode'] = result.errorCode;
+    map['lyrics'] = stringifyJSON(result.lyrics);
     return map;
   }
 
   Future<dynamic> copyrightedMusicGetKrcLyricByToken(String krcToken) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
+    final promise = ZegoFlutterEngine.copyMusic?.getKrcLyricByToken(krcToken);
+    final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
+    map['errorCode'] = result.errorCode;
+    map['lyrics'] = stringifyJSON(result.lyrics);
     return map;
   }
 
@@ -1420,40 +1437,28 @@ class ZegoExpressEngineWeb {
     return map;
   }
 
-  Future<dynamic> copyrightedMusicClearCache() async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
-    final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
-    return map;
+  Future<void> copyrightedMusicClearCache() async {
+    ZegoFlutterEngine.copyMusic?.clearCache();
   }
 
   // 打分相关接口
   Future<dynamic> copyrightedMusicGetStandardPitch(String resourceID) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
+    final promise = ZegoFlutterEngine.copyMusic?.getStandardPitch(resourceID);
+    final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
+    map['errorCode'] = result.errorCode;
+    map['pitch'] = stringifyJSON(result.pitch);
     return map;
   }
 
   Future<dynamic> copyrightedMusicGetCurrentPitch(String resourceID) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
-    final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
-    return map;
+    final promise =
+        await ZegoFlutterEngine.copyMusic?.getCurrentPitch(resourceID);
+    int value = await promiseToFuture(promise);
+    return value;
   }
 
-  Future<dynamic> copyrightedMusicSetScoringLevel(int level) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
-    final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
-    return map;
+  Future<void> copyrightedMusicSetScoringLevel(int level) async {
+    ZegoFlutterEngine.copyMusic?.setScoringLevel(level);
   }
 }

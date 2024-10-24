@@ -4632,7 +4632,9 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
         'vendorID': config.vendorID?.value ??
             ZegoCopyrightedMusicVendorID
                 .ZegoCopyrightedMusicVendorDefault.value,
-        'roomID': config.roomID ?? ''
+        'roomID': config.roomID ?? '',
+        'mode': config.mode,
+        'masterID': config.masterID
       },
       'type': type.index
     });
@@ -4643,15 +4645,18 @@ class ZegoCopyrightedMusicImpl extends ZegoCopyrightedMusic {
   @override
   Future<ZegoCopyrightedMusicGetSharedResourceResult> getSharedResourceV2(
       ZegoCopyrightedMusicGetSharedConfigV2 config) async {
-    var resultMap = await ZegoExpressImpl._channel
-        .invokeMethod('copyrightedMusicGetSharedResourceV2', {
+    final reqConfig = {
       'config': {
         'songID': config.songID,
         'vendorID': config.vendorID ?? 0,
         'roomID': config.roomID ?? '',
-        'resourceType': config.resourceType ?? 0
+        'resourceType': config.resourceType ?? 0,
+        'mode': config.mode,
+        'masterID': config.masterID
       }
-    });
+    };
+    var resultMap = await ZegoExpressImpl._channel
+        .invokeMethod('copyrightedMusicGetSharedResourceV2', reqConfig);
     return ZegoCopyrightedMusicGetSharedResourceResult(
         resultMap['errorCode'], resultMap['resource']);
   }
