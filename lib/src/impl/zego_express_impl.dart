@@ -747,6 +747,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setVideoDenoiseParams', {
+      'params': {'mode': params.mode.index, 'strength': params.strength.value},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<int> setVideoSource(ZegoVideoSourceType source,
       {int? instanceID, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoSource', {

@@ -143,6 +143,8 @@ import im.zego.zegoexpress.constants.ZegoEncodeProfile;
 import im.zego.zegoexpress.constants.ZegoCapabilityNegotiationType;
 import im.zego.zegoexpress.constants.ZegoStreamCensorshipMode;
 import im.zego.zegoexpress.constants.ZegoLowlightEnhancementMode;
+import im.zego.zegoexpress.constants.ZegoVideoDenoiseMode;
+import im.zego.zegoexpress.constants.ZegoVideoDenoiseStrength;
 import im.zego.zegoexpress.constants.ZegoVideoSourceType;
 import im.zego.zegoexpress.constants.ZegoAudioDeviceMode;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicVendorID;
@@ -213,6 +215,7 @@ import im.zego.zegoexpress.entity.ZegoScreenCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoSoundLevelConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
+import im.zego.zegoexpress.entity.ZegoVideoDenoiseParams;
 import im.zego.zegoexpress.entity.ZegoVocalRangeParam;
 import im.zego.zegoexpress.entity.ZegoVoiceChangerParam;
 import im.zego.zegoexpress.entity.ZegoWatermark;
@@ -1382,6 +1385,20 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setLowlightEnhancement(mode, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setVideoDenoiseParams(MethodCall call, Result result) {
+        ZegoVideoDenoiseParams p = new ZegoVideoDenoiseParams();
+        HashMap<String, Object> paramsMap = call.argument("params");
+        p.mode = ZegoVideoDenoiseMode.getZegoVideoDenoiseMode(ZegoUtils.intValue((Number)paramsMap.get("mode")));
+        p.strength = ZegoVideoDenoiseStrength.getZegoVideoDenoiseStrength(ZegoUtils.intValue((Number)paramsMap.get("strength")));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setVideoDenoiseParams(p, channel);
 
         result.success(null);
     }
