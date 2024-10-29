@@ -1941,17 +1941,29 @@
             
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 4) {
-                    codecID = 100;
+                if (videoConfigMap.count > 0) {
+                    int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                    if (codecID > 4) {
+                        codecID = 100;
+                    }
+                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                    int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                    int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                    bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
+                    ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+                    [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
+                    [outputObject setVideoConfig: videoConfig];
                 }
-                int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
-                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
-                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
-                ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
-                [outputObject setVideoConfig: videoConfig];
+            }
+            
+            if ([[outputMap allKeys] containsObject: @"targetRoom"]) {
+                NSDictionary *targetRoomMap = outputMap[@"targetRoom"];
+                if (targetRoomMap.count > 0) {
+                    NSString *roomID = targetRoomMap[@"roomID"];
+                    NSString *userID = targetRoomMap[@"userID"];
+                    ZegoMixerOutputRoomInfo *roomInfo = [[ZegoMixerOutputRoomInfo alloc] initWithRoomID:roomID userID:userID];
+                    [outputObject setTargetRoom: roomInfo];
+                }
             }
             [outputListObject addObject:outputObject];
         }
@@ -2123,17 +2135,29 @@
             
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 4) {
-                    codecID = 100;
+                if (videoConfigMap.count > 0) {
+                    int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                    if (codecID > 4) {
+                        codecID = 100;
+                    }
+                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                    int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                    int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                    bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
+                    ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+                    [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
+                    [outputObject setVideoConfig: videoConfig];
                 }
-                int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
-                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
-                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
-                ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
-                [outputObject setVideoConfig: videoConfig];
+            }
+            
+            if ([[outputMap allKeys] containsObject: @"targetRoom"]) {
+                NSDictionary *targetRoomMap = outputMap[@"targetRoom"];
+                if (targetRoomMap.count > 0) {
+                    NSString *roomID = targetRoomMap[@"roomID"];
+                    NSString *userID = targetRoomMap[@"userID"];
+                    ZegoMixerOutputRoomInfo *roomInfo = [[ZegoMixerOutputRoomInfo alloc] initWithRoomID:roomID userID:userID];
+                    [outputObject setTargetRoom: roomInfo];
+                }
             }
             [outputListObject addObject:outputObject];
         }

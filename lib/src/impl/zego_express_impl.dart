@@ -1078,16 +1078,20 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null) {
+      if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': {
+          'videoConfig': output.videoConfig != null ? {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
             'encodeProfile': output.videoConfig!.encodeProfile.index,
             'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          }
+          } : {},
+          'targetRoom': output.targetRoom != null ? {
+            'roomID': output.targetRoom!.roomID,
+            'userID': output.targetRoom!.userID
+          } : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -1118,16 +1122,20 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null) {
+      if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': {
+          'videoConfig': output.videoConfig != null ? {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
             'encodeProfile': output.videoConfig!.encodeProfile.index,
             'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          }
+          } : {},
+          'targetRoom': output.targetRoom != null ? {
+            'roomID': output.targetRoom!.roomID,
+            'userID': output.targetRoom!.userID
+          } : {}
         });
       } else {
         outputList.add({'target': output.target});

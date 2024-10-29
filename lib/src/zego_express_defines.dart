@@ -3071,6 +3071,22 @@ class ZegoMixerOutputVideoConfig {
       this.enableLowBitrateHD = false});
 }
 
+/// Room information for the output stream in a mixed stream.
+///
+/// Available since: 3.18.0
+/// Description: Setting room information for a single output stream; the mixed output stream can be added to the specified room, allowing users in the room to receive notifications of increased stream in the room.
+/// Use cases: Manual mixed stream scenario, such as Co-hosting.
+/// Restrictions: Dynamic updates during mixed stream are not supported.
+class ZegoMixerOutputRoomInfo {
+  /// Specifies the room ID of the output stream. You need to ensure that the room is already present when mixing starts.
+  String roomID;
+
+  /// Specifies the user ID of the output stream. It is not recommended to use the same userID as the actual user in the room to avoid conflicts with the SDK's stream addition behavior.
+  String userID;
+
+  ZegoMixerOutputRoomInfo(this.roomID, this.userID);
+}
+
 /// Font style.
 ///
 /// Description: Font style configuration, can be used to configure font type, font size, font color, font transparency.
@@ -3265,7 +3281,10 @@ class ZegoMixerOutput {
   /// Mix stream output video config. On web platforms, this property does not take effect.
   ZegoMixerOutputVideoConfig? videoConfig;
 
-  ZegoMixerOutput(this.target, {this.videoConfig});
+  /// Specifies the room information for the output stream.
+  ZegoMixerOutputRoomInfo? targetRoom;
+
+  ZegoMixerOutput(this.target, {this.videoConfig, this.targetRoom});
 }
 
 /// Watermark object.
