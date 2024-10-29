@@ -3165,25 +3165,29 @@ void ZegoExpressEngineMethodHandler::stopMixerTask(ZFArgument argument, ZFResult
 
         if (!zego_value_is_null(outputMap[ZFValue("videoConfig")])) {
             auto videoConfigMap = zego_value_get_map(outputMap[ZFValue("videoConfig")]);
-            output.videoConfig.bitrate = zego_value_get_int(videoConfigMap[ZFValue("bitrate")]);
-            output.videoConfig.encodeLatency =
-                zego_value_get_int(videoConfigMap[ZFValue("encodeLatency")]);
-            output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)zego_value_get_int(
-                videoConfigMap[ZFValue("encodeProfile")]);
-            output.videoConfig.enableLowBitrateHD =
-                zego_value_get_bool(videoConfigMap[ZFValue("enableLowBitrateHD")]);
+            if (videoConfigMap.size() > 0) {
+                output.videoConfig.bitrate = zego_value_get_int(videoConfigMap[ZFValue("bitrate")]);
+                output.videoConfig.encodeLatency =
+                    zego_value_get_int(videoConfigMap[ZFValue("encodeLatency")]);
+                output.videoConfig.encodeProfile = (EXPRESS::ZegoEncodeProfile)zego_value_get_int(
+                    videoConfigMap[ZFValue("encodeProfile")]);
+                output.videoConfig.enableLowBitrateHD =
+                    zego_value_get_bool(videoConfigMap[ZFValue("enableLowBitrateHD")]);
 
-            auto codecID = zego_value_get_int(videoConfigMap[ZFValue("videoCodecID")]);
-            if (codecID > 4) {
-                codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
+                auto codecID = zego_value_get_int(videoConfigMap[ZFValue("videoCodecID")]);
+                if (codecID > 4) {
+                    codecID = (int32_t)EXPRESS::ZegoVideoCodecID::ZEGO_VIDEO_CODEC_ID_UNKNOWN;
+                }
+                output.videoConfig.videoCodecID = (EXPRESS::ZegoVideoCodecID)codecID;
             }
-            output.videoConfig.videoCodecID = (EXPRESS::ZegoVideoCodecID)codecID;
         }
 
         if (!zego_value_is_null(outputMap[ZFValue("targetRoom")])) {
             auto targetRoomMap = zego_value_get_map(outputMap[ZFValue("targetRoom")]);
-            output.targetRoom.roomID = zego_value_get_string(targetRoomMap[ZFValue("roomID")]);
-            output.targetRoom.userID = zego_value_get_string(targetRoomMap[ZFValue("userID")]);
+            if (targetRoomMap.size() > 0) {
+                output.targetRoom.roomID = zego_value_get_string(targetRoomMap[ZFValue("roomID")]);
+                output.targetRoom.userID = zego_value_get_string(targetRoomMap[ZFValue("userID")]);
+            }
         }
 
         task.outputList.push_back(output);
