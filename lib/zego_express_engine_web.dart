@@ -17,6 +17,8 @@ import 'package:zego_express_engine/src/utils/web_api.dart';
 
 import 'zego_express_engine.dart';
 
+const MEDIA_PLAYER_NOT_EXIST = 1008001;
+
 /// A web implementation of the ZegoExpressEngineWeb plugin.
 class ZegoExpressEngineWeb {
   dynamic previewView;
@@ -186,6 +188,14 @@ class ZegoExpressEngineWeb {
       case 'mediaPlayerLoadResourceFromMediaData':
         return mediaPlayerLoadResourceFromMediaData(call.arguments['index'],
             call.arguments['mediaData'], call.arguments['startPosition']);
+      case 'mediaPlayerLoadCopyrightedMusicResourceWithPosition':
+        return mediaPlayerLoadCopyrightedMusicResourceWithPosition(
+            call.arguments['index'],
+            call.arguments['resourceID'],
+            call.arguments['startPosition']);
+      case 'mediaPlayerSetAudioTrackIndex':
+        return mediaPlayerSetAudioTrackIndex(
+            call.arguments['index'], call.arguments['trackIndex']);
       case 'mediaPlayerEnableRepeat':
         return mediaPlayerEnableRepeat(
             call.arguments['index'], call.arguments['enable']);
@@ -213,6 +223,9 @@ class ZegoExpressEngineWeb {
             call.arguments['index'], call.arguments['volume']);
       case 'mediaPlayerGetTotalDuration':
         return mediaPlayerGetTotalDuration(call.arguments['index']);
+      case 'mediaPlayerSeekTo':
+        return mediaPlayerSeekTo(
+            call.arguments['index'], call.arguments['millisecond']);
       case 'setRoomScenario':
         return setRoomScenario(call.arguments['scenario']);
       case 'setRoomMode':
@@ -1128,7 +1141,7 @@ class ZegoExpressEngineWeb {
       int index, String path) async {
     final map = {};
     if (_mediaPlayers[index] == null) {
-      map["errorCode"] = 1;
+      map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
       return Future.value(map);
     }
     await (() {
@@ -1146,7 +1159,7 @@ class ZegoExpressEngineWeb {
       int index, dynamic mediaData, int startPosition) async {
     final map = {};
     if (_mediaPlayers[index] == null) {
-      map["errorCode"] = 1;
+      map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
       return Future.value(map);
     }
     await (() {
@@ -1157,6 +1170,32 @@ class ZegoExpressEngineWeb {
     })();
     map["errorCode"] = 0;
     return Future.value(map);
+  }
+
+  Future<Map<dynamic, dynamic>>
+      mediaPlayerLoadCopyrightedMusicResourceWithPosition(
+          int index, String resourceID, int startPosition) async {
+    final map = {};
+    if (_mediaPlayers[index] == null) {
+      map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
+      return Future.value(map);
+    }
+
+    final urls = _downloadUrlMap[resourceID];
+
+    final promise = _mediaPlayers[index]
+        .instance
+        .loadCopyrightedMusicResourceWithPosition(urls, 0, startPosition);
+    final result = await promiseToFuture(promise);
+    map["errorCode"] = result;
+    return Future.value(map);
+  }
+
+  mediaPlayerSetAudioTrackIndex(int index, int trackIndex) {
+    if (_mediaPlayers[index] == null) {
+      return;
+    }
+    _mediaPlayers[index].instance.setAudioTrackIndex(trackIndex);
   }
 
   Future<void> mediaPlayerEnableRepeat(int index, bool enable) async {
@@ -1235,6 +1274,18 @@ class ZegoExpressEngineWeb {
   Future<int> mediaPlayerGetTotalDuration(int index) async {
     var duration = _mediaPlayers[index].instance.getTotalDuration();
     return Future.value(duration);
+  }
+
+  Future<dynamic> mediaPlayerSeekTo(int index, int millisecond) async {
+    final map = {};
+    if (_mediaPlayers[index] == null) {
+      map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
+      return Future.value(map);
+    }
+    var errorCode = _mediaPlayers[index].instance.seekTo(millisecond);
+
+    map['errorCode'] = errorCode;
+    return map;
   }
 
   Future<void> setRoomScenario(int scenario) async {
@@ -1336,6 +1387,7 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> destroyCopyrightedMusic(dynamic copyrightedMusic) async {
+    _downloadUrlMap = {};
     ZegoFlutterEngine.instance.destroyCopyrightedMusic();
     ZegoFlutterEngine.copyMusic = null;
   }
@@ -1428,16 +1480,21 @@ class ZegoExpressEngineWeb {
     return map;
   }
 
+  Map<String, List<String>> _downloadUrlMap = {};
+
   Future<dynamic> copyrightedMusicDownload(String resourceID) async {
-    // final promise = ZegoFlutterEngine.copyMusic
-    //     ?.sendExtendedRequest(command, parseJSON(params));
-    // final result = await promiseToFuture(promise);
+    final promise = ZegoFlutterEngine.copyMusic?.download(resourceID);
+    final result = await promiseToFuture(promise);
+    if (result.errorCode == 0) {
+      _downloadUrlMap[resourceID] = List<String>.from(result.urls);
+    }
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = -1; // result.errorCode;
+    map['errorCode'] = result.errorCode;
     return map;
   }
 
   Future<void> copyrightedMusicClearCache() async {
+    _downloadUrlMap = {};
     ZegoFlutterEngine.copyMusic?.clearCache();
   }
 
