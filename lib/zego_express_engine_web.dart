@@ -294,6 +294,23 @@ class ZegoExpressEngineWeb {
         return copyrightedMusicGetCurrentPitch(call.arguments["resourceID"]);
       case 'copyrightedMusicSetScoringLevel':
         return copyrightedMusicSetScoringLevel(call.arguments["level"]);
+      case 'copyrightedMusicStartScore':
+        return copyrightedMusicStartScore(call
+            .arguments["resourceID"]); // ,call.arguments["pitchValueInterval"]
+      case 'copyrightedMusicStopScore':
+        return copyrightedMusicStopScore(call.arguments["resourceID"]);
+      case 'copyrightedMusicPauseScore':
+        return copyrightedMusicPauseScore(call.arguments["resourceID"]);
+      case 'copyrightedMusicResumeScore':
+        return copyrightedMusicResumeScore(call.arguments["resourceID"]);
+      case 'copyrightedMusicGetPreviousScore':
+        return copyrightedMusicGetPreviousScore(call.arguments["resourceID"]);
+      case 'copyrightedMusicGetAverageScore': 
+        return copyrightedMusicGetAverageScore(call.arguments["resourceID"]);
+      case 'copyrightedMusicGetTotalScore': 
+        return copyrightedMusicGetTotalScore(call.arguments["resourceID"]);
+      case 'copyrightedMusicGetFullScore': 
+        return copyrightedMusicGetFullScore(call.arguments["resourceID"]);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -1148,7 +1165,7 @@ class ZegoExpressEngineWeb {
       Map completerMap = createCompleter();
       _mediaPlayers[index]
           .instance
-          .loadResource(path, completerMap["success"], completerMap["fail"]);
+          .loadResource(path, 0, completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     map["errorCode"] = 0;
@@ -1185,7 +1202,7 @@ class ZegoExpressEngineWeb {
 
     final promise = _mediaPlayers[index]
         .instance
-        .loadCopyrightedMusicResourceWithPosition(urls, 0, startPosition);
+        .loadCopyrightedMusicResourceWithPosition(resourceID, urls, 0, startPosition);
     final result = await promiseToFuture(promise);
     map["errorCode"] = result;
     return Future.value(map);
@@ -1517,5 +1534,50 @@ class ZegoExpressEngineWeb {
 
   Future<void> copyrightedMusicSetScoringLevel(int level) async {
     ZegoFlutterEngine.copyMusic?.setScoringLevel(level);
+  }
+
+  Future<int> copyrightedMusicStartScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.instance
+        .copyrightedMusicStartScore(ZegoFlutterEngine.copyMusic, resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+
+  Future<int> copyrightedMusicStopScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.stopScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+
+  Future<int> copyrightedMusicPauseScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.pauseScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+
+  Future<int> copyrightedMusicResumeScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.resumeScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+  Future<int> copyrightedMusicGetPreviousScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.getPreviousScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+  Future<int> copyrightedMusicGetAverageScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.getAverageScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+  Future<int> copyrightedMusicGetTotalScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.getTotalScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
+  }
+  Future<int> copyrightedMusicGetFullScore(String resourceID) async {
+    final promise = ZegoFlutterEngine.copyMusic?.getFullScore(resourceID);
+    final result = await promiseToFuture(promise);
+    return result;
   }
 }

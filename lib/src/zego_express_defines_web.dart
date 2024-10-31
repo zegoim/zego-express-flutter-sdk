@@ -96,6 +96,7 @@ class ZegoFlutterEngine {
   external stopMixerTask(String taskId, dynamic success, dynamic fail);
   external createCopyrightedMusic();
   external destroyCopyrightedMusic();
+  external copyrightedMusicStartScore(dynamic copMusic   ,String resourceID);
 }
 
 @JS()
