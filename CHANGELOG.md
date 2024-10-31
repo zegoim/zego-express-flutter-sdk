@@ -1,5 +1,10 @@
 # Change Log
 
+## 3.17.1
+
+### Bug Fixes
+1. Fix the issue of crashing when custom video processing use SurfaceTexture video type.
+
 ## 3.17.0
 
 ### New Features
