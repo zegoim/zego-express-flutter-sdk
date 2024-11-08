@@ -236,8 +236,6 @@ class ZegoExpressEngineWeb {
         return enableEffectsBeauty(call.arguments['enable']);
       case 'setEffectsBeautyParam':
         return setEffectsBeautyParam(call.arguments['param']);
-      case 'startEffectsEnv':
-        return;
       case 'getScreenCaptureSources':
         return;
       case 'createScreenCaptureSource':
@@ -245,6 +243,8 @@ class ZegoExpressEngineWeb {
             call.arguments['sourceId'], call.arguments['sourceType']);
       case 'destroyScreenCaptureSource':
         return destroyScreenCaptureSource(call.arguments['index']);
+      case 'startEffectsEnv':
+        return startEffectsEnv();
       case 'stopEffectsEnv':
         return stopEffectsEnv();
       case 'setVideoSource':
@@ -822,7 +822,7 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> setVideoConfig(dynamic config, int channel) {
+  Future<void> setVideoConfig(dynamic config, int? channel) {
     ZegoWebVideoConfig webVideoConfig = ZegoWebVideoConfig(
         encodeWidth: config["encodeWidth"],
         encodeHeight: config["encodeHeight"],
@@ -1325,6 +1325,10 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.instance.enableEffectsBeauty(enable);
   }
 
+  Future<void> startEffectsEnv() async {
+    return ZegoFlutterEngine.instance.startEffectsEnv();
+  }
+
   Future<void> stopEffectsEnv() async {
     return ZegoFlutterEngine.instance.stopEffectsEnv();
   }
@@ -1363,7 +1367,7 @@ class ZegoExpressEngineWeb {
 
   Future<int> setVideoSource(int source, int? instanceID, int? channel) async {
     return ZegoFlutterEngine.instance
-        .setVideoSource(source, instanceID, getPublishChannel(channel));
+        .setVideoSource(source, instanceID ?? 0, getPublishChannel(channel));
   }
 
   Future<int> setAudioSource(int source, int? channel) async {

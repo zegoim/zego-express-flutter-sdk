@@ -86,18 +86,19 @@ class ZegoFlutterEngine {
   external setRoomScenario(int scenario);
   external static setRoomMode(int mode);
   external enableEffectsBeauty(bool enable);
+  external startEffectsEnv();
   external stopEffectsEnv();
   external setEffectsBeautyParam(dynamic param);
   external createScreenCaptureSource(int? sourceId);
   external startCaptureScreen(int index, dynamic config);
-  external setVideoSource(int source, int? instanceID, int? channel);
-  external setAudioSource(int source, int? channel);
+  external setVideoSource(int source, int instanceID, int channel);
+  external setAudioSource(int source, int channel);
   external stopCaptureScreen(int index);
   external startMixerTask(String config, dynamic success, dynamic fail);
   external stopMixerTask(String taskId, dynamic success, dynamic fail);
   external createCopyrightedMusic();
   external destroyCopyrightedMusic();
-  external copyrightedMusicStartScore(dynamic copMusic   ,String resourceID);
+  external copyrightedMusicStartScore(dynamic copMusic, String resourceID);
 }
 
 @JS()

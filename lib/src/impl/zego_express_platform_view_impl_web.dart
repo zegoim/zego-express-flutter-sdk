@@ -11,9 +11,8 @@ class ZegoExpressPlatformViewImpl {
     // ignore:undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
         webcamPushElement,
-        (int id) => VideoElement()
-          ..id = "zego-view-$id"
-          ..autoplay = true);
+        (int id) => DivElement()
+          ..id = "zego-view-$id");
     return HtmlElementView(
         key: key,
         viewType: webcamPushElement,
