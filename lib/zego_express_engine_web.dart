@@ -954,14 +954,14 @@ class ZegoExpressEngineWeb {
   Future<void> startPreview(dynamic canvas, int channel) async {
     previewView = document.getElementById("zego-view-${canvas["view"]}");
     // previewView?.muted = true;
-    ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
+    // ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
 
     await (() {
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.startPreview(
           previewView,
           getPublishChannel(channel),
-          false,
+          dartObjToJSON(canvas),
           completerMap["success"],
           completerMap["fail"]);
       return completerMap["completer"].future;
@@ -1075,9 +1075,9 @@ class ZegoExpressEngineWeb {
   Future<void> startPlayingStream(
       String streamID, dynamic canvas, dynamic config) {
     final playView = document.getElementById('zego-view-${canvas["view"]}');
-    ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
+    // ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
     ZegoFlutterEngine.instance
-        .startPlayingStream(streamID, playView, "", jsonEncode(config));
+        .startPlayingStream(streamID, playView, "", jsonEncode(config), dartObjToJSON(canvas));
     return Future.value();
   }
 
@@ -1317,12 +1317,12 @@ class ZegoExpressEngineWeb {
     if (_mediaPlayers[index] == null) {
       return Future.value();
     }
-    ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
+    // ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
     await (() {
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.mediaPlayerSetPlayerCanvas(
           viewElem,
-          canvas,
+          dartObjToJSON(canvas),
           _mediaPlayers[index].instance,
           completerMap["success"],
           completerMap["fail"]);

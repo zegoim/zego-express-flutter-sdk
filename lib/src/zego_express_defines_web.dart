@@ -30,7 +30,7 @@ class ZegoFlutterEngine {
   external static setRoomMode(int mode);
   external static setEngineConfig(dynamic config);
 
- /////////////////////////////房间////////////////////////////////////////
+  /////////////////////////////房间////////////////////////////////////////
   external loginRoom(String roomID, dynamic user, dynamic config,
       void Function(int errorCode) success, void Function(int errorCode) fail);
   external logoutRoom(
@@ -45,14 +45,14 @@ class ZegoFlutterEngine {
   external startPublishingStream(String streamID, int? channel, dynamic config);
   external stopPublishingStream(int channel);
   external setStreamExtraInfo(String extraInfo, int channel);
-  external startPreview(dynamic canvas, int channel, bool isPublish,
+  external startPreview(dynamic canvas, int channel, dynamic canvasOptions,
       dynamic success, dynamic fail);
   external stopPreview(int channel);
   external setVideoConfig(dynamic config, int channel);
   external getVideoConfig(int channel);
   //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setPublishDualStreamConfig.html
   //setPublishDualStreamConfig(List<ZegoPublishDualStreamConfig> configList, int channel)
-  
+
   //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setVideoMirrorMode.html
   //external setVideoMirrorMode(int mirrorMode, int channel);
 
@@ -78,8 +78,10 @@ class ZegoFlutterEngine {
   external setTrafficControlFocusOn(int mode, int channel);
   external setCaptureVolume(int volume);
   // setAudioCaptureStereoMode
-  external addPublishCdnUrl(String streamID, String targetURL, dynamic success, dynamic fail);
-  external removePublishCdnUrl(String streamID, String targetURL, dynamic success, dynamic fail);
+  external addPublishCdnUrl(
+      String streamID, String targetURL, dynamic success, dynamic fail);
+  external removePublishCdnUrl(
+      String streamID, String targetURL, dynamic success, dynamic fail);
   // enablePublishDirectToCDN
   // external setPublishWatermark
   external setSEIConfig(int config);
@@ -98,9 +100,8 @@ class ZegoFlutterEngine {
   // enableAlphaChannelVideoEncoder
   // setCameraStabilizationMode
 
- /////////////////////////////拉流////////////////////////////////////////
-  external startPlayingStream(
-      String streamID, dynamic remoteVideo, String s, dynamic config);
+  /////////////////////////////拉流////////////////////////////////////////
+  external startPlayingStream(String streamID, dynamic remoteVideo, String audioOutput, dynamic config, dynamic canvasOptions);
   //switchPlayingStream
   external stopPlayingStream(String streamID);
   // setPlayStreamDecryptionKey
@@ -126,7 +127,7 @@ class ZegoFlutterEngine {
   // initVideoSuperResolution
   // uninitVideoSuperResolution
   // updatePlayingCanvas
- 
+
 /////////////////////////////消息////////////////////////////////////////
   // createRealTimeSequentialDataManager
   // destroyRealTimeSequentialDataManager
@@ -177,15 +178,10 @@ class ZegoFlutterEngine {
   /////////////////////////////媒体播放器////////////////////////////////////////
   external createMediaPlayer();
   external setStyleByCanvas(dynamic canvas);
-  external mediaPlayerSetPlayerCanvas(
-      dynamic viewElem,
-      Map<dynamic, dynamic> canvas,
-      dynamic mediaPlayer,
-      dynamic success,
-      dynamic fail);
+  external mediaPlayerSetPlayerCanvas(dynamic viewElem, dynamic canvas,
+      dynamic mediaPlayer, dynamic success, dynamic fail);
   external mediaPlayerEnableAux(bool enable, dynamic mediaPlayer);
   external mediaPlayerSetVolume(int volume, dynamic mediaPlayer);
-
 
   ////////////////////////////others////////////////////////////////////////
   external createScreenCaptureSource(int? sourceId);
@@ -245,7 +241,6 @@ class ZegoCopMusicInitConfigWeb {
   external factory ZegoCopMusicInitConfigWeb({ZegoUserWeb user});
   external ZegoUserWeb get user;
 }
-
 
 @JS()
 @anonymous
