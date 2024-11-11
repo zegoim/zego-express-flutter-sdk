@@ -59,8 +59,8 @@ class ZegoFlutterEngine {
   //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setAppOrientation.html
   //setAppOrientation
 
-  // external setAudioConfig(dynamic config, int channel);
-  // external getAudioConfig(int channel);
+  external setAudioConfig(dynamic config, int channel);
+  external getAudioConfig(int channel);
 
   //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setPublishStreamEncryptionKey.html
   //setPublishStreamEncryptionKey
@@ -69,14 +69,13 @@ class ZegoFlutterEngine {
   //takePublishStreamSnapshot(int channel)
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
-  //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setStreamAlignmentProperty.html
-  //external setStreamAlignmentProperty(int alignment, int channel);
+  external setStreamAlignmentProperty(int alignment, int channel);
   
-  // enableTrafficControl
-  // setMinVideoBitrateForTrafficControl
+  external enableTrafficControl(bool enable, int channel);
+  external setMinVideoBitrateForTrafficControl(int bitrate, int mode, int channel);
   // setMinVideoFpsForTrafficControl
   // setMinVideoResolutionForTrafficControl
-  // setTrafficControlFocusOn
+  external setTrafficControlFocusOn(int mode, int channel);
   external setCaptureVolume(int volume);
   // setAudioCaptureStereoMode
   external addPublishCdnUrl(String streamID, String targetURL, dynamic success, dynamic fail);
@@ -279,6 +278,14 @@ enum ZegoWebVideoCodecID {
   Default,
 
   Vp8
+}
+
+@JS()
+@anonymous
+class ZegoWebAudioConfig {
+  external factory ZegoWebAudioConfig({int bitrate, int channel});
+  external int get bitrate;
+  external int get channel;
 }
 
 @JS("MediaPlayer")

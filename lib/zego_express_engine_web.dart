@@ -95,6 +95,11 @@ class ZegoExpressEngineWeb {
             call.arguments["config"], call.arguments["channel"]);
       case 'getVideoConfig':
         return getVideoConfig(call.arguments["channel"]);
+      case 'setAudioConfig':
+        return setAudioConfig(
+            call.arguments["config"], call.arguments["channel"]);
+      case 'getAudioConfig':
+        return getAudioConfig(call.arguments["channel"]);
       case 'enableAEC':
         return enableAEC(call.arguments["enable"]);
       case 'enableAGC':
@@ -118,6 +123,18 @@ class ZegoExpressEngineWeb {
       case 'mutePublishStreamAudio':
         return mutePublishStreamAudio(
             call.arguments["mute"], call.arguments["channel"]);
+      case 'setStreamAlignmentProperty':
+        return setStreamAlignmentProperty(
+            call.arguments["alignment"], call.arguments["channel"]);
+      case 'enableTrafficControl':
+        return enableTrafficControl(
+            call.arguments["enable"], call.arguments["channel"]);
+      case 'setMinVideoBitrateForTrafficControl':
+        return setMinVideoBitrateForTrafficControl(
+            call.arguments["bitrate"], call.arguments["mode"], call.arguments["channel"]);
+      case 'setTrafficControlFocusOn':
+        return setTrafficControlFocusOn(
+            call.arguments["mode"], call.arguments["channel"]);
       case 'muteMicrophone':
         return muteMicrophone(call.arguments["mute"]);
       case 'isMicrophoneMuted':
@@ -913,9 +930,30 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
+  Future<void> setAudioConfig(dynamic config, int? channel) {
+    ZegoWebAudioConfig aconfig = ZegoWebAudioConfig(
+        bitrate: config["bitrate"],
+        channel: config["channel"],
+      );
+
+    ZegoFlutterEngine.instance.setAudioConfig(aconfig, getPublishChannel(channel));
+    return Future.value();
+  }
+
+  Future<Map<dynamic, dynamic>> getAudioConfig(int? channel) async {
+    var config =
+        ZegoFlutterEngine.instance.getAudioConfig(getPublishChannel(channel));
+    var map = {};
+    map['bitrate'] = config.captureWidth;
+    map['channel'] = config.captureHeight;
+    map['codecID'] = 6; // Low3(OPUS)
+
+    return Future.value(map);
+  }
+
   Future<void> startPreview(dynamic canvas, int channel) async {
     previewView = document.getElementById("zego-view-${canvas["view"]}");
-    previewView?.muted = true;
+    // previewView?.muted = true;
     ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
 
     await (() {
@@ -998,14 +1036,31 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<void> mutePublishStreamVideo(bool mute, int channel) async {
+  Future<void> mutePublishStreamVideo(bool mute, int? channel) async {
     return await ZegoFlutterEngine.instance
         .mutePublishStreamVideo(mute, getPublishChannel(channel));
   }
 
-  Future<void> mutePublishStreamAudio(bool mute, int channel) async {
+  Future<void> mutePublishStreamAudio(bool mute, int? channel) async {
     return await ZegoFlutterEngine.instance
         .mutePublishStreamAudio(mute, getPublishChannel(channel));
+  }
+
+  Future<void> setStreamAlignmentProperty(int alignment, int? channel) async {
+    return await ZegoFlutterEngine.instance
+        .setStreamAlignmentProperty(alignment, getPublishChannel(channel));
+  }
+
+  Future<void> enableTrafficControl(bool enable, int? channel) async {
+     return await ZegoFlutterEngine.instance.enableTrafficControl(enable, getPublishChannel(channel));
+  }
+  Future<void>  setMinVideoBitrateForTrafficControl(int bitrate, int mode, int? channel) async {
+    return await ZegoFlutterEngine.instance.setMinVideoBitrateForTrafficControl(bitrate, mode, getPublishChannel(channel));
+  }
+  // setMinVideoFpsForTrafficControl
+  // setMinVideoResolutionForTrafficControl
+  Future<void>  setTrafficControlFocusOn(int mode, int? channel) async {
+    return await ZegoFlutterEngine.instance.setTrafficControlFocusOn(mode, getPublishChannel(channel));
   }
 
   Future<void> muteMicrophone(bool mute) async {
