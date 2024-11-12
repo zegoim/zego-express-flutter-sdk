@@ -1567,6 +1567,7 @@ class ZegoExpressEngineWeb {
   }
 
   ////////////////////////////////版权音乐相关//////////////////////////////////////////
+  Map<String, List<String>> _downloadUrlMap = {};
   Future<int> createCopyrightedMusic() async {
     ZegoFlutterEngine.copyMusic =
         ZegoFlutterEngine.instance.createCopyrightedMusic();
@@ -1588,7 +1589,6 @@ class ZegoExpressEngineWeb {
     dynamic obj = dartObjToJSON(config);
     final promise = ZegoFlutterEngine.copyMusic?.initCopyrightedMusic(obj);
     int code = await promiseToFuture(promise);
-
     final Map<dynamic, dynamic> map = {};
     map['errorCode'] = code;
     return map;
@@ -1670,8 +1670,6 @@ class ZegoExpressEngineWeb {
     map['lyrics'] = stringifyJSON(result.lyrics);
     return map;
   }
-
-  Map<String, List<String>> _downloadUrlMap = {};
 
   Future<dynamic> copyrightedMusicDownload(String resourceID) async {
     final promise = ZegoFlutterEngine.copyMusic?.download(resourceID);

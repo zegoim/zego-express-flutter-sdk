@@ -17,7 +17,7 @@ import 'package:js/js.dart';
 class ZegoFlutterEngine {
   external dynamic zegoEntity;
   external static ZegoFlutterEngine instance;
-  external static dynamic copyMusic;
+  external static ZegoCopyrightedMusic? copyMusic;
 
   /////////////////////////////初始化相关的前置功能////////////////////////////////////////
   external static createEngineWithProfile(dynamic profile);
@@ -70,9 +70,10 @@ class ZegoFlutterEngine {
   external mutePublishStreamVideo(bool mute, int channel);
   external mutePublishStreamAudio(bool mute, int channel);
   external setStreamAlignmentProperty(int alignment, int channel);
-  
+
   external enableTrafficControl(bool enable, int channel);
-  external setMinVideoBitrateForTrafficControl(int bitrate, int mode, int channel);
+  external setMinVideoBitrateForTrafficControl(
+      int bitrate, int mode, int channel);
   // setMinVideoFpsForTrafficControl
   // setMinVideoResolutionForTrafficControl
   external setTrafficControlFocusOn(int mode, int channel);
@@ -101,7 +102,8 @@ class ZegoFlutterEngine {
   // setCameraStabilizationMode
 
   /////////////////////////////拉流////////////////////////////////////////
-  external startPlayingStream(String streamID, dynamic remoteVideo, String audioOutput, dynamic config, dynamic canvasOptions);
+  external startPlayingStream(String streamID, dynamic remoteVideo,
+      String audioOutput, dynamic config, dynamic canvasOptions);
   //switchPlayingStream
   external stopPlayingStream(String streamID);
   // setPlayStreamDecryptionKey
@@ -192,6 +194,28 @@ class ZegoFlutterEngine {
   external createCopyrightedMusic();
   external destroyCopyrightedMusic();
   external copyrightedMusicStartScore(dynamic copMusic, String resourceID);
+}
+
+@JS()
+class ZegoCopyrightedMusic {
+  external initCopyrightedMusic(dynamic config);
+  external sendExtendedRequest(String command, dynamic params);
+  external requestResource(dynamic config, int type);
+  external getSharedResource(dynamic config, int type);
+  external getLrcLyric(String songID, int vendorID);
+  external getKrcLyricByToken(String krcToken);
+  external download(String resourceID);
+  external clearCache();
+  external getStandardPitch(String resourceID);
+  external getCurrentPitch(String resourceID);
+  external stopScore(String resourceID);
+  external pauseScore(String resourceID);
+  external resumeScore(String resourceID);
+  external getPreviousScore(String resourceID);
+  external getAverageScore(String resourceID);
+  external getTotalScore(String resourceID);
+  external getFullScore(String resourceID);
+  external setScoringLevel(int level);
 }
 
 @JS()

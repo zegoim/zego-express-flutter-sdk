@@ -1,19 +1,18 @@
-@JS('window') 
-library window; 
-
+@JS('window')
+library window;
 
 import 'package:js/js.dart';
 import 'dart:convert';
 import 'dart:js';
 import 'dart:async';
 
-@JS('JSON.parse') 
+@JS('JSON.parse')
 external dynamic parseJSON(String str);
-@JS('JSON.stringify') 
-external String stringifyJSON(dynamic str);
+@JS('JSON.stringify')
+external String stringifyJSON(dynamic obj);
 
 dynamic dartObjToJSON(dynamic obj) {
-  String str =  jsonEncode(obj);
+  String str = jsonEncode(obj);
   return parseJSON(str);
 }
 // Future<T> promiseToFuture1<T>(dynamic promise) {
