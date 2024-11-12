@@ -130,8 +130,8 @@ class ZegoExpressEngineWeb {
         return enableTrafficControl(
             call.arguments["enable"], call.arguments["channel"]);
       case 'setMinVideoBitrateForTrafficControl':
-        return setMinVideoBitrateForTrafficControl(
-            call.arguments["bitrate"], call.arguments["mode"], call.arguments["channel"]);
+        return setMinVideoBitrateForTrafficControl(call.arguments["bitrate"],
+            call.arguments["mode"], call.arguments["channel"]);
       case 'setTrafficControlFocusOn':
         return setTrafficControlFocusOn(
             call.arguments["mode"], call.arguments["channel"]);
@@ -150,7 +150,8 @@ class ZegoExpressEngineWeb {
       case 'stopPlayingStream':
         return stopPlayingStream(call.arguments["streamID"]);
       case 'setPlayVolume':
-        return setPlayVolume(call.arguments["streamID"], call.arguments["volume"]);
+        return setPlayVolume(
+            call.arguments["streamID"], call.arguments["volume"]);
       case 'setAllPlayStreamVolume':
         return setAllPlayStreamVolume(call.arguments["volume"]);
       case 'destroyPlatformView':
@@ -328,11 +329,11 @@ class ZegoExpressEngineWeb {
         return copyrightedMusicResumeScore(call.arguments["resourceID"]);
       case 'copyrightedMusicGetPreviousScore':
         return copyrightedMusicGetPreviousScore(call.arguments["resourceID"]);
-      case 'copyrightedMusicGetAverageScore': 
+      case 'copyrightedMusicGetAverageScore':
         return copyrightedMusicGetAverageScore(call.arguments["resourceID"]);
-      case 'copyrightedMusicGetTotalScore': 
+      case 'copyrightedMusicGetTotalScore':
         return copyrightedMusicGetTotalScore(call.arguments["resourceID"]);
-      case 'copyrightedMusicGetFullScore': 
+      case 'copyrightedMusicGetFullScore':
         return copyrightedMusicGetFullScore(call.arguments["resourceID"]);
       default:
         throw PlatformException(
@@ -601,7 +602,7 @@ class ZegoExpressEngineWeb {
                 0,
                 0));
         break;
-       ////////////////////////////////////拉流相关/////////////////////////////////////
+      ////////////////////////////////////拉流相关/////////////////////////////////////
       case "onPlayerStateUpdate":
         if (ZegoExpressEngine.onPlayerStateUpdate == null) return;
 
@@ -690,7 +691,7 @@ class ZegoExpressEngineWeb {
         var bytes = Uint8List.fromList(utf8.encode(data["data"]));
         ZegoExpressEngine.onPlayerRecvSEI!(data['streamID'], bytes);
         break;
-       ////////////////////////////////////设备相关/////////////////////////////////////
+      ////////////////////////////////////设备相关/////////////////////////////////////
       case "onRemoteMicStateUpdate":
         if (ZegoExpressEngine.onRemoteMicStateUpdate == null) return;
 
@@ -786,7 +787,8 @@ class ZegoExpressEngineWeb {
         break;
       case 'onMixerRelayCDNStateUpdate':
         final data = jsonDecode(map["data"]);
-        ZegoExpressEngine.onMixerRelayCDNStateUpdate!(data['taskID'], data['infoList']);
+        ZegoExpressEngine.onMixerRelayCDNStateUpdate!(
+            data['taskID'], data['infoList']);
         break;
       default:
         break;
@@ -830,7 +832,7 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.setRoomMode(mode);
   }
 
-  /////////////////////////////房间相关//////////////////////////////////////// 
+  /////////////////////////////房间相关////////////////////////////////////////
   Future<Map<dynamic, dynamic>> loginRoom(
       String roomID, dynamic user, dynamic config) async {
     ZegoUserWeb webUser =
@@ -875,7 +877,8 @@ class ZegoExpressEngineWeb {
     return Future.value(ZegoFlutterEngine.instance.renewToken(roomID, token));
   }
 
-  Future<void> switchRoom(String fromRoomID, String toRoomID, dynamic config) async {
+  Future<void> switchRoom(
+      String fromRoomID, String toRoomID, dynamic config) async {
     ZegoRoomConfigWeb webConfig = ZegoRoomConfigWeb(
         maxMemberCount: config["maxMemberCount"] ?? 0,
         token: config["token"] ?? "",
@@ -932,11 +935,12 @@ class ZegoExpressEngineWeb {
 
   Future<void> setAudioConfig(dynamic config, int? channel) {
     ZegoWebAudioConfig aconfig = ZegoWebAudioConfig(
-        bitrate: config["bitrate"],
-        channel: config["channel"],
-      );
+      bitrate: config["bitrate"],
+      channel: config["channel"],
+    );
 
-    ZegoFlutterEngine.instance.setAudioConfig(aconfig, getPublishChannel(channel));
+    ZegoFlutterEngine.instance
+        .setAudioConfig(aconfig, getPublishChannel(channel));
     return Future.value();
   }
 
@@ -1004,13 +1008,15 @@ class ZegoExpressEngineWeb {
     return await ZegoFlutterEngine.instance.setCaptureVolume(volume);
   }
 
-  Future<Map<dynamic, dynamic>> addPublishCdnUrl(String streamID, String targetURL, {int? timeout})  async {
+  Future<Map<dynamic, dynamic>> addPublishCdnUrl(
+      String streamID, String targetURL,
+      {int? timeout}) async {
     final map = {};
     try {
       final result = await (() {
         Map completerMap = createCompleter();
-        ZegoFlutterEngine.instance.addPublishCdnUrl(streamID, targetURL,
-            completerMap["success"], completerMap["fail"]);
+        ZegoFlutterEngine.instance.addPublishCdnUrl(
+            streamID, targetURL, completerMap["success"], completerMap["fail"]);
         return completerMap["completer"].future;
       })();
       map["errorCode"] = result;
@@ -1020,13 +1026,14 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<Map<dynamic, dynamic>> removePublishCdnUrl(String streamID,String targetURL) async {
+  Future<Map<dynamic, dynamic>> removePublishCdnUrl(
+      String streamID, String targetURL) async {
     final map = {};
     try {
       final result = await (() {
         Map completerMap = createCompleter();
-        ZegoFlutterEngine.instance.removePublishCdnUrl(streamID, targetURL,
-            completerMap["success"], completerMap["fail"]);
+        ZegoFlutterEngine.instance.removePublishCdnUrl(
+            streamID, targetURL, completerMap["success"], completerMap["fail"]);
         return completerMap["completer"].future;
       })();
       map["errorCode"] = result;
@@ -1052,15 +1059,21 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> enableTrafficControl(bool enable, int? channel) async {
-     return await ZegoFlutterEngine.instance.enableTrafficControl(enable, getPublishChannel(channel));
+    return await ZegoFlutterEngine.instance
+        .enableTrafficControl(enable, getPublishChannel(channel));
   }
-  Future<void>  setMinVideoBitrateForTrafficControl(int bitrate, int mode, int? channel) async {
-    return await ZegoFlutterEngine.instance.setMinVideoBitrateForTrafficControl(bitrate, mode, getPublishChannel(channel));
+
+  Future<void> setMinVideoBitrateForTrafficControl(
+      int bitrate, int mode, int? channel) async {
+    return await ZegoFlutterEngine.instance.setMinVideoBitrateForTrafficControl(
+        bitrate, mode, getPublishChannel(channel));
   }
+
   // setMinVideoFpsForTrafficControl
   // setMinVideoResolutionForTrafficControl
-  Future<void>  setTrafficControlFocusOn(int mode, int? channel) async {
-    return await ZegoFlutterEngine.instance.setTrafficControlFocusOn(mode, getPublishChannel(channel));
+  Future<void> setTrafficControlFocusOn(int mode, int? channel) async {
+    return await ZegoFlutterEngine.instance
+        .setTrafficControlFocusOn(mode, getPublishChannel(channel));
   }
 
   Future<void> muteMicrophone(bool mute) async {
@@ -1076,8 +1089,8 @@ class ZegoExpressEngineWeb {
       String streamID, dynamic canvas, dynamic config) {
     final playView = document.getElementById('zego-view-${canvas["view"]}');
     // ZegoFlutterEngine.instance.setStyleByCanvas(jsonEncode(canvas));
-    ZegoFlutterEngine.instance
-        .startPlayingStream(streamID, playView, "", jsonEncode(config), dartObjToJSON(canvas));
+    ZegoFlutterEngine.instance.startPlayingStream(
+        streamID, playView, "", jsonEncode(config), dartObjToJSON(canvas));
     return Future.value();
   }
 
@@ -1091,7 +1104,7 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-   Future<void> setAllPlayStreamVolume(int volume) {
+  Future<void> setAllPlayStreamVolume(int volume) {
     ZegoFlutterEngine.instance.setAllPlayStreamVolume(volume);
     return Future.value();
   }
@@ -1379,7 +1392,8 @@ class ZegoExpressEngineWeb {
 
     final promise = _mediaPlayers[index]
         .instance
-        .loadCopyrightedMusicResourceWithPosition(resourceID, urls, 0, startPosition);
+        .loadCopyrightedMusicResourceWithPosition(
+            resourceID, urls, 0, startPosition);
     final result = await promiseToFuture(promise);
     map["errorCode"] = result;
     return Future.value(map);
@@ -1546,7 +1560,8 @@ class ZegoExpressEngineWeb {
     return json.decode(data);
   }
 
-   Future<Map<dynamic, dynamic>> startAutoMixerTask(Map<dynamic, dynamic> config) async {
+  Future<Map<dynamic, dynamic>> startAutoMixerTask(
+      Map<dynamic, dynamic> config) async {
     var data = await (() {
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.startAutoMixerTask(
@@ -1556,11 +1571,12 @@ class ZegoExpressEngineWeb {
     return json.decode(data);
   }
 
-  Future<Map<dynamic, dynamic>> stopAutoMixerTask(Map<dynamic, dynamic> config) async {
+  Future<Map<dynamic, dynamic>> stopAutoMixerTask(
+      Map<dynamic, dynamic> config) async {
     var data = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance
-          .stopAutoMixerTask(jsonEncode(config), completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.stopAutoMixerTask(
+          jsonEncode(config), completerMap["success"], completerMap["fail"]);
       return completerMap["completer"].future;
     })();
     return json.decode(data);
@@ -1594,31 +1610,32 @@ class ZegoExpressEngineWeb {
     return map;
   }
 
-  Future<dynamic> copyrightedMusicSendExtendedRequest(
+  Future<Map<dynamic, dynamic>> copyrightedMusicSendExtendedRequest(
       String command, String params) async {
-    final promise = ZegoFlutterEngine.copyMusic
+    Object promise = ZegoFlutterEngine.copyMusic
         ?.sendExtendedRequest(command, parseJSON(params));
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = result.errorCode;
+    map['errorCode'] = getProperty(result, 'errorCode');
     map['command'] = command;
-    final reqResult = result.result;
+    final reqResult = getProperty(result, 'result');
     map['result'] = stringifyJSON(reqResult);
     return map;
   }
 
-  Future<dynamic> copyrightedMusicRequestResource(
+  Future<Map<dynamic, dynamic>> copyrightedMusicRequestResource(
       dynamic config, int type) async {
     final promise = ZegoFlutterEngine.copyMusic
         ?.requestResource(dartObjToJSON(config), type);
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = result.errorCode;
-    map['resource'] = stringifyJSON(result.resource);
+    map['errorCode'] = getProperty(result, 'errorCode');
+    map['resource'] = stringifyJSON(getProperty(result, 'resource'));
     return map;
   }
 
-  Future<dynamic> copyrightedMusicRequestResourceV2(dynamic config) async {
+  Future<Map<dynamic, dynamic>> copyrightedMusicRequestResourceV2(
+      dynamic config) async {
     int resourceType = 0;
     if (config['resourceType'] != null) {
       resourceType = config['resourceType'];
@@ -1633,8 +1650,8 @@ class ZegoExpressEngineWeb {
       final promise = ZegoFlutterEngine.copyMusic
           ?.getSharedResource(dartObjToJSON(config), type);
       final result = await promiseToFuture(promise);
-      map['errorCode'] = result.errorCode;
-      map['resource'] = stringifyJSON(result.resource);
+      map['errorCode'] = result['errorCode'];
+      map['resource'] = stringifyJSON(result['resource']);
     } catch (e) {
       dynamic error = e;
       if (error.errorCode) {
@@ -1657,8 +1674,8 @@ class ZegoExpressEngineWeb {
     final promise = ZegoFlutterEngine.copyMusic?.getLrcLyric(songID, vendorID);
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = result.errorCode;
-    map['lyrics'] = stringifyJSON(result.lyrics);
+    map['errorCode'] = getProperty(result, 'errorCode');
+    map['lyrics'] = stringifyJSON(getProperty(result, 'lyrics'));
     return map;
   }
 
@@ -1666,19 +1683,21 @@ class ZegoExpressEngineWeb {
     final promise = ZegoFlutterEngine.copyMusic?.getKrcLyricByToken(krcToken);
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = result.errorCode;
-    map['lyrics'] = stringifyJSON(result.lyrics);
+    map['errorCode'] = getProperty(result, 'errorCode');
+    map['lyrics'] = stringifyJSON(getProperty(result, 'lyrics'));
     return map;
   }
 
   Future<dynamic> copyrightedMusicDownload(String resourceID) async {
     final promise = ZegoFlutterEngine.copyMusic?.download(resourceID);
     final result = await promiseToFuture(promise);
-    if (result.errorCode == 0) {
-      _downloadUrlMap[resourceID] = List<String>.from(result.urls);
+    final errorCode = getProperty(result, 'errorCode');
+    if (errorCode == 0) {
+      _downloadUrlMap[resourceID] =
+          List<String>.from(getProperty(result, 'urls'));
     }
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = result.errorCode;
+    map['errorCode'] = errorCode;
     return map;
   }
 
@@ -1692,8 +1711,8 @@ class ZegoExpressEngineWeb {
     final promise = ZegoFlutterEngine.copyMusic?.getStandardPitch(resourceID);
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
-    map['errorCode'] = result.errorCode;
-    map['pitch'] = stringifyJSON(result.pitch);
+    map['errorCode'] = getProperty(result, 'errorCode');
+    map['pitch'] = stringifyJSON(getProperty(result, 'pitch'));
     return map;
   }
 
@@ -1732,21 +1751,25 @@ class ZegoExpressEngineWeb {
     final result = await promiseToFuture(promise);
     return result;
   }
+
   Future<int> copyrightedMusicGetPreviousScore(String resourceID) async {
     final promise = ZegoFlutterEngine.copyMusic?.getPreviousScore(resourceID);
     final result = await promiseToFuture(promise);
     return result;
   }
+
   Future<int> copyrightedMusicGetAverageScore(String resourceID) async {
     final promise = ZegoFlutterEngine.copyMusic?.getAverageScore(resourceID);
     final result = await promiseToFuture(promise);
     return result;
   }
+
   Future<int> copyrightedMusicGetTotalScore(String resourceID) async {
     final promise = ZegoFlutterEngine.copyMusic?.getTotalScore(resourceID);
     final result = await promiseToFuture(promise);
     return result;
   }
+
   Future<int> copyrightedMusicGetFullScore(String resourceID) async {
     final promise = ZegoFlutterEngine.copyMusic?.getFullScore(resourceID);
     final result = await promiseToFuture(promise);
