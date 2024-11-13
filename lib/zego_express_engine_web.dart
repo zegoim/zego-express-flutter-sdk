@@ -12,6 +12,7 @@ import 'dart:js_util';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:zego_express_engine/src/impl/zego_express_impl.dart';
 import 'package:zego_express_engine/src/zego_express_defines_web.dart';
 import 'package:zego_express_engine/src/utils/web_api.dart';
 
@@ -64,6 +65,7 @@ class ZegoExpressEngineWeb {
   /// https://flutter.dev/go/federated-plugins
   Future<dynamic> handleMethodCall(MethodCall call) async {
     // var args = <String, dynamic>{};
+    //print("*### [sdk] metho ${call.method}");
     switch (call.method) {
       case 'createEngineWithProfile':
         if (call.arguments['profile'] != null &&
@@ -85,11 +87,36 @@ class ZegoExpressEngineWeb {
         return presetLogConfig(call.arguments['config']);
       case 'getVersion':
         return getVersion();
+      case 'setEngineConfig':
+        return setEngineConfig(call.arguments['config']);
+      case 'setPluginVersion':
+        return;
+      case 'setRoomScenario':
+        return setRoomScenario(call.arguments['scenario']);
+      case 'setRoomMode':
+        return setRoomMode(call.arguments['mode']);
+      //////////////////////////////房间相关//////////////////////////////////
       case 'loginRoom':
         return loginRoom(call.arguments['roomID'], call.arguments['user'],
             call.arguments['config']);
       case 'logoutRoom':
         return logoutRoom(call.arguments['roomID']);
+      case 'renewToken':
+        return renewToken(call.arguments['roomID'], call.arguments['token']);
+      case 'setRoomExtraInfo':
+        return setRoomExtraInfo(call.arguments['roomID'], call.arguments['key'],
+            call.arguments['value']);
+      case 'switchRoom':
+        return switchRoom(call.arguments['fromRoomID'], call.arguments['toRoomID'], call.arguments['config']);
+       //////////////////////////////推流相关//////////////////////////////////
+      case 'startPublishingStream':
+        return startPublishingStream(call.arguments["streamID"],
+            call.arguments["config"], call.arguments["channel"]);
+      case 'stopPublishingStream':
+        return stopPublishingStream(call.arguments["channel"]);
+      case 'setStreamExtraInfo':
+        return setStreamExtraInfo(
+            call.arguments['extraInfo'], call.arguments['channel']);
       case 'setVideoConfig':
         return setVideoConfig(
             call.arguments["config"], call.arguments["channel"]);
@@ -100,18 +127,6 @@ class ZegoExpressEngineWeb {
             call.arguments["config"], call.arguments["channel"]);
       case 'getAudioConfig':
         return getAudioConfig(call.arguments["channel"]);
-      case 'enableAEC':
-        return enableAEC(call.arguments["enable"]);
-      case 'enableAGC':
-        return enableAGC(call.arguments["enable"]);
-      case 'enableANS':
-        return enableANS(call.arguments["enable"]);
-      case 'enableCamera':
-        return enableCamera(
-            call.arguments["enable"], call.arguments["channel"]);
-      case 'useFrontCamera':
-        return useFrontCamera(
-            call.arguments["enable"], call.arguments["channel"]);
       case 'startPreview':
         return startPreview(
             call.arguments['canvas'], call.arguments["channel"]);
@@ -139,11 +154,18 @@ class ZegoExpressEngineWeb {
         return muteMicrophone(call.arguments["mute"]);
       case 'isMicrophoneMuted':
         return isMicrophoneMuted();
-      case 'startPublishingStream':
-        return startPublishingStream(call.arguments["streamID"],
-            call.arguments["config"], call.arguments["channel"]);
-      case 'stopPublishingStream':
-        return stopPublishingStream(call.arguments["channel"]);
+      case 'setSEIConfig':
+        return setSEIConfig(call.arguments['config']);
+      case 'sendSEI':
+        return sendSEI(call.arguments['data'], call.arguments['dataLength'],
+            call.arguments['channel']);
+      case 'setVideoSource':
+        return setVideoSource(call.arguments['source'],
+            call.arguments['instanceID'], call.arguments['channel']);
+      case 'setAudioSource':
+        return setAudioSource(
+            call.arguments['source'], call.arguments['channel']);
+      //////////////////////////////拉流相关//////////////////////////////////
       case 'startPlayingStream':
         return startPlayingStream(call.arguments["streamID"],
             call.arguments["canvas"], call.arguments["config"]);
@@ -154,8 +176,13 @@ class ZegoExpressEngineWeb {
             call.arguments["streamID"], call.arguments["volume"]);
       case 'setAllPlayStreamVolume':
         return setAllPlayStreamVolume(call.arguments["volume"]);
-      case 'destroyPlatformView':
-        return destroyPlatformView(call.arguments["viewID"]);
+      case 'mutePlayStreamAudio':
+        return mutePlayStreamAudio(
+            call.arguments['streamID'], call.arguments['mute']);
+      case 'mutePlayStreamVideo':
+        return mutePlayStreamVideo(
+            call.arguments['streamID'], call.arguments['mute']);
+      //////////////////////////////消息相关//////////////////////////////////
       case 'sendBroadcastMessage':
         return sendBroadcastMessage(
             call.arguments["roomID"], call.arguments["message"]);
@@ -165,22 +192,53 @@ class ZegoExpressEngineWeb {
       case 'sendCustomCommand':
         return sendCustomCommand(call.arguments['roomID'],
             call.arguments['command'], call.arguments['toUserList']);
-      case 'setRoomExtraInfo':
-        return setRoomExtraInfo(call.arguments['roomID'], call.arguments['key'],
-            call.arguments['value']);
-      case 'setSEIConfig':
-        return setSEIConfig(call.arguments['config']);
-      case 'sendSEI':
-        return sendSEI(call.arguments['data'], call.arguments['dataLength'],
-            call.arguments['channel']);
-      case 'renewToken':
-        return renewToken(call.arguments['roomID'], call.arguments['token']);
-      case 'mutePlayStreamAudio':
-        return mutePlayStreamAudio(
-            call.arguments['streamID'], call.arguments['mute']);
-      case 'mutePlayStreamVideo':
-        return mutePlayStreamVideo(
-            call.arguments['streamID'], call.arguments['mute']);
+      case 'createRealTimeSequentialDataManager':
+        return createRealTimeSequentialDataManager(call.arguments['roomID']);
+      case 'destroyRealTimeSequentialDataManager':
+        return destroyRealTimeSequentialDataManager(call.arguments['index']);
+      case 'dataManagerStartBroadcasting':
+        return startBroadcasting(call.arguments['index'], call.arguments['streamID']);
+      case 'dataManagerStopBroadcasting':
+        return stopBroadcasting(call.arguments['index'], call.arguments['streamID']);
+      case 'dataManagerStartSubscribing':
+        return startSubscribing(call.arguments['index'], call.arguments['streamID']);
+      case 'dataManagerStopSubscribing':
+        return stopSubscribing(call.arguments['index'], call.arguments['streamID']);
+      case 'dataManagerSendRealTimeSequentialData':
+      return sendRealTimeSequentialData(call.arguments['index'], call.arguments['data'], call.arguments['streamID']);
+      //////////////////////////////混流相关//////////////////////////////////
+      case 'startMixerTask':
+        return startMixerTask(call.arguments);
+      case 'stopMixerTask':
+        return stopMixerTask(call.arguments["taskID"]);
+      case 'startAutoMixerTask':
+        return startAutoMixerTask(call.arguments);
+      case 'stopAutoMixerTask':
+        return stopMixerTask(call.arguments["taskID"]);
+      //////////////////////////////前处理相关//////////////////////////////////
+      case 'enableAEC':
+        return enableAEC(call.arguments["enable"]);
+      case 'enableAGC':
+        return enableAGC(call.arguments["enable"]);
+      case 'enableANS':
+        return enableANS(call.arguments["enable"]);
+      case 'startEffectsEnv':
+        return startEffectsEnv();
+      case 'stopEffectsEnv':
+        return stopEffectsEnv();
+      case 'enableEffectsBeauty':
+        return enableEffectsBeauty(call.arguments['enable']);
+      case 'setEffectsBeautyParam':
+        return setEffectsBeautyParam(call.arguments['param']);
+      //////////////////////////////设备管理相关/////////////////////////////////
+      case 'enableCamera':
+        return enableCamera(
+            call.arguments["enable"], call.arguments["channel"]);
+      case 'useFrontCamera':
+        return useFrontCamera(
+            call.arguments["enable"], call.arguments["channel"]);
+      case 'destroyPlatformView':
+        return destroyPlatformView(call.arguments["viewID"]);
       case 'getAudioDeviceList':
         return getAudioDeviceList(call.arguments['type']);
       case 'getVideoDeviceList':
@@ -194,13 +252,19 @@ class ZegoExpressEngineWeb {
       case 'useAudioOutputDevice':
         return useAudioOutputDevice(
             call.arguments['mediaID'], call.arguments['deviceID']);
-      case 'setEngineConfig':
-        return setEngineConfig(call.arguments['config']);
-      case 'setStreamExtraInfo':
-        return setStreamExtraInfo(
-            call.arguments['extraInfo'], call.arguments['channel']);
-      case 'setPluginVersion':
+      case 'getScreenCaptureSources':
         return;
+      case 'createScreenCaptureSource':
+        return createScreenCaptureSource(
+            call.arguments['sourceId'], call.arguments['sourceType']);
+      case 'destroyScreenCaptureSource':
+        return destroyScreenCaptureSource(call.arguments['index']);
+      case 'startCaptureScreenCaptureSource':
+        return startCaptureScreen(
+            call.arguments['index'], call.arguments['config']);
+      case 'stopCaptureScreenCaptureSource':
+        return stopCaptureScreen(call.arguments['index']);
+      //////////////////////////////播放器相关/////////////////////////////////
       case 'createMediaPlayer':
         return createMediaPlayer();
       case 'mediaPlayerSetPlayerCanvas':
@@ -250,40 +314,7 @@ class ZegoExpressEngineWeb {
       case 'mediaPlayerSeekTo':
         return mediaPlayerSeekTo(
             call.arguments['index'], call.arguments['millisecond']);
-      case 'setRoomScenario':
-        return setRoomScenario(call.arguments['scenario']);
-      case 'setRoomMode':
-        return setRoomMode(call.arguments['mode']);
-      case 'enableEffectsBeauty':
-        return enableEffectsBeauty(call.arguments['enable']);
-      case 'setEffectsBeautyParam':
-        return setEffectsBeautyParam(call.arguments['param']);
-      case 'getScreenCaptureSources':
-        return;
-      case 'createScreenCaptureSource':
-        return createScreenCaptureSource(
-            call.arguments['sourceId'], call.arguments['sourceType']);
-      case 'destroyScreenCaptureSource':
-        return destroyScreenCaptureSource(call.arguments['index']);
-      case 'startEffectsEnv':
-        return startEffectsEnv();
-      case 'stopEffectsEnv':
-        return stopEffectsEnv();
-      case 'setVideoSource':
-        return setVideoSource(call.arguments['source'],
-            call.arguments['instanceID'], call.arguments['channel']);
-      case 'setAudioSource':
-        return setAudioSource(
-            call.arguments['source'], call.arguments['channel']);
-      case 'startCaptureScreenCaptureSource':
-        return startCaptureScreen(
-            call.arguments['index'], call.arguments['config']);
-      case 'stopCaptureScreenCaptureSource':
-        return stopCaptureScreen(call.arguments['index']);
-      case 'startMixerTask':
-        return startMixerTask(call.arguments);
-      case 'stopMixerTask':
-        return stopMixerTask(call.arguments["taskID"]);
+      //////////////////////////////版权音乐相关/////////////////////////////////
       case 'createCopyrightedMusic':
         return createCopyrightedMusic();
       case 'destroyCopyrightedMusic':
@@ -763,11 +794,18 @@ class ZegoExpressEngineWeb {
       case 'onIMRecvCustomCommand':
         if (ZegoExpressEngine.onIMRecvCustomCommand == null) return;
         final data = jsonDecode(map["data"]);
-
-        ZegoUser fromUser =
-            ZegoUser(data['fromUser']['userID'], data['fromUser']['userName']);
+        ZegoUser fromUser = ZegoUser(data['fromUser']['userID'], data['fromUser']['userName']);
         ZegoExpressEngine.onIMRecvCustomCommand!(
             data['roomID'], fromUser, data['command']);
+        break;
+      case 'onReceiveRealTimeSequentialData':
+        if(ZegoExpressEngine.onReceiveRealTimeSequentialData == null) return;
+        final data = jsonDecode(map["data"]);
+        var bytes = Uint8List.fromList(utf8.encode(data["data"]));
+        var mgr = ZegoExpressImpl.realTimeSequentialDataManagerMap[data['index']];
+        if(mgr != null) {
+          ZegoExpressEngine.onReceiveRealTimeSequentialData!(mgr, bytes, data['streamID']);
+        }
         break;
       ////////////////////////////////////其他/////////////////////////////////////
       case 'onDebugError':
@@ -1193,6 +1231,40 @@ class ZegoExpressEngineWeb {
       map["errorCode"] = e;
     }
     return Future.value(map);
+  }
+
+  Future<int> createRealTimeSequentialDataManager(String roomID) async {
+    //print("*### [sdk] createRealTimeSequentialDataManager ${roomID}");
+    final index = await ZegoFlutterEngine.instance.createRealTimeSequentialDataManager(roomID);
+    return index;
+  }
+
+  Future<void> destroyRealTimeSequentialDataManager(int index) async {
+  // print("*### [sdk] destroyRealTimeSequentialDataManager ${index}");
+    await ZegoFlutterEngine.instance.destroyRealTimeSequentialDataManager(index);
+  }
+
+  Future<void> startBroadcasting(int index, String streamID) async {
+     await ZegoFlutterEngine.instance.startBroadcasting(index, streamID);
+  }
+
+  Future<void> stopBroadcasting(int index, String streamID) async {
+     await ZegoFlutterEngine.instance.stopBroadcasting(index, streamID);
+  }
+
+  Future<Map<dynamic, dynamic>> sendRealTimeSequentialData(int index, Uint8List data, String streamID) async {
+    final Map<dynamic, dynamic> map = {};
+    await ZegoFlutterEngine.instance.sendRealTimeSequentialData(index, streamID, const Utf8Decoder().convert(data));
+    map["errorCode"] = 0;
+    return Future.value(map);
+  }
+
+  Future<void> startSubscribing(int index, String streamID) async {
+     await ZegoFlutterEngine.instance.startSubscribing(index, streamID);
+  }
+
+  Future<void> stopSubscribing(int index, String streamID) async {
+     await ZegoFlutterEngine.instance.stopSubscribing(index, streamID);
   }
 
   /////////////////////////////设备相关////////////////////////////////////////

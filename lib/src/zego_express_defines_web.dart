@@ -131,13 +131,13 @@ class ZegoFlutterEngine {
   // updatePlayingCanvas
 
 /////////////////////////////消息////////////////////////////////////////
-  // createRealTimeSequentialDataManager
-  // destroyRealTimeSequentialDataManager
-  // startBroadcasting
-  // stopBroadcasting
-  // sendRealTimeSequentialData
-  // startSubscribing
-  // stopSubscribing
+  external createRealTimeSequentialDataManager(String roomID);
+  external destroyRealTimeSequentialDataManager(int index);
+  external startBroadcasting(int index, String streamID);
+  external stopBroadcasting(int index, String streamID);
+  external sendRealTimeSequentialData(int index, String streamID, dynamic data);
+  external startSubscribing(int index, String streamID);
+  external stopSubscribing(int index, String streamID);
   // getIndex
   external sendBroadcastMessage(
       String roomID,
