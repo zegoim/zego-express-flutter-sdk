@@ -3982,15 +3982,19 @@
 
         NSDictionary *resourceMap = call.arguments[@"resource"];
         ZegoMediaPlayerResource *resource = [[ZegoMediaPlayerResource alloc] init];
-        resource.resourceID =  resourceMap[@"resourceID"];
-        resource.startPosition = [ZegoUtils longLongValue:resourceMap[@"startPosition"]];
         resource.loadType = (ZegoMultimediaLoadType)[ZegoUtils intValue:resourceMap[@"loadType"]];
+        resource.startPosition = [ZegoUtils longLongValue:resourceMap[@"startPosition"]];
         resource.alphaLayout = (ZegoAlphaLayoutType)[ZegoUtils intValue:resourceMap[@"alphaLayout"]];
         resource.filePath =  resourceMap[@"filePath"];
         
         FlutterStandardTypedData *memory = resourceMap[@"memory"];
         resource.memory = memory.data;
         resource.memoryLength = (int)memory.data.length;
+
+        resource.resourceID =  resourceMap[@"resourceID"];
+
+        resource.onlineResourceCachePath = resourceMap[@"onlineResourceCachePath"];
+        resource.maxCachePendingLength = [ZegoUtils longLongValue:resourceMap[@"maxCachePendingLength"]];
 
         [mediaPlayer loadResourceWithConfig:resource callback:^(int errorCode) {
             result(@{

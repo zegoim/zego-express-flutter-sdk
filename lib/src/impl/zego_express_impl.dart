@@ -3930,6 +3930,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'alphaLayout':
             resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
         'memory': resource.memory ?? Uint8List.fromList([]),
+        'onlineResourceCachePath': resource.onlineResourceCachePath ?? '',
+        'maxCachePendingLength': resource.maxCachePendingLength ?? 0,
       }
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);

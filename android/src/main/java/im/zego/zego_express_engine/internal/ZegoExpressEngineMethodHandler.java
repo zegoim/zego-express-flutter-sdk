@@ -4241,16 +4241,18 @@ public class ZegoExpressEngineMethodHandler {
             HashMap<String, Object> resourceMap = call.argument("resource");
 
             ZegoMediaPlayerResource resource = new ZegoMediaPlayerResource();
-            resource.resourceID = (String)resourceMap.get("resourceID");
-            resource.startPosition = ZegoUtils.longValue((Number) resourceMap.get("startPosition"));
             resource.loadType = ZegoMultimediaLoadType.getZegoMultimediaLoadType(ZegoUtils.intValue((Number) resourceMap.get("loadType")));
-            resource.filePath = (String)resourceMap.get("filePath");
+            resource.startPosition = ZegoUtils.longValue((Number) resourceMap.get("startPosition"));
             resource.alphaLayout = ZegoAlphaLayoutType.getZegoAlphaLayoutType(ZegoUtils.intValue((Number) resourceMap.get("alphaLayout")));
+            resource.filePath = (String)resourceMap.get("filePath");
             byte[] memory = (byte[]) resourceMap.get("memory");
             ByteBuffer memoryByteBuffer =  ByteBuffer.allocateDirect(memory.length);
             resource.memory = memoryByteBuffer.put(memory);
             resource.memory.flip();
             resource.memoryLength = memory.length;
+            resource.resourceID = (String)resourceMap.get("resourceID");
+            resource.onlineResourceCachePath = (String)resourceMap.get("onlineResourceCachePath");
+            resource.maxCachePendingLength = ZegoUtils.longValue((Number) resourceMap.get("maxCachePendingLength"));
 
             mediaPlayer.loadResourceWithConfig(resource, new IZegoMediaPlayerLoadResourceCallback() {
                 @Override
