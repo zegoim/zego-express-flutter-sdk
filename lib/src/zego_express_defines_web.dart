@@ -54,7 +54,7 @@ class ZegoFlutterEngine {
   //setPublishDualStreamConfig(List<ZegoPublishDualStreamConfig> configList, int channel)
 
   //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setVideoMirrorMode.html
-  //external setVideoMirrorMode(int mirrorMode, int channel);
+  external setVideoMirrorMode(int mirrorMode, int channel);
 
   //https://doc-zh.zego.im/unique-api/express-video-sdk/zh/dart_flutter/zego_express_engine/ZegoExpressEnginePublisher/setAppOrientation.html
   //setAppOrientation
@@ -88,13 +88,13 @@ class ZegoFlutterEngine {
   external setSEIConfig(int config);
   external sendSEI(dynamic data, int dataLength, int channel);
   // sendAudioSideInfo
-  // enableHardwareEncoder
+  external enableHardwareEncoder(bool enable);
   // setCapturePipelineScaleMode
   // setDummyCaptureImagePath
   // enableH265EncodeFallback
   // isVideoEncoderSupported
   // setAppOrientationMode
-  // setLowlightEnhancement
+  external setLowlightEnhancement(int mode, int channel);
   external setVideoSource(int source, int instanceID, int channel);
   external setAudioSource(int source, int channel);
   // enableVideoObjectSegmentation
@@ -176,6 +176,10 @@ class ZegoFlutterEngine {
   external startEffectsEnv();
   external stopEffectsEnv();
   external setEffectsBeautyParam(dynamic param);
+  external setVoiceChangerPreset(int preset);
+  external setVoiceChangerParam(int pitch);
+  external setReverbPreset(int prese);
+  external enableVirtualStereo(bool enable, int angle);
 
   /////////////////////////////媒体播放器////////////////////////////////////////
   external createMediaPlayer();

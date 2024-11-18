@@ -127,6 +127,8 @@ class ZegoExpressEngineWeb {
             call.arguments["config"], call.arguments["channel"]);
       case 'getAudioConfig':
         return getAudioConfig(call.arguments["channel"]);
+      case 'setVideoMirrorMode':
+        return setVideoMirrorMode(call.arguments["mirrorMode"], call.arguments["channel"]);
       case 'startPreview':
         return startPreview(
             call.arguments['canvas'], call.arguments["channel"]);
@@ -159,12 +161,16 @@ class ZegoExpressEngineWeb {
       case 'sendSEI':
         return sendSEI(call.arguments['data'], call.arguments['dataLength'],
             call.arguments['channel']);
+      case 'setLowlightEnhancement':
+          return setLowlightEnhancement(call.arguments['mode'], call.arguments['channel']);
       case 'setVideoSource':
         return setVideoSource(call.arguments['source'],
             call.arguments['instanceID'], call.arguments['channel']);
       case 'setAudioSource':
         return setAudioSource(
             call.arguments['source'], call.arguments['channel']);
+      case 'enableHardwareEncoder':
+        return enableHardwareEncoder(call.arguments['enable']);
       //////////////////////////////拉流相关//////////////////////////////////
       case 'startPlayingStream':
         return startPlayingStream(call.arguments["streamID"],
@@ -230,6 +236,14 @@ class ZegoExpressEngineWeb {
         return enableEffectsBeauty(call.arguments['enable']);
       case 'setEffectsBeautyParam':
         return setEffectsBeautyParam(call.arguments['param']);
+      case 'setVoiceChangerPreset':
+       return setVoiceChangerPreset(call.arguments['preset']);
+      case 'setVoiceChangerParam':
+       return setVoiceChangerPreset(call.arguments['pitch']);
+      case 'setReverbPreset':
+        return setReverbPreset(call.arguments['prese']);
+      case 'enableVirtualStereo':
+        return enableVirtualStereo(call.arguments['enable'], call.arguments['angle']);
       //////////////////////////////设备管理相关/////////////////////////////////
       case 'enableCamera':
         return enableCamera(
@@ -993,6 +1007,11 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
+  Future<void> setVideoMirrorMode(int mirrorMode, int? channel) async {
+    ZegoFlutterEngine.instance.setVideoMirrorMode(mirrorMode, getPublishChannel(channel));
+    return Future.value();
+  }
+
   Future<void> startPreview(dynamic canvas, int channel) async {
     previewView = document.getElementById("zego-view-${canvas["view"]}");
     // previewView?.muted = true;
@@ -1385,6 +1404,15 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);
   }
 
+  Future<void> setVoiceChangerPreset(int preset) async {
+  }
+  Future<void>  setVoiceChangerParam(int pitch) async {
+  }
+  Future<void>  setReverbPreset(int prese) async {
+  }
+  Future<void>  enableVirtualStereo(bool enable, int angle) async {
+  }
+
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
     var instance = await ZegoFlutterEngine.instance.createMediaPlayer();
@@ -1591,6 +1619,11 @@ class ZegoExpressEngineWeb {
     _mediaSources.remove(index);
   }
 
+  Future<int> setLowlightEnhancement(int mode, int? channel) async {
+    return ZegoFlutterEngine.instance
+        .setLowlightEnhancement(mode, getPublishChannel(channel));
+  }
+
   Future<int> setVideoSource(int source, int? instanceID, int? channel) async {
     return ZegoFlutterEngine.instance
         .setVideoSource(source, instanceID ?? 0, getPublishChannel(channel));
@@ -1599,6 +1632,10 @@ class ZegoExpressEngineWeb {
   Future<int> setAudioSource(int source, int? channel) async {
     return ZegoFlutterEngine.instance
         .setAudioSource(source, getPublishChannel(channel));
+  }
+
+  Future<void> enableHardwareEncoder(bool enable) async {
+    return  ZegoFlutterEngine.instance.enableHardwareEncoder(enable);
   }
 
   Future<void> startCaptureScreen(int index, dynamic config) async {
