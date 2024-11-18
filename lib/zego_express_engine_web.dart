@@ -188,6 +188,9 @@ class ZegoExpressEngineWeb {
       case 'mutePlayStreamVideo':
         return mutePlayStreamVideo(
             call.arguments['streamID'], call.arguments['mute']);
+      case 'updatePlayingCanvas':
+        return updatePlayingCanvas(call.arguments["streamID"],
+            call.arguments["canvas"]);
       //////////////////////////////消息相关//////////////////////////////////
       case 'sendBroadcastMessage':
         return sendBroadcastMessage(
@@ -266,6 +269,10 @@ class ZegoExpressEngineWeb {
       case 'useAudioOutputDevice':
         return useAudioOutputDevice(
             call.arguments['mediaID'], call.arguments['deviceID']);
+      case 'startSoundLevelMonitor':
+        return startSoundLevelMonitor(call.arguments['config']);
+      case 'stopSoundLevelMonitor':
+        return stopSoundLevelMonitor();
       case 'getScreenCaptureSources':
         return;
       case 'createScreenCaptureSource':
@@ -773,6 +780,17 @@ class ZegoExpressEngineWeb {
         final data = jsonDecode(map["data"]);
         ZegoExpressEngine.onCapturedSoundLevelUpdate!(data['soundLevel']);
         break;
+      // onAudioDeviceStateChanged
+      // onAudioDeviceVolumeChanged
+      // onVideoDeviceStateChanged
+      // onCapturedSoundLevelInfoUpdate
+      // onRemoteSoundLevelInfoUpdate
+      // onCapturedAudioSpectrumUpdate
+      // onRemoteAudioSpectrumUpdate
+      // onLocalDeviceExceptionOccurred
+      // onRemoteSpeakerStateUpdate
+      // onAudioRouteChange
+      // onAudioVADStateUpdate
       ////////////////////////////////////消息相关/////////////////////////////////////
       case 'onIMRecvBroadcastMessage':
         if (ZegoExpressEngine.onIMRecvBroadcastMessage == null) return;
@@ -1174,6 +1192,11 @@ class ZegoExpressEngineWeb {
     await ZegoFlutterEngine.instance.mutePlayStreamVideo(streamID, mute);
   }
 
+  Future<int> updatePlayingCanvas(String streamID, dynamic canvas) async {
+    final view = document.getElementById('zego-view-${canvas["view"]}');
+    return ZegoFlutterEngine.instance.updatePlayingCanvas(streamID, view, dartObjToJSON(canvas));
+  }
+
   /////////////////////////////消息相关////////////////////////////////////////
   Future sendBroadcastMessageWithCallback(String roomID, String message) {
     Completer c = Completer();
@@ -1353,6 +1376,14 @@ class ZegoExpressEngineWeb {
   Future<void> useAudioOutputDevice(String viewID, String deviceID) async {
     return await ZegoFlutterEngine.instance.useAudioOutputDevice(
         document.querySelector('#zego-view-' + viewID), deviceID);
+  }
+
+  Future<void> startSoundLevelMonitor(dynamic config) async {
+    return ZegoFlutterEngine.instance.startSoundLevelMonitor(config);
+  }
+
+  Future<void> stopSoundLevelMonitor() async {
+    return ZegoFlutterEngine.instance.stopSoundLevelMonitor();
   }
 
   Future<void> setEngineConfig(dynamic config) async {

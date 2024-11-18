@@ -128,7 +128,7 @@ class ZegoFlutterEngine {
   // enableVideoSuperResolution
   // initVideoSuperResolution
   // uninitVideoSuperResolution
-  // updatePlayingCanvas
+  external updatePlayingCanvas(String streamID, dynamic view, dynamic canvasOptions);
 
 /////////////////////////////消息////////////////////////////////////////
   external createRealTimeSequentialDataManager(String roomID);
@@ -155,13 +155,50 @@ class ZegoFlutterEngine {
   /////////////////////////////设备管理////////////////////////////////////////
   external muteMicrophone(bool mute);
   external isMicrophoneMuted();
+  // muteSpeaker
+  // isSpeakerMuted
+  external getAudioDeviceList(int type, dynamic success, dynamic fail);
+  // getDefaultAudioDeviceID
+  external useAudioDevice(int type, String deviceID);
+  // getAudioDeviceVolume
+  // setAudioDeviceVolume
+  // setSpeakerVolumeInAPP
+  // getSpeakerVolumeInAPP
+  // startAudioDeviceVolumeMonitor
+  // stopAudioDeviceVolumeMonitor
+  // muteAudioDevice
+  // setAudioDeviceMode
+  // isAudioDeviceMuted
+  // enableAudioCaptureDevice
+  // getAudioRouteType
+  // setAudioRouteToSpeaker
   external enableCamera(bool enable, int channel);
   external useFrontCamera(bool enable, int channel);
-  external getAudioDeviceList(int type, dynamic success, dynamic fail);
-  external getVideoDeviceList(dynamic success, dynamic fail);
+  // isCameraFocusSupported
+  // setCameraFocusMode
+  // setCameraFocusPointInPreview
+  // setCameraExposureMode
+  // setCameraExposurePointInPreview
+  // setCameraExposureCompensation
+  // setCameraZoomFactor
+  // getCameraMaxZoomFactor
+  // enableCameraAdaptiveFPS
   external useVideoDevice(String deviceID, int channel);
-  external useAudioDevice(int type, String deviceID);
+  external getVideoDeviceList(dynamic success, dynamic fail);
   external useAudioOutputDevice(dynamic media, String deviceID);
+  // getDefaultVideoDeviceID
+  external startSoundLevelMonitor(dynamic config);
+  external stopSoundLevelMonitor();
+  // startAudioSpectrumMonitor
+  // stopAudioSpectrumMonitor
+  // enableHeadphoneMonitor
+  // setHeadphoneMonitorVolume
+  // enableMixSystemPlayout
+  // setMixSystemPlayoutVolume
+  // enableMixEnginePlayout
+  // startAudioVADStableStateMonitor
+  // stopAudioVADStableStateMonitor
+  // getCurrentAudioDevice
 
   /////////////////////////////混流////////////////////////////////////////
   external startMixerTask(String config, dynamic success, dynamic fail);
