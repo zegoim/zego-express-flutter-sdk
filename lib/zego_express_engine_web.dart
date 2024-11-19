@@ -107,8 +107,9 @@ class ZegoExpressEngineWeb {
         return setRoomExtraInfo(call.arguments['roomID'], call.arguments['key'],
             call.arguments['value']);
       case 'switchRoom':
-        return switchRoom(call.arguments['fromRoomID'], call.arguments['toRoomID'], call.arguments['config']);
-       //////////////////////////////推流相关//////////////////////////////////
+        return switchRoom(call.arguments['fromRoomID'],
+            call.arguments['toRoomID'], call.arguments['config']);
+      //////////////////////////////推流相关//////////////////////////////////
       case 'startPublishingStream':
         return startPublishingStream(call.arguments["streamID"],
             call.arguments["config"], call.arguments["channel"]);
@@ -128,7 +129,8 @@ class ZegoExpressEngineWeb {
       case 'getAudioConfig':
         return getAudioConfig(call.arguments["channel"]);
       case 'setVideoMirrorMode':
-        return setVideoMirrorMode(call.arguments["mirrorMode"], call.arguments["channel"]);
+        return setVideoMirrorMode(
+            call.arguments["mirrorMode"], call.arguments["channel"]);
       case 'startPreview':
         return startPreview(
             call.arguments['canvas'], call.arguments["channel"]);
@@ -162,7 +164,8 @@ class ZegoExpressEngineWeb {
         return sendSEI(call.arguments['data'], call.arguments['dataLength'],
             call.arguments['channel']);
       case 'setLowlightEnhancement':
-          return setLowlightEnhancement(call.arguments['mode'], call.arguments['channel']);
+        return setLowlightEnhancement(
+            call.arguments['mode'], call.arguments['channel']);
       case 'setVideoSource':
         return setVideoSource(call.arguments['source'],
             call.arguments['instanceID'], call.arguments['channel']);
@@ -189,8 +192,8 @@ class ZegoExpressEngineWeb {
         return mutePlayStreamVideo(
             call.arguments['streamID'], call.arguments['mute']);
       case 'updatePlayingCanvas':
-        return updatePlayingCanvas(call.arguments["streamID"],
-            call.arguments["canvas"]);
+        return updatePlayingCanvas(
+            call.arguments["streamID"], call.arguments["canvas"]);
       //////////////////////////////消息相关//////////////////////////////////
       case 'sendBroadcastMessage':
         return sendBroadcastMessage(
@@ -206,15 +209,20 @@ class ZegoExpressEngineWeb {
       case 'destroyRealTimeSequentialDataManager':
         return destroyRealTimeSequentialDataManager(call.arguments['index']);
       case 'dataManagerStartBroadcasting':
-        return startBroadcasting(call.arguments['index'], call.arguments['streamID']);
+        return startBroadcasting(
+            call.arguments['index'], call.arguments['streamID']);
       case 'dataManagerStopBroadcasting':
-        return stopBroadcasting(call.arguments['index'], call.arguments['streamID']);
+        return stopBroadcasting(
+            call.arguments['index'], call.arguments['streamID']);
       case 'dataManagerStartSubscribing':
-        return startSubscribing(call.arguments['index'], call.arguments['streamID']);
+        return startSubscribing(
+            call.arguments['index'], call.arguments['streamID']);
       case 'dataManagerStopSubscribing':
-        return stopSubscribing(call.arguments['index'], call.arguments['streamID']);
+        return stopSubscribing(
+            call.arguments['index'], call.arguments['streamID']);
       case 'dataManagerSendRealTimeSequentialData':
-      return sendRealTimeSequentialData(call.arguments['index'], call.arguments['data'], call.arguments['streamID']);
+        return sendRealTimeSequentialData(call.arguments['index'],
+            call.arguments['data'], call.arguments['streamID']);
       //////////////////////////////混流相关//////////////////////////////////
       case 'startMixerTask':
         return startMixerTask(call.arguments);
@@ -240,13 +248,14 @@ class ZegoExpressEngineWeb {
       case 'setEffectsBeautyParam':
         return setEffectsBeautyParam(call.arguments['param']);
       case 'setVoiceChangerPreset':
-       return setVoiceChangerPreset(call.arguments['preset']);
+        return setVoiceChangerPreset(call.arguments['preset']);
       case 'setVoiceChangerParam':
-       return setVoiceChangerPreset(call.arguments['pitch']);
+        return setVoiceChangerPreset(call.arguments['pitch']);
       case 'setReverbPreset':
         return setReverbPreset(call.arguments['prese']);
       case 'enableVirtualStereo':
-        return enableVirtualStereo(call.arguments['enable'], call.arguments['angle']);
+        return enableVirtualStereo(
+            call.arguments['enable'], call.arguments['angle']);
       //////////////////////////////设备管理相关/////////////////////////////////
       case 'enableCamera':
         return enableCamera(
@@ -826,17 +835,20 @@ class ZegoExpressEngineWeb {
       case 'onIMRecvCustomCommand':
         if (ZegoExpressEngine.onIMRecvCustomCommand == null) return;
         final data = jsonDecode(map["data"]);
-        ZegoUser fromUser = ZegoUser(data['fromUser']['userID'], data['fromUser']['userName']);
+        ZegoUser fromUser =
+            ZegoUser(data['fromUser']['userID'], data['fromUser']['userName']);
         ZegoExpressEngine.onIMRecvCustomCommand!(
             data['roomID'], fromUser, data['command']);
         break;
       case 'onReceiveRealTimeSequentialData':
-        if(ZegoExpressEngine.onReceiveRealTimeSequentialData == null) return;
+        if (ZegoExpressEngine.onReceiveRealTimeSequentialData == null) return;
         final data = jsonDecode(map["data"]);
         var bytes = Uint8List.fromList(utf8.encode(data["data"]));
-        var mgr = ZegoExpressImpl.realTimeSequentialDataManagerMap[data['index']];
-        if(mgr != null) {
-          ZegoExpressEngine.onReceiveRealTimeSequentialData!(mgr, bytes, data['streamID']);
+        var mgr =
+            ZegoExpressImpl.realTimeSequentialDataManagerMap[data['index']];
+        if (mgr != null) {
+          ZegoExpressEngine.onReceiveRealTimeSequentialData!(
+              mgr, bytes, data['streamID']);
         }
         break;
       ////////////////////////////////////其他/////////////////////////////////////
@@ -1026,7 +1038,8 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> setVideoMirrorMode(int mirrorMode, int? channel) async {
-    ZegoFlutterEngine.instance.setVideoMirrorMode(mirrorMode, getPublishChannel(channel));
+    ZegoFlutterEngine.instance
+        .setVideoMirrorMode(mirrorMode, getPublishChannel(channel));
     return Future.value();
   }
 
@@ -1194,7 +1207,8 @@ class ZegoExpressEngineWeb {
 
   Future<int> updatePlayingCanvas(String streamID, dynamic canvas) async {
     final view = document.getElementById('zego-view-${canvas["view"]}');
-    return ZegoFlutterEngine.instance.updatePlayingCanvas(streamID, view, dartObjToJSON(canvas));
+    return ZegoFlutterEngine.instance
+        .updatePlayingCanvas(streamID, view, dartObjToJSON(canvas));
   }
 
   /////////////////////////////消息相关////////////////////////////////////////
@@ -1277,36 +1291,40 @@ class ZegoExpressEngineWeb {
 
   Future<int> createRealTimeSequentialDataManager(String roomID) async {
     //print("*### [sdk] createRealTimeSequentialDataManager ${roomID}");
-    final index = await ZegoFlutterEngine.instance.createRealTimeSequentialDataManager(roomID);
+    final index = await ZegoFlutterEngine.instance
+        .createRealTimeSequentialDataManager(roomID);
     return index;
   }
 
   Future<void> destroyRealTimeSequentialDataManager(int index) async {
-  // print("*### [sdk] destroyRealTimeSequentialDataManager ${index}");
-    await ZegoFlutterEngine.instance.destroyRealTimeSequentialDataManager(index);
+    // print("*### [sdk] destroyRealTimeSequentialDataManager ${index}");
+    await ZegoFlutterEngine.instance
+        .destroyRealTimeSequentialDataManager(index);
   }
 
   Future<void> startBroadcasting(int index, String streamID) async {
-     await ZegoFlutterEngine.instance.startBroadcasting(index, streamID);
+    await ZegoFlutterEngine.instance.startBroadcasting(index, streamID);
   }
 
   Future<void> stopBroadcasting(int index, String streamID) async {
-     await ZegoFlutterEngine.instance.stopBroadcasting(index, streamID);
+    await ZegoFlutterEngine.instance.stopBroadcasting(index, streamID);
   }
 
-  Future<Map<dynamic, dynamic>> sendRealTimeSequentialData(int index, Uint8List data, String streamID) async {
+  Future<Map<dynamic, dynamic>> sendRealTimeSequentialData(
+      int index, Uint8List data, String streamID) async {
     final Map<dynamic, dynamic> map = {};
-    await ZegoFlutterEngine.instance.sendRealTimeSequentialData(index, streamID, const Utf8Decoder().convert(data));
+    await ZegoFlutterEngine.instance.sendRealTimeSequentialData(
+        index, streamID, const Utf8Decoder().convert(data));
     map["errorCode"] = 0;
     return Future.value(map);
   }
 
   Future<void> startSubscribing(int index, String streamID) async {
-     await ZegoFlutterEngine.instance.startSubscribing(index, streamID);
+    await ZegoFlutterEngine.instance.startSubscribing(index, streamID);
   }
 
   Future<void> stopSubscribing(int index, String streamID) async {
-     await ZegoFlutterEngine.instance.stopSubscribing(index, streamID);
+    await ZegoFlutterEngine.instance.stopSubscribing(index, streamID);
   }
 
   /////////////////////////////设备相关////////////////////////////////////////
@@ -1435,14 +1453,10 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);
   }
 
-  Future<void> setVoiceChangerPreset(int preset) async {
-  }
-  Future<void>  setVoiceChangerParam(int pitch) async {
-  }
-  Future<void>  setReverbPreset(int prese) async {
-  }
-  Future<void>  enableVirtualStereo(bool enable, int angle) async {
-  }
+  Future<void> setVoiceChangerPreset(int preset) async {}
+  Future<void> setVoiceChangerParam(int pitch) async {}
+  Future<void> setReverbPreset(int prese) async {}
+  Future<void> enableVirtualStereo(bool enable, int angle) async {}
 
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
@@ -1502,8 +1516,12 @@ class ZegoExpressEngineWeb {
     }
     await (() {
       Map completerMap = createCompleter();
-      _mediaPlayers[index].instance.loadResourceFromMediaData(mediaData,
-          startPosition, completerMap["success"], completerMap["fail"]);
+      callMethod(_mediaPlayers[index].instance, 'loadResourceFromMediaData', [
+        mediaData,
+        startPosition,
+        completerMap["success"],
+        completerMap["fail"]
+      ]);
       return completerMap["completer"].future;
     })();
     map["errorCode"] = 0;
@@ -1521,10 +1539,10 @@ class ZegoExpressEngineWeb {
 
     final urls = _downloadUrlMap[resourceID];
 
-    final promise = _mediaPlayers[index]
-        .instance
-        .loadCopyrightedMusicResourceWithPosition(
-            resourceID, urls, 0, startPosition);
+    final promise = callMethod(
+        _mediaPlayers[index].instance,
+        'loadCopyrightedMusicResourceWithPosition',
+        [resourceID, urls, 0, startPosition]);
     final result = await promiseToFuture(promise);
     map["errorCode"] = result;
     return Future.value(map);
@@ -1534,56 +1552,57 @@ class ZegoExpressEngineWeb {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    _mediaPlayers[index].instance.setAudioTrackIndex(trackIndex);
+    callMethod(
+        _mediaPlayers[index].instance, 'setAudioTrackIndex', [trackIndex]);
   }
 
   Future<void> mediaPlayerEnableRepeat(int index, bool enable) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.enableRepeat(enable);
+    return callMethod(_mediaPlayers[index].instance, 'enableRepeat', [enable]);
   }
 
   Future<void> mediaPlayerStart(int index) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.start();
+    return callMethod(_mediaPlayers[index].instance, 'start', []);
   }
 
   Future<void> mediaPlayerPause(int index) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.pause();
+    return callMethod(_mediaPlayers[index].instance, 'pause', []);
   }
 
   Future<void> mediaPlayerStop(int index) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.stop();
+    return callMethod(_mediaPlayers[index].instance, 'stop', []);
   }
 
   Future<void> mediaPlayerResume(int index) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.resume();
+    return callMethod(_mediaPlayers[index].instance, 'resume', []);
   }
 
   Future<void> mediaPlayerSetPlaySpeed(int index, double speed) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.setPlaySpeed(speed);
+    return callMethod(_mediaPlayers[index].instance, 'setPlaySpeed', [speed]);
   }
 
   Future<void> mediaPlayerMuteLocal(int index, bool enable) async {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    return _mediaPlayers[index].instance.muteLocal(enable);
+    return callMethod(_mediaPlayers[index].instance, 'muteLocal', [enable]);
   }
 
   Future<void> mediaPlayerEnableAux(int index, bool enable) async {
@@ -1598,7 +1617,7 @@ class ZegoExpressEngineWeb {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    _mediaPlayers[index].instance.destroy();
+    callMethod(_mediaPlayers[index].instance, 'destroy', []);
     _mediaPlayers.remove(index);
   }
 
@@ -1611,7 +1630,7 @@ class ZegoExpressEngineWeb {
   }
 
   Future<int> mediaPlayerGetTotalDuration(int index) async {
-    var duration = _mediaPlayers[index].instance.getTotalDuration();
+    var duration = callMethod(_mediaPlayers[index].instance, 'getTotalDuration', []);
     return Future.value(duration);
   }
 
@@ -1621,7 +1640,7 @@ class ZegoExpressEngineWeb {
       map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
       return Future.value(map);
     }
-    var errorCode = _mediaPlayers[index].instance.seekTo(millisecond);
+    var errorCode = callMethod(_mediaPlayers[index].instance, 'seekTo', [millisecond]);
 
     map['errorCode'] = errorCode;
     return map;
@@ -1666,7 +1685,7 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> enableHardwareEncoder(bool enable) async {
-    return  ZegoFlutterEngine.instance.enableHardwareEncoder(enable);
+    return ZegoFlutterEngine.instance.enableHardwareEncoder(enable);
   }
 
   Future<void> startCaptureScreen(int index, dynamic config) async {
