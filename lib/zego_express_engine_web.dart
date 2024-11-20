@@ -53,6 +53,10 @@ class ZegoExpressEngineWeb {
       ..src = 'assets/packages/zego_express_engine/assets/copyrighted-music.js'
       ..type = 'application/javascript';
     document.body!.append(musicEl);
+    // var voiceChangerEl = ScriptElement()
+    //   ..src = 'assets/packages/zego_express_engine/assets/voice-changer.js'
+    //   ..type = 'application/javascript';
+    // document.body!.append(voiceChangerEl);
     var element = ScriptElement()
       ..src =
           'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
@@ -95,6 +99,14 @@ class ZegoExpressEngineWeb {
         return setRoomScenario(call.arguments['scenario']);
       case 'setRoomMode':
         return setRoomMode(call.arguments['mode']);
+      case 'setGeoFence':
+        return setGeoFence(call.arguments['type'], call.arguments['areaList']);
+      case 'setCloudProxyConfig':
+        return setCloudProxyConfig(call.arguments['proxyList'], call.arguments['token'], call.arguments['enable']);
+      case 'setLocalProxyConfig':
+        return setLocalProxyConfig(call.arguments['proxyList'], call.arguments['enable']);
+      case 'callExperimentalAPI':
+        return callExperimentalAPI(call.arguments['params']);
       //////////////////////////////房间相关//////////////////////////////////
       case 'loginRoom':
         return loginRoom(call.arguments['roomID'], call.arguments['user'],
@@ -174,6 +186,10 @@ class ZegoExpressEngineWeb {
             call.arguments['source'], call.arguments['channel']);
       case 'enableHardwareEncoder':
         return enableHardwareEncoder(call.arguments['enable']);
+      case 'addPublishCdnUrl':
+        return addPublishCdnUrl(call.arguments['streamID'], call.arguments['targetURL']);
+      case 'removePublishCdnUrl':
+        return removePublishCdnUrl(call.arguments['streamID'], call.arguments['targetURL']); 
       //////////////////////////////拉流相关//////////////////////////////////
       case 'startPlayingStream':
         return startPlayingStream(call.arguments["streamID"],
@@ -191,9 +207,15 @@ class ZegoExpressEngineWeb {
       case 'mutePlayStreamVideo':
         return mutePlayStreamVideo(
             call.arguments['streamID'], call.arguments['mute']);
+      case 'muteAllPlayAudioStreams':
+        return muteAllPlayAudioStreams(call.arguments['mute']);
+      case 'muteAllPlayVideoStreams':
+        return muteAllPlayVideoStreams(call.arguments['mute']); 
       case 'updatePlayingCanvas':
         return updatePlayingCanvas(
             call.arguments["streamID"], call.arguments["canvas"]);
+      case 'enableHardwareDecoder':
+        return enableHardwareDecoder(call.arguments["enable"]);
       //////////////////////////////消息相关//////////////////////////////////
       case 'sendBroadcastMessage':
         return sendBroadcastMessage(
@@ -231,7 +253,7 @@ class ZegoExpressEngineWeb {
       case 'startAutoMixerTask':
         return startAutoMixerTask(call.arguments);
       case 'stopAutoMixerTask':
-        return stopMixerTask(call.arguments["taskID"]);
+        return stopAutoMixerTask(call.arguments);
       //////////////////////////////前处理相关//////////////////////////////////
       case 'enableAEC':
         return enableAEC(call.arguments["enable"]);
@@ -789,9 +811,17 @@ class ZegoExpressEngineWeb {
         final data = jsonDecode(map["data"]);
         ZegoExpressEngine.onCapturedSoundLevelUpdate!(data['soundLevel']);
         break;
-      // onAudioDeviceStateChanged
+      case 'onAudioDeviceStateChanged':
+        if(ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
+        final data = jsonDecode(map["data"]);
+        ZegoExpressEngine.onAudioDeviceStateChanged!(data['updateType'], data['deviceType'], data['deviceInfo']);
+        break;
       // onAudioDeviceVolumeChanged
-      // onVideoDeviceStateChanged
+      case 'onVideoDeviceStateChanged':
+       if(ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
+        final data = jsonDecode(map["data"]);
+        ZegoExpressEngine.onVideoDeviceStateChanged!(data['updateType'], data['deviceInfo']);
+        break;
       // onCapturedSoundLevelInfoUpdate
       // onRemoteSoundLevelInfoUpdate
       // onCapturedAudioSpectrumUpdate
@@ -912,6 +942,39 @@ class ZegoExpressEngineWeb {
 
   Future<void> setRoomMode(int mode) async {
     return ZegoFlutterEngine.setRoomMode(mode);
+  }
+
+  Future<void> setGeoFence(int type, List<int> areaList) async {
+    ZegoFlutterEngine.setGeoFence(type, areaList);
+    return Future.value(); 
+  }
+
+  static Future<void> setLocalProxyConfig(List<Map> proxyList, bool enable) async {
+    // fixme
+    var proxy = proxyList[0];
+    ZegoLocalProxyConfigWeb config = ZegoLocalProxyConfigWeb(accesshubProxy: proxy['hostName']);
+    ZegoFlutterEngine.setLocalProxyConfig(config, enable);
+    return Future.value(); 
+  }
+
+  static Future<void> setCloudProxyConfig(List<Map> proxyList, String token, bool enable) async {
+    List<ZegoProxyInfoWeb> proxyListWeb = [];
+     for (var item in proxyList) {
+       if(item['port'] == 0) {
+         ZegoProxyInfoWeb newItem = ZegoProxyInfoWeb(hostName: item['hostName']);
+        proxyListWeb.add(newItem);
+       } else {
+         ZegoProxyInfoWeb newItem= ZegoProxyInfoWeb(hostName: item['hostName'], port: item['port']);
+        proxyListWeb.add(newItem);
+       }
+    }
+    ZegoFlutterEngine.setCloudProxyConfig(proxyListWeb, token, enable);
+    return Future.value(); 
+  }
+
+  Future<String> callExperimentalAPI(dynamic params) async {
+    //todo: 
+    return Future.value("");
   }
 
   /////////////////////////////房间相关////////////////////////////////////////
@@ -1096,9 +1159,7 @@ class ZegoExpressEngineWeb {
     return await ZegoFlutterEngine.instance.setCaptureVolume(volume);
   }
 
-  Future<Map<dynamic, dynamic>> addPublishCdnUrl(
-      String streamID, String targetURL,
-      {int? timeout}) async {
+  Future<Map<dynamic, dynamic>> addPublishCdnUrl(String streamID, String targetURL, {int? timeout}) async {
     final map = {};
     try {
       final result = await (() {
@@ -1114,8 +1175,7 @@ class ZegoExpressEngineWeb {
     return Future.value(map);
   }
 
-  Future<Map<dynamic, dynamic>> removePublishCdnUrl(
-      String streamID, String targetURL) async {
+  Future<Map<dynamic, dynamic>> removePublishCdnUrl(String streamID, String targetURL) async {
     final map = {};
     try {
       final result = await (() {
@@ -1205,11 +1265,24 @@ class ZegoExpressEngineWeb {
     await ZegoFlutterEngine.instance.mutePlayStreamVideo(streamID, mute);
   }
 
+  Future<void> muteAllPlayAudioStreams(bool mute) async {
+    await ZegoFlutterEngine.instance.muteAllPlayAudioStreams(mute);
+  }
+
+  Future<void> muteAllPlayVideoStreams(bool mute) async {
+    await ZegoFlutterEngine.instance.muteAllPlayVideoStreams(mute);
+  }
+
   Future<int> updatePlayingCanvas(String streamID, dynamic canvas) async {
     final view = document.getElementById('zego-view-${canvas["view"]}');
     return ZegoFlutterEngine.instance
         .updatePlayingCanvas(streamID, view, dartObjToJSON(canvas));
   }
+
+   Future<void> enableHardwareDecoder(bool enable) async {
+    //ZegoFlutterEngine.instance.enableHardwareDecoder(enable);
+    return Future.value(); 
+   }
 
   /////////////////////////////消息相关////////////////////////////////////////
   Future sendBroadcastMessageWithCallback(String roomID, String message) {
@@ -1669,9 +1742,10 @@ class ZegoExpressEngineWeb {
     _mediaSources.remove(index);
   }
 
-  Future<int> setLowlightEnhancement(int mode, int? channel) async {
-    return ZegoFlutterEngine.instance
+  Future<void> setLowlightEnhancement(int mode, int? channel) async {
+     ZegoFlutterEngine.instance
         .setLowlightEnhancement(mode, getPublishChannel(channel));
+    return Future.value();
   }
 
   Future<int> setVideoSource(int source, int? instanceID, int? channel) async {
@@ -1700,45 +1774,65 @@ class ZegoExpressEngineWeb {
   Future<Map<dynamic, dynamic>> startMixerTask(
       Map<dynamic, dynamic> config) async {
     config["userData"] = const Utf8Decoder().convert(config["userData"]);
-    var data = await (() {
+    var result = await (() {
       Map completerMap = createCompleter();
       ZegoFlutterEngine.instance.startMixerTask(
-          jsonEncode(config), completerMap["success"], completerMap["fail"]);
+          jsonEncode(config), completerMap["success"]);
       return completerMap["completer"].future;
     })();
-    return json.decode(data);
+      final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = result.errorCode;
+    if(result.extendedData) {
+      map['extendedData'] = result.extendedData;
+    }
+    return map;
   }
 
   Future<Map<dynamic, dynamic>> stopMixerTask(String taskID) async {
-    var data = await (() {
+    var result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance
-          .stopMixerTask(taskID, completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.stopMixerTask(taskID, completerMap["success"]);
       return completerMap["completer"].future;
     })();
-    return json.decode(data);
+
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = result.errorCode;
+    if(result.extendedData) {
+      map['extendedData'] = result.extendedData;
+    }
+    return map;
   }
 
   Future<Map<dynamic, dynamic>> startAutoMixerTask(
       Map<dynamic, dynamic> config) async {
-    var data = await (() {
+    var result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.startAutoMixerTask(
-          jsonEncode(config), completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.startAutoMixerTask(jsonEncode(config), completerMap["success"]);
       return completerMap["completer"].future;
     })();
-    return json.decode(data);
+
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = result.errorCode;
+    if(result.extendedData) {
+      map['extendedData'] = result.extendedData;
+    }
+    return map;
   }
 
   Future<Map<dynamic, dynamic>> stopAutoMixerTask(
       Map<dynamic, dynamic> config) async {
-    var data = await (() {
+    var result = await (() {
       Map completerMap = createCompleter();
-      ZegoFlutterEngine.instance.stopAutoMixerTask(
-          jsonEncode(config), completerMap["success"], completerMap["fail"]);
+      ZegoFlutterEngine.instance.stopAutoMixerTask(jsonEncode(config), completerMap["success"]);
       return completerMap["completer"].future;
     })();
-    return json.decode(data);
+
+    final Map<dynamic, dynamic> map = {};
+    map['errorCode'] = result.errorCode;
+    if(result.extendedData) {
+      map['extendedData'] = result.extendedData;
+    }
+    return map;
   }
 
   ////////////////////////////////版权音乐相关//////////////////////////////////////////
