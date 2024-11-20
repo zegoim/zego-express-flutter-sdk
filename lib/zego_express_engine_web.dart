@@ -1569,14 +1569,11 @@ class ZegoExpressEngineWeb {
       map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
       return Future.value(map);
     }
-    await (() {
-      Map completerMap = createCompleter();
-      _mediaPlayers[index]
-          .instance
-          .loadResource(path, 0, completerMap["success"], completerMap["fail"]);
-      return completerMap["completer"].future;
-    })();
-    map["errorCode"] = 0;
+
+    final promise =
+        callMethod(_mediaPlayers[index].instance, 'loadResource', [path, 0]);
+    final result = await promiseToFuture(promise);
+    map["errorCode"] = getProperty(result, 'errorCode');
     return Future.value(map);
   }
 
@@ -1587,17 +1584,13 @@ class ZegoExpressEngineWeb {
       map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
       return Future.value(map);
     }
-    await (() {
-      Map completerMap = createCompleter();
-      callMethod(_mediaPlayers[index].instance, 'loadResourceFromMediaData', [
-        mediaData,
-        startPosition,
-        completerMap["success"],
-        completerMap["fail"]
-      ]);
-      return completerMap["completer"].future;
-    })();
-    map["errorCode"] = 0;
+    final promise =
+        callMethod(_mediaPlayers[index].instance, 'loadResourceFromMediaData', [
+      mediaData,
+      startPosition,
+    ]);
+    final result = await promiseToFuture(promise);
+    map["errorCode"] = result;
     return Future.value(map);
   }
 
@@ -1703,7 +1696,8 @@ class ZegoExpressEngineWeb {
   }
 
   Future<int> mediaPlayerGetTotalDuration(int index) async {
-    var duration = callMethod(_mediaPlayers[index].instance, 'getTotalDuration', []);
+    var duration =
+        callMethod(_mediaPlayers[index].instance, 'getTotalDuration', []);
     return Future.value(duration);
   }
 
@@ -1713,7 +1707,8 @@ class ZegoExpressEngineWeb {
       map["errorCode"] = MEDIA_PLAYER_NOT_EXIST;
       return Future.value(map);
     }
-    var errorCode = callMethod(_mediaPlayers[index].instance, 'seekTo', [millisecond]);
+    var errorCode =
+        callMethod(_mediaPlayers[index].instance, 'seekTo', [millisecond]);
 
     map['errorCode'] = errorCode;
     return map;
