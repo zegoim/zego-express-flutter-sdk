@@ -1908,12 +1908,13 @@ class ZegoExpressEngineWeb {
       final promise = ZegoFlutterEngine.copyMusic
           ?.getSharedResource(dartObjToJSON(config), type);
       final result = await promiseToFuture(promise);
-      map['errorCode'] = result['errorCode'];
-      map['resource'] = stringifyJSON(result['resource']);
+      map['errorCode'] = getProperty(result, 'errorCode');
+      map['resource'] = stringifyJSON(getProperty(result, 'resource'));
     } catch (e) {
       dynamic error = e;
-      if (error.errorCode) {
-        map['errorCode'] = error.errorCode;
+      final errorCode = getProperty(error, 'errorCode');
+      if (errorCode) {
+        map['errorCode'] = errorCode;
       }
     }
     return map;
