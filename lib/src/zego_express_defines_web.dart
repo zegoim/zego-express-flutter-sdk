@@ -224,8 +224,6 @@ class ZegoFlutterEngine {
   /////////////////////////////媒体播放器////////////////////////////////////////
   external createMediaPlayer();
   external setStyleByCanvas(dynamic canvas);
-  external mediaPlayerSetPlayerCanvas(dynamic viewElem, dynamic canvas,
-      dynamic mediaPlayer, dynamic success, dynamic fail);
   external mediaPlayerEnableAux(bool enable, dynamic mediaPlayer);
   external mediaPlayerSetVolume(int volume, dynamic mediaPlayer);
 
