@@ -911,6 +911,21 @@ class ZegoExpressEngineWeb {
         ZegoExpressEngine.onMixerRelayCDNStateUpdate!(
             data['taskID'], data['infoList']);
         break;
+      //////////////////////////////媒体播放器//////////////////////////
+      case "onMediaPlayerStateUpdate":
+        if (ZegoExpressEngine.onMediaPlayerStateUpdate == null) return;
+        final data = jsonDecode(map["data"]);
+        final index = data["mediaPlayer"];
+        if (index is int) {
+          final player = ZegoExpressImpl.mediaPlayerMap[index];
+          if (player != null) {
+            ZegoMediaPlayerState state =
+                ZegoMediaPlayerState.values[data["state"]];
+            ZegoExpressEngine.onMediaPlayerStateUpdate!(
+                player, state, data["errorCode"]);
+          }
+        }
+        break;
       default:
         break;
     }
@@ -1549,8 +1564,8 @@ class ZegoExpressEngineWeb {
 
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
-    var instance = await ZegoFlutterEngine.instance.createMediaPlayer();
     var i = _index;
+    var instance = await ZegoFlutterEngine.instance.createMediaPlayer(i);
     var mediaPlayer = MediaPlayer();
     mediaPlayer.instance = instance;
     _mediaPlayers[i] = mediaPlayer;
@@ -1913,9 +1928,10 @@ class ZegoExpressEngineWeb {
     } catch (e) {
       dynamic error = e;
       final errorCode = getProperty(error, 'errorCode');
-      if (errorCode) {
+      if (errorCode is int) {
         map['errorCode'] = errorCode;
       }
+      throw error;
     }
     return map;
   }
