@@ -30,8 +30,10 @@ class ZegoFlutterEngine {
   external static setRoomMode(int mode);
   external static setEngineConfig(dynamic config);
   external static setGeoFence(int type, dynamic areaList);
-  external static setLocalProxyConfig(ZegoLocalProxyConfigWeb proxyConfig, bool enable);
-  external static setCloudProxyConfig(List<ZegoProxyInfoWeb> proxyList, String token, bool enable);
+  external static setLocalProxyConfig(
+      ZegoLocalProxyConfigWeb proxyConfig, bool enable);
+  external static setCloudProxyConfig(
+      List<ZegoProxyInfoWeb> proxyList, String token, bool enable);
 
   /////////////////////////////房间////////////////////////////////////////
   external loginRoom(String roomID, dynamic user, dynamic config,
@@ -131,7 +133,8 @@ class ZegoFlutterEngine {
   // enableVideoSuperResolution
   // initVideoSuperResolution
   // uninitVideoSuperResolution
-  external updatePlayingCanvas(String streamID, dynamic view, dynamic canvasOptions);
+  external updatePlayingCanvas(
+      String streamID, dynamic view, dynamic canvasOptions);
 
 /////////////////////////////消息////////////////////////////////////////
   external createRealTimeSequentialDataManager(String roomID);
@@ -204,10 +207,14 @@ class ZegoFlutterEngine {
   // getCurrentAudioDevice
 
   /////////////////////////////混流////////////////////////////////////////
-  external startMixerTask(String config, void Function(ZegoResponseWeb res) onresult);
-  external stopMixerTask(String taskId, void Function(ZegoResponseWeb res) onresult);
-  external startAutoMixerTask(String task, void Function(ZegoResponseWeb res) onresult);
-  external stopAutoMixerTask(String task, void Function(ZegoResponseWeb res) onresult);
+  external startMixerTask(
+      String config, void Function(ZegoResponseWeb res) onresult);
+  external stopMixerTask(
+      String taskId, void Function(ZegoResponseWeb res) onresult);
+  external startAutoMixerTask(
+      String task, void Function(ZegoResponseWeb res) onresult);
+  external stopAutoMixerTask(
+      String task, void Function(ZegoResponseWeb res) onresult);
   /////////////////////////////前处理////////////////////////////////////////
   external enableAEC(bool enable);
   external enableAGC(bool enable);
@@ -402,25 +409,26 @@ class EffectsBeautyParam {
   external int sharpenIntensity;
 }
 
-
 @JS("ZegoProxyInfoWeb")
-@anonymous 
+@anonymous
 class ZegoProxyInfoWeb {
-external factory ZegoProxyInfoWeb({String hostName, int? port});
+  external factory ZegoProxyInfoWeb({String hostName, int? port});
   external String hostName;
   external int port;
 }
 
 @JS()
-@anonymous 
+@anonymous
 class ZegoLocalProxyConfigWeb {
-  external factory ZegoLocalProxyConfigWeb({String accesshubProxy, String? loggerProxy, String? detaillogProxy});
-    external String accesshubProxy;
-    external String loggerProxy;
-    external String detaillogProxy;
+  external factory ZegoLocalProxyConfigWeb(
+      {String accesshubProxy, String? loggerProxy, String? detaillogProxy});
+  external String accesshubProxy;
+  external String loggerProxy;
+  external String detaillogProxy;
 }
+
 @JS()
-@anonymous 
+@anonymous
 class ZegoResponseWeb {
   external factory ZegoResponseWeb({int errorCode, String? extendedData});
   external int errorCode;

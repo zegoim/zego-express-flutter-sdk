@@ -2012,7 +2012,7 @@ class ZegoLogConfig {
   /// Local log level. Only valid for web. The higher the level, the fewer logs will be printed. Available values: 'debug' | 'info' | 'warn' | 'error' | 'report' | 'disable'
   String? logLevel;
 
-  ZegoLogConfig(this.logPath, this.logSize, { this.logCount, this.logLevel });
+  ZegoLogConfig(this.logPath, this.logSize, {this.logCount, this.logLevel});
 }
 
 /// Custom video capture configuration.
@@ -3959,7 +3959,11 @@ class ZegoCopyrightedMusicGetSharedConfigV2 {
   String? masterID;
 
   ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
-      {this.vendorID, this.roomID, this.resourceType, this.mode, this.masterID});
+      {this.vendorID,
+      this.roomID,
+      this.resourceType,
+      this.mode,
+      this.masterID});
 }
 
 /// The configuration of querying cache.
