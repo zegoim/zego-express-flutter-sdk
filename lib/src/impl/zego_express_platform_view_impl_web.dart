@@ -10,9 +10,7 @@ class ZegoExpressPlatformViewImpl {
     String webcamPushElement = 'plugins.zego.im/zego_express_view';
     // ignore:undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(
-        webcamPushElement,
-        (int id) => DivElement()
-          ..id = "zego-view-$id");
+        webcamPushElement, (int id) => DivElement()..id = "zego-view-$id");
     return HtmlElementView(
         key: key,
         viewType: webcamPushElement,
