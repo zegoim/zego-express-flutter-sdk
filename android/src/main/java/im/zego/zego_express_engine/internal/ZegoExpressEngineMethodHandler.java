@@ -94,6 +94,7 @@ import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceQualityType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
+import im.zego.zegoexpress.constants.ZegoDummyCaptureImageMode;
 import im.zego.zegoexpress.constants.ZegoDumpDataType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
@@ -178,6 +179,7 @@ import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoRenderConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
+import im.zego.zegoexpress.entity.ZegoDummyCaptureImageParams;
 import im.zego.zegoexpress.entity.ZegoDumpDataConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
@@ -557,6 +559,27 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setDummyCaptureImagePath(filePath, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setDummyCaptureImageParams(MethodCall call, Result result) {
+        ZegoDummyCaptureImageParams params = new ZegoDummyCaptureImageParams();
+        HashMap<String, Object> paramsMap = call.argument("params");
+        if (paramsMap != null) {
+            params.path = (String) paramsMap.get("path");
+            params.mode = ZegoDummyCaptureImageMode.getZegoDummyCaptureImageMode(ZegoUtils.intValue((Number) paramsMap.get("mode")));
+        }
+        if (params.path != null && params.path.startsWith("flutter-asset://")) {
+            String processedURL = params.path.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[setDummyCaptureImageParams] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", params.path, processedURL);
+            params.path = processedURL;
+        }
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setDummyCaptureImageParams(params, channel);
 
         result.success(null);
     }

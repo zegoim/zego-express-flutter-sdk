@@ -1994,6 +1994,15 @@ enum ZegoDumpDataType {
   Audio
 }
 
+/// Dummy capture image mode.
+enum ZegoDummyCaptureImageMode {
+  /// Manual mode. The user needs to call the [EnableCamera] interface to turn off camera capture, and the SDK will use dummy capture image.
+  Manual,
+
+  /// Auto mode. After the SDK detects that the camera is unavailable, it uses dummy capture image to puublish the stream.
+  Auto
+}
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -2851,7 +2860,11 @@ class ZegoMediaSideInfo {
   /// timestamp
   int timestampNs;
 
-  ZegoMediaSideInfo(this.streamID, this.SEIData, this.timestampNs);
+  /// SEI source module. Please contact ZEGO technical support.
+  int moduleType;
+
+  ZegoMediaSideInfo(
+      this.streamID, this.SEIData, this.timestampNs, this.moduleType);
 }
 
 /// Device Info.
@@ -4290,6 +4303,22 @@ class ZegoColorEnhancementParams {
       : intensity = 0,
         skinToneProtectionLevel = 1,
         lipColorProtectionLevel = 0;
+}
+
+/// Dummy capture image params.
+class ZegoDummyCaptureImageParams {
+  /// Picture file path.
+  String path;
+
+  /// Dummy capture image mode.
+  ZegoDummyCaptureImageMode mode;
+
+  ZegoDummyCaptureImageParams(this.path, this.mode);
+
+  /// Constructs a dummy capture image params object by default.
+  ZegoDummyCaptureImageParams.defaultParam()
+      : path = '',
+        mode = ZegoDummyCaptureImageMode.Manual;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
