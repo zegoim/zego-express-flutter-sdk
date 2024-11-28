@@ -49,10 +49,6 @@ class ZegoExpressEngineWeb {
       _eventListener(event);
     });
 
-    var musicEl = ScriptElement()
-      ..src = 'assets/packages/zego_express_engine/assets/copyrighted-music.js'
-      ..type = 'application/javascript';
-    document.body!.append(musicEl);
     // var voiceChangerEl = ScriptElement()
     //   ..src = 'assets/packages/zego_express_engine/assets/voice-changer.js'
     //   ..type = 'application/javascript';
