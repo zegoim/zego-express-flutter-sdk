@@ -377,7 +377,7 @@ class ZegoExpressEngineWeb {
       case 'createCopyrightedMusic':
         return createCopyrightedMusic();
       case 'destroyCopyrightedMusic':
-        return destroyCopyrightedMusic(call.arguments["copyrightedMusic"]);
+        return destroyCopyrightedMusic();
       case 'copyrightedMusicInitCopyrightedMusic':
         return copyrightedMusicInitCopyrightedMusic(call.arguments["config"]);
       case 'copyrightedMusicSendExtendedRequest':
@@ -1867,7 +1867,7 @@ class ZegoExpressEngineWeb {
     }
   }
 
-  Future<void> destroyCopyrightedMusic(dynamic copyrightedMusic) async {
+  Future<void> destroyCopyrightedMusic() async {
     _downloadUrlMap = {};
     ZegoFlutterEngine.instance.destroyCopyrightedMusic();
     ZegoFlutterEngine.copyMusic = null;
