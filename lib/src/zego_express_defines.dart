@@ -2036,7 +2036,10 @@ class ZegoLogConfig {
   /// Log files count. Default is 3. Value range is [3, 20].
   int? logCount;
 
-  ZegoLogConfig(this.logPath, this.logSize, {this.logCount});
+  /// Local log level. Only valid for web. The higher the level, the fewer logs will be printed. Available values: 'debug' | 'info' | 'warn' | 'error' | 'report' | 'disable'
+  String? logLevel;
+
+  ZegoLogConfig(this.logPath, this.logSize, { this.logCount, this.logLevel });
 }
 
 /// Custom video capture configuration.
