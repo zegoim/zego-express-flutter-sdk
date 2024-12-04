@@ -71,6 +71,8 @@ class ZegoExpressEngineWeb {
           _evenController.add({'methodName': event, 'data': data});
         }));
         return createEngineWithProfile(call.arguments['profile']);
+      case 'setLogConfig':
+        return presetLogConfig(call.arguments['config']);
       case 'getVersion':
         return getVersion();
       case 'loginRoom':
@@ -696,6 +698,12 @@ class ZegoExpressEngineWeb {
         Profile(appID: appID, server: server, scenario: profile['scenario']);
 
     ZegoFlutterEngine.createEngineWithProfile(engineProfile);
+  }
+
+  static Future<void> presetLogConfig(dynamic config) async {
+    final logLevel = config["logLevel"];
+    LogConfig logConfig = LogConfig(logLevel: logLevel);
+    ZegoFlutterEngine.presetLogConfig(logConfig);
   }
 
   Future<void> destroyEngine() {
