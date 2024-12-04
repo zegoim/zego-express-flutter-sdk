@@ -538,6 +538,9 @@ class ZegoErrorCode {
   /// Description: Failed to mux input image. <br>Cause: The image size of the mixed stream input parameter exceeds the limit. <br>Solution: Image size is limited to 1M.
   static const int MixerInputImageUrlSizeError = 1005036;
 
+  /// Description: The mixed output stream target room is misconfigured. <br>Cause: The room doesn't exist when the mixing starts. <br>Solution: Please make sure that the room corresponding to the configured targetRoom exists.
+  static const int MixerOutputTargetRoomError = 1005037;
+
   /// Description: Failed to start mixed stream. <br>Cause: Mixed-stream authentication failed. <br>Solutions: Contact ZEGO technical support.
   static const int MixerAuthenticationFailed = 1005050;
 
