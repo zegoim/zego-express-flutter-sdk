@@ -652,7 +652,10 @@ enum ZegoAECMode {
   Medium,
 
   /// Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening.
-  Soft
+  Soft,
+
+  /// AI mode AEC.
+  AI
 }
 
 /// Active Noise Suppression mode.
@@ -1751,6 +1754,30 @@ enum ZegoLowlightEnhancementMode {
   Auto
 }
 
+/// Video denoise mode.
+enum ZegoVideoDenoiseMode {
+  /// Turn off video denoise.
+  Off,
+
+  /// Turn on video denoise.
+  On,
+
+  /// Automatic video denoise.
+  Auto
+}
+
+/// Video denoise strength.
+enum ZegoVideoDenoiseStrength {
+  /// Light denoise strength.
+  Light,
+
+  /// Medium denoise strength.
+  Medium,
+
+  /// Heavy denoise strength.
+  Heavy
+}
+
 /// Super resolution mode.
 enum ZegoSuperResolutionState {
   /// Super resolution turned off.
@@ -2009,7 +2036,10 @@ class ZegoLogConfig {
   /// Log files count. Default is 3. Value range is [3, 20].
   int? logCount;
 
-  ZegoLogConfig(this.logPath, this.logSize, {this.logCount});
+  /// Local log level. Only valid for web. The higher the level, the fewer logs will be printed. Available values: 'debug' | 'info' | 'warn' | 'error' | 'report' | 'disable'
+  String? logLevel;
+
+  ZegoLogConfig(this.logPath, this.logSize, { this.logCount, this.logLevel });
 }
 
 /// Custom video capture configuration.
@@ -3044,6 +3074,22 @@ class ZegoMixerOutputVideoConfig {
       this.enableLowBitrateHD = false});
 }
 
+/// Room information for the output stream in a mixed stream.
+///
+/// Available since: 3.18.0
+/// Description: Setting room information for a single output stream; the mixed output stream can be added to the specified room, allowing users in the room to receive notifications of increased stream in the room.
+/// Use cases: Manual mixed stream scenario, such as Co-hosting.
+/// Restrictions: Dynamic updates during mixed stream are not supported.
+class ZegoMixerOutputRoomInfo {
+  /// Specifies the room ID of the output stream. You need to ensure that the room is already present when mixing starts.
+  String roomID;
+
+  /// Specifies the user ID of the output stream. It is not recommended to use the same userID as the actual user in the room to avoid conflicts with the SDK's stream addition behavior.
+  String userID;
+
+  ZegoMixerOutputRoomInfo(this.roomID, this.userID);
+}
+
 /// Font style.
 ///
 /// Description: Font style configuration, can be used to configure font type, font size, font color, font transparency.
@@ -3238,7 +3284,10 @@ class ZegoMixerOutput {
   /// Mix stream output video config. On web platforms, this property does not take effect.
   ZegoMixerOutputVideoConfig? videoConfig;
 
-  ZegoMixerOutput(this.target, {this.videoConfig});
+  /// Specifies the room information for the output stream.
+  ZegoMixerOutputRoomInfo? targetRoom;
+
+  ZegoMixerOutput(this.target, {this.videoConfig, this.targetRoom});
 }
 
 /// Watermark object.
@@ -4290,6 +4339,22 @@ class ZegoColorEnhancementParams {
       : intensity = 0,
         skinToneProtectionLevel = 1,
         lipColorProtectionLevel = 0;
+}
+
+/// Video denoise params.
+class ZegoVideoDenoiseParams {
+  /// Description: Video denoise mode. Default value: Off.
+  ZegoVideoDenoiseMode mode;
+
+  /// Description: Video denoise strength. Default value: Light.
+  ZegoVideoDenoiseStrength strength;
+
+  ZegoVideoDenoiseParams(this.mode, this.strength);
+
+  /// Constructs a video denoise params object by default.
+  ZegoVideoDenoiseParams.defaultParam()
+      : mode = ZegoVideoDenoiseMode.Off,
+        strength = ZegoVideoDenoiseStrength.Light;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {

@@ -64,6 +64,8 @@ class ZegoExpressImpl {
   // enablePlatformView
   static bool _enablePlatformView = false;
 
+  static int _androidVersionCode = 0;
+
   static bool shouldUsePlatformView() {
     bool use = ZegoExpressImpl._enablePlatformView;
     // Web only supports PlatformView
@@ -88,6 +90,28 @@ class ZegoExpressImpl {
       }
     }
 
+    /**
+     * https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
+     * https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
+     */
+    if (kIsAndroid && _androidVersionCode < 23) {
+      try {
+        String dartVersion = Platform.version.split(' ')[0];
+        int? major = int.tryParse(dartVersion.split('.')[0]);
+        int? minor = int.tryParse(dartVersion.split('.')[1]);
+        // Flutter v3.19.0 <==> Dart v3.3.0
+        if (major == null || minor == null) {
+          use = false;
+        } else if (major == 3 && minor >= 3) {
+          use = false;
+        } else if (major > 3) {
+          use = false;
+        }
+      } catch (e) {
+        use = false;
+      }
+    }
+
     return use;
   }
 
@@ -104,6 +128,10 @@ class ZegoExpressImpl {
     _registerEventHandler();
 
     _enablePlatformView = profile.enablePlatformView ?? false;
+
+    if (kIsAndroid) {
+      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+    }
 
     await _channel.invokeMethod('createEngineWithProfile', {
       'profile': {
@@ -126,6 +154,10 @@ class ZegoExpressImpl {
     _registerEventHandler();
 
     _enablePlatformView = enablePlatformView ?? false;
+
+    if (kIsAndroid) {
+      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+    }
 
     await _channel.invokeMethod('createEngine', {
       'appID': appID,
@@ -166,13 +198,14 @@ class ZegoExpressImpl {
   }
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
-    return await _channel.invokeMethod('setLogConfig', {
-      'config': {
-        'logPath': config.logPath,
-        'logSize': config.logSize,
-        'logCount': config.logCount ?? 3,
-      }
-    });
+      return await _channel.invokeMethod('setLogConfig', {
+        'config': {
+          'logPath': config.logPath,
+          'logSize': config.logSize,
+          'logCount': config.logCount ?? 3,
+          'logLevel': config.logLevel ?? "error",
+        }
+      });
   }
 
   static Future<void> setLocalProxyConfig(
@@ -715,6 +748,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setVideoDenoiseParams', {
+      'params': {'mode': params.mode.index, 'strength': params.strength.value},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<int> setVideoSource(ZegoVideoSourceType source,
       {int? instanceID, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoSource', {
@@ -1038,16 +1079,20 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null) {
+      if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': {
+          'videoConfig': output.videoConfig != null ? {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
             'encodeProfile': output.videoConfig!.encodeProfile.index,
             'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          }
+          } : {},
+          'targetRoom': output.targetRoom != null ? {
+            'roomID': output.targetRoom!.roomID,
+            'userID': output.targetRoom!.userID
+          } : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -1078,16 +1123,20 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null) {
+      if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': {
+          'videoConfig': output.videoConfig != null ? {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
             'encodeProfile': output.videoConfig!.encodeProfile.index,
             'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          }
+          } : {},
+          'targetRoom': output.targetRoom != null ? {
+            'roomID': output.targetRoom!.roomID,
+            'userID': output.targetRoom!.userID
+          } : {}
         });
       } else {
         outputList.add({'target': output.target});

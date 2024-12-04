@@ -71,6 +71,8 @@ class ZegoExpressEngineWeb {
           _evenController.add({'methodName': event, 'data': data});
         }));
         return createEngineWithProfile(call.arguments['profile']);
+      case 'setLogConfig':
+        return presetLogConfig(call.arguments['config']);
       case 'getVersion':
         return getVersion();
       case 'loginRoom':
@@ -299,6 +301,54 @@ class ZegoExpressEngineWeb {
         ZegoExpressEngine.onRoomStateUpdate!(
             data["roomID"],
             ZegoRoomState.values[state],
+            data['errorCode'],
+            Map<String, dynamic>.from(extendedData));
+        break;
+      case "onRoomStateChanged":
+        if (ZegoExpressEngine.onRoomStateChanged == null) return;
+
+        final data = jsonDecode(map["data"]);
+        var state, extendedData;
+
+        switch (data["reason"]) {
+          case "LOGINING":
+            state = 0;
+            break;
+          case "LOGINED":
+            state = 1;
+            break;
+          case "LOGIN_FAILED":
+            state = 2;
+            break;
+          case "RECONNECTING":
+            state = 3;
+            break;
+          case "RECONNECTED":
+            state = 4;
+            break;
+          case "RECONNECT_FAILED":
+            state = 5;
+            break;
+          case "KICKOUT":
+            state = 6;
+            break;
+          case "LOGOUT":
+            state = 7;
+            break;
+          case "LOGOUT_FAILED":
+            state = 8;
+            break;
+        }
+        // if (data['extendedData'] == null || data['extendedData'] == "") {
+        //   extendedData = {};
+        // } else {
+        //   extendedData = jsonDecode(map['extendedData']);
+        // }
+        extendedData = {};
+
+        ZegoExpressEngine.onRoomStateChanged!(
+            data["roomID"],
+            ZegoRoomStateChangedReason.values[state],
             data['errorCode'],
             Map<String, dynamic>.from(extendedData));
         break;
@@ -648,6 +698,12 @@ class ZegoExpressEngineWeb {
         Profile(appID: appID, server: server, scenario: profile['scenario']);
 
     ZegoFlutterEngine.createEngineWithProfile(engineProfile);
+  }
+
+  static Future<void> presetLogConfig(dynamic config) async {
+    final logLevel = config["logLevel"];
+    LogConfig logConfig = LogConfig(logLevel: logLevel);
+    ZegoFlutterEngine.presetLogConfig(logConfig);
   }
 
   Future<void> destroyEngine() {
