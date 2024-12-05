@@ -926,6 +926,19 @@ class ZegoExpressEngineWeb {
           }
         }
         break;
+      case "onMediaPlayerPlayingProgress":
+        if (ZegoExpressEngine.onMediaPlayerPlayingProgress == null) return;
+        final data = jsonDecode(map["data"]);
+        final index = data["mediaPlayer"];
+        if (index is int) {
+          final player = ZegoExpressImpl.mediaPlayerMap[index];
+          if (player != null) {
+            final millisecond = data["millisecond"];
+            ZegoExpressEngine.onMediaPlayerPlayingProgress!(
+                player, millisecond);
+          }
+        }
+        break;
       default:
         break;
     }
