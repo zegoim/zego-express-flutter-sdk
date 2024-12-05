@@ -831,11 +831,19 @@ class ZegoExpressEngineWeb {
         ZegoExpressEngine.onVideoDeviceStateChanged!(
             data['updateType'], data['deviceInfo']);
         break;
+      case 'onLocalDeviceExceptionOccurred':
+        if (ZegoExpressEngine.onLocalDeviceExceptionOccurred == null) return;
+        final data = jsonDecode(map["data"]);
+        final exceptionType =
+            ZegoDeviceExceptionType.values[data['exceptionType']];
+        final deviceType = ZegoDeviceType.values[data['deviceType']];
+        ZegoExpressEngine.onLocalDeviceExceptionOccurred!(
+            exceptionType, deviceType, data['deviceID']);
+        break;
       // onCapturedSoundLevelInfoUpdate
       // onRemoteSoundLevelInfoUpdate
       // onCapturedAudioSpectrumUpdate
       // onRemoteAudioSpectrumUpdate
-      // onLocalDeviceExceptionOccurred
       // onRemoteSpeakerStateUpdate
       // onAudioRouteChange
       // onAudioVADStateUpdate
