@@ -701,6 +701,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .setLowlightEnhancement(mode, channel: channel);
   }
 
+  /// Set video denoise params.
+  ///
+  /// Available since: 3.18.0
+  /// Description: Set video denoise parameters, including mode and strength.
+  /// Default value: Off.
+  /// When to call: After creating the engine [createEngine].
+  /// Platform differences: Only supports iPhone and Android.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [params] Video denoise params.
+  /// - [channel] Publish stream channel.
+  Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setVideoDenoiseParams(params, channel: channel);
+  }
+
   /// Set a video capture instance as video capture source for the specified channel.
   ///
   /// Available since: 3.1.0
