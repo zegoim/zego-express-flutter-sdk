@@ -2890,11 +2890,7 @@ class ZegoMediaSideInfo {
   /// timestamp
   int timestampNs;
 
-  /// SEI source module. Please contact ZEGO technical support.
-  int moduleType;
-
-  ZegoMediaSideInfo(
-      this.streamID, this.SEIData, this.timestampNs, this.moduleType);
+  ZegoMediaSideInfo(this.streamID, this.SEIData, this.timestampNs);
 }
 
 /// Device Info.
