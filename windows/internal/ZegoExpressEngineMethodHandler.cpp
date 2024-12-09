@@ -306,9 +306,9 @@ void ZegoExpressEngineMethodHandler::setDummyCaptureImagePath(ZFArgument argumen
 }
 
 void ZegoExpressEngineMethodHandler::setDummyCaptureImageParams(ZFArgument argument, ZFResult result) {
-    Express::ZegoDummyCaptureImageParams params;
+    EXPRESS::ZegoDummyCaptureImageParams params;
     auto paramsMap = zego_value_get_map(argument[ZFValue("params")]);
-    params.path = zego_value_get_string(paramsMap[ZFValue("path")];
+    params.path = zego_value_get_string(paramsMap[ZFValue("path")]);
     params.mode = (EXPRESS::ZegoDummyCaptureImageMode)zego_value_get_int(paramsMap[ZFValue("mode")]);
     const std::string flutterAssertTaget = "flutter-asset://";
     if (params.path.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
