@@ -4127,12 +4127,20 @@ class ZegoMediaPlayerResource {
   /// The resource ID obtained from the copyrighted music module.
   String? resourceID;
 
+  /// Online resource cache path, in utf8 encoding format.
+  String? onlineResourceCachePath;
+
+  /// The maximum length of online resource cache to be used, in bytes, with a minimum setting of 10M (10 * 1024 * 1024). The default value is 0 - no limit, and try to cache the entire file.
+  int? maxCachePendingLength;
+
   ZegoMediaPlayerResource(this.loadType,
       {this.startPosition,
       this.alphaLayout,
       this.filePath,
       this.memory,
-      this.resourceID});
+      this.resourceID,
+      this.onlineResourceCachePath,
+      this.maxCachePendingLength});
 
   /// Constructs a media player resource object by default.
   ZegoMediaPlayerResource.defaultConfig()
@@ -4141,7 +4149,9 @@ class ZegoMediaPlayerResource {
         alphaLayout = ZegoAlphaLayoutType.None,
         filePath = '',
         memory = Uint8List.fromList([]),
-        resourceID = '';
+        resourceID = '',
+        onlineResourceCachePath = '',
+        maxCachePendingLength = 0;
 }
 
 /// Background config.
