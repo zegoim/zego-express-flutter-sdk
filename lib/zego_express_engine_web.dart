@@ -49,19 +49,11 @@ class ZegoExpressEngineWeb {
       _eventListener(event);
     });
 
-    var musicEl = ScriptElement()
-      ..src = 'assets/packages/zego_express_engine/assets/copyrighted-music.js'
-      ..type = 'application/javascript';
-    document.body!.append(musicEl);
-    // var voiceChangerEl = ScriptElement()
-    //   ..src = 'assets/packages/zego_express_engine/assets/voice-changer.js'
+    // var element = ScriptElement()
+    //   ..src =
+    //       'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
     //   ..type = 'application/javascript';
-    // document.body!.append(voiceChangerEl);
-    var element = ScriptElement()
-      ..src =
-          'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
-      ..type = 'application/javascript';
-    document.body!.append(element);
+    // document.body!.append(element);
   }
 
   /// Handles method calls over the MethodChannel of this plugin.
