@@ -1,5 +1,13 @@
 # Change Log
 
+## 3.18.1
+
+### Bug Fixes
+
+1. Login performance optimization
+2. Fixed compatibility issues of experimental API with older versions
+3. Fixed abnormal low-probability states in the media player
+
 ## 3.18.0
 
 ### New Features
