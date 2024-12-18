@@ -1,5 +1,5 @@
 #include "include/zego_express_engine/ZegoCustomVideoCaptureManager.h"
-#include "ZegoLog.h"
+#include "internal/ZegoLog.h"
 #include <ZegoExpressSDK.h>
 
 static std::shared_ptr<ZegoCustomVideoCaptureManager> instance_ = nullptr;

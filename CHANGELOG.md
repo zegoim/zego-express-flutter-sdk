@@ -1,5 +1,106 @@
 # Change Log
 
+## 3.18.1
+
+### Bug Fixes
+
+1. Login performance optimization
+2. Fixed compatibility issues of experimental API with older versions
+3. Fixed abnormal low-probability states in the media player
+
+## 3.18.0
+
+### New Features
+
+1. **Added AI Echo Cancellation (AEC) Lightweight Mode - Real-time Voice + Ultra-Low Latency Live Streaming - All Platforms**
+
+   - Relevant APIs: `setAECMode`
+
+2. **Supports Video Noise Reduction Function - Ultra-Low Latency Live Streaming - iOS/Android/Flutter**
+
+   - Relevant APIs: `setVideoDenoiseParams`
+
+3. **Supports Returning Face Recognition Status from Camera Capture - Ultra-Low Latency Live Streaming - iOS/Android**
+
+   - Note: if use please connect Zego Technical Support
+
+4. **Supports Adding Mixed Stream Output to Target Room - Ultra-Low Latency Live Streaming - All Platforms**
+
+   - Relevant APIs: `startMixerTask` `targetRoom` param
+
+5. **Optimized Noise Reduction Effect in Low Light Enhancement Function - Ultra-Low Latency Live Streaming - iOS/Android/Mac/Windows**
+
+### Bug Fixes
+1. Fixed Issue Where Media Player Fails to Load URL Links with Spaces
+
+2. Fixed Issue Where iPad Cannot Connect to Bluetooth Headphones
+
+3. Fixed Issue Where MacOS Throws State Error After Disconnecting the Current Media Device
+
+4. Fixed Issue Where Media Player Crashes Occasionally When Local Cache Is Enabled
+
+## 3.17.1
+
+### Bug Fixes
+1. Fix the issue of crashing when custom video processing use SurfaceTexture video type.
+
+## 3.17.0
+
+### New Features
+
+1. **Support for Linux Platform in Flutter Framework**
+
+   - Supports Debian 10 or higher, Ubuntu 20.04 LTS, 22.04 LTS, 24.04 LTS.
+
+2. **Support for Alpha Data Layout on Top-Right of RGB Data in Media Player**
+
+   - When playing transparent effects, the media player now supports an enum `ZegoAlphaLayoutType > RightTop`, allowing the alpha data to be placed on the top-right of the RGB data. When using this enum, only a 0.5x scale ratio is supported.
+   
+   - Relevant APIs: `loadResourceWithConfig`, `ZegoStreamResourceMode > Custom`, `ZegoAlphaLayoutType > RightTop`.
+
+3. **Support for Custom Stream Resource Types Before and After Audience Join/Leave**
+
+   - Allows setting different stream resource types before and after an audience member joins or leaves the stage, providing more flexible stream handling. You can choose from RTC streaming, ultra-low latency live streaming (L3), or CDN streaming.
+   
+   - For example, in live streaming with audience interaction, the audience can use L3 streaming before joining the stage, switch to RTC streaming when interacting, and revert to L3 streaming after leaving the stage.
+   
+   - Relevant APIs: `startPlayingStream`, `ZegoPlayerConfig > customResourceConfig`.
+
+### Improvements & Optimizations
+
+1. **Removal of Default Screen Sharing Permissions in AndroidManifest.xml**
+
+   - Note: After version 3.17.0, if you implement screen sharing functionality without declaring the required permissions, you must now manually declare them to avoid compatibility issues. For any compatibility concerns in live applications, please contact ZEGO technical support.
+   
+   - To align with privacy regulations, the default screen sharing permission has been removed from the `AndroidManifest.xml`. Developers must manually declare permissions:
+     
+     - If the target Android SDK version is below 34.0.0, you need to declare the `FOREGROUND_SERVICE` permission.
+     - If the target Android SDK version is 34.0.0 or later, you must declare both `FOREGROUND_SERVICE` and `FOREGROUND_SERVICE_MEDIA_PROJECTION` permissions.
+   
+   - Refer to the **Screen Sharing** documentation for more details.
+
+2. **`userName` Field in `loginRoom` Now Optional**
+
+   - When calling the `loginRoom` API to enter a room, the `userName` field is now optional, previously it was a required field.
+   
+   - Relevant APIs: `loginRoom`.
+
+3. **Improved Stereo Voice Changing Effects and Enhanced Music Pitch Quality**
+
+   - Relevant APIs: `setVoiceChangerParam`.
+
+### Bug Fixes
+
+1. **Fixed Issue with Parsing H.265 Streams Containing Abnormal Cropping Regions**
+
+2. **Resolved a Crash in the Monitoring Module During Deinitialization, Which Caused the Main Thread to Hang**
+
+3. **Fixed a Crash That Might Occur When Starting Scoring for Copyrighted Music**
+
+4. **Adjusted Lifecycle and Fixed Known Crash Issues**
+
+5. **Fixed Known Issues in the Media Player**
+
 ## 3.16.2
 
 ### Bug Fixes

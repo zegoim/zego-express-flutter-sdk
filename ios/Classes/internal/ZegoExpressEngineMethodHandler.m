@@ -1057,10 +1057,12 @@
     if (config && config.count > 0) {
         NSString *url = config[@"url"];
         NSString *authParam = config[@"authParam"];
+        NSString *customParams = config[@"customParams"];
 
         cdnConfig = [[ZegoCDNConfig alloc] init];
         cdnConfig.url = url;
         cdnConfig.authParam = authParam;
+        cdnConfig.customParams = customParams;
         cdnConfig.protocol = config[@"protocol"];
         cdnConfig.quicVersion = config[@"quicVersion"];
         cdnConfig.quicConnectMode = [ZegoUtils intValue:config[@"quicConnectMode"]];
@@ -1215,6 +1217,19 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] setLowlightEnhancement:(ZegoLowlightEnhancementMode)mode channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+- (void)setVideoDenoiseParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoVideoDenoiseParams *p = [[ZegoVideoDenoiseParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    p.mode = [ZegoUtils intValue:paramsMap[@"mode"]];
+    p.strength = [ZegoUtils intValue:paramsMap[@"strength"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setVideoDenoiseParams:p channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
@@ -1396,6 +1411,7 @@
             ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
             cdnConfig.url = cdnConfigMap[@"url"];
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.customParams = cdnConfigMap[@"customParams"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
             cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
@@ -1408,6 +1424,16 @@
 
         playerConfig.adaptiveSwitch = [ZegoUtils intValue:playerConfigMap[@"adaptiveSwitch"]];
         playerConfig.adaptiveTemplateIDList = playerConfigMap[@"adaptiveTemplateIDList"];
+        
+        NSDictionary * customResourceConfigMap = playerConfigMap[@"customResourceConfig"];
+        if (customResourceConfigMap && customResourceConfigMap.count > 0) {
+            ZegoCustomPlayerResourceConfig *customResourceConfig = [[ZegoCustomPlayerResourceConfig alloc] init];
+            customResourceConfig.beforePublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"beforePublish"]];
+            customResourceConfig.publishing = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"publishing"]];
+            customResourceConfig.afterPublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"afterPublish"]];
+            
+            playerConfig.customResourceConfig = customResourceConfig;
+        }
     }
 
     // Handle ZegoCanvas
@@ -1509,6 +1535,7 @@
             ZegoCDNConfig *cdnConfig = [[ZegoCDNConfig alloc] init];
             cdnConfig.url = cdnConfigMap[@"url"];
             cdnConfig.authParam = cdnConfigMap[@"authParam"];
+            cdnConfig.customParams = cdnConfigMap[@"customParams"];
             cdnConfig.protocol = cdnConfigMap[@"protocol"];
             cdnConfig.quicVersion = cdnConfigMap[@"quicVersion"];
             cdnConfig.quicConnectMode = [ZegoUtils intValue:cdnConfigMap[@"quicConnectMode"]];
@@ -1517,6 +1544,16 @@
             cdnConfig.httpdns = (ZegoHttpDNSType)httpdnsIndex;
             
             playerConfig.cdnConfig = cdnConfig;
+        }
+        
+        NSDictionary * customResourceConfigMap = playerConfigMap[@"customResourceConfig"];
+        if (customResourceConfigMap && customResourceConfigMap.count > 0) {
+            ZegoCustomPlayerResourceConfig *customResourceConfig = [[ZegoCustomPlayerResourceConfig alloc] init];
+            customResourceConfig.beforePublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"beforePublish"]];
+            customResourceConfig.publishing = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"publishing"]];
+            customResourceConfig.afterPublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"afterPublish"]];
+            
+            playerConfig.customResourceConfig = customResourceConfig;
         }
     }
 
@@ -1904,17 +1941,29 @@
             
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 4) {
-                    codecID = 100;
+                if (videoConfigMap.count > 0) {
+                    int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                    if (codecID > 4) {
+                        codecID = 100;
+                    }
+                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                    int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                    int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                    bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
+                    ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+                    [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
+                    [outputObject setVideoConfig: videoConfig];
                 }
-                int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
-                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
-                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
-                ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
-                [outputObject setVideoConfig: videoConfig];
+            }
+            
+            if ([[outputMap allKeys] containsObject: @"targetRoom"]) {
+                NSDictionary *targetRoomMap = outputMap[@"targetRoom"];
+                if (targetRoomMap.count > 0) {
+                    NSString *roomID = targetRoomMap[@"roomID"];
+                    NSString *userID = targetRoomMap[@"userID"];
+                    ZegoMixerOutputRoomInfo *roomInfo = [[ZegoMixerOutputRoomInfo alloc] initWithRoomID:roomID userID:userID];
+                    [outputObject setTargetRoom: roomInfo];
+                }
             }
             [outputListObject addObject:outputObject];
         }
@@ -1981,6 +2030,9 @@
             whiteboard.verticalRatio = [ZegoUtils intValue:whiteboardMap[@"verticalRatio"]];
             whiteboard.isPPTAnimation = [ZegoUtils boolValue:whiteboardMap[@"isPPTAnimation"]];
             whiteboard.zOrder = [ZegoUtils intValue:whiteboardMap[@"zOrder"]];
+            if (whiteboardMap[@"backgroundColor"]) {
+                whiteboard.backgroundColor = [ZegoUtils intValue:whiteboardMap[@"backgroundColor"]];
+            }
             
             NSDictionary *layoutMap = whiteboardMap[@"layout"];
             if (layoutMap && layoutMap.count > 0) {
@@ -2083,17 +2135,29 @@
             
             if ([[outputMap allKeys] containsObject: @"videoConfig"]) {
                 NSDictionary *videoConfigMap = outputMap[@"videoConfig"];
-                int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
-                if (codecID > 4) {
-                    codecID = 100;
+                if (videoConfigMap.count > 0) {
+                    int codecID = [ZegoUtils intValue:videoConfigMap[@"videoCodecID"]];
+                    if (codecID > 4) {
+                        codecID = 100;
+                    }
+                    int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
+                    int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
+                    int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
+                    bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
+                    ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
+                    [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD:enableLowBitrateHD];
+                    [outputObject setVideoConfig: videoConfig];
                 }
-                int bitrate = [ZegoUtils intValue:videoConfigMap[@"bitrate"]];
-                int encodeLatency = [ZegoUtils intValue:videoConfigMap[@"encodeLatency"]];
-                int encodeProfile = [ZegoUtils intValue:videoConfigMap[@"encodeProfile"]];
-                bool enableLowBitrateHD = [ZegoUtils boolValue:videoConfigMap[@"enableLowBitrateHD"]];
-                ZegoMixerOutputVideoConfig *videoConfig = [[ZegoMixerOutputVideoConfig alloc] init];
-                [videoConfig configWithCodecID: (ZegoVideoCodecID)codecID bitrate: bitrate encodeProfile: (ZegoEncodeProfile)encodeProfile encodeLatency: encodeLatency enableLowBitrateHD: enableLowBitrateHD];
-                [outputObject setVideoConfig: videoConfig];
+            }
+            
+            if ([[outputMap allKeys] containsObject: @"targetRoom"]) {
+                NSDictionary *targetRoomMap = outputMap[@"targetRoom"];
+                if (targetRoomMap.count > 0) {
+                    NSString *roomID = targetRoomMap[@"roomID"];
+                    NSString *userID = targetRoomMap[@"userID"];
+                    ZegoMixerOutputRoomInfo *roomInfo = [[ZegoMixerOutputRoomInfo alloc] initWithRoomID:roomID userID:userID];
+                    [outputObject setTargetRoom: roomInfo];
+                }
             }
             [outputListObject addObject:outputObject];
         }
