@@ -778,9 +778,9 @@ class ZegoExpressEngineWeb {
         if (ZegoExpressEngine.onRemoteMicStateUpdate == null) return;
 
         final data = jsonDecode(map["data"]);
-        var state = 10;
-        if (data["state"] == 'OPEN') {
-          state = 0;
+        var state = data["state"];
+        if (state < 0 || state > 16) {
+          state = 10;
         }
         ZegoExpressEngine.onRemoteMicStateUpdate!(
             data['streamID'], ZegoRemoteDeviceState.values[state]);
@@ -788,9 +788,9 @@ class ZegoExpressEngineWeb {
       case "onRemoteCameraStateUpdate":
         if (ZegoExpressEngine.onRemoteCameraStateUpdate == null) return;
         final data = jsonDecode(map["data"]);
-        var state = 10;
-        if (data["state"] == 'OPEN') {
-          state = 0;
+        var state = data["state"];
+        if (state < 0 || state > 16) {
+          state = 10;
         }
         ZegoExpressEngine.onRemoteCameraStateUpdate!(
             data['streamID'], ZegoRemoteDeviceState.values[state]);
