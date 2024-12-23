@@ -780,6 +780,7 @@ public class ZegoExpressEngineEventHandler {
             map.put("streamID", info.streamID);
             map.put("SEIData", data);
             map.put("timestampNs", info.timestampNs);
+            map.put("moduleType", info.moduleType);
 
             mUIHandler.post(new Runnable() {
                 @Override

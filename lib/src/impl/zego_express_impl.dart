@@ -2779,7 +2779,7 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerRecvMediaSideInfo == null) return;
 
         ZegoExpressEngine.onPlayerRecvMediaSideInfo!(ZegoMediaSideInfo(
-            map['streamID'], map['SEIData'], map['timestampNs']));
+            map['streamID'], map['SEIData'], map['timestampNs'], map['moduleType']));
         break;
 
       case 'onPlayerRecvAudioSideInfo':
