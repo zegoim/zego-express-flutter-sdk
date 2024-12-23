@@ -105,7 +105,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
   /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
   /// When to call: After [createEngine].
-  /// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution and the bit rate after [startPreview].
+  /// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution, the bit rate and the frame rate after [startPreview].
   /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
@@ -408,7 +408,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Set audio capture stereo mode.
   ///
-  /// Available since: 1.15.0 (iOS/Android/Windows); support macOS since 2.16.0
+  /// Available since: 1.15.0 (iOS/Android/Windows/OHOS); support macOS since 2.16.0
   /// Description: This function is used to set the audio capture channel mode. When the developer turns on the stereo capture, using a special stereo capture device, the stereo audio data can be captured and streamed.
   /// Use cases: In some professional scenes, users are particularly sensitive to sound effects, such as voice radio and musical instrument performance. At this time, support for stereo and high-quality sound is required.
   /// Default value: The default is None, which means mono capture.
@@ -656,7 +656,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 3.0.0 and above
   /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
   /// When to call: After creating the engine.
-  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities. You need to call the [enableHardwareEncoder] function to enable hardware encoding, and then use this function to determine whether H.265 hardware encoding is supported.
+  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
   ///
   /// - [codecID] Video codec id. Required: Yes.
   /// - [codecBackend] Backend implementation of encoder. Required: Yes.
@@ -707,7 +707,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set video denoise parameters, including mode and strength.
   /// Default value: Off.
   /// When to call: After creating the engine [createEngine].
-  /// Platform differences: Only supports iPhone and Android.
+  /// Platform differences: Only supports iOS and Android.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [params] Video denoise params.
