@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.17.0";
+  static String pluginVersion = "3.18.1";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -198,13 +198,14 @@ class ZegoExpressImpl {
   }
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
-    return await _channel.invokeMethod('setLogConfig', {
-      'config': {
-        'logPath': config.logPath,
-        'logSize': config.logSize,
-        'logCount': config.logCount ?? 3,
-      }
-    });
+      return await _channel.invokeMethod('setLogConfig', {
+        'config': {
+          'logPath': config.logPath,
+          'logSize': config.logSize,
+          'logCount': config.logCount ?? 3,
+          'logLevel': config.logLevel ?? "error",
+        }
+      });
   }
 
   static Future<void> setLocalProxyConfig(
@@ -3983,6 +3984,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'alphaLayout':
             resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
         'memory': resource.memory ?? Uint8List.fromList([]),
+        'onlineResourceCachePath': resource.onlineResourceCachePath ?? '',
+        'maxCachePendingLength': resource.maxCachePendingLength ?? 0,
       }
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);

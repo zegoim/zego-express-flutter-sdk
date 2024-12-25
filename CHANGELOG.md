@@ -1,5 +1,49 @@
 # Change Log
 
+## 3.18.1
+
+### Bug Fixes
+
+1. Login performance optimization
+2. Fixed compatibility issues of experimental API with older versions
+3. Fixed abnormal low-probability states in the media player
+
+## 3.18.0
+
+### New Features
+
+1. **Added AI Echo Cancellation (AEC) Lightweight Mode - Real-time Voice + Ultra-Low Latency Live Streaming - All Platforms**
+
+   - Relevant APIs: `setAECMode`
+
+2. **Supports Video Noise Reduction Function - Ultra-Low Latency Live Streaming - iOS/Android/Flutter**
+
+   - Relevant APIs: `setVideoDenoiseParams`
+
+3. **Supports Returning Face Recognition Status from Camera Capture - Ultra-Low Latency Live Streaming - iOS/Android**
+
+   - Note: if use please connect Zego Technical Support
+
+4. **Supports Adding Mixed Stream Output to Target Room - Ultra-Low Latency Live Streaming - All Platforms**
+
+   - Relevant APIs: `startMixerTask` `targetRoom` param
+
+5. **Optimized Noise Reduction Effect in Low Light Enhancement Function - Ultra-Low Latency Live Streaming - iOS/Android/Mac/Windows**
+
+### Bug Fixes
+1. Fixed Issue Where Media Player Fails to Load URL Links with Spaces
+
+2. Fixed Issue Where iPad Cannot Connect to Bluetooth Headphones
+
+3. Fixed Issue Where MacOS Throws State Error After Disconnecting the Current Media Device
+
+4. Fixed Issue Where Media Player Crashes Occasionally When Local Cache Is Enabled
+
+## 3.17.1
+
+### Bug Fixes
+1. Fix the issue of crashing when custom video processing use SurfaceTexture video type.
+
 ## 3.17.0
 
 ### New Features

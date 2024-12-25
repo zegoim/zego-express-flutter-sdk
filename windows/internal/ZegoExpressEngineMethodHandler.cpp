@@ -2622,16 +2622,18 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithConfig(ZFArgumen
     if (mediaPlayer) {
         auto resourceMap = zego_value_get_map(argument[ZFValue("resource")]);
         EXPRESS::ZegoMediaPlayerResource resource;
-        resource.resourceID = zego_value_get_string(resourceMap[ZFValue("resourceID")]);
         resource.loadType =
             (EXPRESS::ZegoMultimediaLoadType)zego_value_get_int(resourceMap[ZFValue("loadType")]);
+        resource.startPosition = zego_value_get_long(resourceMap[ZFValue("startPosition")]);
         resource.alphaLayout =
             (EXPRESS::ZegoAlphaLayoutType)zego_value_get_int(resourceMap[ZFValue("alphaLayout")]);
-        resource.startPosition = zego_value_get_long(resourceMap[ZFValue("startPosition")]);
         resource.filePath = zego_value_get_string(resourceMap[ZFValue("filePath")]);
         auto memory = zego_value_get_vector_uint8(resourceMap[ZFValue("memory")]);
         resource.memory = memory.data();
         resource.memoryLength = memory.size();
+        resource.resourceID = zego_value_get_string(resourceMap[ZFValue("resourceID")]);
+        resource.onlineResourceCachePath = zego_value_get_string(resourceMap[ZFValue("onlineResourceCachePath")]);
+        resource.maxCachePendingLength = zego_value_get_long(resourceMap[ZFValue("maxCachePendingLength")]);
 
         auto sharedPtrResult = ZFMoveResult(result);
 
