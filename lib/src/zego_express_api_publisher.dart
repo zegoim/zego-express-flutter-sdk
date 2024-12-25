@@ -607,6 +607,35 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .setDummyCaptureImagePath(filePath, channel);
   }
 
+  /// Set the params of the static picture would be published when the camera is closed.
+  ///
+  /// Available: since 3.19.0
+  /// Description: Set the params of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
+  /// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
+  /// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
+  /// Restrictions:
+  ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
+  ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+  ///   3. Not supported that the filePath is a network link.
+  /// Caution:
+  ///   1. The static picture cannot be seen in the local preview.
+  ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
+  ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+  /// Platform differences:
+  ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
+  ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
+  ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+  ///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
+  ///   5. UniApp: Only absolute paths are supported. You need to add a "file:" prefix, such as: "file:/sdcard/image.png".
+  ///
+  /// - [params] Dummy capture image params.
+  /// - [channel] Publish channel.
+  Future<void> setDummyCaptureImageParams(
+      ZegoDummyCaptureImageParams params, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance
+        .setDummyCaptureImageParams(params, channel);
+  }
+
   /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
   ///
   /// Available since: 2.12.0

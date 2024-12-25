@@ -292,6 +292,14 @@ class ZegoExpressImpl {
         {'filePath': filePath, 'channel': channel.index});
   }
 
+  Future<void> setDummyCaptureImageParams(
+      ZegoDummyCaptureImageParams params, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('setDummyCaptureImageParams', {
+      'params': {'path': params.path, 'mode': params.mode.index},
+      'channel': channel.index
+    });
+  }
+
   /* Room */
 
   Future<ZegoRoomLoginResult> loginRoom(String roomID, ZegoUser user,

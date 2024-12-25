@@ -51,6 +51,7 @@ static const std::map<std::string,
         EngineMethodHandler(enableDebugAssistant),
         EngineMethodHandler(callExperimentalAPI),
         EngineMethodHandler(setDummyCaptureImagePath),
+        EngineMethodHandler(setDummyCaptureImageParams),
 
         EngineMethodHandler(loginRoom),
         EngineMethodHandler(logoutRoom),
