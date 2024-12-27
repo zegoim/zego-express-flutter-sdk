@@ -789,4 +789,16 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance
         .setCameraStabilizationMode(mode, channel: channel);
   }
+
+  /// Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+  ///
+  /// Available since: 3.18.0
+  /// Description: Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM to balance the volume of the human voice and the BGM.
+  /// When to call: Called after the engine is created [createEngine].
+  /// Restrictions: This interface will take effect only when the [EnableAux] interface of the media player is called to enable aux.
+  ///
+  /// - [enable] Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+  Future<void> enableAuxBgmBalance(bool enable) async {
+    return await ZegoExpressImpl.instance.enableAuxBgmBalance(enable);
+  }
 }
