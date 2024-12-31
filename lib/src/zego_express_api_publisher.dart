@@ -672,6 +672,23 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .setLowlightEnhancement(mode, channel: channel);
   }
 
+  /// Set low light enhancement params.
+  ///
+  /// Available since: 3.19.0
+  /// Description: According to the set low-light enhancement mode, the brightness of the image captured by the camera is enhanced, which is compatible with the beauty function. Users can watch the effect while previewing and toggle the low-light enhancement mode in real time.
+  /// Use cases: The environment on the streaming end is dark, or the frame rate set by the camera is high, which causes the picture to be dark, and the subject cannot be displayed or recognized normally.
+  /// When to call: After creating the engine [createEngine].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [params] Low light enhancement params.
+  /// - [channel] Publish stream channel.
+  Future<void> setLowlightEnhancementParams(
+      ZegoExpLowlightEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setLowlightEnhancementParams(params, channel: channel);
+  }
+
   /// Set video denoise params.
   ///
   /// Available since: 3.18.0

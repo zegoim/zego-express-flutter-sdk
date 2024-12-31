@@ -1391,6 +1391,20 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setLowlightEnhancementParams(MethodCall call, Result result) {
+        ZegoExpLowlightEnhancementParams p = new ZegoExpLowlightEnhancementParams();
+        HashMap<String, Object> paramsMap = call.argument("params");
+        p.mode = ZegoLowlightEnhancementMode.getZegoLowlightEnhancementMode(ZegoUtils.intValue((Number)paramsMap.get("mode")));
+        p.type = ZegoExpLowlightEnhancementType.getZegoExpLowlightEnhancementType(ZegoUtils.intValue((Number)paramsMap.get("type")));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setLowlightEnhancementParams(p, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setVideoDenoiseParams(MethodCall call, Result result) {
         ZegoVideoDenoiseParams p = new ZegoVideoDenoiseParams();
         HashMap<String, Object> paramsMap = call.argument("params");
