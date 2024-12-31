@@ -817,8 +817,8 @@ void ZegoExpressEngineMethodHandler::setLowlightEnhancementParams(ZFArgument arg
                                                                   ZFResult result) {
     EXPRESS::ZegoExpLowlightEnhancementParams p;
     auto params = zego_value_get_map(argument[ZFValue("params")]);
-    p.mode = zego_value_get_int(params[ZFValue("mode")]);
-    p.type = zego_value_get_int(params[ZFValue("type")]);
+    p.mode = (EXPRESS::ZegoLowlightEnhancementMode)zego_value_get_int(params[ZFValue("mode")]);
+    p.type = (EXPRESS::ZegoExpLowlightEnhancementType)zego_value_get_int(params[ZFValue("type")]);
 
     auto channel = zego_value_get_int(argument[ZFValue("channel")]);
 
