@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.16.0";
+  static String pluginVersion = "3.18.1";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -64,6 +64,8 @@ class ZegoExpressImpl {
   // enablePlatformView
   static bool _enablePlatformView = false;
 
+  static int _androidVersionCode = 0;
+
   static bool shouldUsePlatformView() {
     bool use = ZegoExpressImpl._enablePlatformView;
     // Web only supports PlatformView
@@ -71,6 +73,7 @@ class ZegoExpressImpl {
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
     use &= !kIsWindows;
+    use &= !kIsLinux;
 
     if (kIsMacOS) {
       try {
@@ -80,6 +83,28 @@ class ZegoExpressImpl {
         if (major == null || major < 3) {
           // PlatformView on macOS has a crash issue under flutter v3.10
           // Ref: https://github.com/flutter/flutter/issues/96668
+          use = false;
+        }
+      } catch (e) {
+        use = false;
+      }
+    }
+
+    /**
+     * https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
+     * https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
+     */
+    if (kIsAndroid && _androidVersionCode < 23) {
+      try {
+        String dartVersion = Platform.version.split(' ')[0];
+        int? major = int.tryParse(dartVersion.split('.')[0]);
+        int? minor = int.tryParse(dartVersion.split('.')[1]);
+        // Flutter v3.19.0 <==> Dart v3.3.0
+        if (major == null || minor == null) {
+          use = false;
+        } else if (major == 3 && minor >= 3) {
+          use = false;
+        } else if (major > 3) {
           use = false;
         }
       } catch (e) {
@@ -104,6 +129,10 @@ class ZegoExpressImpl {
 
     _enablePlatformView = profile.enablePlatformView ?? false;
 
+    if (kIsAndroid) {
+      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+    }
+
     await _channel.invokeMethod('createEngineWithProfile', {
       'profile': {
         'appID': profile.appID,
@@ -125,6 +154,10 @@ class ZegoExpressImpl {
     _registerEventHandler();
 
     _enablePlatformView = enablePlatformView ?? false;
+
+    if (kIsAndroid) {
+      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+    }
 
     await _channel.invokeMethod('createEngine', {
       'appID': appID,
@@ -165,13 +198,14 @@ class ZegoExpressImpl {
   }
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
-    return await _channel.invokeMethod('setLogConfig', {
-      'config': {
-        'logPath': config.logPath,
-        'logSize': config.logSize,
-        'logCount': config.logCount ?? 3,
-      }
-    });
+      return await _channel.invokeMethod('setLogConfig', {
+        'config': {
+          'logPath': config.logPath,
+          'logSize': config.logSize,
+          'logCount': config.logCount ?? 3,
+          'logLevel': config.logLevel ?? "error",
+        }
+      });
   }
 
   static Future<void> setLocalProxyConfig(
@@ -636,7 +670,8 @@ class ZegoExpressImpl {
               'protocol': config.protocol ?? '',
               'quicVersion': config.quicVersion ?? '',
               'httpdns': config.httpdns?.index ?? ZegoHttpDNSType.None.index,
-              'quicConnectMode': config.quicConnectMode ?? 0
+              'quicConnectMode': config.quicConnectMode ?? 0,
+              'customParams': config.customParams ?? ''
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -713,6 +748,14 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setVideoDenoiseParams', {
+      'params': {'mode': params.mode.index, 'strength': params.strength.value},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<int> setVideoSource(ZegoVideoSourceType source,
       {int? instanceID, ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoSource', {
@@ -775,6 +818,11 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> enableAuxBgmBalance(bool enable) async {
+    return await _channel
+        .invokeMethod('enableAuxBgmBalance', {'enable': enable});
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,
@@ -813,7 +861,8 @@ class ZegoExpressImpl {
                       'quicVersion': config.cdnConfig?.quicVersion ?? "",
                       'httpdns': config.cdnConfig?.httpdns?.index ??
                           ZegoHttpDNSType.None.index,
-                      'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
+                      'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0,
+                      'customParams': config.cdnConfig?.customParams ?? ""
                     }
                   : {},
               'roomID': config.roomID ?? '',
@@ -829,6 +878,16 @@ class ZegoExpressImpl {
                       ZegoStreamResourceType.Default.index,
               'adaptiveSwitch': config.adaptiveSwitch ?? 0,
               'adaptiveTemplateIDList': config.adaptiveTemplateIDList ?? [],
+              'customResourceConfig': config.customResourceConfig != null
+                  ? {
+                      'beforePublish':
+                          config.customResourceConfig?.beforePublish.index,
+                      'publishing':
+                          config.customResourceConfig?.publishing.index,
+                      'afterPublish':
+                          config.customResourceConfig?.afterPublish.index
+                    }
+                  : {},
             }
           : {}
     });
@@ -849,12 +908,21 @@ class ZegoExpressImpl {
                 'quicVersion': config.cdnConfig?.quicVersion ?? "",
                 'httpdns': config.cdnConfig?.httpdns?.index ??
                     ZegoHttpDNSType.None.index,
-                'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0
+                'quicConnectMode': config.cdnConfig?.quicConnectMode ?? 0,
+                'customParams': config.cdnConfig?.customParams ?? ""
               }
             : {},
         'roomID': config.roomID ?? '',
         'resourceSwitchMode': config.resourceSwitchMode?.index ??
             ZegoStreamResourceSwitchMode.Default.index,
+        'customResourceConfig': config.customResourceConfig != null
+            ? {
+                'beforePublish':
+                    config.customResourceConfig?.beforePublish.index,
+                'publishing': config.customResourceConfig?.publishing.index,
+                'afterPublish': config.customResourceConfig?.afterPublish.index
+              }
+            : {},
       }
     });
   }
@@ -1016,16 +1084,20 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null) {
+      if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': {
+          'videoConfig': output.videoConfig != null ? {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
             'encodeProfile': output.videoConfig!.encodeProfile.index,
             'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          }
+          } : {},
+          'targetRoom': output.targetRoom != null ? {
+            'roomID': output.targetRoom!.roomID,
+            'userID': output.targetRoom!.userID
+          } : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -1056,16 +1128,20 @@ class ZegoExpressImpl {
 
     List<Map<String, dynamic>> outputList = [];
     for (ZegoMixerOutput output in task.outputList) {
-      if (output.videoConfig != null) {
+      if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': {
+          'videoConfig': output.videoConfig != null ? {
             'videoCodecID': output.videoConfig!.videoCodecID.index,
             'bitrate': output.videoConfig!.bitrate,
             'encodeLatency': output.videoConfig!.encodeLatency,
             'encodeProfile': output.videoConfig!.encodeProfile.index,
             'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          }
+          } : {},
+          'targetRoom': output.targetRoom != null ? {
+            'roomID': output.targetRoom!.roomID,
+            'userID': output.targetRoom!.userID
+          } : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -3908,6 +3984,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'alphaLayout':
             resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
         'memory': resource.memory ?? Uint8List.fromList([]),
+        'onlineResourceCachePath': resource.onlineResourceCachePath ?? '',
+        'maxCachePendingLength': resource.maxCachePendingLength ?? 0,
       }
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
