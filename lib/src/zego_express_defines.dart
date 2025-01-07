@@ -413,22 +413,22 @@ enum ZegoVoiceChangerPreset {
   /// Minions effect
   Minions,
 
-  /// Sunshine effect, only support iOS
+  /// Sunshine effect
   Sunshine,
 
-  /// Gentle effect, only support iOS
+  /// Gentle effect
   Gentle,
 
-  /// Sweet effect, only support iOS
+  /// Sweet effect
   Sweet,
 
-  /// Sweet male effect, only support iOS
+  /// Sweet male effect
   SweetMale,
 
-  /// Sweet female effect, only support iOS
+  /// Sweet female effec
   SweetFemale,
 
-  /// Bright effect, only support iOS
+  /// Bright effect
   Bright,
 
   /// Autobot effect
@@ -654,7 +654,7 @@ enum ZegoAECMode {
   /// Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening.
   Soft,
 
-  /// AI mode AEC.
+  /// AI echo cancellation. Supports intelligent recognition and elimination of echo, with a significant improvement in vocal fidelity compared to traditional AEC algorithms, without additional delay or power consumption increase.
   AI
 }
 
@@ -1762,7 +1762,7 @@ enum ZegoVideoDenoiseMode {
   /// Turn on video denoise.
   On,
 
-  /// Automatic video denoise.
+  /// Automatic video noise reduction, where the SDK internally determines whether to enable noise reduction based on the level of noise in the captured footage.
   Auto
 }
 
@@ -2021,6 +2021,15 @@ enum ZegoDumpDataType {
   Audio
 }
 
+/// Dummy capture image mode.
+enum ZegoDummyCaptureImageMode {
+  /// Manual mode. The user needs to call the [EnableCamera] interface to turn off camera capture, and the SDK will use dummy capture image.
+  Manual,
+
+  /// Auto mode. After the SDK detects that the camera is unavailable, it uses dummy capture image to puublish the stream.
+  Auto
+}
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -2039,7 +2048,7 @@ class ZegoLogConfig {
   /// Local log level. Only valid for web. The higher the level, the fewer logs will be printed. Available values: 'debug' | 'info' | 'warn' | 'error' | 'report' | 'disable'
   String? logLevel;
 
-  ZegoLogConfig(this.logPath, this.logSize, { this.logCount, this.logLevel });
+  ZegoLogConfig(this.logPath, this.logSize, {this.logCount, this.logLevel});
 }
 
 /// Custom video capture configuration.
@@ -2197,7 +2206,7 @@ class ZegoVideoConfig {
   /// Encode resolution height, control the image height of the encoder when publishing stream. SDK requires this member to be set to an even number. The settings before and after publishing stream can be effective
   int encodeHeight;
 
-  /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
+  /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
   int fps;
 
   /// Bit rate in kbps. The settings before and after publishing stream can be effective. The SDK will automatically set the bit rate suitable for the scenario selected by the developer. If the bit rate manually set by the developer exceeds the reasonable range, the SDK will automatically process the bit rate according to the reasonable range. If you need to configure a high bit rate due to business needs, please contact ZEGO Business.
@@ -2881,7 +2890,11 @@ class ZegoMediaSideInfo {
   /// timestamp
   int timestampNs;
 
-  ZegoMediaSideInfo(this.streamID, this.SEIData, this.timestampNs);
+  /// SEI source module. Please contact ZEGO technical support.
+  int moduleType;
+
+  ZegoMediaSideInfo(
+      this.streamID, this.SEIData, this.timestampNs, this.moduleType);
 }
 
 /// Device Info.
@@ -3937,10 +3950,10 @@ class ZegoCopyrightedMusicRequestConfigV2 {
   /// the ID of the song.
   String songID;
 
-  /// VOD billing mode.
+  /// VOD billing mode. Refer to the value of [ZegoCopyrightedMusicBillingMode].
   int mode;
 
-  /// Copyright music resource song copyright provider.
+  /// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
   int? vendorID;
 
   /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicate in which room to order song/accompaniment/accompaniment clip/accompaniment segment.
@@ -3952,7 +3965,7 @@ class ZegoCopyrightedMusicRequestConfigV2 {
   /// The scene ID, indicate the actual business. For details, please consult ZEGO technical support.
   int? sceneID;
 
-  /// The resource type of music.
+  /// The resource type of music. Refer to the value of [ZegoCopyrightedMusicResourceType].
   int? resourceType;
 
   ZegoCopyrightedMusicRequestConfigV2(this.songID, this.mode,
@@ -3983,7 +3996,7 @@ class ZegoCopyrightedMusicGetSharedConfigV2 {
   /// the ID of the song.
   String songID;
 
-  /// Copyright music resource song copyright provider.
+  /// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
   int? vendorID;
 
   /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
@@ -4019,13 +4032,13 @@ class ZegoCopyrightedMusicQueryCacheConfigV2 {
   /// the ID of the song.
   String songID;
 
-  /// The resource type of music.
+  /// The resource type of music. Refer to the value of [ZegoCopyrightedMusicResourceType].
   int? resourceType;
 
-  /// The resource quality type of music.
+  /// The resource quality type of music. Refer to the value of [ZegoCopyrightedMusicResourceQualityType].
   int? resourceQualityType;
 
-  /// Copyright music resource song copyright provider.
+  /// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
   int? vendorID;
 
   ZegoCopyrightedMusicQueryCacheConfigV2(this.songID,
@@ -4365,6 +4378,22 @@ class ZegoVideoDenoiseParams {
   ZegoVideoDenoiseParams.defaultParam()
       : mode = ZegoVideoDenoiseMode.Off,
         strength = ZegoVideoDenoiseStrength.Light;
+}
+
+/// Dummy capture image params.
+class ZegoDummyCaptureImageParams {
+  /// Picture file path.
+  String path;
+
+  /// Dummy capture image mode.
+  ZegoDummyCaptureImageMode mode;
+
+  ZegoDummyCaptureImageParams(this.path, this.mode);
+
+  /// Constructs a dummy capture image params object by default.
+  ZegoDummyCaptureImageParams.defaultParam()
+      : path = '',
+        mode = ZegoDummyCaptureImageMode.Manual;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -4836,7 +4865,7 @@ abstract class ZegoMediaPlayer {
   ///
   /// Available since: 3.10.0
   /// Description: Configure the media stream type to be played. You can only play video streams or audio streams. This will take effect during the life cycle of the media player.
-  /// Use cases: When the network resource needs to set special header information.
+  /// Use cases: When only the video stream or audio stream needs to be played.
   /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
   /// Caution: Changing the media stream type during playing will take effect in the next playing.
   ///
@@ -5669,7 +5698,7 @@ abstract class ZegoCopyrightedMusic {
   /// Available since: 2.15.0
   /// Description: Get standard pitch data.
   /// Use case: Can be used to display standard pitch lines on the view.
-  /// Cation: Only accompaniment or climactic clip assets have pitch lines.
+  /// Caution: Only accompaniment or climactic clip assets have pitch lines.
   ///
   /// - [resourceID] the resource ID corresponding to the accompaniment or accompaniment clip.
   Future<ZegoCopyrightedMusicGetStandardPitchResult> getStandardPitch(

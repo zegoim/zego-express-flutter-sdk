@@ -423,6 +423,37 @@
     result(nil);
 }
 
+- (void)setDummyCaptureImageParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoDummyCaptureImageParams *params = [[ZegoDummyCaptureImageParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    params.path = paramsMap[@"path"];
+    params.mode = (ZegoDummyCaptureImageMode)[ZegoUtils intValue:paramsMap[@"mode"]];
+    NSString *flutterAssetPrefix = @"flutter-asset://";
+    if ([params.path hasPrefix:flutterAssetPrefix]) {
+        NSString *assetName = [params.path substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
+        NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+        NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+        NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+        NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
+        NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+        ZGLog(@"[setDummyCaptureImageParams] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", params.path, processedURL);
+        if (!assetRealPath) {
+            ZGLog(@"[setDummyCaptureImageParams] Can not get real path for flutter asset: '%@', please check if the asset is correctly declared in flutter project's pubspec.yaml", assetName);
+        } else {
+            params.path = processedURL;
+        }
+    }
+
+    ZegoPublishChannel channel = (ZegoPublishChannel)[ZegoUtils intValue:call.arguments[@"channel"]];
+    
+    [[ZegoExpressEngine sharedEngine] setDummyCaptureImageParams:params channel:channel];
+    
+    result(nil);
+}
+
 
 #pragma mark - Room
 

@@ -802,7 +802,8 @@
             @"method": @"onPlayerRecvMediaSideInfo",
             @"SEIData": [FlutterStandardTypedData typedDataWithBytes:info.SEIData],
             @"streamID": info.streamID,
-            @"timestampNs": @(info.timestampNs)
+            @"timestampNs": @(info.timestampNs),
+            @"moduleType": @(info.moduleType),
         });
     }
 }
