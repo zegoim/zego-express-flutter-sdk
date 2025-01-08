@@ -756,6 +756,15 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setLowlightEnhancementParams(
+      ZegoExpLowlightEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setLowlightEnhancementParams', {
+      'params': {'mode': params.mode.index, 'type': params.type.index},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoDenoiseParams', {

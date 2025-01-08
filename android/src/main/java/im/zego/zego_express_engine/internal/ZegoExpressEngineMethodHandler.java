@@ -98,6 +98,7 @@ import im.zego.zegoexpress.constants.ZegoDataRecordType;
 import im.zego.zegoexpress.constants.ZegoDummyCaptureImageMode;
 import im.zego.zegoexpress.constants.ZegoDumpDataType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
+import im.zego.zegoexpress.constants.ZegoExpLowlightEnhancementType;
 import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
@@ -186,6 +187,7 @@ import im.zego.zegoexpress.entity.ZegoDummyCaptureImageParams;
 import im.zego.zegoexpress.entity.ZegoDumpDataConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
+import im.zego.zegoexpress.entity.ZegoExpLowlightEnhancementParams;
 import im.zego.zegoexpress.entity.ZegoFontStyle;
 import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
@@ -1409,6 +1411,20 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setLowlightEnhancement(mode, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setLowlightEnhancementParams(MethodCall call, Result result) {
+        ZegoExpLowlightEnhancementParams p = new ZegoExpLowlightEnhancementParams();
+        HashMap<String, Object> paramsMap = call.argument("params");
+        p.mode = ZegoLowlightEnhancementMode.getZegoLowlightEnhancementMode(ZegoUtils.intValue((Number)paramsMap.get("mode")));
+        p.type = ZegoExpLowlightEnhancementType.getZegoExpLowlightEnhancementType(ZegoUtils.intValue((Number)paramsMap.get("type")));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setLowlightEnhancementParams(p, channel);
 
         result.success(null);
     }

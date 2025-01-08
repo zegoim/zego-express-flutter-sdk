@@ -836,6 +836,21 @@ void ZegoExpressEngineMethodHandler::setLowlightEnhancement(ZFArgument argument,
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setLowlightEnhancementParams(ZFArgument argument,
+                                                                  ZFResult result) {
+    EXPRESS::ZegoExpLowlightEnhancementParams p;
+    auto params = zego_value_get_map(argument[ZFValue("params")]);
+    p.mode = (EXPRESS::ZegoLowlightEnhancementMode)zego_value_get_int(params[ZFValue("mode")]);
+    p.type = (EXPRESS::ZegoExpLowlightEnhancementType)zego_value_get_int(params[ZFValue("type")]);
+
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setLowlightEnhancementParams(
+        p, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::setVideoSource(ZFArgument argument, ZFResult result) {
     auto source = zego_value_get_int(argument[ZFValue("source")]);
 

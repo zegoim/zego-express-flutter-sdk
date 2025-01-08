@@ -1754,6 +1754,15 @@ enum ZegoLowlightEnhancementMode {
   Auto
 }
 
+/// Low light enhanced type.
+enum ZegoExpLowlightEnhancementType {
+  /// Normal low light enhancement.
+  Normal,
+
+  /// AI low light enhancement. If you want to use this function, contact ZEGO technical support.
+  AI
+}
+
 /// Video denoise mode.
 enum ZegoVideoDenoiseMode {
   /// Turn off video denoise.
@@ -4394,6 +4403,22 @@ class ZegoDummyCaptureImageParams {
   ZegoDummyCaptureImageParams.defaultParam()
       : path = '',
         mode = ZegoDummyCaptureImageMode.Manual;
+}
+
+/// Low light enhancement params.
+class ZegoExpLowlightEnhancementParams {
+  /// Description: Low light enhancement mode. Default value: Off.
+  ZegoLowlightEnhancementMode mode;
+
+  /// Description: Low light enhancement type. Default value: Normal.
+  ZegoExpLowlightEnhancementType type;
+
+  ZegoExpLowlightEnhancementParams(this.mode, this.type);
+
+  /// Constructs a low light enhancement params object by default.
+  ZegoExpLowlightEnhancementParams.defaultParam()
+      : mode = ZegoLowlightEnhancementMode.Off,
+        type = ZegoExpLowlightEnhancementType.Normal;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {

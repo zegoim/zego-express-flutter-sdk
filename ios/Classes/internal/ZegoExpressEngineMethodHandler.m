@@ -1252,6 +1252,19 @@
     result(nil);
 }
 
+- (void)setLowlightEnhancementParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoExpLowlightEnhancementParams *p = [[ZegoExpLowlightEnhancementParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    p.mode = [ZegoUtils intValue:paramsMap[@"mode"]];
+    p.type = [ZegoUtils intValue:paramsMap[@"type"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setLowlightEnhancementParams:p channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)setVideoDenoiseParams:(FlutterMethodCall *)call result:(FlutterResult)result {
     ZegoVideoDenoiseParams *p = [[ZegoVideoDenoiseParams alloc] init];
     NSDictionary *paramsMap = call.arguments[@"params"];
