@@ -90,10 +90,8 @@ class ZegoExpressImpl {
       }
     }
 
-    /**
-     * https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
-     * https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
-     */
+    /// https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
+    /// https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
     if (kIsAndroid && _androidVersionCode < 23) {
       try {
         String dartVersion = Platform.version.split(' ')[0];
@@ -130,7 +128,8 @@ class ZegoExpressImpl {
     _enablePlatformView = profile.enablePlatformView ?? false;
 
     if (kIsAndroid) {
-      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+      _androidVersionCode =
+          await _channel.invokeMethod('getAndroidBuildVersionCode');
     }
 
     await _channel.invokeMethod('createEngineWithProfile', {
@@ -156,7 +155,8 @@ class ZegoExpressImpl {
     _enablePlatformView = enablePlatformView ?? false;
 
     if (kIsAndroid) {
-      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+      _androidVersionCode =
+          await _channel.invokeMethod('getAndroidBuildVersionCode');
     }
 
     await _channel.invokeMethod('createEngine', {
@@ -198,14 +198,14 @@ class ZegoExpressImpl {
   }
 
   static Future<void> setLogConfig(ZegoLogConfig config) async {
-      return await _channel.invokeMethod('setLogConfig', {
-        'config': {
-          'logPath': config.logPath,
-          'logSize': config.logSize,
-          'logCount': config.logCount ?? 3,
-          'logLevel': config.logLevel ?? "error",
-        }
-      });
+    return await _channel.invokeMethod('setLogConfig', {
+      'config': {
+        'logPath': config.logPath,
+        'logSize': config.logSize,
+        'logCount': config.logCount ?? 3,
+        'logLevel': config.logLevel ?? "error",
+      }
+    });
   }
 
   static Future<void> setLocalProxyConfig(
@@ -290,6 +290,14 @@ class ZegoExpressImpl {
       String filePath, ZegoPublishChannel channel) async {
     return await _channel.invokeMethod('setDummyCaptureImagePath',
         {'filePath': filePath, 'channel': channel.index});
+  }
+
+  Future<void> setDummyCaptureImageParams(
+      ZegoDummyCaptureImageParams params, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('setDummyCaptureImageParams', {
+      'params': {'path': params.path, 'mode': params.mode.index},
+      'channel': channel.index
+    });
   }
 
   /* Room */
@@ -1096,17 +1104,21 @@ class ZegoExpressImpl {
       if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': output.videoConfig != null ? {
-            'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate,
-            'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index,
-            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          } : {},
-          'targetRoom': output.targetRoom != null ? {
-            'roomID': output.targetRoom!.roomID,
-            'userID': output.targetRoom!.userID
-          } : {}
+          'videoConfig': output.videoConfig != null
+              ? {
+                  'videoCodecID': output.videoConfig!.videoCodecID.index,
+                  'bitrate': output.videoConfig!.bitrate,
+                  'encodeLatency': output.videoConfig!.encodeLatency,
+                  'encodeProfile': output.videoConfig!.encodeProfile.index,
+                  'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
+                }
+              : {},
+          'targetRoom': output.targetRoom != null
+              ? {
+                  'roomID': output.targetRoom!.roomID,
+                  'userID': output.targetRoom!.userID
+                }
+              : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -1140,17 +1152,21 @@ class ZegoExpressImpl {
       if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': output.videoConfig != null ? {
-            'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate,
-            'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index,
-            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          } : {},
-          'targetRoom': output.targetRoom != null ? {
-            'roomID': output.targetRoom!.roomID,
-            'userID': output.targetRoom!.userID
-          } : {}
+          'videoConfig': output.videoConfig != null
+              ? {
+                  'videoCodecID': output.videoConfig!.videoCodecID.index,
+                  'bitrate': output.videoConfig!.bitrate,
+                  'encodeLatency': output.videoConfig!.encodeLatency,
+                  'encodeProfile': output.videoConfig!.encodeProfile.index,
+                  'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
+                }
+              : {},
+          'targetRoom': output.targetRoom != null
+              ? {
+                  'roomID': output.targetRoom!.roomID,
+                  'userID': output.targetRoom!.userID
+                }
+              : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -2777,7 +2793,10 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerRecvMediaSideInfo == null) return;
 
         ZegoExpressEngine.onPlayerRecvMediaSideInfo!(ZegoMediaSideInfo(
-            map['streamID'], map['SEIData'], map['timestampNs']));
+            map['streamID'],
+            map['SEIData'],
+            map['timestampNs'],
+            map['moduleType']));
         break;
 
       case 'onPlayerRecvAudioSideInfo':

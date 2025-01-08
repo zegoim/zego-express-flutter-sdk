@@ -706,7 +706,9 @@ class ZegoExpressEngine {
   /// Description: After the [startPlayingStream] function is called successfully, the play resolution will change when the first frame of video data is received, or when the publisher changes the encoding resolution by calling [setVideoConfig], or when the network traffic control strategies work.
   /// Use cases: Developers can update or switch the UI components that actually play the stream based on the final resolution of the stream.
   /// Trigger: After the [startPlayingStream] function is called successfully, this callback is triggered when the video resolution changes while playing the stream.
-  /// Caution: If the stream is only audio data, the callback will not be triggered.
+  /// Caution:
+  ///  1. If the stream is only audio data, the callback will not be triggered.
+  ///  2. If the user enables custom video rendering of the ZegoVideoBufferTypeEncodedData type, the SDK is not responsible for video decoding and will not trigger this callback.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.

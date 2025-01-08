@@ -55,6 +55,7 @@ class ZegoExpressEngineMethodHandler {
     void enableDebugAssistant(ZFArgument argument, ZFResult result);
     void callExperimentalAPI(ZFArgument argument, ZFResult result);
     void setDummyCaptureImagePath(ZFArgument argument, ZFResult result);
+    void setDummyCaptureImageParams(ZFArgument argument, ZFResult result);
 
     void loginRoom(ZFArgument argument, ZFResult result);
     void logoutRoom(ZFArgument argument, ZFResult result);
