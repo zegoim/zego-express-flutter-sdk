@@ -49,11 +49,22 @@ class ZegoExpressEngineWeb {
       _eventListener(event);
     });
 
-    // var element = ScriptElement()
-    //   ..src =
-    //       'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
-    //   ..type = 'application/javascript';
-    // document.body!.append(element);
+    // 获取所有 <script> 标签
+    List<Element> scripts = document.querySelectorAll('script');
+    // 查找包含 'ZegoExpressWebFlutterWrapper' 的脚本
+    final zegoScript = scripts.firstWhere(
+      (script) =>
+          script.attributes['src']?.contains('ZegoExpressWebFlutterWrapper') ??
+          false,
+      orElse: () => Element.div(),
+    );
+    if (zegoScript.tagName.toLowerCase() == 'div') {
+      var element = ScriptElement()
+        ..src =
+            'assets/packages/zego_express_engine/assets/ZegoExpressWebFlutterWrapper.js'
+        ..type = 'application/javascript';
+      document.body!.append(element);
+    }
   }
 
   /// Handles method calls over the MethodChannel of this plugin.
