@@ -6017,6 +6017,15 @@
     config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
     config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
     config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+    
+    if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
+        NSDictionary *cropRectMap = configMap[@"cropRect"];
+        int x = [ZegoUtils intValue:cropRectMap[@"x"]];
+        int y = [ZegoUtils intValue:cropRectMap[@"y"]];
+        int width = [ZegoUtils intValue:cropRectMap[@"width"]];
+        int height = [ZegoUtils intValue:cropRectMap[@"height"]];
+        config.cropRect = CGRectMake(x, y, width, height);
+    }
 
     if (@available(iOS 12.0, *)) {
         [[ZegoExpressEngine sharedEngine] updateScreenCaptureConfig:config];
@@ -6055,6 +6064,15 @@
             config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
             config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
             config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+            
+            if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
+                NSDictionary *cropRectMap = configMap[@"cropRect"];
+                int x = [ZegoUtils intValue:cropRectMap[@"x"]];
+                int y = [ZegoUtils intValue:cropRectMap[@"y"]];
+                int width = [ZegoUtils intValue:cropRectMap[@"width"]];
+                int height = [ZegoUtils intValue:cropRectMap[@"height"]];
+                config.cropRect = CGRectMake(x, y, width, height);
+            }
         }
         
         if (inApp) {

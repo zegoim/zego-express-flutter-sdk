@@ -4858,6 +4858,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                   : {
                       'sampleRate': config.audioParam!.sampleRate.value,
                       'channel': config.audioParam!.channel.index
+                    },
+              'cropRect': config.cropRect == null
+                  ? null
+                  : {
+                      'x': config.cropRect!.left,
+                      'y': config.cropRect!.top,
+                      'width': config.cropRect!.width,
+                      'height': config.cropRect!.height,
                     }
             },
       'inApp': inApp,
@@ -4910,6 +4918,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
             : {
                 'sampleRate': config.audioParam!.sampleRate.value,
                 'channel': config.audioParam!.channel.index
+              },
+        'cropRect': config.cropRect == null
+            ? null
+            : {
+                'x': config.cropRect!.left,
+                'y': config.cropRect!.top,
+                'width': config.cropRect!.width,
+                'height': config.cropRect!.height,
               }
       },
       'index': _index

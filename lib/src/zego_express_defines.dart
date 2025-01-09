@@ -4071,8 +4071,14 @@ class ZegoScreenCaptureConfig {
   /// Set the audio capture parameters during screen capture. (only for Android)
   ZegoAudioFrameParam? audioParam;
 
+  /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data. (only for iOS/Android)
+  Rect? cropRect;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
-      {this.microphoneVolume, this.applicationVolume, this.audioParam});
+      {this.microphoneVolume,
+      this.applicationVolume,
+      this.audioParam,
+      this.cropRect});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4080,7 +4086,8 @@ class ZegoScreenCaptureConfig {
         microphoneVolume = 100,
         applicationVolume = 100,
         audioParam = ZegoAudioFrameParam(
-            ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo);
+            ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
+        cropRect = Rect.zero;
 }
 
 /// The screen captures source information.
