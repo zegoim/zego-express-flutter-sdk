@@ -305,6 +305,29 @@ void ZegoExpressEngineMethodHandler::setDummyCaptureImagePath(ZFArgument argumen
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setDummyCaptureImageParams(ZFArgument argument, ZFResult result) {
+    EXPRESS::ZegoDummyCaptureImageParams params;
+    auto paramsMap = zego_value_get_map(argument[ZFValue("params")]);
+    params.path = zego_value_get_string(paramsMap[ZFValue("path")]);
+    params.mode = (EXPRESS::ZegoDummyCaptureImageMode)zego_value_get_int(paramsMap[ZFValue("mode")]);
+    const std::string flutterAssertTaget = "flutter-asset://";
+    if (params.path.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+        params.path.replace(0, flutterAssertTaget.size(), "");
+        std::string flutterAssetsPath = GetFlutterAssetsPath();
+        if (!flutterAssetsPath.empty()) {
+            params.path = flutterAssetsPath + params.path;
+        } else {
+            result->Error("setDummyCaptureImageParams_get_exe_path_fail",
+                          "Failed to get the directory where the application is located");
+            return;
+        }
+    }
+
+    auto channel = (EXPRESS::ZegoPublishChannel)zego_value_get_int(argument[ZFValue("channel")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setDummyCaptureImageParams(params, channel);
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::loginRoom(ZFArgument argument, ZFResult result) {
     auto roomID = zego_value_get_string(argument[ZFValue("roomID")]);
     auto userMap = zego_value_get_map(argument[ZFValue("user")]);
@@ -809,6 +832,21 @@ void ZegoExpressEngineMethodHandler::setLowlightEnhancement(ZFArgument argument,
 
     EXPRESS::ZegoExpressSDK::getEngine()->setLowlightEnhancement(
         (EXPRESS::ZegoLowlightEnhancementMode)mode, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setLowlightEnhancementParams(ZFArgument argument,
+                                                                  ZFResult result) {
+    EXPRESS::ZegoExpLowlightEnhancementParams p;
+    auto params = zego_value_get_map(argument[ZFValue("params")]);
+    p.mode = (EXPRESS::ZegoLowlightEnhancementMode)zego_value_get_int(params[ZFValue("mode")]);
+    p.type = (EXPRESS::ZegoExpLowlightEnhancementType)zego_value_get_int(params[ZFValue("type")]);
+
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setLowlightEnhancementParams(
+        p, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success();
 }

@@ -557,6 +557,7 @@ void ZegoExpressEngineEventHandler::onPlayerRecvMediaSideInfo(
         retMap[ZFValue("method")] = ZFValue("onPlayerRecvMediaSideInfo");
         retMap[ZFValue("streamID")] = ZFValue(info.streamID);
         retMap[ZFValue("timestampNs")] = ZFValue(info.timestampNs);
+        retMap[ZFValue("moduleType")] = ZFValue(info.moduleType);
 
         auto nonConstData = const_cast<unsigned char *>(info.SEIData);
         std::vector<uint8_t> dataArray(nonConstData, nonConstData + info.SEIDataLength);
