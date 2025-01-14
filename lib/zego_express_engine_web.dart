@@ -955,12 +955,8 @@ class ZegoExpressEngineWeb {
     }
   }
 
-  static getPublishChannel(int? channel) {
-    if (channel != null) {
+  static getPublishChannel([int? channel = 0]) {
       return channel;
-    }
-
-    return 0;
   }
 
   static Future<void> createEngineWithProfile(dynamic profile) async {
