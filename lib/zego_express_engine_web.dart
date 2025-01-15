@@ -1586,10 +1586,14 @@ class ZegoExpressEngineWeb {
   Future<int> createMediaPlayer() async {
     var i = _index;
     var instance = await ZegoFlutterEngine.instance.createMediaPlayer(i);
-    var mediaPlayer = MediaPlayer();
-    mediaPlayer.instance = instance;
-    _mediaPlayers[i] = mediaPlayer;
-    _index++;
+    if(instance != null) {
+      var mediaPlayer = MediaPlayer();
+      mediaPlayer.instance = instance;
+      _mediaPlayers[i] = mediaPlayer;
+      _index++;
+    } else {
+      i = -1;
+    }
     return i;
   }
 
