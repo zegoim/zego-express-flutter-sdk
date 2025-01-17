@@ -1529,7 +1529,8 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> setEngineConfig(dynamic config) async {
-    return await ZegoFlutterEngine.setEngineConfig(config);
+    final engineConfig = dartObjToJSON(config);
+    return await ZegoFlutterEngine.setEngineConfig(engineConfig);
   }
 
   Future<Map<dynamic, dynamic>> setStreamExtraInfo(
