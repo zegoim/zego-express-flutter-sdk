@@ -956,7 +956,7 @@ class ZegoExpressEngineWeb {
   }
 
   static getPublishChannel([int? channel = 0]) {
-      return channel;
+    return channel;
   }
 
   static Future<void> createEngineWithProfile(dynamic profile) async {
@@ -1587,7 +1587,7 @@ class ZegoExpressEngineWeb {
   Future<int> createMediaPlayer() async {
     var i = _index;
     var instance = await ZegoFlutterEngine.instance.createMediaPlayer(i);
-    if(instance != null) {
+    if (instance != null) {
       var mediaPlayer = MediaPlayer();
       mediaPlayer.instance = instance;
       _mediaPlayers[i] = mediaPlayer;
@@ -1910,8 +1910,11 @@ class ZegoExpressEngineWeb {
 
   Future<Map<dynamic, dynamic>> copyrightedMusicSendExtendedRequest(
       String command, String params) async {
+    print('ffflutter sendExtendedRequest1 ${params}');
+    final paramsJS = parseJSON(params);
+    print('ffflutter sendExtendedRequest2 ${getProperty(paramsJS, 'keyword')} ');
     Object promise = ZegoFlutterEngine.copyMusic
-        ?.sendExtendedRequest(command, parseJSON(params));
+        ?.sendExtendedRequest(command, paramsJS);
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
     map['errorCode'] = getProperty(result, 'errorCode');
