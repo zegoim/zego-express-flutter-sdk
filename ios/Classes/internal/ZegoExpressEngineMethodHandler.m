@@ -423,6 +423,37 @@
     result(nil);
 }
 
+- (void)setDummyCaptureImageParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoDummyCaptureImageParams *params = [[ZegoDummyCaptureImageParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    params.path = paramsMap[@"path"];
+    params.mode = (ZegoDummyCaptureImageMode)[ZegoUtils intValue:paramsMap[@"mode"]];
+    NSString *flutterAssetPrefix = @"flutter-asset://";
+    if ([params.path hasPrefix:flutterAssetPrefix]) {
+        NSString *assetName = [params.path substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
+        NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+        NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+        NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+        NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
+        NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+        ZGLog(@"[setDummyCaptureImageParams] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", params.path, processedURL);
+        if (!assetRealPath) {
+            ZGLog(@"[setDummyCaptureImageParams] Can not get real path for flutter asset: '%@', please check if the asset is correctly declared in flutter project's pubspec.yaml", assetName);
+        } else {
+            params.path = processedURL;
+        }
+    }
+
+    ZegoPublishChannel channel = (ZegoPublishChannel)[ZegoUtils intValue:call.arguments[@"channel"]];
+    
+    [[ZegoExpressEngine sharedEngine] setDummyCaptureImageParams:params channel:channel];
+    
+    result(nil);
+}
+
 
 #pragma mark - Room
 
@@ -1221,6 +1252,19 @@
     result(nil);
 }
 
+- (void)setLowlightEnhancementParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoExpLowlightEnhancementParams *p = [[ZegoExpLowlightEnhancementParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    p.mode = [ZegoUtils intValue:paramsMap[@"mode"]];
+    p.type = [ZegoUtils intValue:paramsMap[@"type"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setLowlightEnhancementParams:p channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)setVideoDenoiseParams:(FlutterMethodCall *)call result:(FlutterResult)result {
     ZegoVideoDenoiseParams *p = [[ZegoVideoDenoiseParams alloc] init];
     NSDictionary *paramsMap = call.arguments[@"params"];
@@ -1377,6 +1421,14 @@
     result(nil);
 }
 
+- (void)enableAuxBgmBalance:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableAuxBgmBalance:enable];
+
+    result(nil);
+}
 
 #pragma mark - Player
 
@@ -2346,6 +2398,14 @@
     result(@(muted));
 }
 
+- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
+
+    result(nil);
+}
+
 #if TARGET_OS_OSX
 
 - (void)getAudioDeviceList:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2478,14 +2538,6 @@
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
     [[ZegoExpressEngine sharedEngine] setMixSystemPlayoutVolume:volume];
-
-    result(nil);
-}
-
-- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
 
     result(nil);
 }
@@ -4019,15 +4071,19 @@
 
         NSDictionary *resourceMap = call.arguments[@"resource"];
         ZegoMediaPlayerResource *resource = [[ZegoMediaPlayerResource alloc] init];
-        resource.resourceID =  resourceMap[@"resourceID"];
-        resource.startPosition = [ZegoUtils longLongValue:resourceMap[@"startPosition"]];
         resource.loadType = (ZegoMultimediaLoadType)[ZegoUtils intValue:resourceMap[@"loadType"]];
+        resource.startPosition = [ZegoUtils longLongValue:resourceMap[@"startPosition"]];
         resource.alphaLayout = (ZegoAlphaLayoutType)[ZegoUtils intValue:resourceMap[@"alphaLayout"]];
         resource.filePath =  resourceMap[@"filePath"];
         
         FlutterStandardTypedData *memory = resourceMap[@"memory"];
         resource.memory = memory.data;
         resource.memoryLength = (int)memory.data.length;
+
+        resource.resourceID =  resourceMap[@"resourceID"];
+
+        resource.onlineResourceCachePath = resourceMap[@"onlineResourceCachePath"];
+        resource.maxCachePendingLength = [ZegoUtils longLongValue:resourceMap[@"maxCachePendingLength"]];
 
         [mediaPlayer loadResourceWithConfig:resource callback:^(int errorCode) {
             result(@{
@@ -5961,6 +6017,15 @@
     config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
     config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
     config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+    
+    if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
+        NSDictionary *cropRectMap = configMap[@"cropRect"];
+        int x = [ZegoUtils intValue:cropRectMap[@"x"]];
+        int y = [ZegoUtils intValue:cropRectMap[@"y"]];
+        int width = [ZegoUtils intValue:cropRectMap[@"width"]];
+        int height = [ZegoUtils intValue:cropRectMap[@"height"]];
+        config.cropRect = CGRectMake(x, y, width, height);
+    }
 
     if (@available(iOS 12.0, *)) {
         [[ZegoExpressEngine sharedEngine] updateScreenCaptureConfig:config];
@@ -5999,6 +6064,15 @@
             config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
             config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
             config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+            
+            if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
+                NSDictionary *cropRectMap = configMap[@"cropRect"];
+                int x = [ZegoUtils intValue:cropRectMap[@"x"]];
+                int y = [ZegoUtils intValue:cropRectMap[@"y"]];
+                int width = [ZegoUtils intValue:cropRectMap[@"width"]];
+                int height = [ZegoUtils intValue:cropRectMap[@"height"]];
+                config.cropRect = CGRectMake(x, y, width, height);
+            }
         }
         
         if (inApp) {

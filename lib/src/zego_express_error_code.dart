@@ -1045,7 +1045,7 @@ class ZegoErrorCode {
   /// Description: Get lyric fail. <br>Cause: Lyrics not found. <br>Solutions: Please try again later.
   static const int CopyrightedMusicGetLyricFail = 1017048;
 
-  /// Description: Get pitch fail. <br>Cause: Pitch not found. <br>Solutions: Please try again later.
+  /// Description: Get pitch fail. <br>Cause: Pitch not found. <br>Solutions: Please select correct song.
   static const int CopyrightedMusicGetPitchFail = 1017049;
 
   /// Description: This resource is not shared in the room. <br>Cause: No users in the room share this resource. <br>Solutions: Please any one user in the room to call the [requestresource] function to request resources and share them.

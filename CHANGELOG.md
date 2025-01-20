@@ -1,5 +1,41 @@
 # Change Log
 
+## 3.19.0
+
+### New Features
+
+1. **Support AI Low Light Enhancement Function - Ultra-Low Latency Live Streaming - All Platforms**
+
+    - Relevate APIs: `setLowlightEnhancementParams`
+
+2. **Support Screen Sharing In Designated Areas - Ultra-Low Latency Live Streaming - All Platforms**
+
+    - Relevate APIs: `ZegoScreenCaptureConfig`
+
+3. **Support Use Dummy Capture Image in auto Mode - Ultra-Low Latency Live Streaming - All Platforms**
+
+    - Relevate APIs: `setDummyCaptureImagePath`
+    
+4. **Support Automatic Noise Suppression(ANS) AI Aggressive Mode - Ultra-Low Latency Live Streaming - All Platforms**
+
+    - Relevate APIs: `ZegoANSMode`
+    
+5. **Support Dynamic Equalization Function of Vocal Accompaniment Volume - Ultra-Low Latency Live Streaming - All Platforms**
+
+   - Relevate APIs: `enableAuxBgmBalance`
+   
+6. **Support MediaPlayer Downloading，Caching And Playing At The Same Time - Ultra-Low Latency Live Streaming - All Platforms**
+
+   - Relevate APIs: `ZegoMediaPlayerResource`
+
+### Bug Fixes
+
+1. Fixed Issue Where Repeatedly Starting And Stopping The Camera Causing a Deadlock.
+
+2. Fixed Issue Where MediaPlayer Load Resource Failed Problem.
+
+3. Fixed the crash problem caused by exiting the background and killing the app during camera acquisition.
+
 ## 3.18.1
 
 ### Bug Fixes
