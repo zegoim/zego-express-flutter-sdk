@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.18.1";
+  static String pluginVersion = "3.19.0";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -756,6 +756,15 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setLowlightEnhancementParams(
+      ZegoExpLowlightEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setLowlightEnhancementParams', {
+      'params': {'mode': params.mode.index, 'type': params.type.index},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoDenoiseParams', {
@@ -824,6 +833,11 @@ class ZegoExpressImpl {
       'mode': mode,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
+  }
+
+  Future<void> enableAuxBgmBalance(bool enable) async {
+    return await _channel
+        .invokeMethod('enableAuxBgmBalance', {'enable': enable});
   }
 
   /* Player */
@@ -4844,6 +4858,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                   : {
                       'sampleRate': config.audioParam!.sampleRate.value,
                       'channel': config.audioParam!.channel.index
+                    },
+              'cropRect': config.cropRect == null
+                  ? null
+                  : {
+                      'x': config.cropRect!.left,
+                      'y': config.cropRect!.top,
+                      'width': config.cropRect!.width,
+                      'height': config.cropRect!.height,
                     }
             },
       'inApp': inApp,
@@ -4896,6 +4918,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
             : {
                 'sampleRate': config.audioParam!.sampleRate.value,
                 'channel': config.audioParam!.channel.index
+              },
+        'cropRect': config.cropRect == null
+            ? null
+            : {
+                'x': config.cropRect!.left,
+                'y': config.cropRect!.top,
+                'width': config.cropRect!.width,
+                'height': config.cropRect!.height,
               }
       },
       'index': _index

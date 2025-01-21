@@ -167,10 +167,12 @@ class ZegoExpressEngineMethodHandler {
     void enableH265EncodeFallback(ZFArgument argument, ZFResult result);
     void isVideoEncoderSupported(ZFArgument argument, ZFResult result);
     void setLowlightEnhancement(ZFArgument argument, ZFResult result);
+    void setLowlightEnhancementParams(ZFArgument argument, ZFResult result);
     void setVideoSource(ZFArgument argument, ZFResult result);
     void setAudioSource(ZFArgument argument, ZFResult result);
     void enableVideoObjectSegmentation(ZFArgument argument, ZFResult result);
     void enableAlphaChannelVideoEncoder(ZFArgument argument, ZFResult result);
+    void enableAuxBgmBalance(ZFArgument argument, ZFResult result);
 
     void startPlayingStream(ZFArgument argument, ZFResult result);
     void switchPlayingStream(ZFArgument argument, ZFResult result);
