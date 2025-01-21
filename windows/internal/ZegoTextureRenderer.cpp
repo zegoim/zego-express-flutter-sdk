@@ -56,7 +56,7 @@ bool ZegoTextureRenderer::updateSrcFrameBuffer(uint8_t *data, uint32_t data_leng
             return false;
         }
 
-        if (srcBuffer_.size() != data_length) {
+        if (srcBuffer_.size() < data_length) {
             // Update source buffer size.
             srcBuffer_.resize(data_length);
         }

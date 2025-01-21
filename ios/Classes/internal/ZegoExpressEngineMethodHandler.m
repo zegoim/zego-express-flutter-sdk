@@ -1252,6 +1252,19 @@
     result(nil);
 }
 
+- (void)setLowlightEnhancementParams:(FlutterMethodCall *)call result:(FlutterResult)result {
+    ZegoExpLowlightEnhancementParams *p = [[ZegoExpLowlightEnhancementParams alloc] init];
+    NSDictionary *paramsMap = call.arguments[@"params"];
+    p.mode = [ZegoUtils intValue:paramsMap[@"mode"]];
+    p.type = [ZegoUtils intValue:paramsMap[@"type"]];
+
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] setLowlightEnhancementParams:p channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 - (void)setVideoDenoiseParams:(FlutterMethodCall *)call result:(FlutterResult)result {
     ZegoVideoDenoiseParams *p = [[ZegoVideoDenoiseParams alloc] init];
     NSDictionary *paramsMap = call.arguments[@"params"];
@@ -1408,6 +1421,14 @@
     result(nil);
 }
 
+- (void)enableAuxBgmBalance:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+
+    [[ZegoExpressEngine sharedEngine] enableAuxBgmBalance:enable];
+
+    result(nil);
+}
 
 #pragma mark - Player
 
@@ -2377,6 +2398,14 @@
     result(@(muted));
 }
 
+- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
+
+    result(nil);
+}
+
 #if TARGET_OS_OSX
 
 - (void)getAudioDeviceList:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2509,14 +2538,6 @@
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
     [[ZegoExpressEngine sharedEngine] setMixSystemPlayoutVolume:volume];
-
-    result(nil);
-}
-
-- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
 
     result(nil);
 }
@@ -5996,6 +6017,15 @@
     config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
     config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
     config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+    
+    if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
+        NSDictionary *cropRectMap = configMap[@"cropRect"];
+        int x = [ZegoUtils intValue:cropRectMap[@"x"]];
+        int y = [ZegoUtils intValue:cropRectMap[@"y"]];
+        int width = [ZegoUtils intValue:cropRectMap[@"width"]];
+        int height = [ZegoUtils intValue:cropRectMap[@"height"]];
+        config.cropRect = CGRectMake(x, y, width, height);
+    }
 
     if (@available(iOS 12.0, *)) {
         [[ZegoExpressEngine sharedEngine] updateScreenCaptureConfig:config];
@@ -6034,6 +6064,15 @@
             config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
             config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
             config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+            
+            if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
+                NSDictionary *cropRectMap = configMap[@"cropRect"];
+                int x = [ZegoUtils intValue:cropRectMap[@"x"]];
+                int y = [ZegoUtils intValue:cropRectMap[@"y"]];
+                int width = [ZegoUtils intValue:cropRectMap[@"width"]];
+                int height = [ZegoUtils intValue:cropRectMap[@"height"]];
+                config.cropRect = CGRectMake(x, y, width, height);
+            }
         }
         
         if (inApp) {

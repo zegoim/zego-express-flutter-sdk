@@ -1763,6 +1763,15 @@ enum ZegoLowlightEnhancementMode {
   Auto
 }
 
+/// Low light enhanced type.
+enum ZegoExpLowlightEnhancementType {
+  /// Normal low light enhancement.
+  Normal,
+
+  /// AI low light enhancement. If you want to use this function, contact ZEGO technical support.
+  AI
+}
+
 /// Video denoise mode.
 enum ZegoVideoDenoiseMode {
   /// Turn off video denoise.
@@ -4071,8 +4080,14 @@ class ZegoScreenCaptureConfig {
   /// Set the audio capture parameters during screen capture. (only for Android)
   ZegoAudioFrameParam? audioParam;
 
+  /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data. (only for iOS/Android)
+  Rect? cropRect;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
-      {this.microphoneVolume, this.applicationVolume, this.audioParam});
+      {this.microphoneVolume,
+      this.applicationVolume,
+      this.audioParam,
+      this.cropRect});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4080,7 +4095,8 @@ class ZegoScreenCaptureConfig {
         microphoneVolume = 100,
         applicationVolume = 100,
         audioParam = ZegoAudioFrameParam(
-            ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo);
+            ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
+        cropRect = Rect.zero;
 }
 
 /// The screen captures source information.
@@ -4403,6 +4419,22 @@ class ZegoDummyCaptureImageParams {
   ZegoDummyCaptureImageParams.defaultParam()
       : path = '',
         mode = ZegoDummyCaptureImageMode.Manual;
+}
+
+/// Low light enhancement params.
+class ZegoExpLowlightEnhancementParams {
+  /// Description: Low light enhancement mode. Default value: Off.
+  ZegoLowlightEnhancementMode mode;
+
+  /// Description: Low light enhancement type. Default value: Normal.
+  ZegoExpLowlightEnhancementType type;
+
+  ZegoExpLowlightEnhancementParams(this.mode, this.type);
+
+  /// Constructs a low light enhancement params object by default.
+  ZegoExpLowlightEnhancementParams.defaultParam()
+      : mode = ZegoLowlightEnhancementMode.Off,
+        type = ZegoExpLowlightEnhancementType.Normal;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
