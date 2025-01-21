@@ -2588,6 +2588,15 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void enableMixEnginePlayout(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoExpressEngine.getEngine().enableMixEnginePlayout(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setAudioDeviceMode(MethodCall call, Result result) {
 
         ZegoAudioDeviceMode deviceMode = ZegoAudioDeviceMode.getZegoAudioDeviceMode( ZegoUtils.intValue((Number) call.argument("deviceMode")));
