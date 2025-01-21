@@ -685,7 +685,10 @@ enum ZegoANSMode {
   AIBalanced,
 
   /// Low latency AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-  AILowLatency
+  AILowLatency,
+
+  /// Aggressive AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+  AIAggressive
 }
 
 /// video encode profile.
@@ -4080,7 +4083,7 @@ class ZegoScreenCaptureConfig {
   /// Set the audio capture parameters during screen capture. (only for Android)
   ZegoAudioFrameParam? audioParam;
 
-  /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data. (only for iOS/Android)
+  /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
   Rect? cropRect;
 
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
