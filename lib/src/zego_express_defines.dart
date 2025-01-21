@@ -483,7 +483,16 @@ enum ZegoReverbPreset {
   EnhancedRock,
 
   /// Enhanced misty reverb effect
-  EnhancedMisty
+  EnhancedMisty,
+
+  /// Hip Hop reverb effect
+  HipHop,
+
+  /// Misty reverb effect
+  Misty,
+
+  /// 3D voice reverb effect
+  ThreeDimensionalVoice
 }
 
 /// Mode of Electronic Effects.

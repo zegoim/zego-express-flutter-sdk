@@ -2398,6 +2398,14 @@
     result(@(muted));
 }
 
+- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
+
+    result(nil);
+}
+
 #if TARGET_OS_OSX
 
 - (void)getAudioDeviceList:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -2530,14 +2538,6 @@
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
     [[ZegoExpressEngine sharedEngine] setMixSystemPlayoutVolume:volume];
-
-    result(nil);
-}
-
-- (void)enableMixEnginePlayout:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
-    [[ZegoExpressEngine sharedEngine] enableMixEnginePlayout:enable];
 
     result(nil);
 }
