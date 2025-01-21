@@ -90,7 +90,7 @@ class ZegoFlutterEngine {
       String streamID, String targetURL, dynamic success, dynamic fail);
   // enablePublishDirectToCDN
   // external setPublishWatermark
-  external setSEIConfig(int config);
+  external setSEIConfig(int type);
   external sendSEI(dynamic data, int dataLength, int channel);
   // sendAudioSideInfo
   external enableHardwareEncoder(bool enable);
