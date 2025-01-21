@@ -839,7 +839,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
   ///
   /// Available since: 3.18.0
-  /// Description: Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM to balance the volume of the human voice and the BGM.
+  /// Description: Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM to balance the volume of the human voice and the BGM. Default is off.
   /// When to call: Called after the engine is created [createEngine].
   /// Restrictions: This interface will take effect only when the [EnableAux] interface of the media player is called to enable aux.
   ///
