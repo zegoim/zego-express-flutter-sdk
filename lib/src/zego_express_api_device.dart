@@ -273,10 +273,13 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Whether to turn on the camera, `true`: turn on camera, `false`: turn off camera
+  /// - [notifyMode] Mode for notifying the local device status.
   /// - [channel] Publishing stream channel
-  Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
+  Future<void> enableCamera(bool enable,
+      {ZegoExpNotifyDeviceStateMode? notifyMode,
+      ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
-        .enableCamera(enable, channel: channel);
+        .enableCamera(enable, notifyMode: notifyMode, channel: channel);
   }
 
   /// Switches to the front or the rear camera (for the specified channel).

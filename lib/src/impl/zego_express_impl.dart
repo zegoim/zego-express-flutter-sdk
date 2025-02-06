@@ -1336,9 +1336,13 @@ class ZegoExpressImpl {
     return ZegoAudioRoute.values[typeIdx];
   }
 
-  Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
+  Future<void> enableCamera(bool enable,
+      {ZegoExpNotifyDeviceStateMode? notifyMode,
+      ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('enableCamera', {
       'enable': enable,
+      'notifyMode':
+          notifyMode?.index ?? ZegoExpNotifyDeviceStateMode.Open.index,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
