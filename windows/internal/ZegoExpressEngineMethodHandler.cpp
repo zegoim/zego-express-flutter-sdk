@@ -5557,6 +5557,23 @@ void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(ZFA
 #endif
 }
 
+void ZegoExpressEngineMethodHandler::enableHightLightScreenCaptureSource(ZFArgument argument,
+                                                                       ZFResult result) {
+#ifdef _WIN32
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+        screenCaptureSource->enableHightLight(enable);
+    }
+
+    result->Success();
+#else
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
+}
+
 void ZegoExpressEngineMethodHandler::setExcludeWindowListScreenCaptureSource(ZFArgument argument,
                                                                              ZFResult result) {
 #ifdef _WIN32

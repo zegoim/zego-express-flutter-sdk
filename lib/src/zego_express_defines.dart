@@ -5924,6 +5924,16 @@ abstract class ZegoScreenCaptureSource {
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
 
+  /// Set whether to highlight the capture area
+  ///
+  /// Available since: 3.20.0
+  /// Description: Set whether to highlight the capture area.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [enable] Whether to highlight the capture area. true to highlight, false to not highlight, the default is false.
+  Future<void> enableHightLight(bool enable);
+
   /// Whether to collect the sound of the window process during window collection
   ///
   /// Available since: 3.13.0

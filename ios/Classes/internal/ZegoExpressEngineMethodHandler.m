@@ -5927,6 +5927,18 @@
     result(nil);
 }
 
+- (void)enableHightLightScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+
+    if (screenCaptureSource) {
+        BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+        [screenCaptureSource enableHightLight:enable];
+    }
+
+    result(nil);
+}
+
 - (void)enableWindowActivateScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSNumber *index = call.arguments[@"index"];
     ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
