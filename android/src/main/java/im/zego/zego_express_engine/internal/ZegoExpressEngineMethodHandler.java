@@ -99,6 +99,7 @@ import im.zego.zegoexpress.constants.ZegoDummyCaptureImageMode;
 import im.zego.zegoexpress.constants.ZegoDumpDataType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
 import im.zego.zegoexpress.constants.ZegoExpLowlightEnhancementType;
+import im.zego.zegoexpress.constants.ZegoExpNotifyDeviceStateMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
@@ -2648,9 +2649,10 @@ public class ZegoExpressEngineMethodHandler {
     public static void enableCamera(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoExpNotifyDeviceStateMode notifyMode = ZegoExpNotifyDeviceStateMode.getZegoExpNotifyDeviceStateMode(ZegoUtils.intValue((Number) call.argument("notifyMode")));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().enableCamera(enable, channel);
+        ZegoExpressEngine.getEngine().enableCamera(enable, notifyMode, channel);
 
         result.success(null);
     }
