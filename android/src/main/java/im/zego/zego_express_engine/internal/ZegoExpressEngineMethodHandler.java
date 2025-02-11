@@ -237,13 +237,10 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.TextureRegistry;
 
 
 public class ZegoExpressEngineMethodHandler {
-
-    private static Registrar registrar = null;
 
     private static FlutterPluginBinding pluginBinding = null;
 
@@ -276,7 +273,7 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+    public static void createEngineWithProfile(MethodCall call, Result result, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         // Report framework info
         reportPluginInfo();
@@ -291,12 +288,8 @@ public class ZegoExpressEngineMethodHandler {
         if (binding != null) {
             application = (Application) binding.getApplicationContext();
             textureRegistry = binding.getTextureRegistry();
-        } else {
-            application = (Application) reg.context();
-            textureRegistry = reg.textures();
         }
 
-        registrar = reg;
         pluginBinding = binding;
 
         // Set eventSink for ZegoExpressEngineEventHandler
@@ -326,7 +319,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Main */
     @SuppressWarnings("unused")
-    public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+    public static void createEngine(MethodCall call, Result result, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         // Report framework info
         reportPluginInfo();
@@ -341,12 +334,8 @@ public class ZegoExpressEngineMethodHandler {
         if (binding != null) {
             application = (Application) binding.getApplicationContext();
             textureRegistry = binding.getTextureRegistry();
-        } else {
-            application = (Application) reg.context();
-            textureRegistry = reg.textures();
         }
 
-        registrar = reg;
         pluginBinding = binding;
 
         // Set eventSink for ZegoExpressEngineEventHandler
@@ -6452,7 +6441,8 @@ public class ZegoExpressEngineMethodHandler {
         if (pluginBinding != null) {
             assetKey = pluginBinding.getFlutterAssets().getAssetFilePathByName(assetPath);
         } else {
-            assetKey = registrar.lookupKeyForAsset(assetPath);
+            // Handle the case where pluginBinding is null if necessary
+            assetKey = ""; // or some default value
         }
         String realPath = application.getFilesDir().getAbsolutePath() + File.separator + assetKey;
 
