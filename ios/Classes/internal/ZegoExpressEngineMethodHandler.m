@@ -5930,10 +5930,15 @@
 - (void)enableHightLightScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSNumber *index = call.arguments[@"index"];
     ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
-
     if (screenCaptureSource) {
         BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
-        [screenCaptureSource enableHightLight:enable];
+        ZegoLayerBorderConfig *config = [[ZegoLayerBorderConfig alloc] init];
+        NSDictionary *configMap = call.arguments[@"config"];
+        if (configMap) {
+            config.color = [ZegoUtils intValue: configMap[@"color"]];
+            config.width = [ZegoUtils intValue: configMap[@"width"]];
+        }
+        [screenCaptureSource enableHightLight:enable config:config];
     }
 
     result(nil);

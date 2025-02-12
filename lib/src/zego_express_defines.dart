@@ -4123,6 +4123,23 @@ class ZegoScreenCaptureSourceInfo {
       this.thumbnailImage, this.iconImage);
 }
 
+/// Layer border configuration.
+///
+/// Customize the size, color, etc. of the layer border.
+class ZegoLayerBorderConfig {
+  /// Border size, default value 4.
+  int width;
+
+  /// Background color, the format is 0xRRGGBB, default is green, which is 0x00FF00
+  int color;
+
+  ZegoLayerBorderConfig(this.width, this.color);
+
+  ZegoLayerBorderConfig.defaultConfig()
+      : width = 4,
+        color = 0x00FF00;
+}
+
 /// Audio source mix config
 ///
 /// Used to config whether mix media player, audio effect player and captured system audio into publish stream or not when set audio source.
@@ -5932,7 +5949,8 @@ abstract class ZegoScreenCaptureSource {
   /// Restrictions: Only available on Windows/macOS.
   ///
   /// - [enable] Whether to highlight the capture area. true to highlight, false to not highlight, the default is false.
-  Future<void> enableHightLight(bool enable);
+  /// - [config] Highlight capture area border configuration.
+  Future<void> enableHightLight(bool enable, {ZegoLayerBorderConfig? config});
 
   /// Whether to collect the sound of the window process during window collection
   ///
