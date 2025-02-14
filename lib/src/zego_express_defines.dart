@@ -1013,6 +1013,15 @@ enum ZegoDeviceExceptionType {
   AudioSessionCategoryChange
 }
 
+/// Mode for notifying the local device state.
+enum ZegoExpNotifyDeviceStateMode {
+  /// Notify the local device state.
+  Open,
+
+  /// Do not notify the local device state. Only valid for disable device.
+  Close
+}
+
 /// Remote device status.
 enum ZegoRemoteDeviceState {
   /// Device on

@@ -2599,9 +2599,10 @@
 - (void)enableCamera:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    int notifyMode = [ZegoUtils intValue:call.arguments[@"notifyMode"]];
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
-    [[ZegoExpressEngine sharedEngine] enableCamera:enable channel:(ZegoPublishChannel)channel];
+    [[ZegoExpressEngine sharedEngine] enableCamera:enable notifyMode:(ZegoExpNotifyDeviceStateMode)notifyMode channel:(ZegoPublishChannel)channel];
 
     result(nil);
 }
