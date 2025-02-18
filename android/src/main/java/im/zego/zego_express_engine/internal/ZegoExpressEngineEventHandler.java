@@ -598,13 +598,13 @@ public class ZegoExpressEngineEventHandler {
             infoMap.put("imageHeight", info.imageHeight);
 
             ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
-            for (ZegoFaceDetectionRect info: info.faceRectList) {
+            for (ZegoFaceDetectionRect item: info.faceRectList) {
 
                 HashMap<String, Object> rect = new HashMap<>();
-                rect.put("x", info.x);
-                rect.put("y", info.y);
-                rect.put("width", info.width);
-                rect.put("height", info.height);
+                rect.put("x", item.x);
+                rect.put("y", item.y);
+                rect.put("width", item.width);
+                rect.put("height", item.height);
 
                 arrayList.add(rect);
             }
