@@ -70,6 +70,8 @@ import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
+import im.zego.zegoexpress.entity.ZegoFaceDetectionInfo;
+import im.zego.zegoexpress.entity.ZegoFaceDetectionRect;
 import im.zego.zegoexpress.entity.ZegoMediaSideInfo;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestQuality;
 import im.zego.zegoexpress.entity.ZegoPerformanceStatus;
@@ -577,6 +579,38 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onPublisherDummyCaptureImagePathError");
             map.put("errorCode", errorCode);
             map.put("path", path);
+            map.put("channel", channel.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPublisherFaceDetectInfo(ZegoFaceDetectionInfo info, ZegoPublishChannel channel) {
+            super.onPublisherFaceDetectInfo(info, channel);
+            ZegoLog.log("[onPublisherFaceDetectInfo] size: %d, w: %d h: %d, channel: %s", info.faceRectList.size(), info.imageWidth, info.imageHeight, channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPublisherFaceDetectInfo");
+            HashMap<String, Object> infoMap = new HashMap<>();
+            infoMap.put("imageWidth", info.imageWidth);
+            infoMap.put("imageHeight", info.imageHeight);
+
+            ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
+            for (ZegoFaceDetectionRect info: info.faceRectList) {
+
+                HashMap<String, Object> rect = new HashMap<>();
+                rect.put("x", info.x);
+                rect.put("y", info.y);
+                rect.put("width", info.width);
+                rect.put("height", info.height);
+
+                arrayList.add(rect);
+            }
+            infoMap.put("faceRectList", arrayList);
+
+            map.put("info", infoMap);
             map.put("channel", channel.value());
 
             sink.success(map);

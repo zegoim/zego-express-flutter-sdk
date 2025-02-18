@@ -1430,6 +1430,16 @@
     result(nil);
 }
 
+- (void)enableFaceDetection:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableFaceDetection:enable channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {

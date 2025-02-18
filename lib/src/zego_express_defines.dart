@@ -2501,6 +2501,23 @@ class ZegoRoomExtraInfo {
   ZegoRoomExtraInfo(this.key, this.value, this.updateUser, this.updateTime);
 }
 
+/// Coordinates used by the face detection.
+class ZegoFaceDetectionRect {
+  /// The horizontal offset from the top-left corner
+  int x;
+
+  /// The vertical offset from the top-left corner
+  int y;
+
+  /// The width of the rectangle
+  int width;
+
+  /// The height of the rectangle
+  int height;
+
+  ZegoFaceDetectionRect(this.x, this.y, this.width, this.height);
+}
+
 /// View object.
 ///
 /// Configure view object, view Mode, background color
@@ -2672,6 +2689,26 @@ class ZegoStreamRelayCDNInfo {
 
   ZegoStreamRelayCDNInfo(
       this.url, this.state, this.updateReason, this.stateTime);
+}
+
+/// Face detection info.
+///
+/// Face detection info.
+class ZegoFaceDetectionInfo {
+  /// The image width captured by the camera
+  int imageWidth;
+
+  /// The image height captured by the camera
+  int imageHeight;
+
+  /// Face position information list
+  List<ZegoFaceDetectionRect> faceRectList;
+
+  /// Create a face detection info object
+  ZegoFaceDetectionInfo()
+      : imageWidth = 0,
+        imageHeight = 0,
+        faceRectList = [];
 }
 
 /// Custom play stream resource type configuration.
@@ -4863,7 +4900,7 @@ abstract class ZegoMediaPlayer {
   /// Related APIs: After it is turned on, user can use the [onMediaPlayerFrequencySpectrumUpdate] callback to monitor frequency spectrum updates.
   ///
   /// - [enable] Whether to enable monitoring, true is enabled, false is disabled.
-  /// - [millisecond] Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [100, 3000].
+  /// - [millisecond] Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [10, 3000]. Note that on v3.19.0 and older version, the value range is [100, 3000].
   Future<void> enableFrequencySpectrumMonitor(bool enable, int millisecond);
 
   /// Set the playback channel.

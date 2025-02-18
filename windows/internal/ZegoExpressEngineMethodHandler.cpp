@@ -1018,6 +1018,16 @@ void ZegoExpressEngineMethodHandler::enableAuxBgmBalance(ZFArgument argument,
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::enableFaceDetection(ZFArgument argument,
+                                                         ZFResult result) {
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    // EXPRESS::ZegoExpressSDK::getEngine()->enableFaceDetection(enable, channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFResult result) {
     auto streamID = zego_value_get_string(argument[ZFValue("streamID")]);
 

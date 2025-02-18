@@ -840,6 +840,11 @@ class ZegoExpressImpl {
         .invokeMethod('enableAuxBgmBalance', {'enable': enable});
   }
 
+  Future<void> enableFaceDetection(bool enable, {ZegoPublishChannel? channel}) async {
+    return await _channel
+        .invokeMethod('enableFaceDetection', {'enable': enable, 'channel': channel?.index ?? ZegoPublishChannel.Main.index});
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,
@@ -2681,6 +2686,28 @@ class ZegoExpressImpl {
         ZegoExpressEngine.onPublisherDummyCaptureImagePathError!(
             map['errorCode'],
             map['path'],
+            ZegoPublishChannel.values[map['channel']]);
+        break;
+
+      case 'onPublisherFaceDetectInfo':
+        if (ZegoExpressEngine.onPublisherFaceDetectInfo == null)
+          return;
+
+        ZegoFaceDetectionInfo faceDetectionInfo = ZegoFaceDetectionInfo();
+        faceDetectionInfo.imageWidth = map['info']['imageWidth'];
+        faceDetectionInfo.imageHeight = map['info']['imageHeight'];
+        List<dynamic> faceRectList = map['info']['faceRectList'];
+        for (Map<dynamic, dynamic> rectMap in faceRectList) {
+          ZegoFaceDetectionRect rect = ZegoFaceDetectionRect(
+              rectMap['x'],
+              rectMap['y'],
+              rectMap['width'],
+              rectMap['height']);
+          faceDetectionInfo.faceRectList.add(rect);
+        }
+
+        ZegoExpressEngine.onPublisherFaceDetectInfo!(
+            faceDetectionInfo,
             ZegoPublishChannel.values[map['channel']]);
         break;
 

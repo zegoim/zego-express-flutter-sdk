@@ -614,6 +614,33 @@
     }
 }
 
+- (void)onPublisherFaceDetectInfo:(ZegoFaceDetectionInfo *)info channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherFaceDetectInfo] size: %d, w: %d, h: %d, channel: %d", info.faceRectList.count, info.imageWidth, info.imageHeight, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        NSMutableArray *faceRectListArray = [[NSMutableArray alloc] init];
+        for (ZegoFaceDetectionRect *rect in info.faceRectList) {
+            [faceRectListArray addObject:@{
+                @"x": @(rect.x),
+                @"y": @(rect.y),
+                @"width": @(rect.width),
+                @"height": @(rect.height)
+            }];
+        }
+        sink(@{
+            @"method": @"onPublisherFaceDetectInfo",
+            @"info": @{
+                @"imageWidth": @(info.imageWidth),
+                @"imageHeight": @(info.imageHeight),
+                @"faceRectList": faceRectListArray
+            },
+            @"channel": @((int)channel),
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
