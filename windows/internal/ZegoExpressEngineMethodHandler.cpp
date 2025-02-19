@@ -5566,7 +5566,7 @@ void ZegoExpressEngineMethodHandler::enableHightLightScreenCaptureSource(ZFArgum
     if (screenCaptureSource) {
         auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
         auto configMap = zego_value_get_map(argument[ZFValue("config")]);
-        if (configMap && configMap.size() > 0) {
+        if (configMap.size() > 0) {
             EXPRESS::ZegoLayerBorderConfig config;
             config.color = zego_value_get_int(configMap[ZFValue("color")]);
             config.width = zego_value_get_int(configMap[ZFValue("width")]);
