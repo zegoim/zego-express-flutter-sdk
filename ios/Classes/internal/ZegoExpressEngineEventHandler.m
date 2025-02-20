@@ -623,10 +623,10 @@
         NSMutableArray *facePositionListArray = [[NSMutableArray alloc] init];
         for (ZegoFacePositionInfo *rect in info.facePositionList) {
             [facePositionListArray addObject:@{
-                @"left": @(rect.position.left),
-                @"top": @(rect.position.top),
-                @"right": @(rect.position.right),
-                @"bottom": @(rect.position.bottom)
+                @"left": @(rect.position.origin.x),
+                @"top": @(rect.position.origin.y),
+                @"right": @(CGRectGetMaxX(rect.position)),
+                @"bottom": @(CGRectGetMaxY(rect.position))
             }];
         }
         sink(@{
