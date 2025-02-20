@@ -5476,6 +5476,8 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(ZFArgument argument
         resultArray.emplace_back(ZFValue(infoMap));
     }
 
+    EXPRESS::ZegoExpressSDK::getEngine()->freeScreenCaptureSources(infos);
+
     result->Success(resultArray);
 #else
     result->Error("not_support_feature", "linux platform not support feature");
