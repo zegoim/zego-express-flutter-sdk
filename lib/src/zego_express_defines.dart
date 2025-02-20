@@ -2501,21 +2501,12 @@ class ZegoRoomExtraInfo {
   ZegoRoomExtraInfo(this.key, this.value, this.updateUser, this.updateTime);
 }
 
-/// Coordinates used by the face detection.
-class ZegoFaceDetectionRect {
-  /// The horizontal offset from the top-left corner
-  int x;
+/// Position information used by the face detection.
+class ZegoFacePositionInfo {
+  /// Coordinates used by the face detection.
+  Rect position;
 
-  /// The vertical offset from the top-left corner
-  int y;
-
-  /// The width of the rectangle
-  int width;
-
-  /// The height of the rectangle
-  int height;
-
-  ZegoFaceDetectionRect(this.x, this.y, this.width, this.height);
+  ZegoFacePositionInfo(this.position);
 }
 
 /// View object.
@@ -2702,13 +2693,13 @@ class ZegoFaceDetectionInfo {
   int imageHeight;
 
   /// Face position information list
-  List<ZegoFaceDetectionRect> faceRectList;
+  List<ZegoFacePositionInfo> facePositionList;
 
   /// Create a face detection info object
   ZegoFaceDetectionInfo()
       : imageWidth = 0,
         imageHeight = 0,
-        faceRectList = [];
+        facePositionList = [];
 }
 
 /// Custom play stream resource type configuration.

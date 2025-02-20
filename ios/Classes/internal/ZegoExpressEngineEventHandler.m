@@ -616,17 +616,17 @@
 
 - (void)onPublisherFaceDetectInfo:(ZegoFaceDetectionInfo *)info channel:(ZegoPublishChannel)channel {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPublisherFaceDetectInfo] size: %d, w: %d, h: %d, channel: %d", info.faceRectList.count, info.imageWidth, info.imageHeight, (int)channel);
+    ZGLog(@"[onPublisherFaceDetectInfo] size: %d, w: %d, h: %d, channel: %d", info.facePositionList.count, info.imageWidth, info.imageHeight, (int)channel);
 
     GUARD_SINK
     if (sink) {
-        NSMutableArray *faceRectListArray = [[NSMutableArray alloc] init];
-        for (ZegoFaceDetectionRect *rect in info.faceRectList) {
-            [faceRectListArray addObject:@{
-                @"x": @(rect.x),
-                @"y": @(rect.y),
-                @"width": @(rect.width),
-                @"height": @(rect.height)
+        NSMutableArray *facePositionListArray = [[NSMutableArray alloc] init];
+        for (ZegoFacePositionInfo *rect in info.facePositionList) {
+            [facePositionListArray addObject:@{
+                @"left": @(rect.position.left),
+                @"top": @(rect.position.top),
+                @"right": @(rect.position.right),
+                @"bottom": @(rect.position.bottom)
             }];
         }
         sink(@{
@@ -634,7 +634,7 @@
             @"info": @{
                 @"imageWidth": @(info.imageWidth),
                 @"imageHeight": @(info.imageHeight),
-                @"faceRectList": faceRectListArray
+                @"facePositionList": facePositionListArray
             },
             @"channel": @((int)channel),
         });

@@ -71,7 +71,7 @@ import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
 import im.zego.zegoexpress.entity.ZegoFaceDetectionInfo;
-import im.zego.zegoexpress.entity.ZegoFaceDetectionRect;
+import im.zego.zegoexpress.entity.ZegoFacePositionInfo;
 import im.zego.zegoexpress.entity.ZegoMediaSideInfo;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestQuality;
 import im.zego.zegoexpress.entity.ZegoPerformanceStatus;
@@ -587,7 +587,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onPublisherFaceDetectInfo(ZegoFaceDetectionInfo info, ZegoPublishChannel channel) {
             super.onPublisherFaceDetectInfo(info, channel);
-            ZegoLog.log("[onPublisherFaceDetectInfo] size: %d, w: %d h: %d, channel: %s", info.faceRectList.size(), info.imageWidth, info.imageHeight, channel.name());
+            ZegoLog.log("[onPublisherFaceDetectInfo] size: %d, w: %d h: %d, channel: %s", info.facePositionList.size(), info.imageWidth, info.imageHeight, channel.name());
 
             if (guardSink()) { return; }
 
@@ -598,17 +598,17 @@ public class ZegoExpressEngineEventHandler {
             infoMap.put("imageHeight", info.imageHeight);
 
             ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
-            for (ZegoFaceDetectionRect item: info.faceRectList) {
+            for (ZegoFacePositionInfo item: info.facePositionList) {
 
                 HashMap<String, Object> rect = new HashMap<>();
-                rect.put("x", item.x);
-                rect.put("y", item.y);
-                rect.put("width", item.width);
-                rect.put("height", item.height);
+                rect.put("left", item.position.left);
+                rect.put("top", item.position.top);
+                rect.put("right", item.position.right);
+                rect.put("bottom", item.position.bottom);
 
                 arrayList.add(rect);
             }
-            infoMap.put("faceRectList", arrayList);
+            infoMap.put("facePositionList", arrayList);
 
             map.put("info", infoMap);
             map.put("channel", channel.value());
