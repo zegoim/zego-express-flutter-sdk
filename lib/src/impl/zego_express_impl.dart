@@ -4832,6 +4832,20 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
   }
 
   @override
+  Future<void> enableHightLight(bool enable,
+      {ZegoLayerBorderConfig? config}) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('enableHightLightScreenCaptureSource', {
+      'enable': enable,
+      'config': {
+        'color': config?.color ?? 0x00FF00,
+        'width': config?.width ?? 4
+      },
+      'index': _index
+    });
+  }
+
+  @override
   Future<void> enableWindowActivate(bool active) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'enableWindowActivateScreenCaptureSource',
