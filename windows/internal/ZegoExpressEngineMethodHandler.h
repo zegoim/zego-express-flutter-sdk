@@ -411,6 +411,7 @@ class ZegoExpressEngineMethodHandler {
     void createScreenCaptureSource(ZFArgument argument, ZFResult result);
     void destroyScreenCaptureSource(ZFArgument argument, ZFResult result);
     void enableCursorVisibleScreenCaptureSource(ZFArgument argument, ZFResult result);
+    void enableHightLightScreenCaptureSource(ZFArgument argument, ZFResult result);
     void enableWindowActivateScreenCaptureSource(ZFArgument argument, ZFResult result);
     void setExcludeWindowListScreenCaptureSource(ZFArgument argument, ZFResult result);
     void updateCaptureRegionScreenCaptureSource(ZFArgument argument, ZFResult result);
