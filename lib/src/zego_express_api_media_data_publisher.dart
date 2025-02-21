@@ -1,3 +1,4 @@
+
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -5,6 +6,7 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineMediaDataPublisher on ZegoExpressEngine {
+
   /// Creates a media data publisher instance.
   ///
   /// Available since: 3.4.0
@@ -16,8 +18,7 @@ extension ZegoExpressEngineMediaDataPublisher on ZegoExpressEngine {
   ///
   /// - [config] Config the media data publisher.
   /// - Returns Media data publisher instance.
-  Future<ZegoMediaDataPublisher?> createMediaDataPublisher(
-      ZegoMediaDataPublisherConfig config) async {
+  Future<ZegoMediaDataPublisher?> createMediaDataPublisher(ZegoMediaDataPublisherConfig config) async {
     return await ZegoExpressImpl.instance.createMediaDataPublisher(config);
   }
 
@@ -30,9 +31,8 @@ extension ZegoExpressEngineMediaDataPublisher on ZegoExpressEngine {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [mediaDataPublisher] The media data publisher instance object to be destroyed
-  Future<void> destroyMediaDataPublisher(
-      ZegoMediaDataPublisher mediaDataPublisher) async {
-    return await ZegoExpressImpl.instance
-        .destroyMediaDataPublisher(mediaDataPublisher);
+  Future<void> destroyMediaDataPublisher(ZegoMediaDataPublisher mediaDataPublisher) async {
+    return await ZegoExpressImpl.instance.destroyMediaDataPublisher(mediaDataPublisher);
   }
+
 }
