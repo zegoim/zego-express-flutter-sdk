@@ -601,10 +601,10 @@ public class ZegoExpressEngineEventHandler {
             for (ZegoFacePositionInfo item: info.facePositionList) {
 
                 HashMap<String, Object> rect = new HashMap<>();
-                rect.put("left", item.position.left);
-                rect.put("top", item.position.top);
-                rect.put("right", item.position.right);
-                rect.put("bottom", item.position.bottom);
+                rect.put("left", (double)item.position.left);
+                rect.put("top", (double)item.position.top);
+                rect.put("right", (double)item.position.right);
+                rect.put("bottom", (double)item.position.bottom);
 
                 arrayList.add(rect);
             }
