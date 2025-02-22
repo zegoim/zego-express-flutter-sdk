@@ -227,13 +227,13 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+// import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.TextureRegistry;
 
 
 public class ZegoExpressEngineMethodHandler {
 
-    private static Registrar registrar = null;
+    // private static Registrar registrar = null;
 
     private static FlutterPluginBinding pluginBinding = null;
 
@@ -260,63 +260,9 @@ public class ZegoExpressEngineMethodHandler {
 
     private static ZegoCopyrightedMusic copyrightedMusicInstance = null;
 
-    @SuppressWarnings("unused")
-    public static void initApiCalledCallback() {
-        ZegoExpressEngine.setApiCalledCallback(ZegoExpressEngineEventHandler.getInstance().apiCalledEventHandler);
-    }
-
-    @SuppressWarnings("unused")
-    public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
-
-        // Report framework info
-        reportPluginInfo();
-        
-        HashMap<String, Object> profileMap = call.argument("profile");
-        long appID = ZegoUtils.longValue((Number)profileMap.get("appID"));
-        String appSign = (String) profileMap.get("appSign");
-        ZegoScenario scenario = ZegoScenario.getZegoScenario(ZegoUtils.intValue((Number)profileMap.get("scenario")));
-
-        enablePlatformView = ZegoUtils.boolValue((Boolean) profileMap.get("enablePlatformView"));
-
-        if (binding != null) {
-            application = (Application) binding.getApplicationContext();
-            textureRegistry = binding.getTextureRegistry();
-        } else {
-            application = (Application) reg.context();
-            textureRegistry = reg.textures();
-        }
-
-        registrar = reg;
-        pluginBinding = binding;
-
-        // Set eventSink for ZegoExpressEngineEventHandler
-        if (sink == null) {
-            ZegoLog.error("[createEngine] FlutterEventSink is null");
-        }
-        ZegoExpressEngineEventHandler.getInstance().sink = sink;
-
-        ZegoEngineProfile profile = new ZegoEngineProfile();
-        profile.appID = appID;
-        if (appSign != null) {
-            profile.appSign = appSign;
-        }
-        profile.scenario = scenario;
-        profile.application = application;
-        ZegoExpressEngine.createEngine(profile, ZegoExpressEngineEventHandler.getInstance().eventHandler);
-        setPlatformLanguage();
-
-        ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
-        ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
-        ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
-
-        ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, scenario.name());
-
-        result.success(null);
-    }
-
     /* Main */
     @SuppressWarnings("unused")
-    public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+    public static void createEngine(MethodCall call, Result result, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         // Report framework info
         reportPluginInfo();
@@ -332,12 +278,9 @@ public class ZegoExpressEngineMethodHandler {
             application = (Application) binding.getApplicationContext();
             textureRegistry = binding.getTextureRegistry();
         } else {
-            application = (Application) reg.context();
-            textureRegistry = reg.textures();
+            
         }
-
-        registrar = reg;
-        pluginBinding = binding;
+        
 
         // Set eventSink for ZegoExpressEngineEventHandler
         if (sink == null) {
@@ -6306,13 +6249,13 @@ public class ZegoExpressEngineMethodHandler {
         if (pluginBinding != null) {
             assetKey = pluginBinding.getFlutterAssets().getAssetFilePathByName(assetPath);
         } else {
-            assetKey = registrar.lookupKeyForAsset(assetPath);
+            // assetKey = registrar.lookupKeyForAsset(assetPath);
         }
-        String realPath = application.getFilesDir().getAbsolutePath() + File.separator + assetKey;
+        // String realPath = application.getFilesDir().getAbsolutePath() + File.separator + assetKey;
 
-        ZegoLog.log("[getAssetAbsolutePath] assetPath: %s, realPath: %s", assetPath, realPath);
+        // ZegoLog.log("[getAssetAbsolutePath] assetPath: %s, realPath: %s", assetPath, realPath);
 
-        result.success(realPath);
+        // result.success(realPath);
     }
 
 
