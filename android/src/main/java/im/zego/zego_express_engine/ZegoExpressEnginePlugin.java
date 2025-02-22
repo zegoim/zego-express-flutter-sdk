@@ -17,14 +17,12 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import static im.zego.zego_express_engine.internal.ZegoUtils.getStackTrace;
 
 /** ZegoExpressEnginePlugin */
 public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
 
-    private Registrar registrar;
     private FlutterPluginBinding pluginBinding;
 
     private MethodChannel methodChannel;
@@ -73,39 +71,11 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         this.pluginBinding = null;
     }
 
-
-    /* Adapt to Flutter versions before 1.12 */
-
-    // V1 embedding
-
-    // This static function is optional and equivalent to onAttachedToEngine. It supports the old
-    // pre-Flutter-1.12 Android projects. You are encouraged to continue supporting
-    // plugin registration via this function while apps migrate to use the new Android APIs
-    // post-flutter-1.12 via https://flutter.dev/go/android-project-migration.
-    //
-    // It is encouraged to share logic between onAttachedToEngine and registerWith to keep
-    // them functionally equivalent. Only one of onAttachedToEngine or registerWith will be called
-    // depending on the user's project. onAttachedToEngine or registerWith must both be defined
-    // in the same class.
-    @SuppressWarnings("unused")
-    public static void registerWith(Registrar registrar) {
-
-        MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "plugins.zego.im/zego_express_engine");
-        EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.zego.im/zego_express_event_handler");
-
-        // Register platform view factory
-        registrar.platformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
-
-        ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin();
-        plugin.setupPlugin(registrar, null, methodChannel, eventChannel);
-    }
-
-
     /* Setup ZegoExpressEngine Plugin */
 
-    private void setupPlugin(Registrar registrar, FlutterPluginBinding pluginBinding, MethodChannel methodChannel, EventChannel eventChannel) {
+    private void setupPlugin(FlutterPluginBinding pluginBinding, MethodChannel methodChannel, EventChannel eventChannel) {
 
-        this.registrar = registrar;
+        
         this.pluginBinding = pluginBinding;
 
         this.methodChannel = methodChannel;
@@ -153,9 +123,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             Method method = methodHashMap.get(call.method);
             if (method == null) {
                 if (call.method.equals("createEngine")) {
-                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
+                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
                 } else if (call.method.equals("createEngineWithProfile")) {
-                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
+                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
                 } else {
                     method = this.manager.getMethod(call.method, MethodCall.class, Result.class);
                 }
@@ -163,9 +133,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             }
 
             if (call.method.equals("createEngine")) {
-                method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
+                method.invoke(null, call, result, this.pluginBinding, this.sink);
             } else if (call.method.equals("createEngineWithProfile")) {
-                method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
+                method.invoke(null, call, result, this.pluginBinding, this.sink);
             } else {
                 method.invoke(null, call, result);
             }
