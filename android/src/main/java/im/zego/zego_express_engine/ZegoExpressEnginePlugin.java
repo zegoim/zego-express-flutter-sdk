@@ -56,7 +56,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         // Register platform view factory
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
 
-        this.setupPlugin(null, flutterPluginBinding, methodChannel, eventChannel);
+        // this.setupPlugin(null, flutterPluginBinding, methodChannel, eventChannel);
     }
 
     @Override
