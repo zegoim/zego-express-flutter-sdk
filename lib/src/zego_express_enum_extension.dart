@@ -230,6 +230,8 @@ extension ZegoVideoSourceTypeExtension on ZegoVideoSourceType {
         return ZegoVideoSourceType.ZegoVideoSourcePlayer;
       case 13:
         return ZegoVideoSourceType.ZegoVideoSourceScreenCapture;
+      case 14:
+        return ZegoVideoSourceType.SecondaryCamera;
       default:
         return ZegoVideoSourceType.ZegoVideoSourceDefault;
     }
