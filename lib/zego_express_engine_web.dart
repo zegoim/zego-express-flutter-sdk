@@ -689,7 +689,7 @@ class ZegoExpressEngineWeb {
                 quality['rtt'],
                 quality['packetLostRate'],
                 ZegoStreamQualityLevel.values[quality['level']],
-                false,
+                quality['isHardwareEncode'],
                 ZegoVideoCodecID.values[quality['videoCodecID']],
                 0,
                 0,
@@ -1111,18 +1111,20 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<Map<dynamic, dynamic>> getVideoConfig(int? channel) async {
+  Future<dynamic> getVideoConfig(int? channel) async {
     var config =
         ZegoFlutterEngine.instance.getVideoConfig(getPublishChannel(channel));
     var map = {};
-    map['captureWidth'] = config.captureWidth;
-    map['captureHeight'] = config.captureHeight;
-    map['encodeWidth'] = config.captureWidth;
-    map['encodeHeight'] = config.captureHeight;
-    map['fps'] = config.fps;
-    map['bitrate'] = config.bitrate;
-    map['codecID'] = config.codecID;
-
+    map['captureWidth'] = config?.captureWidth ?? config?.encodeWidth ?? 0;
+    map['captureHeight'] = config?.captureHeight ?? config?.encodeHeight ?? 0;
+    map['encodeWidth'] = config?.encodeWidth ?? 0;
+    map['encodeHeight'] = config?.encodeHeight ?? 0;
+    map['fps'] = config?.fps ?? 0;
+    map['bitrate'] = config?.bitrate ?? 0;
+    map['codecID'] = config?.codecID ?? 0;
+    if (config?.keyFrameInterval != null) {
+      map['keyFrameInterval'] = config.keyFrameInterval;
+    }
     return Future.value(map);
   }
 
@@ -1825,7 +1827,7 @@ class ZegoExpressEngineWeb {
     })();
     final Map<dynamic, dynamic> map = {};
     map['errorCode'] = result.errorCode;
-    if (result.extendedData) {
+    if (result.extendedData != null) {
       map['extendedData'] = result.extendedData;
     }
     return map;
@@ -1910,11 +1912,9 @@ class ZegoExpressEngineWeb {
 
   Future<Map<dynamic, dynamic>> copyrightedMusicSendExtendedRequest(
       String command, String params) async {
-    print('ffflutter sendExtendedRequest1 ${params}');
     final paramsJS = parseJSON(params);
-    print('ffflutter sendExtendedRequest2 ${getProperty(paramsJS, 'keyword')} ');
-    Object promise = ZegoFlutterEngine.copyMusic
-        ?.sendExtendedRequest(command, paramsJS);
+    Object promise =
+        ZegoFlutterEngine.copyMusic?.sendExtendedRequest(command, paramsJS);
     final result = await promiseToFuture(promise);
     final Map<dynamic, dynamic> map = {};
     map['errorCode'] = getProperty(result, 'errorCode');
