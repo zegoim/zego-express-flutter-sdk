@@ -1841,6 +1841,29 @@ void ZegoExpressEngineEventHandler::onNetworkQuality(
     }
 }
 
+void ZegoExpressEngineEventHandler::onRtcStats(const EXPRESS::ZegoRtcStatsInfo &info) {
+
+    // High frequency callbacks do not log
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onRtcStats");
+        ZFMap infoMap;
+        infoMap[ZFValue("totalTxBandwidth")] = ZFValue(info.totalTxBandwidth);
+        infoMap[ZFValue("avgTxRtt")] = ZFValue((int64_t)info.avgTxRtt);
+        infoMap[ZFValue("avgTxPacketLostRate")] = ZFValue(info.avgTxPacketLostRate);
+        infoMap[ZFValue("avgTxJitter")] = ZFValue((int64_t)info.avgTxJitter);
+        infoMap[ZFValue("totalRxBandwidth")] = ZFValue(info.totalRxBandwidth);
+        infoMap[ZFValue("avgRxRtt")] = ZFValue((int64_t)info.avgRxRtt);
+        infoMap[ZFValue("avgRxPacketLostRate")] = ZFValue(info.avgRxPacketLostRate);
+        infoMap[ZFValue("avgRxJitter")] = ZFValue((int64_t)info.avgRxJitter);
+
+        retMap[ZFValue("info")] = ZFValue(infoMap);
+
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onReceiveRealTimeSequentialData(
     EXPRESS::IZegoRealTimeSequentialDataManager *manager, const unsigned char *data,
     unsigned int dataLength, const std::string &streamID) {

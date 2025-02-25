@@ -3367,6 +3367,35 @@ class ZegoNetworkSpeedTestQuality {
 
 }
 
+/// RTC Network Statistics
+class ZegoRtcStatsInfo {
+  /// total upstream bandwidth.
+  double totalTxBandwidth;
+
+  /// upstream average rtt, in milliseconds
+  int avgTxRtt;
+
+  /// upstream average packet lost rate. in percentage, 0.0 ~ 1.0
+  double avgTxPacketLostRate;
+
+  /// upstream average jitter, in milliseconds
+  int avgTxJitter;
+
+  /// total downlink bandwidth.
+  double totalRxBandwidth;
+
+  /// downlink average rtt, in milliseconds
+  int avgRxRtt;
+
+  /// downlink average packet lost rate. in percentage, 0.0 ~ 1.0
+  double avgRxPacketLostRate;
+
+  /// downlink average jitter, in milliseconds
+  int avgRxJitter;
+
+  ZegoRtcStatsInfo(this.totalTxBandwidth, this.avgTxRtt, this.avgTxPacketLostRate, this.avgTxJitter, this.totalRxBandwidth, this.avgRxRtt, this.avgRxPacketLostRate, this.avgRxJitter);
+}
+
 /// The NTP info
 class ZegoNetworkTimeInfo {
 

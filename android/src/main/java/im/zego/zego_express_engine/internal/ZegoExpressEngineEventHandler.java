@@ -1418,6 +1418,30 @@ public class ZegoExpressEngineEventHandler {
             sink.success(map);
         }
 
+        @Override
+        public void onRtcStats(ZegoRtcStatsInfo info) {
+            super.onRtcStats(info);
+            
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRtcStats");
+            HashMap<String, Object> infoMap = new HashMap<>();
+            infoMap.put("totalTxBandwidth", info.totalTxBandwidth);
+            infoMap.put("avgTxRtt", info.avgTxRtt);
+            infoMap.put("avgTxPacketLostRate", info.avgTxPacketLostRate);
+            infoMap.put("avgTxJitter", info.avgTxJitter);
+            infoMap.put("totalRxBandwidth", info.totalRxBandwidth);
+            infoMap.put("avgRxRtt", info.avgRxRtt);
+            infoMap.put("avgRxPacketLostRate", info.avgRxPacketLostRate);
+            infoMap.put("avgRxJitter", info.avgRxJitter);
+            map.put("info", infoMap);
+
+            sink.success(map);
+        }
+
         /* Screen Capture */
         @Override
         public void onScreenCaptureExceptionOccurred(ZegoScreenCaptureExceptionType exceptionType) {

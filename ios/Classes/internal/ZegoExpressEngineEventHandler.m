@@ -1348,6 +1348,27 @@
     }
 }
 
+- (void)onRtcStats:(ZegoRtcStatsInfo *)info {
+    FlutterEventSink sink = _eventSink;
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRtcStats",
+            @"info": @{
+                @"totalTxBandwidth": @(info.totalTxBandwidth),
+                @"avgTxRtt": @(info.avgTxRtt),
+                @"avgTxPacketLostRate": @(info.avgTxPacketLostRate),
+                @"avgTxJitter": @(info.avgTxJitter),
+                @"totalRxBandwidth": @(info.totalRxBandwidth),
+                @"avgRxRtt": @(info.avgRxRtt),
+                @"avgRxPacketLostRate": @(info.avgRxPacketLostRate),
+                @"avgRxJitter": @(info.avgRxJitter)
+            },
+        });
+    }
+}
+
 
 #pragma mark - ZegoMediaPlayerEventHandler
 

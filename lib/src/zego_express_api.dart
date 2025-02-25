@@ -1310,6 +1310,18 @@ class ZegoExpressEngine {
   /// - [downstreamQuality] Downstream network quality
   static void Function(String userID, ZegoStreamQualityLevel upstreamQuality, ZegoStreamQualityLevel downstreamQuality)? onNetworkQuality;
 
+  /// RTC network statistics callback.
+  ///
+  /// Available since: 3.20.0
+  /// Description: RTC network statistics callback.
+  /// Use cases: When a developer wants to analyze the local network situation.
+  /// When to Trigger: After calling [startPublishingStream] to start pushing the RTC stream, it will call back the upstream statistics. After calling [startPlayingStream] to start playing the RTC or L3 stream, it will call back the downlink statistics. The default callback period is 3 seconds.
+  /// Restrictions: None.
+  /// Caution: None.
+  ///
+  /// - [info] statistical information.
+  static void Function(ZegoRtcStatsInfo info)? onRtcStats;
+
   /// Successful callback of network time synchronization.
   ///
   /// Available since: 2.12.0
