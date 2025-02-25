@@ -1433,11 +1433,10 @@ public class ZegoExpressEngineEventHandler {
             infoMap.put("totalTxBandwidth", info.totalTxBandwidth);
             infoMap.put("avgTxRtt", info.avgTxRtt);
             infoMap.put("avgTxPacketLostRate", info.avgTxPacketLostRate);
-            infoMap.put("avgTxJitter", info.avgTxJitter);
             infoMap.put("totalRxBandwidth", info.totalRxBandwidth);
             infoMap.put("avgRxRtt", info.avgRxRtt);
             infoMap.put("avgRxPacketLostRate", info.avgRxPacketLostRate);
-            infoMap.put("avgRxJitter", info.avgRxJitter);
+            infoMap.put("avgPeerToPeerDelay", info.avgPeerToPeerDelay);
             map.put("info", infoMap);
 
             sink.success(map);

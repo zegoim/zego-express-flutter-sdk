@@ -3139,16 +3139,14 @@ class ZegoExpressImpl {
       case 'onRtcStats':
         if (ZegoExpressEngine.onRtcStats == null) return;
 
-        ZegoExpressEngine.onRtcStats!(
-            ZegoRtcStatsInfo(
-                map['info']['totalTxBandwidth'],
-                map['info']['avgTxRtt'],
-                map['info']['avgTxPacketLostRate'],
-                map['info']['avgTxJitter'],
-                map['info']['totalRxBandwidth'],
-                map['info']['avgRxRtt'],
-                map['info']['avgRxPacketLostRate'],
-                map['info']['avgRxJitter']));
+        ZegoExpressEngine.onRtcStats!(ZegoRtcStatsInfo(
+            map['info']['totalTxBandwidth'],
+            map['info']['avgTxRtt'],
+            map['info']['avgTxPacketLostRate'],
+            map['info']['totalRxBandwidth'],
+            map['info']['avgRxRtt'],
+            map['info']['avgRxPacketLostRate'],
+            map['info']['avgPeerToPeerDelay']));
         break;
 
       /* Process Audio Data */

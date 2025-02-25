@@ -1852,11 +1852,10 @@ void ZegoExpressEngineEventHandler::onRtcStats(const EXPRESS::ZegoRtcStatsInfo &
         infoMap[ZFValue("totalTxBandwidth")] = ZFValue(info.totalTxBandwidth);
         infoMap[ZFValue("avgTxRtt")] = ZFValue((int64_t)info.avgTxRtt);
         infoMap[ZFValue("avgTxPacketLostRate")] = ZFValue(info.avgTxPacketLostRate);
-        infoMap[ZFValue("avgTxJitter")] = ZFValue((int64_t)info.avgTxJitter);
         infoMap[ZFValue("totalRxBandwidth")] = ZFValue(info.totalRxBandwidth);
         infoMap[ZFValue("avgRxRtt")] = ZFValue((int64_t)info.avgRxRtt);
         infoMap[ZFValue("avgRxPacketLostRate")] = ZFValue(info.avgRxPacketLostRate);
-        infoMap[ZFValue("avgRxJitter")] = ZFValue((int64_t)info.avgRxJitter);
+        infoMap[ZFValue("avgPeerToPeerDelay")] = ZFValue((int64_t)info.avgPeerToPeerDelay);
 
         retMap[ZFValue("info")] = ZFValue(infoMap);
 

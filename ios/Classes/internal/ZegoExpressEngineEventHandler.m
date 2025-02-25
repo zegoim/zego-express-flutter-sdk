@@ -1359,11 +1359,10 @@
                 @"totalTxBandwidth": @(info.totalTxBandwidth),
                 @"avgTxRtt": @(info.avgTxRtt),
                 @"avgTxPacketLostRate": @(info.avgTxPacketLostRate),
-                @"avgTxJitter": @(info.avgTxJitter),
                 @"totalRxBandwidth": @(info.totalRxBandwidth),
                 @"avgRxRtt": @(info.avgRxRtt),
                 @"avgRxPacketLostRate": @(info.avgRxPacketLostRate),
-                @"avgRxJitter": @(info.avgRxJitter)
+                @"avgPeerToPeerDelay": @(info.avgPeerToPeerDelay)
             },
         });
     }
