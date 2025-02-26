@@ -614,6 +614,33 @@
     }
 }
 
+- (void)onPublisherFaceDetectInfo:(ZegoFaceDetectionInfo *)info channel:(ZegoPublishChannel)channel {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPublisherFaceDetectInfo] size: %d, w: %d, h: %d, channel: %d", info.facePositionList.count, info.imageWidth, info.imageHeight, (int)channel);
+
+    GUARD_SINK
+    if (sink) {
+        NSMutableArray *facePositionListArray = [[NSMutableArray alloc] init];
+        for (ZegoFacePositionInfo *rect in info.facePositionList) {
+            [facePositionListArray addObject:@{
+                @"left": @(rect.position.origin.x),
+                @"top": @(rect.position.origin.y),
+                @"right": @(CGRectGetMaxX(rect.position)),
+                @"bottom": @(CGRectGetMaxY(rect.position))
+            }];
+        }
+        sink(@{
+            @"method": @"onPublisherFaceDetectInfo",
+            @"info": @{
+                @"imageWidth": @(info.imageWidth),
+                @"imageHeight": @(info.imageHeight),
+                @"facePositionList": facePositionListArray
+            },
+            @"channel": @((int)channel),
+        });
+    }
+}
+
 #pragma mark Player Callback
 
 - (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
@@ -1344,6 +1371,26 @@
             @"userID": userID,
             @"upstreamQuality": @(upstreamQuality),
             @"downstreamQuality": @(downstreamQuality)
+        });
+    }
+}
+
+- (void)onRtcStats:(ZegoRtcStatsInfo *)info {
+    FlutterEventSink sink = _eventSink;
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onRtcStats",
+            @"info": @{
+                @"totalTxBandwidth": @(info.totalTxBandwidth),
+                @"avgTxRtt": @(info.avgTxRtt),
+                @"avgTxPacketLostRate": @(info.avgTxPacketLostRate),
+                @"totalRxBandwidth": @(info.totalRxBandwidth),
+                @"avgRxRtt": @(info.avgRxRtt),
+                @"avgRxPacketLostRate": @(info.avgRxPacketLostRate),
+                @"avgPeerToPeerDelay": @(info.avgPeerToPeerDelay)
+            },
         });
     }
 }

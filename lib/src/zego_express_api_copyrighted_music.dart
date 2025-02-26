@@ -1,3 +1,4 @@
+
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -5,6 +6,7 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineCopyrightedMusic on ZegoExpressEngine {
+
   /// Creates a copyrighted music instance.
   ///
   /// Available since: 2.13.0
@@ -25,9 +27,8 @@ extension ZegoExpressEngineCopyrightedMusic on ZegoExpressEngine {
   /// When to call: It can be called before the engine by [destroyEngine]
   ///
   /// - [copyrightedMusic] The copyrighted music instance object to be destroyed.
-  Future<void> destroyCopyrightedMusic(
-      ZegoCopyrightedMusic copyrightedMusic) async {
-    return await ZegoExpressImpl.instance
-        .destroyCopyrightedMusic(copyrightedMusic);
+  Future<void> destroyCopyrightedMusic(ZegoCopyrightedMusic copyrightedMusic) async {
+    return await ZegoExpressImpl.instance.destroyCopyrightedMusic(copyrightedMusic);
   }
+
 }

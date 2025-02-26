@@ -840,6 +840,14 @@ class ZegoExpressImpl {
         .invokeMethod('enableAuxBgmBalance', {'enable': enable});
   }
 
+  Future<void> enableFaceDetection(bool enable,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableFaceDetection', {
+      'enable': enable,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   /* Player */
 
   Future<void> startPlayingStream(String streamID,
@@ -1336,9 +1344,13 @@ class ZegoExpressImpl {
     return ZegoAudioRoute.values[typeIdx];
   }
 
-  Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
+  Future<void> enableCamera(bool enable,
+      {ZegoExpNotifyDeviceStateMode? notifyMode,
+      ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('enableCamera', {
       'enable': enable,
+      'notifyMode':
+          notifyMode?.index ?? ZegoExpNotifyDeviceStateMode.Open.index,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -2680,6 +2692,26 @@ class ZegoExpressImpl {
             ZegoPublishChannel.values[map['channel']]);
         break;
 
+      case 'onPublisherFaceDetectInfo':
+        if (ZegoExpressEngine.onPublisherFaceDetectInfo == null) return;
+
+        ZegoFaceDetectionInfo faceDetectionInfo = ZegoFaceDetectionInfo();
+        faceDetectionInfo.imageWidth = map['info']['imageWidth'];
+        faceDetectionInfo.imageHeight = map['info']['imageHeight'];
+        List<dynamic> facePositionList = map['info']['facePositionList'];
+        for (Map<dynamic, dynamic> rectMap in facePositionList) {
+          ZegoFacePositionInfo rect = ZegoFacePositionInfo(Rect.fromLTRB(
+              rectMap['left'],
+              rectMap['top'],
+              rectMap['right'],
+              rectMap['bottom']));
+          faceDetectionInfo.facePositionList.add(rect);
+        }
+
+        ZegoExpressEngine.onPublisherFaceDetectInfo!(
+            faceDetectionInfo, ZegoPublishChannel.values[map['channel']]);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -3130,6 +3162,19 @@ class ZegoExpressImpl {
             map['userID'],
             ZegoStreamQualityLevel.values[map['upstreamQuality']],
             ZegoStreamQualityLevel.values[map['downstreamQuality']]);
+        break;
+
+      case 'onRtcStats':
+        if (ZegoExpressEngine.onRtcStats == null) return;
+
+        ZegoExpressEngine.onRtcStats!(ZegoRtcStatsInfo(
+            map['info']['totalTxBandwidth'],
+            map['info']['avgTxRtt'],
+            map['info']['avgTxPacketLostRate'],
+            map['info']['totalRxBandwidth'],
+            map['info']['avgRxRtt'],
+            map['info']['avgRxPacketLostRate'],
+            map['info']['avgPeerToPeerDelay']));
         break;
 
       /* Process Audio Data */
@@ -4825,6 +4870,20 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
     return await ZegoExpressImpl._channel.invokeMethod(
         'enableCursorVisibleScreenCaptureSource',
         {'visible': visible, 'index': _index});
+  }
+
+  @override
+  Future<void> enableHightLight(bool enable,
+      {ZegoLayerBorderConfig? config}) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('enableHightLightScreenCaptureSource', {
+      'enable': enable,
+      'config': {
+        'color': config?.color ?? 0x00FF00,
+        'width': config?.width ?? 4
+      },
+      'index': _index
+    });
   }
 
   @override
