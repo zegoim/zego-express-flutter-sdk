@@ -17,14 +17,13 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 
 import static im.zego.zego_express_engine.internal.ZegoUtils.getStackTrace;
 
 /** ZegoExpressEnginePlugin */
 public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
 
-    private Registrar registrar;
     private FlutterPluginBinding pluginBinding;
 
     private MethodChannel methodChannel;
@@ -48,17 +47,15 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
 
     // V2 embedding
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-
-        MethodChannel methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_engine");
-        EventChannel eventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.zego.im/zego_express_event_handler");
+        MethodChannel methodChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "plugins.zego.im/zego_express_engine");
+        EventChannel eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "plugins.zego.im/zego_express_event_handler");
 
         // Register platform view factory
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
 
-        this.setupPlugin(null, flutterPluginBinding, methodChannel, eventChannel);
+        this.setupPlugin(flutterPluginBinding, methodChannel, eventChannel);
     }
 
     @Override
@@ -74,38 +71,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
     }
 
 
-    /* Adapt to Flutter versions before 1.12 */
-
-    // V1 embedding
-
-    // This static function is optional and equivalent to onAttachedToEngine. It supports the old
-    // pre-Flutter-1.12 Android projects. You are encouraged to continue supporting
-    // plugin registration via this function while apps migrate to use the new Android APIs
-    // post-flutter-1.12 via https://flutter.dev/go/android-project-migration.
-    //
-    // It is encouraged to share logic between onAttachedToEngine and registerWith to keep
-    // them functionally equivalent. Only one of onAttachedToEngine or registerWith will be called
-    // depending on the user's project. onAttachedToEngine or registerWith must both be defined
-    // in the same class.
-    @SuppressWarnings("unused")
-    public static void registerWith(Registrar registrar) {
-
-        MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "plugins.zego.im/zego_express_engine");
-        EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.zego.im/zego_express_event_handler");
-
-        // Register platform view factory
-        registrar.platformViewRegistry().registerViewFactory("plugins.zego.im/zego_express_view", ZegoPlatformViewFactory.getInstance());
-
-        ZegoExpressEnginePlugin plugin = new ZegoExpressEnginePlugin();
-        plugin.setupPlugin(registrar, null, methodChannel, eventChannel);
-    }
-
-
     /* Setup ZegoExpressEngine Plugin */
 
-    private void setupPlugin(Registrar registrar, FlutterPluginBinding pluginBinding, MethodChannel methodChannel, EventChannel eventChannel) {
-
-        this.registrar = registrar;
+    private void setupPlugin(FlutterPluginBinding pluginBinding, MethodChannel methodChannel, EventChannel eventChannel) {
         this.pluginBinding = pluginBinding;
 
         this.methodChannel = methodChannel;
@@ -117,13 +85,8 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         try {
             Method initApiCalledCallbackMethod = this.manager.getMethod("initApiCalledCallback");
             initApiCalledCallbackMethod.invoke(null);
-        } catch (NoSuchMethodException e) {
-            ZegoLog.log("[DartCall] [NoSuchMethodException] [%s] %s | %s", "initApiCalledCallback", e.getMessage(), getStackTrace(e));
-        } catch (IllegalAccessException e) {
-            ZegoLog.log("[DartCall] [IllegalAccessException] [%s] %s | %s", "initApiCalledCallback", e.getMessage(), getStackTrace(e));
-        } catch (InvocationTargetException e) {
-            Throwable t = e.getTargetException();
-            ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s | %s", "initApiCalledCallback", t.getCause(), t.getMessage(), getStackTrace(t));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            ZegoLog.log("[DartCall] [Exception] [%s] %s | %s", "initApiCalledCallback", e.getMessage(), getStackTrace(e));
         }
     }
 
@@ -153,9 +116,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             Method method = methodHashMap.get(call.method);
             if (method == null) {
                 if (call.method.equals("createEngine")) {
-                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
+                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
                 } else if (call.method.equals("createEngineWithProfile")) {
-                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, Registrar.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
+                    method = this.manager.getMethod(call.method, MethodCall.class, Result.class, FlutterPluginBinding.class, EventChannel.EventSink.class);
                 } else {
                     method = this.manager.getMethod(call.method, MethodCall.class, Result.class);
                 }
@@ -163,9 +126,9 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
             }
 
             if (call.method.equals("createEngine")) {
-                method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
+                method.invoke(null, call, result, this.pluginBinding, this.sink);
             } else if (call.method.equals("createEngineWithProfile")) {
-                method.invoke(null, call, result, this.registrar, this.pluginBinding, this.sink);
+                method.invoke(null, call, result, this.pluginBinding, this.sink);
             } else {
                 method.invoke(null, call, result);
             }
