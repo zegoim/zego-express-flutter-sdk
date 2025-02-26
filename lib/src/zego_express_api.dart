@@ -576,12 +576,11 @@ class ZegoExpressEngine {
   /// Available since: 3.20.0
   /// Description: The notification for face detection.
   /// When to trigger: Turn on face detection through the [enableFaceDetection] interface, and this callback will be triggered when the camera is started or the number of faces changes.
-  /// Caution: None.
+  /// Caution: The callback is low-frequency and cannot be used with the custom video pre-processing function.
   ///
   /// - [info] Face detection information.
   /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
-  static void Function(ZegoFaceDetectionInfo info, ZegoPublishChannel channel)?
-      onPublisherFaceDetectInfo;
+  static void Function(ZegoFaceDetectionInfo info, ZegoPublishChannel channel)? onPublisherFaceDetectInfo;
 
   /// The callback triggered when the state of stream playing changes.
   ///
