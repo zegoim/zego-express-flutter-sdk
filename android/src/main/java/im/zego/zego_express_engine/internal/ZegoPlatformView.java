@@ -9,21 +9,21 @@
 package im.zego.zego_express_engine.internal;
 
 import android.content.Context;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 
 import io.flutter.plugin.platform.PlatformView;
 
 public class ZegoPlatformView implements PlatformView {
 
-    private SurfaceView surfaceView;
+    private TextureView surfaceView;
 
     ZegoPlatformView(Context context) {
-        this.surfaceView = new SurfaceView(context);
+        this.surfaceView = new TextureView(context);
         ZegoLog.log("[ZegoPlatformView] [init] surfaceView:%s", this.surfaceView.hashCode());
     }
 
-    public SurfaceView getSurfaceView() {
+    public TextureView getSurfaceView() {
         return this.surfaceView;
     }
 
