@@ -77,6 +77,7 @@ import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
 import im.zego.zegoexpress.entity.ZegoRoomExtraInfo;
 import im.zego.zegoexpress.entity.ZegoSoundLevelInfo;
+import im.zego.zegoexpress.entity.ZegoRtcStatsInfo;
 import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -1414,6 +1415,29 @@ public class ZegoExpressEngineEventHandler {
             map.put("userID", userID);
             map.put("upstreamQuality", upstreamQuality.value());
             map.put("downstreamQuality", downstreamQuality.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRtcStats(ZegoRtcStatsInfo info) {
+            super.onRtcStats(info);
+            
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRtcStats");
+            HashMap<String, Object> infoMap = new HashMap<>();
+            infoMap.put("totalTxBandwidth", info.totalTxBandwidth);
+            infoMap.put("avgTxRtt", info.avgTxRtt);
+            infoMap.put("avgTxPacketLostRate", info.avgTxPacketLostRate);
+            infoMap.put("totalRxBandwidth", info.totalRxBandwidth);
+            infoMap.put("avgRxRtt", info.avgRxRtt);
+            infoMap.put("avgRxPacketLostRate", info.avgRxPacketLostRate);
+            infoMap.put("avgPeerToPeerDelay", info.avgPeerToPeerDelay);
+            map.put("info", infoMap);
 
             sink.success(map);
         }

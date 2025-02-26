@@ -191,6 +191,8 @@ protected:
 
     void onNetworkQuality(const std::string & userID, EXPRESS::ZegoStreamQualityLevel upstreamQuality, EXPRESS::ZegoStreamQualityLevel downstreamQuality) override;
 
+    void onRtcStats(const EXPRESS::ZegoRtcStatsInfo &info) override;
+
 // RealTimeSequentialData
 protected:
     void onReceiveRealTimeSequentialData(EXPRESS::IZegoRealTimeSequentialDataManager * manager, const unsigned char * data, unsigned int dataLength, const std::string & streamID) override;
