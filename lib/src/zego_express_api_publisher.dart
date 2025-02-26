@@ -766,4 +766,19 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableAuxBgmBalance(enable);
   }
 
+  /// Turn on or off the face detection.
+  ///
+  /// Available since: 3.20.0
+  /// Description: Turn on or off the face detection. Default is on.
+  /// When to call: Called after the engine is created [createEngine].
+  /// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
+  ///
+  /// - [enable] Turn on or off the face detection.
+  /// - [channel] Publish stream channel.
+  Future<void> enableFaceDetection(bool enable,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .enableFaceDetection(enable, channel: channel);
+  }
+
 }

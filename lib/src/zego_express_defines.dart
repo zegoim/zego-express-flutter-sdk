@@ -2062,6 +2062,14 @@ class ZegoRoomExtraInfo {
 
 }
 
+/// Position information used by the face detection.
+class ZegoFacePositionInfo {
+  /// Coordinates used by the face detection.
+  Rect position;
+
+  ZegoFacePositionInfo(this.position);
+}
+
 /// View object.
 ///
 /// Configure view object, view Mode, background color
@@ -2213,6 +2221,26 @@ class ZegoStreamRelayCDNInfo {
 
   ZegoStreamRelayCDNInfo(this.url, this.state, this.updateReason, this.stateTime);
 
+}
+
+/// Face detection info.
+///
+/// Face detection info.
+class ZegoFaceDetectionInfo {
+  /// The image width captured by the camera
+  int imageWidth;
+
+  /// The image height captured by the camera
+  int imageHeight;
+
+  /// Face position information list
+  List<ZegoFacePositionInfo> facePositionList;
+
+  /// Create a face detection info object
+  ZegoFaceDetectionInfo()
+      : imageWidth = 0,
+        imageHeight = 0,
+        facePositionList = [];
 }
 
 /// Custom play stream resource type configuration.

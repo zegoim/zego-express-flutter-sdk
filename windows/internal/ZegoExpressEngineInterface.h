@@ -163,6 +163,7 @@ static const std::map<std::string,
         EngineMethodHandler(enableVideoObjectSegmentation),
         EngineMethodHandler(enableAlphaChannelVideoEncoder),
         EngineMethodHandler(enableAuxBgmBalance),
+        EngineMethodHandler(enableFaceDetection),
 
         EngineMethodHandler(startPlayingStream),
         EngineMethodHandler(switchPlayingStream),

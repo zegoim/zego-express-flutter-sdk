@@ -408,6 +408,8 @@ void ZegoExpressEngineEventHandler::onPublisherDummyCaptureImagePathError(
     }
 }
 
+// windows not supported onPublisherFaceDetectInfo
+
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
                                                         int errorCode,

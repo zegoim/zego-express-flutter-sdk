@@ -173,6 +173,7 @@ class ZegoExpressEngineMethodHandler {
     void enableVideoObjectSegmentation(ZFArgument argument, ZFResult result);
     void enableAlphaChannelVideoEncoder(ZFArgument argument, ZFResult result);
     void enableAuxBgmBalance(ZFArgument argument, ZFResult result);
+    void enableFaceDetection(ZFArgument argument, ZFResult result);
 
     void startPlayingStream(ZFArgument argument, ZFResult result);
     void switchPlayingStream(ZFArgument argument, ZFResult result);
