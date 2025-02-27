@@ -1020,12 +1020,12 @@ void ZegoExpressEngineMethodHandler::enableAuxBgmBalance(ZFArgument argument,
 
 void ZegoExpressEngineMethodHandler::enableFaceDetection(ZFArgument argument,
                                                          ZFResult result) {
-    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
-    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+    // auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    // auto channel = zego_value_get_int(argument[ZFValue("channel")]);
 
     // EXPRESS::ZegoExpressSDK::getEngine()->enableFaceDetection(enable, channel);
 
-    result->Success();
+    result->Error("not_support_feature", "windows platform not support feature");
 }
 
 void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFResult result) {
