@@ -1570,6 +1570,17 @@ public class ZegoExpressEngineMethodHandler {
         result.success(null);
     }
 
+    @SuppressWarnings("unused")
+    public static void enableFaceDetection(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableFaceDetection(enable, channel);
+
+        result.success(null);
+    }
+
     /* Player */
 
     @SuppressWarnings({"unused", "unchecked", "deprecation"})

@@ -173,6 +173,7 @@ class ZegoExpressEngineMethodHandler {
     void enableVideoObjectSegmentation(ZFArgument argument, ZFResult result);
     void enableAlphaChannelVideoEncoder(ZFArgument argument, ZFResult result);
     void enableAuxBgmBalance(ZFArgument argument, ZFResult result);
+    void enableFaceDetection(ZFArgument argument, ZFResult result);
 
     void startPlayingStream(ZFArgument argument, ZFResult result);
     void switchPlayingStream(ZFArgument argument, ZFResult result);
@@ -410,6 +411,7 @@ class ZegoExpressEngineMethodHandler {
     void createScreenCaptureSource(ZFArgument argument, ZFResult result);
     void destroyScreenCaptureSource(ZFArgument argument, ZFResult result);
     void enableCursorVisibleScreenCaptureSource(ZFArgument argument, ZFResult result);
+    void enableHightLightScreenCaptureSource(ZFArgument argument, ZFResult result);
     void enableWindowActivateScreenCaptureSource(ZFArgument argument, ZFResult result);
     void setExcludeWindowListScreenCaptureSource(ZFArgument argument, ZFResult result);
     void updateCaptureRegionScreenCaptureSource(ZFArgument argument, ZFResult result);

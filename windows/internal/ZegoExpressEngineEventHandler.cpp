@@ -408,6 +408,8 @@ void ZegoExpressEngineEventHandler::onPublisherDummyCaptureImagePathError(
     }
 }
 
+// windows not supported onPublisherFaceDetectInfo
+
 void ZegoExpressEngineEventHandler::onPlayerStateUpdate(const std::string &streamID,
                                                         EXPRESS::ZegoPlayerState state,
                                                         int errorCode,
@@ -1836,6 +1838,28 @@ void ZegoExpressEngineEventHandler::onNetworkQuality(
         retMap[ZFValue("upstreamQuality")] = ZFValue((int32_t)upstreamQuality);
         retMap[ZFValue("downstreamQuality")] = ZFValue((int32_t)downstreamQuality);
         retMap[ZFValue("userID")] = ZFValue(userID);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onRtcStats(const EXPRESS::ZegoRtcStatsInfo &info) {
+
+    // High frequency callbacks do not log
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onRtcStats");
+        ZFMap infoMap;
+        infoMap[ZFValue("totalTxBandwidth")] = ZFValue(info.totalTxBandwidth);
+        infoMap[ZFValue("avgTxRtt")] = ZFValue((int64_t)info.avgTxRtt);
+        infoMap[ZFValue("avgTxPacketLostRate")] = ZFValue(info.avgTxPacketLostRate);
+        infoMap[ZFValue("totalRxBandwidth")] = ZFValue(info.totalRxBandwidth);
+        infoMap[ZFValue("avgRxRtt")] = ZFValue((int64_t)info.avgRxRtt);
+        infoMap[ZFValue("avgRxPacketLostRate")] = ZFValue(info.avgRxPacketLostRate);
+        infoMap[ZFValue("avgPeerToPeerDelay")] = ZFValue((int64_t)info.avgPeerToPeerDelay);
+
+        retMap[ZFValue("info")] = ZFValue(infoMap);
 
         eventSink_->Success(retMap);
     }

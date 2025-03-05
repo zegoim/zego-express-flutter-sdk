@@ -1430,6 +1430,16 @@
     result(nil);
 }
 
+- (void)enableFaceDetection:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+
+    [[ZegoExpressEngine sharedEngine] enableFaceDetection:enable channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
 #pragma mark - Player
 
 - (void)startPlayingStream:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -5923,6 +5933,23 @@
     if (screenCaptureSource) {
         BOOL visible = [ZegoUtils boolValue: call.arguments[@"visible"]];
         [screenCaptureSource enableCursorVisible:visible];
+    }
+
+    result(nil);
+}
+
+- (void)enableHightLightScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSNumber *index = call.arguments[@"index"];
+    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
+    if (screenCaptureSource) {
+        BOOL enable = [ZegoUtils boolValue: call.arguments[@"enable"]];
+        ZegoLayerBorderConfig *config = [[ZegoLayerBorderConfig alloc] init];
+        NSDictionary *configMap = call.arguments[@"config"];
+        if (configMap) {
+            config.color = [ZegoUtils intValue: configMap[@"color"]];
+            config.width = [ZegoUtils intValue: configMap[@"width"]];
+        }
+        [screenCaptureSource enableHightLight:enable config:config];
     }
 
     result(nil);
