@@ -1143,8 +1143,8 @@ class ZegoExpressEngineWeb {
     var config =
         ZegoFlutterEngine.instance.getAudioConfig(getPublishChannel(channel));
     var map = {};
-    map['bitrate'] = config.captureWidth;
-    map['channel'] = config.captureHeight;
+    map['bitrate'] = config.bitrate;
+    map['channel'] = config.channel;
     map['codecID'] = 6; // Low3(OPUS)
 
     return Future.value(map);
@@ -1214,15 +1214,12 @@ class ZegoExpressEngineWeb {
       {int? timeout}) async {
     final map = {};
     try {
-      final result = await (() {
-        Map completerMap = createCompleter();
-        ZegoFlutterEngine.instance.addPublishCdnUrl(
-            streamID, targetURL, completerMap["success"], completerMap["fail"]);
-        return completerMap["completer"].future;
-      })();
-      map["errorCode"] = result;
-    } catch (errorCode) {
-      map["errorCode"] = errorCode;
+      final promise = callMethod(ZegoFlutterEngine.instance, 'addPublishCdnUrl',
+          [streamID, targetURL]);
+      final result = await promiseToFuture(promise);
+      map["errorCode"] = getProperty(result, 'errorCode');
+    } catch (error) {
+      map["errorCode"] = getProperty(error, 'errorCode');
     }
     return Future.value(map);
   }
@@ -1231,15 +1228,12 @@ class ZegoExpressEngineWeb {
       String streamID, String targetURL) async {
     final map = {};
     try {
-      final result = await (() {
-        Map completerMap = createCompleter();
-        ZegoFlutterEngine.instance.removePublishCdnUrl(
-            streamID, targetURL, completerMap["success"], completerMap["fail"]);
-        return completerMap["completer"].future;
-      })();
-      map["errorCode"] = result;
-    } catch (errorCode) {
-      map["errorCode"] = errorCode;
+      final promise = callMethod(ZegoFlutterEngine.instance, 'removePublishCdnUrl',
+          [streamID, targetURL]);
+      final result = await promiseToFuture(promise);
+      map["errorCode"] = getProperty(result, 'errorCode');
+    } catch (error) {
+      map["errorCode"] = getProperty(error, 'errorCode');
     }
     return Future.value(map);
   }
