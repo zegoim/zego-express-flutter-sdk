@@ -1,12 +1,12 @@
 name: zego_express_engine
 summary: Zego RTC SDK for Flutter
 description: ZegoExpressEngine Flutter SDK is a flutter plugin wrapper based on ZEGO Express RTC SDK (Native & Web), providing live video and real-time audio/video services.
-version: 3.19.0
+version: 3.19.1
 homepage: https://zego.im
 
 environment:
   sdk: ">=2.12.0 <4.0.0"
-  flutter: ">=1.10.0"
+  flutter: ">=1.12.0"
 
 dependencies:
   flutter:

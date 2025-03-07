@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.19.1
+
+### Bug Fixes
+
+1. Adpat Flutter version 3.29.0
+
 ## 3.19.0
 
 ### New Features
