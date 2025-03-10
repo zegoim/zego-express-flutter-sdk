@@ -26,5 +26,6 @@ double zego_value_get_double(flutter::EncodableValue value);
 std::string zego_value_get_string(flutter::EncodableValue value);
 std::vector<float> zego_value_get_vector_float(flutter::EncodableValue value);
 std::vector<uint8_t> zego_value_get_vector_uint8(flutter::EncodableValue value);
+std::vector<std::string> zego_value_get_vector_string(flutter::EncodableValue value);
 ZFMap zego_value_get_map(flutter::EncodableValue value);
 ZFArray zego_value_get_list(flutter::EncodableValue value);

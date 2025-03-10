@@ -3042,8 +3042,28 @@ class ZegoAutoMixerTask {
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
+  /// Network time deviation threshold for stream mixing alignment, in milliseconds. The default value is 2000, with a range of values [100, 2000].
+  int streamAlignmentThreshold;
+
+  /// Stream mixing alignment scene volume adjustment mode.
+  ZegoStreamAlignmentVolumeControlMode streamAlignmentVolumeControlMode;
+
+  /// Stream mixing alignment scene volume adjustment blacklist list.
+  List<String> streamAlignmentVolumeControlBlacklist;
+
   /// Create a auto mix stream task object
-  ZegoAutoMixerTask() : taskID = "", roomID = "", outputList = [], audioConfig = ZegoMixerAudioConfig.defaultConfig(), enableSoundLevel = false, streamAlignmentMode = ZegoStreamAlignmentMode.None, minPlayStreamBufferLength = -1;
+  ZegoAutoMixerTask()
+      : taskID = "",
+        roomID = "",
+        outputList = [],
+        audioConfig = ZegoMixerAudioConfig.defaultConfig(),
+        enableSoundLevel = false,
+        streamAlignmentMode = ZegoStreamAlignmentMode.None,
+        minPlayStreamBufferLength = -1,
+        streamAlignmentThreshold = 2000,
+        streamAlignmentVolumeControlMode =
+            ZegoStreamAlignmentVolumeControlMode.Close,
+        streamAlignmentVolumeControlBlacklist = [];
 
   Map<String, dynamic> toMap() {
     return {
