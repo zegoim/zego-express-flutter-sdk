@@ -26,7 +26,16 @@ std::vector<uint8_t> zego_value_get_vector_uint8(flutter::EncodableValue value) 
 }
 
 std::vector<std::string> zego_value_get_vector_string(flutter::EncodableValue value) {
-    return std::get<std::vector<std::string>>(value);
+    std::vector<std::string> result;
+    if (std::holds_alternative<flutter::EncodableList>(value)) {
+        const flutter::EncodableList& list = std::get<flutter::EncodableList>(value);
+        for (const auto& item : list) {
+            if (std::holds_alternative<std::string>(item)) {
+                result.push_back(std::get<std::string>(item));
+            }
+        }
+    }
+    return result;
 }
 
 ZFMap zego_value_get_map(flutter::EncodableValue value) { return std::get<ZFMap>(value); }
