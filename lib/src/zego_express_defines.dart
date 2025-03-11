@@ -566,6 +566,14 @@ enum ZegoMixImageCheckMode {
   Nothing
 }
 
+/// Stream alignment volume control mode.
+enum ZegoStreamAlignmentVolumeControlMode {
+  /// Disable volume control when stream alignment.
+  Close,
+  /// Enable volume control when stream alignment.
+  Open
+}
+
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
   /// Basic (Adaptive (reduce) video bitrate)
