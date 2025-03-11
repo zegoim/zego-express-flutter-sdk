@@ -3081,10 +3081,14 @@ class ZegoAutoMixerTask {
       'outputList': this.outputList,
       'enableSoundLevel': this.enableSoundLevel,
       'streamAlignmentMode': this.streamAlignmentMode.index,
-      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
+      'streamAlignmentThreshold': this.streamAlignmentThreshold,
+      'streamAlignmentVolumeControlMode':
+          this.streamAlignmentVolumeControlMode.index,
+      'streamAlignmentVolumeControlBlacklist':
+          this.streamAlignmentVolumeControlBlacklist
     };
   }
-
 }
 
 /// Broadcast message info.
