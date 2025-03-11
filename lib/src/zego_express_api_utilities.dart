@@ -1,4 +1,3 @@
-
 import 'zego_express_api.dart';
 import 'impl/zego_express_impl.dart';
 import 'zego_express_defines.dart';
@@ -6,7 +5,6 @@ import 'zego_express_defines.dart';
 // ignore_for_file: deprecated_member_use_from_same_package
 
 extension ZegoExpressEngineUtilities on ZegoExpressEngine {
-
   /// Start system performance monitoring.
   ///
   /// Available since: 1.19.0
@@ -19,7 +17,8 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   ///
   /// - [millisecond] Monitoring time period(in milliseconds), the value range is [1000, 10000]. Default value is 2000 ms.
   Future<void> startPerformanceMonitor({int? millisecond}) async {
-    return await ZegoExpressImpl.instance.startPerformanceMonitor(millisecond: millisecond);
+    return await ZegoExpressImpl.instance
+        .startPerformanceMonitor(millisecond: millisecond);
   }
 
   /// Stop system performance monitoring.
@@ -45,7 +44,8 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   /// Related APIs: Call [stopNetworkProbe] to stop network probe.
   ///
   /// - [config] network probe config.
-  Future<ZegoNetworkProbeResult> startNetworkProbe(ZegoNetworkProbeConfig config) async {
+  Future<ZegoNetworkProbeResult> startNetworkProbe(
+      ZegoNetworkProbeConfig config) async {
     return await ZegoExpressImpl.instance.startNetworkProbe(config);
   }
 
@@ -73,8 +73,10 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   ///
   /// - [config] Network speed test configuration.
   /// - [interval] Interval of network speed test. In milliseconds, default is 3000 ms.
-  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config, {int? interval}) async {
-    return await ZegoExpressImpl.instance.startNetworkSpeedTest(config, interval: interval);
+  Future<void> startNetworkSpeedTest(ZegoNetworkSpeedTestConfig config,
+      {int? interval}) async {
+    return await ZegoExpressImpl.instance
+        .startNetworkSpeedTest(config, interval: interval);
   }
 
   /// Stop network speed test.
@@ -150,5 +152,4 @@ extension ZegoExpressEngineUtilities on ZegoExpressEngine {
   Future<void> removeDumpData() async {
     return await ZegoExpressImpl.instance.removeDumpData();
   }
-
 }
