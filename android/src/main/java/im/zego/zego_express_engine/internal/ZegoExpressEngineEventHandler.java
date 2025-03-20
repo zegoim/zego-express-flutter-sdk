@@ -70,6 +70,8 @@ import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordProgress;
+import im.zego.zegoexpress.entity.ZegoFaceDetectionInfo;
+import im.zego.zegoexpress.entity.ZegoFacePositionInfo;
 import im.zego.zegoexpress.entity.ZegoMediaSideInfo;
 import im.zego.zegoexpress.entity.ZegoNetworkSpeedTestQuality;
 import im.zego.zegoexpress.entity.ZegoPerformanceStatus;
@@ -77,6 +79,7 @@ import im.zego.zegoexpress.entity.ZegoPlayStreamQuality;
 import im.zego.zegoexpress.entity.ZegoPublishStreamQuality;
 import im.zego.zegoexpress.entity.ZegoRoomExtraInfo;
 import im.zego.zegoexpress.entity.ZegoSoundLevelInfo;
+import im.zego.zegoexpress.entity.ZegoRtcStatsInfo;
 import im.zego.zegoexpress.entity.ZegoStream;
 import im.zego.zegoexpress.entity.ZegoStreamRelayCDNInfo;
 import im.zego.zegoexpress.entity.ZegoUser;
@@ -577,6 +580,38 @@ public class ZegoExpressEngineEventHandler {
             map.put("method", "onPublisherDummyCaptureImagePathError");
             map.put("errorCode", errorCode);
             map.put("path", path);
+            map.put("channel", channel.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPublisherFaceDetectInfo(ZegoFaceDetectionInfo info, ZegoPublishChannel channel) {
+            super.onPublisherFaceDetectInfo(info, channel);
+            ZegoLog.log("[onPublisherFaceDetectInfo] size: %d, w: %d h: %d, channel: %s", info.facePositionList.size(), info.imageWidth, info.imageHeight, channel.name());
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPublisherFaceDetectInfo");
+            HashMap<String, Object> infoMap = new HashMap<>();
+            infoMap.put("imageWidth", info.imageWidth);
+            infoMap.put("imageHeight", info.imageHeight);
+
+            ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
+            for (ZegoFacePositionInfo item: info.facePositionList) {
+
+                HashMap<String, Object> rect = new HashMap<>();
+                rect.put("left", (double)item.position.left);
+                rect.put("top", (double)item.position.top);
+                rect.put("right", (double)item.position.right);
+                rect.put("bottom", (double)item.position.bottom);
+
+                arrayList.add(rect);
+            }
+            infoMap.put("facePositionList", arrayList);
+
+            map.put("info", infoMap);
             map.put("channel", channel.value());
 
             sink.success(map);
@@ -1414,6 +1449,29 @@ public class ZegoExpressEngineEventHandler {
             map.put("userID", userID);
             map.put("upstreamQuality", upstreamQuality.value());
             map.put("downstreamQuality", downstreamQuality.value());
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onRtcStats(ZegoRtcStatsInfo info) {
+            super.onRtcStats(info);
+            
+            // High frequency callbacks do not log
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onRtcStats");
+            HashMap<String, Object> infoMap = new HashMap<>();
+            infoMap.put("totalTxBandwidth", info.totalTxBandwidth);
+            infoMap.put("avgTxRtt", info.avgTxRtt);
+            infoMap.put("avgTxPacketLostRate", info.avgTxPacketLostRate);
+            infoMap.put("totalRxBandwidth", info.totalRxBandwidth);
+            infoMap.put("avgRxRtt", info.avgRxRtt);
+            infoMap.put("avgRxPacketLostRate", info.avgRxPacketLostRate);
+            infoMap.put("avgPeerToPeerDelay", info.avgPeerToPeerDelay);
+            map.put("info", infoMap);
 
             sink.success(map);
         }

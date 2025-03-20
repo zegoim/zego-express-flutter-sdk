@@ -1018,6 +1018,16 @@ void ZegoExpressEngineMethodHandler::enableAuxBgmBalance(ZFArgument argument,
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::enableFaceDetection(ZFArgument argument,
+                                                         ZFResult result) {
+    // auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    // auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    // EXPRESS::ZegoExpressSDK::getEngine()->enableFaceDetection(enable, channel);
+
+    result->Error("not_support_feature", "windows platform not support feature");
+}
+
 void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFResult result) {
     auto streamID = zego_value_get_string(argument[ZFValue("streamID")]);
 
@@ -5476,6 +5486,8 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(ZFArgument argument
         resultArray.emplace_back(ZFValue(infoMap));
     }
 
+    EXPRESS::ZegoExpressSDK::getEngine()->freeScreenCaptureSources(infos);
+
     result->Success(resultArray);
 #else
     result->Error("not_support_feature", "linux platform not support feature");
@@ -5549,6 +5561,31 @@ void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(ZFA
     if (screenCaptureSource) {
         auto active = zego_value_get_bool(argument[ZFValue("active")]);
         screenCaptureSource->enableWindowActivate(active);
+    }
+
+    result->Success();
+#else
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
+}
+
+void ZegoExpressEngineMethodHandler::enableHightLightScreenCaptureSource(ZFArgument argument,
+                                                                       ZFResult result) {
+#ifdef _WIN32
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+        auto configMap = zego_value_get_map(argument[ZFValue("config")]);
+        if (configMap.size() > 0) {
+            EXPRESS::ZegoLayerBorderConfig config;
+            config.color = zego_value_get_int(configMap[ZFValue("color")]);
+            config.width = zego_value_get_int(configMap[ZFValue("width")]);
+            screenCaptureSource->enableHightLight(enable, config);
+        } else {
+            screenCaptureSource->enableHightLight(enable);
+        }
     }
 
     result->Success();

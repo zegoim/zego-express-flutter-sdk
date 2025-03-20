@@ -1013,6 +1013,15 @@ enum ZegoDeviceExceptionType {
   AudioSessionCategoryChange
 }
 
+/// Mode for notifying the local device state.
+enum ZegoExpNotifyDeviceStateMode {
+  /// Notify the local device state.
+  Open,
+
+  /// Do not notify the local device state. Only valid for disable device.
+  Close
+}
+
 /// Remote device status.
 enum ZegoRemoteDeviceState {
   /// Device on
@@ -2492,6 +2501,14 @@ class ZegoRoomExtraInfo {
   ZegoRoomExtraInfo(this.key, this.value, this.updateUser, this.updateTime);
 }
 
+/// Position information used by the face detection.
+class ZegoFacePositionInfo {
+  /// Coordinates used by the face detection.
+  Rect position;
+
+  ZegoFacePositionInfo(this.position);
+}
+
 /// View object.
 ///
 /// Configure view object, view Mode, background color
@@ -2663,6 +2680,26 @@ class ZegoStreamRelayCDNInfo {
 
   ZegoStreamRelayCDNInfo(
       this.url, this.state, this.updateReason, this.stateTime);
+}
+
+/// Face detection info.
+///
+/// Face detection info.
+class ZegoFaceDetectionInfo {
+  /// The image width captured by the camera
+  int imageWidth;
+
+  /// The image height captured by the camera
+  int imageHeight;
+
+  /// Face position information list
+  List<ZegoFacePositionInfo> facePositionList;
+
+  /// Create a face detection info object
+  ZegoFaceDetectionInfo()
+      : imageWidth = 0,
+        imageHeight = 0,
+        facePositionList = [];
 }
 
 /// Custom play stream resource type configuration.
@@ -3880,6 +3917,39 @@ class ZegoNetworkSpeedTestQuality {
       this.connectCost, this.rtt, this.packetLostRate, this.quality);
 }
 
+/// RTC Network Statistics
+class ZegoRtcStatsInfo {
+  /// total upstream bandwidth, in kbps
+  double totalTxBandwidth;
+
+  /// upstream average rtt, in milliseconds
+  int avgTxRtt;
+
+  /// upstream average packet lost rate. in percentage, 0.0 ~ 1.0
+  double avgTxPacketLostRate;
+
+  /// total downlink bandwidth, in kbps
+  double totalRxBandwidth;
+
+  /// downlink average rtt, in milliseconds
+  int avgRxRtt;
+
+  /// downlink average packet lost rate. in percentage, 0.0 ~ 1.0
+  double avgRxPacketLostRate;
+
+  /// average peer to peer delay, in milliseconds
+  int avgPeerToPeerDelay;
+
+  ZegoRtcStatsInfo(
+      this.totalTxBandwidth,
+      this.avgTxRtt,
+      this.avgTxPacketLostRate,
+      this.totalRxBandwidth,
+      this.avgRxRtt,
+      this.avgRxPacketLostRate,
+      this.avgPeerToPeerDelay);
+}
+
 /// The NTP info
 class ZegoNetworkTimeInfo {
   /// Network timestamp after synchronization, 0 indicates not yet synchronized
@@ -4121,6 +4191,23 @@ class ZegoScreenCaptureSourceInfo {
 
   ZegoScreenCaptureSourceInfo(this.sourceType, this.sourceID, this.sourceName,
       this.thumbnailImage, this.iconImage);
+}
+
+/// Layer border configuration.
+///
+/// Customize the size, color, etc. of the layer border.
+class ZegoLayerBorderConfig {
+  /// Border size, default value 4, the maximum value is 100.
+  int width;
+
+  /// Background color, the format is 0xRRGGBB, default is green, which is 0x00FF00
+  int color;
+
+  ZegoLayerBorderConfig(this.width, this.color);
+
+  ZegoLayerBorderConfig.defaultConfig()
+      : width = 4,
+        color = 0x00FF00;
 }
 
 /// Audio source mix config
@@ -4854,7 +4941,7 @@ abstract class ZegoMediaPlayer {
   /// Related APIs: After it is turned on, user can use the [onMediaPlayerFrequencySpectrumUpdate] callback to monitor frequency spectrum updates.
   ///
   /// - [enable] Whether to enable monitoring, true is enabled, false is disabled.
-  /// - [millisecond] Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [100, 3000].
+  /// - [millisecond] Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [10, 3000]. Note that on v3.19.0 and older version, the value range is [100, 3000].
   Future<void> enableFrequencySpectrumMonitor(bool enable, int millisecond);
 
   /// Set the playback channel.
@@ -5923,6 +6010,17 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// - [visible] Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
   Future<void> enableCursorVisible(bool visible);
+
+  /// Set whether to highlight the capture area
+  ///
+  /// Available since: 3.20.0
+  /// Description: Set whether to highlight the capture area.
+  /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [enable] Whether to highlight the capture area. true to highlight, false to not highlight, the default is false.
+  /// - [config] Highlight capture area border configuration.
+  Future<void> enableHightLight(bool enable, {ZegoLayerBorderConfig? config});
 
   /// Whether to collect the sound of the window process during window collection
   ///
