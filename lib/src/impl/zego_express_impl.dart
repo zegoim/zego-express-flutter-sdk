@@ -1096,6 +1096,36 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<int> setPlayingCanvas(String streamID, ZegoViewUpdateType updateType,
+      {ZegoCanvas? canvas}) async {
+    if (canvas != null && !shouldUsePlatformView()) {
+      ZegoExpressTextureRenderer()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
+    }
+    return await _channel.invokeMethod('setPlayingCanvas', {
+      'streamID': streamID,
+      'canvas': canvas != null
+          ? {
+              'view': canvas.view,
+              'viewMode':
+                  canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
+              'backgroundColor': canvas.backgroundColor ?? 0x000000,
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0,
+              'mirror': canvas.mirror ?? false,
+              'viewContext': canvas.viewContext ?? 0
+            }
+          : {}
+    });
+  }
+
   /* Mixer */
 
   Future<ZegoMixerStartResult> startMixerTask(ZegoMixerTask task) async {

@@ -855,6 +855,18 @@ enum ZegoStreamResourceType {
 }
 
 /// Update type.
+enum ZegoViewUpdateType {
+  /// Add
+  Add,
+
+  /// Delete
+  Delete,
+
+  /// Update
+  Update
+}
+
+/// Update type.
 enum ZegoUpdateType {
   /// Add
   Add,
@@ -2525,13 +2537,31 @@ class ZegoCanvas {
   /// If enable alpha blend render, default is false.
   bool? alphaBlend;
 
-  ZegoCanvas(this.view, {this.viewMode, this.backgroundColor, this.alphaBlend});
+  /// Rotate the angle counterclockwise, the default is 0.
+  int? rotation;
+
+  /// If enable the view mirror, default is false.
+  bool? mirror;
+
+  /// Context of view, default is 0.
+  int? viewContext;
+
+  ZegoCanvas(this.view,
+      {this.viewMode,
+      this.backgroundColor,
+      this.alphaBlend,
+      this.rotation,
+      this.mirror,
+      this.viewContext});
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
   ZegoCanvas.view(this.view)
       : this.viewMode = ZegoViewMode.AspectFit,
         this.backgroundColor = 0x000000,
-        this.alphaBlend = false;
+        this.alphaBlend = false,
+        this.rotation = 0,
+        this.mirror = false,
+        this.viewContext = 0;
 }
 
 /// Advanced publisher configuration.

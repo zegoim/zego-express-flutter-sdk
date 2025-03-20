@@ -417,4 +417,26 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   Future<int> updatePlayingCanvas(String streamID, ZegoCanvas canvas) async {
     return await ZegoExpressImpl.instance.updatePlayingCanvas(streamID, canvas);
   }
+
+  /// Setting up playing canvas.
+  ///
+  /// Available: since 3.21.0
+  /// Description: This interface can add, delete and update playing view.
+  /// Use case: The user can call this function to add, delete and update canvas display video.
+  /// When to call: After calling the [startPlayingStream] interface.
+  /// Restrictions: None.
+  /// Caution: None.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [streamID] Stream ID, a string of up to 256 characters.
+  ///   Caution:
+  ///   Only support numbers, English characters and '-', '_'.
+  /// - [updateType] Update type.
+  /// - [canvas] The view used to display the play audio and video stream's image.
+  /// - Returns Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+  Future<int> setPlayingCanvas(String streamID, ZegoViewUpdateType updateType,
+      {ZegoCanvas? canvas}) async {
+    return await ZegoExpressImpl.instance
+        .setPlayingCanvas(streamID, updateType, canvas: canvas);
+  }
 }

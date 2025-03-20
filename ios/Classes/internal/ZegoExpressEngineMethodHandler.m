@@ -1897,6 +1897,8 @@
     result(@(errorCode));
 }
 
+// TODO: setPlayingCanvas
+
 #if TARGET_OS_IPHONE
 - (void)enableVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {
 

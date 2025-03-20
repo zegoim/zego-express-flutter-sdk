@@ -2114,6 +2114,85 @@ public class ZegoExpressEngineMethodHandler {
         result.success(errorCode);
     }
 
+    @SuppressWarnings("unused")
+    public static void setPlayingCanvas(MethodCall call, Result result) {
+
+        String streamID = call.argument("streamID");
+        // ZegoStreamAlignmentMode mode = ZegoStreamAlignmentMode.getZegoStreamAlignmentMode(ZegoUtils.intValue((Number) call.argument("mode")));
+        ZegoViewUpdateType updateType = ZegoViewUpdateType.getZegoViewUpdateType(ZegoUtils.intValue((Number) call.argument("updateType")));
+        // Handle ZegoCanvas
+
+        HashMap<String, Object> canvasMap = call.argument("canvas");
+        ZegoCanvas canvas = null;
+        if (canvasMap != null && !canvasMap.isEmpty()) {
+            // Play video
+
+            // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+            int viewID = ZegoUtils.intValue((Number) canvasMap.get("view"));
+            ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
+            int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
+            boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
+            int rotation = ZegoUtils.intValue((Number) canvasMap.get("rotation"));
+            boolean mirror = ZegoUtils.boolValue((Boolean) canvasMap.get("mirror"));
+            int viewContext = ZegoUtils.intValue((Number) canvasMap.get("viewContext"));
+
+            Object view = null;
+
+            if (enablePlatformView) {
+                // Render with PlatformView
+                ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
+
+                if (platformView != null) {
+                    view = platformView.getSurfaceView();
+                    if (alphaBlend) {
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
+                    }
+                } else {
+                    // Play video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
+                    ZegoLog.error("[setPlayingCanvas] %s", errorMessage);
+                    result.error("setPlayingCanvas_No_PlatformView".toUpperCase(), errorMessage, null);
+                    return;
+                }
+
+            } else {
+                // Render with Texture
+                ZegoTextureRenderer textureRenderer = ZegoTextureRendererController.getInstance().getTextureRenderer((long) viewID);
+
+                if (textureRenderer != null) {
+                    view = textureRenderer.getSurface();
+                } else {
+                    // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
+                    String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
+                    ZegoLog.error("[setPlayingCanvas] %s", errorMessage);
+                    result.error("setPlayingCanvas_No_TextureRenderer".toUpperCase(), errorMessage, null);
+                    return;
+                }
+            }
+
+            if (view != null) {
+                canvas = new ZegoCanvas(view);
+                canvas.viewMode = viewMode;
+                canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
+                canvas.viewContext = viewContext;
+            }
+
+            // Mark the canvas is in use
+            if (!enablePlatformView) {
+                // ZegoTextureRendererController.getInstance().playerCanvasInUse.put(streamID, canvas);
+            }
+        }
+        int errorCode = ZegoExpressEngine.getEngine().setPlayingCanvas(streamID, updateType, canvas);
+
+        result.success(errorCode);
+    }
+
     /* Mixer */
 
     @SuppressWarnings("unused")
