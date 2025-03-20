@@ -129,6 +129,7 @@ import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoVideoCodecBackend;
+import im.zego.zegoexpress.constants.ZegoViewUpdateType;
 import im.zego.zegoexpress.constants.ZegoOrientationMode;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormat;
 import im.zego.zegoexpress.constants.ZegoVideoFrameFormatSeries;
