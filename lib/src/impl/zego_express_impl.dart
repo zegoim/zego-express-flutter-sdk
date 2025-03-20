@@ -1111,6 +1111,7 @@ class ZegoExpressImpl {
     }
     return await _channel.invokeMethod('setPlayingCanvas', {
       'streamID': streamID,
+      'updateType': updateType.index,
       'canvas': canvas != null
           ? {
               'view': canvas.view,
