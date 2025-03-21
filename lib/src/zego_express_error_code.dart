@@ -155,7 +155,7 @@ class ZegoErrorCode {
   /// The key for room extra info is too long. <br>The length of the key for room extra info input by the [setRoomExtraInfo] function is greater than or equal to 128 bytes. <br>Please check the key for room extra info entered when calling the [setRoomExtraInfo] function to ensure that its length is less than 128 bytes.
   static const int RoomRoomExtraInfoKeyTooLong = 1002015;
 
-  /// The value for room extra info is too long. <br>The length of the value for room extra info input by the [setRoomExtraInfo] function is greater than or equal to 4096 bytes. <br>Please check the value for room extra info entered when calling the [setRoomExtraInfo] function to ensure that its length is less than 4096 bytes.
+  /// The value for room extra info is too long. <br>The length of the value for room extra info input by the [setRoomExtraInfo] function is greater than or equal to 128 bytes. <br>Please check the value for room extra info entered when calling the [setRoomExtraInfo] function to ensure that its length is less than 128 bytes.
   static const int RoomRoomExtraInfoValueTooLong = 1002016;
 
   /// Description: The number of keys set in the room additional message exceeds the maximum number of supported limits. <br>Cause: called setRoomExtraInfo Different keys have been passed in multiple times. <br> Solutions: please contact ZEGO technical support.
@@ -475,7 +475,7 @@ class ZegoErrorCode {
   /// Description: Illegal format of mixed stream output target parameter. <br>Cause: When the target of the mixed stream output target is streamID, an illegal character is passed in. <br>Solutions: Please check whether the target of the mixed stream output target is of streamID type, if so, target only support numbers, English characters and '-', '_'.
   static const int MixerOutputTargetInvalid = 1005006;
 
-  /// Description: Failed to start the stream mixing task. <br>Cause: Requests are too frequent, exceeding the qps limit of the service. <br>Solutions: Please ensure that the qps of the mixing request is less than 100.
+  /// Description: Failed to start the stream mixing task. <br>Cause: Requests are too frequent, exceeding the qps limit of the service. Network exceptions. An illegal mixed stream output URL was passed in. <br>Solutions: Please ensure that the qps of the mixing request is less than 100. Check the network. Pass in a valid mixed stream output URL.
   static const int MixerStartRequestError = 1005010;
 
   /// Description: Failed to stop the stream mixing task. <br>Cause: May be the cause of the network error. <br>Solutions: Please check the network ring.
@@ -537,6 +537,9 @@ class ZegoErrorCode {
 
   /// Description: Failed to mux input image. <br>Cause: The image size of the mixed stream input parameter exceeds the limit. <br>Solution: Image size is limited to 1M.
   static const int MixerInputImageUrlSizeError = 1005036;
+
+  /// Description: The mixed output stream target room is misconfigured. <br>Cause: The room doesn't exist when the mixing starts. <br>Solution: Please make sure that the room corresponding to the configured targetRoom exists.
+  static const int MixerOutputTargetRoomError = 1005037;
 
   /// Description: Failed to start mixed stream. <br>Cause: Mixed-stream authentication failed. <br>Solutions: Contact ZEGO technical support.
   static const int MixerAuthenticationFailed = 1005050;
@@ -697,6 +700,12 @@ class ZegoErrorCode {
   /// Description: The copyrighted music resource ID is too long. <br>Cause: The copyrighted music resource ID is too long. The maximum length should be less than 512 bytes. <br> Solutions: Please copyrighted music resource ID less than 1024 bytes.
   static const int MediaPlayerResourceIdTooLong = 1008012;
 
+  /// Description: User cancel. <br>Cause: After calling [Load] to load the resource, call [Stop] to stop the player. <br> Solutions: Expected behavior when calling [Stop] while loading a resource.
+  static const int MediaPlayerUserCancel = 1008013;
+
+  /// Description: The MediaPlayer is already start. <br>Cause: [Load] has been called. <br> Solutions: Please call [Stop] first, then call [Load].
+  static const int MediaPlayerAlreadyStart = 1008014;
+
   /// Description: The MediaPlayer failed to seek. <br>Cause: The file hasn't been loaded yet. <br> Solutions: The media player loads the media resource [loadResource] before seeking [seekTo].
   static const int MediaPlayerSeekError = 1008016;
 
@@ -825,6 +834,9 @@ class ZegoErrorCode {
 
   /// Description: Custom video rendering does not support the currently set video buffer type. <br>Cause: The buffer_type in the config parameter of [enableCustomVideoRender] only supports raw_data, cv_pixel_buffer, encoded_data. For [enableCustomVideoProcessing], only raw_data is supported on Windows platform, only cv_pixel_buffer is supported on Apple devices, and gl_texture_2d and surface_texture are supported on Android platform. <br> Solutions: Select the correct video buffer type.
   static const int CustomVideoIONotSupportedBufferType = 1011011;
+
+  /// Description: [customVideoCaptureSendD3DTextureData] specifies texture not supported by the SDK. <br>Cause: TThe device corresponding to the texture specified by [customVideoCaptureSendD3DTextureData] was not created by D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, NULL,...). <br> Solutions: [customVideoCaptureSendD3DTextureData] specifies the texture created by D3D11CreateDevice (0, D3D_DRIVER_TYPE_HARDWARE, NULL,...).
+  static const int CustomVideoIOInvalidActiveD3d11Device = 1011012;
 
   /// Description: Unsupported custom audio source type. <br>Cause: Only channel_aux supports zego_audio_source_type_media_player. <br> Solutions: Select the correct custom audio source type.
   static const int CustomAudioIOUnsupportedAudioSourceType = 1012001;
@@ -1036,7 +1048,7 @@ class ZegoErrorCode {
   /// Description: Get lyric fail. <br>Cause: Lyrics not found. <br>Solutions: Please try again later.
   static const int CopyrightedMusicGetLyricFail = 1017048;
 
-  /// Description: Get pitch fail. <br>Cause: Pitch not found. <br>Solutions: Please try again later.
+  /// Description: Get pitch fail. <br>Cause: Pitch not found. <br>Solutions: Please select correct song.
   static const int CopyrightedMusicGetPitchFail = 1017049;
 
   /// Description: This resource is not shared in the room. <br>Cause: No users in the room share this resource. <br>Solutions: Please any one user in the room to call the [requestresource] function to request resources and share them.

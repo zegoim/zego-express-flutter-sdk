@@ -59,7 +59,8 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Use cases: In the real-time scenario, developers can listen to the [onRoomStreamUpdate] event callback to obtain the delete stream information in the room where they are located, and call this interface to pass in streamID for stop play streams.
   /// When to call: After [loginRoom].
   /// Restrictions: None.
-  /// Caution: When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
+  /// Caution: 1. When stopped, the attributes set for this stream previously, such as [setPlayVolume], [mutePlayStreamAudio], [mutePlayStreamVideo], etc., will be invalid and need to be reset when playing the the stream next time.
+  ///  2. After stopping pulling, the iOS platform view will clear the last frame by default and keep the background color of the view. The Android platform view remains at the last frame by default. If you need to clear the last frame, please contact ZEGO technical support.
   ///
   /// - [streamID] Stream ID.
   Future<void> stopPlayingStream(String streamID) async {
@@ -232,7 +233,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.mutePlayStreamVideo(streamID, mute);
   }
 
-  /// Can the pull stream receive all audio data.
+  /// Can the pull stream receive all audio data. (When set to true, calling [mutePlayStreamAudio] will not take effect)
   ///
   /// Available since: 2.4.0
   /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from all remote users when pulling streams (including the audio streams pushed by users who have newly joined the room after calling this function). By default, users can receive audio data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
@@ -260,7 +261,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.muteAllPlayAudioStreams(mute);
   }
 
-  /// Can the pull stream receive all video data.
+  /// Can the pull stream receive all video data. (When set to true, calling [mutePlayStreamVideo] will not take effect)
   ///
   /// Available since: 2.4.0
   /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
@@ -403,7 +404,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Available: since 3.4.0
   /// Description: This interface will update playing view.
   /// Use case: The user can call this function to update canvas display video.
-  /// When to call: After receiving a successful playing stream from the [onPlayerStateUpdate] or [onUserStreamStateUpdate] callback.
+  /// When to call: After calling the [startPlayingStream] interface.
   /// Restrictions: None.
   /// Caution: None.
   /// Note: This function is only available in ZegoExpressVideo SDK!

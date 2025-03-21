@@ -266,3 +266,29 @@ extension ZegoCopyrightedMusicVendorIDExtension
     }
   }
 }
+
+extension ZegoVideoDenoiseStrengthExtension on ZegoVideoDenoiseStrength {
+  int get value {
+    switch (this) {
+      case ZegoVideoDenoiseStrength.Light:
+        return 1;
+      case ZegoVideoDenoiseStrength.Medium:
+        return 2;
+      case ZegoVideoDenoiseStrength.Heavy:
+        return 3;
+    }
+  }
+
+  static ZegoVideoDenoiseStrength fromValue(int value) {
+    switch (value) {
+      case 1:
+        return ZegoVideoDenoiseStrength.Light;
+      case 2:
+        return ZegoVideoDenoiseStrength.Medium;
+      case 3:
+        return ZegoVideoDenoiseStrength.Heavy;
+      default:
+        return ZegoVideoDenoiseStrength.Light;
+    }
+  }
+}

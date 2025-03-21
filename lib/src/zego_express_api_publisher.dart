@@ -105,7 +105,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
   /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
   /// When to call: After [createEngine].
-  /// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution and the bit rate after [startPreview].
+  /// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution, the bit rate and the frame rate after [startPreview].
   /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
@@ -338,7 +338,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the minimum video frame rate threshold for traffic control.
   ///
   /// Available since: 2.17.0
-  /// Description: Set the control policy when the video frame rate reaches the lowest threshold when flow control.
+  /// Description: When enabling traffic control [enableTrafficControl], and its parameter [property] includes the attribute AdaptiveFPS, the minimum frame rate of the video will not be lower than the value set by the [setMinVideoFpsForTrafficControl] interface. A value of 0 indicates no limit.
   /// Default value: There is no control effect of the lowest threshold of video frame rate.
   /// When to call: The call takes effect after the engine [createEngine] is created.
   /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveFPS, Please refer to [ZegoTrafficControlProperty] for details.
@@ -357,7 +357,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Sets the minimum video resolution threshold for traffic control.
   ///
   /// Available since: 2.17.0
-  /// Description: Set the control policy when the video resolution reaches the lowest threshold when flow control.
+  /// Description: When enabling traffic control [enableTrafficControl], and its parameter [property] includes the attribute AdaptiveResolution, the minimum resolution of the video will not be lower than the value set by the [setMinVideoResolutionForTrafficControl] interface. A value of 0 indicates no limit.
   /// Default value: There is no control effect of the lowest threshold of video resolution.
   /// When to call: The call takes effect after the engine [createEngine] is created.
   /// Restrictions: The traffic control must be turned on [enableTrafficControl]. And its parameter [property] must contain AdaptiveResolution, Please refer to [ZegoTrafficControlProperty] for details.
@@ -408,7 +408,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
 
   /// Set audio capture stereo mode.
   ///
-  /// Available since: 1.15.0 (iOS/Android/Windows); support macOS since 2.16.0
+  /// Available since: 1.15.0 (iOS/Android/Windows/OHOS); support macOS since 2.16.0
   /// Description: This function is used to set the audio capture channel mode. When the developer turns on the stereo capture, using a special stereo capture device, the stereo audio data can be captured and streamed.
   /// Use cases: In some professional scenes, users are particularly sensitive to sound effects, such as voice radio and musical instrument performance. At this time, support for stereo and high-quality sound is required.
   /// Default value: The default is None, which means mono capture.
@@ -597,6 +597,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
   ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
   ///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
+  ///   5. UniApp: Only absolute paths are supported. You need to add a "file:" prefix, such as: "file:/sdcard/image.png".
   ///
   /// - [filePath] Picture file path
   /// - [channel] Publish channel.
@@ -604,6 +605,35 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
       String filePath, ZegoPublishChannel channel) async {
     return await ZegoExpressImpl.instance
         .setDummyCaptureImagePath(filePath, channel);
+  }
+
+  /// Set the params of the static picture would be published when the camera is closed.
+  ///
+  /// Available: since 3.19.0
+  /// Description: Set the params of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
+  /// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
+  /// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
+  /// Restrictions:
+  ///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
+  ///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+  ///   3. Not supported that the filePath is a network link.
+  /// Caution:
+  ///   1. The static picture cannot be seen in the local preview.
+  ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
+  ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+  /// Platform differences:
+  ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
+  ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
+  ///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+  ///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
+  ///   5. UniApp: Only absolute paths are supported. You need to add a "file:" prefix, such as: "file:/sdcard/image.png".
+  ///
+  /// - [params] Dummy capture image params.
+  /// - [channel] Publish channel.
+  Future<void> setDummyCaptureImageParams(
+      ZegoDummyCaptureImageParams params, ZegoPublishChannel channel) async {
+    return await ZegoExpressImpl.instance
+        .setDummyCaptureImageParams(params, channel);
   }
 
   /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
@@ -626,7 +656,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   /// Available since: 3.0.0 and above
   /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
   /// When to call: After creating the engine.
-  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities. You need to call the [enableHardwareEncoder] function to enable hardware encoding, and then use this function to determine whether H.265 hardware encoding is supported.
+  /// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
   ///
   /// - [codecID] Video codec id. Required: Yes.
   /// - [codecBackend] Backend implementation of encoder. Required: Yes.
@@ -669,6 +699,40 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
       {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
         .setLowlightEnhancement(mode, channel: channel);
+  }
+
+  /// Set low light enhancement params.
+  ///
+  /// Available since: 3.19.0
+  /// Description: According to the set low-light enhancement mode, the brightness of the image captured by the camera is enhanced, which is compatible with the beauty function. Users can watch the effect while previewing and toggle the low-light enhancement mode in real time.
+  /// Use cases: The environment on the streaming end is dark, or the frame rate set by the camera is high, which causes the picture to be dark, and the subject cannot be displayed or recognized normally.
+  /// When to call: After creating the engine [createEngine].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [params] Low light enhancement params.
+  /// - [channel] Publish stream channel.
+  Future<void> setLowlightEnhancementParams(
+      ZegoExpLowlightEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setLowlightEnhancementParams(params, channel: channel);
+  }
+
+  /// Set video denoise params.
+  ///
+  /// Available since: 3.18.0
+  /// Description: Set video denoise parameters, including mode and strength.
+  /// Default value: Off.
+  /// When to call: After creating the engine [createEngine].
+  /// Platform differences: Only supports iOS and Android.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [params] Video denoise params.
+  /// - [channel] Publish stream channel.
+  Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .setVideoDenoiseParams(params, channel: channel);
   }
 
   /// Set a video capture instance as video capture source for the specified channel.
@@ -770,5 +834,17 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
       {ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
         .setCameraStabilizationMode(mode, channel: channel);
+  }
+
+  /// Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+  ///
+  /// Available since: 3.18.0
+  /// Description: Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM to balance the volume of the human voice and the BGM. Default is off.
+  /// When to call: Called after the engine is created [createEngine].
+  /// Restrictions: This interface will take effect only when the [EnableAux] interface of the media player is called to enable aux.
+  ///
+  /// - [enable] Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+  Future<void> enableAuxBgmBalance(bool enable) async {
+    return await ZegoExpressImpl.instance.enableAuxBgmBalance(enable);
   }
 }

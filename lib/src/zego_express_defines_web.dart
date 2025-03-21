@@ -20,6 +20,7 @@ class ZegoFlutterEngine {
   external static destroyEngine();
   external static getVersion();
   external static createEngineWithProfile(dynamic profile);
+  external static presetLogConfig(dynamic config);
   external static setEventHandler(Function handler);
   external loginRoom(String roomID, dynamic user, dynamic config,
       dynamic success, dynamic fail);
@@ -102,6 +103,14 @@ class Profile {
 
   external int get appID;
   external String get server;
+}
+
+@JS()
+@anonymous
+class LogConfig {
+  external factory LogConfig({String logLevel});
+
+  external String get logLevel;
 }
 
 @JS()
