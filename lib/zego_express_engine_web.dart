@@ -428,6 +428,8 @@ class ZegoExpressEngineWeb {
         return copyrightedMusicGetTotalScore(call.arguments["resourceID"]);
       case 'copyrightedMusicGetFullScore':
         return copyrightedMusicGetFullScore(call.arguments["resourceID"]);
+      case 'takePlayStreamSnapshot':
+        return takePlayStreamSnapshot(call.arguments['streamID']);
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -1228,8 +1230,8 @@ class ZegoExpressEngineWeb {
       String streamID, String targetURL) async {
     final map = {};
     try {
-      final promise = callMethod(ZegoFlutterEngine.instance, 'removePublishCdnUrl',
-          [streamID, targetURL]);
+      final promise = callMethod(ZegoFlutterEngine.instance,
+          'removePublishCdnUrl', [streamID, targetURL]);
       final result = await promiseToFuture(promise);
       map["errorCode"] = getProperty(result, 'errorCode');
     } catch (error) {
@@ -1873,6 +1875,30 @@ class ZegoExpressEngineWeb {
     if (result.extendedData) {
       map['extendedData'] = result.extendedData;
     }
+    return map;
+  }
+
+  Future<dynamic> takePlayStreamSnapshot(String streamID) async {
+    final result = ZegoFlutterEngine.instance.takePlayStreamSnapshot(streamID);
+    // final result = await promiseToFuture(promise);
+
+    final Map<dynamic, dynamic> map = {};
+    final errorCode = getProperty(result, 'errorCode');
+    map['errorCode'] = errorCode;
+
+    map['image'] = null;
+    final imageURL = getProperty(result, 'image') as String;
+
+    if (imageURL.startsWith('data:image/')) {
+      // 提取 Base64 数据
+      final base64Data = imageURL.split(',')[1];
+      // 解码 Base64 数据
+      Uint8List bytes = base64.decode(base64Data);
+
+      // 返回 MemoryImage
+      map['image'] = bytes;
+    }
+
     return map;
   }
 
