@@ -35,6 +35,6 @@ public class ZegoPlatformView implements PlatformView {
     @Override
     public void dispose() {
         ZegoLog.log("[ZegoPlatformView] [dispose] surfaceView:%s", this.surfaceView.hashCode());
-        this.surfaceView = null;
+        // Can not set surfaceView null, flutter may getView() after dispose()
     }
 }
