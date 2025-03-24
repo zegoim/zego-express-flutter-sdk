@@ -1,5 +1,43 @@
 # Change Log
 
+## 3.20.0
+
+### New Features
+
+1. **Supports accurate synchronization of audio and video in event commentary scenes - All Platforms**
+
+   - Note: if use please connect Zego Technical Support
+
+2. **Added user-level network quality callback - All Platforms**
+
+    - Relevate APIs: `onRtcStats`
+
+3. **The face recognition function supports the rear camera and calls back the number of faces and coordinate information - iOS/Android**
+
+    - Relevate APIs: `enableFaceDetection` `onPublisherFaceDetectInfo`
+
+4. **macOS custom video rendering supports outputting RGBA data - maxOS**
+
+   - Note: if use please connect Zego Technical Support
+
+### Improvements & Optimizations
+
+1. **Optimize the local recording lag caused by weak network when pushing CDN directly - All Platforms**
+
+   - Note: if use please connect Zego Technical Support
+
+2. **Optimize the flickering problem when switching video streams to achieve smooth transition - iOS**
+
+   - Note: if use please connect Zego Technical Support
+
+3. **Optimize the problem of too many camera status callbacks when calling enableCamera frequently - iOS/Android**
+
+    - Relevate APIs: `enableCamera`
+
+### Bug Fixes
+
+1. Fix known issues and optimize SDK performance.
+
 ## 3.19.1
 
 ### Bug Fixes
@@ -10,27 +48,27 @@
 
 ### New Features
 
-1. **Support AI Low Light Enhancement Function - Ultra-Low Latency Live Streaming - All Platforms**
+1. **Support AI Low Light Enhancement Function - All Platforms**
 
     - Relevate APIs: `setLowlightEnhancementParams`
 
-2. **Support Screen Sharing In Designated Areas - Ultra-Low Latency Live Streaming - All Platforms**
+2. **Support Screen Sharing In Designated Areas - All Platforms**
 
     - Relevate APIs: `ZegoScreenCaptureConfig`
 
-3. **Support Use Dummy Capture Image in auto Mode - Ultra-Low Latency Live Streaming - All Platforms**
+3. **Support Use Dummy Capture Image in auto Mode - All Platforms**
 
     - Relevate APIs: `setDummyCaptureImagePath`
     
-4. **Support Automatic Noise Suppression(ANS) AI Aggressive Mode - Ultra-Low Latency Live Streaming - All Platforms**
+4. **Support Automatic Noise Suppression(ANS) AI Aggressive Mode - All Platforms**
 
     - Relevate APIs: `ZegoANSMode`
     
-5. **Support Dynamic Equalization Function of Vocal Accompaniment Volume - Ultra-Low Latency Live Streaming - All Platforms**
+5. **Support Dynamic Equalization Function of Vocal Accompaniment Volume - All Platforms**
 
    - Relevate APIs: `enableAuxBgmBalance`
    
-6. **Support MediaPlayer Downloading，Caching And Playing At The Same Time - Ultra-Low Latency Live Streaming - All Platforms**
+6. **Support MediaPlayer Downloading，Caching And Playing At The Same Time - All Platforms**
 
    - Relevate APIs: `ZegoMediaPlayerResource`
 
@@ -54,23 +92,23 @@
 
 ### New Features
 
-1. **Added AI Echo Cancellation (AEC) Lightweight Mode - Real-time Voice + Ultra-Low Latency Live Streaming - All Platforms**
+1. **Added AI Echo Cancellation (AEC) Lightweight Mode - All Platforms**
 
    - Relevant APIs: `setAECMode`
 
-2. **Supports Video Noise Reduction Function - Ultra-Low Latency Live Streaming - iOS/Android/Flutter**
+2. **Supports Video Noise Reduction Function - iOS/Android/Flutter**
 
    - Relevant APIs: `setVideoDenoiseParams`
 
-3. **Supports Returning Face Recognition Status from Camera Capture - Ultra-Low Latency Live Streaming - iOS/Android**
+3. **Supports Returning Face Recognition Status from Camera Capture - iOS/Android**
 
    - Note: if use please connect Zego Technical Support
 
-4. **Supports Adding Mixed Stream Output to Target Room - Ultra-Low Latency Live Streaming - All Platforms**
+4. **Supports Adding Mixed Stream Output to Target Room - All Platforms**
 
    - Relevant APIs: `startMixerTask` `targetRoom` param
 
-5. **Optimized Noise Reduction Effect in Low Light Enhancement Function - Ultra-Low Latency Live Streaming - iOS/Android/Mac/Windows**
+5. **Optimized Noise Reduction Effect in Low Light Enhancement Function - iOS/Android/Mac/Windows**
 
 ### Bug Fixes
 1. Fixed Issue Where Media Player Fails to Load URL Links with Spaces
