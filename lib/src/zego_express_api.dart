@@ -712,6 +712,20 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRenderCameraVideoFirstFrame;
 
+  /// TWhen multiple playing canvas are set, the callback will be triggered after one view renders the first frame of the video.
+  ///
+  /// Available since: 1.1.0
+  /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK rendered the first frame of video data.
+  /// Use cases: Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
+  /// Trigger: This callback is triggered when SDK rendered the first frame of video data from the network.
+  /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerRecvVideoFirstFrame] determines whether the SDK has received the video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [streamID] Stream ID.
+  /// - [viewContext] Context of view.
+  static void Function(String streamID, int viewContext)?
+      onPlayerRenderMultiViewFirstFrame;
+
   /// The callback triggered when the stream playback resolution changes.
   ///
   /// Available since: 1.1.0
