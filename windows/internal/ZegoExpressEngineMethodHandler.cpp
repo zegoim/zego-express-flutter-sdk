@@ -982,10 +982,31 @@ void ZegoExpressEngineMethodHandler::enableVideoObjectSegmentation(ZFArgument ar
                 backgroundConfigMap[ZFValue("blurLevel")]);
             // Note：注意这里巨坑，如果这里使用std::get<int64_t>处理传过来的0时会导致crash, 怀疑是flutter内部的bug
             backgroundConfig.color = zego_value_get_long(backgroundConfigMap[ZFValue("color")]);
-            backgroundConfig.imageURL =
-                zego_value_get_string(backgroundConfigMap[ZFValue("imageURL")]);
-            backgroundConfig.videoURL =
-                zego_value_get_string(backgroundConfigMap[ZFValue("videoURL")]);
+            std::string imageURL = zego_value_get_string(backgroundConfigMap[ZFValue("imageURL")]);
+            std::string videoURL = zego_value_get_string(backgroundConfigMap[ZFValue("videoURL")]);
+            const std::string flutterAssertTaget = "flutter-asset://";
+            if (imageURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+                std::string flutterAssetsPath = GetFlutterAssetsPath();
+                if (!flutterAssetsPath.empty()) {
+                    imageURL.replace(0, flutterAssertTaget.size(), "");
+                    imageURL = flutterAssetsPath + imageURL;
+                } else {
+                    ZF::logInfo("enableVideoObjectSegmentation_get_exe_path_fail",
+                                "Failed to get the directory where the application is located");
+                }
+            }
+            if (videoURL.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+                std::string flutterAssetsPath = GetFlutterAssetsPath();
+                if (!flutterAssetsPath.empty()) {
+                    videoURL.replace(0, flutterAssertTaget.size(), "");
+                    videoURL = flutterAssetsPath + videoURL;
+                } else {
+                    ZF::logInfo("enableVideoObjectSegmentation_get_exe_path_fail",
+                                "Failed to get the directory where the application is located");
+                }
+            }
+            backgroundConfig.imageURL = imageURL;
+            backgroundConfig.videoURL = videoURL;
 
             config.backgroundConfig = backgroundConfig;
         }

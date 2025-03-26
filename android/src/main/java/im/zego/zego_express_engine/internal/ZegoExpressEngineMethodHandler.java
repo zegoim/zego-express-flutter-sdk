@@ -1528,11 +1528,13 @@ public class ZegoExpressEngineMethodHandler {
         String imageURL = (String) backgroundMap.get("imageURL");
         if (imageURL != null && imageURL.startsWith("flutter-asset://")) {
             String processedURL = imageURL.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[enableVideoObjectSegmentation] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", imageURL, processedURL);
             imageURL = processedURL;
         }
         String videoURL = (String) backgroundMap.get("videoURL");
         if (videoURL != null && videoURL.startsWith("flutter-asset://")) {
             String processedURL = videoURL.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[enableVideoObjectSegmentation] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", videoURL, processedURL);
             videoURL = processedURL;
         }
         backgroundConfig.imageURL = imageURL;
