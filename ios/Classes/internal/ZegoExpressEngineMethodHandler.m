@@ -1897,7 +1897,67 @@
     result(@(errorCode));
 }
 
-// TODO: setPlayingCanvas
+- (void)setPlayingCanvas:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSString *streamID = call.arguments[@"streamID"];
+    ZegoViewUpdateType updateType = (ZegoViewUpdateType)[ZegoUtils intValue:call.arguments[@"updateType"]];
+    
+    // Handle ZegoCanvas
+
+    NSDictionary *canvasMap = call.arguments[@"canvas"];
+
+    int errorCode = 0;
+    if (canvasMap && canvasMap.count > 0) {
+        // Play video
+
+        // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+        int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+        int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+        int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+        BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
+        BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
+        int viewContext = [ZegoUtils intValue:canvasMap[@"viewContext"]];
+
+        if (self.enablePlatformView) {
+            // Render with PlatformView
+            ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+#if TARGET_OS_IPHONE
+            if (alphaBlend) {
+                [platformView.view setBackgroundColor:UIColor.clearColor];
+            }
+#endif
+
+            if (platformView) {
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
+                canvas.viewMode = (ZegoViewMode)viewMode;
+                canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
+                canvas.viewContext = viewContext;
+
+                errorCode = [[ZegoExpressEngine sharedEngine] setPlayingCanvas:streamID updateType:updateType canvas:canvas];
+            } else {
+                // Play video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGError(@"[setPlayingCanvas] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"setPlayingCanvas_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
+            }
+
+        } else {
+            NSString *errorMessage = [NSString stringWithFormat:@"setPlayingCanvas Supported only PlatformView"];
+            ZGError(@"[setPlayingCanvas] %@", errorMessage);
+            result([FlutterError errorWithCode:[@"setPlayingCanvas_Supported_Only_PlatformView" uppercaseString] message:errorMessage details:nil]);
+            return;
+        }
+
+    }
+
+    result(@(errorCode));
+}
 
 #if TARGET_OS_IPHONE
 - (void)enableVideoSuperResolution:(FlutterMethodCall *)call result:(FlutterResult)result {

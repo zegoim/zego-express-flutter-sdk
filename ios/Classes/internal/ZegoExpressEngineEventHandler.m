@@ -893,6 +893,21 @@
     }
 }
 
+- (void)onPlayerRenderMultiViewFirstFrame:(NSString *) streamID viewContext:(unsigned int)viewContext {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerRenderMultiViewFirstFrame] streamID: %@ ctx:%d", streamID, viewContext);
+
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRenderMultiViewFirstFrame",
+            @"streamID": streamID,
+            @"viewContext": @(viewContext)
+        });
+    }
+}
+
 - (void)onPlayerVideoSuperResolutionUpdate:(NSString *) streamID state:(ZegoSuperResolutionState) state errorCode:(int) errorCode {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPlayerVideoSuperResolutionUpdate] streamID: %@, state: %d, errorCode: %d", streamID, (int)state, errorCode);

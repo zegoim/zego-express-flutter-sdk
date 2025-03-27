@@ -2897,10 +2897,10 @@ class ZegoExpressImpl {
         break;
 
       case 'onPlayerRenderMultiViewFirstFrame':
-        if (ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame == null)
-          return;
+        if (ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame == null) return;
 
-        ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame!(map['streamID'], map['viewContext']);
+        ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame!(
+            map['streamID'], map['viewContext']);
         break;
 
       case 'onPlayerVideoSuperResolutionUpdate':

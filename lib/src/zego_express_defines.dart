@@ -2537,13 +2537,13 @@ class ZegoCanvas {
   /// If enable alpha blend render, default is false.
   bool? alphaBlend;
 
-  /// Rotate the angle counterclockwise, the default is 0.
+  /// Rotate the angle counterclockwise, the default is 0. The media player canvas is not supported.
   int? rotation;
 
-  /// If enable the view mirror, default is false.
+  /// If enable the view mirror, default is false. Only play stream canvas is supported, for publish stream please use [setVideoMirrorMode] interface, for media player please use [enableViewMirror] interface.
   bool? mirror;
 
-  /// Context of view, default is 0.
+  /// Context of view, default is 0. Generally no attention is required, it can be used for slitting rendering of mixed stream, to understand the specific use, you need to contact ZEGO technical support.
   int? viewContext;
 
   ZegoCanvas(this.view,
