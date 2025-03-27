@@ -2484,10 +2484,8 @@ public class ZegoExpressEngineMethodHandler {
         // minPlayStreamBufferLength
         taskObject.minPlayStreamBufferLength = ZegoUtils.intValue((Number)call.argument("minPlayStreamBufferLength"));
 
-        // streamAlignmentThreshold
-        taskObject.streamAlignmentThreshold = ZegoUtils.intValue((Number)call.argument("streamAlignmentThreshold"));
         taskObject.streamAlignmentVolumeControlMode = ZegoStreamAlignmentVolumeControlMode.getZegoStreamAlignmentVolumeControlMode(ZegoUtils.intValue((Number)call.argument("streamAlignmentVolumeControlMode")));
-        taskObject.streamAlignmentVolumeControlBlacklist = call.argument("streamAlignmentVolumeControlBlacklist");
+        taskObject.streamAlignmentBaselineStreamID = call.argument("streamAlignmentBaselineStreamID");
 
         ZegoExpressEngine.getEngine().startAutoMixerTask(taskObject, new IZegoMixerStartCallback() {
             @Override

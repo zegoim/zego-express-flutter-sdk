@@ -740,6 +740,7 @@ enum ZegoMixImageCheckMode {
 enum ZegoStreamAlignmentVolumeControlMode {
   /// Disable volume control when stream alignment.
   Close,
+
   /// Enable volume control when stream alignment.
   Open
 }
@@ -1677,16 +1678,16 @@ enum ZegoAudioVADStableStateMonitorType {
 
 /// Orientation mode of the video.
 enum ZegoOrientationMode {
-  /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
+  /// Custom mode. The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
   Custom,
 
-  /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
+  /// Description: Player self adaption mode. The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
   Adaption,
 
-  /// Player adapt to pulisher mode.Description: Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
+  /// Description: Player adapt to pulisher mode. Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
   Alignment,
 
-  /// Fixed resolution ratio mode.Description: Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
+  /// Description: Fixed resolution ratio mode. Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
   FixedResolutionRatio
 }
 
@@ -2253,7 +2254,7 @@ class ZegoVideoConfig {
   /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
   ZegoVideoCodecID codecID;
 
-  /// Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
+  /// Video keyframe interval, in seconds. Description: Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
   int? keyFrameInterval;
 
   ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth,
@@ -3586,14 +3587,11 @@ class ZegoAutoMixerTask {
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
-  /// Network time deviation threshold for stream mixing alignment, in milliseconds. The default value is 2000, with a range of values [100, 2000].
-  int streamAlignmentThreshold;
-
   /// Stream mixing alignment scene volume adjustment mode.
   ZegoStreamAlignmentVolumeControlMode streamAlignmentVolumeControlMode;
 
-  /// Stream mixing alignment scene volume adjustment blacklist list.
-  List<String> streamAlignmentVolumeControlBlacklist;
+  /// Stream mixing alignment scene baseline streamID.
+  String streamAlignmentBaselineStreamID;
 
   /// Create a auto mix stream task object
   ZegoAutoMixerTask()
@@ -3604,10 +3602,9 @@ class ZegoAutoMixerTask {
         enableSoundLevel = false,
         streamAlignmentMode = ZegoStreamAlignmentMode.None,
         minPlayStreamBufferLength = -1,
-        streamAlignmentThreshold = 2000,
         streamAlignmentVolumeControlMode =
             ZegoStreamAlignmentVolumeControlMode.Close,
-        streamAlignmentVolumeControlBlacklist = [];
+        streamAlignmentBaselineStreamID = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -3618,11 +3615,9 @@ class ZegoAutoMixerTask {
       'enableSoundLevel': this.enableSoundLevel,
       'streamAlignmentMode': this.streamAlignmentMode.index,
       'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
-      'streamAlignmentThreshold': this.streamAlignmentThreshold,
       'streamAlignmentVolumeControlMode':
           this.streamAlignmentVolumeControlMode.index,
-      'streamAlignmentVolumeControlBlacklist':
-          this.streamAlignmentVolumeControlBlacklist
+      'streamAlignmentBaselineStreamID': this.streamAlignmentBaselineStreamID
     };
   }
 }
@@ -4010,10 +4005,10 @@ class ZegoAccurateSeekConfig {
 
 /// Media player network cache information
 class ZegoNetWorkResourceCache {
-  /// Cached duration, unit ms
+  /// Cached playable duration, unit ms
   int time;
 
-  /// Cached size, unit byte
+  /// Cached playable size, unit byte
   int size;
 
   ZegoNetWorkResourceCache(this.time, this.size);
