@@ -739,7 +739,7 @@ class ZegoExpressEngineWeb {
             ZegoPlayStreamQuality(
                 quality['videoRecvFPS'],
                 0,
-                0,
+                quality['videoFPS'],
                 quality['videoRenderFPS'],
                 quality['videoKBPS'],
                 0,
