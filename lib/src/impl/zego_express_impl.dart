@@ -450,7 +450,8 @@ class ZegoExpressImpl {
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
               'backgroundColor': canvas.backgroundColor ?? 0x000000,
-              'alphaBlend': canvas.alphaBlend ?? false
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -872,7 +873,9 @@ class ZegoExpressImpl {
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
               'backgroundColor': canvas.backgroundColor ?? 0x000000,
-              'alphaBlend': canvas.alphaBlend ?? false
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0,
+              'mirror': canvas.mirror ?? false
             }
           : {},
       'config': config != null
@@ -1091,7 +1094,9 @@ class ZegoExpressImpl {
         'view': canvas.view,
         'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
         'backgroundColor': canvas.backgroundColor ?? 0x000000,
-        'alphaBlend': canvas.alphaBlend ?? false
+        'alphaBlend': canvas.alphaBlend ?? false,
+        'rotation': canvas.rotation ?? 0,
+        'mirror': canvas.mirror ?? false
       }
     });
   }

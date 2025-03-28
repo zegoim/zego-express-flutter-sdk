@@ -822,6 +822,7 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
             boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
+            int rotation = ZegoUtils.intValue((Number) canvasMap.get("rotation"));
 
             Object view;
 
@@ -867,6 +868,7 @@ public class ZegoExpressEngineMethodHandler {
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
 
                 // Mark the canvas is in use
                 if (!enablePlatformView) {
@@ -1658,6 +1660,8 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
             boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
+            int rotation = ZegoUtils.intValue((Number) canvasMap.get("rotation"));
+            boolean mirror = ZegoUtils.boolValue((Boolean) canvasMap.get("mirror"));
 
             Object view;
 
@@ -1703,6 +1707,8 @@ public class ZegoExpressEngineMethodHandler {
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
             }
 
             // Mark the canvas is in use
@@ -2060,6 +2066,8 @@ public class ZegoExpressEngineMethodHandler {
             ZegoViewMode viewMode = ZegoViewMode.getZegoViewMode(ZegoUtils.intValue((Number) canvasMap.get("viewMode")));
             int backgroundColor = ZegoUtils.intValue((Number) canvasMap.get("backgroundColor"));
             boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
+            int rotation = ZegoUtils.intValue((Number) canvasMap.get("rotation"));
+            boolean mirror = ZegoUtils.boolValue((Boolean) canvasMap.get("mirror"));
 
             Object view;
 
@@ -2103,6 +2111,8 @@ public class ZegoExpressEngineMethodHandler {
                 canvas.viewMode = viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
             }
 
             // Mark the canvas is in use

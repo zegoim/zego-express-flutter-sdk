@@ -711,6 +711,7 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
@@ -726,6 +727,7 @@
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
 
                 [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
             } else {
@@ -1510,6 +1512,8 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
+        BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
@@ -1525,6 +1529,8 @@
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
 
                 if (playerConfig) {
                     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
@@ -1853,6 +1859,8 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
+        BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
@@ -1868,6 +1876,8 @@
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
 
                 errorCode = [[ZegoExpressEngine sharedEngine] updatePlayingCanvas:streamID canvas:canvas];
             } else {
