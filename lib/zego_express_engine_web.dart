@@ -1117,15 +1117,22 @@ class ZegoExpressEngineWeb {
     var config =
         ZegoFlutterEngine.instance.getVideoConfig(getPublishChannel(channel));
     var map = {};
-    map['captureWidth'] = config?.captureWidth ?? config?.encodeWidth ?? 0;
-    map['captureHeight'] = config?.captureHeight ?? config?.encodeHeight ?? 0;
-    map['encodeWidth'] = config?.encodeWidth ?? 0;
-    map['encodeHeight'] = config?.encodeHeight ?? 0;
-    map['fps'] = config?.fps ?? 0;
-    map['bitrate'] = config?.bitrate ?? 0;
-    map['codecID'] = config?.codecID ?? 0;
-    if (config?.keyFrameInterval != null) {
-      map['keyFrameInterval'] = config.keyFrameInterval;
+    if (config != null) {
+      map['captureWidth'] = getProperty(config, 'captureWidth') ??
+          getProperty(config, 'encodeWidth') ??
+          0;
+      map['captureHeight'] = getProperty(config, 'captureHeight') ??
+          getProperty(config, 'encodeHeight') ??
+          0;
+      map['encodeWidth'] = getProperty(config, 'encodeHeight') ?? 0;
+      map['encodeHeight'] = getProperty(config, 'encodeWidth') ?? 0;
+      map['fps'] = getProperty(config, 'fps') ?? 0;
+      map['bitrate'] = getProperty(config, 'bitrate') ?? 0;
+      map['codecID'] = getProperty(config, 'codecID') ?? 0;
+      final gop = getProperty(config, 'keyFrameInterval');
+      if (gop != null) {
+        map['keyFrameInterval'] = gop;
+      }
     }
     return Future.value(map);
   }
