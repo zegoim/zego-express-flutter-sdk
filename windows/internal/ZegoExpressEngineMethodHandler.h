@@ -420,6 +420,7 @@ class ZegoExpressEngineMethodHandler {
     void startCaptureScreenCaptureSource(ZFArgument argument, ZFResult result);
     void stopCaptureScreenCaptureSource(ZFArgument argument, ZFResult result);
     void getCaptureSourceRectScreenCaptureSource(ZFArgument argument, ZFResult result);
+    void getCaptureSourceTypeScreenCaptureSource(ZFArgument argument, ZFResult result);
     void enableAudioCaptureScreenCaptureSource(ZFArgument argument, ZFResult result);
 
     // AIVoiceChanger

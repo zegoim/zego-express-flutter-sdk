@@ -5010,6 +5010,13 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
   }
 
   @override
+  Future<ZegoScreenCaptureSourceType> getCaptureSourceType() async {
+    int type = await ZegoExpressImpl._channel.invokeMethod(
+        'getCaptureSourceTypeScreenCaptureSource', {'index': _index});
+    return ZegoScreenCaptureSourceType.values[type];
+  }
+
+  @override
   Future<void> updatePublishRegion(Rect rect) async {
     return await ZegoExpressImpl._channel
         .invokeMethod('updatePublishRegionScreenCaptureSource', {
