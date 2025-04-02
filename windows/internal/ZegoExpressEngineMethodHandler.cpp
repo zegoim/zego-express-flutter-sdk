@@ -5729,28 +5729,9 @@ void ZegoExpressEngineMethodHandler::getCaptureSourceRectScreenCaptureSource(ZFA
         resultMap[ZFValue("width")] = ZFValue((int32_t)rect.width);
         resultMap[ZFValue("height")] = ZFValue((int32_t)rect.height);
         result->Success(resultMap);
-    } else {
-        result->Error("getCaptureSourceRectScreenCaptureSource_Can_not_find_Instance",
-                      "Invoke `getCaptureSourceRectScreenCaptureSource` but can't find specific instance");
     }
-#else
-    result->Error("not_support_feature", "linux platform not support feature");
-#endif
-}
 
-void ZegoExpressEngineMethodHandler::getCaptureSourceTypeScreenCaptureSource(ZFArgument argument,
-                                                                             ZFResult result) {
-#ifdef _WIN32
-    auto index = zego_value_get_int(argument[ZFValue("index")]);
-    auto screenCaptureSource = screenCaptureSourceMap_[index];
-
-    if (screenCaptureSource) {
-        auto type = screenCaptureSource->getCaptureSourceType();
-        result->Success(ZFValue(static_cast<int32_t>(type)));
-    } else {
-        result->Error("getCaptureSourceTypeScreenCaptureSource_Can_not_find_Instance",
-                      "Invoke `getCaptureSourceTypeScreenCaptureSource` but can't find specific instance");
-    }
+    result->Success();
 #else
     result->Error("not_support_feature", "linux platform not support feature");
 #endif

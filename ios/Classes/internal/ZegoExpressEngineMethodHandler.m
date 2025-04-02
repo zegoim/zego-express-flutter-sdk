@@ -5885,16 +5885,6 @@
     }
 }
 
-- (void)getCaptureSourceTypeScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSNumber *index = call.arguments[@"index"];
-    ZegoScreenCaptureSource *screenCaptureSource = self.screenCaptureSouceMap[index];
-    if (screenCaptureSource) {
-        result(@((int)screenCaptureSource.getCaptureSourceType));
-    } else {
-        result([FlutterError errorWithCode:[@"screenCaptureSource_Can_not_find_Instance" uppercaseString] message:@"Invoke `getCaptureSourceTypeScreenCaptureSource` but can't find specific instance" details:nil]);
-    }
-}
-
 - (void)createScreenCaptureSource:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     if (!self.screenCaptureSouceMap) {
