@@ -567,8 +567,9 @@ class ZegoExpressEngineWeb {
       case 'onRoomOnlineUserCountUpdate':
         if (ZegoExpressEngine.onRoomOnlineUserCountUpdate == null) return;
 
+        var data = jsonDecode(map["data"]);
         ZegoExpressEngine.onRoomOnlineUserCountUpdate!(
-            map['roomID'], map['count']);
+            data['roomID'], data['count']);
         break;
       case "onRoomStreamUpdate":
         if (ZegoExpressEngine.onRoomStreamUpdate == null) return;
