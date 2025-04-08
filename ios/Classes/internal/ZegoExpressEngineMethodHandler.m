@@ -3410,9 +3410,9 @@
         } else {
             [[ZegoExpressEngine sharedEngine] setCustomVideoRenderHandler:nil];
         }
-        
-        [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:enable config: config];
     }
+    
+    [[ZegoExpressEngine sharedEngine] enableCustomVideoRender:enable config: config];
 
     result(nil);
 }
