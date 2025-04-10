@@ -100,6 +100,7 @@ class ZegoExpressEngineMethodHandler {
     void initVideoSuperResolution(ZFArgument argument, ZFResult result);
     void uninitVideoSuperResolution(ZFArgument argument, ZFResult result);
     void updatePlayingCanvas(ZFArgument argument, ZFResult result);
+    void setPlayingCanvas(ZFArgument argument, ZFResult result);
 
     void startAutoMixerTask(ZFArgument argument, ZFResult result);
     void stopAutoMixerTask(ZFArgument argument, ZFResult result);

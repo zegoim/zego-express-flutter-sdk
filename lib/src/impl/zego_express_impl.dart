@@ -441,7 +441,8 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
-      ZegoExpressTextureRenderer().setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
     }
 
     return await _channel.invokeMethod('startPreview', {
@@ -864,8 +865,10 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
-      ZegoExpressTextureRenderer().setRotation(canvas.view, canvas.rotation ?? 0);
-      ZegoExpressTextureRenderer().setMirror(canvas.view, canvas.mirror ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setMirror(canvas.view, canvas.mirror ?? false);
     }
 
     return await _channel.invokeMethod('startPlayingStream', {
@@ -1090,8 +1093,10 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
-      ZegoExpressTextureRenderer().setRotation(canvas.view, canvas.rotation ?? 0);
-      ZegoExpressTextureRenderer().setMirror(canvas.view, canvas.mirror ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setMirror(canvas.view, canvas.mirror ?? false);
     }
     return await _channel.invokeMethod('updatePlayingCanvas', {
       'streamID': streamID,
@@ -1118,7 +1123,8 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
-      ZegoExpressTextureRenderer().setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
     }
     return await _channel.invokeMethod('setPlayingCanvas', {
       'streamID': streamID,

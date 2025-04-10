@@ -91,7 +91,8 @@ class ZegoExpressTextureRenderer {
     if (!kIsWindows) {
       return;
     }
-    ZegoExpressImpl.sendCustomLogMessage('[WidgetState] setRotation. widget: $textureID, rotation: $rotation');
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] setRotation. widget: $textureID, rotation: $rotation');
     _rotationMap[textureID] = rotation;
     _updateController.sink.add({'textureID': textureID, 'type': 'update'});
   }
@@ -100,7 +101,8 @@ class ZegoExpressTextureRenderer {
     if (!kIsWindows) {
       return;
     }
-    ZegoExpressImpl.sendCustomLogMessage('[WidgetState] setMirror. widget: $textureID, mirror: $mirror');
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] setMirror. widget: $textureID, mirror: $mirror');
     _mirrorMap[textureID] = mirror ? 1 : 0;
     _updateController.sink.add({'textureID': textureID, 'type': 'update'});
   }
