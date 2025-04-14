@@ -1908,7 +1908,7 @@
 }
 
 - (void)setPlayingCanvas:(FlutterMethodCall *)call result:(FlutterResult)result {
-
+#if TARGET_OS_IPHONE
     NSString *streamID = call.arguments[@"streamID"];
     ZegoViewUpdateType updateType = (ZegoViewUpdateType)[ZegoUtils intValue:call.arguments[@"updateType"]];
     
@@ -1932,11 +1932,10 @@
         if (self.enablePlatformView) {
             // Render with PlatformView
             ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
-#if TARGET_OS_IPHONE
+
             if (alphaBlend) {
                 [platformView.view setBackgroundColor:UIColor.clearColor];
             }
-#endif
 
             if (platformView) {
                 ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
@@ -1967,6 +1966,11 @@
     }
 
     result(@(errorCode));
+#elif TARGET_OS_OSX
+    NSString *errorMessage = [NSString stringWithFormat:@"OSX platform not support feature"];
+    ZGError(@"[setPlayingCanvas] %@", errorMessage);
+    result([FlutterError errorWithCode:[@"not_support_feature" uppercaseString] message:errorMessage details:nil]);
+#endif
 }
 
 #if TARGET_OS_IPHONE
