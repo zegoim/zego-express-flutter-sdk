@@ -9,32 +9,32 @@
 package im.zego.zego_express_engine.internal;
 
 import android.content.Context;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 
 import io.flutter.plugin.platform.PlatformView;
 
 public class ZegoPlatformView implements PlatformView {
 
-    private SurfaceView surfaceView;
+    private TextureView textureView;
 
     ZegoPlatformView(Context context) {
-        this.surfaceView = new SurfaceView(context);
-        ZegoLog.log("[ZegoPlatformView] [init] surfaceView:%s", this.surfaceView.hashCode());
+        this.textureView = new TextureView(context);
+        ZegoLog.log("[ZegoPlatformView] [init] textureView:%s", getView().hashCode());
     }
 
-    public SurfaceView getSurfaceView() {
-        return this.surfaceView;
+    public TextureView getTextureView() {
+        return this.textureView;
     }
 
     @Override
     public View getView() {
-        return this.surfaceView;
+        return this.textureView;
     }
 
     @Override
     public void dispose() {
-        ZegoLog.log("[ZegoPlatformView] [dispose] surfaceView:%s", this.surfaceView.hashCode());
+        ZegoLog.log("[ZegoPlatformView] [dispose] surfaceView:%s", getView().hashCode());
         // Can not set surfaceView null, flutter may getView() after dispose()
     }
 }
