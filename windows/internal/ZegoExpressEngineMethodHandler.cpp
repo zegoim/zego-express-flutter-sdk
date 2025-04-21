@@ -510,6 +510,7 @@ void ZegoExpressEngineMethodHandler::startPublishingStream(ZFArgument argument, 
                 zego_value_get_int(configMap[ZFValue("forceSynchronousNetworkTime")]);
             config.streamCensorshipMode = (EXPRESS::ZegoStreamCensorshipMode)zego_value_get_int(
                 configMap[ZFValue("streamCensorshipMode")]);
+            config.streamTitle = zego_value_get_string(configMap[ZFValue("streamTitle")]);
 
             EXPRESS::ZegoExpressSDK::getEngine()->startPublishingStream(
                 streamID, config, (EXPRESS::ZegoPublishChannel)channel);

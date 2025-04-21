@@ -768,6 +768,7 @@ public class ZegoExpressEngineMethodHandler {
             config.forceSynchronousNetworkTime = ZegoUtils.intValue((Number)configMap.get("forceSynchronousNetworkTime"));
             config.streamCensorshipMode = ZegoStreamCensorshipMode.getZegoStreamCensorshipMode(ZegoUtils.intValue((Number)configMap.get("streamCensorshipMode")));
             config.codecNegotiationType = ZegoCapabilityNegotiationType.getZegoCapabilityNegotiationType(ZegoUtils.intValue((Number)configMap.get("codecNegotiationType")));
+            config.streamTitle = (String) configMap.get("streamTitle");
         }
 
         if (config != null) {

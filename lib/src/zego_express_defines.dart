@@ -2553,12 +2553,16 @@ class ZegoPublisherConfig {
   /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
   ZegoCapabilityNegotiationType? codecNegotiationType;
 
+  /// Stream title, a utf8 string with a maximum length of 255 bytes or less.
+  String? streamTitle;
+
   ZegoPublisherConfig(
       {this.roomID,
       this.forceSynchronousNetworkTime,
       this.streamCensorshipMode,
       this.streamCensorFlag,
-      this.codecNegotiationType});
+      this.codecNegotiationType,
+      this.streamTitle});
 }
 
 /// Published stream quality information.
@@ -3984,10 +3988,10 @@ class ZegoAccurateSeekConfig {
 
 /// Media player network cache information
 class ZegoNetWorkResourceCache {
-  /// Cached duration, unit ms
+  /// Cached playable duration, unit ms
   int time;
 
-  /// Cached size, unit byte
+  /// Cached playable size, unit byte
   int size;
 
   ZegoNetWorkResourceCache(this.time, this.size);
