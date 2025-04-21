@@ -665,6 +665,7 @@
         config.forceSynchronousNetworkTime = [ZegoUtils intValue:configMap[@"forceSynchronousNetworkTime"]];
         config.streamCensorshipMode = (ZegoStreamCensorshipMode)[ZegoUtils intValue:configMap[@"streamCensorshipMode"]];
         config.codecNegotiationType = (ZegoCapabilityNegotiationType)[ZegoUtils intValue:configMap[@"codecNegotiationType"]];
+        config.streamTitle = configMap[@"streamTitle"];
     }
 
     if (config) {

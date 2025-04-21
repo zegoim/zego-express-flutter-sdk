@@ -405,7 +405,8 @@ class ZegoExpressImpl {
               'streamCensorshipMode': config.streamCensorshipMode?.index ??
                   ZegoStreamCensorshipMode.None.index,
               'codecNegotiationType': config.codecNegotiationType?.index ??
-                  ZegoCapabilityNegotiationType.None.index
+                  ZegoCapabilityNegotiationType.None.index,
+              'streamTitle': config.streamTitle ?? '',
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
