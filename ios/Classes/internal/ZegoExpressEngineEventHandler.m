@@ -2061,4 +2061,35 @@
     }
 }
 
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onSetSpeaker:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerSetSpeaker], index: %d, errorCode: %d", aiVoiceChanger.getIndex, errorCode);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerSetSpeaker",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onEvent:(ZegoAIVoiceChangerEvent)event {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerEvent], index: %d, event: %d", aiVoiceChanger.getIndex, event);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerEvent",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"event": @(event)
+        });
+    }
+}
+
+
 @end
