@@ -35,6 +35,7 @@ import im.zego.zegoexpress.callback.IZegoMediaDataPublisherEventHandler;
 import im.zego.zegoexpress.callback.IZegoMediaPlayerEventHandler;
 import im.zego.zegoexpress.callback.IZegoRangeAudioEventHandler;
 import im.zego.zegoexpress.callback.IZegoRealTimeSequentialDataEventHandler;
+import im.zego.zegoexpress.constants.ZegoAIVoiceChangerEvent;
 import im.zego.zegoexpress.constants.ZegoAudioEffectPlayState;
 import im.zego.zegoexpress.constants.ZegoAudioRoute;
 import im.zego.zegoexpress.constants.ZegoDataRecordState;
