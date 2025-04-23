@@ -2139,3 +2139,31 @@ void ZegoExpressEngineEventHandler::onUpdateProgress(
         eventSink_->Success(retMap);
     }
 }
+
+void ZegoExpressEngineEventHandler::onSetSpeaker(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerSetSpeaker] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onAIVoiceChangerSetSpeaker");
+        retMap[ZFValue("aiVoiceChangerIndex")] = ZFValue(aiVoiceChanger->getIndex());
+        retMap[ZFValue("errorCode")] = ZFValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onEvent(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, EXPRESS::ZegoAIVoiceChangerEvent event) {
+    ZF::logInfo("[onAIVoiceChangerEvent] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onAIVoiceChangerEvent");
+        retMap[ZFValue("aiVoiceChangerIndex")] = ZFValue(aiVoiceChanger->getIndex());
+        retMap[ZFValue("event")] = ZFValue(static_cast<int32_t>(event));
+
+        eventSink_->Success(retMap);
+    }
+}

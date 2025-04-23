@@ -2081,7 +2081,7 @@
     ZGLog(@"[onAIVoiceChangerEvent], index: %d, event: %d", aiVoiceChanger.getIndex, event);
     
     GUARD_SINK
-    
+
     if (sink) {
         sink(@{
             @"method": @"onAIVoiceChangerEvent",
@@ -2090,6 +2090,4 @@
         });
     }
 }
-
-
 @end
