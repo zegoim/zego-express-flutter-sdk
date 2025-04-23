@@ -2298,5 +2298,37 @@ public class ZegoExpressEngineEventHandler {
 
             sink.success(map);
         }
+
+        @Override
+        public void onSetSpeaker(ZegoAIVoiceChanger aiVoiceChanger, int errorCode) {
+            super.onSetSpeaker(aiVoiceChanger, errorCode);
+            ZegoLog.log("[onAIVoiceChangerSetSpeaker] idx: %d, errorCode: %d", aiVoiceChanger.getIndex(), errorCode);
+            
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAIVoiceChangerSetSpeaker");
+            map.put("aiVoiceChangerIndex", aiVoiceChanger.getIndex());
+            map.put("errorCode", errorCode);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onEvent(ZegoAIVoiceChanger aiVoiceChanger, ZegoAIVoiceChangerEvent event) {
+            super.onEvent(aiVoiceChanger, event);
+            ZegoLog.log("[onAIVoiceChangerEvent] idx: %d, event: %d", aiVoiceChanger.getIndex(), event);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+
+            map.put("method", "onAIVoiceChangerEvent");
+            map.put("aiVoiceChangerIndex", aiVoiceChanger.getIndex());
+            map.put("event", event.value());
+
+            sink.success(map);
+        }
     };
 }
