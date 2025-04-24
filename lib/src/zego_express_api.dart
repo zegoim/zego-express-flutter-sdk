@@ -602,6 +602,18 @@ class ZegoExpressEngine {
   static void Function(int errorCode, String path, ZegoPublishChannel channel)?
       onPublisherDummyCaptureImagePathError;
 
+  /// Face detection information update notification.
+  ///
+  /// Available since: 3.20.0
+  /// Description: The notification for face detection.
+  /// When to trigger: Turn on face detection through the [enableFaceDetection] interface, and this callback will be triggered when the camera is started or the number of faces changes.
+  /// Caution: The callback is low-frequency and cannot be used with the custom video pre-processing function.
+  ///
+  /// - [info] Face detection information.
+  /// - [channel] Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+  static void Function(ZegoFaceDetectionInfo info, ZegoPublishChannel channel)?
+      onPublisherFaceDetectInfo;
+
   /// The callback triggered when the state of stream playing changes.
   ///
   /// Available since: 1.1.0
@@ -706,7 +718,9 @@ class ZegoExpressEngine {
   /// Description: After the [startPlayingStream] function is called successfully, the play resolution will change when the first frame of video data is received, or when the publisher changes the encoding resolution by calling [setVideoConfig], or when the network traffic control strategies work.
   /// Use cases: Developers can update or switch the UI components that actually play the stream based on the final resolution of the stream.
   /// Trigger: After the [startPlayingStream] function is called successfully, this callback is triggered when the video resolution changes while playing the stream.
-  /// Caution: If the stream is only audio data, the callback will not be triggered.
+  /// Caution:
+  ///  1. If the stream is only audio data, the callback will not be triggered.
+  ///  2. If the user enables custom video rendering of the ZegoVideoBufferTypeEncodedData type, the SDK is not responsible for video decoding and will not trigger this callback.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [streamID] Stream ID.
@@ -1405,6 +1419,18 @@ class ZegoExpressEngine {
   /// - [downstreamQuality] Downstream network quality
   static void Function(String userID, ZegoStreamQualityLevel upstreamQuality,
       ZegoStreamQualityLevel downstreamQuality)? onNetworkQuality;
+
+  /// RTC network statistics callback.
+  ///
+  /// Available since: 3.20.0
+  /// Description: RTC network statistics callback.
+  /// Use cases: When a developer wants to analyze the local network situation.
+  /// When to Trigger: After calling [startPublishingStream] to start pushing the RTC stream, it will call back the upstream statistics. After calling [startPlayingStream] to start playing the RTC or L3 stream, it will call back the downlink statistics. The default callback period is 3 seconds.
+  /// Restrictions: None.
+  /// Caution: None.
+  ///
+  /// - [info] statistical information.
+  static void Function(ZegoRtcStatsInfo info)? onRtcStats;
 
   /// Successful callback of network time synchronization.
   ///

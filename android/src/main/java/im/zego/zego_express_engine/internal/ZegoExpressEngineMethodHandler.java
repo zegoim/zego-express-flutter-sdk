@@ -95,8 +95,11 @@ import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceQualityType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicResourceType;
 import im.zego.zegoexpress.constants.ZegoCopyrightedMusicType;
 import im.zego.zegoexpress.constants.ZegoDataRecordType;
+import im.zego.zegoexpress.constants.ZegoDummyCaptureImageMode;
 import im.zego.zegoexpress.constants.ZegoDumpDataType;
 import im.zego.zegoexpress.constants.ZegoElectronicEffectsMode;
+import im.zego.zegoexpress.constants.ZegoExpLowlightEnhancementType;
+import im.zego.zegoexpress.constants.ZegoExpNotifyDeviceStateMode;
 import im.zego.zegoexpress.constants.ZegoFontType;
 import im.zego.zegoexpress.constants.ZegoGeoFenceType;
 import im.zego.zegoexpress.constants.ZegoHttpDNSType;
@@ -181,9 +184,11 @@ import im.zego.zegoexpress.entity.ZegoCustomVideoCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoProcessConfig;
 import im.zego.zegoexpress.entity.ZegoCustomVideoRenderConfig;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
+import im.zego.zegoexpress.entity.ZegoDummyCaptureImageParams;
 import im.zego.zegoexpress.entity.ZegoDumpDataConfig;
 import im.zego.zegoexpress.entity.ZegoEngineConfig;
 import im.zego.zegoexpress.entity.ZegoEngineProfile;
+import im.zego.zegoexpress.entity.ZegoExpLowlightEnhancementParams;
 import im.zego.zegoexpress.entity.ZegoFontStyle;
 import im.zego.zegoexpress.entity.ZegoLabelInfo;
 import im.zego.zegoexpress.entity.ZegoLogConfig;
@@ -233,13 +238,10 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.TextureRegistry;
 
 
 public class ZegoExpressEngineMethodHandler {
-
-    private static Registrar registrar = null;
 
     private static FlutterPluginBinding pluginBinding = null;
 
@@ -272,7 +274,7 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
-    public static void createEngineWithProfile(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+    public static void createEngineWithProfile(MethodCall call, Result result, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         // Report framework info
         reportPluginInfo();
@@ -287,12 +289,8 @@ public class ZegoExpressEngineMethodHandler {
         if (binding != null) {
             application = (Application) binding.getApplicationContext();
             textureRegistry = binding.getTextureRegistry();
-        } else {
-            application = (Application) reg.context();
-            textureRegistry = reg.textures();
         }
 
-        registrar = reg;
         pluginBinding = binding;
 
         // Set eventSink for ZegoExpressEngineEventHandler
@@ -322,7 +320,7 @@ public class ZegoExpressEngineMethodHandler {
 
     /* Main */
     @SuppressWarnings("unused")
-    public static void createEngine(MethodCall call, Result result, Registrar reg, FlutterPluginBinding binding, EventChannel.EventSink sink) {
+    public static void createEngine(MethodCall call, Result result, FlutterPluginBinding binding, EventChannel.EventSink sink) {
 
         // Report framework info
         reportPluginInfo();
@@ -337,12 +335,8 @@ public class ZegoExpressEngineMethodHandler {
         if (binding != null) {
             application = (Application) binding.getApplicationContext();
             textureRegistry = binding.getTextureRegistry();
-        } else {
-            application = (Application) reg.context();
-            textureRegistry = reg.textures();
         }
 
-        registrar = reg;
         pluginBinding = binding;
 
         // Set eventSink for ZegoExpressEngineEventHandler
@@ -562,6 +556,27 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setDummyCaptureImagePath(filePath, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setDummyCaptureImageParams(MethodCall call, Result result) {
+        ZegoDummyCaptureImageParams params = new ZegoDummyCaptureImageParams();
+        HashMap<String, Object> paramsMap = call.argument("params");
+        if (paramsMap != null) {
+            params.path = (String) paramsMap.get("path");
+            params.mode = ZegoDummyCaptureImageMode.getZegoDummyCaptureImageMode(ZegoUtils.intValue((Number) paramsMap.get("mode")));
+        }
+        if (params.path != null && params.path.startsWith("flutter-asset://")) {
+            String processedURL = params.path.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[setDummyCaptureImageParams] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", params.path, processedURL);
+            params.path = processedURL;
+        }
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setDummyCaptureImageParams(params, channel);
 
         result.success(null);
     }
@@ -1391,6 +1406,20 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void setLowlightEnhancementParams(MethodCall call, Result result) {
+        ZegoExpLowlightEnhancementParams p = new ZegoExpLowlightEnhancementParams();
+        HashMap<String, Object> paramsMap = call.argument("params");
+        p.mode = ZegoLowlightEnhancementMode.getZegoLowlightEnhancementMode(ZegoUtils.intValue((Number)paramsMap.get("mode")));
+        p.type = ZegoExpLowlightEnhancementType.getZegoExpLowlightEnhancementType(ZegoUtils.intValue((Number)paramsMap.get("type")));
+
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().setLowlightEnhancementParams(p, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setVideoDenoiseParams(MethodCall call, Result result) {
         ZegoVideoDenoiseParams p = new ZegoVideoDenoiseParams();
         HashMap<String, Object> paramsMap = call.argument("params");
@@ -1527,6 +1556,27 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().setCameraStabilizationMode(mode, channel);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableAuxBgmBalance(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+
+        ZegoExpressEngine.getEngine().enableAuxBgmBalance(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void enableFaceDetection(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+
+        ZegoExpressEngine.getEngine().enableFaceDetection(enable, channel);
 
         result.success(null);
     }
@@ -2539,6 +2589,15 @@ public class ZegoExpressEngineMethodHandler {
     }
 
     @SuppressWarnings("unused")
+    public static void enableMixEnginePlayout(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoExpressEngine.getEngine().enableMixEnginePlayout(enable);
+
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
     public static void setAudioDeviceMode(MethodCall call, Result result) {
 
         ZegoAudioDeviceMode deviceMode = ZegoAudioDeviceMode.getZegoAudioDeviceMode( ZegoUtils.intValue((Number) call.argument("deviceMode")));
@@ -2590,9 +2649,10 @@ public class ZegoExpressEngineMethodHandler {
     public static void enableCamera(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue((Boolean) call.argument("enable"));
+        ZegoExpNotifyDeviceStateMode notifyMode = ZegoExpNotifyDeviceStateMode.getZegoExpNotifyDeviceStateMode(ZegoUtils.intValue((Number) call.argument("notifyMode")));
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
-        ZegoExpressEngine.getEngine().enableCamera(enable, channel);
+        ZegoExpressEngine.getEngine().enableCamera(enable, notifyMode, channel);
 
         result.success(null);
     }
@@ -4282,16 +4342,18 @@ public class ZegoExpressEngineMethodHandler {
             HashMap<String, Object> resourceMap = call.argument("resource");
 
             ZegoMediaPlayerResource resource = new ZegoMediaPlayerResource();
-            resource.resourceID = (String)resourceMap.get("resourceID");
-            resource.startPosition = ZegoUtils.longValue((Number) resourceMap.get("startPosition"));
             resource.loadType = ZegoMultimediaLoadType.getZegoMultimediaLoadType(ZegoUtils.intValue((Number) resourceMap.get("loadType")));
-            resource.filePath = (String)resourceMap.get("filePath");
+            resource.startPosition = ZegoUtils.longValue((Number) resourceMap.get("startPosition"));
             resource.alphaLayout = ZegoAlphaLayoutType.getZegoAlphaLayoutType(ZegoUtils.intValue((Number) resourceMap.get("alphaLayout")));
+            resource.filePath = (String)resourceMap.get("filePath");
             byte[] memory = (byte[]) resourceMap.get("memory");
             ByteBuffer memoryByteBuffer =  ByteBuffer.allocateDirect(memory.length);
             resource.memory = memoryByteBuffer.put(memory);
             resource.memory.flip();
             resource.memoryLength = memory.length;
+            resource.resourceID = (String)resourceMap.get("resourceID");
+            resource.onlineResourceCachePath = (String)resourceMap.get("onlineResourceCachePath");
+            resource.maxCachePendingLength = ZegoUtils.longValue((Number) resourceMap.get("maxCachePendingLength"));
 
             mediaPlayer.loadResourceWithConfig(resource, new IZegoMediaPlayerLoadResourceCallback() {
                 @Override
@@ -6149,6 +6211,16 @@ public class ZegoExpressEngineMethodHandler {
                 audioFrameParam.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) audioParamMap.get("channel")));
                 config.audioParam = audioFrameParam;
             }
+
+            HashMap<String, Object> cropRectMap = (HashMap<String, Object>) configMap.get("cropRect");
+            if (cropRectMap != null) {
+                Rect cropRect = new Rect();
+                cropRect.left = ZegoUtils.intValue((Number) cropRectMap.get("x"));
+                cropRect.top = ZegoUtils.intValue((Number) cropRectMap.get("y"));
+                cropRect.right = ZegoUtils.intValue((Number) cropRectMap.get("width")) + cropRect.left;
+                cropRect.bottom = ZegoUtils.intValue((Number) cropRectMap.get("height")) + cropRect.top;
+                config.cropRect = cropRect;
+            }
         }
         ZegoExpressEngine.getEngine().startScreenCapture(config);
 
@@ -6179,6 +6251,16 @@ public class ZegoExpressEngineMethodHandler {
                 audioFrameParam.sampleRate = ZegoAudioSampleRate.getZegoAudioSampleRate(ZegoUtils.intValue((Number) audioParamMap.get("sampleRate")));
                 audioFrameParam.channel = ZegoAudioChannel.getZegoAudioChannel(ZegoUtils.intValue((Number) audioParamMap.get("channel")));
                 config.audioParam = audioFrameParam;
+            }
+
+            HashMap<String, Object> cropRectMap = (HashMap<String, Object>) configMap.get("cropRect");
+            if (cropRectMap != null) {
+                Rect cropRect = new Rect();
+                cropRect.left = ZegoUtils.intValue((Number) cropRectMap.get("x"));
+                cropRect.top = ZegoUtils.intValue((Number) cropRectMap.get("y"));
+                cropRect.right = ZegoUtils.intValue((Number) cropRectMap.get("width")) + cropRect.left;
+                cropRect.bottom = ZegoUtils.intValue((Number) cropRectMap.get("height")) + cropRect.top;
+                config.cropRect = cropRect;
             }
         }
         ZegoExpressEngine.getEngine().updateScreenCaptureConfig(config);
@@ -6372,7 +6454,8 @@ public class ZegoExpressEngineMethodHandler {
         if (pluginBinding != null) {
             assetKey = pluginBinding.getFlutterAssets().getAssetFilePathByName(assetPath);
         } else {
-            assetKey = registrar.lookupKeyForAsset(assetPath);
+            // Handle the case where pluginBinding is null if necessary
+            assetKey = ""; // or some default value
         }
         String realPath = application.getFilesDir().getAbsolutePath() + File.separator + assetKey;
 

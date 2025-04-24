@@ -19,6 +19,33 @@ import 'package:zego_express_engine/src/utils/web_api.dart';
 import 'zego_express_engine.dart';
 
 const MEDIA_PLAYER_NOT_EXIST = 1008001;
+ZegoAudioFrameParam getZegoAudioOutputParam(dynamic data) {
+  final channelCount = ZegoAudioChannel.values[getProperty(data, 'channel')];
+
+  ZegoAudioSampleRate convertSampleRate(int sampleRate) {
+    switch (sampleRate) {
+      case 8000:
+        return ZegoAudioSampleRate.SampleRate8K;
+      case 16000:
+        return ZegoAudioSampleRate.SampleRate16K;
+      case 22050:
+        return ZegoAudioSampleRate.SampleRate22K;
+      case 24000:
+        return ZegoAudioSampleRate.SampleRate24K;
+      case 32000:
+        return ZegoAudioSampleRate.SampleRate32K;
+      case 44100:
+        return ZegoAudioSampleRate.SampleRate44K;
+      case 48000:
+        return ZegoAudioSampleRate.SampleRate48K;
+      default:
+        return ZegoAudioSampleRate.Unknown;
+    }
+  }
+
+  return ZegoAudioFrameParam(
+      convertSampleRate(getProperty(data, 'sampleRate')), channelCount);
+}
 
 /// A web implementation of the ZegoExpressEngineWeb plugin.
 class ZegoExpressEngineWeb {
@@ -84,7 +111,7 @@ class ZegoExpressEngineWeb {
           );
         }
         ZegoFlutterEngine.setEventHandler(
-            allowInterop((String event, String data) {
+            allowInterop((String event, dynamic data) {
           _evenController.add({'methodName': event, 'data': data});
         }));
         return createEngineWithProfile(call.arguments['profile']);
@@ -430,6 +457,11 @@ class ZegoExpressEngineWeb {
         return copyrightedMusicGetFullScore(call.arguments["resourceID"]);
       case 'takePlayStreamSnapshot':
         return takePlayStreamSnapshot(call.arguments['streamID']);
+      case 'startAudioDataObserver':
+        return startAudioDataObserver(
+            call.arguments["observerBitMask"], call.arguments["param"]);
+      case 'stopAudioDataObserver':
+        return stopAudioDataObserver();
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -903,6 +935,26 @@ class ZegoExpressEngineWeb {
           ZegoExpressEngine.onReceiveRealTimeSequentialData!(
               mgr, bytes, data['streamID']);
         }
+        break;
+      // 获取推拉流输出音频原始数据
+      case 'onMixedAudioData':
+        if (ZegoExpressEngine.onMixedAudioData == null) return;
+        final data = map["data"];
+        final param = getZegoAudioOutputParam(data);
+        ZegoExpressEngine.onMixedAudioData!(
+            Uint8List.view(getProperty(data, 'data')),
+            getProperty(data, 'dataLength'),
+            param);
+        break;
+      case 'onPlayerAudioData':
+        if (ZegoExpressEngine.onPlayerAudioData == null) return;
+        final data = map["data"];
+        final param = getZegoAudioOutputParam(data);
+        ZegoExpressEngine.onPlayerAudioData!(
+            Uint8List.view(getProperty(data, 'data')),
+            getProperty(data, 'dataLength'),
+            param,
+            getProperty(data, 'streamID'));
         break;
       ////////////////////////////////////其他/////////////////////////////////////
       case 'onDebugError':
@@ -2105,5 +2157,16 @@ class ZegoExpressEngineWeb {
     final promise = ZegoFlutterEngine.copyMusic?.getFullScore(resourceID);
     final result = await promiseToFuture(promise);
     return result;
+  }
+
+  Future<void> startAudioDataObserver(
+      int observerBitMask, dynamic param) async {
+    final param1 = dartObjToJSON(param);
+    callMethod(ZegoFlutterEngine.instance, 'startAudioDataObserver',
+        [observerBitMask, param1]);
+  }
+
+  Future<void> stopAudioDataObserver() async {
+    callMethod(ZegoFlutterEngine.instance, 'stopAudioDataObserver', []);
   }
 }

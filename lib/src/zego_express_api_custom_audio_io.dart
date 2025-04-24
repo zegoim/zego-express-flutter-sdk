@@ -75,7 +75,7 @@ extension ZegoExpressEngineCustomAudioIO on ZegoExpressEngine {
   /// Enable custom audio processing for SDK playback audio data.
   ///
   /// Available since: 1.13.0
-  /// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
+  /// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessPlaybackAudioData], and can modify the audio data.
   /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after collecting audio data.
   /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
   /// Restrictions: None.

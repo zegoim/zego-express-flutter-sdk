@@ -225,7 +225,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Enables or disables the audio capture device.
   ///
   /// Available since: 1.1.0
-  /// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming.
+  /// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming. not support Linux.
   /// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
   /// Default value: The default is `true`.
   /// When to call: After creating the engine [createEngine].
@@ -273,10 +273,13 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
   /// - [enable] Whether to turn on the camera, `true`: turn on camera, `false`: turn off camera
+  /// - [notifyMode] Mode for notifying the local device status.
   /// - [channel] Publishing stream channel
-  Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
+  Future<void> enableCamera(bool enable,
+      {ZegoExpNotifyDeviceStateMode? notifyMode,
+      ZegoPublishChannel? channel}) async {
     return await ZegoExpressImpl.instance
-        .enableCamera(enable, channel: channel);
+        .enableCamera(enable, notifyMode: notifyMode, channel: channel);
   }
 
   /// Switches to the front or the rear camera (for the specified channel).
@@ -529,7 +532,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   /// When to call: After the engine is created [createEngine].
   /// Caution: [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is the value set by the parameter.
   ///
-  /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
+  /// - [millisecond] Monitoring time period of the audio spectrum, in milliseconds, the minimum value is 10. Default is 500 ms.
   Future<void> startAudioSpectrumMonitor({int? millisecond}) async {
     return await ZegoExpressImpl.instance
         .startAudioSpectrumMonitor(millisecond: millisecond);

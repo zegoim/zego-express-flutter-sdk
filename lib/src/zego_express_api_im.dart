@@ -48,7 +48,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Related callbacks: The room broadcast message can be received through [onIMRecvBroadcastMessage].
   /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
   ///
-  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  /// - [roomID] Room ID, a string of less 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
   ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -70,7 +70,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Related callbacks: The room barrage message can be received through [onIMRecvBarrageMessage].
   /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and custom command can be sent through the [sendCustomCommand] function.
   ///
-  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  /// - [roomID] Room ID, a string of less 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
   ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -93,7 +93,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and barrage messages can be sent through the [sendBarrageMessage] function.
   /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ///
-  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  /// - [roomID] Room ID, a string of less 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
   ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -117,7 +117,7 @@ extension ZegoExpressEngineIM on ZegoExpressEngine {
   /// Related callbacks: When sending a message, Mode is specified for ZegoRoomTransparentMessageModeOnlyClient or ZegoRoomTransparentMessageModeClientAndServer can pass [onRecvRoomTransparentMessage] received sends the message content.
   /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
   ///
-  /// - [roomID] Room ID, a string of up to 128 bytes in length.
+  /// - [roomID] Room ID, a string of less 128 bytes in length.
   ///   Caution:
   ///   1. room ID is defined by yourself.
   ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.

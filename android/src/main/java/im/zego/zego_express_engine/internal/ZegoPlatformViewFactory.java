@@ -61,7 +61,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
     }
 
     /// Get PlatformView to pass to native when dart invoke `startPreview` or `startPlayingStream`
-    ZegoPlatformView getPlatformView(int viewID) {
+    public ZegoPlatformView getPlatformView(int viewID) {
 
         ZegoLog.log("[getPlatformView] viewID:%d", viewID);
 

@@ -305,6 +305,29 @@ void ZegoExpressEngineMethodHandler::setDummyCaptureImagePath(ZFArgument argumen
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setDummyCaptureImageParams(ZFArgument argument, ZFResult result) {
+    EXPRESS::ZegoDummyCaptureImageParams params;
+    auto paramsMap = zego_value_get_map(argument[ZFValue("params")]);
+    params.path = zego_value_get_string(paramsMap[ZFValue("path")]);
+    params.mode = (EXPRESS::ZegoDummyCaptureImageMode)zego_value_get_int(paramsMap[ZFValue("mode")]);
+    const std::string flutterAssertTaget = "flutter-asset://";
+    if (params.path.compare(0, flutterAssertTaget.size(), flutterAssertTaget) == 0) {
+        params.path.replace(0, flutterAssertTaget.size(), "");
+        std::string flutterAssetsPath = GetFlutterAssetsPath();
+        if (!flutterAssetsPath.empty()) {
+            params.path = flutterAssetsPath + params.path;
+        } else {
+            result->Error("setDummyCaptureImageParams_get_exe_path_fail",
+                          "Failed to get the directory where the application is located");
+            return;
+        }
+    }
+
+    auto channel = (EXPRESS::ZegoPublishChannel)zego_value_get_int(argument[ZFValue("channel")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setDummyCaptureImageParams(params, channel);
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::loginRoom(ZFArgument argument, ZFResult result) {
     auto roomID = zego_value_get_string(argument[ZFValue("roomID")]);
     auto userMap = zego_value_get_map(argument[ZFValue("user")]);
@@ -813,6 +836,21 @@ void ZegoExpressEngineMethodHandler::setLowlightEnhancement(ZFArgument argument,
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setLowlightEnhancementParams(ZFArgument argument,
+                                                                  ZFResult result) {
+    EXPRESS::ZegoExpLowlightEnhancementParams p;
+    auto params = zego_value_get_map(argument[ZFValue("params")]);
+    p.mode = (EXPRESS::ZegoLowlightEnhancementMode)zego_value_get_int(params[ZFValue("mode")]);
+    p.type = (EXPRESS::ZegoExpLowlightEnhancementType)zego_value_get_int(params[ZFValue("type")]);
+
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setLowlightEnhancementParams(
+        p, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::setVideoSource(ZFArgument argument, ZFResult result) {
     auto source = zego_value_get_int(argument[ZFValue("source")]);
 
@@ -969,6 +1007,25 @@ void ZegoExpressEngineMethodHandler::enableAlphaChannelVideoEncoder(ZFArgument a
         enable, (EXPRESS::ZegoAlphaLayoutType)alphaLayout, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableAuxBgmBalance(ZFArgument argument,
+                                                         ZFResult result) {
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAuxBgmBalance(enable);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableFaceDetection(ZFArgument argument,
+                                                         ZFResult result) {
+    // auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    // auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    // EXPRESS::ZegoExpressSDK::getEngine()->enableFaceDetection(enable, channel);
+
+    result->Error("not_support_feature", "windows platform not support feature");
 }
 
 void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFResult result) {
@@ -2613,16 +2670,18 @@ void ZegoExpressEngineMethodHandler::mediaPlayerLoadResourceWithConfig(ZFArgumen
     if (mediaPlayer) {
         auto resourceMap = zego_value_get_map(argument[ZFValue("resource")]);
         EXPRESS::ZegoMediaPlayerResource resource;
-        resource.resourceID = zego_value_get_string(resourceMap[ZFValue("resourceID")]);
         resource.loadType =
             (EXPRESS::ZegoMultimediaLoadType)zego_value_get_int(resourceMap[ZFValue("loadType")]);
+        resource.startPosition = zego_value_get_long(resourceMap[ZFValue("startPosition")]);
         resource.alphaLayout =
             (EXPRESS::ZegoAlphaLayoutType)zego_value_get_int(resourceMap[ZFValue("alphaLayout")]);
-        resource.startPosition = zego_value_get_long(resourceMap[ZFValue("startPosition")]);
         resource.filePath = zego_value_get_string(resourceMap[ZFValue("filePath")]);
         auto memory = zego_value_get_vector_uint8(resourceMap[ZFValue("memory")]);
         resource.memory = memory.data();
         resource.memoryLength = memory.size();
+        resource.resourceID = zego_value_get_string(resourceMap[ZFValue("resourceID")]);
+        resource.onlineResourceCachePath = zego_value_get_string(resourceMap[ZFValue("onlineResourceCachePath")]);
+        resource.maxCachePendingLength = zego_value_get_long(resourceMap[ZFValue("maxCachePendingLength")]);
 
         auto sharedPtrResult = ZFMoveResult(result);
 
@@ -5427,6 +5486,8 @@ void ZegoExpressEngineMethodHandler::getScreenCaptureSources(ZFArgument argument
         resultArray.emplace_back(ZFValue(infoMap));
     }
 
+    EXPRESS::ZegoExpressSDK::getEngine()->freeScreenCaptureSources(infos);
+
     result->Success(resultArray);
 #else
     result->Error("not_support_feature", "linux platform not support feature");
@@ -5500,6 +5561,31 @@ void ZegoExpressEngineMethodHandler::enableWindowActivateScreenCaptureSource(ZFA
     if (screenCaptureSource) {
         auto active = zego_value_get_bool(argument[ZFValue("active")]);
         screenCaptureSource->enableWindowActivate(active);
+    }
+
+    result->Success();
+#else
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
+}
+
+void ZegoExpressEngineMethodHandler::enableHightLightScreenCaptureSource(ZFArgument argument,
+                                                                       ZFResult result) {
+#ifdef _WIN32
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto screenCaptureSource = screenCaptureSourceMap_[index];
+
+    if (screenCaptureSource) {
+        auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+        auto configMap = zego_value_get_map(argument[ZFValue("config")]);
+        if (configMap.size() > 0) {
+            EXPRESS::ZegoLayerBorderConfig config;
+            config.color = zego_value_get_int(configMap[ZFValue("color")]);
+            config.width = zego_value_get_int(configMap[ZFValue("width")]);
+            screenCaptureSource->enableHightLight(enable, config);
+        } else {
+            screenCaptureSource->enableHightLight(enable);
+        }
     }
 
     result->Success();

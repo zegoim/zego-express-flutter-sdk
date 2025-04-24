@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.18.0";
+  static String pluginVersion = "3.20.0";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -90,10 +90,8 @@ class ZegoExpressImpl {
       }
     }
 
-    /**
-     * https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
-     * https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
-     */
+    /// https://github.com/flutter/flutter/blob/master/docs/platforms/android/Texture-Layer-Hybrid-Composition.md
+    /// https://github.com/flutter/website/blob/main/src/content/release/breaking-changes/3-19-deprecations.md
     if (kIsAndroid && _androidVersionCode < 23) {
       try {
         String dartVersion = Platform.version.split(' ')[0];
@@ -130,7 +128,8 @@ class ZegoExpressImpl {
     _enablePlatformView = profile.enablePlatformView ?? false;
 
     if (kIsAndroid) {
-      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+      _androidVersionCode =
+          await _channel.invokeMethod('getAndroidBuildVersionCode');
     }
 
     await _channel.invokeMethod('createEngineWithProfile', {
@@ -156,7 +155,8 @@ class ZegoExpressImpl {
     _enablePlatformView = enablePlatformView ?? false;
 
     if (kIsAndroid) {
-      _androidVersionCode = await _channel.invokeMethod('getAndroidBuildVersionCode');
+      _androidVersionCode =
+          await _channel.invokeMethod('getAndroidBuildVersionCode');
     }
 
     await _channel.invokeMethod('createEngine', {
@@ -290,6 +290,14 @@ class ZegoExpressImpl {
       String filePath, ZegoPublishChannel channel) async {
     return await _channel.invokeMethod('setDummyCaptureImagePath',
         {'filePath': filePath, 'channel': channel.index});
+  }
+
+  Future<void> setDummyCaptureImageParams(
+      ZegoDummyCaptureImageParams params, ZegoPublishChannel channel) async {
+    return await _channel.invokeMethod('setDummyCaptureImageParams', {
+      'params': {'path': params.path, 'mode': params.mode.index},
+      'channel': channel.index
+    });
   }
 
   /* Room */
@@ -748,6 +756,15 @@ class ZegoExpressImpl {
     });
   }
 
+  Future<void> setLowlightEnhancementParams(
+      ZegoExpLowlightEnhancementParams params,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('setLowlightEnhancementParams', {
+      'params': {'mode': params.mode.index, 'type': params.type.index},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
   Future<void> setVideoDenoiseParams(ZegoVideoDenoiseParams params,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setVideoDenoiseParams', {
@@ -814,6 +831,19 @@ class ZegoExpressImpl {
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('setCameraStabilizationMode', {
       'mode': mode,
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+  }
+
+  Future<void> enableAuxBgmBalance(bool enable) async {
+    return await _channel
+        .invokeMethod('enableAuxBgmBalance', {'enable': enable});
+  }
+
+  Future<void> enableFaceDetection(bool enable,
+      {ZegoPublishChannel? channel}) async {
+    return await _channel.invokeMethod('enableFaceDetection', {
+      'enable': enable,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -1082,17 +1112,21 @@ class ZegoExpressImpl {
       if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': output.videoConfig != null ? {
-            'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate,
-            'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index,
-            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          } : {},
-          'targetRoom': output.targetRoom != null ? {
-            'roomID': output.targetRoom!.roomID,
-            'userID': output.targetRoom!.userID
-          } : {}
+          'videoConfig': output.videoConfig != null
+              ? {
+                  'videoCodecID': output.videoConfig!.videoCodecID.index,
+                  'bitrate': output.videoConfig!.bitrate,
+                  'encodeLatency': output.videoConfig!.encodeLatency,
+                  'encodeProfile': output.videoConfig!.encodeProfile.index,
+                  'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
+                }
+              : {},
+          'targetRoom': output.targetRoom != null
+              ? {
+                  'roomID': output.targetRoom!.roomID,
+                  'userID': output.targetRoom!.userID
+                }
+              : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -1126,17 +1160,21 @@ class ZegoExpressImpl {
       if (output.videoConfig != null || output.targetRoom != null) {
         outputList.add({
           'target': output.target,
-          'videoConfig': output.videoConfig != null ? {
-            'videoCodecID': output.videoConfig!.videoCodecID.index,
-            'bitrate': output.videoConfig!.bitrate,
-            'encodeLatency': output.videoConfig!.encodeLatency,
-            'encodeProfile': output.videoConfig!.encodeProfile.index,
-            'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
-          } : {},
-          'targetRoom': output.targetRoom != null ? {
-            'roomID': output.targetRoom!.roomID,
-            'userID': output.targetRoom!.userID
-          } : {}
+          'videoConfig': output.videoConfig != null
+              ? {
+                  'videoCodecID': output.videoConfig!.videoCodecID.index,
+                  'bitrate': output.videoConfig!.bitrate,
+                  'encodeLatency': output.videoConfig!.encodeLatency,
+                  'encodeProfile': output.videoConfig!.encodeProfile.index,
+                  'enableLowBitrateHD': output.videoConfig!.enableLowBitrateHD
+                }
+              : {},
+          'targetRoom': output.targetRoom != null
+              ? {
+                  'roomID': output.targetRoom!.roomID,
+                  'userID': output.targetRoom!.userID
+                }
+              : {}
         });
       } else {
         outputList.add({'target': output.target});
@@ -1306,9 +1344,13 @@ class ZegoExpressImpl {
     return ZegoAudioRoute.values[typeIdx];
   }
 
-  Future<void> enableCamera(bool enable, {ZegoPublishChannel? channel}) async {
+  Future<void> enableCamera(bool enable,
+      {ZegoExpNotifyDeviceStateMode? notifyMode,
+      ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('enableCamera', {
       'enable': enable,
+      'notifyMode':
+          notifyMode?.index ?? ZegoExpNotifyDeviceStateMode.Open.index,
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
     });
   }
@@ -2650,6 +2692,26 @@ class ZegoExpressImpl {
             ZegoPublishChannel.values[map['channel']]);
         break;
 
+      case 'onPublisherFaceDetectInfo':
+        if (ZegoExpressEngine.onPublisherFaceDetectInfo == null) return;
+
+        ZegoFaceDetectionInfo faceDetectionInfo = ZegoFaceDetectionInfo();
+        faceDetectionInfo.imageWidth = map['info']['imageWidth'];
+        faceDetectionInfo.imageHeight = map['info']['imageHeight'];
+        List<dynamic> facePositionList = map['info']['facePositionList'];
+        for (Map<dynamic, dynamic> rectMap in facePositionList) {
+          ZegoFacePositionInfo rect = ZegoFacePositionInfo(Rect.fromLTRB(
+              rectMap['left'],
+              rectMap['top'],
+              rectMap['right'],
+              rectMap['bottom']));
+          faceDetectionInfo.facePositionList.add(rect);
+        }
+
+        ZegoExpressEngine.onPublisherFaceDetectInfo!(
+            faceDetectionInfo, ZegoPublishChannel.values[map['channel']]);
+        break;
+
       /* Player */
 
       case 'onPlayerStateUpdate':
@@ -2763,7 +2825,10 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onPlayerRecvMediaSideInfo == null) return;
 
         ZegoExpressEngine.onPlayerRecvMediaSideInfo!(ZegoMediaSideInfo(
-            map['streamID'], map['SEIData'], map['timestampNs']));
+            map['streamID'],
+            map['SEIData'],
+            map['timestampNs'],
+            map['moduleType']));
         break;
 
       case 'onPlayerRecvAudioSideInfo':
@@ -3097,6 +3162,19 @@ class ZegoExpressImpl {
             map['userID'],
             ZegoStreamQualityLevel.values[map['upstreamQuality']],
             ZegoStreamQualityLevel.values[map['downstreamQuality']]);
+        break;
+
+      case 'onRtcStats':
+        if (ZegoExpressEngine.onRtcStats == null) return;
+
+        ZegoExpressEngine.onRtcStats!(ZegoRtcStatsInfo(
+            map['info']['totalTxBandwidth'],
+            map['info']['avgTxRtt'],
+            map['info']['avgTxPacketLostRate'],
+            map['info']['totalRxBandwidth'],
+            map['info']['avgRxRtt'],
+            map['info']['avgRxPacketLostRate'],
+            map['info']['avgPeerToPeerDelay']));
         break;
 
       /* Process Audio Data */
@@ -3979,6 +4057,8 @@ class ZegoMediaPlayerImpl extends ZegoMediaPlayer {
         'alphaLayout':
             resource.alphaLayout?.index ?? ZegoAlphaLayoutType.None.index,
         'memory': resource.memory ?? Uint8List.fromList([]),
+        'onlineResourceCachePath': resource.onlineResourceCachePath ?? '',
+        'maxCachePendingLength': resource.maxCachePendingLength ?? 0,
       }
     });
     return ZegoMediaPlayerLoadResourceResult(map['errorCode']);
@@ -4798,6 +4878,20 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
   }
 
   @override
+  Future<void> enableHightLight(bool enable,
+      {ZegoLayerBorderConfig? config}) async {
+    return await ZegoExpressImpl._channel
+        .invokeMethod('enableHightLightScreenCaptureSource', {
+      'enable': enable,
+      'config': {
+        'color': config?.color ?? 0x00FF00,
+        'width': config?.width ?? 4
+      },
+      'index': _index
+    });
+  }
+
+  @override
   Future<void> enableWindowActivate(bool active) async {
     return await ZegoExpressImpl._channel.invokeMethod(
         'enableWindowActivateScreenCaptureSource',
@@ -4828,6 +4922,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                   : {
                       'sampleRate': config.audioParam!.sampleRate.value,
                       'channel': config.audioParam!.channel.index
+                    },
+              'cropRect': config.cropRect == null
+                  ? null
+                  : {
+                      'x': config.cropRect!.left,
+                      'y': config.cropRect!.top,
+                      'width': config.cropRect!.width,
+                      'height': config.cropRect!.height,
                     }
             },
       'inApp': inApp,
@@ -4880,6 +4982,14 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
             : {
                 'sampleRate': config.audioParam!.sampleRate.value,
                 'channel': config.audioParam!.channel.index
+              },
+        'cropRect': config.cropRect == null
+            ? null
+            : {
+                'x': config.cropRect!.left,
+                'y': config.cropRect!.top,
+                'width': config.cropRect!.width,
+                'height': config.cropRect!.height,
               }
       },
       'index': _index
