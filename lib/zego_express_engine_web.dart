@@ -248,8 +248,8 @@ class ZegoExpressEngineWeb {
       case 'updatePlayingCanvas':
         return updatePlayingCanvas(
             call.arguments["streamID"], call.arguments["canvas"]);
-      case 'enableHardwareDecoder':
-        return enableHardwareDecoder(call.arguments["enable"]);
+      // case 'enableHardwareDecoder':
+      //   return enableHardwareDecoder(call.arguments["enable"]);
       //////////////////////////////消息相关//////////////////////////////////
       case 'sendBroadcastMessage':
         return sendBroadcastMessage(
@@ -303,15 +303,15 @@ class ZegoExpressEngineWeb {
         return enableEffectsBeauty(call.arguments['enable']);
       case 'setEffectsBeautyParam':
         return setEffectsBeautyParam(call.arguments['param']);
-      case 'setVoiceChangerPreset':
-        return setVoiceChangerPreset(call.arguments['preset']);
-      case 'setVoiceChangerParam':
-        return setVoiceChangerPreset(call.arguments['pitch']);
-      case 'setReverbPreset':
-        return setReverbPreset(call.arguments['prese']);
-      case 'enableVirtualStereo':
-        return enableVirtualStereo(
-            call.arguments['enable'], call.arguments['angle']);
+      // case 'setVoiceChangerPreset':
+      //   return setVoiceChangerPreset(call.arguments['preset']);
+      // case 'setVoiceChangerParam':
+      //   return setVoiceChangerPreset(call.arguments['pitch']);
+      // case 'setReverbPreset':
+      //   return setReverbPreset(call.arguments['prese']);
+      // case 'enableVirtualStereo':
+      //   return enableVirtualStereo(
+      //       call.arguments['enable'], call.arguments['angle']);
       //////////////////////////////设备管理相关/////////////////////////////////
       case 'enableCamera':
         return enableCamera(
@@ -1388,10 +1388,10 @@ class ZegoExpressEngineWeb {
         .updatePlayingCanvas(streamID, view, dartObjToJSON(canvas));
   }
 
-  Future<void> enableHardwareDecoder(bool enable) async {
-    //ZegoFlutterEngine.instance.enableHardwareDecoder(enable);
-    return Future.value();
-  }
+  // Future<void> enableHardwareDecoder(bool enable) async {
+  //   //ZegoFlutterEngine.instance.enableHardwareDecoder(enable);
+  //   return Future.value();
+  // }
 
   /////////////////////////////消息相关////////////////////////////////////////
   Future sendBroadcastMessageWithCallback(String roomID, String message) {
@@ -1636,10 +1636,10 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);
   }
 
-  Future<void> setVoiceChangerPreset(int preset) async {}
-  Future<void> setVoiceChangerParam(int pitch) async {}
-  Future<void> setReverbPreset(int prese) async {}
-  Future<void> enableVirtualStereo(bool enable, int angle) async {}
+  // Future<void> setVoiceChangerPreset(int preset) async {}
+  // Future<void> setVoiceChangerParam(int pitch) async {}
+  // Future<void> setReverbPreset(int prese) async {}
+  // Future<void> enableVirtualStereo(bool enable, int angle) async {}
 
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
