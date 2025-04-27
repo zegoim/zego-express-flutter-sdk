@@ -1665,6 +1665,23 @@ class ZegoExpressEngine {
   static void Function(ZegoScreenCaptureSource source,
       ZegoScreenCaptureSourceExceptionType exceptionType)? onExceptionOccurred;
 
+  /// The callback triggered when a screen capture source capture type exception occurred
+  ///
+  /// Available since: 3.21.0
+  /// Description: The callback triggered when a screen capture source capture type exception occurred.
+  /// Trigger: This callback is triggered when an exception occurs after the screen start capture.
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [sourceType] Capture source type.
+  /// - [exceptionType] Capture source exception type.
+  static void Function(
+          ZegoScreenCaptureSource source,
+          ZegoScreenCaptureSourceType sourceType,
+          ZegoScreenCaptureSourceExceptionType exceptionType)?
+      onCaptureTypeExceptionOccurred;
+
   /// The callback will be triggered when the state of the capture target window change.
   ///
   /// Available since: 3.4.0

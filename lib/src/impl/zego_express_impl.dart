@@ -405,7 +405,8 @@ class ZegoExpressImpl {
               'streamCensorshipMode': config.streamCensorshipMode?.index ??
                   ZegoStreamCensorshipMode.None.index,
               'codecNegotiationType': config.codecNegotiationType?.index ??
-                  ZegoCapabilityNegotiationType.None.index
+                  ZegoCapabilityNegotiationType.None.index,
+              'streamTitle': config.streamTitle ?? '',
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -3578,6 +3579,21 @@ class ZegoExpressImpl {
         if (screenCaptureSource != null) {
           ZegoExpressEngine.onExceptionOccurred!(
               screenCaptureSource,
+              ZegoScreenCaptureSourceExceptionType
+                  .values[map['exceptionType']]);
+        }
+        break;
+
+      case 'onCaptureTypeExceptionOccurred':
+        if (ZegoExpressEngine.onCaptureTypeExceptionOccurred == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onCaptureTypeExceptionOccurred!(
+              screenCaptureSource,
+              ZegoScreenCaptureSourceType.values[map['sourceType']],
               ZegoScreenCaptureSourceExceptionType
                   .values[map['exceptionType']]);
         }
