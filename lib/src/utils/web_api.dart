@@ -13,3 +13,6 @@ dynamic dartObjToJSON(dynamic obj) {
   String str = jsonEncode(obj);
   return parseJSON(str);
 }
+
+@JS('Object.keys')
+external dynamic objectKeys(dynamic obj);

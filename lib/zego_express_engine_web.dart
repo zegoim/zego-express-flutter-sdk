@@ -134,9 +134,9 @@ class ZegoExpressEngineWeb {
       case 'setCloudProxyConfig':
         return setCloudProxyConfig(call.arguments['proxyList'],
             call.arguments['token'], call.arguments['enable']);
-      case 'setLocalProxyConfig':
-        return setLocalProxyConfig(
-            call.arguments['proxyList'], call.arguments['enable']);
+      // case 'setLocalProxyConfig': // 参数跟native接口有差异，web 需要统一接入、logger 域名，Flutter对外接口需要改声明才能兼容。
+      //   return setLocalProxyConfig(
+      //       call.arguments['proxyList'], call.arguments['enable']);
       case 'callExperimentalAPI':
         return callExperimentalAPI(call.arguments['params']);
       //////////////////////////////房间相关//////////////////////////////////
@@ -289,6 +289,8 @@ class ZegoExpressEngineWeb {
       case 'stopAutoMixerTask':
         return stopAutoMixerTask(call.arguments);
       //////////////////////////////前处理相关//////////////////////////////////
+      case 'setCaptureVolume':
+        return setCaptureVolume(call.arguments["volume"]);
       case 'enableAEC':
         return enableAEC(call.arguments["enable"]);
       case 'enableAGC':
@@ -965,12 +967,30 @@ class ZegoExpressEngineWeb {
         break;
       //////////////////////////////混流//////////////////////////
       case 'onMixerSoundLevelUpdate':
-        final data = jsonDecode(map["data"]);
-        ZegoExpressEngine.onMixerSoundLevelUpdate!(data['soundLevels']);
+        final data = parseJSON(map["data"]);
+        final soundLevelsMap = getProperty(data, 'soundLevels');
+        final keys = objectKeys(soundLevelsMap);
+        final soundLevels = <int, double>{};
+        for (int i = 0; i < keys.length; i++) {
+          final key = keys[i];
+          final numKey = int.parse(key);
+          final numValue = getProperty(soundLevelsMap, key);
+          soundLevels[numKey] = numValue;
+        };
+        ZegoExpressEngine.onMixerSoundLevelUpdate!(soundLevels);
         break;
       case 'onAutoMixerSoundLevelUpdate':
-        final data = jsonDecode(map["data"]);
-        ZegoExpressEngine.onAutoMixerSoundLevelUpdate!(data['soundLevels']);
+        final data = parseJSON(map["data"]);
+        final soundLevelsMap = getProperty(data, 'soundLevels');
+        final keys = objectKeys(soundLevelsMap);
+        final soundLevels = <String, double>{};
+        for (int i = 0; i < keys.length; i++) {
+          final key = keys[i];
+          final numKey = key;
+          final numValue = getProperty(soundLevelsMap, key);
+          soundLevels[numKey] = numValue;
+        };
+        ZegoExpressEngine.onAutoMixerSoundLevelUpdate!(soundLevels);
         break;
       case 'onMixerRelayCDNStateUpdate':
         final data = jsonDecode(map["data"]);
@@ -1630,7 +1650,7 @@ class ZegoExpressEngineWeb {
   Future<void> setEffectsBeautyParam(dynamic param) async {
     EffectsBeautyParam options = EffectsBeautyParam(
         whitenIntensity: param["whitenIntensity"],
-        osyIntensity: param["osyIntensity"],
+        rosyIntensity: param["rosyIntensity"],
         smoothIntensity: param["smoothIntensity"],
         sharpenIntensity: param["sharpenIntensity"]);
     return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);

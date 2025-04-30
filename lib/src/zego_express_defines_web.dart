@@ -402,11 +402,11 @@ class PublishConfig {
 class EffectsBeautyParam {
   external factory EffectsBeautyParam(
       {int? whitenIntensity,
-      int? osyIntensity,
+      int? rosyIntensity,
       int? smoothIntensity,
       int? sharpenIntensity});
   external int whitenIntensity;
-  external int osyIntensity;
+  external int rosyIntensity;
   external int smoothIntensity;
   external int sharpenIntensity;
 }
