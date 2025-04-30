@@ -2969,7 +2969,7 @@ class ZegoDeviceInfo {
   /// Device name
   String deviceName;
 
-  /// Device extra info, Format: key=value\nkey2=value2..., use line break \n to separate key-value pairs, and use equal sign = to separate key and value
+  /// Device extra info, Format: key="value"\nkey2="value2"..., use line break \n to separate key-value pairs, and use equal sign = to separate key and "value", and there are double quotes around the value
   String deviceExtraInfo;
 
   ZegoDeviceInfo(this.deviceID, this.deviceName, this.deviceExtraInfo);
