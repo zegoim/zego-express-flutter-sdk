@@ -925,7 +925,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onMixerSoundLevelUpdate(HashMap<Integer, Float> soundLevels) {
             super.onMixerSoundLevelUpdate(soundLevels);
-            // Super high frequency callbacks do not log, do not guard sink
+
+            if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -938,7 +939,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onAutoMixerSoundLevelUpdate(HashMap<String, Float> soundLevels) {
             super.onAutoMixerSoundLevelUpdate(soundLevels);
-            // Super high frequency callbacks do not log, do not guard sink
+            
+            if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -954,7 +956,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedSoundLevelUpdate(float soundLevel) {
             super.onCapturedSoundLevelUpdate(soundLevel);
-            // Super high frequency callbacks do not log, do not guard sink
+            
+            if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -967,7 +970,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedSoundLevelInfoUpdate(ZegoSoundLevelInfo soundLevelInfo) {
             super.onCapturedSoundLevelInfoUpdate(soundLevelInfo);
-            // Super high frequency callbacks do not log, do not guard sink
+            
+            if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -985,7 +989,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteSoundLevelUpdate(HashMap<String, Float> soundLevels) {
             super.onRemoteSoundLevelUpdate(soundLevels);
-            // Super high frequency callbacks do not log, do not guard sink
+            
+            if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
 
@@ -998,7 +1003,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteSoundLevelInfoUpdate(HashMap<String, ZegoSoundLevelInfo> soundLevelInfos) {
             super.onRemoteSoundLevelInfoUpdate(soundLevelInfos);
-            // Super high frequency callbacks do not log, do not guard sink
+
+            if (guardSink()) { return; }
 
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onRemoteSoundLevelInfoUpdate");
@@ -1020,7 +1026,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onCapturedAudioSpectrumUpdate(float[] audioSpectrum) {
             super.onCapturedAudioSpectrumUpdate(audioSpectrum);
-            // Super high frequency callbacks do not log, do not guard sink
+            
+            if (guardSink()) { return; }
 
             ArrayList<Float> audioSpectrumList = new ArrayList<>();
 
@@ -1039,7 +1046,8 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onRemoteAudioSpectrumUpdate(HashMap<String, float[]> audioSpectrums) {
             super.onRemoteAudioSpectrumUpdate(audioSpectrums);
-            // Super high frequency callbacks do not log, do not guard sink
+            
+            if (guardSink()) { return; }
 
             HashMap<String, ArrayList<Float>> audioSpectrumsMap = new HashMap<>();
 
