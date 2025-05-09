@@ -696,6 +696,7 @@ void ZegoExpressEngineEventHandler::onAudioDeviceStateChanged(
         ZFMap deviceInfoMap;
         deviceInfoMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceInfoMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceInfoMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
 
         retMap[ZFValue("deviceInfo")] = ZFValue(deviceInfoMap);
 
@@ -1472,6 +1473,7 @@ void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(
         ZFMap deviceInfoMap;
         deviceInfoMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceInfoMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceInfoMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
         retMap[ZFValue("deviceInfo")] = ZFValue(deviceInfoMap);
 
         eventSink_->Success(retMap);
