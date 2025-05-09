@@ -1160,7 +1160,8 @@
             @"method": @"onAudioDeviceStateChanged",
             @"deviceInfo": @{
                 @"deviceID": deviceInfo.deviceID,
-                @"deviceName": deviceInfo.deviceName
+                @"deviceName": deviceInfo.deviceName,
+                @"deviceExtraInfo": deviceInfo.deviceExtraInfo
             },
             @"deviceType": @(deviceType),
             @"updateType": @(updateType),
@@ -1179,7 +1180,8 @@
             @"method": @"onVideoDeviceStateChanged",
             @"deviceInfo": @{
                 @"deviceID": deviceInfo.deviceID,
-                @"deviceName": deviceInfo.deviceName
+                @"deviceName": deviceInfo.deviceName,
+                @"deviceExtraInfo": deviceInfo.deviceExtraInfo
             },
             @"updateType": @(updateType),
         });

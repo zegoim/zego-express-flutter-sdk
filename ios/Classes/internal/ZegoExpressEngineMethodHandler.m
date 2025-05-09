@@ -2427,7 +2427,8 @@
     for (ZegoDeviceInfo *info in audioDeviceList) {
         [audioDeviceListResult addObject:@{
             @"deviceID": info.deviceID,
-            @"deviceName": info.deviceName
+            @"deviceName": info.deviceName,
+            @"deviceExtraInfo": info.deviceExtraInfo
         }];
     }
     
@@ -2467,7 +2468,8 @@
     for (ZegoDeviceInfo *info in videoDeviceList) {
         [videoDeviceListResult addObject:@{
             @"deviceID": info.deviceID,
-            @"deviceName": info.deviceName
+            @"deviceName": info.deviceName,
+            @"deviceExtraInfo": info.deviceExtraInfo
         }];
     }
     
@@ -2560,7 +2562,8 @@
 
     result(@{
         @"deviceID": info.deviceID,
-        @"deviceName": info.deviceName
+        @"deviceName": info.deviceName,
+        @"deviceExtraInfo": info.deviceExtraInfo
     });
 }
 
