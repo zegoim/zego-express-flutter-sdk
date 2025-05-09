@@ -20,7 +20,7 @@ class ZegoFlutterEngine {
   external static ZegoCopyrightedMusic? copyMusic;
 
   /////////////////////////////初始化相关的前置功能////////////////////////////////////////
-  external static createEngineWithProfile(dynamic profile);
+  external static createEngineWithProfile(dynamic profile, String framework);
   external static destroyEngine();
   external static getVersion();
   external static presetLogConfig(dynamic config);
@@ -215,8 +215,7 @@ class ZegoFlutterEngine {
       String task, void Function(ZegoResponseWeb res) onresult);
   external stopAutoMixerTask(
       String task, void Function(ZegoResponseWeb res) onresult);
-  external takePlayStreamSnapshot(
-      String streamID);
+  external takePlayStreamSnapshot(String streamID);
   /////////////////////////////前处理////////////////////////////////////////
   external enableAEC(bool enable);
   external enableAGC(bool enable);

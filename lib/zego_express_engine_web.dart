@@ -1040,7 +1040,7 @@ class ZegoExpressEngineWeb {
     Profile engineProfile =
         Profile(appID: appID, server: server, scenario: profile['scenario']);
 
-    ZegoFlutterEngine.createEngineWithProfile(engineProfile);
+    ZegoFlutterEngine.createEngineWithProfile(engineProfile, 'flutter');
   }
 
   static Future<void> presetLogConfig(dynamic config) async {
