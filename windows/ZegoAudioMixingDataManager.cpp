@@ -1,5 +1,5 @@
 #include "include/zego_express_engine/ZegoAudioMixingDataManager.h"
-#include "ZegoLog.h"
+#include "internal/ZegoLog.h"
 #include <ZegoExpressSDK.h>
 
 static std::shared_ptr<ZegoAudioMixingDataManager> instance_ = nullptr;
@@ -9,10 +9,6 @@ class ZegoAudioMixingHandler : public ZEGO::EXPRESS::IZegoAudioMixingHandler {
 public:
     void setHandler(std::shared_ptr<IZegoFlutterAudioMixingHandler> handler) {
         handler_ = handler;
-    }
-
-    std::shared_ptr<ZEGO::EXPRESS::IZegoAudioMixingHandler> getHandler() {
-        return zegoHandler_;
     }
 
 private:
@@ -54,6 +50,7 @@ std::shared_ptr<ZEGO::EXPRESS::IZegoAudioMixingHandler> ZegoAudioMixingDataManag
 }
 
 void ZegoAudioMixingDataManager::setHandler(std::shared_ptr<IZegoFlutterAudioMixingHandler> handler) {
+    ZF::logInfo("[AudioMixingDataManager][setHandler] handler: %p", handler.get());
     handler_ = handler;
     if (handler_ && !zegoHandler_) {
         zegoHandler_ = std::make_shared<ZegoAudioMixingHandler>();

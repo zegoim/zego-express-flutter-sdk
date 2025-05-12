@@ -19,6 +19,7 @@
 #import "ZegoMediaPlayerVideoManager.h"
 #import "ZegoMediaPlayerAudioManager.h"
 #import "ZegoMediaPlayerBlockDataManager.h"
+#import "ZegoAudioMixingDataManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
