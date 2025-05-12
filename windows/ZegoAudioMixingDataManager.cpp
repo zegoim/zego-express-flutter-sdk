@@ -14,7 +14,7 @@ public:
 private:
     std::shared_ptr<IZegoFlutterAudioMixingHandler> handler_ = nullptr;
 
-    void onAudioMixingCopyData(ZegoAudioMixingData *data) override {
+    void onAudioMixingCopyData(ZEGO::EXPRESS::ZegoAudioMixingData *data) override {
         if (handler_ == nullptr) {
             return;
         }
