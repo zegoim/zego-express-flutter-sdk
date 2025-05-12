@@ -14,27 +14,22 @@ public:
 private:
     std::shared_ptr<IZegoFlutterAudioMixingHandler> handler_ = nullptr;
 
-    ZegoAudioMixingData onAudioMixingCopyData(unsigned int expectedDataLength) override {
+    void onAudioMixingCopyData(ZegoAudioMixingData *data) override {
         if (handler_ == nullptr) {
-            return nullptr;
+            return;
         }
 
-        auto data = handler_->onAudioMixingCopyData(expectedDataLength);
-
-        if (data == nullptr) {
-            return nullptr;
-        }
-
-        ZegoAudioMixingData result;
-        result.audioData = data.audioData;
-        result.audioDataLength = data.audioDataLength;
-        result.SEIData = data.SEIData;
-        ZegoAudioFrameParam param;
-        param.sampleRate = data.param.sampleRate;
-        param.channel = data.param.channel;
+        ZGFlutterAudioMixingData result;
+        result.audioData = data->audioData;
+        result.audioDataLength = data->audioDataLength;
+        result.SEIData = data->SEIData;
+        result.SEIDataLength = data->SEIDataLength;
+        ZGFlutterAudioFrameParam param;
+        param.sampleRate = data->param.sampleRate;
+        param.channel = data->param.channel;
         result.param = param;
-        result.SEIDataLength = data.SEIDataLength;
-        return result;
+
+        handler_->onAudioMixingCopyData(&result);
     }
 };
 

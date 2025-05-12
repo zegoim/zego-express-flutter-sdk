@@ -7,7 +7,7 @@ class FLUTTER_PLUGIN_EXPORT IZegoFlutterAudioMixingHandler {
 protected:
     virtual ~IZegoFlutterAudioMixingHandler() {}
 public:
-    virtual ZGFlutterAudioMixingData onAudioMixingCopyData(unsigned int expectedDataLength) = 0;
+    virtual void onAudioMixingCopyData(ZGFlutterAudioMixingData *data) = 0;
 };
 
 namespace ZEGO::EXPRESS {
