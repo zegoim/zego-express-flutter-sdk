@@ -167,6 +167,7 @@
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:[ZegoAudioMixingDataManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -205,6 +206,7 @@
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:[ZegoAudioMixingDataManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -3402,6 +3404,33 @@
     }
     
     [[ZegoExpressEngine sharedEngine] enableCustomVideoProcessing:(BOOL)enable config:config channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+#pragma mark - AudioMixing
+
+- (void)enableAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    [[ZegoExpressEngine sharedEngine] enableAudioMixing:enable];
+
+    result(nil);
+}
+
+- (void)setAudioMixingVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+    int volumeType = [ZegoUtils intValue:call.arguments[@"volumeType"]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingVolume:volume type:(ZegoVolumeType)volumeType];
+
+    result(nil);
+}
+
+- (void)muteLocalAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+    [[ZegoExpressEngine sharedEngine] muteLocalAudioMixing:mute];
 
     result(nil);
 }

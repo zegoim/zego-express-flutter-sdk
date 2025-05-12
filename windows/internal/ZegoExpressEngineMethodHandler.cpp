@@ -1548,6 +1548,29 @@ void ZegoExpressEngineMethodHandler::stopAudioDataObserver(ZFArgument argument, 
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFResult result) {
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAudioMixing(enable);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setAudioMixingVolume(ZFArgument argument, ZFResult result) {
+    auto volume = zego_value_get_int(argument[ZFValue("volume")]);
+    auto volumeType = zego_value_get_int(argument[ZFValue("volumeType")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingVolume(volume,
+                                                                (EXPRESS::ZegoVolumeType)volumeType);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::muteLocalAudioMixing(ZFArgument argument, ZFResult result) {
+    auto mute = zego_value_get_bool(argument[ZFValue("mute")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->muteLocalAudioMixing(mute);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::createAudioEffectPlayer(ZFArgument argument, ZFResult result) {
     auto player = EXPRESS::ZegoExpressSDK::getEngine()->createAudioEffectPlayer();
     if (player) {

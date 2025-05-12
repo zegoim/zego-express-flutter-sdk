@@ -126,6 +126,51 @@ extension ZegoExpressEnginePreprocess on ZegoExpressEngine {
     return await ZegoExpressImpl.instance.enableSpeechEnhance(enable, level);
   }
 
+  /// Enables or disables audio mixing function.
+  ///
+  /// Available since: 1.9.0, will be deprecated soon. It is recommended to use the media player [createMediaPlayer] or the audio effect player [createAudioEffectPlayer] to implement the audio mixing function.
+  /// Description: After the audio mixing function is turned on, the SDK will mix the audio data prepared by the developer with the audio data collected by the SDK before publishing.
+  /// Use case: Developers can use this function when they need to mix their own songs, sound effects or other audio data into the publishing stream.
+  /// Default value: When this function is not called, this is disabled by default.
+  /// When to call: It needs to be called after [createEngine].
+  /// Related APIs: After enabling audio mixing, the developer needs to provide the SDK with the audio data that needs to be mixed in the [onAudioMixingCopyData] callback.
+  /// Caution: After you start audio mixing, the SDK will play the mixed audio on the local (publisher side) by default. If you do not want to play it locally but only on the remote (player side), please call [muteLocalAudioMixing] to set the local audio mixing mute. Recommend to use audio effect player or media player for audio mixing.
+  /// Restrictions: None.
+  ///
+  /// - [enable] Whether to enable audio mixting, true: enable, false: disable
+  Future<void> enableAudioMixing(bool enable) async {
+    return await ZegoExpressImpl.instance.enableAudioMixing(enable);
+  }
+
+  /// Mute or resume local playback of the mixing audio.
+  ///
+  /// Available since: 1.9.0
+  /// Description: When calling this function to mute the local playback audio mixing, the local (publisher side) will not play the audio provided to the SDK through [onAudioMixingCopyData], but the remote (player side) can still playback it Mix.
+  /// Use case: When developers need to mix their own songs, sound effects or other audio data into the publishing stream, but the mixed audio only wants to be heard by the remote player, and does not want to be playback locally, you can use this function.
+  /// Default value: When this function is not called, the default is not mute, which is false.
+  /// When to call: It needs to be called after [createEngine].
+  /// Restrictions: None.
+  ///
+  /// - [mute] Whether to mute local audio mixting, true: mute, false: unmute
+  Future<void> muteLocalAudioMixing(bool mute) async {
+    return await ZegoExpressImpl.instance.muteLocalAudioMixing(mute);
+  }
+
+  /// Sets the audio mixing output volume for either local playback or the stream to published.
+  ///
+  /// Available since: 1.9.0
+  /// Description: After enabling the audio mixing function through [enableAudioMixing], the developer can use this function to set the volume of the mixing audio to be mixed to SDK.
+  /// Use case: When developers need to mix their own songs, sound effects or other audio data into the publishing stream, and want to adjust the volume of the mixing audio, you can use this function.
+  /// When to call: It needs to be called after [createEngine].
+  /// Caution: This function can individually set the mixing audio volume of the local playback or the remote playback.
+  /// Restrictions: None.
+  ///
+  /// - [volume] The audio mixing volume, range from 0 to 200, 100 as default.
+  /// - [type] Local playback volume / Remote playback volume
+  Future<void> setAudioMixingVolume(int volume, ZegoVolumeType type) async {
+    return await ZegoExpressImpl.instance.setAudioMixingVolume(volume, type);
+  }
+
   /// Enable the Effects beauty environment.
   ///
   /// Available since: 2.16.0

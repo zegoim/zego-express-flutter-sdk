@@ -237,6 +237,10 @@ static const std::map<std::string,
         EngineMethodHandler(removeDumpData),
         EngineMethodHandler(enableColorEnhancement),
 
+        EngineMethodHandler(enableAudioMixing),
+        EngineMethodHandler(setAudioMixingVolume),
+        EngineMethodHandler(muteLocalAudioMixing),
+
         EngineMethodHandler(createAudioEffectPlayer),
         EngineMethodHandler(destroyAudioEffectPlayer),
         EngineMethodHandler(audioEffectPlayerStart),
