@@ -25,8 +25,8 @@ private:
         result.SEIData = data->SEIData;
         result.SEIDataLength = data->SEIDataLength;
         ZGFlutterAudioFrameParam param;
-        param.sampleRate = data->param.sampleRate;
-        param.channel = data->param.channel;
+        param.sampleRate = (ZGFlutterAudioSampleRate)data->param.sampleRate;
+        param.channel = (ZGFlutterAudioChannel)data->param.channel;
         result.param = param;
 
         handler_->onAudioMixingCopyData(&result);
