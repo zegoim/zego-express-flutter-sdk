@@ -21,7 +21,7 @@ public:
 
     std::shared_ptr<ZEGO::EXPRESS::IZegoAudioMixingHandler> getHandler();
 
-    void setHandler(std::shared_ptr<IZegoFlutterAudioMixingHandler> handler);
+    void setAudioMixingHandler(std::shared_ptr<IZegoFlutterAudioMixingHandler> handler);
 
 private:
     friend class ZegoAudioMixingHandler;
