@@ -3545,7 +3545,8 @@ public class ZegoExpressEngineMethodHandler {
     @SuppressWarnings("unused")
     public static void setAudioMixingVolume(MethodCall call, Result result) {
         int volume = ZegoUtils.intValue(call.argument("volume"));
-        ZegoVolumeType volumeType = ZegoVolumeType.getZegoVolumeType(volume);
+        int type = ZegoUtils.intValue(call.argument("type"));
+        ZegoVolumeType volumeType = ZegoVolumeType.getZegoVolumeType(type);
         ZegoExpressEngine.getEngine().setAudioMixingVolume(volume, volumeType);
         result.success(null);
     }

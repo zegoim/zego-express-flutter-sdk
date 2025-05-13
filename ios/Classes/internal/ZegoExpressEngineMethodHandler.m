@@ -168,7 +168,7 @@
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:[ZegoAudioMixingDataManager sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -207,7 +207,7 @@
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:[ZegoAudioMixingDataManager sharedInstance]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -3422,7 +3422,7 @@
 - (void)setAudioMixingVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
-    int volumeType = [ZegoUtils intValue:call.arguments[@"volumeType"]];
+    int volumeType = [ZegoUtils intValue:call.arguments[@"type"]];
     [[ZegoExpressEngine sharedEngine] setAudioMixingVolume:volume type:(ZegoVolumeType)volumeType];
 
     result(nil);

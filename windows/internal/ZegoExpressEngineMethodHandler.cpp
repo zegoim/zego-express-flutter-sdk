@@ -1557,7 +1557,7 @@ void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFRe
 
 void ZegoExpressEngineMethodHandler::setAudioMixingVolume(ZFArgument argument, ZFResult result) {
     auto volume = zego_value_get_int(argument[ZFValue("volume")]);
-    auto volumeType = zego_value_get_int(argument[ZFValue("volumeType")]);
+    auto volumeType = zego_value_get_int(argument[ZFValue("type")]);
     EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingVolume(volume,
                                                                 (EXPRESS::ZegoVolumeType)volumeType);
 
