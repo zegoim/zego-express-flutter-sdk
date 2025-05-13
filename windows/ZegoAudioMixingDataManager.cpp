@@ -44,8 +44,8 @@ std::shared_ptr<ZEGO::EXPRESS::IZegoAudioMixingHandler> ZegoAudioMixingDataManag
     return zegoHandler_;
 }
 
-void ZegoAudioMixingDataManager::setHandler(std::shared_ptr<IZegoFlutterAudioMixingHandler> handler) {
-    ZF::logInfo("[AudioMixingDataManager][setHandler] handler: %p", handler.get());
+void ZegoAudioMixingDataManager::setAudioMixingHandler(std::shared_ptr<IZegoFlutterAudioMixingHandler> handler) {
+    ZF::logInfo("[AudioMixingDataManager][setAudioMixingHandler] handler: %p", handler.get());
     handler_ = handler;
     if (handler_ && !zegoHandler_) {
         zegoHandler_ = std::make_shared<ZegoAudioMixingHandler>();
