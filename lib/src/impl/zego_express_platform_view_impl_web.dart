@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:html';
 import 'dart:ui' as ui;
 
@@ -9,17 +10,26 @@ class ZegoExpressPlatformViewImpl {
       {Key? key}) {
     String webcamPushElement = 'plugins.zego.im/zego_express_view';
     // ignore:undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
-        webcamPushElement,
-        (int id) => VideoElement()
-          ..id = "zego-view-$id"
-          ..autoplay = true);
+    ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
+      return DivElement()..id = "zego-view-$id";
+    });
     return HtmlElementView(
         key: key,
         viewType: webcamPushElement,
         onPlatformViewCreated: (int viewID) {
-          Future.delayed(const Duration(milliseconds: 10), () {
-            onViewCreated(viewID);
+          const checkInterval = Duration(milliseconds: 10);
+          // Maximum number of checks, maximum time consuming 1.5s
+          var checks = 0;
+          const maxChecks = 150;
+          final elementId = "zego-view-$viewID";
+          Timer.periodic(checkInterval, (timer) {
+            final div = window.document.getElementById(elementId);
+            if (div != null || checks >= maxChecks) {
+              // Element found or timeout
+              timer.cancel();
+              onViewCreated(viewID);
+            }
+            checks++;
           });
         });
   }
