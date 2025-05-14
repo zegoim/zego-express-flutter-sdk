@@ -10,6 +10,7 @@
 #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 #include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
+#include "zego_express_engine/ZegoAudioMixingDataManager.h"
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #endif
@@ -97,6 +98,7 @@ void ZegoExpressEngineMethodHandler::createEngine(ZFArgument argument, ZFResult 
     engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
+    engine->setAudioMixingHandler(ZegoAudioMixingDataManager::getInstance()->getHandler());
 
     ZegoTextureRendererController::getInstance()->init(messenger_);
 
@@ -127,6 +129,7 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(ZFArgument argument
         engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
+        engine->setAudioMixingHandler(ZegoAudioMixingDataManager::getInstance()->getHandler());
 
         ZegoTextureRendererController::getInstance()->init(messenger_);
     }

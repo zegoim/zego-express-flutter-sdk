@@ -24,12 +24,15 @@ private:
         result.audioDataLength = data->audioDataLength;
         result.SEIData = data->SEIData;
         result.SEIDataLength = data->SEIDataLength;
-        ZGFlutterAudioFrameParam param;
-        param.sampleRate = (ZGFlutterAudioSampleRate)data->param.sampleRate;
-        param.channel = (ZGFlutterAudioChannel)data->param.channel;
-        result.param = param;
+        result.param.sampleRate = (ZGFlutterAudioSampleRate)data->param.sampleRate;
+        result.param.channel = (ZGFlutterAudioChannel)data->param.channel;
 
         handler_->onAudioMixingCopyData(&result);
+
+        data->audioDataLength = result.audioDataLength;
+        data->param.sampleRate = ZEGO::EXPRESS::ZegoAudioSampleRate(result.param.sampleRate);
+        data->param.channel = ZEGO::EXPRESS::ZegoAudioChannel(result.param.channel);
+        data->SEIDataLength = result.SEIDataLength;
     }
 };
 
