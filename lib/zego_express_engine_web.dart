@@ -2181,7 +2181,13 @@ class ZegoExpressEngineWeb {
 
   Future<void> startAudioDataObserver(
       int observerBitMask, dynamic param) async {
+    int sampleRate = param['sampleRate'];
     final param1 = dartObjToJSON(param);
+    if (sampleRate == 0) {
+      setProperty(param1, 'sampleRate', context['undefined']);
+    } else {
+      setProperty(param1, 'sampleRate', sampleRate);
+    }
     callMethod(ZegoFlutterEngine.instance, 'startAudioDataObserver',
         [observerBitMask, param1]);
   }
