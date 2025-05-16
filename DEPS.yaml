@@ -1,5 +1,5 @@
-android: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/android/ZegoExpressVideo-android-shared-java.zip?version=3.19.0.42747
-ios: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/ios/ZegoExpressVideo-ios-shared-objc.zip?version=3.19.0.42747
-macos: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/mac/ZegoExpressVideo-mac-shared-objc.zip?version=3.19.0.42747
-windows: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/win/ZegoExpressVideo-win-shared-cpp.zip?version=3.19.0.42747
-linux: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/linux/ZegoExpressVideo-linux-gnu-shared-cpp.zip?version=3.19.0.42747
+android: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/android/ZegoExpressVideo-android-shared-java.zip?version=3.20.5.44240
+ios: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/ios/ZegoExpressVideo-ios-shared-objc.zip?version=3.20.5.44240
+macos: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/mac/ZegoExpressVideo-mac-shared-objc.zip?version=3.20.5.44240
+windows: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/win/ZegoExpressVideo-win-shared-cpp.zip?version=3.20.5.44240
+linux: https://artifact-node.zego.cloud/generic/rtc/public/native/ZegoExpressVideo/linux/ZegoExpressVideo-linux-gnu-shared-cpp.zip?version=3.20.5.44240
