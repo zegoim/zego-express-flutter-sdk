@@ -4103,8 +4103,14 @@ class ZegoCopyrightedMusicGetSharedConfig {
   /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
   String? roomID;
 
+  /// VOD billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
+  int? mode;
+
+  /// The master ID, which must be passed when the billing mode is billed by host.
+  String? masterID;
+
   ZegoCopyrightedMusicGetSharedConfig(this.songID,
-      {this.vendorID, this.roomID});
+      {this.vendorID, this.roomID, this.mode, this.masterID});
 }
 
 /// The configuration of getting shared resource.
@@ -4121,8 +4127,18 @@ class ZegoCopyrightedMusicGetSharedConfigV2 {
   /// The resource type of music.
   int? resourceType;
 
+  /// VOD billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
+  int? mode;
+
+  /// The master ID, which must be passed when the billing mode is billed by host.
+  String? masterID;
+
   ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
-      {this.vendorID, this.roomID, this.resourceType});
+      {this.vendorID,
+      this.roomID,
+      this.resourceType,
+      this.mode,
+      this.masterID});
 }
 
 /// The configuration of querying cache.

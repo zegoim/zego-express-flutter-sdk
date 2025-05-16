@@ -1,5 +1,54 @@
 # Change Log
 
+## 3.20.5
+
+### New Features
+
+1. More Features Added for Web Platform
+
+| Feature | API |
+| --- | --- |
+| Get and Set Audio Parameters | getAudioConfig<br> setAudioConfig |
+| Geo-fencing | setGeoFence |
+| Cloud Proxy | setCloudProxyConfig |
+| Set Mirror Mode | setVideoMirrorMode<br>Setting stream mirroring is not supported. |
+| Set Publishing End Capture Volume | setCaptureVolume |
+| Forward to CDN | addPublishCdnUrl<br> removePublishCdnUrl |
+| Dynamic Traffic Control Strategy Switching | enableTrafficControl<br> setMinVideoBitrateForTrafficControl<br> setTrafficControlFocusOn |
+| Set Playback Volume | setPlayVolume<br> setAllPlayStreamVolume<br>（Values above 100 are not supported and will be treated as 100.) |
+| Whether to receive all audio data for playback | muteAllPlayAudioStreams |
+| Whether to receive all video data for playback | muteAllPlayVideoStreams |
+| Update playback view | updatePlayingCanvas |
+| Whether to enable hardware decoding | enableHardwareEncoder |
+| Real-time sequential data | createRealTimeSequentialDataManager<br> destroyRealTimeSequentialDataManager<br> startBroadcasting<br> stopBroadcasting<br> sendRealTimeSequentialData<br> startSubscribing<br> stopSubscribing<br> onReceiveRealTimeSequentialData |
+| Enable and disable sound level monitoring | startSoundLevelMonitor<br> stopSoundLevelMonitor |
+| Basic beauty effects | startEffectsEnv<br> stopEffectsEnv<br> enableEffectsBeauty<br> setEffectsBeautyParam |
+| Media player | loadCopyrightedMusicResourceWithPosition |
+| Low-light Enhancement | setLowlightEnhancement |
+| Auto Mixing | startAutoMixerTask<br> stopAutoMixerTask |
+| Play Stream Screenshot | takePlayStreamSnapshot |
+| Local Device Exception Event Callback | onLocalDeviceExceptionOccurred |
+| Local Video and Audio Device State Change Event Callback | onVideoDeviceStateChanged<br> onAudioDeviceStateChanged |
+| Get Raw Audio Data | startAudioDataObserver<br> stopAudioDataObserver<br> onMixedAudioData<br> onPlayerAudioData |
+| Mixer Sound Level Callback | onMixerSoundLevelUpdate<br>(Web platform only supports getting mixer sound level through SEI. Please contact ZEGOCLOUD technical support to enable configuration and handle race conditions when calling the interface.) |
+| Auto Mixer Sound Level Callback | onAutoMixerSoundLevelUpdate<br>(Please contact ZEGOCLOUD technical support to enable configuration.) |
+
+### Improvements & Optimizations
+
+1. Updated Express Native SDK to version 3.20.5.
+2. Updated Express Web SDK to version 3.9.0.
+
+### Bug Fixes
+
+The following bug fixes only apply to Web platform methods.
+
+1. Fixed issue where calling getVideoConfig after engine initialization failed to get default scene configuration.
+2. Fixed issue where calling setVideoConfig before publishing stream did not take effect.
+3. Fixed issue where setting maxMemberCount parameter when logging into room did not take effect.
+4. Fixed issue where calling setStreamExtraInfo, mutePublishStreamVideo, mutePublishStreamAudio, enableCamera before publishing stream did not take effect.
+5. Fixed issue where remainTimeInSecond field in onRoomTokenWillExpire had incorrect unit (changed from milliseconds to seconds).
+6. Fixed issue where setRoomMode could still be called to modify multi-room mode after engine initialization.
+
 ## 3.20.0
 
 ### New Features
