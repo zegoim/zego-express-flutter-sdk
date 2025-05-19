@@ -314,7 +314,6 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
-        ZegoExpressEngine.getEngine().setAudioMixingHandler(ZegoAudioMixingDataManager.getInstance());
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, scenario.name());
 
@@ -354,7 +353,6 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
-        ZegoExpressEngine.getEngine().setAudioMixingHandler(ZegoAudioMixingDataManager.getInstance());
         
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, isTestEnv ? "true" : "false", scenario.name());
 
@@ -3538,6 +3536,11 @@ public class ZegoExpressEngineMethodHandler {
     public static void enableAudioMixing(MethodCall call, Result result) {
 
         boolean enable = ZegoUtils.boolValue(call.argument("enable"));
+        if (enable) {
+            ZegoExpressEngine.getEngine().setAudioMixingHandler(ZegoAudioMixingDataManager.getInstance());
+        } else {
+            ZegoExpressEngine.getEngine().setAudioMixingHandler(null);
+        }
         ZegoExpressEngine.getEngine().enableAudioMixing(enable);
         result.success(null);
     }
