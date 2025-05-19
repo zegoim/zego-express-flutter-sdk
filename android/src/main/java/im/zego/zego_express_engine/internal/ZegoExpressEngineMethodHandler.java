@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import im.zego.zego_express_engine.ZegoAudioMixingDataManager;
 import im.zego.zego_express_engine.ZegoCustomVideoCaptureManager;
 import im.zego.zego_express_engine.ZegoCustomVideoProcessManager;
 import im.zego.zego_express_engine.ZegoCustomVideoRenderManager;
@@ -158,6 +159,7 @@ import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
 import im.zego.zegoexpress.constants.ZegoRoomStreamListType;
+import im.zego.zegoexpress.constants.ZegoVolumeType;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -312,6 +314,7 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
+        ZegoExpressEngine.getEngine().setAudioMixingHandler(ZegoAudioMixingDataManager.getInstance());
 
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, scenario.name());
 
@@ -351,6 +354,7 @@ public class ZegoExpressEngineMethodHandler {
         ZegoExpressEngine.getEngine().setDataRecordEventHandler(ZegoExpressEngineEventHandler.getInstance().dataRecordEventHandler);
         ZegoExpressEngine.getEngine().setAudioDataHandler(ZegoExpressEngineEventHandler.getInstance().audioDataHandler);
         ZegoExpressEngine.getEngine().setCustomAudioProcessHandler(ZegoExpressEngineEventHandler.getInstance().customAudioProcessHandler);
+        ZegoExpressEngine.getEngine().setAudioMixingHandler(ZegoAudioMixingDataManager.getInstance());
         
         ZegoLog.log("[createEngine] platform:Android, enablePlatformView:%s, sink: %d, appID:%d, isTestEnv:%s, scenario:%s", enablePlatformView ? "true" : "false", sink!=null ? sink.hashCode() : -1, appID, isTestEnv ? "true" : "false", scenario.name());
 
@@ -3525,6 +3529,32 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoExpressEngine.getEngine().fetchCustomAudioRenderPCMData(dataByteBuffer, dataLength, param);
 
+        result.success(null);
+    }
+
+    /* AudioMixing */
+
+    @SuppressWarnings("unused")
+    public static void enableAudioMixing(MethodCall call, Result result) {
+
+        boolean enable = ZegoUtils.boolValue(call.argument("enable"));
+        ZegoExpressEngine.getEngine().enableAudioMixing(enable);
+        result.success(null);
+    }
+    
+    @SuppressWarnings("unused")
+    public static void setAudioMixingVolume(MethodCall call, Result result) {
+        int volume = ZegoUtils.intValue(call.argument("volume"));
+        int type = ZegoUtils.intValue(call.argument("type"));
+        ZegoVolumeType volumeType = ZegoVolumeType.getZegoVolumeType(type);
+        ZegoExpressEngine.getEngine().setAudioMixingVolume(volume, volumeType);
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void muteLocalAudioMixing(MethodCall call, Result result) {
+        boolean mute = ZegoUtils.boolValue(call.argument("mute"));
+        ZegoExpressEngine.getEngine().muteLocalAudioMixing(mute);
         result.success(null);
     }
 

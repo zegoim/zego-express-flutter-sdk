@@ -303,4 +303,25 @@ enum ZGFlutterProcessedDataUsageType {
 
 };
 
+/// Object for audio mixing data.
+///
+/// Including audio data and audio data attributes.
+struct ZGFlutterAudioMixingData {
+    /// Audio PCM data that needs to be mixed into the stream
+    unsigned char *audioData;
+
+    /// the length of the audio PCM data that needs to be mixed into the stream. If this is no enough data left to mix as audioDataLength, then you can set audioDataLength = 0.
+    unsigned int audioDataLength;
+
+    /// Audio data attributes, including sample rate and number of channels. Currently supports 16k, 32k, 44.1k, 48k sampling rate, mono or stereo, 16-bit deep PCM data. Developers need to explicitly specify audio data attributes, otherwise mixing will not take effect.
+    ZGFlutterAudioFrameParam param;
+
+    /// SEI data, used to transfer custom data. When audioData is null, SEIData will not be sent
+    unsigned char *SEIData;
+
+    /// SEI data length
+    unsigned int SEIDataLength;
+};
+
+
 #endif  // ZEGO_CUSTOM_VIDEO_DEFINE_H_

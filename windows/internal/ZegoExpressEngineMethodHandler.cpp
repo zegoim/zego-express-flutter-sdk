@@ -10,6 +10,7 @@
 #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 #include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
+#include "zego_express_engine/ZegoAudioMixingDataManager.h"
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #endif
@@ -97,6 +98,7 @@ void ZegoExpressEngineMethodHandler::createEngine(ZFArgument argument, ZFResult 
     engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
+    engine->setAudioMixingHandler(ZegoAudioMixingDataManager::getInstance()->getHandler());
 
     ZegoTextureRendererController::getInstance()->init(messenger_);
 
@@ -127,6 +129,7 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(ZFArgument argument
         engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
+        engine->setAudioMixingHandler(ZegoAudioMixingDataManager::getInstance()->getHandler());
 
         ZegoTextureRendererController::getInstance()->init(messenger_);
     }
@@ -1544,6 +1547,29 @@ void ZegoExpressEngineMethodHandler::startAudioDataObserver(ZFArgument argument,
 
 void ZegoExpressEngineMethodHandler::stopAudioDataObserver(ZFArgument argument, ZFResult result) {
     EXPRESS::ZegoExpressSDK::getEngine()->stopAudioDataObserver();
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFResult result) {
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAudioMixing(enable);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setAudioMixingVolume(ZFArgument argument, ZFResult result) {
+    auto volume = zego_value_get_int(argument[ZFValue("volume")]);
+    auto volumeType = zego_value_get_int(argument[ZFValue("type")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingVolume(volume,
+                                                                (EXPRESS::ZegoVolumeType)volumeType);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::muteLocalAudioMixing(ZFArgument argument, ZFResult result) {
+    auto mute = zego_value_get_bool(argument[ZFValue("mute")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->muteLocalAudioMixing(mute);
 
     result->Success();
 }

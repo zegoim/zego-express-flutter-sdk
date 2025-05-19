@@ -2091,6 +2091,20 @@ class ZegoExpressImpl {
     });
   }
 
+  /* Audio Mixing */
+  Future<void> enableAudioMixing(bool enable) async {
+    return await _channel.invokeMethod('enableAudioMixing', {'enable': enable});
+  }
+
+  Future<void> setAudioMixingVolume(int volume, ZegoVolumeType type) async {
+    return await _channel.invokeMethod(
+        'setAudioMixingVolume', {'volume': volume, 'type': type.index});
+  }
+
+  Future<void> muteLocalAudioMixing(bool mute) async {
+    return await _channel.invokeMethod('muteLocalAudioMixing', {'mute': mute});
+  }
+
   /* Range Audio */
   static ZegoRangeAudioImpl? rangeAudioImpl;
   Future<ZegoRangeAudio?> createRangeAudio() async {
