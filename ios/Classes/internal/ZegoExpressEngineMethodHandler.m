@@ -168,7 +168,6 @@
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -207,7 +206,6 @@
     [[ZegoExpressEngine sharedEngine] setDataRecordEventHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setAudioDataHandler:[ZegoExpressEngineEventHandler sharedInstance]];
     [[ZegoExpressEngine sharedEngine] setCustomAudioProcessHandler:[ZegoExpressEngineEventHandler sharedInstance]];
-    [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
 
     // Init texture renderer
     if (!self.enablePlatformView) {
@@ -3414,6 +3412,11 @@
 - (void)enableAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    if (enable) {
+        [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:nil];
+    }
     [[ZegoExpressEngine sharedEngine] enableAudioMixing:enable];
 
     result(nil);

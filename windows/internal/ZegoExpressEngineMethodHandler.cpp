@@ -98,7 +98,6 @@ void ZegoExpressEngineMethodHandler::createEngine(ZFArgument argument, ZFResult 
     engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
-    engine->setAudioMixingHandler(ZegoAudioMixingDataManager::getInstance()->getHandler());
 
     ZegoTextureRendererController::getInstance()->init(messenger_);
 
@@ -129,7 +128,6 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(ZFArgument argument
         engine->setAudioDataHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
-        engine->setAudioMixingHandler(ZegoAudioMixingDataManager::getInstance()->getHandler());
 
         ZegoTextureRendererController::getInstance()->init(messenger_);
     }
@@ -1553,6 +1551,14 @@ void ZegoExpressEngineMethodHandler::stopAudioDataObserver(ZFArgument argument, 
 
 void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFResult result) {
     auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+
+    if (enable) {
+        EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(
+            ZegoAudioMixingDataManager::getInstance()->getHandler());
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(nullptr);
+    }
+
     EXPRESS::ZegoExpressSDK::getEngine()->enableAudioMixing(enable);
 
     result->Success();
