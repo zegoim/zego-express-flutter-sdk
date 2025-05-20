@@ -549,7 +549,7 @@ public class ZegoExpressEngineMethodHandler {
 
         String filePath = call.argument("filePath");
         if (filePath != null && filePath.startsWith("flutter-asset://")) {
-            String processedURL = filePath.replace("flutter-asset://", "asset:flutter_assets/");
+            String processedURL = filePath.replace("flutter-asset://", "asset://flutter_assets/");
             ZegoLog.log("[setDummyCaptureImagePath] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", filePath, processedURL);
             filePath = processedURL;
         }
@@ -569,7 +569,7 @@ public class ZegoExpressEngineMethodHandler {
             params.mode = ZegoDummyCaptureImageMode.getZegoDummyCaptureImageMode(ZegoUtils.intValue((Number) paramsMap.get("mode")));
         }
         if (params.path != null && params.path.startsWith("flutter-asset://")) {
-            String processedURL = params.path.replace("flutter-asset://", "asset:flutter_assets/");
+            String processedURL = params.path.replace("flutter-asset://", "asset://flutter_assets/");
             ZegoLog.log("[setDummyCaptureImageParams] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", params.path, processedURL);
             params.path = processedURL;
         }
@@ -1528,13 +1528,13 @@ public class ZegoExpressEngineMethodHandler {
         backgroundConfig.color = (ZegoUtils.intValue((Number) backgroundMap.get("color")));
         String imageURL = (String) backgroundMap.get("imageURL");
         if (imageURL != null && imageURL.startsWith("flutter-asset://")) {
-            String processedURL = imageURL.replace("flutter-asset://", "asset:flutter_assets/");
+            String processedURL = imageURL.replace("flutter-asset://", "asset://flutter_assets/");
             ZegoLog.log("[enableVideoObjectSegmentation] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", imageURL, processedURL);
             imageURL = processedURL;
         }
         String videoURL = (String) backgroundMap.get("videoURL");
         if (videoURL != null && videoURL.startsWith("flutter-asset://")) {
-            String processedURL = videoURL.replace("flutter-asset://", "asset:flutter_assets/");
+            String processedURL = videoURL.replace("flutter-asset://", "asset://flutter_assets/");
             ZegoLog.log("[enableVideoObjectSegmentation] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", videoURL, processedURL);
             videoURL = processedURL;
         }
