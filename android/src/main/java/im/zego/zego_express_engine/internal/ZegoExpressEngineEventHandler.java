@@ -1862,7 +1862,12 @@ public class ZegoExpressEngineEventHandler {
             map.put("data", data);
             map.put("streamID", streamID);
 
-            sink.success(map);
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
     };
 
