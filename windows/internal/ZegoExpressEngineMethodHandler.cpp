@@ -1303,6 +1303,7 @@ void ZegoExpressEngineMethodHandler::getAudioDeviceList(ZFArgument argument, ZFR
         ZFMap deviceMap;
         deviceMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
 
         deviceListArray.emplace_back(ZFValue(deviceMap));
     }
@@ -3489,6 +3490,7 @@ void ZegoExpressEngineMethodHandler::getVideoDeviceList(ZFArgument argument, ZFR
         ZFMap deviceMap;
         deviceMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
 
         deviceListArray.emplace_back(ZFValue(deviceMap));
     }
@@ -3559,6 +3561,7 @@ void ZegoExpressEngineMethodHandler::getCurrentAudioDevice(ZFArgument argument, 
     ZFMap resultMap;
     resultMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
     resultMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+    resultMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
     result->Success(resultMap);
 }
 
