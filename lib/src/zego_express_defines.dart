@@ -1886,6 +1886,18 @@ enum ZegoScreenCaptureSourceExceptionType {
   PublishRegionInvalid
 }
 
+/// Screen capture orientation.
+enum ZegoScreenCaptureOrientation {
+  /// Auto follow system orientation.
+  Auto,
+
+  /// Fixed portrait.
+  Portrait,
+
+  /// Fixed landscape.
+  Landscape
+}
+
 /// Screen capture source exception type. (only for Android)
 enum ZegoScreenCaptureExceptionType {
   /// Unknown exception type.
@@ -3984,10 +3996,10 @@ class ZegoAccurateSeekConfig {
 
 /// Media player network cache information
 class ZegoNetWorkResourceCache {
-  /// Cached duration, unit ms
+  /// Cached playable duration, unit ms
   int time;
 
-  /// Cached size, unit byte
+  /// Cached playable size, unit byte
   int size;
 
   ZegoNetWorkResourceCache(this.time, this.size);
@@ -4156,11 +4168,15 @@ class ZegoScreenCaptureConfig {
   /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
   Rect? cropRect;
 
+  /// Set the capture orientation of the screen capture. The capture orientation will be fixed, ignoring the system returned orientation. (only for iOS/Android)
+  ZegoScreenCaptureOrientation? orientation;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
       {this.microphoneVolume,
       this.applicationVolume,
       this.audioParam,
-      this.cropRect});
+      this.cropRect,
+      this.orientation});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4169,7 +4185,8 @@ class ZegoScreenCaptureConfig {
         applicationVolume = 100,
         audioParam = ZegoAudioFrameParam(
             ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
-        cropRect = Rect.zero;
+        cropRect = Rect.zero,
+        orientation = ZegoScreenCaptureOrientation.Auto;
 }
 
 /// The screen captures source information.

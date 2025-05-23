@@ -158,6 +158,7 @@ import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
 import im.zego.zegoexpress.constants.ZegoRoomStreamListType;
+import im.zego.zegoexpress.constants.ZegoScreenCaptureOrientation;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -6203,6 +6204,7 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null) {
             config.captureAudio = ZegoUtils.boolValue((Boolean) configMap.get("captureAudio"));
             config.captureVideo = ZegoUtils.boolValue((Boolean) configMap.get("captureVideo"));
+            config.orientation = ZegoScreenCaptureOrientation.getZegoScreenCaptureOrientation(ZegoUtils.intValue((Number) configMap.get("orientation")));
 
             HashMap<String, Object> audioParamMap = (HashMap<String, Object>) configMap.get("audioParam");
             if (audioParamMap != null) {
@@ -6244,6 +6246,7 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null) {
             config.captureAudio = ZegoUtils.boolValue((Boolean) configMap.get("captureAudio"));
             config.captureVideo = ZegoUtils.boolValue((Boolean) configMap.get("captureVideo"));
+            config.orientation = ZegoScreenCaptureOrientation.getZegoScreenCaptureOrientation(ZegoUtils.intValue((Number) configMap.get("orientation")));
 
             HashMap<String, Object> audioParamMap = (HashMap<String, Object>) configMap.get("audioParam");
             if (audioParamMap != null) {
