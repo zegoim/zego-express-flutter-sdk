@@ -5002,7 +5002,7 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                 'width': config.cropRect!.width,
                 'height': config.cropRect!.height,
               },
-        'orientation': config.orientation?.index
+        'orientation': config.orientation?.index ?? ZegoScreenCaptureOrientation.Auto.index
       },
       'index': _index
     });
