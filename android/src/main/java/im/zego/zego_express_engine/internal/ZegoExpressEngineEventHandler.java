@@ -2326,7 +2326,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onEvent(ZegoAIVoiceChanger aiVoiceChanger, ZegoAIVoiceChangerEvent event) {
             super.onEvent(aiVoiceChanger, event);
-            ZegoLog.log("[onAIVoiceChangerEvent] idx: %d, event: %d", aiVoiceChanger.getIndex(), event);
+            ZegoLog.log("[onAIVoiceChangerEvent] idx: %d, event: %d", aiVoiceChanger.getIndex(), event.value());
 
             if (guardSink()) { return; }
 
