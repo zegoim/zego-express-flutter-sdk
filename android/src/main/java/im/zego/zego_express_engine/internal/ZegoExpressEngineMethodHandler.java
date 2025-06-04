@@ -1494,6 +1494,7 @@ public class ZegoExpressEngineMethodHandler {
             }
             config.audioEffectPlayerIndexList = audioEffectPlayerIndexList_;
             config.mediaPlayerIndexList = mediaPlayerIndexList_;
+            config.enableMixScreenCapture = ZegoUtils.boolValue((Boolean) configMap.get("enableMixScreenCapture"));
         }
 
         int ret = -1;
@@ -6205,6 +6206,7 @@ public class ZegoExpressEngineMethodHandler {
             config.captureAudio = ZegoUtils.boolValue((Boolean) configMap.get("captureAudio"));
             config.captureVideo = ZegoUtils.boolValue((Boolean) configMap.get("captureVideo"));
             config.orientation = ZegoScreenCaptureOrientation.getZegoScreenCaptureOrientation(ZegoUtils.intValue((Number) configMap.get("orientation")));
+            config.applicationVolume = ZegoUtils.intValue((Number) configMap.get("applicationVolume"));
 
             HashMap<String, Object> audioParamMap = (HashMap<String, Object>) configMap.get("audioParam");
             if (audioParamMap != null) {
@@ -6247,6 +6249,7 @@ public class ZegoExpressEngineMethodHandler {
             config.captureAudio = ZegoUtils.boolValue((Boolean) configMap.get("captureAudio"));
             config.captureVideo = ZegoUtils.boolValue((Boolean) configMap.get("captureVideo"));
             config.orientation = ZegoScreenCaptureOrientation.getZegoScreenCaptureOrientation(ZegoUtils.intValue((Number) configMap.get("orientation")));
+            config.applicationVolume = ZegoUtils.intValue((Number) configMap.get("applicationVolume"));
 
             HashMap<String, Object> audioParamMap = (HashMap<String, Object>) configMap.get("audioParam");
             if (audioParamMap != null) {

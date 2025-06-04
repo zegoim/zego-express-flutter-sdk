@@ -1344,6 +1344,8 @@
             *mediaPlayers = [index intValue];
             mediaPlayers += 1;
         }
+
+        config.enableMixScreenCapture = [ZegoUtils boolValue:configMap[@"enableMixScreenCapture"]];
     }
 
     BOOL hasChannel = NO;

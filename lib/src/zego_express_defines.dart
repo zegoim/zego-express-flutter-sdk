@@ -1928,7 +1928,10 @@ enum ZegoScreenCaptureExceptionType {
   SourceNotSpecified,
 
   /// System error exception. For example, low memory, etc.
-  SystemError
+  SystemError,
+
+  /// Exception interrupted.
+  ExceptionInterrupted
 }
 
 /// The state of the screen capture source window changes.
@@ -4159,7 +4162,7 @@ class ZegoScreenCaptureConfig {
   /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
   int? microphoneVolume;
 
-  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
+  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS and Android)
   int? applicationVolume;
 
   /// Set the audio capture parameters during screen capture. (only for Android)
@@ -4243,11 +4246,15 @@ class ZegoAudioSourceMixConfig {
   /// Enable or disable mix SDK playout into publish stream.
   bool? enableMixEnginePlayout;
 
+  /// Enable or disable mix screen capture into publish stream, the input source cannot be set to screen capture. (only for Android and iOS)
+  bool? enableMixScreenCapture;
+
   ZegoAudioSourceMixConfig(
       {this.mediaPlayerIndexList,
       this.audioEffectPlayerIndexList,
       this.enableMixSystemPlayout,
-      this.enableMixEnginePlayout});
+      this.enableMixEnginePlayout,
+      this.enableMixScreenCapture});
 }
 
 /// Multimedia resource for ZEGO media player.
