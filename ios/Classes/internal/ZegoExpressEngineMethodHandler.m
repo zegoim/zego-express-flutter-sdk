@@ -6045,6 +6045,7 @@
     config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
     config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
     config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+    config.orientation = (ZegoScreenCaptureOrientation)[ZegoUtils intValue:configMap[@"orientation"]];
     
     if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
         NSDictionary *cropRectMap = configMap[@"cropRect"];
@@ -6092,6 +6093,7 @@
             config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
             config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
             config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+            config.orientation = (ZegoScreenCaptureOrientation)[ZegoUtils intValue:configMap[@"orientation"]];
             
             if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
                 NSDictionary *cropRectMap = configMap[@"cropRect"];
