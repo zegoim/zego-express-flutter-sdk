@@ -230,7 +230,7 @@ class ZegoFlutterEngine {
   external enableVirtualStereo(bool enable, int angle);
 
   /////////////////////////////媒体播放器////////////////////////////////////////
-  external createMediaPlayer(int index);
+  external createMediaPlayer();
   external setStyleByCanvas(dynamic canvas);
   external mediaPlayerEnableAux(bool enable, dynamic mediaPlayer);
   external mediaPlayerSetVolume(int volume, dynamic mediaPlayer);
