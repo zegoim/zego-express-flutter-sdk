@@ -4943,7 +4943,8 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                       'height': config.cropRect!.height,
                     },
               'orientation': config.orientation?.index ??
-                  ZegoScreenCaptureOrientation.Auto.index
+                  ZegoScreenCaptureOrientation.Auto.index,
+              'muteExtensMicrophone': config.muteExtensMicrophone ?? false
             },
       'inApp': inApp,
       'index': _index
@@ -5004,8 +5005,9 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                 'width': config.cropRect!.width,
                 'height': config.cropRect!.height,
               },
-        'orientation':
-            config.orientation?.index ?? ZegoScreenCaptureOrientation.Auto.index
+        'orientation': config.orientation?.index ??
+            ZegoScreenCaptureOrientation.Auto.index,
+        'muteExtensMicrophone': config.muteExtensMicrophone ?? false
       },
       'index': _index
     });

@@ -4174,12 +4174,16 @@ class ZegoScreenCaptureConfig {
   /// Set the capture orientation of the screen capture. The capture orientation will be fixed, ignoring the system returned orientation. (only for iOS/Android)
   ZegoScreenCaptureOrientation? orientation;
 
+  /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
+  bool? muteExtensMicrophone;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
       {this.microphoneVolume,
       this.applicationVolume,
       this.audioParam,
       this.cropRect,
-      this.orientation});
+      this.orientation,
+      this.muteExtensMicrophone});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4189,7 +4193,8 @@ class ZegoScreenCaptureConfig {
         audioParam = ZegoAudioFrameParam(
             ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
         cropRect = Rect.zero,
-        orientation = ZegoScreenCaptureOrientation.Auto;
+        orientation = ZegoScreenCaptureOrientation.Auto,
+        muteExtensMicrophone = false;
 }
 
 /// The screen captures source information.
