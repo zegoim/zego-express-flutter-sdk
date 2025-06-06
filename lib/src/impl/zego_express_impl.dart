@@ -1138,7 +1138,7 @@ class ZegoExpressImpl {
               'alphaBlend': canvas.alphaBlend ?? false,
               'rotation': canvas.rotation ?? 0,
               'mirror': canvas.mirror ?? false,
-              'viewContext': canvas.viewContext ?? 0
+              'viewContext': canvas.viewContext ?? ""
             }
           : {}
     });

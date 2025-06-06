@@ -893,9 +893,9 @@
     }
 }
 
-- (void)onPlayerRenderMultiViewFirstFrame:(NSString *) streamID viewContext:(unsigned int)viewContext {
+- (void)onPlayerRenderMultiViewFirstFrame:(NSString *) streamID viewContext:(NSString *)viewContext {
     FlutterEventSink sink = _eventSink;
-    ZGLog(@"[onPlayerRenderMultiViewFirstFrame] streamID: %@ ctx:%d", streamID, viewContext);
+    ZGLog(@"[onPlayerRenderMultiViewFirstFrame] streamID: %@ ctx:%@", streamID, viewContext);
 
     GUARD_SINK
     
@@ -903,7 +903,7 @@
         sink(@{
             @"method": @"onPlayerRenderMultiViewFirstFrame",
             @"streamID": streamID,
-            @"viewContext": @(viewContext)
+            @"viewContext": viewContext
         });
     }
 }

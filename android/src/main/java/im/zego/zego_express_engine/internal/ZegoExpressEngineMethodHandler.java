@@ -2145,7 +2145,7 @@ public class ZegoExpressEngineMethodHandler {
             boolean alphaBlend = ZegoUtils.boolValue((Boolean) canvasMap.get("alphaBlend"));
             int rotation = ZegoUtils.intValue((Number) canvasMap.get("rotation"));
             boolean mirror = ZegoUtils.boolValue((Boolean) canvasMap.get("mirror"));
-            int viewContext = ZegoUtils.intValue((Number) canvasMap.get("viewContext"));
+            String viewContext = (String) canvasMap.get("viewContext");
 
             Object view = null;
 

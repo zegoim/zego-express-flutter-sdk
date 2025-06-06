@@ -1927,7 +1927,7 @@
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
         int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
         BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
-        int viewContext = [ZegoUtils intValue:canvasMap[@"viewContext"]];
+        NSString *viewContext = canvasMap[@"viewContext"];
 
         if (self.enablePlatformView) {
             // Render with PlatformView

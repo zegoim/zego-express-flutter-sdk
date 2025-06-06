@@ -888,9 +888,9 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
-        public void onPlayerRenderMultiViewFirstFrame(String streamID, int viewContext) {
+        public void onPlayerRenderMultiViewFirstFrame(String streamID, String viewContext) {
             super.onPlayerRenderMultiViewFirstFrame(streamID, viewContext);
-            ZegoLog.log("[onPlayerRenderMultiViewFirstFrame] streamID: %s ctx: %d", streamID, viewContext);
+            ZegoLog.log("[onPlayerRenderMultiViewFirstFrame] streamID: %s ctx: %s", streamID, viewContext);
 
             if (guardSink()) { return; }
 
