@@ -40,6 +40,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAIVoiceChanger *> *aiVoiceChangerMap;
 
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoPictureCapturer *> *pictureCapturerMap;
+
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
 
 @property (nonatomic, strong) ZegoCopyrightedMusic *copyrightedMusicInstance;
@@ -6272,6 +6274,69 @@
         
     [[ZegoExpressEngine sharedEngine] enableColorEnhancement:enable params:p channel:(ZegoPublishChannel)channel];
     
+    result(nil);
+}
+
+#pragma mark - Picture Capturer
+
+- (void)createPictureCapturer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.pictureCapturerMap) {
+        self.pictureCapturerMap = [NSMutableDictionary dictionary];
+    }
+
+    ZegoPictureCapturer *pictureCapturer = [[ZegoExpressEngine sharedEngine] createPictureCapturer];
+
+    if (pictureCapturer) {
+        int index = pictureCapturer.getIndex;
+
+        self.pictureCapturerMap[@(index)] = pictureCapturer;
+
+        result(@(index));
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyPictureCapturer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoPictureCapturer *pictureCapturer = self.pictureCapturerMap[index];
+
+    if (pictureCapturer) {
+        [[ZegoExpressEngine sharedEngine] destroyPictureCapturer:pictureCapturer];
+    }
+
+    [self.pictureCapturerMap removeObjectForKey:index];
+
+    result(nil);
+}
+
+- (void)setPathPictureCapturer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoPictureCapturer *pictureCapturer = self.pictureCapturerMap[index];
+
+    if (pictureCapturer) {
+        NSString *path = call.arguments[@"path"];
+        
+        NSString *flutterAssetPrefix = @"flutter-asset://";
+        if ([path hasPrefix:flutterAssetPrefix]) {
+            NSString *assetName = [path substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
+            NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+            NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+            NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+            NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
+            NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+            [pictureCapturer setPath:processedURL];
+        } else {
+            [pictureCapturer setPath:path];
+        }
+    }
+
     result(nil);
 }
 

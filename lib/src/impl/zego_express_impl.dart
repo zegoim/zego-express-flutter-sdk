@@ -2324,6 +2324,27 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('isAIVoiceChangerSupported');
   }
 
+  /* Picture Capturer */
+  static final Map<int, ZegoPictureCapturer> pictureCapturerMap = {};
+  Future<ZegoPictureCapturer?> createPictureCapturer() async {
+    int index = await _channel.invokeMethod('createPictureCapturer');
+    if (index >= 0) {
+      ZegoPictureCapturer pictureCapturerInstance =
+          ZegoPictureCapturerImpl(index);
+      pictureCapturerMap[index] = pictureCapturerInstance;
+      return pictureCapturerInstance;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyPictureCapturer(
+      ZegoPictureCapturer pictureCapturer) async {
+    int index = pictureCapturer.getIndex();
+    await _channel.invokeMethod('destroyPictureCapturer', {'index': index});
+    pictureCapturerMap.remove(index);
+  }
+
   /* EventHandler */
 
   static void _registerEventHandler() async {
@@ -5092,5 +5113,22 @@ class ZegoAIVoiceChangerImpl extends ZegoAIVoiceChanger {
   Future<void> update() async {
     return await ZegoExpressImpl._channel
         .invokeMethod('aiVoiceChangerUpdate', {'index': _index});
+  }
+}
+
+class ZegoPictureCapturerImpl extends ZegoPictureCapturer {
+  final int _index;
+
+  ZegoPictureCapturerImpl(int index) : _index = index;
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+  @override
+  Future<void> setPath(String path) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'setPathPictureCapturer', {'index': _index, 'path': path});
   }
 }

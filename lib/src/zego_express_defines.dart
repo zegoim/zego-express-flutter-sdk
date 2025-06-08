@@ -1868,7 +1868,10 @@ enum ZegoVideoSourceType {
   ZegoVideoSourceScreenCapture,
 
   /// Video source from secondary camera, the rear camera when [useFrontCamera] is set to true, otherwise the front camera, only support iOS.
-  SecondaryCamera
+  SecondaryCamera,
+
+  /// Video source from picture capture.
+  Picture
 }
 
 /// Screen capture source exception type.
@@ -6107,6 +6110,22 @@ abstract class ZegoAIVoiceChanger {
   ///
   /// - [speakerID] Speaker ID.
   Future<void> setSpeaker(int speakerID);
+}
+
+abstract class ZegoPictureCapturer {
+  /// Set the path of the picture capturer source.
+  ///
+  /// Available since: 3.22.0
+  /// Description: Set the path of the picture capturer source.
+  /// Related APIs: User can call [createPictureCapturer] function to create a picture capturer instance.
+  ///
+  /// - [path] The path of the picture.
+  Future<void> setPath(String path);
+
+  /// Get picture capturer instance index.
+  ///
+  /// - Returns Picture capturer instance index.
+  int getIndex();
 }
 
 /// Callback for setting room extra information.
