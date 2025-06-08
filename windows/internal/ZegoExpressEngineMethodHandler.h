@@ -431,6 +431,11 @@ class ZegoExpressEngineMethodHandler {
     void aiVoiceChangerSetSpeaker(ZFArgument argument, ZFResult result);
     void aiVoiceChangerUpdate(ZFArgument argument, ZFResult result);
 
+    // Picture Capturer
+    void createPictureCapturer(ZFArgument argument, ZFResult result);
+    void destroyPictureCapturer(ZFArgument argument, ZFResult result);
+    void setPathPictureCapturer(ZFArgument argument, ZFResult result);
+
     void createTextureRenderer(ZFArgument argument, ZFResult result);
     void destroyTextureRenderer(ZFArgument argument, ZFResult result);
 
@@ -444,6 +449,7 @@ class ZegoExpressEngineMethodHandler {
     std::unordered_map<int, EXPRESS::IZegoScreenCaptureSource *> screenCaptureSourceMap_;
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
     std::unordered_map<int, EXPRESS::IZegoAIVoiceChanger *> aiVoiceChangerMap_;
+    std::unordered_map<int, EXPRESS::IZegoPictureCapturer *> pictureCapturerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
 
