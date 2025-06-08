@@ -793,7 +793,8 @@ class ZegoExpressImpl {
                   config.audioEffectPlayerIndexList ?? [],
               'mediaPlayerIndexList': config.mediaPlayerIndexList ?? [],
               'enableMixEnginePlayout': config.enableMixEnginePlayout ?? false,
-              'enableMixSystemPlayout': config.enableMixSystemPlayout ?? false
+              'enableMixSystemPlayout': config.enableMixSystemPlayout ?? false,
+              'enableMixScreenCapture': config.enableMixScreenCapture ?? false
             },
       'channel': channel?.index,
     });
@@ -4941,7 +4942,9 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                       'width': config.cropRect!.width,
                       'height': config.cropRect!.height,
                     },
-              'orientation': config.orientation?.index ?? ZegoScreenCaptureOrientation.Auto.index
+              'orientation': config.orientation?.index ??
+                  ZegoScreenCaptureOrientation.Auto.index,
+              'muteExtensMicrophone': config.muteExtensMicrophone ?? false
             },
       'inApp': inApp,
       'index': _index
@@ -5002,7 +5005,9 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                 'width': config.cropRect!.width,
                 'height': config.cropRect!.height,
               },
-        'orientation': config.orientation?.index ?? ZegoScreenCaptureOrientation.Auto.index
+        'orientation': config.orientation?.index ??
+            ZegoScreenCaptureOrientation.Auto.index,
+        'muteExtensMicrophone': config.muteExtensMicrophone ?? false
       },
       'index': _index
     });
