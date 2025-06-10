@@ -405,7 +405,8 @@ class ZegoExpressImpl {
               'streamCensorshipMode': config.streamCensorshipMode?.index ??
                   ZegoStreamCensorshipMode.None.index,
               'codecNegotiationType': config.codecNegotiationType?.index ??
-                  ZegoCapabilityNegotiationType.None.index
+                  ZegoCapabilityNegotiationType.None.index,
+              'streamTitle': config.streamTitle ?? '',
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -1417,8 +1418,8 @@ class ZegoExpressImpl {
     List<ZegoDeviceInfo> deviceInfoList = [];
 
     for (var deviceInfoMap in deviceInfoMapList) {
-      deviceInfoList.add(ZegoDeviceInfo(
-          deviceInfoMap["deviceID"], deviceInfoMap["deviceName"]));
+      deviceInfoList.add(ZegoDeviceInfo(deviceInfoMap["deviceID"],
+          deviceInfoMap["deviceName"], deviceInfoMap["deviceExtraInfo"]));
     }
 
     return deviceInfoList;
@@ -1447,7 +1448,8 @@ class ZegoExpressImpl {
     var resultList = await _channel.invokeMethod('getVideoDeviceList', {});
     var retList = <ZegoDeviceInfo>[];
     for (dynamic info in resultList) {
-      retList.add(ZegoDeviceInfo(info['deviceID'], info['deviceName']));
+      retList.add(ZegoDeviceInfo(
+          info['deviceID'], info['deviceName'], info["deviceExtraInfo"]));
     }
     return retList;
   }
@@ -1564,7 +1566,8 @@ class ZegoExpressImpl {
       ZegoAudioDeviceType deviceType) async {
     var resultMap = await _channel.invokeMethod(
         'getCurrentAudioDevice', {'deviceType': deviceType.index});
-    return ZegoDeviceInfo(resultMap['deviceID'], resultMap['deviceName']);
+    return ZegoDeviceInfo(resultMap['deviceID'], resultMap['deviceName'],
+        resultMap["deviceExtraInfo"]);
   }
 
   /* PreProcess */
@@ -2916,7 +2919,9 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onAudioDeviceStateChanged == null) return;
 
         ZegoDeviceInfo info = ZegoDeviceInfo(
-            map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
+            map['deviceInfo']['deviceID'],
+            map['deviceInfo']['deviceName'],
+            map['deviceInfo']["deviceExtraInfo"]);
 
         ZegoExpressEngine.onAudioDeviceStateChanged!(
             ZegoUpdateType.values[map['updateType']],
@@ -2937,7 +2942,9 @@ class ZegoExpressImpl {
         if (ZegoExpressEngine.onVideoDeviceStateChanged == null) return;
 
         ZegoDeviceInfo info = ZegoDeviceInfo(
-            map['deviceInfo']['deviceID'], map['deviceInfo']['deviceName']);
+            map['deviceInfo']['deviceID'],
+            map['deviceInfo']['deviceName'],
+            map['deviceInfo']["deviceExtraInfo"]);
 
         ZegoExpressEngine.onVideoDeviceStateChanged!(
             ZegoUpdateType.values[map['updateType']], info);
@@ -3583,6 +3590,21 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onCaptureTypeExceptionOccurred':
+        if (ZegoExpressEngine.onCaptureTypeExceptionOccurred == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onCaptureTypeExceptionOccurred!(
+              screenCaptureSource,
+              ZegoScreenCaptureSourceType.values[map['sourceType']],
+              ZegoScreenCaptureSourceExceptionType
+                  .values[map['exceptionType']]);
+        }
+        break;
+
       case 'onWindowStateChanged':
         if (ZegoExpressEngine.onWindowStateChanged == null) return;
 
@@ -3684,6 +3706,30 @@ class ZegoExpressImpl {
         if (aiVoiceChanger != null) {
           ZegoExpressEngine.onAIVoiceChangerUpdateProgress!(aiVoiceChanger,
               map['percent'], map['fileIndex'], map['fileCount']);
+        }
+        break;
+      
+      case 'onAIVoiceChangerSetSpeaker':
+        if (ZegoExpressEngine.onAIVoiceChangerSetSpeaker == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerSetSpeaker!(
+              aiVoiceChanger, map['errorCode']);
+        }
+        break;
+      
+      case 'onAIVoiceChangerEvent':
+        if (ZegoExpressEngine.onAIVoiceChangerEvent == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerEvent!(
+              aiVoiceChanger, ZegoAIVoiceChangerEvent.values[map['event']]);
         }
         break;
 

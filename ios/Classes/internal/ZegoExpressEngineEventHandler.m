@@ -1160,7 +1160,8 @@
             @"method": @"onAudioDeviceStateChanged",
             @"deviceInfo": @{
                 @"deviceID": deviceInfo.deviceID,
-                @"deviceName": deviceInfo.deviceName
+                @"deviceName": deviceInfo.deviceName,
+                @"deviceExtraInfo": deviceInfo.deviceExtraInfo
             },
             @"deviceType": @(deviceType),
             @"updateType": @(updateType),
@@ -1179,7 +1180,8 @@
             @"method": @"onVideoDeviceStateChanged",
             @"deviceInfo": @{
                 @"deviceID": deviceInfo.deviceID,
-                @"deviceName": deviceInfo.deviceName
+                @"deviceName": deviceInfo.deviceName,
+                @"deviceExtraInfo": deviceInfo.deviceExtraInfo
             },
             @"updateType": @(updateType),
         });
@@ -1946,6 +1948,22 @@
     }
 }
 
+- (void)screenCapture:(ZegoScreenCaptureSource *)source captureType:(ZegoScreenCaptureSourceType)sourceType exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)exceptionType {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[screenCapture:sourceType:exceptionOccurred:] captureType: %td, exceptionType: %td", sourceType, exceptionType);
+
+    GUARD_SINK
+
+    if (sink) {
+        sink(@{
+            @"method": @"onCaptureTypeExceptionOccurred",
+            @"screenCaptureSourceIndex": [source getIndex],
+            @"sourceType": @(sourceType),
+            @"exceptionType": @(exceptionType)
+        });
+    }
+}
+
 - (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[screenCapture:windowState:windowRect:] state: %td, rect: %@", state, NSStringFromRect(rect));
@@ -2061,4 +2079,33 @@
     }
 }
 
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onSetSpeaker:(int)errorCode {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerSetSpeaker], index: %d, errorCode: %d", aiVoiceChanger.getIndex, errorCode);
+    
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerSetSpeaker",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"errorCode": @(errorCode)
+        });
+    }
+}
+
+- (void)aiVoiceChanger:(ZegoAIVoiceChanger *)aiVoiceChanger onEvent:(ZegoAIVoiceChangerEvent)event {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onAIVoiceChangerEvent], index: %d, event: %d", aiVoiceChanger.getIndex, event);
+    
+    GUARD_SINK
+
+    if (sink) {
+        sink(@{
+            @"method": @"onAIVoiceChangerEvent",
+            @"aiVoiceChangerIndex": @(aiVoiceChanger.getIndex),
+            @"event": @(event)
+        });
+    }
+}
 @end
