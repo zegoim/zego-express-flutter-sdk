@@ -1280,7 +1280,7 @@ public class ZegoExpressEngineMethodHandler {
             String imageURL = (String) watermarkMap.get("imageURL");
 
             if (imageURL != null && imageURL.startsWith("flutter-asset://")) {
-                String processedURL = imageURL.replace("flutter-asset://", "asset:flutter_assets/");
+                String processedURL = imageURL.replace("flutter-asset://", "asset://flutter_assets/");
                 ZegoLog.log("[setPublishWatermark] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", imageURL, processedURL);
                 imageURL = processedURL;
             }
