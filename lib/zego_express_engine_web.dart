@@ -976,7 +976,7 @@ class ZegoExpressEngineWeb {
           final numKey = int.parse(key);
           final numValue = getProperty(soundLevelsMap, key);
           soundLevels[numKey] = numValue;
-        };
+        }
         ZegoExpressEngine.onMixerSoundLevelUpdate!(soundLevels);
         break;
       case 'onAutoMixerSoundLevelUpdate':
@@ -989,7 +989,7 @@ class ZegoExpressEngineWeb {
           final numKey = key;
           final numValue = getProperty(soundLevelsMap, key);
           soundLevels[numKey] = numValue;
-        };
+        }
         ZegoExpressEngine.onAutoMixerSoundLevelUpdate!(soundLevels);
         break;
       case 'onMixerRelayCDNStateUpdate':
@@ -1024,6 +1024,12 @@ class ZegoExpressEngineWeb {
                 player, millisecond);
           }
         }
+        break;
+      case "onRecvExperimentalAPI":
+        if (ZegoExpressEngine.onRecvExperimentalAPI == null) return;
+        final data = jsonDecode(map["data"]);
+        final content = data["content"];
+        ZegoExpressEngine.onRecvExperimentalAPI!(content);
         break;
       default:
         break;
@@ -1095,9 +1101,11 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<String> callExperimentalAPI(dynamic params) async {
-    //todo:
-    return Future.value("");
+  Future<String> callExperimentalAPI(String params) async {
+    final promise =
+        callMethod(ZegoFlutterEngine.instance, 'callExperimentalAPI', [params]);
+    final jsResponse = await promiseToFuture(promise); print("callExperimentalAPI: $jsResponse");
+    return Future.value(jsResponse ?? "");
   }
 
   /////////////////////////////房间相关////////////////////////////////////////
