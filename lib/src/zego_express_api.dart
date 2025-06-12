@@ -1484,7 +1484,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive PCM audio frames collected locally by custom audio processing. The returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be modified. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
-  /// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+  /// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
   /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
@@ -1499,7 +1499,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive the PCM audio frame after the custom audio processing is locally collected and returned to the ear. The returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be changed.
-  /// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+  /// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
   /// - [data] Audio data in PCM format
@@ -1579,7 +1579,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 1.1.0
   /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
-  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreview] or [startPlayingStream] or [startPublishingStream]).
   /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
   /// Caution: This callback is a high-frequency callback. Please do not perform time-consuming operations in this callback. When the engine is not in the stream publishing state and the media player is not used to play media files, the audio data in the callback is muted audio data.
   ///
