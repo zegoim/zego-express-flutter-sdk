@@ -1528,8 +1528,20 @@ public class ZegoExpressEngineMethodHandler {
         HashMap<String, Object> backgroundMap = (HashMap<String, Object>) configMap.get("backgroundConfig");
         backgroundConfig.processType = ZegoBackgroundProcessType.getZegoBackgroundProcessType(ZegoUtils.intValue((Number) backgroundMap.get("processType")));
         backgroundConfig.color = (ZegoUtils.intValue((Number) backgroundMap.get("color")));
-        backgroundConfig.imageURL = (String) backgroundMap.get("imageURL");
-        backgroundConfig.videoURL = (String) backgroundMap.get("videoURL");
+        String imageURL = (String) backgroundMap.get("imageURL");
+        if (imageURL != null && imageURL.startsWith("flutter-asset://")) {
+            String processedURL = imageURL.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[enableVideoObjectSegmentation] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", imageURL, processedURL);
+            imageURL = processedURL;
+        }
+        String videoURL = (String) backgroundMap.get("videoURL");
+        if (videoURL != null && videoURL.startsWith("flutter-asset://")) {
+            String processedURL = videoURL.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[enableVideoObjectSegmentation] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", videoURL, processedURL);
+            videoURL = processedURL;
+        }
+        backgroundConfig.imageURL = imageURL;
+        backgroundConfig.videoURL = videoURL;
         backgroundConfig.blurLevel = ZegoBackgroundBlurLevel.getZegoBackgroundBlurLevel(ZegoUtils.intValue((Number) backgroundMap.get("blurLevel")));
 
         config.backgroundConfig = backgroundConfig;

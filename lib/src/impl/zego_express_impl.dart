@@ -3722,6 +3722,30 @@ class ZegoExpressImpl {
               map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
+      
+      case 'onAIVoiceChangerSetSpeaker':
+        if (ZegoExpressEngine.onAIVoiceChangerSetSpeaker == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerSetSpeaker!(
+              aiVoiceChanger, map['errorCode']);
+        }
+        break;
+      
+      case 'onAIVoiceChangerEvent':
+        if (ZegoExpressEngine.onAIVoiceChangerEvent == null) {
+          return;
+        }
+        var aiVoiceChangerIndex = map['aiVoiceChangerIndex'];
+        var aiVoiceChanger = aiVoiceChangerMap[aiVoiceChangerIndex];
+        if (aiVoiceChanger != null) {
+          ZegoExpressEngine.onAIVoiceChangerEvent!(
+              aiVoiceChanger, ZegoAIVoiceChangerEvent.values[map['event']]);
+        }
+        break;
 
       default:
         // TODO: Unknown callback

@@ -289,6 +289,10 @@ protected:
     void onUpdateProgress(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
                           int fileIndex, int fileCount) override;
 
+    void onSetSpeaker(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) override;
+
+    void onEvent(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, EXPRESS::ZegoAIVoiceChangerEvent event) override;
+
 private:
     ZFMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);
 

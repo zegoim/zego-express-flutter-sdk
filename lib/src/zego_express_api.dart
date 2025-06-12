@@ -1780,6 +1780,31 @@ class ZegoExpressEngine {
           List<ZegoAIVoiceChangerSpeakerInfo> speakerList)?
       onAIVoiceChangerGetSpeakerList;
 
+  /// AI voice changer event callback.
+  ///
+  /// Available since: 3.12.0.
+  /// Description: AI voice changer event callback.
+  /// Trigger: The callback triggered when AI voice changer transcode failure occurred.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [event] AI voice changer event.
+  static void Function(
+          ZegoAIVoiceChanger aiVoiceChanger, ZegoAIVoiceChangerEvent event)?
+      onAIVoiceChangerEvent;
+
+  /// Set AI voice changer engine speaker status callback.
+  ///
+  /// Available since: 3.12.0.
+  /// Description: Set AI voice changer engine speaker status callback.
+  /// Trigger: The callback triggered when call [setSpeaker] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
+      onAIVoiceChangerSetSpeaker;
+
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///
   /// Available: 1.1.0 ~ 2.13.1, deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead

@@ -2033,6 +2033,24 @@ enum ZegoLiveAudioEffectMode {
   All
 }
 
+/// AI voice changer event.
+enum ZegoAIVoiceChangerEvent {
+  /// Succeed.
+  Succeed,
+
+  /// Background performance insufficient.
+  BackgroundPerformanceInsufficient,
+
+  /// Foreground performance insufficient.
+  ForegroundPerformanceInsufficient,
+
+  /// Others.
+  Others,
+
+  /// Set speaker failed.
+  SetSpeakerFailed
+}
+
 /// Media stream type.
 enum ZegoMediaStreamType {
   /// Media audio stream.
