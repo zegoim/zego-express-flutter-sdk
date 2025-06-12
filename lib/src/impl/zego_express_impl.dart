@@ -3708,7 +3708,7 @@ class ZegoExpressImpl {
               map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
-      
+
       case 'onAIVoiceChangerSetSpeaker':
         if (ZegoExpressEngine.onAIVoiceChangerSetSpeaker == null) {
           return;
@@ -3720,7 +3720,7 @@ class ZegoExpressImpl {
               aiVoiceChanger, map['errorCode']);
         }
         break;
-      
+
       case 'onAIVoiceChangerEvent':
         if (ZegoExpressEngine.onAIVoiceChangerEvent == null) {
           return;
