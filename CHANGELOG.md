@@ -1,5 +1,65 @@
 # Change Log
 
+## 3.21.0
+
+### New Features
+
+1. **Screen sharing feature supports outline effect - Windows/Mac**
+
+    - Relevate APIs: `enableHightLight`
+
+2. **Added a screen sharing exception callback with source type - Windows/Mac**
+
+    - Relevate APIs: `onCaptureTypeExceptionOccurred`
+
+3. **Support customizing CDN stream playback timeout duration - All Platforms**
+
+    - Note: if use please connect Zego Technical Support
+
+4. **Support setting the stream title when publishing a stream - All Platforms**
+
+    - Relevate APIs: `startPublishingStream`
+
+5. **Added an error code related to resource file permissions for the media player - All Platforms**
+
+    - Relevate APIs: `onMediaPlayerStateUpdate`
+
+### Improvements & Optimizations
+
+1. **Updated the libvpx version - All Platforms**
+
+   - Note: To improve the security quality of the SDK, the libvpx library has been upgraded to version 1.13.1.
+
+2. **Optimize the login and stream publishing/playing time - All Platforms**
+
+   - Note: The SDK scheduling logic has been optimized to reduce the login and stream publishing/playing time. It can improve the user's experience of playing streams instantly.
+
+3. **Optimize the low-light enhancement algorithm - All Platforms**
+
+    - Note: The low-light enhancement algorithm has been optimized to make the transition between light and dark smoother and avoid overexposure issues.
+
+    - Relevate APIs: `setLowlightEnhancement` `setLowlightEnhancementParams`
+
+4. **Optimize the ear-return delay performance - Android**
+
+   - Note: The ear-return delay performance of Android devices in the ultra-low latency mode has been optimized.
+
+5. **Optimize the dual-channel audio encoding - All Platforms**
+
+   - Note: if use please connect Zego Technical Support
+
+6. **Optimize the room stream extra information sending performance - All Platforms**
+
+   - Note: When the room stream extra information fails to be sent, the SDK will retry until the information is successfully sent within the stream life cycle, improving the reliability of the information.
+
+### Bug Fixes
+
+1. Fixed the issue that the transcoding template is invalid when the user plays a stream during stream publishing.
+
+2. Fixed the issue that the onAudioRouteChange callback is not triggered when switching between speaker and earpiece using AVRoutePickerView in the call volume mode on iOS devices.
+
+3. Fixed the issue that the wireless microphone device can not collect sound correctly in the media mode on iOS devices.
+
 ## 3.20.5
 
 ### New Features

@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
 class Global {
-  static String pluginVersion = "3.20.5";
+  static String pluginVersion = "3.21.0";
 }
 
 class MethodChannelWrapper extends MethodChannel {
@@ -2091,6 +2091,20 @@ class ZegoExpressImpl {
     });
   }
 
+  /* Audio Mixing */
+  Future<void> enableAudioMixing(bool enable) async {
+    return await _channel.invokeMethod('enableAudioMixing', {'enable': enable});
+  }
+
+  Future<void> setAudioMixingVolume(int volume, ZegoVolumeType type) async {
+    return await _channel.invokeMethod(
+        'setAudioMixingVolume', {'volume': volume, 'type': type.index});
+  }
+
+  Future<void> muteLocalAudioMixing(bool mute) async {
+    return await _channel.invokeMethod('muteLocalAudioMixing', {'mute': mute});
+  }
+
   /* Range Audio */
   static ZegoRangeAudioImpl? rangeAudioImpl;
   Future<ZegoRangeAudio?> createRangeAudio() async {
@@ -3708,7 +3722,7 @@ class ZegoExpressImpl {
               map['percent'], map['fileIndex'], map['fileCount']);
         }
         break;
-      
+
       case 'onAIVoiceChangerSetSpeaker':
         if (ZegoExpressEngine.onAIVoiceChangerSetSpeaker == null) {
           return;
@@ -3720,7 +3734,7 @@ class ZegoExpressImpl {
               aiVoiceChanger, map['errorCode']);
         }
         break;
-      
+
       case 'onAIVoiceChangerEvent':
         if (ZegoExpressEngine.onAIVoiceChangerEvent == null) {
           return;

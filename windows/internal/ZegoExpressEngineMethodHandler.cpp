@@ -10,6 +10,7 @@
 #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 #include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
+#include "zego_express_engine/ZegoAudioMixingDataManager.h"
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #endif
@@ -1323,6 +1324,7 @@ void ZegoExpressEngineMethodHandler::getAudioDeviceList(ZFArgument argument, ZFR
         ZFMap deviceMap;
         deviceMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
 
         deviceListArray.emplace_back(ZFValue(deviceMap));
     }
@@ -1565,6 +1567,37 @@ void ZegoExpressEngineMethodHandler::startAudioDataObserver(ZFArgument argument,
 
 void ZegoExpressEngineMethodHandler::stopAudioDataObserver(ZFArgument argument, ZFResult result) {
     EXPRESS::ZegoExpressSDK::getEngine()->stopAudioDataObserver();
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFResult result) {
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+
+    if (enable) {
+        EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(
+            ZegoAudioMixingDataManager::getInstance()->getHandler());
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(nullptr);
+    }
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAudioMixing(enable);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setAudioMixingVolume(ZFArgument argument, ZFResult result) {
+    auto volume = zego_value_get_int(argument[ZFValue("volume")]);
+    auto volumeType = zego_value_get_int(argument[ZFValue("type")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingVolume(volume,
+                                                                (EXPRESS::ZegoVolumeType)volumeType);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::muteLocalAudioMixing(ZFArgument argument, ZFResult result) {
+    auto mute = zego_value_get_bool(argument[ZFValue("mute")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->muteLocalAudioMixing(mute);
 
     result->Success();
 }
@@ -3478,6 +3511,7 @@ void ZegoExpressEngineMethodHandler::getVideoDeviceList(ZFArgument argument, ZFR
         ZFMap deviceMap;
         deviceMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
 
         deviceListArray.emplace_back(ZFValue(deviceMap));
     }
@@ -3548,6 +3582,7 @@ void ZegoExpressEngineMethodHandler::getCurrentAudioDevice(ZFArgument argument, 
     ZFMap resultMap;
     resultMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
     resultMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+    resultMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
     result->Success(resultMap);
 }
 

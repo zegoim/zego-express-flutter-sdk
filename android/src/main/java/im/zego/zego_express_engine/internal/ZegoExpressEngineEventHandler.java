@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import im.zego.zegoexpress.ZegoAIVoiceChanger;
@@ -58,7 +57,6 @@ import im.zego.zegoexpress.constants.ZegoScreenCaptureExceptionType;
 import im.zego.zegoexpress.constants.ZegoStreamEvent;
 import im.zego.zegoexpress.constants.ZegoStreamQualityLevel;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
-import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoAudioVADType;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
@@ -67,6 +65,7 @@ import im.zego.zegoexpress.constants.ZegoDeviceType;
 import im.zego.zegoexpress.constants.ZegoSuperResolutionState;
 import im.zego.zegoexpress.entity.ZegoAIVoiceChangerSpeakerInfo;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
+import im.zego.zegoexpress.entity.ZegoAudioMixingData;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
@@ -2326,7 +2325,7 @@ public class ZegoExpressEngineEventHandler {
         @Override
         public void onEvent(ZegoAIVoiceChanger aiVoiceChanger, ZegoAIVoiceChangerEvent event) {
             super.onEvent(aiVoiceChanger, event);
-            ZegoLog.log("[onAIVoiceChangerEvent] idx: %d, event: %d", aiVoiceChanger.getIndex(), event);
+            ZegoLog.log("[onAIVoiceChangerEvent] idx: %d, event: %d", aiVoiceChanger.getIndex(), event.value());
 
             if (guardSink()) { return; }
 

@@ -2772,7 +2772,7 @@ class ZegoPlayerConfig {
   /// Whether to enable adaptive switching of streams, 1 means on, 0 means off. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   int? adaptiveSwitch;
 
-  /// Stream adaptive transcoding template ID list. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  /// Stream adaptive transcoding template ID list. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   List<int>? adaptiveTemplateIDList;
 
   /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
@@ -4103,7 +4103,7 @@ class ZegoCopyrightedMusicGetSharedConfig {
   /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
   String? roomID;
 
-  /// VOD billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
+  /// billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
   int? mode;
 
   /// The master ID, which must be passed when the billing mode is billed by host.
@@ -4127,11 +4127,11 @@ class ZegoCopyrightedMusicGetSharedConfigV2 {
   /// The resource type of music.
   int? resourceType;
 
-  /// VOD billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
-  int? mode;
+  /// billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
+  String? mode;
 
   /// The master ID, which must be passed when the billing mode is billed by host.
-  String? masterID;
+  int? masterID;
 
   ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
       {this.vendorID,
@@ -6054,7 +6054,7 @@ abstract class ZegoScreenCaptureSource {
 
   /// Set whether to highlight the capture area
   ///
-  /// Available since: 3.20.0
+  /// Available since: 3.21.0
   /// Description: Set whether to highlight the capture area.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
   /// Restrictions: Only available on Windows/macOS.

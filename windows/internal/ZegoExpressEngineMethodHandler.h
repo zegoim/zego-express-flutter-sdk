@@ -222,6 +222,12 @@ class ZegoExpressEngineMethodHandler {
     /* Custom Audio IO */
     void startAudioDataObserver(ZFArgument argument, ZFResult result);
     void stopAudioDataObserver(ZFArgument argument, ZFResult result);
+
+    /* Audio Mixing */
+    void enableAudioMixing(ZFArgument argument, ZFResult result);
+    void setAudioMixingVolume(ZFArgument argument, ZFResult result);
+    void muteLocalAudioMixing(ZFArgument argument, ZFResult result);
+
     /* Audio Effects Player */
     void createAudioEffectPlayer(ZFArgument argument, ZFResult result);
     void destroyAudioEffectPlayer(ZFArgument argument, ZFResult result);

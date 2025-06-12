@@ -19,6 +19,7 @@
 #import "ZegoMediaPlayerVideoManager.h"
 #import "ZegoMediaPlayerAudioManager.h"
 #import "ZegoMediaPlayerBlockDataManager.h"
+#import "ZegoAudioMixingDataManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -3399,6 +3400,38 @@
     }
     
     [[ZegoExpressEngine sharedEngine] enableCustomVideoProcessing:(BOOL)enable config:config channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+#pragma mark - AudioMixing
+
+- (void)enableAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    if (enable) {
+        [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:nil];
+    }
+    [[ZegoExpressEngine sharedEngine] enableAudioMixing:enable];
+
+    result(nil);
+}
+
+- (void)setAudioMixingVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+    int volumeType = [ZegoUtils intValue:call.arguments[@"type"]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingVolume:volume type:(ZegoVolumeType)volumeType];
+
+    result(nil);
+}
+
+- (void)muteLocalAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+    [[ZegoExpressEngine sharedEngine] muteLocalAudioMixing:mute];
 
     result(nil);
 }
