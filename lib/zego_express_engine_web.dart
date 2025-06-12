@@ -976,7 +976,7 @@ class ZegoExpressEngineWeb {
           final numKey = int.parse(key);
           final numValue = getProperty(soundLevelsMap, key);
           soundLevels[numKey] = numValue;
-        };
+        }
         ZegoExpressEngine.onMixerSoundLevelUpdate!(soundLevels);
         break;
       case 'onAutoMixerSoundLevelUpdate':
@@ -989,7 +989,7 @@ class ZegoExpressEngineWeb {
           final numKey = key;
           final numValue = getProperty(soundLevelsMap, key);
           soundLevels[numKey] = numValue;
-        };
+        }
         ZegoExpressEngine.onAutoMixerSoundLevelUpdate!(soundLevels);
         break;
       case 'onMixerRelayCDNStateUpdate':

@@ -706,6 +706,9 @@ class ZegoErrorCode {
   /// Description: The MediaPlayer is already start. <br>Cause: [Load] has been called. <br> Solutions: Please call [Stop] first, then call [Load].
   static const int MediaPlayerAlreadyStart = 1008014;
 
+  /// Description: The MediaPlayer failed to load the file. <br>Cause: Permission denied. <br> Solutions: Check the validity of the media file path.
+  static const int MediaPlayerPermissionDenied = 1008015;
+
   /// Description: The MediaPlayer failed to seek. <br>Cause: The file hasn't been loaded yet. <br> Solutions: The media player loads the media resource [loadResource] before seeking [seekTo].
   static const int MediaPlayerSeekError = 1008016;
 
