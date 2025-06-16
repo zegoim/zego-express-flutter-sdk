@@ -1436,10 +1436,7 @@ enum ZegoAudioSourceType {
   MainPublishChannel,
 
   /// Using screen capture as audio source. Typically used in mobile screen sharing scenarios. This audio source type can only be used in [setAudioSource] interface, has no effect when used in [enableCustomAudioIO] interface.
-  ScreenCapture,
-
-  /// Using screen capture as audio source, used with [ZegoVideoSourceTypeScreenCaptureAuxiliary]. 1. Only supported on iOS and Android platforms. 2. On iOS system, the audio from the screen capture microphone will not be received. 3. If you need to receive the sound of the microphone, please select [ZegoAudioSourceTypeMicrophone] as the main audio source, and enable [enableMixScreenCapture] to mix the app audio of the screen capture into the main audio.
-  ScreenCaptureAuxiliary
+  ScreenCapture
 }
 
 /// Record type.
@@ -1874,10 +1871,7 @@ enum ZegoVideoSourceType {
   SecondaryCamera,
 
   /// Video source from picture capture.
-  Picture,
-
-  /// Video source from screen capture, used with [ZegoAudioSourceTypeScreenCaptureAuxiliary]. Only supported on iOS and Android platforms.
-  ScreenCaptureAuxiliary
+  Picture
 }
 
 /// Screen capture source exception type.
