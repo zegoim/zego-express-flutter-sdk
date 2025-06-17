@@ -305,6 +305,8 @@ class ZegoExpressEngineWeb {
         return enableEffectsBeauty(call.arguments['enable']);
       case 'setEffectsBeautyParam':
         return setEffectsBeautyParam(call.arguments['param']);
+      case 'setANSMode':
+        return setANSMode(call.arguments['mode']);
       // case 'setVoiceChangerPreset':
       //   return setVoiceChangerPreset(call.arguments['preset']);
       // case 'setVoiceChangerParam':
@@ -1104,7 +1106,7 @@ class ZegoExpressEngineWeb {
   Future<String> callExperimentalAPI(String params) async {
     final promise =
         callMethod(ZegoFlutterEngine.instance, 'callExperimentalAPI', [params]);
-    final jsResponse = await promiseToFuture(promise); print("callExperimentalAPI: $jsResponse");
+    final jsResponse = await promiseToFuture(promise);
     return Future.value(jsResponse ?? "");
   }
 
@@ -1664,6 +1666,9 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);
   }
 
+  Future<void> setANSMode(int mode) async {
+    callMethod(ZegoFlutterEngine.instance, 'setANSMode', [mode]);
+  }
   // Future<void> setVoiceChangerPreset(int preset) async {}
   // Future<void> setVoiceChangerParam(int pitch) async {}
   // Future<void> setReverbPreset(int prese) async {}
