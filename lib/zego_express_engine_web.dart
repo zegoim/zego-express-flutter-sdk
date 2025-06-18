@@ -1557,8 +1557,9 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> useFrontCamera(bool enable, int channel) async {
-    return await ZegoFlutterEngine.instance
-        .useFrontCamera(enable, getPublishChannel(channel));
+    final promise = callMethod(ZegoFlutterEngine.instance, 'useFrontCamera',
+        [enable, getPublishChannel(channel)]);
+    final result = await promiseToFuture(promise);
   }
 
   // type 0 为input, 1 为output
