@@ -1669,16 +1669,16 @@ enum ZegoAudioVADStableStateMonitorType {
 
 /// Orientation mode of the video.
 enum ZegoOrientationMode {
-  /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
+  /// Custom mode. The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
   Custom,
 
-  /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
+  /// Description: Player self adaption mode. The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
   Adaption,
 
-  /// Player adapt to pulisher mode.Description: Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
+  /// Description: Player adapt to pulisher mode. Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
   Alignment,
 
-  /// Fixed resolution ratio mode.Description: Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
+  /// Description: Fixed resolution ratio mode. Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
   FixedResolutionRatio
 }
 
@@ -2033,6 +2033,24 @@ enum ZegoLiveAudioEffectMode {
   All
 }
 
+/// AI voice changer event.
+enum ZegoAIVoiceChangerEvent {
+  /// Succeed.
+  Succeed,
+
+  /// Background performance insufficient.
+  BackgroundPerformanceInsufficient,
+
+  /// Foreground performance insufficient.
+  ForegroundPerformanceInsufficient,
+
+  /// Others.
+  Others,
+
+  /// Set speaker failed.
+  SetSpeakerFailed
+}
+
 /// Media stream type.
 enum ZegoMediaStreamType {
   /// Media audio stream.
@@ -2245,7 +2263,7 @@ class ZegoVideoConfig {
   /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
   ZegoVideoCodecID codecID;
 
-  /// Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
+  /// Video keyframe interval, in seconds. Description: Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
   int? keyFrameInterval;
 
   ZegoVideoConfig(this.captureWidth, this.captureHeight, this.encodeWidth,
@@ -2553,12 +2571,16 @@ class ZegoPublisherConfig {
   /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
   ZegoCapabilityNegotiationType? codecNegotiationType;
 
+  /// Stream title, a utf8 string with a maximum length of 255 bytes or less.
+  String? streamTitle;
+
   ZegoPublisherConfig(
       {this.roomID,
       this.forceSynchronousNetworkTime,
       this.streamCensorshipMode,
       this.streamCensorFlag,
-      this.codecNegotiationType});
+      this.codecNegotiationType,
+      this.streamTitle});
 }
 
 /// Published stream quality information.
@@ -2750,7 +2772,7 @@ class ZegoPlayerConfig {
   /// Whether to enable adaptive switching of streams, 1 means on, 0 means off. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   int? adaptiveSwitch;
 
-  /// Stream adaptive transcoding template ID list. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+  /// Stream adaptive transcoding template ID list. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
   List<int>? adaptiveTemplateIDList;
 
   /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
@@ -2965,7 +2987,10 @@ class ZegoDeviceInfo {
   /// Device name
   String deviceName;
 
-  ZegoDeviceInfo(this.deviceID, this.deviceName);
+  /// Device extra info, Format: key="value"\nkey2="value2"..., use line break \n to separate key-value pairs, and use equal sign = to separate key and "value", and there are double quotes around the value
+  String deviceExtraInfo;
+
+  ZegoDeviceInfo(this.deviceID, this.deviceName, this.deviceExtraInfo);
 }
 
 /// System performance monitoring status
@@ -3984,10 +4009,10 @@ class ZegoAccurateSeekConfig {
 
 /// Media player network cache information
 class ZegoNetWorkResourceCache {
-  /// Cached duration, unit ms
+  /// Cached playable duration, unit ms
   int time;
 
-  /// Cached size, unit byte
+  /// Cached playable size, unit byte
   int size;
 
   ZegoNetWorkResourceCache(this.time, this.size);
@@ -4078,7 +4103,7 @@ class ZegoCopyrightedMusicGetSharedConfig {
   /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
   String? roomID;
 
-  /// VOD billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
+  /// billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
   int? mode;
 
   /// The master ID, which must be passed when the billing mode is billed by host.
@@ -4102,11 +4127,11 @@ class ZegoCopyrightedMusicGetSharedConfigV2 {
   /// The resource type of music.
   int? resourceType;
 
-  /// VOD billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
-  int? mode;
+  /// billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
+  String? mode;
 
   /// The master ID, which must be passed when the billing mode is billed by host.
-  String? masterID;
+  int? masterID;
 
   ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
       {this.vendorID,
@@ -6029,7 +6054,7 @@ abstract class ZegoScreenCaptureSource {
 
   /// Set whether to highlight the capture area
   ///
-  /// Available since: 3.20.0
+  /// Available since: 3.21.0
   /// Description: Set whether to highlight the capture area.
   /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
   /// Restrictions: Only available on Windows/macOS.

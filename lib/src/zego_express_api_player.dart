@@ -168,7 +168,7 @@ extension ZegoExpressEnginePlayer on ZegoExpressEngine {
   /// Available since: 2.1.0
   /// Description: Set the range of adaptive adjustment of the internal buffer of the sdk when streaming is 0-4000ms.
   /// Use cases: Generally, in the case of a poor network environment, adjusting and increasing the playback buffer of the pull stream will significantly reduce the audio and video freezes, but will increase the delay.
-  /// When to call: after called [createEngine].
+  /// When to call: after called [createEngine], if it has been set, you need to reset it every time you play the stream again.
   /// Restrictions: None.
   /// Caution: When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms. When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
   ///

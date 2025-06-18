@@ -1410,7 +1410,9 @@ class ZegoExpressEngine {
   ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
   ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
   ///   Version 2.22.0 and above:
-  ///   1. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
+  ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
+  ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
+  ///   3. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
   /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
   /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
   ///
@@ -1482,7 +1484,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive PCM audio frames collected locally by custom audio processing. The returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be modified. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
-  /// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+  /// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
   /// Restrictions: None.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
@@ -1497,7 +1499,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 2.13.0
   /// Description: In this callback, you can receive the PCM audio frame after the custom audio processing is locally collected and returned to the ear. The returned timestamp can be used for data synchronization, such as lyrics, etc. The returned data cannot be changed.
-  /// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+  /// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
   /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
   ///
   /// - [data] Audio data in PCM format
@@ -1577,7 +1579,7 @@ class ZegoExpressEngine {
   ///
   /// Available: Since 1.1.0
   /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
-  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+  /// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreview] or [startPlayingStream] or [startPublishingStream]).
   /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
   /// Caution: This callback is a high-frequency callback. Please do not perform time-consuming operations in this callback. When the engine is not in the stream publishing state and the media player is not used to play media files, the audio data in the callback is muted audio data.
   ///
@@ -1662,6 +1664,23 @@ class ZegoExpressEngine {
   /// - [exceptionType] Capture source exception type.
   static void Function(ZegoScreenCaptureSource source,
       ZegoScreenCaptureSourceExceptionType exceptionType)? onExceptionOccurred;
+
+  /// The callback triggered when a screen capture source capture type exception occurred
+  ///
+  /// Available since: 3.21.0
+  /// Description: The callback triggered when a screen capture source capture type exception occurred.
+  /// Trigger: This callback is triggered when an exception occurs after the screen start capture.
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [sourceType] Capture source type.
+  /// - [exceptionType] Capture source exception type.
+  static void Function(
+          ZegoScreenCaptureSource source,
+          ZegoScreenCaptureSourceType sourceType,
+          ZegoScreenCaptureSourceExceptionType exceptionType)?
+      onCaptureTypeExceptionOccurred;
 
   /// The callback will be triggered when the state of the capture target window change.
   ///
@@ -1760,6 +1779,31 @@ class ZegoExpressEngine {
   static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode,
           List<ZegoAIVoiceChangerSpeakerInfo> speakerList)?
       onAIVoiceChangerGetSpeakerList;
+
+  /// AI voice changer event callback.
+  ///
+  /// Available since: 3.12.0.
+  /// Description: AI voice changer event callback.
+  /// Trigger: The callback triggered when AI voice changer transcode failure occurred.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [event] AI voice changer event.
+  static void Function(
+          ZegoAIVoiceChanger aiVoiceChanger, ZegoAIVoiceChangerEvent event)?
+      onAIVoiceChangerEvent;
+
+  /// Set AI voice changer engine speaker status callback.
+  ///
+  /// Available since: 3.12.0.
+  /// Description: Set AI voice changer engine speaker status callback.
+  /// Trigger: The callback triggered when call [setSpeaker] function.
+  /// Restrictions: None.
+  ///
+  /// - [aiVoiceChanger] Callback AI voice changer instance.
+  /// - [errorCode] Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+  static void Function(ZegoAIVoiceChanger aiVoiceChanger, int errorCode)?
+      onAIVoiceChangerSetSpeaker;
 
   /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
   ///

@@ -696,6 +696,7 @@ void ZegoExpressEngineEventHandler::onAudioDeviceStateChanged(
         ZFMap deviceInfoMap;
         deviceInfoMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceInfoMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceInfoMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
 
         retMap[ZFValue("deviceInfo")] = ZFValue(deviceInfoMap);
 
@@ -1472,6 +1473,7 @@ void ZegoExpressEngineEventHandler::onVideoDeviceStateChanged(
         ZFMap deviceInfoMap;
         deviceInfoMap[ZFValue("deviceID")] = ZFValue(deviceInfo.deviceID);
         deviceInfoMap[ZFValue("deviceName")] = ZFValue(deviceInfo.deviceName);
+        deviceInfoMap[ZFValue("deviceExtraInfo")] = ZFValue(deviceInfo.deviceExtraInfo);
         retMap[ZFValue("deviceInfo")] = ZFValue(deviceInfoMap);
 
         eventSink_->Success(retMap);
@@ -2025,6 +2027,24 @@ void ZegoExpressEngineEventHandler::onExceptionOccurred(
     }
 }
 
+void ZegoExpressEngineEventHandler::onCaptureTypeExceptionOccurred(
+    EXPRESS::IZegoScreenCaptureSource *source, EXPRESS::ZegoScreenCaptureSourceType sourceType,
+    EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType) {
+
+    ZF::logInfo("[onCaptureTypeExceptionOccurred] index: %d, sourceType: %d, exceptionType: %d",
+                source->getIndex(), sourceType, exceptionType);
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onCaptureTypeExceptionOccurred");
+        retMap[ZFValue("screenCaptureSourceIndex")] = ZFValue(source->getIndex());
+        retMap[ZFValue("sourceType")] = ZFValue(static_cast<int32_t>(sourceType));
+        retMap[ZFValue("exceptionType")] = ZFValue(static_cast<int32_t>(exceptionType));
+
+        eventSink_->Success(retMap);
+    }
+}
+
 void ZegoExpressEngineEventHandler::onWindowStateChanged(
     EXPRESS::IZegoScreenCaptureSource *source, EXPRESS::ZegoScreenCaptureWindowState windowState,
     EXPRESS::ZegoRect windowRect) {
@@ -2135,6 +2155,34 @@ void ZegoExpressEngineEventHandler::onUpdateProgress(
         retMap[ZFValue("percent")] = ZFValue(percent);
         retMap[ZFValue("fileIndex")] = ZFValue(fileIndex);
         retMap[ZFValue("fileCount")] = ZFValue(fileCount);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onSetSpeaker(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) {
+    ZF::logInfo("[onAIVoiceChangerSetSpeaker] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onAIVoiceChangerSetSpeaker");
+        retMap[ZFValue("aiVoiceChangerIndex")] = ZFValue(aiVoiceChanger->getIndex());
+        retMap[ZFValue("errorCode")] = ZFValue(errorCode);
+
+        eventSink_->Success(retMap);
+    }
+}
+
+void ZegoExpressEngineEventHandler::onEvent(
+    EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, EXPRESS::ZegoAIVoiceChangerEvent event) {
+    ZF::logInfo("[onAIVoiceChangerEvent] index: %d", aiVoiceChanger->getIndex());
+
+    if (eventSink_) {
+        ZFMap retMap;
+        retMap[ZFValue("method")] = ZFValue("onAIVoiceChangerEvent");
+        retMap[ZFValue("aiVoiceChangerIndex")] = ZFValue(aiVoiceChanger->getIndex());
+        retMap[ZFValue("event")] = ZFValue(static_cast<int32_t>(event));
 
         eventSink_->Success(retMap);
     }
