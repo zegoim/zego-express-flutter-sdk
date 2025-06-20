@@ -842,6 +842,15 @@ enum ZegoStreamResourceSwitchMode {
   KeepOriginal
 }
 
+/// Switch playing stream type.
+enum ZegoSwitchPlayingStreamType {
+  /// Default, smooth switching.
+  Default,
+
+  /// Force switching, Only the timestamp is guaranteed not to be refunded, and smooth switching is not guaranteed.
+  Force
+}
+
 /// Stream Resource Type
 enum ZegoStreamResourceType {
   /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
@@ -2741,6 +2750,16 @@ class ZegoCustomPlayerResourceConfig {
       this.beforePublish, this.publishing, this.afterPublish);
 }
 
+/// Extended parameters for the [switchPlayingStream] interface.
+///
+/// Extended parameters for the [switchPlayingStream] interface.
+class ZegoSwitchPlayingStreamConfig {
+  /// Switch playing stream type.
+  ZegoSwitchPlayingStreamType switchType;
+
+  ZegoSwitchPlayingStreamConfig(this.switchType);
+}
+
 /// Advanced player configuration.
 ///
 /// Configure stream resource mode, CDN configuration and other advanced configurations.
@@ -2778,6 +2797,9 @@ class ZegoPlayerConfig {
   /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
   ZegoCustomPlayerResourceConfig? customResourceConfig;
 
+  /// Extended parameters for the [switchPlayingStream] interface.
+  ZegoSwitchPlayingStreamConfig? switchStreamConfig;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
@@ -2788,7 +2810,8 @@ class ZegoPlayerConfig {
       this.resourceWhenStopPublish,
       this.adaptiveSwitch,
       this.adaptiveTemplateIDList,
-      this.customResourceConfig});
+      this.customResourceConfig,
+      this.switchStreamConfig});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
