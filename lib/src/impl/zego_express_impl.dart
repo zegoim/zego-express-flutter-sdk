@@ -949,6 +949,11 @@ class ZegoExpressImpl {
                 'afterPublish': config.customResourceConfig?.afterPublish.index
               }
             : {},
+        'switchStreamConfig': config.switchStreamConfig != null
+            ? {
+                'switchType': config.switchStreamConfig?.switchType.index
+              }
+            : {},
       }
     });
   }

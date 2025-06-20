@@ -1161,7 +1161,14 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(ZFArgument argument, ZF
                 config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[ZFValue("publishing")]);
                 config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[ZFValue("afterPublish")]);
             }
-        } 
+        }
+
+        if (!zego_value_is_null(configMap[ZFValue("switchStreamConfig")])) {
+            auto switchStreamConfigMap = zego_value_get_map(configMap[ZFValue("switchStreamConfig")]);
+            if (switchStreamConfigMap.size() > 0) {
+                config.switchStreamConfig.switchType = (EXPRESS::ZegoSwitchPlayingStreamType)zego_value_get_int(switchStreamConfigMap[ZFValue("switchType")]);
+            }
+        }
     } 
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);

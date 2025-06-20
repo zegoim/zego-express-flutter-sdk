@@ -1621,6 +1621,14 @@
             
             playerConfig.customResourceConfig = customResourceConfig;
         }
+        
+        NSDictionary * switchStreamConfigMap = playerConfigMap[@"switchStreamConfig"];
+        if (switchStreamConfigMap && switchStreamConfigMap.count > 0) {
+            ZegoSwitchPlayingStreamConfig *switchStreamConfig = [[ZegoSwitchPlayingStreamConfig alloc] init];
+            switchStreamConfig.switchType = (ZegoSwitchPlayingStreamType)[ZegoUtils intValue:switchStreamConfigMap[@"switchType"]];
+            
+            playerConfig.switchStreamConfig = switchStreamConfig;
+        }
     }
 
     [[ZegoExpressEngine sharedEngine] switchPlayingStream:fromStreamID toStreamID:toStreamID config:playerConfig];
