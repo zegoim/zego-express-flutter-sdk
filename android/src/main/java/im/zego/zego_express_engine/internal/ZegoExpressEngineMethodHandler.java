@@ -125,6 +125,7 @@ import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceSwitchMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceType;
+import im.zego.zegoexpress.constants.ZegoSwitchPlayingStreamType;
 import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
@@ -221,6 +222,7 @@ import im.zego.zegoexpress.entity.ZegoRoomConfig;
 import im.zego.zegoexpress.entity.ZegoSEIConfig;
 import im.zego.zegoexpress.entity.ZegoScreenCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoSoundLevelConfig;
+import im.zego.zegoexpress.entity.ZegoSwitchPlayingStreamConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVideoDenoiseParams;
@@ -1767,6 +1769,13 @@ public class ZegoExpressEngineMethodHandler {
                 customResourceConfig.publishing = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("publishing")));
                 customResourceConfig.afterPublish = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("afterPublish")));
                 playerConfig.customResourceConfig = customResourceConfig;
+            }
+
+            HashMap<String, Object> switchStreamConfigMap = (HashMap<String, Object>) playerConfigMap.get("switchStreamConfig");
+            if (switchStreamConfigMap != null && !switchStreamConfigMap.isEmpty()) {
+                ZegoSwitchPlayingStreamConfig switchStreamConfig = new ZegoSwitchPlayingStreamConfig();
+                switchStreamConfig.switchType = ZegoSwitchPlayingStreamType.getZegoSwitchPlayingStreamType(ZegoUtils.intValue((Number) switchStreamConfigMap.get("switchType")));
+                playerConfig.switchStreamConfig = switchStreamConfig;
             }
         }
 
