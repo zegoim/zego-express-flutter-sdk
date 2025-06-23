@@ -820,7 +820,7 @@ class ZegoExpressEngineWeb {
       case 'onPlayerRecvSEI':
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
         final data = jsonDecode(map["data"]);
-        var bytes = Uint8List.fromList(utf8.encode(data["data"]));
+        var bytes = base64Decode(data["data"]);
         ZegoExpressEngine.onPlayerRecvSEI!(data['streamID'], bytes);
         break;
       ////////////////////////////////////设备相关/////////////////////////////////////
@@ -1293,7 +1293,7 @@ class ZegoExpressEngineWeb {
 
   Future<void> sendSEI(dynamic data, int dataLength, int channel) async {
     return await ZegoFlutterEngine.instance
-        .sendSEI(const Utf8Decoder().convert(data), dataLength, channel);
+        .sendSEI(base64Encode(data), dataLength, channel);
   }
 
   Future<void> setCaptureVolume(int volume) async {
@@ -1676,17 +1676,15 @@ class ZegoExpressEngineWeb {
 
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
-    var i = _index;
-    var instance = await ZegoFlutterEngine.instance.createMediaPlayer(i);
+    var instance = await ZegoFlutterEngine.instance.createMediaPlayer();
     if (instance != null) {
       var mediaPlayer = MediaPlayer();
       mediaPlayer.instance = instance;
-      _mediaPlayers[i] = mediaPlayer;
-      _index++;
+      _mediaPlayers[instance.id] = mediaPlayer;
+      return instance.id;
     } else {
-      i = -1;
+      return -1;
     }
-    return i;
   }
 
   void mediaPlayerSetPlayerCanvas(int index, Map<dynamic, dynamic> canvas) {
@@ -1822,7 +1820,9 @@ class ZegoExpressEngineWeb {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    callMethod(_mediaPlayers[index].instance, 'destroy', []);
+    callMethod(ZegoFlutterEngine.instance, 'destroyMediaPlayer',
+        [_mediaPlayers[index].instance]);
+    // callMethod(_mediaPlayers[index].instance, 'destroy', []);
     _mediaPlayers.remove(index);
   }
 
