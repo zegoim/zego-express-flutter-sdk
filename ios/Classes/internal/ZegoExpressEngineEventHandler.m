@@ -1395,6 +1395,32 @@
     }
 }
 
+#pragma mark - ScreenCapture
+- (void)onMobileScreenCaptureStart {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMobileScreenCaptureStart]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMobileScreenCaptureStart",
+        });
+    }
+}
+
+- (void)onMobileScreenCaptureExceptionOccurred:(ZegoScreenCaptureExceptionType)exceptionType {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMobileScreenCaptureExceptionOccurred] exceptionType: %d", (int)exceptionType);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMobileScreenCaptureExceptionOccurred",
+            @"exceptionType": @(exceptionType)
+        });
+    }
+}
+
 
 #pragma mark - ZegoMediaPlayerEventHandler
 

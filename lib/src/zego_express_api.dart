@@ -1713,7 +1713,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when the mobile screen capture source exception occurred.
   /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   ///
   /// - [exceptionType] Screen capture exception type.
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
@@ -1725,7 +1725,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when calling the start mobile screen capture.
   /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   static void Function()? onMobileScreenCaptureStart;
 
   /// Initialize AI voice changer engine status callback.

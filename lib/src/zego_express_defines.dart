@@ -1910,7 +1910,7 @@ enum ZegoScreenCaptureOrientation {
   Landscape
 }
 
-/// Screen capture source exception type. (only for Android)
+/// Screen capture source exception type. (only for Android and iOS)
 enum ZegoScreenCaptureExceptionType {
   /// Unknown exception type.
   Unknown,
