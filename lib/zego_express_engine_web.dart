@@ -1104,9 +1104,8 @@ class ZegoExpressEngineWeb {
   }
 
   Future<String> callExperimentalAPI(String params) async {
-    final promise =
+    final jsResponse =
         callMethod(ZegoFlutterEngine.instance, 'callExperimentalAPI', [params]);
-    final jsResponse = await promiseToFuture(promise);
     return Future.value(jsResponse ?? "");
   }
 
