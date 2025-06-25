@@ -16,9 +16,7 @@ import '../utils/zego_express_utils.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
-class Global {
-  static String pluginVersion = "3.21.0";
-}
+const String pluginVersion = "3.21.0";
 
 class MethodChannelWrapper extends MethodChannel {
   MethodChannelWrapper(String name) : super(name);
@@ -142,7 +140,7 @@ class ZegoExpressImpl {
     });
 
     await _channel
-        .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+        .invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -168,7 +166,7 @@ class ZegoExpressImpl {
     });
 
     await _channel
-        .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+        .invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
