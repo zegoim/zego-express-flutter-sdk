@@ -16,9 +16,7 @@ import '../utils/zego_express_utils.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
-class Global {
-  static String pluginVersion = "3.21.0";
-}
+const String pluginVersion = "3.21.0";
 
 class MethodChannelWrapper extends MethodChannel {
   MethodChannelWrapper(String name) : super(name);
@@ -142,7 +140,7 @@ class ZegoExpressImpl {
     });
 
     await _channel
-        .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+        .invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -168,7 +166,7 @@ class ZegoExpressImpl {
     });
 
     await _channel
-        .invokeMethod('setPluginVersion', {'version': Global.pluginVersion});
+        .invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -1419,7 +1417,7 @@ class ZegoExpressImpl {
 
     for (var deviceInfoMap in deviceInfoMapList) {
       deviceInfoList.add(ZegoDeviceInfo(deviceInfoMap["deviceID"],
-          deviceInfoMap["deviceName"], deviceInfoMap["deviceExtraInfo"]));
+          deviceInfoMap["deviceName"], deviceInfoMap["deviceExtraInfo"] ?? ''));
     }
 
     return deviceInfoList;
@@ -1449,7 +1447,7 @@ class ZegoExpressImpl {
     var retList = <ZegoDeviceInfo>[];
     for (dynamic info in resultList) {
       retList.add(ZegoDeviceInfo(
-          info['deviceID'], info['deviceName'], info["deviceExtraInfo"]));
+          info['deviceID'], info['deviceName'], info["deviceExtraInfo"] ?? ''));
     }
     return retList;
   }
@@ -1567,7 +1565,7 @@ class ZegoExpressImpl {
     var resultMap = await _channel.invokeMethod(
         'getCurrentAudioDevice', {'deviceType': deviceType.index});
     return ZegoDeviceInfo(resultMap['deviceID'], resultMap['deviceName'],
-        resultMap["deviceExtraInfo"]);
+        resultMap["deviceExtraInfo"] ?? '');
   }
 
   /* PreProcess */
@@ -2935,7 +2933,7 @@ class ZegoExpressImpl {
         ZegoDeviceInfo info = ZegoDeviceInfo(
             map['deviceInfo']['deviceID'],
             map['deviceInfo']['deviceName'],
-            map['deviceInfo']["deviceExtraInfo"]);
+            map['deviceInfo']["deviceExtraInfo"] ?? '');
 
         ZegoExpressEngine.onAudioDeviceStateChanged!(
             ZegoUpdateType.values[map['updateType']],
@@ -2958,7 +2956,7 @@ class ZegoExpressImpl {
         ZegoDeviceInfo info = ZegoDeviceInfo(
             map['deviceInfo']['deviceID'],
             map['deviceInfo']['deviceName'],
-            map['deviceInfo']["deviceExtraInfo"]);
+            map['deviceInfo']["deviceExtraInfo"] ?? '');
 
         ZegoExpressEngine.onVideoDeviceStateChanged!(
             ZegoUpdateType.values[map['updateType']], info);
