@@ -401,13 +401,7 @@
     NSString *flutterAssetPrefix = @"flutter-asset://";
     if ([filePath hasPrefix:flutterAssetPrefix]) {
         NSString *assetName = [filePath substringFromIndex:flutterAssetPrefix.length];
-#if TARGET_OS_IPHONE
-        NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
-        NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
-#elif TARGET_OS_OSX
-        NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
-        NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
-#endif
+        NSString *assetRealPath = [self getFlutterAssetAbsolutePath:assetName];
         NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
         ZGLog(@"[setDummyCaptureImagePath] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", filePath, processedURL);
         if (!assetRealPath) {
@@ -431,13 +425,7 @@
     NSString *flutterAssetPrefix = @"flutter-asset://";
     if ([params.path hasPrefix:flutterAssetPrefix]) {
         NSString *assetName = [params.path substringFromIndex:flutterAssetPrefix.length];
-#if TARGET_OS_IPHONE
-        NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
-        NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
-#elif TARGET_OS_OSX
-        NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
-        NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
-#endif
+        NSString *assetRealPath = [self getFlutterAssetAbsolutePath:assetName];
         NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
         ZGLog(@"[setDummyCaptureImageParams] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", params.path, processedURL);
         if (!assetRealPath) {
@@ -665,6 +653,7 @@
         config.forceSynchronousNetworkTime = [ZegoUtils intValue:configMap[@"forceSynchronousNetworkTime"]];
         config.streamCensorshipMode = (ZegoStreamCensorshipMode)[ZegoUtils intValue:configMap[@"streamCensorshipMode"]];
         config.codecNegotiationType = (ZegoCapabilityNegotiationType)[ZegoUtils intValue:configMap[@"codecNegotiationType"]];
+        config.streamTitle = configMap[@"streamTitle"];
     }
 
     if (config) {
@@ -1124,13 +1113,7 @@
         NSString *flutterAssetPrefix = @"flutter-asset://";
         if ([imageURL hasPrefix:flutterAssetPrefix]) {
             NSString *assetName = [imageURL substringFromIndex:flutterAssetPrefix.length];
-#if TARGET_OS_IPHONE
-            NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
-            NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
-#elif TARGET_OS_OSX
-            NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
-            NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
-#endif
+            NSString *assetRealPath = [self getFlutterAssetAbsolutePath:assetName];
             NSString *processedURL = [NSString stringWithFormat:@"file://%@", assetRealPath];
             ZGLog(@"[setPublishWatermark] Flutter asset prefix detected, origin URL: '%@', processed URL: '%@'", imageURL, processedURL);
             if (!assetRealPath) {
@@ -1389,8 +1372,23 @@
             backgroundConfig.processType = (ZegoBackgroundProcessType)[ZegoUtils intValue:backgroundConfigMap[@"processType"]];
             backgroundConfig.blurLevel = (ZegoBackgroundBlurLevel)[ZegoUtils intValue:backgroundConfigMap[@"blurLevel"]];
             backgroundConfig.color = [ZegoUtils intValue:backgroundConfigMap[@"color"]];
-            backgroundConfig.imageURL = backgroundConfigMap[@"imageURL"];
-            backgroundConfig.videoURL = backgroundConfigMap[@"videoURL"];
+            NSString *flutterAssetPrefix = @"flutter-asset://";
+            NSString *imageURL = backgroundConfigMap[@"imageURL"];
+            if ([imageURL hasPrefix:flutterAssetPrefix]) {
+                NSString *assetName = [imageURL substringFromIndex:flutterAssetPrefix.length];
+                NSString *assetRealPath = [self getFlutterAssetAbsolutePath:assetName];
+                NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+                imageURL = processedURL;
+            }
+            NSString *videoURL = backgroundConfigMap[@"videoURL"];
+            if ([videoURL hasPrefix:flutterAssetPrefix]) {
+                NSString *assetName = [videoURL substringFromIndex:flutterAssetPrefix.length];
+                NSString *assetRealPath = [self getFlutterAssetAbsolutePath:assetName];
+                NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+                videoURL = processedURL;
+            }
+            backgroundConfig.imageURL = imageURL;
+            backgroundConfig.videoURL = videoURL;
             config.backgroundConfig = backgroundConfig;
         }
     }
@@ -2426,7 +2424,8 @@
     for (ZegoDeviceInfo *info in audioDeviceList) {
         [audioDeviceListResult addObject:@{
             @"deviceID": info.deviceID,
-            @"deviceName": info.deviceName
+            @"deviceName": info.deviceName,
+            @"deviceExtraInfo": info.deviceExtraInfo
         }];
     }
     
@@ -2466,7 +2465,8 @@
     for (ZegoDeviceInfo *info in videoDeviceList) {
         [videoDeviceListResult addObject:@{
             @"deviceID": info.deviceID,
-            @"deviceName": info.deviceName
+            @"deviceName": info.deviceName,
+            @"deviceExtraInfo": info.deviceExtraInfo
         }];
     }
     
@@ -2559,7 +2559,8 @@
 
     result(@{
         @"deviceID": info.deviceID,
-        @"deviceName": info.deviceName
+        @"deviceName": info.deviceName,
+        @"deviceExtraInfo": info.deviceExtraInfo
     });
 }
 
@@ -6310,18 +6311,24 @@
 
 - (void)getAssetAbsolutePath:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSString *assetPath = call.arguments[@"assetPath"];
-#if TARGET_OS_IPHONE
-    NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
-    NSString *realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
-#elif TARGET_OS_OSX
-    NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
-    NSString *realPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetPath];
-#endif
+    NSString *realPath = [self getFlutterAssetAbsolutePath:assetPath];
     ZGLog(@"[getAssetAbsolutePath] assetPath: %@, realPath: %@", assetPath, realPath);
     result(realPath);
 }
 
 #pragma mark - Private
+
+- (NSString *)getFlutterAssetAbsolutePath:(NSString *)assetPath {
+    NSString *realPath = nil;
+    #if TARGET_OS_IPHONE
+    NSString *assetKey = [_registrar lookupKeyForAsset:assetPath];
+    realPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+    NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+    realPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetPath];
+#endif
+    return realPath;
+}
 
 - (void)setPluginVersion:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSString *version = call.arguments[@"version"];

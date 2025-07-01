@@ -271,6 +271,8 @@ protected:
 
     void onExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType) override;
 
+    void onCaptureTypeExceptionOccurred(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureSourceType sourceType, EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType) override;
+
     void onWindowStateChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoScreenCaptureWindowState windowState, EXPRESS::ZegoRect windowRect) override;
 
     void onRectChanged(EXPRESS::IZegoScreenCaptureSource* source, EXPRESS::ZegoRect captureRect) override;
@@ -286,6 +288,10 @@ protected:
 
     void onUpdateProgress(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, double percent,
                           int fileIndex, int fileCount) override;
+
+    void onSetSpeaker(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, int errorCode) override;
+
+    void onEvent(EXPRESS::IZegoAIVoiceChanger *aiVoiceChanger, EXPRESS::ZegoAIVoiceChangerEvent event) override;
 
 private:
     ZFMap convertPublishQuality(const EXPRESS::ZegoPublishStreamQuality &quality);

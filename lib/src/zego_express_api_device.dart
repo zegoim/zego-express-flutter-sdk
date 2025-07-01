@@ -264,7 +264,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
 
   /// Turns on/off the camera (for the specified channel).
   ///
-  /// Available since: 1.1.0
+  /// Available since: 3.20.0
   /// Description: This function is used to control whether to start the capture of the camera. After the camera is turned off, the video capture will not be performed. At this time, there will be no video data for local preview and push streaming.
   /// Default value: The default is `true` which means the camera is turned on.
   /// When to call: After creating the engine [createEngine].
@@ -304,7 +304,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 2.14.0
   /// Description: Whether the camera supports focusing.
-  /// Trigger: Called after turn on preview [startPreivew].
+  /// Trigger: Called after turn on preview [startPreview].
   /// Caution: Need to start the camera successfully.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
@@ -319,7 +319,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 2.14.0
   /// Description: Set the camera focus mode.
-  /// Trigger: Called after turn on preview [startPreivew].
+  /// Trigger: Called after turn on preview [startPreview].
   /// Restrictions: Currently only supports iOS and Android platforms.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
@@ -335,7 +335,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 2.14.0
   /// Description: Set the focus point in the preview view. (x, y) are the normalized coordinates in the preview view, that is, the ratio of the position of the focus point relative to the preview view and the width and height of the preview view. The upper left corner is (0, 0).
-  /// Trigger: Called after turn on preview [startPreivew].
+  /// Trigger: Called after turn on preview [startPreview].
   /// Restrictions: Currently only supports iOS and Android platforms.
   /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
   /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -353,7 +353,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 2.14.0
   /// Description: Set the camera exposure mode.
-  /// Trigger: Called after turn on preview [startPreivew].
+  /// Trigger: Called after turn on preview [startPreview].
   /// Restrictions: Currently only supports iOS and Android platforms.
   /// Note: This function is only available in ZegoExpressVideo SDK!
   ///
@@ -369,7 +369,7 @@ extension ZegoExpressEngineDevice on ZegoExpressEngine {
   ///
   /// Available since: 2.14.0
   /// Description: Set the exposure point in the preview view. (x, y) are the normalized coordinates in the preview view, that is, the ratio of the position of the exposure point relative to the preview view and the width and height of the preview view. The upper left corner is (0, 0).
-  /// Trigger: Called after turn on preview [startPreivew].
+  /// Trigger: Called after turn on preview [startPreview].
   /// Restrictions: Currently only supports iOS and Android platforms.
   /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
   /// Note: This function is only available in ZegoExpressVideo SDK!
