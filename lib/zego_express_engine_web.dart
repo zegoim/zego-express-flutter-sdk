@@ -1676,12 +1676,13 @@ class ZegoExpressEngineWeb {
 
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
-    var instance = await ZegoFlutterEngine.instance.createMediaPlayer();
+    var instance = ZegoFlutterEngine.instance.createMediaPlayer();
     if (instance != null) {
       var mediaPlayer = MediaPlayer();
       mediaPlayer.instance = instance;
-      _mediaPlayers[instance.id] = mediaPlayer;
-      return instance.id;
+      final id = getProperty(instance, 'id');
+      _mediaPlayers[id] = mediaPlayer;
+      return id;
     } else {
       return -1;
     }
