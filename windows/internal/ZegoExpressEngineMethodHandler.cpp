@@ -1581,7 +1581,6 @@ void ZegoExpressEngineMethodHandler::stopAudioDataObserver(ZFArgument argument, 
 void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFResult result) {
 #ifdef _WIN32
     auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
-
     if (enable) {
         EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(
             ZegoAudioMixingDataManager::getInstance()->getHandler());
@@ -1590,7 +1589,6 @@ void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFRe
     }
 
     EXPRESS::ZegoExpressSDK::getEngine()->enableAudioMixing(enable);
-
     result->Success();
 #else
     result->Error("not_support_feature", "linux platform not support feature");

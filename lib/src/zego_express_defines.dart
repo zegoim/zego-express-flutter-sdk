@@ -4151,10 +4151,10 @@ class ZegoCopyrightedMusicGetSharedConfigV2 {
   int? resourceType;
 
   /// billing mode.It is only required when using on the Web platform and using vendorID value is ZegoCopyrightedMusicVendor1.
-  String? mode;
+  int? mode;
 
   /// The master ID, which must be passed when the billing mode is billed by host.
-  int? masterID;
+  String? masterID;
 
   ZegoCopyrightedMusicGetSharedConfigV2(this.songID,
       {this.vendorID,

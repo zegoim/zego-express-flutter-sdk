@@ -2346,8 +2346,10 @@ class ZegoExpressImpl {
   /* EventHandler */
 
   static void _registerEventHandler() async {
-    _streamSubscription =
-        _event.receiveBroadcastStream().listen(_eventListener);
+    if (!kIsWeb) {
+      _streamSubscription =
+          _event.receiveBroadcastStream().listen(_eventListener);
+    }
   }
 
   static void _unregisterEventHandler() async {
