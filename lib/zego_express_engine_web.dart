@@ -305,6 +305,8 @@ class ZegoExpressEngineWeb {
         return enableEffectsBeauty(call.arguments['enable']);
       case 'setEffectsBeautyParam':
         return setEffectsBeautyParam(call.arguments['param']);
+      case 'setANSMode':
+        return setANSMode(call.arguments['mode']);
       // case 'setVoiceChangerPreset':
       //   return setVoiceChangerPreset(call.arguments['preset']);
       // case 'setVoiceChangerParam':
@@ -818,7 +820,7 @@ class ZegoExpressEngineWeb {
       case 'onPlayerRecvSEI':
         if (ZegoExpressEngine.onPlayerRecvSEI == null) return;
         final data = jsonDecode(map["data"]);
-        var bytes = Uint8List.fromList(utf8.encode(data["data"]));
+        var bytes = base64Decode(data["data"]);
         ZegoExpressEngine.onPlayerRecvSEI!(data['streamID'], bytes);
         break;
       ////////////////////////////////////设备相关/////////////////////////////////////
@@ -1025,6 +1027,12 @@ class ZegoExpressEngineWeb {
           }
         }
         break;
+      case "onRecvExperimentalAPI":
+        if (ZegoExpressEngine.onRecvExperimentalAPI == null) return;
+        final data = jsonDecode(map["data"]);
+        final content = data["content"];
+        ZegoExpressEngine.onRecvExperimentalAPI!(content);
+        break;
       default:
         break;
     }
@@ -1095,9 +1103,10 @@ class ZegoExpressEngineWeb {
     return Future.value();
   }
 
-  Future<String> callExperimentalAPI(dynamic params) async {
-    //todo:
-    return Future.value("");
+  Future<String> callExperimentalAPI(String params) async {
+    final jsResponse =
+        callMethod(ZegoFlutterEngine.instance, 'callExperimentalAPI', [params]);
+    return Future.value(jsResponse ?? "");
   }
 
   /////////////////////////////房间相关////////////////////////////////////////
@@ -1284,7 +1293,7 @@ class ZegoExpressEngineWeb {
 
   Future<void> sendSEI(dynamic data, int dataLength, int channel) async {
     return await ZegoFlutterEngine.instance
-        .sendSEI(const Utf8Decoder().convert(data), dataLength, channel);
+        .sendSEI(base64Encode(data), dataLength, channel);
   }
 
   Future<void> setCaptureVolume(int volume) async {
@@ -1547,8 +1556,9 @@ class ZegoExpressEngineWeb {
   }
 
   Future<void> useFrontCamera(bool enable, int channel) async {
-    return await ZegoFlutterEngine.instance
-        .useFrontCamera(enable, getPublishChannel(channel));
+    final promise = callMethod(ZegoFlutterEngine.instance, 'useFrontCamera',
+        [enable, getPublishChannel(channel)]);
+    final result = await promiseToFuture(promise);
   }
 
   // type 0 为input, 1 为output
@@ -1656,6 +1666,9 @@ class ZegoExpressEngineWeb {
     return ZegoFlutterEngine.instance.setEffectsBeautyParam(options);
   }
 
+  Future<void> setANSMode(int mode) async {
+    callMethod(ZegoFlutterEngine.instance, 'setANSMode', [mode]);
+  }
   // Future<void> setVoiceChangerPreset(int preset) async {}
   // Future<void> setVoiceChangerParam(int pitch) async {}
   // Future<void> setReverbPreset(int prese) async {}
@@ -1663,17 +1676,16 @@ class ZegoExpressEngineWeb {
 
   /////////////////////////////播放器相关////////////////////////////////////////
   Future<int> createMediaPlayer() async {
-    var i = _index;
-    var instance = await ZegoFlutterEngine.instance.createMediaPlayer(i);
+    var instance = ZegoFlutterEngine.instance.createMediaPlayer();
     if (instance != null) {
       var mediaPlayer = MediaPlayer();
       mediaPlayer.instance = instance;
-      _mediaPlayers[i] = mediaPlayer;
-      _index++;
+      final id = getProperty(instance, 'id');
+      _mediaPlayers[id] = mediaPlayer;
+      return id;
     } else {
-      i = -1;
+      return -1;
     }
-    return i;
   }
 
   void mediaPlayerSetPlayerCanvas(int index, Map<dynamic, dynamic> canvas) {
@@ -1809,7 +1821,9 @@ class ZegoExpressEngineWeb {
     if (_mediaPlayers[index] == null) {
       return;
     }
-    callMethod(_mediaPlayers[index].instance, 'destroy', []);
+    callMethod(ZegoFlutterEngine.instance, 'destroyMediaPlayer',
+        [_mediaPlayers[index].instance]);
+    // callMethod(_mediaPlayers[index].instance, 'destroy', []);
     _mediaPlayers.remove(index);
   }
 
@@ -2181,7 +2195,13 @@ class ZegoExpressEngineWeb {
 
   Future<void> startAudioDataObserver(
       int observerBitMask, dynamic param) async {
+    int sampleRate = param['sampleRate'];
     final param1 = dartObjToJSON(param);
+    if (sampleRate == 0) {
+      setProperty(param1, 'sampleRate', context['undefined']);
+    } else {
+      setProperty(param1, 'sampleRate', sampleRate);
+    }
     callMethod(ZegoFlutterEngine.instance, 'startAudioDataObserver',
         [observerBitMask, param1]);
   }
