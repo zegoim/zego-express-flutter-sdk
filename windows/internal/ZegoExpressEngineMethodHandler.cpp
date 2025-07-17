@@ -5924,3 +5924,40 @@ void ZegoExpressEngineMethodHandler::enableColorEnhancement(ZFArgument argument,
 
     result->Success();
 }
+
+// Picture Capturer
+void ZegoExpressEngineMethodHandler::createPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto pictureCapturer = EXPRESS::ZegoExpressSDK::getEngine()->createPictureCapturer();
+    if (pictureCapturer) {
+        auto index = pictureCapturer->getIndex();
+        pictureCapturerMap_[index] = pictureCapturer;
+        result->Success(ZFValue(index));
+    } else {
+        result->Success(ZFValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto pictureCapturer = pictureCapturerMap_[index];
+
+    if (pictureCapturer) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyPictureCapturer(pictureCapturer);
+    }
+
+    pictureCapturerMap_.erase(index);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setPathPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto pictureCapturer = pictureCapturerMap_[index];
+
+    if (pictureCapturer) {
+        auto path = zego_value_get_string(argument[ZFValue("path")]);
+        pictureCapturer->setPath(path);
+    }
+
+    result->Success();
+}

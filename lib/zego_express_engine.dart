@@ -11,6 +11,7 @@ export 'src/zego_express_api_im.dart';
 export 'src/zego_express_api_media_data_publisher.dart';
 export 'src/zego_express_api_mediaplayer.dart';
 export 'src/zego_express_api_mixer.dart';
+export 'src/zego_express_api_picture_capturer.dart';
 export 'src/zego_express_api_player.dart';
 export 'src/zego_express_api_preprocess.dart';
 export 'src/zego_express_api_publisher.dart';

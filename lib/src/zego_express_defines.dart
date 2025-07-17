@@ -1877,7 +1877,10 @@ enum ZegoVideoSourceType {
   ZegoVideoSourceScreenCapture,
 
   /// Video source from secondary camera, the rear camera when [useFrontCamera] is set to true, otherwise the front camera, only support iOS.
-  SecondaryCamera
+  SecondaryCamera,
+
+  /// Video source from picture capture.
+  Picture
 }
 
 /// Screen capture source exception type.
@@ -1895,7 +1898,19 @@ enum ZegoScreenCaptureSourceExceptionType {
   PublishRegionInvalid
 }
 
-/// Screen capture source exception type. (only for Android)
+/// Screen capture orientation.
+enum ZegoScreenCaptureOrientation {
+  /// Auto follow system orientation.
+  Auto,
+
+  /// Fixed portrait.
+  Portrait,
+
+  /// Fixed landscape.
+  Landscape
+}
+
+/// Screen capture source exception type. (only for Android and iOS)
 enum ZegoScreenCaptureExceptionType {
   /// Unknown exception type.
   Unknown,
@@ -1925,7 +1940,10 @@ enum ZegoScreenCaptureExceptionType {
   SourceNotSpecified,
 
   /// System error exception. For example, low memory, etc.
-  SystemError
+  SystemError,
+
+  /// Exception interrupted.
+  ExceptionInterrupted
 }
 
 /// The state of the screen capture source window changes.
@@ -4211,7 +4229,7 @@ class ZegoScreenCaptureConfig {
   /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
   int? microphoneVolume;
 
-  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
+  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS and Android)
   int? applicationVolume;
 
   /// Set the audio capture parameters during screen capture. (only for Android)
@@ -4220,11 +4238,19 @@ class ZegoScreenCaptureConfig {
   /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
   Rect? cropRect;
 
+  /// Set the capture orientation of the screen capture. The capture orientation will be fixed, ignoring the system returned orientation. (only for iOS/Android)
+  ZegoScreenCaptureOrientation? orientation;
+
+  /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
+  bool? muteExtensMicrophone;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
       {this.microphoneVolume,
       this.applicationVolume,
       this.audioParam,
-      this.cropRect});
+      this.cropRect,
+      this.orientation,
+      this.muteExtensMicrophone});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4233,7 +4259,9 @@ class ZegoScreenCaptureConfig {
         applicationVolume = 100,
         audioParam = ZegoAudioFrameParam(
             ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
-        cropRect = Rect.zero;
+        cropRect = Rect.zero,
+        orientation = ZegoScreenCaptureOrientation.Auto,
+        muteExtensMicrophone = false;
 }
 
 /// The screen captures source information.
@@ -4290,11 +4318,15 @@ class ZegoAudioSourceMixConfig {
   /// Enable or disable mix SDK playout into publish stream.
   bool? enableMixEnginePlayout;
 
+  /// Enable or disable mix screen capture into publish stream, the input source cannot be set to screen capture. (only for Android and iOS)
+  bool? enableMixScreenCapture;
+
   ZegoAudioSourceMixConfig(
       {this.mediaPlayerIndexList,
       this.audioEffectPlayerIndexList,
       this.enableMixSystemPlayout,
-      this.enableMixEnginePlayout});
+      this.enableMixEnginePlayout,
+      this.enableMixScreenCapture});
 }
 
 /// Multimedia resource for ZEGO media player.
@@ -6142,6 +6174,22 @@ abstract class ZegoAIVoiceChanger {
   ///
   /// - [speakerID] Speaker ID.
   Future<void> setSpeaker(int speakerID);
+}
+
+abstract class ZegoPictureCapturer {
+  /// Set the path of the picture capturer source.
+  ///
+  /// Available since: 3.22.0
+  /// Description: Set the path of the picture capturer source.
+  /// Related APIs: User can call [createPictureCapturer] function to create a picture capturer instance.
+  ///
+  /// - [path] The path of the picture.
+  Future<void> setPath(String path);
+
+  /// Get picture capturer instance index.
+  ///
+  /// - Returns Picture capturer instance index.
+  int getIndex();
 }
 
 /// Callback for setting room extra information.
