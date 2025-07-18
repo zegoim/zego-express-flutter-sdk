@@ -1679,6 +1679,23 @@ class ZegoExpressEngine {
   static void Function(ZegoScreenCaptureSource source,
       ZegoScreenCaptureSourceExceptionType exceptionType)? onExceptionOccurred;
 
+  /// The callback triggered when a screen capture source capture type exception occurred
+  ///
+  /// Available since: 3.21.0
+  /// Description: The callback triggered when a screen capture source capture type exception occurred.
+  /// Trigger: This callback is triggered when an exception occurs after the screen start capture.
+  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+  /// Restrictions: Only available on Windows/macOS.
+  ///
+  /// - [source] Callback screen capture source object.
+  /// - [sourceType] Capture source type.
+  /// - [exceptionType] Capture source exception type.
+  static void Function(
+          ZegoScreenCaptureSource source,
+          ZegoScreenCaptureSourceType sourceType,
+          ZegoScreenCaptureSourceExceptionType exceptionType)?
+      onCaptureTypeExceptionOccurred;
+
   /// The callback will be triggered when the state of the capture target window change.
   ///
   /// Available since: 3.4.0
@@ -1710,7 +1727,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when the mobile screen capture source exception occurred.
   /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   ///
   /// - [exceptionType] Screen capture exception type.
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
@@ -1722,7 +1739,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when calling the start mobile screen capture.
   /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   static void Function()? onMobileScreenCaptureStart;
 
   /// Initialize AI voice changer engine status callback.

@@ -1161,7 +1161,14 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(ZFArgument argument, ZF
                 config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[ZFValue("publishing")]);
                 config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[ZFValue("afterPublish")]);
             }
-        } 
+        }
+
+        if (!zego_value_is_null(configMap[ZFValue("switchStreamConfig")])) {
+            auto switchStreamConfigMap = zego_value_get_map(configMap[ZFValue("switchStreamConfig")]);
+            if (switchStreamConfigMap.size() > 0) {
+                config.switchStreamConfig.switchType = (EXPRESS::ZegoSwitchPlayingStreamType)zego_value_get_int(switchStreamConfigMap[ZFValue("switchType")]);
+            }
+        }
     } 
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);
@@ -5859,6 +5866,43 @@ void ZegoExpressEngineMethodHandler::enableColorEnhancement(ZFArgument argument,
 
     EXPRESS::ZegoExpressSDK::getEngine()->enableColorEnhancement(
         enable, p, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+// Picture Capturer
+void ZegoExpressEngineMethodHandler::createPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto pictureCapturer = EXPRESS::ZegoExpressSDK::getEngine()->createPictureCapturer();
+    if (pictureCapturer) {
+        auto index = pictureCapturer->getIndex();
+        pictureCapturerMap_[index] = pictureCapturer;
+        result->Success(ZFValue(index));
+    } else {
+        result->Success(ZFValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto pictureCapturer = pictureCapturerMap_[index];
+
+    if (pictureCapturer) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyPictureCapturer(pictureCapturer);
+    }
+
+    pictureCapturerMap_.erase(index);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setPathPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto pictureCapturer = pictureCapturerMap_[index];
+
+    if (pictureCapturer) {
+        auto path = zego_value_get_string(argument[ZFValue("path")]);
+        pictureCapturer->setPath(path);
+    }
 
     result->Success();
 }

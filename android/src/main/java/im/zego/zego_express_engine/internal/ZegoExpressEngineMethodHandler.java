@@ -44,6 +44,7 @@ import im.zego.zegoexpress.ZegoCopyrightedMusic;
 import im.zego.zegoexpress.ZegoExpressEngine;
 import im.zego.zegoexpress.ZegoMediaDataPublisher;
 import im.zego.zegoexpress.ZegoMediaPlayer;
+import im.zego.zegoexpress.ZegoPictureCapturer;
 import im.zego.zegoexpress.ZegoRangeAudio;
 import im.zego.zegoexpress.ZegoRealTimeSequentialDataManager;
 import im.zego.zegoexpress.callback.IZegoAudioEffectPlayerLoadResourceCallback;
@@ -124,6 +125,7 @@ import im.zego.zegoexpress.constants.ZegoScenario;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceSwitchMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceType;
+import im.zego.zegoexpress.constants.ZegoSwitchPlayingStreamType;
 import im.zego.zegoexpress.constants.ZegoTrafficControlFocusOnMode;
 import im.zego.zegoexpress.constants.ZegoTrafficControlMinVideoBitrateMode;
 import im.zego.zegoexpress.constants.ZegoVideoBufferType;
@@ -159,6 +161,7 @@ import im.zego.zegoexpress.constants.ZegoRangeAudioListenMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageMode;
 import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
 import im.zego.zegoexpress.constants.ZegoRoomStreamListType;
+import im.zego.zegoexpress.constants.ZegoScreenCaptureOrientation;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -220,6 +223,7 @@ import im.zego.zegoexpress.entity.ZegoRoomConfig;
 import im.zego.zegoexpress.entity.ZegoSEIConfig;
 import im.zego.zegoexpress.entity.ZegoScreenCaptureConfig;
 import im.zego.zegoexpress.entity.ZegoSoundLevelConfig;
+import im.zego.zegoexpress.entity.ZegoSwitchPlayingStreamConfig;
 import im.zego.zegoexpress.entity.ZegoUser;
 import im.zego.zegoexpress.entity.ZegoVideoConfig;
 import im.zego.zegoexpress.entity.ZegoVideoDenoiseParams;
@@ -262,8 +266,9 @@ public class ZegoExpressEngineMethodHandler {
 
     private static final HashMap<Integer, ZegoRealTimeSequentialDataManager> realTimeSequentialDataManagerHashMap = new HashMap<>();
 
-
     private static final HashMap<Integer, ZegoAIVoiceChanger> aiVoiceChangerHashMap = new HashMap<>();
+
+    private static final HashMap<Integer, ZegoPictureCapturer> pictureCapturerHashMap = new HashMap<>();
 
     private static ZegoRangeAudio rangeAudioInstance = null;
 
@@ -1496,6 +1501,7 @@ public class ZegoExpressEngineMethodHandler {
             }
             config.audioEffectPlayerIndexList = audioEffectPlayerIndexList_;
             config.mediaPlayerIndexList = mediaPlayerIndexList_;
+            config.enableMixScreenCapture = ZegoUtils.boolValue((Boolean) configMap.get("enableMixScreenCapture"));
         }
 
         int ret = -1;
@@ -1770,6 +1776,13 @@ public class ZegoExpressEngineMethodHandler {
                 customResourceConfig.publishing = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("publishing")));
                 customResourceConfig.afterPublish = ZegoResourceType.getZegoResourceType(ZegoUtils.intValue((Number) customResourceConfigMap.get("afterPublish")));
                 playerConfig.customResourceConfig = customResourceConfig;
+            }
+
+            HashMap<String, Object> switchStreamConfigMap = (HashMap<String, Object>) playerConfigMap.get("switchStreamConfig");
+            if (switchStreamConfigMap != null && !switchStreamConfigMap.isEmpty()) {
+                ZegoSwitchPlayingStreamConfig switchStreamConfig = new ZegoSwitchPlayingStreamConfig();
+                switchStreamConfig.switchType = ZegoSwitchPlayingStreamType.getZegoSwitchPlayingStreamType(ZegoUtils.intValue((Number) switchStreamConfigMap.get("switchType")));
+                playerConfig.switchStreamConfig = switchStreamConfig;
             }
         }
 
@@ -6293,6 +6306,8 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null) {
             config.captureAudio = ZegoUtils.boolValue((Boolean) configMap.get("captureAudio"));
             config.captureVideo = ZegoUtils.boolValue((Boolean) configMap.get("captureVideo"));
+            config.orientation = ZegoScreenCaptureOrientation.getZegoScreenCaptureOrientation(ZegoUtils.intValue((Number) configMap.get("orientation")));
+            config.applicationVolume = ZegoUtils.intValue((Number) configMap.get("applicationVolume"));
 
             HashMap<String, Object> audioParamMap = (HashMap<String, Object>) configMap.get("audioParam");
             if (audioParamMap != null) {
@@ -6334,6 +6349,8 @@ public class ZegoExpressEngineMethodHandler {
         if (configMap != null) {
             config.captureAudio = ZegoUtils.boolValue((Boolean) configMap.get("captureAudio"));
             config.captureVideo = ZegoUtils.boolValue((Boolean) configMap.get("captureVideo"));
+            config.orientation = ZegoScreenCaptureOrientation.getZegoScreenCaptureOrientation(ZegoUtils.intValue((Number) configMap.get("orientation")));
+            config.applicationVolume = ZegoUtils.intValue((Number) configMap.get("applicationVolume"));
 
             HashMap<String, Object> audioParamMap = (HashMap<String, Object>) configMap.get("audioParam");
             if (audioParamMap != null) {
@@ -6469,6 +6486,46 @@ public class ZegoExpressEngineMethodHandler {
 
         ZegoExpressEngine.getEngine().enableColorEnhancement(enable, p, channel);
 
+        result.success(null);
+    }
+
+    /* Picture Capturer */
+    @SuppressWarnings("unused")
+    public static void createPictureCapturer(MethodCall call, Result result) {
+        ZegoPictureCapturer pictureCapturer = ZegoExpressEngine.getEngine().createPictureCapturer();
+        if (pictureCapturer != null) {
+            int index = pictureCapturer.getIndex();
+            pictureCapturerHashMap.put(index, pictureCapturer);
+            result.success(index);
+        } else {
+            result.success(-1);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void destroyPictureCapturer(MethodCall call, Result result) {
+        int index = ZegoUtils.intValue((Number) call.argument("index"));
+        ZegoPictureCapturer pictureCapturer = pictureCapturerHashMap.get(index);
+        if (pictureCapturer != null) {
+            ZegoExpressEngine.getEngine().destroyPictureCapturer(pictureCapturer);
+        }
+        pictureCapturerHashMap.remove(index);
+        result.success(null);
+    }
+
+    @SuppressWarnings("unused")
+    public static void setPathPictureCapturer(MethodCall call, Result result) {
+        int index = ZegoUtils.intValue((Number) call.argument("index"));
+        String path = call.argument("path");
+        if (path != null && path.startsWith("flutter-asset://")) {
+            String processedURL = path.replace("flutter-asset://", "asset:flutter_assets/");
+            ZegoLog.log("[setDummyCaptureImagePath] Flutter asset prefix detected, origin URL: '%s', processed URL: '%s'", path, processedURL);
+            path = processedURL;
+        }
+        ZegoPictureCapturer pictureCapturer = pictureCapturerHashMap.get(index);
+        if (pictureCapturer != null) {
+            pictureCapturer.setPath(path);
+        }
         result.success(null);
     }
 

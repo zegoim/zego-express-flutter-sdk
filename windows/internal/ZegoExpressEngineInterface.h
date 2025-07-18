@@ -413,6 +413,11 @@ static const std::map<std::string,
         EngineMethodHandler(aiVoiceChangerSetSpeaker),
         EngineMethodHandler(aiVoiceChangerUpdate),
 
+        // Picture Capturer
+        EngineMethodHandler(createPictureCapturer),
+        EngineMethodHandler(destroyPictureCapturer),
+        EngineMethodHandler(setPathPictureCapturer),
+
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),
         EngineMethodHandler(destroyTextureRenderer),
