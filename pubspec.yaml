@@ -48,3 +48,4 @@ flutter:
   assets:
     - assets/ZegoExpressWebFlutterWrapper.js
     - assets/copyrighted-music.js
+    - assets/voice-changer.js
