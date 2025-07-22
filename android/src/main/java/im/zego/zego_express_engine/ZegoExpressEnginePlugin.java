@@ -92,7 +92,7 @@ public class ZegoExpressEnginePlugin implements FlutterPlugin, MethodCallHandler
         } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             ZegoLog.log("[DartCall] [InvocationTargetException] [%s] %s | %s | %s", "initApiCalledCallback", t.getCause(), t.getMessage(), getStackTrace(t));
-
+        }
     }
 
 
