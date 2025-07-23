@@ -349,6 +349,9 @@ void ZegoExpressEngineMethodHandler::loginRoom(ZFArgument argument, ZFResult res
         if (!zego_value_is_null(configMap[ZFValue("capabilityNegotiationTypes")])) {
             config.capabilityNegotiationTypes = zego_value_get_long(configMap[ZFValue("capabilityNegotiationTypes")]);
         }
+        if (!zego_value_is_null(configMap[ZFValue("roomType")])) {
+            config.roomType = zego_value_get_long(configMap[ZFValue("roomType")]);
+        }
     }
     auto sharedPtrResult = ZFMoveResult(result);
     EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(

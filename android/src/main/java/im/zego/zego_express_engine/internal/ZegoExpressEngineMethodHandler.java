@@ -606,7 +606,9 @@ public class ZegoExpressEngineMethodHandler {
             if (configMap.containsKey("capabilityNegotiationTypes") && configMap.get("capabilityNegotiationTypes") != null) {
                 roomConfig.capabilityNegotiationTypes = ZegoUtils.intValue((Number) configMap.get("capabilityNegotiationTypes"));
             }
-            
+            if (configMap.containsKey("roomType") && configMap.get("roomType") != null) {
+                roomConfig.roomType = ZegoUtils.intValue((Number) configMap.get("roomType"));
+            }
         }
 
         ZegoExpressEngine.getEngine().loginRoom(roomID, user, roomConfig, new IZegoRoomLoginCallback() {

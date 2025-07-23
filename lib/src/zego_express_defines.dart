@@ -2225,22 +2225,27 @@ class ZegoRoomConfig {
   /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
   int? capabilityNegotiationTypes;
 
+  /// The type of the room, the default is 0.
+  int? roomType;
+
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token,
-      {this.capabilityNegotiationTypes});
+      {this.capabilityNegotiationTypes, this.roomType});
 
   /// Create a default room configuration
   ZegoRoomConfig.defaultConfig()
       : maxMemberCount = 0,
         isUserStatusNotify = false,
         token = "",
-        capabilityNegotiationTypes = 0;
+        capabilityNegotiationTypes = 0,
+        roomType = 0;
 
   Map<String, dynamic> toMap() {
     return {
       'maxMemberCount': this.maxMemberCount,
       'isUserStatusNotify': this.isUserStatusNotify,
       'token': this.token,
-      'capabilityNegotiationTypes': this.capabilityNegotiationTypes
+      'capabilityNegotiationTypes': this.capabilityNegotiationTypes,
+      'roomType': this.roomType
     };
   }
 }
