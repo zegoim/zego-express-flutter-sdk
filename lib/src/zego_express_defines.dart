@@ -4244,13 +4244,17 @@ class ZegoScreenCaptureConfig {
   /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
   bool? muteExtensMicrophone;
 
+  /// Set whether to adapt to the device mode when screen capture. (only for iOS)
+  bool? adaptiveDeviceMode;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
       {this.microphoneVolume,
       this.applicationVolume,
       this.audioParam,
       this.cropRect,
       this.orientation,
-      this.muteExtensMicrophone});
+      this.muteExtensMicrophone,
+      this.adaptiveDeviceMode});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4261,7 +4265,8 @@ class ZegoScreenCaptureConfig {
             ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
         cropRect = Rect.zero,
         orientation = ZegoScreenCaptureOrientation.Auto,
-        muteExtensMicrophone = false;
+        muteExtensMicrophone = false,
+        adaptiveDeviceMode = false;
 }
 
 /// The screen captures source information.
@@ -6122,7 +6127,7 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// Available since: 3.13.0
   /// Description: Whether to collect the sound of the window process during window collection.
-  /// When to call: Before starting the collection [startScreencapture].
+  /// When to call: Before starting the collection [startScreencapture]. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeCustom, and the screen acquisition and streaming channels are the same.
   /// Restrictions: Only applicable to Windows 10 and above versions.
   ///
   /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.

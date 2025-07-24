@@ -139,8 +139,7 @@ class ZegoExpressImpl {
       }
     });
 
-    await _channel
-        .invokeMethod('setPluginVersion', {'version': pluginVersion});
+    await _channel.invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -165,8 +164,7 @@ class ZegoExpressImpl {
       'enablePlatformView': shouldUsePlatformView()
     });
 
-    await _channel
-        .invokeMethod('setPluginVersion', {'version': pluginVersion});
+    await _channel.invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -949,9 +947,7 @@ class ZegoExpressImpl {
               }
             : {},
         'switchStreamConfig': config.switchStreamConfig != null
-            ? {
-                'switchType': config.switchStreamConfig?.switchType.index
-              }
+            ? {'switchType': config.switchStreamConfig?.switchType.index}
             : {},
       }
     });
@@ -5020,7 +5016,8 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                     },
               'orientation': config.orientation?.index ??
                   ZegoScreenCaptureOrientation.Auto.index,
-              'muteExtensMicrophone': config.muteExtensMicrophone ?? false
+              'muteExtensMicrophone': config.muteExtensMicrophone ?? false,
+              'adaptiveDeviceMode': config.adaptiveDeviceMode ?? false
             },
       'inApp': inApp,
       'index': _index
@@ -5083,7 +5080,8 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
               },
         'orientation': config.orientation?.index ??
             ZegoScreenCaptureOrientation.Auto.index,
-        'muteExtensMicrophone': config.muteExtensMicrophone ?? false
+        'muteExtensMicrophone': config.muteExtensMicrophone ?? false,
+        'adaptiveDeviceMode': config.adaptiveDeviceMode ?? false
       },
       'index': _index
     });
