@@ -2025,24 +2025,6 @@ void ZegoExpressEngineEventHandler::onExceptionOccurred(
     }
 }
 
-void ZegoExpressEngineEventHandler::onCaptureTypeExceptionOccurred(
-    EXPRESS::IZegoScreenCaptureSource *source, EXPRESS::ZegoScreenCaptureSourceType sourceType,
-    EXPRESS::ZegoScreenCaptureSourceExceptionType exceptionType) {
-
-    ZF::logInfo("[onCaptureTypeExceptionOccurred] index: %d, sourceType: %d, exceptionType: %d",
-                source->getIndex(), sourceType, exceptionType);
-
-    if (eventSink_) {
-        ZFMap retMap;
-        retMap[ZFValue("method")] = ZFValue("onCaptureTypeExceptionOccurred");
-        retMap[ZFValue("screenCaptureSourceIndex")] = ZFValue(source->getIndex());
-        retMap[ZFValue("sourceType")] = ZFValue(static_cast<int32_t>(sourceType));
-        retMap[ZFValue("exceptionType")] = ZFValue(static_cast<int32_t>(exceptionType));
-
-        eventSink_->Success(retMap);
-    }
-}
-
 void ZegoExpressEngineEventHandler::onWindowStateChanged(
     EXPRESS::IZegoScreenCaptureSource *source, EXPRESS::ZegoScreenCaptureWindowState windowState,
     EXPRESS::ZegoRect windowRect) {
