@@ -1972,22 +1972,6 @@
     }
 }
 
-- (void)screenCapture:(ZegoScreenCaptureSource *)source captureType:(ZegoScreenCaptureSourceType)sourceType exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)exceptionType {
-    FlutterEventSink sink = _eventSink;
-    ZGLog(@"[screenCapture:sourceType:exceptionOccurred:] captureType: %td, exceptionType: %td", sourceType, exceptionType);
-
-    GUARD_SINK
-
-    if (sink) {
-        sink(@{
-            @"method": @"onCaptureTypeExceptionOccurred",
-            @"screenCaptureSourceIndex": [source getIndex],
-            @"sourceType": @(sourceType),
-            @"exceptionType": @(exceptionType)
-        });
-    }
-}
-
 - (void)screenCapture:(ZegoScreenCaptureSource *)source windowState:(ZegoScreenCaptureWindowState)state windowRect:(CGRect)rect {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[screenCapture:windowState:windowRect:] state: %td, rect: %@", state, NSStringFromRect(rect));
