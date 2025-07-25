@@ -568,6 +568,19 @@ class ZegoExpressImpl {
         image: map['image'] != null ? MemoryImage(map['image']) : null);
   }
 
+  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshotByConfig(
+      ZegoPublisherTakeSnapshotConfig config,
+      {ZegoPublishChannel? channel}) async {
+    final Map<dynamic, dynamic> map =
+        await _channel.invokeMethod('takePublishStreamSnapshotByConfig', {
+      'config': {'position': config.position.index},
+      'channel': channel?.index ?? ZegoPublishChannel.Main.index
+    });
+
+    return ZegoPublisherTakeSnapshotResult(map['errorCode'],
+        image: map['image'] != null ? MemoryImage(map['image']) : null);
+  }
+
   Future<void> mutePublishStreamAudio(bool mute,
       {ZegoPublishChannel? channel}) async {
     return await _channel.invokeMethod('mutePublishStreamAudio', {
