@@ -3627,6 +3627,21 @@ class ZegoExpressImpl {
         }
         break;
 
+      case 'onCaptureTypeExceptionOccurred':
+        if (ZegoExpressEngine.onCaptureTypeExceptionOccurred == null) return;
+
+        var screenCaptureSourceIndex = map['screenCaptureSourceIndex'];
+        var screenCaptureSource =
+            screenCaptureSourceMap[screenCaptureSourceIndex!];
+        if (screenCaptureSource != null) {
+          ZegoExpressEngine.onCaptureTypeExceptionOccurred!(
+              screenCaptureSource,
+              ZegoScreenCaptureSourceType.values[map['sourceType']],
+              ZegoScreenCaptureSourceExceptionType
+                  .values[map['exceptionType']]);
+        }
+        break;
+
       case 'onWindowStateChanged':
         if (ZegoExpressEngine.onWindowStateChanged == null) return;
 
