@@ -468,6 +468,9 @@
         if (configMap[@"capabilityNegotiationTypes"]) {
             configObject.capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
         }
+        if (configMap[@"roomType"]) {
+            configObject.roomType = [ZegoUtils unsignedIntValue:configMap[@"roomType"]];
+        }
     }
 
     [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {

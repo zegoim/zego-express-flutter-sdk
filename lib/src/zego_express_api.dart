@@ -1410,9 +1410,7 @@ class ZegoExpressEngine {
   ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
   ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
   ///   Version 2.22.0 and above:
-  ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
-  ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
-  ///   3. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
+  ///   1. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
   /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
   /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
   ///
@@ -1664,23 +1662,6 @@ class ZegoExpressEngine {
   /// - [exceptionType] Capture source exception type.
   static void Function(ZegoScreenCaptureSource source,
       ZegoScreenCaptureSourceExceptionType exceptionType)? onExceptionOccurred;
-
-  /// The callback triggered when a screen capture source capture type exception occurred
-  ///
-  /// Available since: 3.21.0
-  /// Description: The callback triggered when a screen capture source capture type exception occurred.
-  /// Trigger: This callback is triggered when an exception occurs after the screen start capture.
-  /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Windows/macOS.
-  ///
-  /// - [source] Callback screen capture source object.
-  /// - [sourceType] Capture source type.
-  /// - [exceptionType] Capture source exception type.
-  static void Function(
-          ZegoScreenCaptureSource source,
-          ZegoScreenCaptureSourceType sourceType,
-          ZegoScreenCaptureSourceExceptionType exceptionType)?
-      onCaptureTypeExceptionOccurred;
 
   /// The callback will be triggered when the state of the capture target window change.
   ///
