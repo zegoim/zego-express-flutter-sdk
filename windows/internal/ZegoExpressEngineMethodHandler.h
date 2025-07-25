@@ -77,6 +77,7 @@ class ZegoExpressEngineMethodHandler {
     void getAudioConfig(ZFArgument argument, ZFResult result);
     void setPublishStreamEncryptionKey(ZFArgument argument, ZFResult result);
     void takePublishStreamSnapshot(ZFArgument argument, ZFResult result);
+    void takePublishStreamSnapshotByConfig(ZFArgument argument, ZFResult result);
 
     void setMinVideoBitrateForTrafficControl(ZFArgument argument, ZFResult result);
     void setMinVideoFpsForTrafficControl(ZFArgument argument, ZFResult result);

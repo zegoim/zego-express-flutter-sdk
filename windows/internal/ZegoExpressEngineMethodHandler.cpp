@@ -723,6 +723,32 @@ void ZegoExpressEngineMethodHandler::takePublishStreamSnapshot(ZFArgument argume
         (EXPRESS::ZegoPublishChannel)channel);
 }
 
+void ZegoExpressEngineMethodHandler::takePublishStreamSnapshotByConfig(ZFArgument argument, ZFResult result) {
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+    auto configMap = zego_value_get_map(argument[ZFValue("config")]);
+    EXPRESS::ZegoPublisherTakeSnapshotConfig config;
+    config.position = (EXPRESS::ZegoPublisherTakeSnapshotPosition)zego_value_get_int(configMap[ZFValue("position")]);
+    
+    auto sharedPtrResult = ZFMoveResult(result);
+    EXPRESS::ZegoExpressSDK::getEngine()->takePublishStreamSnapshotByConfig(config,
+        [=](int errorCode, void *image) {
+            std::vector<uint8_t> raw_image;
+            if (image) {
+#ifdef _WIN32
+                auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+                raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
+#endif
+            }
+
+            ZFMap resultMap;
+            resultMap[ZFValue("errorCode")] = ZFValue(errorCode);
+            resultMap[ZFValue("image")] = ZFValue(raw_image);
+            sharedPtrResult->Success(resultMap);
+        },
+        (EXPRESS::ZegoPublishChannel)channel);
+}
+
 void ZegoExpressEngineMethodHandler::mutePublishStreamAudio(ZFArgument argument, ZFResult result) {
     auto mute = zego_value_get_bool(argument[ZFValue("mute")]);
     auto channel = zego_value_get_int(argument[ZFValue("channel")]);

@@ -953,6 +953,35 @@
     } channel:(ZegoPublishChannel)channel];
 }
 
+- (void)takePublishStreamSnapshotByConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoPublisherTakeSnapshotConfig *config = [ZegoPublisherTakeSnapshotConfig new];
+    config.position = (ZegoPublisherTakeSnapshotPosition)[ZegoUtils intValue:configMap[@"position"]];
+
+    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshotByConfig:config callback:^(int errorCode, ZGImage * _Nullable image) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = nil;
+            if (errorCode == 0 && image) {
+#if TARGET_OS_IPHONE
+                imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                result(@{
+                    @"errorCode": @(errorCode),
+                    @"image": imageData ?: [[NSNull alloc] init]
+                });
+            });
+        });
+    } channel:(ZegoPublishChannel)channel];
+}
+
 - (void)mutePublishStreamAudio:(FlutterMethodCall *)call result:(FlutterResult)result {
 
     BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];

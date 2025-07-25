@@ -72,6 +72,7 @@ static const std::map<std::string,
         EngineMethodHandler(getAudioConfig),
         EngineMethodHandler(setPublishStreamEncryptionKey),
         EngineMethodHandler(takePublishStreamSnapshot),
+        EngineMethodHandler(takePublishStreamSnapshotByConfig),
 
         EngineMethodHandler(setMinVideoBitrateForTrafficControl),
         EngineMethodHandler(setMinVideoFpsForTrafficControl),

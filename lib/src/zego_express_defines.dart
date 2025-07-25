@@ -1823,6 +1823,15 @@ enum ZegoVideoDenoiseStrength {
   Heavy
 }
 
+/// The position of taking snapshot.
+enum ZegoPublisherTakeSnapshotPosition {
+  /// After video process.
+  AfterProcess,
+
+  /// On capture.
+  OnCapture
+}
+
 /// Super resolution mode.
 enum ZegoSuperResolutionState {
   /// Super resolution turned off.
@@ -4637,6 +4646,18 @@ class ZegoExpLowlightEnhancementParams {
   ZegoExpLowlightEnhancementParams.defaultParam()
       : mode = ZegoLowlightEnhancementMode.Off,
         type = ZegoExpLowlightEnhancementType.Normal;
+}
+
+/// The config of publish stream snapshot.
+class ZegoPublisherTakeSnapshotConfig {
+  /// The position of taking snapshot. Default value: .
+  ZegoPublisherTakeSnapshotPosition position;
+
+  ZegoPublisherTakeSnapshotConfig(this.position);
+
+  /// Constructs a publish take snapshot config object by default.
+  ZegoPublisherTakeSnapshotConfig.defaultConfig()
+      : position = ZegoPublisherTakeSnapshotPosition.AfterProcess;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {

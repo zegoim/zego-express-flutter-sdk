@@ -163,6 +163,7 @@ import im.zego.zegoexpress.constants.ZegoRoomTransparentMessageType;
 import im.zego.zegoexpress.constants.ZegoRoomStreamListType;
 import im.zego.zegoexpress.constants.ZegoScreenCaptureOrientation;
 import im.zego.zegoexpress.constants.ZegoVolumeType;
+import im.zego.zegoexpress.constants.ZegoPublisherTakeSnapshotPosition;
 import im.zego.zegoexpress.entity.ZegoAccurateSeekConfig;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import im.zego.zegoexpress.entity.ZegoAudioEffectPlayConfig;
@@ -239,6 +240,7 @@ import im.zego.zegoexpress.entity.ZegoColorEnhancementParams;
 import im.zego.zegoexpress.entity.ZegoRoomSendTransparentMessage;
 import im.zego.zegoexpress.entity.ZegoRoomStreamList;
 import im.zego.zegoexpress.entity.ZegoStream;
+import im.zego.zegoexpress.entity.ZegoPublisherTakeSnapshotConfig;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
@@ -1073,6 +1075,53 @@ public class ZegoExpressEngineMethodHandler {
         ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
 
         ZegoExpressEngine.getEngine().takePublishStreamSnapshot(new IZegoPublisherTakeSnapshotCallback() {
+            @Override
+            public void onPublisherTakeSnapshotResult(final int errorCode, final Bitmap image) {
+
+                if (image != null) {
+                    new Thread(new Runnable(){
+                        public void run() {
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                            final byte[] imageData = stream.toByteArray();
+                            image.recycle();
+
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HashMap<String, Object> resultMap = new HashMap<>();
+                                    resultMap.put("errorCode", errorCode);
+                                    resultMap.put("image", imageData);
+                                    result.success(resultMap);
+                                }
+                            });
+                        }
+                    }).start();
+
+                } else {
+                    HashMap<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("errorCode", errorCode);
+                    resultMap.put("image", null);
+                    result.success(resultMap);
+                }
+            }
+        }, channel);
+    }
+
+    @SuppressWarnings("unused")
+    public static void takePublishStreamSnapshotByConfig(MethodCall call, final Result result) {
+        ZegoPublishChannel channel = ZegoPublishChannel.getZegoPublishChannel(ZegoUtils.intValue((Number) call.argument("channel")));
+        HashMap<String, Object> configMap = call.argument("config");
+        if (configMap == null || configMap.isEmpty()) {
+            result.error("takePublishStreamSnapshotByConfig_Null_Config".toUpperCase(), "[takePublishStreamSnapshotByConfig] Null config", null);
+            return;
+        }
+
+        int position = ZegoUtils.intValue((Number) configMap.get("position"));
+        ZegoPublisherTakeSnapshotConfig config = new ZegoPublisherTakeSnapshotConfig();
+        config.position = ZegoPublisherTakeSnapshotPosition.getZegoPublisherTakeSnapshotPosition(position);
+
+        ZegoExpressEngine.getEngine().takePublishStreamSnapshotByConfig(config, new IZegoPublisherTakeSnapshotCallback() {
             @Override
             public void onPublisherTakeSnapshotResult(final int errorCode, final Bitmap image) {
 
