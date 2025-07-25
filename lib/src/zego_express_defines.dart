@@ -1808,6 +1808,15 @@ enum ZegoVideoDenoiseStrength {
   Heavy
 }
 
+/// The position of taking snapshot.
+enum ZegoPublisherTakeSnapshotPosition {
+  /// After video process.
+  AfterProcess,
+
+  /// On capture.
+  OnCapture
+}
+
 /// Super resolution mode.
 enum ZegoSuperResolutionState {
   /// Super resolution turned off.
@@ -4568,6 +4577,18 @@ class ZegoExpLowlightEnhancementParams {
         type = ZegoExpLowlightEnhancementType.Normal;
 }
 
+/// The config of publish stream snapshot.
+class ZegoPublisherTakeSnapshotConfig {
+  /// The position of taking snapshot. Default value: .
+  ZegoPublisherTakeSnapshotPosition position;
+
+  ZegoPublisherTakeSnapshotConfig(this.position);
+
+  /// Constructs a publish take snapshot config object by default.
+  ZegoPublisherTakeSnapshotConfig.defaultConfig()
+      : position = ZegoPublisherTakeSnapshotPosition.AfterProcess;
+}
+
 abstract class ZegoRealTimeSequentialDataManager {
   /// Start broadcasting real-time sequential data stream.
   ///
@@ -6067,7 +6088,7 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// Available since: 3.13.0
   /// Description: Whether to collect the sound of the window process during window collection.
-  /// When to call: Before starting the collection [startScreencapture].
+  /// When to call: Before starting the collection [startScreencapture]. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeCustom, and the screen acquisition and streaming channels are the same.
   /// Restrictions: Only applicable to Windows 10 and above versions.
   ///
   /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.

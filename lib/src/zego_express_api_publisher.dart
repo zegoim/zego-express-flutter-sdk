@@ -245,6 +245,27 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
         .takePublishStreamSnapshot(channel: channel);
   }
 
+  /// Take a snapshot of the publishing stream for the specified publish channel.
+  ///
+  /// Available since: 3.22.0
+  /// Description: Take a snapshot of the publishing stream.
+  /// When to call: Called this function after calling [startPublishingStream] or [startPreview].
+  /// Restrictions: None.
+  /// Caution: The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post].
+  /// Related callbacks: The screenshot result will be called back through [ZegoPublisherTakeSnapshotCallback].
+  /// Related APIs: [takePlayStreamSnapshot].
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [config] The config of snapshot
+  /// - [channel] Publish stream channel.
+  /// - Returns Results of take publish stream snapshot.
+  Future<ZegoPublisherTakeSnapshotResult> takePublishStreamSnapshotByConfig(
+      ZegoPublisherTakeSnapshotConfig config,
+      {ZegoPublishChannel? channel}) async {
+    return await ZegoExpressImpl.instance
+        .takePublishStreamSnapshotByConfig(config, channel: channel);
+  }
+
   /// Stops or resumes sending the audio part of a stream for the specified channel.
   ///
   /// Available since: 1.1.0
