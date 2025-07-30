@@ -2161,10 +2161,9 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getSurfaceView();
+                    view = platformView.getTextureView();
                     if (alphaBlend) {
-                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
-                        ((SurfaceView)view).setZOrderOnTop(true);
+                        ((TextureView)view).setOpaque(false);
                     }
                 } else {
                     // Play video without creating the PlatformView in advance
