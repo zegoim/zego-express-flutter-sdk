@@ -2345,6 +2345,12 @@
     // minPlayStreamBufferLength
     taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
 
+    // streamAlignmentVolumeControlMode
+    taskObject.streamAlignmentVolumeControlMode = (ZegoStreamAlignmentVolumeControlMode)[ZegoUtils intValue:call.arguments[@"streamAlignmentVolumeControlMode"]];
+
+    // streamAlignmentBaselineStreamID
+    taskObject.streamAlignmentBaselineStreamID = call.arguments[@"streamAlignmentBaselineStreamID"];
+
     [[ZegoExpressEngine sharedEngine] startAutoMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
 
         NSString *extendedDataJsonString = @"{}";

@@ -736,6 +736,15 @@ enum ZegoMixImageCheckMode {
   Nothing
 }
 
+/// Stream alignment volume control mode.
+enum ZegoStreamAlignmentVolumeControlMode {
+  /// Disable volume control when stream alignment.
+  Close,
+
+  /// Enable volume control when stream alignment.
+  Open
+}
+
 /// Traffic control property (bitmask enumeration).
 class ZegoTrafficControlProperty {
   /// Basic (Adaptive (reduce) video bitrate)
@@ -3673,6 +3682,12 @@ class ZegoAutoMixerTask {
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
+  /// Stream mixing alignment scene volume adjustment mode.
+  ZegoStreamAlignmentVolumeControlMode streamAlignmentVolumeControlMode;
+
+  /// Stream mixing alignment scene baseline streamID.
+  String streamAlignmentBaselineStreamID;
+
   /// Create a auto mix stream task object
   ZegoAutoMixerTask()
       : taskID = "",
@@ -3681,7 +3696,10 @@ class ZegoAutoMixerTask {
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
         enableSoundLevel = false,
         streamAlignmentMode = ZegoStreamAlignmentMode.None,
-        minPlayStreamBufferLength = -1;
+        minPlayStreamBufferLength = -1,
+        streamAlignmentVolumeControlMode =
+            ZegoStreamAlignmentVolumeControlMode.Close,
+        streamAlignmentBaselineStreamID = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -3691,7 +3709,10 @@ class ZegoAutoMixerTask {
       'outputList': this.outputList,
       'enableSoundLevel': this.enableSoundLevel,
       'streamAlignmentMode': this.streamAlignmentMode.index,
-      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
+      'streamAlignmentVolumeControlMode':
+          this.streamAlignmentVolumeControlMode.index,
+      'streamAlignmentBaselineStreamID': this.streamAlignmentBaselineStreamID
     };
   }
 }

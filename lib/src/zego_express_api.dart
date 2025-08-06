@@ -1076,7 +1076,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 1.2.1
   /// Description: This callback is used to receive broadcast messages sent by other users in the same room.
-  /// Use cases: Generally used when the number of people in the live room does not exceed 500
+  /// Use cases: Generally used in the live room.
   /// When to trigger: After calling [loginRoom] to log in to the room, if a user in the room sends a broadcast message via [sendBroadcastMessage] function, this callback will be triggered.
   /// Restrictions: None
   /// Caution: The broadcast message sent by the user will not be notified through this callback.
@@ -1107,7 +1107,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 1.2.1
   /// Description: This callback is used to receive custom command sent by other users in the same room.
-  /// Use cases: Generally used when the number of people in the live room does not exceed 500
+  /// Use cases: Generally used in the live room.
   /// When to trigger: After calling [loginRoom] to log in to the room, if other users in the room send custom signaling to the developer through the [sendCustomCommand] function, this callback will be triggered.
   /// Restrictions: None
   /// Caution: The custom command sent by the user himself will not be notified through this callback.
