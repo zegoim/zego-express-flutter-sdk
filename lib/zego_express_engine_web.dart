@@ -866,8 +866,8 @@ class ZegoExpressEngineWeb {
         final updateType = ZegoUpdateType.values[data['updateType']];
         final deviceType = ZegoAudioDeviceType.values[data['deviceType']];
         final jsDeviceInfo = data['deviceInfo'];
-        final deviceInfo = ZegoDeviceInfo(jsDeviceInfo['deviceID'],
-            jsDeviceInfo['deviceName'],"");
+        final deviceInfo = ZegoDeviceInfo(
+            jsDeviceInfo['deviceID'], jsDeviceInfo['deviceName'], "");
         ZegoExpressEngine.onAudioDeviceStateChanged!(
             updateType, deviceType, deviceInfo);
         break;
@@ -877,10 +877,9 @@ class ZegoExpressEngineWeb {
         final data = jsonDecode(map["data"]);
         final updateType = ZegoUpdateType.values[data['updateType']];
         final jsDeviceInfo = data['deviceInfo'];
-        final deviceInfo = ZegoDeviceInfo(jsDeviceInfo['deviceID'],
-            jsDeviceInfo['deviceName'],"");
-        ZegoExpressEngine.onVideoDeviceStateChanged!(
-            updateType, deviceInfo);
+        final deviceInfo = ZegoDeviceInfo(
+            jsDeviceInfo['deviceID'], jsDeviceInfo['deviceName'], "");
+        ZegoExpressEngine.onVideoDeviceStateChanged!(updateType, deviceInfo);
         break;
       case 'onLocalDeviceExceptionOccurred':
         if (ZegoExpressEngine.onLocalDeviceExceptionOccurred == null) return;

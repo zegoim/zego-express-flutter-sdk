@@ -664,13 +664,7 @@ enum ZegoAECMode {
   Soft,
 
   /// AI echo cancellation. Supports intelligent recognition and elimination of echo, with a significant improvement in vocal fidelity compared to traditional AEC algorithms, without additional delay or power consumption increase.
-  AI,
-
-  /// AI Aggressive echo cancellation, Similar to ZegoAECModeAI, it offers cleaner echo cancellation in scenarios with significant reverberation, making it recommended for use in chat rooms with large reverberation. It can be left off in other scenarios, especially in KTV settings where music is played out loud, as it may cause slightly more distortion to the human voice.
-  AIAggressive,
-
-  /// Balanced AI echo cancellation, Compared with ZegoAECModeAIAggressive, the echo suppression is cleaner, but the human voice will be more damaged. It is recommended to use it in voice chat scenarios.
-  AIBalanced
+  AI
 }
 
 /// Active Noise Suppression mode.
@@ -1766,6 +1760,18 @@ enum ZegoStreamEvent {
   PlayEnd
 }
 
+/// Screen capture audio device mode.
+enum ZegoScreenCaptureAudioDeviceMode {
+  /// Default mode.
+  None,
+
+  /// General mode.
+  General,
+
+  /// Communication mode.
+  Communication
+}
+
 /// Type of capture target.
 enum ZegoScreenCaptureSourceType {
   /// Unknow.
@@ -1958,7 +1964,10 @@ enum ZegoScreenCaptureExceptionType {
   SystemError,
 
   /// Exception interrupted.
-  ExceptionInterrupted
+  ExceptionInterrupted,
+
+  /// Audio device exception. You need to restart the capture.
+  AudioDeviceException
 }
 
 /// The state of the screen capture source window changes.
@@ -4264,8 +4273,12 @@ class ZegoScreenCaptureConfig {
   /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
   bool? muteExtensMicrophone;
 
-  /// Set whether to adapt to the device mode when screen capture. (only for iOS)
-  bool? adaptiveDeviceMode;
+  /// Set the audio device mode for the specified scene, the default is General. (only for iOS) Notes:
+  /// 1. Only works when the audio main source is always a microphone;
+  /// 2. Only works for [startScreenCapture] interface, [updateScreenCapture] does not take effect;
+  /// 3. The audio device mode changes during screen capture may cause the audio output of the screen capture to be abnormal, which can be monitored through [onMobileScreenCaptureExceptionOccurred] callback, and if necessary, the screen capture needs to be restarted.;
+  /// 4. After the screen capture is stopped, the audio device mode before the screen capture will be restored.
+  ZegoScreenCaptureAudioDeviceMode? audioDeviceMode;
 
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
       {this.microphoneVolume,
@@ -4274,7 +4287,7 @@ class ZegoScreenCaptureConfig {
       this.cropRect,
       this.orientation,
       this.muteExtensMicrophone,
-      this.adaptiveDeviceMode});
+      this.audioDeviceMode});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4285,8 +4298,7 @@ class ZegoScreenCaptureConfig {
             ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
         cropRect = Rect.zero,
         orientation = ZegoScreenCaptureOrientation.Auto,
-        muteExtensMicrophone = false,
-        adaptiveDeviceMode = false;
+        muteExtensMicrophone = false;
 }
 
 /// The screen captures source information.
