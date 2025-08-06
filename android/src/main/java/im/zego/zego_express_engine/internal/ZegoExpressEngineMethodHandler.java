@@ -122,6 +122,7 @@ import im.zego.zegoexpress.constants.ZegoReverbPreset;
 import im.zego.zegoexpress.constants.ZegoRoomMode;
 import im.zego.zegoexpress.constants.ZegoSEIType;
 import im.zego.zegoexpress.constants.ZegoScenario;
+import im.zego.zegoexpress.constants.ZegoStreamAlignmentVolumeControlMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceSwitchMode;
 import im.zego.zegoexpress.constants.ZegoStreamResourceType;
@@ -2555,6 +2556,9 @@ public class ZegoExpressEngineMethodHandler {
         
         // minPlayStreamBufferLength
         taskObject.minPlayStreamBufferLength = ZegoUtils.intValue((Number)call.argument("minPlayStreamBufferLength"));
+
+        taskObject.streamAlignmentVolumeControlMode = ZegoStreamAlignmentVolumeControlMode.getZegoStreamAlignmentVolumeControlMode(ZegoUtils.intValue((Number)call.argument("streamAlignmentVolumeControlMode")));
+        taskObject.streamAlignmentBaselineStreamID = call.argument("streamAlignmentBaselineStreamID");
 
         ZegoExpressEngine.getEngine().startAutoMixerTask(taskObject, new IZegoMixerStartCallback() {
             @Override

@@ -4597,6 +4597,9 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(ZFArgument argument, ZFR
     task.minPlayStreamBufferLength =
         zego_value_get_int(argument[ZFValue("minPlayStreamBufferLength")]);
 
+    task.streamAlignmentVolumeControlMode = (EXPRESS::ZegoStreamAlignmentVolumeControlMode)zego_value_get_int(argument[ZFValue("streamAlignmentVolumeControlMode")]);
+    task.streamAlignmentBaselineStreamID = zego_value_get_string(argument[ZFValue("streamAlignmentBaselineStreamID")]);
+
     auto sharedPtrResult = ZFMoveResult(result);
     EXPRESS::ZegoExpressSDK::getEngine()->startAutoMixerTask(
         task, [=](int errorCode, std::string extendedData) {
