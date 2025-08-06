@@ -51,7 +51,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
             return false;
         }
 
-        ZegoLog.log("[destroyPlatformView] viewID:%d, surfaceView:%s", viewID, platformView.getSurfaceView() == null ? "null" : platformView.getSurfaceView().hashCode());
+        ZegoLog.log("[destroyPlatformView] viewID:%d, surfaceView:%s", viewID, platformView.getView() == null ? "null" : platformView.getView().hashCode());
 
         this.platformViews.remove(viewID);
 
@@ -73,7 +73,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
 
     private void addPlatformView(int viewID, ZegoPlatformView view) {
 
-        ZegoLog.log("[createPlatformView] viewID:%d, surfaceView:%s", viewID, view.getSurfaceView().hashCode());
+        ZegoLog.log("[createPlatformView] viewID:%d, surfaceView:%s", viewID, view.getView().hashCode());
 
         this.platformViews.put(viewID, view);
 
@@ -94,7 +94,7 @@ public class ZegoPlatformViewFactory extends PlatformViewFactory {
             if (eachPlatformView == null) {
                 continue;
             }
-            desc.append(String.format(Locale.ENGLISH, "[ID:%d|View:%s] ", id, eachPlatformView.getSurfaceView() == null ? "null" : eachPlatformView.getSurfaceView().hashCode()));
+            desc.append(String.format(Locale.ENGLISH, "[ID:%d|View:%s] ", id, eachPlatformView.getView() == null ? "null" : eachPlatformView.getView().hashCode()));
         }
         ZegoLog.log("[ZegoPlatformViewFactory] currentPlatformViews: %s", desc.toString());
     }

@@ -4549,6 +4549,10 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(ZFArgument argument, ZF
     }
 }
 
+void ZegoExpressEngineMethodHandler::setPlayingCanvas(ZFArgument argument, ZFResult result) {
+    result->Error("not_support_feature", "windows platform not support feature");
+}
+
 void ZegoExpressEngineMethodHandler::startAutoMixerTask(ZFArgument argument, ZFResult result) {
     EXPRESS::ZegoAutoMixerTask task;
     task.taskID = zego_value_get_string(argument[ZFValue("taskID")]);

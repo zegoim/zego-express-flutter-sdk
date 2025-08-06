@@ -873,6 +873,18 @@ enum ZegoStreamResourceType {
 }
 
 /// Update type.
+enum ZegoViewUpdateType {
+  /// Add
+  Add,
+
+  /// Delete
+  Delete,
+
+  /// Update
+  Update
+}
+
+/// Update type.
 enum ZegoUpdateType {
   /// Add
   Add,
@@ -2608,13 +2620,30 @@ class ZegoCanvas {
   /// If enable alpha blend render, default is false.
   bool? alphaBlend;
 
-  ZegoCanvas(this.view, {this.viewMode, this.backgroundColor, this.alphaBlend});
+  /// Rotate the angle counterclockwise, the default is 0. The media player canvas is not supported.
+  int? rotation;
+
+  /// If enable the view mirror, default is false. Only play stream canvas is supported, for publish stream please use [setVideoMirrorMode] interface, for media player please use [enableViewMirror] interface.
+  bool? mirror;
+
+  /// Context of view, default is empty string. A utf8 string with a maximum length of 64 bytes or less. Generally no attention is required, it can be used for slitting rendering of mixed stream, to understand the specific use, you need to contact ZEGO technical support.
+  String? viewContext;
+
+  ZegoCanvas(this.view,
+      {this.viewMode,
+      this.backgroundColor,
+      this.alphaBlend,
+      this.rotation,
+      this.mirror,
+      this.viewContext});
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
   ZegoCanvas.view(this.view)
       : this.viewMode = ZegoViewMode.AspectFit,
         this.backgroundColor = 0x000000,
-        this.alphaBlend = false;
+        this.alphaBlend = false,
+        this.rotation = 0,
+        this.mirror = false;
 }
 
 /// Advanced publisher configuration.

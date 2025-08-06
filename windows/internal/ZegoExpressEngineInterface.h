@@ -96,6 +96,7 @@ static const std::map<std::string,
         EngineMethodHandler(initVideoSuperResolution),
         EngineMethodHandler(uninitVideoSuperResolution),
         EngineMethodHandler(updatePlayingCanvas),
+        EngineMethodHandler(setPlayingCanvas),
 
         EngineMethodHandler(startAutoMixerTask),
         EngineMethodHandler(stopAutoMixerTask),

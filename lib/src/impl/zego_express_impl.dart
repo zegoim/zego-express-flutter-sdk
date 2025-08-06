@@ -438,6 +438,8 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
     }
 
     return await _channel.invokeMethod('startPreview', {
@@ -447,7 +449,8 @@ class ZegoExpressImpl {
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
               'backgroundColor': canvas.backgroundColor ?? 0x000000,
-              'alphaBlend': canvas.alphaBlend ?? false
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -873,6 +876,10 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setMirror(canvas.view, canvas.mirror ?? false);
     }
 
     return await _channel.invokeMethod('startPlayingStream', {
@@ -883,7 +890,9 @@ class ZegoExpressImpl {
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
               'backgroundColor': canvas.backgroundColor ?? 0x000000,
-              'alphaBlend': canvas.alphaBlend ?? false
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0,
+              'mirror': canvas.mirror ?? false
             }
           : {},
       'config': config != null
@@ -1098,6 +1107,10 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setMirror(canvas.view, canvas.mirror ?? false);
     }
     return await _channel.invokeMethod('updatePlayingCanvas', {
       'streamID': streamID,
@@ -1105,8 +1118,43 @@ class ZegoExpressImpl {
         'view': canvas.view,
         'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
         'backgroundColor': canvas.backgroundColor ?? 0x000000,
-        'alphaBlend': canvas.alphaBlend ?? false
+        'alphaBlend': canvas.alphaBlend ?? false,
+        'rotation': canvas.rotation ?? 0,
+        'mirror': canvas.mirror ?? false
       }
+    });
+  }
+
+  Future<int> setPlayingCanvas(String streamID, ZegoViewUpdateType updateType,
+      {ZegoCanvas? canvas}) async {
+    if (canvas != null && !shouldUsePlatformView()) {
+      ZegoExpressTextureRenderer()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+    }
+    return await _channel.invokeMethod('setPlayingCanvas', {
+      'streamID': streamID,
+      'updateType': updateType.index,
+      'canvas': canvas != null
+          ? {
+              'view': canvas.view,
+              'viewMode':
+                  canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
+              'backgroundColor': canvas.backgroundColor ?? 0x000000,
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0,
+              'mirror': canvas.mirror ?? false,
+              'viewContext': canvas.viewContext ?? ""
+            }
+          : {}
     });
   }
 
@@ -2916,6 +2964,13 @@ class ZegoExpressImpl {
           return;
 
         ZegoExpressEngine.onPlayerRenderCameraVideoFirstFrame!(map['streamID']);
+        break;
+
+      case 'onPlayerRenderMultiViewFirstFrame':
+        if (ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame == null) return;
+
+        ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame!(
+            map['streamID'], map['viewContext']);
         break;
 
       case 'onPlayerVideoSuperResolutionUpdate':

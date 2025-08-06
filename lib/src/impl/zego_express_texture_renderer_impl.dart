@@ -87,6 +87,26 @@ class ZegoExpressTextureRenderer {
     _updateController.sink.add({'textureID': textureID, 'type': 'update'});
   }
 
+  void setRotation(int textureID, int rotation) {
+    if (!kIsWindows) {
+      return;
+    }
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] setRotation. widget: $textureID, rotation: $rotation');
+    _rotationMap[textureID] = rotation;
+    _updateController.sink.add({'textureID': textureID, 'type': 'update'});
+  }
+
+  void setMirror(int textureID, bool mirror) {
+    if (!kIsWindows) {
+      return;
+    }
+    ZegoExpressImpl.sendCustomLogMessage(
+        '[WidgetState] setMirror. widget: $textureID, mirror: $mirror');
+    _mirrorMap[textureID] = mirror ? 1 : 0;
+    _updateController.sink.add({'textureID': textureID, 'type': 'update'});
+  }
+
   ZegoViewMode? getViewMode(int textureID) => _viewModeMap[textureID];
   Color? getBackgroundColor(int textureID) => _backgroundColorMap[textureID];
   Size? getSize(int textureID) => _sizeMap[textureID];
@@ -139,8 +159,12 @@ class ZegoExpressTextureRenderer {
           int textureID = map['textureID'];
           _sizeMap[textureID] = Size(double.parse(map['width'].toString()),
               double.parse(map['height'].toString()));
-          _mirrorMap[textureID] = map['isMirror'];
-          _rotationMap[textureID] = map['rotation'];
+          if (_mirrorMap.containsKey('isMirror')) {
+            _mirrorMap[textureID] = map['isMirror'];
+          }
+          if (map.containsKey('rotation')) {
+            _rotationMap[textureID] = map['rotation'];
+          }
           _updateController.sink
               .add({'textureID': textureID, 'type': 'update'});
       }
