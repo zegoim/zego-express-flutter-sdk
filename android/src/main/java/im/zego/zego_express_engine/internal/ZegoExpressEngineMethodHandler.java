@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.SurfaceView;
-import android.view.TextureView;
 
 import org.json.JSONObject;
 
@@ -845,12 +844,14 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getTextureView();
+                    view = platformView.getSurfaceView();
                     if (alphaBlend) {
-                        ((TextureView)view).setOpaque(false);
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
                     }
                 } else {
                     // Preview video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
                     ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_PlatformView".toUpperCase(), errorMessage, null);
@@ -865,6 +866,7 @@ public class ZegoExpressEngineMethodHandler {
                     view = textureRenderer.getSurface();
                 } else {
                     // Preview video without creating TextureRenderer in advance
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
                     ZegoLog.error("[startPreview] %s", errorMessage);
                     result.error("startPreview_No_TextureRenderer".toUpperCase(), errorMessage, null);
@@ -1741,12 +1743,14 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getTextureView();
+                    view = platformView.getSurfaceView();
                     if (alphaBlend) {
-                        ((TextureView)view).setOpaque(false);
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
                     }
                 } else {
                     // Play video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
                     ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_PlatformView".toUpperCase(), errorMessage, null);
@@ -1761,6 +1765,7 @@ public class ZegoExpressEngineMethodHandler {
                     view = textureRenderer.getSurface();
                 } else {
                     // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
                     ZegoLog.error("[startPlayingStream] %s", errorMessage);
                     result.error("startPlayingStream_No_TextureRenderer".toUpperCase(), errorMessage, null);
@@ -2151,12 +2156,14 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view = platformView.getTextureView();
+                    view = platformView.getSurfaceView();
                     if (alphaBlend) {
-                        ((TextureView)view).setOpaque(false);
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
                     }
                 } else {
                     // Play video without creating the PlatformView in advance
+                    // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
                     String errorMessage = String.format(Locale.ENGLISH, "The PlatformView for viewID:%d cannot be found, developer should call `createPlatformView` first and get the viewID", viewID);
                     ZegoLog.error("[updatePlayingCanvas] %s", errorMessage);
                     result.error("updatePlayingCanvas_No_PlatformView".toUpperCase(), errorMessage, null);
@@ -2171,6 +2178,7 @@ public class ZegoExpressEngineMethodHandler {
                     view = textureRenderer.getSurface();
                 } else {
                     // Play video without creating TextureRenderer in advance
+                    // Need to invoke dart `createCanvasView` method in advance to create TextureRenderer and get viewID (TextureID)
                     String errorMessage = String.format(Locale.ENGLISH, "The TextureRenderer for textureID:%d cannot be found, developer should call `createCanvasView` first and get the textureID", viewID);
                     ZegoLog.error("[updatePlayingCanvas] %s", errorMessage);
                     result.error("updatePlayingCanvas_No_TextureRenderer".toUpperCase(), errorMessage, null);
@@ -3982,9 +3990,10 @@ public class ZegoExpressEngineMethodHandler {
                 ZegoPlatformView platformView = ZegoPlatformViewFactory.getInstance().getPlatformView(viewID);
 
                 if (platformView != null) {
-                    view  = platformView.getTextureView();
+                    view  = platformView.getSurfaceView();
                     if (alphaBlend) {
-                        ((TextureView)view).setOpaque(false);
+                        ((SurfaceView)view).getHolder().setFormat(PixelFormat.TRANSLUCENT);
+                        ((SurfaceView)view).setZOrderOnTop(true);
                     }
                 } else {
                     // Media video without creating the PlatformView in advance
