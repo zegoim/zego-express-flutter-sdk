@@ -664,7 +664,13 @@ enum ZegoAECMode {
   Soft,
 
   /// AI echo cancellation. Supports intelligent recognition and elimination of echo, with a significant improvement in vocal fidelity compared to traditional AEC algorithms, without additional delay or power consumption increase.
-  AI
+  AI,
+
+  /// AI Aggressive echo cancellation, Similar to ZegoAECModeAI, it offers cleaner echo cancellation in scenarios with significant reverberation, making it recommended for use in chat rooms with large reverberation. It can be left off in other scenarios, especially in KTV settings where music is played out loud, as it may cause slightly more distortion to the human voice.
+  AIAggressive,
+
+  /// Balanced AI echo cancellation, Compared with ZegoAECModeAIAggressive, the echo suppression is cleaner, but the human voice will be more damaged. It is recommended to use it in voice chat scenarios.
+  AIBalanced
 }
 
 /// Active Noise Suppression mode.
@@ -1984,7 +1990,7 @@ enum ZegoScreenCaptureExceptionType {
   /// System error exception. For example, low memory, etc.
   SystemError,
 
-  /// Exception interrupted.
+  /// Exception interrupted. For example, the user clicks the stop button in the control center during the capture process.
   ExceptionInterrupted,
 
   /// Audio device exception. You need to restart the capture.
@@ -2626,7 +2632,7 @@ class ZegoCanvas {
   /// If enable the view mirror, default is false. Only play stream canvas is supported, for publish stream please use [setVideoMirrorMode] interface, for media player please use [enableViewMirror] interface.
   bool? mirror;
 
-  /// Context of view, default is empty string. A utf8 string with a maximum length of 64 bytes or less. Generally no attention is required, it can be used for slitting rendering of mixed stream, to understand the specific use, you need to contact ZEGO technical support.
+  /// Context of view, default is empty string. A utf8 string with a maximum length of 63 bytes or less. Generally no attention is required, it can be used for slitting rendering of mixed stream, to understand the specific use, you need to contact ZEGO technical support.
   String? viewContext;
 
   ZegoCanvas(this.view,
