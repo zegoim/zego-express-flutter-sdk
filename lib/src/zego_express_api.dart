@@ -712,6 +712,20 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRenderCameraVideoFirstFrame;
 
+  /// When multiple playing canvas are set, the callback will be triggered after one view renders the first frame of the video.
+  ///
+  /// Available since: 3.21.0
+  /// Description: Call [startPlayingStream] to play stream and call [setPlayingCanvas] to add multiple views, this callback will be called when SDK rendered the first frame of video data.
+  /// Use cases: Developer can use this callback to update the UI for playing stream.
+  /// Trigger: The user playing the mixed stream, adds multiple views through [setPlayingCanvas], and sets the correct viewContext parameters, which will trigger this callback after the corresponding view has rendered the first frame of video data.
+  /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerRecvVideoFirstFrame] determines whether the SDK has received the video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [streamID] Stream ID.
+  /// - [viewContext] Context of view.
+  static void Function(String streamID, String viewContext)?
+      onPlayerRenderMultiViewFirstFrame;
+
   /// The callback triggered when the stream playback resolution changes.
   ///
   /// Available since: 1.1.0
@@ -1713,7 +1727,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when the mobile screen capture source exception occurred.
   /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   ///
   /// - [exceptionType] Screen capture exception type.
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
@@ -1725,7 +1739,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when calling the start mobile screen capture.
   /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   static void Function()? onMobileScreenCaptureStart;
 
   /// Initialize AI voice changer engine status callback.

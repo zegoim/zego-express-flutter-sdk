@@ -96,6 +96,7 @@ static const std::map<std::string,
         EngineMethodHandler(initVideoSuperResolution),
         EngineMethodHandler(uninitVideoSuperResolution),
         EngineMethodHandler(updatePlayingCanvas),
+        EngineMethodHandler(setPlayingCanvas),
 
         EngineMethodHandler(startAutoMixerTask),
         EngineMethodHandler(stopAutoMixerTask),
@@ -416,6 +417,11 @@ static const std::map<std::string,
         EngineMethodHandler(aiVoiceChangerInitEngine),
         EngineMethodHandler(aiVoiceChangerSetSpeaker),
         EngineMethodHandler(aiVoiceChangerUpdate),
+
+        // Picture Capturer
+        EngineMethodHandler(createPictureCapturer),
+        EngineMethodHandler(destroyPictureCapturer),
+        EngineMethodHandler(setPathPictureCapturer),
 
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),

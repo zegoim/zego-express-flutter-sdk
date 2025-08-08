@@ -139,8 +139,7 @@ class ZegoExpressImpl {
       }
     });
 
-    await _channel
-        .invokeMethod('setPluginVersion', {'version': pluginVersion});
+    await _channel.invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -165,8 +164,7 @@ class ZegoExpressImpl {
       'enablePlatformView': shouldUsePlatformView()
     });
 
-    await _channel
-        .invokeMethod('setPluginVersion', {'version': pluginVersion});
+    await _channel.invokeMethod('setPluginVersion', {'version': pluginVersion});
 
     isEngineCreated = true;
   }
@@ -440,6 +438,8 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
     }
 
     return await _channel.invokeMethod('startPreview', {
@@ -449,7 +449,8 @@ class ZegoExpressImpl {
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
               'backgroundColor': canvas.backgroundColor ?? 0x000000,
-              'alphaBlend': canvas.alphaBlend ?? false
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0
             }
           : {},
       'channel': channel?.index ?? ZegoPublishChannel.Main.index
@@ -805,7 +806,8 @@ class ZegoExpressImpl {
                   config.audioEffectPlayerIndexList ?? [],
               'mediaPlayerIndexList': config.mediaPlayerIndexList ?? [],
               'enableMixEnginePlayout': config.enableMixEnginePlayout ?? false,
-              'enableMixSystemPlayout': config.enableMixSystemPlayout ?? false
+              'enableMixSystemPlayout': config.enableMixSystemPlayout ?? false,
+              'enableMixScreenCapture': config.enableMixScreenCapture ?? false
             },
       'channel': channel?.index,
     });
@@ -874,6 +876,10 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setMirror(canvas.view, canvas.mirror ?? false);
     }
 
     return await _channel.invokeMethod('startPlayingStream', {
@@ -884,7 +890,9 @@ class ZegoExpressImpl {
               'viewMode':
                   canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
               'backgroundColor': canvas.backgroundColor ?? 0x000000,
-              'alphaBlend': canvas.alphaBlend ?? false
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0,
+              'mirror': canvas.mirror ?? false
             }
           : {},
       'config': config != null
@@ -961,9 +969,7 @@ class ZegoExpressImpl {
               }
             : {},
         'switchStreamConfig': config.switchStreamConfig != null
-            ? {
-                'switchType': config.switchStreamConfig?.switchType.index
-              }
+            ? {'switchType': config.switchStreamConfig?.switchType.index}
             : {},
       }
     });
@@ -1101,6 +1107,10 @@ class ZegoExpressImpl {
       ZegoExpressTextureRenderer().setBackgroundColor(
           canvas.view, backgroundColor,
           hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+      ZegoExpressTextureRenderer()
+          .setMirror(canvas.view, canvas.mirror ?? false);
     }
     return await _channel.invokeMethod('updatePlayingCanvas', {
       'streamID': streamID,
@@ -1108,8 +1118,43 @@ class ZegoExpressImpl {
         'view': canvas.view,
         'viewMode': canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
         'backgroundColor': canvas.backgroundColor ?? 0x000000,
-        'alphaBlend': canvas.alphaBlend ?? false
+        'alphaBlend': canvas.alphaBlend ?? false,
+        'rotation': canvas.rotation ?? 0,
+        'mirror': canvas.mirror ?? false
       }
+    });
+  }
+
+  Future<int> setPlayingCanvas(String streamID, ZegoViewUpdateType updateType,
+      {ZegoCanvas? canvas}) async {
+    if (canvas != null && !shouldUsePlatformView()) {
+      ZegoExpressTextureRenderer()
+          .setViewMode(canvas.view, canvas.viewMode ?? ZegoViewMode.AspectFit);
+      int backgroundColor = 0x000000;
+      if (canvas.backgroundColor != null) {
+        backgroundColor = canvas.backgroundColor!;
+      }
+      ZegoExpressTextureRenderer().setBackgroundColor(
+          canvas.view, backgroundColor,
+          hasAlpha: canvas.alphaBlend ?? false);
+      ZegoExpressTextureRenderer()
+          .setRotation(canvas.view, canvas.rotation ?? 0);
+    }
+    return await _channel.invokeMethod('setPlayingCanvas', {
+      'streamID': streamID,
+      'updateType': updateType.index,
+      'canvas': canvas != null
+          ? {
+              'view': canvas.view,
+              'viewMode':
+                  canvas.viewMode?.index ?? ZegoViewMode.AspectFit.index,
+              'backgroundColor': canvas.backgroundColor ?? 0x000000,
+              'alphaBlend': canvas.alphaBlend ?? false,
+              'rotation': canvas.rotation ?? 0,
+              'mirror': canvas.mirror ?? false,
+              'viewContext': canvas.viewContext ?? ""
+            }
+          : {}
     });
   }
 
@@ -2356,6 +2401,27 @@ class ZegoExpressImpl {
     return await _channel.invokeMethod('isAIVoiceChangerSupported');
   }
 
+  /* Picture Capturer */
+  static final Map<int, ZegoPictureCapturer> pictureCapturerMap = {};
+  Future<ZegoPictureCapturer?> createPictureCapturer() async {
+    int index = await _channel.invokeMethod('createPictureCapturer');
+    if (index >= 0) {
+      ZegoPictureCapturer pictureCapturerInstance =
+          ZegoPictureCapturerImpl(index);
+      pictureCapturerMap[index] = pictureCapturerInstance;
+      return pictureCapturerInstance;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> destroyPictureCapturer(
+      ZegoPictureCapturer pictureCapturer) async {
+    int index = pictureCapturer.getIndex();
+    await _channel.invokeMethod('destroyPictureCapturer', {'index': index});
+    pictureCapturerMap.remove(index);
+  }
+
   /* EventHandler */
 
   static void _registerEventHandler() async {
@@ -2898,6 +2964,13 @@ class ZegoExpressImpl {
           return;
 
         ZegoExpressEngine.onPlayerRenderCameraVideoFirstFrame!(map['streamID']);
+        break;
+
+      case 'onPlayerRenderMultiViewFirstFrame':
+        if (ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame == null) return;
+
+        ZegoExpressEngine.onPlayerRenderMultiViewFirstFrame!(
+            map['streamID'], map['viewContext']);
         break;
 
       case 'onPlayerVideoSuperResolutionUpdate':
@@ -5008,7 +5081,12 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                       'y': config.cropRect!.top,
                       'width': config.cropRect!.width,
                       'height': config.cropRect!.height,
-                    }
+                    },
+              'orientation': config.orientation?.index ??
+                  ZegoScreenCaptureOrientation.Auto.index,
+              'muteExtensMicrophone': config.muteExtensMicrophone ?? false,
+              'audioDeviceMode': config.audioDeviceMode?.index ??
+                  ZegoScreenCaptureAudioDeviceMode.None.index
             },
       'inApp': inApp,
       'index': _index
@@ -5068,7 +5146,12 @@ class ZegoScreenCaptureSourceImpl extends ZegoScreenCaptureSource {
                 'y': config.cropRect!.top,
                 'width': config.cropRect!.width,
                 'height': config.cropRect!.height,
-              }
+              },
+        'orientation': config.orientation?.index ??
+            ZegoScreenCaptureOrientation.Auto.index,
+        'muteExtensMicrophone': config.muteExtensMicrophone ?? false,
+        'audioDeviceMode': config.audioDeviceMode?.index ??
+            ZegoScreenCaptureAudioDeviceMode.None.index
       },
       'index': _index
     });
@@ -5153,5 +5236,22 @@ class ZegoAIVoiceChangerImpl extends ZegoAIVoiceChanger {
   Future<void> update() async {
     return await ZegoExpressImpl._channel
         .invokeMethod('aiVoiceChangerUpdate', {'index': _index});
+  }
+}
+
+class ZegoPictureCapturerImpl extends ZegoPictureCapturer {
+  final int _index;
+
+  ZegoPictureCapturerImpl(int index) : _index = index;
+
+  @override
+  int getIndex() {
+    return _index;
+  }
+
+  @override
+  Future<void> setPath(String path) async {
+    return await ZegoExpressImpl._channel.invokeMethod(
+        'setPathPictureCapturer', {'index': _index, 'path': path});
   }
 }

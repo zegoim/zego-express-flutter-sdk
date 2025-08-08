@@ -893,6 +893,21 @@
     }
 }
 
+- (void)onPlayerRenderMultiViewFirstFrame:(NSString *) streamID viewContext:(NSString *)viewContext {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onPlayerRenderMultiViewFirstFrame] streamID: %@ ctx:%@", streamID, viewContext);
+
+    GUARD_SINK
+    
+    if (sink) {
+        sink(@{
+            @"method": @"onPlayerRenderMultiViewFirstFrame",
+            @"streamID": streamID,
+            @"viewContext": viewContext
+        });
+    }
+}
+
 - (void)onPlayerVideoSuperResolutionUpdate:(NSString *) streamID state:(ZegoSuperResolutionState) state errorCode:(int) errorCode {
     FlutterEventSink sink = _eventSink;
     ZGLog(@"[onPlayerVideoSuperResolutionUpdate] streamID: %@, state: %d, errorCode: %d", streamID, (int)state, errorCode);
@@ -1393,6 +1408,32 @@
                 @"avgRxPacketLostRate": @(info.avgRxPacketLostRate),
                 @"avgPeerToPeerDelay": @(info.avgPeerToPeerDelay)
             },
+        });
+    }
+}
+
+#pragma mark - ScreenCapture
+- (void)onMobileScreenCaptureStart {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMobileScreenCaptureStart]");
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMobileScreenCaptureStart",
+        });
+    }
+}
+
+- (void)onMobileScreenCaptureExceptionOccurred:(ZegoScreenCaptureExceptionType)exceptionType {
+    FlutterEventSink sink = _eventSink;
+    ZGLog(@"[onMobileScreenCaptureExceptionOccurred] exceptionType: %d", (int)exceptionType);
+
+    GUARD_SINK
+    if (sink) {
+        sink(@{
+            @"method": @"onMobileScreenCaptureExceptionOccurred",
+            @"exceptionType": @(exceptionType)
         });
     }
 }

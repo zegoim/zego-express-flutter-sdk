@@ -888,6 +888,21 @@ public class ZegoExpressEngineEventHandler {
         }
 
         @Override
+        public void onPlayerRenderMultiViewFirstFrame(String streamID, String viewContext) {
+            super.onPlayerRenderMultiViewFirstFrame(streamID, viewContext);
+            ZegoLog.log("[onPlayerRenderMultiViewFirstFrame] streamID: %s ctx: %s", streamID, viewContext);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPlayerRenderMultiViewFirstFrame");
+            map.put("streamID", streamID);
+            map.put("viewContext", viewContext);
+
+            sink.success(map);
+        }
+
+        @Override
         public void onPlayerVideoSuperResolutionUpdate(String streamID,ZegoSuperResolutionState state,int errorCode) {
             super.onPlayerVideoSuperResolutionUpdate(streamID, state, errorCode);
             ZegoLog.log("[onPlayerVideoSuperResolutionUpdate] streamID: %s, state: %s, errorCode: %d", streamID, state.name(), errorCode);
@@ -1870,7 +1885,12 @@ public class ZegoExpressEngineEventHandler {
             map.put("data", data);
             map.put("streamID", streamID);
 
-            sink.success(map);
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
     };
 
