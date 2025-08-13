@@ -613,6 +613,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   1. The static picture cannot be seen in the local preview.
   ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
   ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+  ///   4. To publish the audio stream, you must call this interface again and set the image path to empty to avoid video billing.
   /// Platform differences:
   ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
   ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
@@ -642,6 +643,7 @@ extension ZegoExpressEnginePublisher on ZegoExpressEngine {
   ///   1. The static picture cannot be seen in the local preview.
   ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
   ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+  ///   4. To publish the audio stream, you must call this interface again and set the image path to empty to avoid video billing.
   /// Platform differences:
   ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
   ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".

@@ -4329,7 +4329,7 @@ class ZegoScreenCaptureConfig {
   /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
   bool? muteExtensMicrophone;
 
-  /// Set the audio device mode for the specified scene, the default is General. (only for iOS) Notes:
+  /// Set the audio device mode for the specified scene, the default is None. (only for iOS) Notes:
   /// 1. Only works when the audio main source is always a microphone;
   /// 2. Only works for [startScreenCapture] interface, [updateScreenCapture] does not take effect;
   /// 3. The audio device mode changes during screen capture may cause the audio output of the screen capture to be abnormal, which can be monitored through [onMobileScreenCaptureExceptionOccurred] callback, and if necessary, the screen capture needs to be restarted.;
