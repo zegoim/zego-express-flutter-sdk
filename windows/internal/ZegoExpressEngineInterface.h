@@ -150,6 +150,7 @@ static const std::map<std::string,
 
         EngineMethodHandler(mutePublishStreamAudio),
         EngineMethodHandler(mutePublishStreamVideo),
+        EngineMethodHandler(setStreamAlignmentProperty),
         EngineMethodHandler(setCaptureVolume),
         EngineMethodHandler(setAudioCaptureStereoMode),
         EngineMethodHandler(sendSEI),

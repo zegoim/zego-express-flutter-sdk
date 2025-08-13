@@ -769,6 +769,17 @@ void ZegoExpressEngineMethodHandler::mutePublishStreamVideo(ZFArgument argument,
     result->Success();
 }
 
+void ZegoExpressEngineMethodHandler::setStreamAlignmentProperty(ZFArgument argument,
+                                                                ZFResult result) {
+    auto alignment = zego_value_get_int(argument[ZFValue("alignment")]);
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setStreamAlignmentProperty(
+        alignment, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
 void ZegoExpressEngineMethodHandler::setCaptureVolume(ZFArgument argument, ZFResult result) {
     auto volume = zego_value_get_int(argument[ZFValue("volume")]);
 

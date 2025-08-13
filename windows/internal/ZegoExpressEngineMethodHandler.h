@@ -160,6 +160,7 @@ class ZegoExpressEngineMethodHandler {
 
     void mutePublishStreamAudio(ZFArgument argument, ZFResult result);
     void mutePublishStreamVideo(ZFArgument argument, ZFResult result);
+    void setStreamAlignmentProperty(ZFArgument argument, ZFResult result);
     void setCaptureVolume(ZFArgument argument, ZFResult result);
     void setAudioCaptureStereoMode(ZFArgument argument, ZFResult result);
     void sendSEI(ZFArgument argument, ZFResult result);
