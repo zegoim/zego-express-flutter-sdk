@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'zego_express_platform_view_impl.dart';
 import 'zego_express_texture_renderer_impl.dart';
 import '../zego_express_api.dart';
 import '../zego_express_defines.dart';
@@ -70,7 +71,11 @@ class ZegoExpressImpl {
     use |= kIsWeb;
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
-    use &= !kIsWindows;
+    if (kIsWindows && ZegoExpressPlatformViewImpl.onWindowsPlatformViewCreated != null) {
+      use = true;
+    } else {
+      use &= !kIsWindows;
+    }
     use &= !kIsLinux;
 
     if (kIsMacOS) {
@@ -113,6 +118,8 @@ class ZegoExpressImpl {
 
   // Private function
   static void Function(String api, String jsonArgs)? onFlutterApiCalledDetail;
+
+  static void Function(String message)? onCustomLogMessage;
 
   static Future<void> sendCustomLogMessage(String message) async {
     await _channel.invokeMethod('sendCustomLogMessage', {'message': message});

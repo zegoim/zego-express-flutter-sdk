@@ -464,4 +464,5 @@ class ZegoExpressEngineMethodHandler {
 
     ZFBinaryMessenger *messenger_;
     ZFTextureRegistrar *texture_;
+    bool enablePlatformView_;
 };
