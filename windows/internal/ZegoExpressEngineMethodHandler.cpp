@@ -527,6 +527,8 @@ void ZegoExpressEngineMethodHandler::startPublishingStream(ZFArgument argument, 
                 zego_value_get_int(configMap[ZFValue("forceSynchronousNetworkTime")]);
             config.streamCensorshipMode = (EXPRESS::ZegoStreamCensorshipMode)zego_value_get_int(
                 configMap[ZFValue("streamCensorshipMode")]);
+            config.codecNegotiationType = (EXPRESS::ZegoCapabilityNegotiationType)zego_value_get_int(
+                configMap[ZFValue("codecNegotiationType")]);
             config.streamTitle = zego_value_get_string(configMap[ZFValue("streamTitle")]);
 
             EXPRESS::ZegoExpressSDK::getEngine()->startPublishingStream(
