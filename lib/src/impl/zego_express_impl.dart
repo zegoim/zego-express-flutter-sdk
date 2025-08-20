@@ -71,7 +71,8 @@ class ZegoExpressImpl {
     use |= kIsWeb;
     // TODO: PlatformView support on Windows has not yet been implemented
     // Ref: https://github.com/flutter/flutter/issues/31713
-    if (kIsWindows && ZegoExpressPlatformViewImpl.onWindowsPlatformViewCreated != null) {
+    if (kIsWindows &&
+        ZegoExpressPlatformViewImpl.onWindowsPlatformViewCreated != null) {
       use &= kIsWindows;
     } else {
       use &= !kIsWindows;
