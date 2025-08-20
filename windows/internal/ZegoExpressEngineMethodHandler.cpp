@@ -2712,17 +2712,12 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(ZFArgument argument
             }
         } else {
             auto sharedPtrResult = ZFMoveResult(result);
-            int error = mediaPlayer->takeSnapshot([=](int errorCode, void *image) {
+            mediaPlayer->takeSnapshot([=](int errorCode, void *image) {
                 ZFMap retMap;
                 retMap[ZFValue("errorCode")] = ZFValue(errorCode);
                 retMap[ZFValue("image")] = ZFValue(ConvertHBITMAPToVector((HBITMAP)image));
                 sharedPtrResult->Success(retMap);
             });
-            if (error != 0)
-            {
-                resultMap[ZFValue("errorCode")] = ZFValue(error);
-                sharedPtrResult->Success(resultMap);
-            }
             return;
         }
         
