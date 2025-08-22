@@ -10,6 +10,7 @@
 #include "zego_express_engine/ZegoMediaPlayerAudioManager.h"
 #include "zego_express_engine/ZegoMediaPlayerBlockDataManager.h"
 #include "zego_express_engine/ZegoMediaPlayerVideoManager.h"
+#include "zego_express_engine/ZegoAudioMixingDataManager.h"
 #include <flutter/encodable_value.h>
 #include <flutter/plugin_registrar_windows.h>
 #endif
@@ -89,6 +90,10 @@ void ZegoExpressEngineMethodHandler::createEngine(ZFArgument argument, ZFResult 
     std::string appSign = zego_value_get_string(argument[ZFValue("appSign")]);
     bool isTestEnv = zego_value_get_bool(argument[ZFValue("isTestEnv")]);
     int scenario = zego_value_get_int(argument[ZFValue("scenario")]);
+#ifdef _WIN32
+        enablePlatformView_ =
+        zego_value_get_bool(argument[ZFValue("enablePlatformView")]);
+#endif
 
     auto engine = EXPRESS::ZegoExpressSDK::createEngine(
         appID, appSign, isTestEnv, (EXPRESS::ZegoScenario)scenario,
@@ -98,7 +103,9 @@ void ZegoExpressEngineMethodHandler::createEngine(ZFArgument argument, ZFResult 
     engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
     engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
 
-    ZegoTextureRendererController::getInstance()->init(messenger_);
+    if (!enablePlatformView_) {
+        ZegoTextureRendererController::getInstance()->init(messenger_);
+    }
 
     result->Success();
 }
@@ -128,7 +135,14 @@ void ZegoExpressEngineMethodHandler::createEngineWithProfile(ZFArgument argument
         engine->setDataRecordEventHandler(ZegoExpressEngineEventHandler::getInstance());
         engine->setCustomAudioProcessHandler(ZegoExpressEngineEventHandler::getInstance());
 
-        ZegoTextureRendererController::getInstance()->init(messenger_);
+#ifdef _WIN32
+        enablePlatformView_ =
+        zego_value_get_bool(profileMap[ZFValue("enablePlatformView")]);
+#endif
+
+        if (!enablePlatformView_) {
+            ZegoTextureRendererController::getInstance()->init(messenger_);
+        }
     }
     result->Success();
 }
@@ -349,6 +363,9 @@ void ZegoExpressEngineMethodHandler::loginRoom(ZFArgument argument, ZFResult res
         if (!zego_value_is_null(configMap[ZFValue("capabilityNegotiationTypes")])) {
             config.capabilityNegotiationTypes = zego_value_get_long(configMap[ZFValue("capabilityNegotiationTypes")]);
         }
+        if (!zego_value_is_null(configMap[ZFValue("roomType")])) {
+            config.roomType = zego_value_get_long(configMap[ZFValue("roomType")]);
+        }
     }
     auto sharedPtrResult = ZFMoveResult(result);
     EXPRESS::ZegoExpressSDK::getEngine()->loginRoom(
@@ -510,6 +527,8 @@ void ZegoExpressEngineMethodHandler::startPublishingStream(ZFArgument argument, 
                 zego_value_get_int(configMap[ZFValue("forceSynchronousNetworkTime")]);
             config.streamCensorshipMode = (EXPRESS::ZegoStreamCensorshipMode)zego_value_get_int(
                 configMap[ZFValue("streamCensorshipMode")]);
+            config.codecNegotiationType = (EXPRESS::ZegoCapabilityNegotiationType)zego_value_get_int(
+                configMap[ZFValue("codecNegotiationType")]);
             config.streamTitle = zego_value_get_string(configMap[ZFValue("streamTitle")]);
 
             EXPRESS::ZegoExpressSDK::getEngine()->startPublishingStream(
@@ -558,24 +577,36 @@ void ZegoExpressEngineMethodHandler::startPreview(ZFArgument argument, ZFResult 
 
     EXPRESS::ZegoCanvas canvas;
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
+
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[ZFValue("viewMode")]);
         int64_t viewID = zego_value_get_long(canvasMap[ZFValue("view")]);
         auto alphaBlend = zego_value_get_bool(canvasMap[ZFValue("alphaBlend")]);
-        ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
-            (EXPRESS::ZegoPublishChannel)channel);
-        ZegoTextureRendererController::getInstance()->addCapturedRenderer(
-            viewID, (EXPRESS::ZegoPublishChannel)channel, viewMode);
-        ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        int backgroundColor =
+            zego_value_get_int(canvasMap[ZFValue("backgroundColor")]);
+        if (!enablePlatformView_) {
+            ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
+                (EXPRESS::ZegoPublishChannel)channel);
+            ZegoTextureRendererController::getInstance()->addCapturedRenderer(
+                viewID, (EXPRESS::ZegoPublishChannel)channel, viewMode);
+            ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        } else {
+            canvas.viewMode = viewMode;
+            canvas.view = (void *)viewID;
+            canvas.alphaBlend = alphaBlend;
+            canvas.backgroundColor = backgroundColor;
+        }
     }
-    EXPRESS::ZegoExpressSDK::getEngine()->startPreview(nullptr,
+    EXPRESS::ZegoExpressSDK::getEngine()->startPreview(&canvas,
                                                        (EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
 
 void ZegoExpressEngineMethodHandler::stopPreview(ZFArgument argument, ZFResult result) {
     auto channel = zego_value_get_int(argument[ZFValue("channel")]);
-    ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
+    if (!enablePlatformView_) {
+        ZegoTextureRendererController::getInstance()->removeCapturedRenderer(
         (EXPRESS::ZegoPublishChannel)channel);
+    }
     EXPRESS::ZegoExpressSDK::getEngine()->stopPreview((EXPRESS::ZegoPublishChannel)channel);
     result->Success();
 }
@@ -719,6 +750,32 @@ void ZegoExpressEngineMethodHandler::takePublishStreamSnapshot(ZFArgument argume
         (EXPRESS::ZegoPublishChannel)channel);
 }
 
+void ZegoExpressEngineMethodHandler::takePublishStreamSnapshotByConfig(ZFArgument argument, ZFResult result) {
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+    auto configMap = zego_value_get_map(argument[ZFValue("config")]);
+    EXPRESS::ZegoPublisherTakeSnapshotConfig config;
+    config.position = (EXPRESS::ZegoPublisherTakeSnapshotPosition)zego_value_get_int(configMap[ZFValue("position")]);
+    
+    auto sharedPtrResult = ZFMoveResult(result);
+    EXPRESS::ZegoExpressSDK::getEngine()->takePublishStreamSnapshotByConfig(config,
+        [=](int errorCode, void *image) {
+            std::vector<uint8_t> raw_image;
+            if (image) {
+#ifdef _WIN32
+                auto tmpData = CreateFromHBITMAP((HBITMAP)image);
+                raw_image.assign(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
+#endif
+            }
+
+            ZFMap resultMap;
+            resultMap[ZFValue("errorCode")] = ZFValue(errorCode);
+            resultMap[ZFValue("image")] = ZFValue(raw_image);
+            sharedPtrResult->Success(resultMap);
+        },
+        (EXPRESS::ZegoPublishChannel)channel);
+}
+
 void ZegoExpressEngineMethodHandler::mutePublishStreamAudio(ZFArgument argument, ZFResult result) {
     auto mute = zego_value_get_bool(argument[ZFValue("mute")]);
     auto channel = zego_value_get_int(argument[ZFValue("channel")]);
@@ -735,6 +792,17 @@ void ZegoExpressEngineMethodHandler::mutePublishStreamVideo(ZFArgument argument,
 
     EXPRESS::ZegoExpressSDK::getEngine()->mutePublishStreamVideo(
         mute, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setStreamAlignmentProperty(ZFArgument argument,
+                                                                ZFResult result) {
+    auto alignment = zego_value_get_int(argument[ZFValue("alignment")]);
+    auto channel = zego_value_get_int(argument[ZFValue("channel")]);
+
+    EXPRESS::ZegoExpressSDK::getEngine()->setStreamAlignmentProperty(
+        alignment, (EXPRESS::ZegoPublishChannel)channel);
 
     result->Success();
 }
@@ -869,8 +937,10 @@ void ZegoExpressEngineMethodHandler::setVideoSource(ZFArgument argument, ZFResul
         channel = zego_value_get_int(argument[ZFValue("channel")]);
     }
 
-    ZegoTextureRendererController::getInstance()->setVideoSourceChannel(
+    if (!enablePlatformView_) {
+        ZegoTextureRendererController::getInstance()->setVideoSourceChannel(
         (EXPRESS::ZegoPublishChannel)channel, (EXPRESS::ZegoVideoSourceType)source);
+    }
 
     int ret = 0;
     if (!hasChannel && !hasInstanceID) {
@@ -1063,10 +1133,19 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFR
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[ZFValue("viewMode")]);
         auto viewID = zego_value_get_long(canvasMap[ZFValue("view")]);
         auto alphaBlend = zego_value_get_bool(canvasMap[ZFValue("alphaBlend")]);
+        auto backgroundColor =
+            zego_value_get_int(canvasMap[ZFValue("backgroundColor")]);
 
-        ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
-        ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
-        ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        if (!enablePlatformView_) {
+            ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+            ZegoTextureRendererController::getInstance()->addRemoteRenderer(viewID, streamID, viewMode);
+            ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        } else {
+            canvas.viewMode = viewMode;
+            canvas.view = (void *)viewID;
+            canvas.alphaBlend = alphaBlend;
+            canvas.backgroundColor = backgroundColor;
+        }
     }
 
     ZFMap configMap;
@@ -1132,9 +1211,9 @@ void ZegoExpressEngineMethodHandler::startPlayingStream(ZFArgument argument, ZFR
             }
         }
 
-        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr, config);
+        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, &canvas, config);
     } else {
-        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, nullptr);
+        EXPRESS::ZegoExpressSDK::getEngine()->startPlayingStream(streamID, &canvas);
     }
 
     result->Success();
@@ -1183,7 +1262,14 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(ZFArgument argument, ZF
                 config.customResourceConfig.publishing = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[ZFValue("publishing")]);
                 config.customResourceConfig.afterPublish = (EXPRESS::ZegoResourceType)zego_value_get_int(customResourceConfigMap[ZFValue("afterPublish")]);
             }
-        } 
+        }
+
+        if (!zego_value_is_null(configMap[ZFValue("switchStreamConfig")])) {
+            auto switchStreamConfigMap = zego_value_get_map(configMap[ZFValue("switchStreamConfig")]);
+            if (switchStreamConfigMap.size() > 0) {
+                config.switchStreamConfig.switchType = (EXPRESS::ZegoSwitchPlayingStreamType)zego_value_get_int(switchStreamConfigMap[ZFValue("switchType")]);
+            }
+        }
     } 
 
     EXPRESS::ZegoExpressSDK::getEngine()->switchPlayingStream(fromStreamID, toStreamID, config);
@@ -1193,8 +1279,9 @@ void ZegoExpressEngineMethodHandler::switchPlayingStream(ZFArgument argument, ZF
 
 void ZegoExpressEngineMethodHandler::stopPlayingStream(ZFArgument argument, ZFResult result) {
     auto streamID = zego_value_get_string(argument[ZFValue("streamID")]);
-
-    ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+    if (!enablePlatformView_) {
+        ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+    }
     EXPRESS::ZegoExpressSDK::getEngine()->stopPlayingStream(streamID);
 
     result->Success();
@@ -1566,6 +1653,39 @@ void ZegoExpressEngineMethodHandler::startAudioDataObserver(ZFArgument argument,
 
 void ZegoExpressEngineMethodHandler::stopAudioDataObserver(ZFArgument argument, ZFResult result) {
     EXPRESS::ZegoExpressSDK::getEngine()->stopAudioDataObserver();
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::enableAudioMixing(ZFArgument argument, ZFResult result) {
+#ifdef _WIN32
+    auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+    if (enable) {
+        EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(
+            ZegoAudioMixingDataManager::getInstance()->getHandler());
+    } else {
+        EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingHandler(nullptr);
+    }
+
+    EXPRESS::ZegoExpressSDK::getEngine()->enableAudioMixing(enable);
+    result->Success();
+#else
+    result->Error("not_support_feature", "linux platform not support feature");
+#endif
+}
+
+void ZegoExpressEngineMethodHandler::setAudioMixingVolume(ZFArgument argument, ZFResult result) {
+    auto volume = zego_value_get_int(argument[ZFValue("volume")]);
+    auto volumeType = zego_value_get_int(argument[ZFValue("type")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->setAudioMixingVolume(volume,
+                                                                (EXPRESS::ZegoVolumeType)volumeType);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::muteLocalAudioMixing(ZFArgument argument, ZFResult result) {
+    auto mute = zego_value_get_bool(argument[ZFValue("mute")]);
+    EXPRESS::ZegoExpressSDK::getEngine()->muteLocalAudioMixing(mute);
 
     result->Success();
 }
@@ -1961,8 +2081,10 @@ void ZegoExpressEngineMethodHandler::createMediaPlayer(ZFArgument argument, ZFRe
         auto index = mediaPlayer->getIndex();
 
         mediaPlayer->setEventHandler(ZegoExpressEngineEventHandler::getInstance());
-        mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(),
+        if (!enablePlatformView_) {
+            mediaPlayer->setVideoHandler(ZegoTextureRendererController::getInstance(),
                                      ZEGO::EXPRESS::ZEGO_VIDEO_FRAME_FORMAT_RGBA32);
+        }
         mediaPlayerMap_[index] = mediaPlayer;
 
         result->Success(ZFValue(index));
@@ -1977,7 +2099,9 @@ void ZegoExpressEngineMethodHandler::destroyMediaPlayer(ZFArgument argument, ZFR
 
     if (mediaPlayer) {
         mediaPlayer->setEventHandler(nullptr);
-        ZegoTextureRendererController::getInstance()->removeMediaPlayerRenderer(mediaPlayer);
+        if (!enablePlatformView_) {
+            ZegoTextureRendererController::getInstance()->removeMediaPlayerRenderer(mediaPlayer);
+        }
         EXPRESS::ZegoExpressSDK::getEngine()->destroyMediaPlayer(mediaPlayer);
     }
 
@@ -2535,13 +2659,26 @@ void ZegoExpressEngineMethodHandler::mediaPlayerSetPlayerCanvas(ZFArgument argum
         EXPRESS::ZegoCanvas canvas;
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[ZFValue("viewMode")]);
         auto viewID = zego_value_get_long(canvasMap[ZFValue("view")]);
-        if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(
-                viewID, mediaPlayer, viewMode)) {
-            result->Success();
+        auto alphaBlend = zego_value_get_bool(canvasMap[ZFValue("alphaBlend")]);
+        auto backgroundColor =
+            zego_value_get_int(canvasMap[ZFValue("backgroundColor")]);
+        if (!enablePlatformView_) {
+            if (ZegoTextureRendererController::getInstance()->addMediaPlayerRenderer(
+                    viewID, mediaPlayer, viewMode)) {
+                result->Success();
+            } else {
+                result->Error(
+                    "mediaPlayerSetPlayerCanvas_Canvas_error",
+                    "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check      canvas");
+            }
         } else {
-            result->Error(
-                "mediaPlayerSetPlayerCanvas_Canvas_error",
-                "Invoke `mediaPlayerSetPlayerCanvas` but canvas is abnormal, please check canvas");
+            canvas.viewMode = viewMode;
+            canvas.view = (void *)viewID;
+            canvas.alphaBlend = alphaBlend;
+            canvas.backgroundColor = backgroundColor;
+
+            mediaPlayer->setPlayerCanvas(&canvas);
+            result->Success();
         }
     } else {
         result->Error("mediaPlayerSetPlayerCanvas_Can_not_find_player",
@@ -2557,21 +2694,33 @@ void ZegoExpressEngineMethodHandler::mediaPlayerTakeSnapshot(ZFArgument argument
         ZFMap resultMap;
         resultMap[ZFValue("errorCode")] = ZFValue(-1);
 #ifdef _WIN32
-        auto pFrame =
+        if (!enablePlatformView_) {
+            auto pFrame =
             ZegoTextureRendererController::getInstance()->getMediaPlayerFrame(mediaPlayer);
-        auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
-        auto stride =
-            ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
-        if (pFrame && size != std::pair<int, int>(0, 0)) {
-            auto tmpData = makeBtimap(pFrame, size, stride);
-            std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
-            delete[] tmpData.second;
+            auto size = ZegoTextureRendererController::getInstance()->getMediaPlayerSize(mediaPlayer);
+            auto stride =
+                ZegoTextureRendererController::getInstance()->getMediaPlayerFrameStride(mediaPlayer);
+            if (pFrame && size != std::pair<int, int>(0, 0)) {
+                auto tmpData = makeBtimap(pFrame, size, stride);
+                std::vector<uint8_t> raw_image(tmpData.second, tmpData.second + tmpData.first);
+                delete[] tmpData.second;
 
-            resultMap[ZFValue("image")] = ZFValue(raw_image);
-            resultMap[ZFValue("errorCode")] = ZFValue(0);
+                resultMap[ZFValue("image")] = ZFValue(raw_image);
+                resultMap[ZFValue("errorCode")] = ZFValue(0);
+            } else {
+                resultMap[ZFValue("errorCode")] = ZFValue(-1);
+            }
         } else {
-            resultMap[ZFValue("errorCode")] = ZFValue(-1);
+            auto sharedPtrResult = ZFMoveResult(result);
+            mediaPlayer->takeSnapshot([=](int errorCode, void *image) {
+                ZFMap retMap;
+                retMap[ZFValue("errorCode")] = ZFValue(errorCode);
+                retMap[ZFValue("image")] = ZFValue(ConvertHBITMAPToVector((HBITMAP)image));
+                sharedPtrResult->Success(retMap);
+            });
+            return;
         }
+        
 #endif
         result->Success(resultMap);
     } else {
@@ -2645,14 +2794,16 @@ void ZegoExpressEngineMethodHandler::mediaPlayerEnableVideoData(ZFArgument argum
     auto mediaPlayer = mediaPlayerMap_[index];
 
     if (mediaPlayer) {
-        auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
-        if (enable) {
-#ifdef _WIN32
-            ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(
-                ZegoMediaPlayerVideoManager::getInstance()->getHandler());
-#endif
-        } else {
-            ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
+        if (!enablePlatformView_) {
+            auto enable = zego_value_get_bool(argument[ZFValue("enable")]);
+            if (enable) {
+    #ifdef _WIN32
+                ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(
+                    ZegoMediaPlayerVideoManager::getInstance()->getHandler());
+    #endif
+            } else {
+                ZegoTextureRendererController::getInstance()->setMediaPlayerVideoHandler(nullptr);
+            }
         }
         result->Success();
     } else {
@@ -4459,13 +4610,23 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(ZFArgument argument, ZF
     if (EXPRESS::ZegoExpressSDK::getEngine() && canvasMap.size() > 0) {
         auto viewMode = (EXPRESS::ZegoViewMode)zego_value_get_int(canvasMap[ZFValue("viewMode")]);
         auto alphaBlend = zego_value_get_bool(canvasMap[ZFValue("alphaBlend")]);
-
         viewID = zego_value_get_long(canvasMap[ZFValue("view")]);
-        ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
-        isSuccess = ZegoTextureRendererController::getInstance()->addRemoteRenderer(
-            viewID, streamID, viewMode);
+        auto backgroundColor =
+            zego_value_get_int(canvasMap[ZFValue("backgroundColor")]);
+        if (!enablePlatformView_) {
+            ZegoTextureRendererController::getInstance()->removeRemoteRenderer(streamID);
+            isSuccess = ZegoTextureRendererController::getInstance()->addRemoteRenderer(
+                viewID, streamID, viewMode);
 
-        ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+            ZegoTextureRendererController::getInstance()->enableTextureAlpha(alphaBlend, viewID);
+        } else {
+            canvas.viewMode = viewMode;
+            canvas.view = (void *)viewID;
+            canvas.alphaBlend = alphaBlend;
+            canvas.backgroundColor = backgroundColor;
+            isSuccess = EXPRESS::ZegoExpressSDK::getEngine()->updatePlayingCanvas(
+                streamID, &canvas);
+        }
     }
 
     if (isSuccess) {
@@ -4477,6 +4638,10 @@ void ZegoExpressEngineMethodHandler::updatePlayingCanvas(ZFArgument argument, ZF
                "textureID";
         result->Error("updatePlayingCanvas_No_TextureRenderer", oss.str());
     }
+}
+
+void ZegoExpressEngineMethodHandler::setPlayingCanvas(ZFArgument argument, ZFResult result) {
+    result->Error("not_support_feature", "windows platform not support feature");
 }
 
 void ZegoExpressEngineMethodHandler::startAutoMixerTask(ZFArgument argument, ZFResult result) {
@@ -4529,6 +4694,9 @@ void ZegoExpressEngineMethodHandler::startAutoMixerTask(ZFArgument argument, ZFR
     // minPlayStreamBufferLength
     task.minPlayStreamBufferLength =
         zego_value_get_int(argument[ZFValue("minPlayStreamBufferLength")]);
+
+    task.streamAlignmentVolumeControlMode = (EXPRESS::ZegoStreamAlignmentVolumeControlMode)zego_value_get_int(argument[ZFValue("streamAlignmentVolumeControlMode")]);
+    task.streamAlignmentBaselineStreamID = zego_value_get_string(argument[ZFValue("streamAlignmentBaselineStreamID")]);
 
     auto sharedPtrResult = ZFMoveResult(result);
     EXPRESS::ZegoExpressSDK::getEngine()->startAutoMixerTask(
@@ -5880,6 +6048,43 @@ void ZegoExpressEngineMethodHandler::enableColorEnhancement(ZFArgument argument,
 
     EXPRESS::ZegoExpressSDK::getEngine()->enableColorEnhancement(
         enable, p, (EXPRESS::ZegoPublishChannel)channel);
+
+    result->Success();
+}
+
+// Picture Capturer
+void ZegoExpressEngineMethodHandler::createPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto pictureCapturer = EXPRESS::ZegoExpressSDK::getEngine()->createPictureCapturer();
+    if (pictureCapturer) {
+        auto index = pictureCapturer->getIndex();
+        pictureCapturerMap_[index] = pictureCapturer;
+        result->Success(ZFValue(index));
+    } else {
+        result->Success(ZFValue(-1));
+    }
+}
+
+void ZegoExpressEngineMethodHandler::destroyPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto pictureCapturer = pictureCapturerMap_[index];
+
+    if (pictureCapturer) {
+        EXPRESS::ZegoExpressSDK::getEngine()->destroyPictureCapturer(pictureCapturer);
+    }
+
+    pictureCapturerMap_.erase(index);
+
+    result->Success();
+}
+
+void ZegoExpressEngineMethodHandler::setPathPictureCapturer(ZFArgument argument, ZFResult result) {
+    auto index = zego_value_get_int(argument[ZFValue("index")]);
+    auto pictureCapturer = pictureCapturerMap_[index];
+
+    if (pictureCapturer) {
+        auto path = zego_value_get_string(argument[ZFValue("path")]);
+        pictureCapturer->setPath(path);
+    }
 
     result->Success();
 }

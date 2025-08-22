@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -39,6 +40,9 @@ class ZegoExpressCanvasViewImpl {
   static Future<bool> destroyCanvasView(int viewID) async {
     if (ZegoExpressImpl.isEngineCreated) {
       if (ZegoExpressImpl.shouldUsePlatformView()) {
+        if (Platform.isWindows) {
+          return true;
+        }
         return await ZegoExpressImpl.methodChannel
             .invokeMethod('destroyPlatformView', {'viewID': viewID});
       } else {

@@ -77,6 +77,7 @@ class ZegoExpressEngineMethodHandler {
     void getAudioConfig(ZFArgument argument, ZFResult result);
     void setPublishStreamEncryptionKey(ZFArgument argument, ZFResult result);
     void takePublishStreamSnapshot(ZFArgument argument, ZFResult result);
+    void takePublishStreamSnapshotByConfig(ZFArgument argument, ZFResult result);
 
     void setMinVideoBitrateForTrafficControl(ZFArgument argument, ZFResult result);
     void setMinVideoFpsForTrafficControl(ZFArgument argument, ZFResult result);
@@ -100,6 +101,7 @@ class ZegoExpressEngineMethodHandler {
     void initVideoSuperResolution(ZFArgument argument, ZFResult result);
     void uninitVideoSuperResolution(ZFArgument argument, ZFResult result);
     void updatePlayingCanvas(ZFArgument argument, ZFResult result);
+    void setPlayingCanvas(ZFArgument argument, ZFResult result);
 
     void startAutoMixerTask(ZFArgument argument, ZFResult result);
     void stopAutoMixerTask(ZFArgument argument, ZFResult result);
@@ -158,6 +160,7 @@ class ZegoExpressEngineMethodHandler {
 
     void mutePublishStreamAudio(ZFArgument argument, ZFResult result);
     void mutePublishStreamVideo(ZFArgument argument, ZFResult result);
+    void setStreamAlignmentProperty(ZFArgument argument, ZFResult result);
     void setCaptureVolume(ZFArgument argument, ZFResult result);
     void setAudioCaptureStereoMode(ZFArgument argument, ZFResult result);
     void sendSEI(ZFArgument argument, ZFResult result);
@@ -222,6 +225,12 @@ class ZegoExpressEngineMethodHandler {
     /* Custom Audio IO */
     void startAudioDataObserver(ZFArgument argument, ZFResult result);
     void stopAudioDataObserver(ZFArgument argument, ZFResult result);
+
+    /* Audio Mixing */
+    void enableAudioMixing(ZFArgument argument, ZFResult result);
+    void setAudioMixingVolume(ZFArgument argument, ZFResult result);
+    void muteLocalAudioMixing(ZFArgument argument, ZFResult result);
+
     /* Audio Effects Player */
     void createAudioEffectPlayer(ZFArgument argument, ZFResult result);
     void destroyAudioEffectPlayer(ZFArgument argument, ZFResult result);
@@ -431,6 +440,11 @@ class ZegoExpressEngineMethodHandler {
     void aiVoiceChangerSetSpeaker(ZFArgument argument, ZFResult result);
     void aiVoiceChangerUpdate(ZFArgument argument, ZFResult result);
 
+    // Picture Capturer
+    void createPictureCapturer(ZFArgument argument, ZFResult result);
+    void destroyPictureCapturer(ZFArgument argument, ZFResult result);
+    void setPathPictureCapturer(ZFArgument argument, ZFResult result);
+
     void createTextureRenderer(ZFArgument argument, ZFResult result);
     void destroyTextureRenderer(ZFArgument argument, ZFResult result);
 
@@ -444,9 +458,11 @@ class ZegoExpressEngineMethodHandler {
     std::unordered_map<int, EXPRESS::IZegoScreenCaptureSource *> screenCaptureSourceMap_;
     std::unordered_map<int, EXPRESS::IZegoRealTimeSequentialDataManager *> dataManagerMap_;
     std::unordered_map<int, EXPRESS::IZegoAIVoiceChanger *> aiVoiceChangerMap_;
+    std::unordered_map<int, EXPRESS::IZegoPictureCapturer *> pictureCapturerMap_;
     EXPRESS::IZegoCopyrightedMusic *copyrightedMusic_ = nullptr;
     EXPRESS::IZegoRangeAudio *rangeAudio_ = nullptr;
 
     ZFBinaryMessenger *messenger_;
     ZFTextureRegistrar *texture_;
+    bool enablePlatformView_;
 };

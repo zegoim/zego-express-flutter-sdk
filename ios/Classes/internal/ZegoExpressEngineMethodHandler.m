@@ -19,6 +19,7 @@
 #import "ZegoMediaPlayerVideoManager.h"
 #import "ZegoMediaPlayerAudioManager.h"
 #import "ZegoMediaPlayerBlockDataManager.h"
+#import "ZegoAudioMixingDataManager.h"
 
 #import "ZegoUtils.h"
 #import "ZegoLog.h"
@@ -39,6 +40,8 @@
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoRealTimeSequentialDataManager *> *realTimeSequentialDataManagerMap;
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoAIVoiceChanger *> *aiVoiceChangerMap;
+
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, ZegoPictureCapturer *> *pictureCapturerMap;
 
 @property (nonatomic, strong) ZegoRangeAudio *rangeAudioInstance;
 
@@ -465,6 +468,9 @@
         if (configMap[@"capabilityNegotiationTypes"]) {
             configObject.capabilityNegotiationTypes = [ZegoUtils unsignedIntValue:configMap[@"capabilityNegotiationTypes"]];
         }
+        if (configMap[@"roomType"]) {
+            configObject.roomType = [ZegoUtils unsignedIntValue:configMap[@"roomType"]];
+        }
     }
 
     [[ZegoExpressEngine sharedEngine] loginRoom:roomID user:userObject config:configObject callback: ^(int errorCode, NSDictionary * _Nullable extendedData) {
@@ -700,6 +706,7 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
@@ -715,6 +722,7 @@
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
 
                 [[ZegoExpressEngine sharedEngine] startPreview:canvas channel:(ZegoPublishChannel)channel];
             } else {
@@ -925,6 +933,35 @@
     int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
 
     [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshot:^(int errorCode, ZGImage * _Nullable image) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = nil;
+            if (errorCode == 0 && image) {
+#if TARGET_OS_IPHONE
+                imageData = UIImageJPEGRepresentation(image, 1);
+#elif TARGET_OS_OSX
+                CGImageRef cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+                NSBitmapImageRep *bitmapRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+                imageData = [bitmapRep representationUsingType:NSBitmapImageFileTypeJPEG properties:@{}];
+#endif
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                result(@{
+                    @"errorCode": @(errorCode),
+                    @"image": imageData ?: [[NSNull alloc] init]
+                });
+            });
+        });
+    } channel:(ZegoPublishChannel)channel];
+}
+
+- (void)takePublishStreamSnapshotByConfig:(FlutterMethodCall *)call result:(FlutterResult)result {
+    int channel = [ZegoUtils intValue:call.arguments[@"channel"]];
+    NSDictionary *configMap = call.arguments[@"config"];
+    ZegoPublisherTakeSnapshotConfig *config = [ZegoPublisherTakeSnapshotConfig new];
+    config.position = (ZegoPublisherTakeSnapshotPosition)[ZegoUtils intValue:configMap[@"position"]];
+
+    [[ZegoExpressEngine sharedEngine] takePublishStreamSnapshotByConfig:config callback:^(int errorCode, ZGImage * _Nullable image) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *imageData = nil;
             if (errorCode == 0 && image) {
@@ -1327,6 +1364,8 @@
             *mediaPlayers = [index intValue];
             mediaPlayers += 1;
         }
+
+        config.enableMixScreenCapture = [ZegoUtils boolValue:configMap[@"enableMixScreenCapture"]];
     }
 
     BOOL hasChannel = NO;
@@ -1508,6 +1547,8 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
+        BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
@@ -1523,6 +1564,8 @@
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
 
                 if (playerConfig) {
                     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamID canvas:canvas config:playerConfig];
@@ -1614,6 +1657,14 @@
             customResourceConfig.afterPublish = (ZegoResourceType)[ZegoUtils intValue:customResourceConfigMap[@"afterPublish"]];
             
             playerConfig.customResourceConfig = customResourceConfig;
+        }
+        
+        NSDictionary * switchStreamConfigMap = playerConfigMap[@"switchStreamConfig"];
+        if (switchStreamConfigMap && switchStreamConfigMap.count > 0) {
+            ZegoSwitchPlayingStreamConfig *switchStreamConfig = [[ZegoSwitchPlayingStreamConfig alloc] init];
+            switchStreamConfig.switchType = (ZegoSwitchPlayingStreamType)[ZegoUtils intValue:switchStreamConfigMap[@"switchType"]];
+            
+            playerConfig.switchStreamConfig = switchStreamConfig;
         }
     }
 
@@ -1851,6 +1902,8 @@
         int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
         int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
         BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
+        BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
 
         if (self.enablePlatformView) {
             // Render with PlatformView
@@ -1866,6 +1919,8 @@
                 canvas.viewMode = (ZegoViewMode)viewMode;
                 canvas.backgroundColor = backgroundColor;
                 canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
 
                 errorCode = [[ZegoExpressEngine sharedEngine] updatePlayingCanvas:streamID canvas:canvas];
             } else {
@@ -1893,6 +1948,72 @@
     }
 
     result(@(errorCode));
+}
+
+- (void)setPlayingCanvas:(FlutterMethodCall *)call result:(FlutterResult)result {
+#if TARGET_OS_IPHONE
+    NSString *streamID = call.arguments[@"streamID"];
+    ZegoViewUpdateType updateType = (ZegoViewUpdateType)[ZegoUtils intValue:call.arguments[@"updateType"]];
+    
+    // Handle ZegoCanvas
+
+    NSDictionary *canvasMap = call.arguments[@"canvas"];
+
+    int errorCode = 0;
+    if (canvasMap && canvasMap.count > 0) {
+        // Play video
+
+        // This parameter is actually viewID when using PlatformView, and is actually textureID when using Texture render
+        int64_t viewID = [ZegoUtils longLongValue:canvasMap[@"view"]];
+        int viewMode = [ZegoUtils intValue:canvasMap[@"viewMode"]];
+        int backgroundColor = [ZegoUtils intValue:canvasMap[@"backgroundColor"]];
+        BOOL alphaBlend = [ZegoUtils boolValue:canvasMap[@"alphaBlend"]];
+        int rotation = [ZegoUtils intValue:canvasMap[@"rotation"]];
+        BOOL mirror = [ZegoUtils boolValue:canvasMap[@"mirror"]];
+        NSString *viewContext = canvasMap[@"viewContext"];
+
+        if (self.enablePlatformView) {
+            // Render with PlatformView
+            ZegoPlatformView *platformView = [[ZegoPlatformViewFactory sharedInstance] getPlatformView:@(viewID)];
+
+            if (alphaBlend) {
+                [platformView.view setBackgroundColor:UIColor.clearColor];
+            }
+
+            if (platformView) {
+                ZegoCanvas *canvas = [[ZegoCanvas alloc] initWithView:platformView.view];
+                canvas.viewMode = (ZegoViewMode)viewMode;
+                canvas.backgroundColor = backgroundColor;
+                canvas.alphaBlend = alphaBlend;
+                canvas.rotation = rotation;
+                canvas.mirror = mirror;
+                canvas.viewContext = viewContext;
+
+                errorCode = [[ZegoExpressEngine sharedEngine] setPlayingCanvas:streamID updateType:updateType canvas:canvas];
+            } else {
+                // Play video without creating the PlatformView in advance
+                // Need to invoke dart `createPlatformView` method in advance to create PlatformView and get viewID (PlatformViewID)
+                NSString *errorMessage = [NSString stringWithFormat:@"The PlatformView for viewID:%ld cannot be found, developer should call `createPlatformView` first and get the viewID", (long)viewID];
+                ZGError(@"[setPlayingCanvas] %@", errorMessage);
+                result([FlutterError errorWithCode:[@"setPlayingCanvas_No_PlatformView" uppercaseString] message:errorMessage details:nil]);
+                return;
+            }
+
+        } else {
+            NSString *errorMessage = [NSString stringWithFormat:@"setPlayingCanvas Supported only PlatformView"];
+            ZGError(@"[setPlayingCanvas] %@", errorMessage);
+            result([FlutterError errorWithCode:[@"setPlayingCanvas_Supported_Only_PlatformView" uppercaseString] message:errorMessage details:nil]);
+            return;
+        }
+
+    }
+
+    result(@(errorCode));
+#elif TARGET_OS_OSX
+    NSString *errorMessage = [NSString stringWithFormat:@"OSX platform not support feature"];
+    ZGError(@"[setPlayingCanvas] %@", errorMessage);
+    result([FlutterError errorWithCode:[@"not_support_feature" uppercaseString] message:errorMessage details:nil]);
+#endif
 }
 
 #if TARGET_OS_IPHONE
@@ -2299,6 +2420,12 @@
 
     // minPlayStreamBufferLength
     taskObject.minPlayStreamBufferLength = [ZegoUtils intValue:call.arguments[@"minPlayStreamBufferLength"]];
+
+    // streamAlignmentVolumeControlMode
+    taskObject.streamAlignmentVolumeControlMode = (ZegoStreamAlignmentVolumeControlMode)[ZegoUtils intValue:call.arguments[@"streamAlignmentVolumeControlMode"]];
+
+    // streamAlignmentBaselineStreamID
+    taskObject.streamAlignmentBaselineStreamID = call.arguments[@"streamAlignmentBaselineStreamID"];
 
     [[ZegoExpressEngine sharedEngine] startAutoMixerTask:taskObject callback:^(int errorCode, NSDictionary * _Nullable extendedData) {
 
@@ -3399,6 +3526,38 @@
     }
     
     [[ZegoExpressEngine sharedEngine] enableCustomVideoProcessing:(BOOL)enable config:config channel:(ZegoPublishChannel)channel];
+
+    result(nil);
+}
+
+#pragma mark - AudioMixing
+
+- (void)enableAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL enable = [ZegoUtils boolValue:call.arguments[@"enable"]];
+    if (enable) {
+        [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:(id<ZegoAudioMixingHandler>)[ZegoAudioMixingDataManager sharedInstance]];
+    } else {
+        [[ZegoExpressEngine sharedEngine] setAudioMixingHandler:nil];
+    }
+    [[ZegoExpressEngine sharedEngine] enableAudioMixing:enable];
+
+    result(nil);
+}
+
+- (void)setAudioMixingVolume:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    int volume = [ZegoUtils intValue:call.arguments[@"volume"]];
+    int volumeType = [ZegoUtils intValue:call.arguments[@"type"]];
+    [[ZegoExpressEngine sharedEngine] setAudioMixingVolume:volume type:(ZegoVolumeType)volumeType];
+
+    result(nil);
+}
+
+- (void)muteLocalAudioMixing:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    BOOL mute = [ZegoUtils boolValue:call.arguments[@"mute"]];
+    [[ZegoExpressEngine sharedEngine] muteLocalAudioMixing:mute];
 
     result(nil);
 }
@@ -6046,6 +6205,9 @@
     config.captureAudio = [ZegoUtils boolValue:configMap[@"captureAudio"]];
     config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
     config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+    config.orientation = (ZegoScreenCaptureOrientation)[ZegoUtils intValue:configMap[@"orientation"]];
+    config.muteExtensMicrophone = [ZegoUtils boolValue:configMap[@"muteExtensMicrophone"]];
+    config.audioDeviceMode = (ZegoScreenCaptureAudioDeviceMode)[ZegoUtils intValue:configMap[@"audioDeviceMode"]];
     
     if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
         NSDictionary *cropRectMap = configMap[@"cropRect"];
@@ -6093,6 +6255,9 @@
             config.captureVideo = [ZegoUtils boolValue:configMap[@"captureVideo"]];
             config.applicationVolume = [ZegoUtils intValue:configMap[@"applicationVolume"]];
             config.microphoneVolume = [ZegoUtils intValue:configMap[@"microphoneVolume"]];
+            config.orientation = (ZegoScreenCaptureOrientation)[ZegoUtils intValue:configMap[@"orientation"]];
+            config.muteExtensMicrophone = [ZegoUtils boolValue:configMap[@"muteExtensMicrophone"]];
+            config.audioDeviceMode = (ZegoScreenCaptureAudioDeviceMode)[ZegoUtils intValue:configMap[@"audioDeviceMode"]];
             
             if (![ZegoUtils isNullObject:configMap[@"cropRect"]]) {
                 NSDictionary *cropRectMap = configMap[@"cropRect"];
@@ -6267,6 +6432,69 @@
         
     [[ZegoExpressEngine sharedEngine] enableColorEnhancement:enable params:p channel:(ZegoPublishChannel)channel];
     
+    result(nil);
+}
+
+#pragma mark - Picture Capturer
+
+- (void)createPictureCapturer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    if (!self.pictureCapturerMap) {
+        self.pictureCapturerMap = [NSMutableDictionary dictionary];
+    }
+
+    ZegoPictureCapturer *pictureCapturer = [[ZegoExpressEngine sharedEngine] createPictureCapturer];
+
+    if (pictureCapturer) {
+        int index = pictureCapturer.getIndex;
+
+        self.pictureCapturerMap[@(index)] = pictureCapturer;
+
+        result(@(index));
+    } else {
+        result(@(-1));
+    }
+}
+
+- (void)destroyPictureCapturer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoPictureCapturer *pictureCapturer = self.pictureCapturerMap[index];
+
+    if (pictureCapturer) {
+        [[ZegoExpressEngine sharedEngine] destroyPictureCapturer:pictureCapturer];
+    }
+
+    [self.pictureCapturerMap removeObjectForKey:index];
+
+    result(nil);
+}
+
+- (void)setPathPictureCapturer:(FlutterMethodCall *)call result:(FlutterResult)result {
+
+    NSNumber *index = call.arguments[@"index"];
+    ZegoPictureCapturer *pictureCapturer = self.pictureCapturerMap[index];
+
+    if (pictureCapturer) {
+        NSString *path = call.arguments[@"path"];
+        
+        NSString *flutterAssetPrefix = @"flutter-asset://";
+        if ([path hasPrefix:flutterAssetPrefix]) {
+            NSString *assetName = [path substringFromIndex:flutterAssetPrefix.length];
+#if TARGET_OS_IPHONE
+            NSString *assetKey = [_registrar lookupKeyForAsset:assetName];
+            NSString *assetRealPath = [[NSBundle mainBundle] pathForResource:assetKey ofType:nil];
+#elif TARGET_OS_OSX
+            NSString *assetDir = @"/Contents/Frameworks/App.framework/Resources/flutter_assets/";
+            NSString *assetRealPath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], assetDir, assetName];
+#endif
+            NSString *processedURL = [NSString stringWithFormat:@"file:%@", assetRealPath];
+            [pictureCapturer setPath:processedURL];
+        } else {
+            [pictureCapturer setPath:path];
+        }
+    }
+
     result(nil);
 }
 

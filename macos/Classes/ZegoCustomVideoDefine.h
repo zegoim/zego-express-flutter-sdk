@@ -176,4 +176,20 @@ typedef NS_ENUM(NSUInteger, ZGFlutterAudioChannel) {
 
 @end
 
+/// Object for audio mixing data.
+///
+/// Including audio data and audio data attributes.
+@interface ZGFlutterAudioMixingData : NSObject
+
+/// Audio PCM data that needs to be mixed into the stream
+@property (nonatomic, strong, nullable) NSData *audioData;
+
+/// Audio data attributes, including sample rate and number of channels. Currently supports 16k, 32k, 44.1k, 48k sampling rate, mono or stereo, 16-bit deep PCM data. Developers need to explicitly specify audio data attributes, otherwise mixing will not take effect.
+@property (nonatomic, strong, nullable) ZGFlutterAudioFrameParam * param;
+
+/// SEI data, used to transfer custom data. When audioData is null, SEIData will not be sent
+@property (nonatomic, strong, nullable) NSData *SEIData;
+
+@end
+
 #endif /* ZegoCustomVideoDefine_h */

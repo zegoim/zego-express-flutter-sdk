@@ -22,3 +22,7 @@
 @implementation ZGFlutterAudioFrameParam
 
 @end
+
+@implementation ZGFlutterAudioMixingData
+
+@end

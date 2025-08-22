@@ -72,6 +72,7 @@ static const std::map<std::string,
         EngineMethodHandler(getAudioConfig),
         EngineMethodHandler(setPublishStreamEncryptionKey),
         EngineMethodHandler(takePublishStreamSnapshot),
+        EngineMethodHandler(takePublishStreamSnapshotByConfig),
 
         EngineMethodHandler(setMinVideoBitrateForTrafficControl),
         EngineMethodHandler(setMinVideoFpsForTrafficControl),
@@ -95,6 +96,7 @@ static const std::map<std::string,
         EngineMethodHandler(initVideoSuperResolution),
         EngineMethodHandler(uninitVideoSuperResolution),
         EngineMethodHandler(updatePlayingCanvas),
+        EngineMethodHandler(setPlayingCanvas),
 
         EngineMethodHandler(startAutoMixerTask),
         EngineMethodHandler(stopAutoMixerTask),
@@ -148,6 +150,7 @@ static const std::map<std::string,
 
         EngineMethodHandler(mutePublishStreamAudio),
         EngineMethodHandler(mutePublishStreamVideo),
+        EngineMethodHandler(setStreamAlignmentProperty),
         EngineMethodHandler(setCaptureVolume),
         EngineMethodHandler(setAudioCaptureStereoMode),
         EngineMethodHandler(sendSEI),
@@ -236,6 +239,10 @@ static const std::map<std::string,
         EngineMethodHandler(uploadDumpData),
         EngineMethodHandler(removeDumpData),
         EngineMethodHandler(enableColorEnhancement),
+
+        EngineMethodHandler(enableAudioMixing),
+        EngineMethodHandler(setAudioMixingVolume),
+        EngineMethodHandler(muteLocalAudioMixing),
 
         EngineMethodHandler(createAudioEffectPlayer),
         EngineMethodHandler(destroyAudioEffectPlayer),
@@ -411,6 +418,11 @@ static const std::map<std::string,
         EngineMethodHandler(aiVoiceChangerInitEngine),
         EngineMethodHandler(aiVoiceChangerSetSpeaker),
         EngineMethodHandler(aiVoiceChangerUpdate),
+
+        // Picture Capturer
+        EngineMethodHandler(createPictureCapturer),
+        EngineMethodHandler(destroyPictureCapturer),
+        EngineMethodHandler(setPathPictureCapturer),
 
         // textureRenderer
         EngineMethodHandler(createTextureRenderer),
