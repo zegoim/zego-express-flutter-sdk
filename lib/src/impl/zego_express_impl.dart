@@ -17,7 +17,7 @@ import '../utils/zego_express_utils.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package, curly_braces_in_flow_control_structures
 
-const String pluginVersion = "3.21.0";
+const String pluginVersion = "3.22.0";
 
 class MethodChannelWrapper extends MethodChannel {
   MethodChannelWrapper(String name) : super(name);
