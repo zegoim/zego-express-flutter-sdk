@@ -1,5 +1,86 @@
 # Change Log
 
+## 3.22.0
+
+### New Features
+
+1. **Supports mixing the microphone audio source with the screen capture audio source when the primary channel is set as the audio source - iOS/Android**
+
+    - Relevate APIs: `setAudioSource` `startScreenCapture` `updateScreenCaptureConfig` 
+
+2. **Screen sharing provides startup and interruption callbacks - iOS/Android**
+
+    - Relevate APIs: `onMobileScreenCaptureStart` `onMobileScreenCaptureExceptionOccurred` 
+
+3. **Screen sharing supports setting a fixed landscape or portrait orientation - iOS/Android**
+
+    - Relevate APIs: `startScreenCapture` `updateScreenCaptureConfig` 
+
+4. **Screen sharing supports sharing system sounds with the audio package - iOS/Android**
+
+    - Relevate APIs: `startScreenCapture`
+
+5. **Supports starting screen sharing with a specified volume mode - iOS**
+
+    - Relevate APIs: `startScreenCapture` `updateScreenCaptureConfig` 
+
+6. **Added static image capture video source - All Platforms**
+
+    - Relevate APIs: `setVideoSource`
+
+7. **Semi-automatic stream mixing now supports stream alignment - All Platforms**
+
+    - Relevate APIs: `ZegoAutoMixerTask`
+
+8. **The limit on the number of media player instances has been increased to 10 - All Platforms**
+
+9. **The media player supports fragmented file storage for simultaneous downloading and playback - All Platforms**
+
+10. **The stream switching feature supports forced switching mode - All Platforms**
+
+     - Relevate APIs: `switchPlayingStream`
+
+11. **Supports access to the Microframe 264 encoder - All Platforms**
+
+12. **The SDK player supports HLS protocol streaming and adaptive resolution - All Platforms**
+
+    - Relevate APIs: `switchPlayingStream`
+
+13. **Supports simultaneous rendering of video streams to multiple views when pulling video streams - iOS/Android**
+
+    - Relevate APIs: `setPlayingCanvas`
+
+14. **Supports issuing cloud proxy configurations via cloud control, with dynamic implementation - All Platforms**
+
+15. **Added encryption using the National Cryptography Algorithm for streaming push and pull - All Platforms**
+
+16. **Support for WMA encoders - All Platforms**
+
+### Improvements & Optimizations
+
+1. **The curl library in the SDK has been upgraded to version 8.14.1 - All Platforms**
+
+2. **Optimized the issue of excessive memory usage when switching the background type to video with subject segmentation enabled - All Platforms**
+
+3. **Optimized the natural background segmentation effect - All Platforms**
+
+4. **Optimized the AI ​​super-resolution antialiasing effect - All Platforms**
+
+4. **Optimized the low-light enhancement effect - All Platforms**
+
+### Bug Fixes
+
+1. Fixed an issue where repeated camera acquisition when calling startPreview and startPublish asynchronously simultaneously resulted in the camera not being properly released when the stream ended.
+
+2. Fixed an issue where duplicate registration of zego_express_event_handler data in an eventChannel resulted in an error message during callback processing.
+
+3. Fixed an error in the remote device status callback where the onRemoteCameraStateUpdate and onRemoteMicStateUpdate events were not triggered.
+
+4. Fixed the camera permission pop-up issue in audio-only scenes.
+
+5. 
+Fixed an issue where the startPlayingStream method failed to start streaming if the view container parameter was not passed.
+
 ## 3.21.0
 
 ### New Features
