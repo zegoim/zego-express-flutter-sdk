@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import im.zego.zegoexpress.ZegoAIVoiceChanger;
@@ -58,7 +57,6 @@ import im.zego.zegoexpress.constants.ZegoScreenCaptureExceptionType;
 import im.zego.zegoexpress.constants.ZegoStreamEvent;
 import im.zego.zegoexpress.constants.ZegoStreamQualityLevel;
 import im.zego.zegoexpress.constants.ZegoUpdateType;
-import im.zego.zegoexpress.constants.ZegoAudioSampleRate;
 import im.zego.zegoexpress.constants.ZegoVideoCodecID;
 import im.zego.zegoexpress.constants.ZegoAudioVADType;
 import im.zego.zegoexpress.constants.ZegoAudioVADStableStateMonitorType;
@@ -67,6 +65,7 @@ import im.zego.zegoexpress.constants.ZegoDeviceType;
 import im.zego.zegoexpress.constants.ZegoSuperResolutionState;
 import im.zego.zegoexpress.entity.ZegoAIVoiceChangerSpeakerInfo;
 import im.zego.zegoexpress.entity.ZegoAudioFrameParam;
+import im.zego.zegoexpress.entity.ZegoAudioMixingData;
 import im.zego.zegoexpress.entity.ZegoBarrageMessageInfo;
 import im.zego.zegoexpress.entity.ZegoBroadcastMessageInfo;
 import im.zego.zegoexpress.entity.ZegoDataRecordConfig;
@@ -884,6 +883,21 @@ public class ZegoExpressEngineEventHandler {
             HashMap<String, Object> map = new HashMap<>();
             map.put("method", "onPlayerRenderCameraVideoFirstFrame");
             map.put("streamID", streamID);
+
+            sink.success(map);
+        }
+
+        @Override
+        public void onPlayerRenderMultiViewFirstFrame(String streamID, String viewContext) {
+            super.onPlayerRenderMultiViewFirstFrame(streamID, viewContext);
+            ZegoLog.log("[onPlayerRenderMultiViewFirstFrame] streamID: %s ctx: %s", streamID, viewContext);
+
+            if (guardSink()) { return; }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("method", "onPlayerRenderMultiViewFirstFrame");
+            map.put("streamID", streamID);
+            map.put("viewContext", viewContext);
 
             sink.success(map);
         }
@@ -1871,7 +1885,12 @@ public class ZegoExpressEngineEventHandler {
             map.put("data", data);
             map.put("streamID", streamID);
 
-            sink.success(map);
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sink.success(map);
+                }
+            });
         }
     };
 

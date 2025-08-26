@@ -664,7 +664,13 @@ enum ZegoAECMode {
   Soft,
 
   /// AI echo cancellation. Supports intelligent recognition and elimination of echo, with a significant improvement in vocal fidelity compared to traditional AEC algorithms, without additional delay or power consumption increase.
-  AI
+  AI,
+
+  /// AI Aggressive echo cancellation, Similar to ZegoAECModeAI, it offers cleaner echo cancellation in scenarios with significant reverberation, making it recommended for use in chat rooms with large reverberation. It can be left off in other scenarios, especially in KTV settings where music is played out loud, as it may cause slightly more distortion to the human voice.
+  AIAggressive,
+
+  /// Balanced AI echo cancellation, Compared with ZegoAECModeAIAggressive, the echo suppression is cleaner, but the human voice will be more damaged. It is recommended to use it in voice chat scenarios.
+  AIBalanced
 }
 
 /// Active Noise Suppression mode.
@@ -734,6 +740,15 @@ enum ZegoMixImageCheckMode {
 
   /// The mixed flow can be initiated successfully without checking the related parameters of the picture.
   Nothing
+}
+
+/// Stream alignment volume control mode.
+enum ZegoStreamAlignmentVolumeControlMode {
+  /// Disable volume control when stream alignment.
+  Close,
+
+  /// Enable volume control when stream alignment.
+  Open
 }
 
 /// Traffic control property (bitmask enumeration).
@@ -842,6 +857,15 @@ enum ZegoStreamResourceSwitchMode {
   KeepOriginal
 }
 
+/// Switch playing stream type.
+enum ZegoSwitchPlayingStreamType {
+  /// Default, smooth switching.
+  Default,
+
+  /// Force switching, Only the timestamp is guaranteed not to be refunded, and smooth switching is not guaranteed.
+  Force
+}
+
 /// Stream Resource Type
 enum ZegoStreamResourceType {
   /// Default mode. The SDK will automatically select the streaming resource according to the parameters set by the player config and the ready-made background configuration.
@@ -852,6 +876,18 @@ enum ZegoStreamResourceType {
 
   /// L3 resource.
   L3
+}
+
+/// Update type.
+enum ZegoViewUpdateType {
+  /// Add
+  Add,
+
+  /// Delete
+  Delete,
+
+  /// Update
+  Update
 }
 
 /// Update type.
@@ -1751,6 +1787,18 @@ enum ZegoStreamEvent {
   PlayEnd
 }
 
+/// Screen capture audio device mode.
+enum ZegoScreenCaptureAudioDeviceMode {
+  /// Default mode.
+  None,
+
+  /// General mode.
+  General,
+
+  /// Communication mode.
+  Communication
+}
+
 /// Type of capture target.
 enum ZegoScreenCaptureSourceType {
   /// Unknow.
@@ -1806,6 +1854,15 @@ enum ZegoVideoDenoiseStrength {
 
   /// Heavy denoise strength.
   Heavy
+}
+
+/// The position of taking snapshot.
+enum ZegoPublisherTakeSnapshotPosition {
+  /// After video process.
+  AfterProcess,
+
+  /// On capture.
+  OnCapture
 }
 
 /// Super resolution mode.
@@ -1868,7 +1925,10 @@ enum ZegoVideoSourceType {
   ZegoVideoSourceScreenCapture,
 
   /// Video source from secondary camera, the rear camera when [useFrontCamera] is set to true, otherwise the front camera, only support iOS.
-  SecondaryCamera
+  SecondaryCamera,
+
+  /// Video source from picture capture.
+  Picture
 }
 
 /// Screen capture source exception type.
@@ -1886,7 +1946,19 @@ enum ZegoScreenCaptureSourceExceptionType {
   PublishRegionInvalid
 }
 
-/// Screen capture source exception type. (only for Android)
+/// Screen capture orientation.
+enum ZegoScreenCaptureOrientation {
+  /// Auto follow system orientation.
+  Auto,
+
+  /// Fixed portrait.
+  Portrait,
+
+  /// Fixed landscape.
+  Landscape
+}
+
+/// Screen capture source exception type. (only for Android and iOS)
 enum ZegoScreenCaptureExceptionType {
   /// Unknown exception type.
   Unknown,
@@ -1916,7 +1988,13 @@ enum ZegoScreenCaptureExceptionType {
   SourceNotSpecified,
 
   /// System error exception. For example, low memory, etc.
-  SystemError
+  SystemError,
+
+  /// Exception interrupted. For example, the user clicks the stop button in the control center during the capture process.
+  ExceptionInterrupted,
+
+  /// Audio device exception. You need to restart the capture.
+  AudioDeviceException
 }
 
 /// The state of the screen capture source window changes.
@@ -2216,22 +2294,27 @@ class ZegoRoomConfig {
   /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
   int? capabilityNegotiationTypes;
 
+  /// The type of the room, the default is 0.
+  int? roomType;
+
   ZegoRoomConfig(this.maxMemberCount, this.isUserStatusNotify, this.token,
-      {this.capabilityNegotiationTypes});
+      {this.capabilityNegotiationTypes, this.roomType});
 
   /// Create a default room configuration
   ZegoRoomConfig.defaultConfig()
       : maxMemberCount = 0,
         isUserStatusNotify = false,
         token = "",
-        capabilityNegotiationTypes = 0;
+        capabilityNegotiationTypes = 0,
+        roomType = 0;
 
   Map<String, dynamic> toMap() {
     return {
       'maxMemberCount': this.maxMemberCount,
       'isUserStatusNotify': this.isUserStatusNotify,
       'token': this.token,
-      'capabilityNegotiationTypes': this.capabilityNegotiationTypes
+      'capabilityNegotiationTypes': this.capabilityNegotiationTypes,
+      'roomType': this.roomType
     };
   }
 }
@@ -2543,13 +2626,30 @@ class ZegoCanvas {
   /// If enable alpha blend render, default is false.
   bool? alphaBlend;
 
-  ZegoCanvas(this.view, {this.viewMode, this.backgroundColor, this.alphaBlend});
+  /// Rotate the angle counterclockwise, the default is 0. The media player canvas is not supported.
+  int? rotation;
+
+  /// If enable the view mirror, default is false. Only play stream canvas is supported, for publish stream please use [setVideoMirrorMode] interface, for media player please use [enableViewMirror] interface.
+  bool? mirror;
+
+  /// Context of view, default is empty string. A utf8 string with a maximum length of 63 bytes or less. Generally no attention is required, it can be used for slitting rendering of mixed stream, to understand the specific use, you need to contact ZEGO technical support.
+  String? viewContext;
+
+  ZegoCanvas(this.view,
+      {this.viewMode,
+      this.backgroundColor,
+      this.alphaBlend,
+      this.rotation,
+      this.mirror,
+      this.viewContext});
 
   /// Create a ZegoCanvas, default viewMode is AspectFit, default background color is black
   ZegoCanvas.view(this.view)
       : this.viewMode = ZegoViewMode.AspectFit,
         this.backgroundColor = 0x000000,
-        this.alphaBlend = false;
+        this.alphaBlend = false,
+        this.rotation = 0,
+        this.mirror = false;
 }
 
 /// Advanced publisher configuration.
@@ -2741,6 +2841,16 @@ class ZegoCustomPlayerResourceConfig {
       this.beforePublish, this.publishing, this.afterPublish);
 }
 
+/// Extended parameters for the [switchPlayingStream] interface.
+///
+/// Extended parameters for the [switchPlayingStream] interface.
+class ZegoSwitchPlayingStreamConfig {
+  /// Switch playing stream type.
+  ZegoSwitchPlayingStreamType switchType;
+
+  ZegoSwitchPlayingStreamConfig(this.switchType);
+}
+
 /// Advanced player configuration.
 ///
 /// Configure stream resource mode, CDN configuration and other advanced configurations.
@@ -2778,6 +2888,9 @@ class ZegoPlayerConfig {
   /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
   ZegoCustomPlayerResourceConfig? customResourceConfig;
 
+  /// Extended parameters for the [switchPlayingStream] interface.
+  ZegoSwitchPlayingStreamConfig? switchStreamConfig;
+
   ZegoPlayerConfig(this.resourceMode,
       {this.cdnConfig,
       this.roomID,
@@ -2788,7 +2901,8 @@ class ZegoPlayerConfig {
       this.resourceWhenStopPublish,
       this.adaptiveSwitch,
       this.adaptiveTemplateIDList,
-      this.customResourceConfig});
+      this.customResourceConfig,
+      this.switchStreamConfig});
 
   /// Create a default advanced player config object
   ZegoPlayerConfig.defaultConfig()
@@ -3603,6 +3717,12 @@ class ZegoAutoMixerTask {
   /// Description: Sets the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server. In the real-time chorus KTV scenario, slight fluctuations in the network at the push end may cause the mixed stream to freeze. At this time, when the audience pulls the mixed stream, there is a high probability of the problem of freeze. By adjusting the lower limit of the interval range for the adaptive adjustment of the stream playing cache of the stream mixing server, it can optimize the freezing problem that occurs when playing mixing streams at the player end, but it will increase the delay. It is not set by default, that is, the server uses its own configuration values. It only takes effect for the new input stream setting, and does not take effect for the input stream that has already started mixing.Value Range: [0,10000], exceeding the maximum value will result in a failure of the stream mixing request. On web platforms, this property does not take effect.
   int minPlayStreamBufferLength;
 
+  /// Stream mixing alignment scene volume adjustment mode.
+  ZegoStreamAlignmentVolumeControlMode streamAlignmentVolumeControlMode;
+
+  /// Stream mixing alignment scene baseline streamID.
+  String streamAlignmentBaselineStreamID;
+
   /// Create a auto mix stream task object
   ZegoAutoMixerTask()
       : taskID = "",
@@ -3611,7 +3731,10 @@ class ZegoAutoMixerTask {
         audioConfig = ZegoMixerAudioConfig.defaultConfig(),
         enableSoundLevel = false,
         streamAlignmentMode = ZegoStreamAlignmentMode.None,
-        minPlayStreamBufferLength = -1;
+        minPlayStreamBufferLength = -1,
+        streamAlignmentVolumeControlMode =
+            ZegoStreamAlignmentVolumeControlMode.Close,
+        streamAlignmentBaselineStreamID = "";
 
   Map<String, dynamic> toMap() {
     return {
@@ -3621,7 +3744,10 @@ class ZegoAutoMixerTask {
       'outputList': this.outputList,
       'enableSoundLevel': this.enableSoundLevel,
       'streamAlignmentMode': this.streamAlignmentMode.index,
-      'minPlayStreamBufferLength': this.minPlayStreamBufferLength
+      'minPlayStreamBufferLength': this.minPlayStreamBufferLength,
+      'streamAlignmentVolumeControlMode':
+          this.streamAlignmentVolumeControlMode.index,
+      'streamAlignmentBaselineStreamID': this.streamAlignmentBaselineStreamID
     };
   }
 }
@@ -4188,7 +4314,7 @@ class ZegoScreenCaptureConfig {
   /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
   int? microphoneVolume;
 
-  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
+  /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS and Android)
   int? applicationVolume;
 
   /// Set the audio capture parameters during screen capture. (only for Android)
@@ -4197,11 +4323,27 @@ class ZegoScreenCaptureConfig {
   /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
   Rect? cropRect;
 
+  /// Set the capture orientation of the screen capture. The capture orientation will be fixed, ignoring the system returned orientation. (only for iOS/Android)
+  ZegoScreenCaptureOrientation? orientation;
+
+  /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
+  bool? muteExtensMicrophone;
+
+  /// Set the audio device mode for the specified scene, the default is None. (only for iOS) Notes:
+  /// 1. Only works when the audio main source is always a microphone;
+  /// 2. Only works for [startScreenCapture] interface, [updateScreenCapture] does not take effect;
+  /// 3. The audio device mode changes during screen capture may cause the audio output of the screen capture to be abnormal, which can be monitored through [onMobileScreenCaptureExceptionOccurred] callback, and if necessary, the screen capture needs to be restarted.;
+  /// 4. After the screen capture is stopped, the audio device mode before the screen capture will be restored.
+  ZegoScreenCaptureAudioDeviceMode? audioDeviceMode;
+
   ZegoScreenCaptureConfig(this.captureVideo, this.captureAudio,
       {this.microphoneVolume,
       this.applicationVolume,
       this.audioParam,
-      this.cropRect});
+      this.cropRect,
+      this.orientation,
+      this.muteExtensMicrophone,
+      this.audioDeviceMode});
 
   ZegoScreenCaptureConfig.defaultConfig()
       : captureVideo = true,
@@ -4210,7 +4352,9 @@ class ZegoScreenCaptureConfig {
         applicationVolume = 100,
         audioParam = ZegoAudioFrameParam(
             ZegoAudioSampleRate.SampleRate16K, ZegoAudioChannel.Stereo),
-        cropRect = Rect.zero;
+        cropRect = Rect.zero,
+        orientation = ZegoScreenCaptureOrientation.Auto,
+        muteExtensMicrophone = false;
 }
 
 /// The screen captures source information.
@@ -4267,11 +4411,15 @@ class ZegoAudioSourceMixConfig {
   /// Enable or disable mix SDK playout into publish stream.
   bool? enableMixEnginePlayout;
 
+  /// Enable or disable mix screen capture into publish stream, the input source cannot be set to screen capture. (only for Android and iOS)
+  bool? enableMixScreenCapture;
+
   ZegoAudioSourceMixConfig(
       {this.mediaPlayerIndexList,
       this.audioEffectPlayerIndexList,
       this.enableMixSystemPlayout,
-      this.enableMixEnginePlayout});
+      this.enableMixEnginePlayout,
+      this.enableMixScreenCapture});
 }
 
 /// Multimedia resource for ZEGO media player.
@@ -4566,6 +4714,18 @@ class ZegoExpLowlightEnhancementParams {
   ZegoExpLowlightEnhancementParams.defaultParam()
       : mode = ZegoLowlightEnhancementMode.Off,
         type = ZegoExpLowlightEnhancementType.Normal;
+}
+
+/// The config of publish stream snapshot.
+class ZegoPublisherTakeSnapshotConfig {
+  /// The position of taking snapshot. Default value: .
+  ZegoPublisherTakeSnapshotPosition position;
+
+  ZegoPublisherTakeSnapshotConfig(this.position);
+
+  /// Constructs a publish take snapshot config object by default.
+  ZegoPublisherTakeSnapshotConfig.defaultConfig()
+      : position = ZegoPublisherTakeSnapshotPosition.AfterProcess;
 }
 
 abstract class ZegoRealTimeSequentialDataManager {
@@ -6067,7 +6227,7 @@ abstract class ZegoScreenCaptureSource {
   ///
   /// Available since: 3.13.0
   /// Description: Whether to collect the sound of the window process during window collection.
-  /// When to call: Before starting the collection [startScreencapture].
+  /// When to call: Before starting the collection [startScreencapture]. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeCustom, and the screen acquisition and streaming channels are the same.
   /// Restrictions: Only applicable to Windows 10 and above versions.
   ///
   /// - [enable] Whether to collect sound. true for collection, false for no collection, default false.
@@ -6119,6 +6279,22 @@ abstract class ZegoAIVoiceChanger {
   ///
   /// - [speakerID] Speaker ID.
   Future<void> setSpeaker(int speakerID);
+}
+
+abstract class ZegoPictureCapturer {
+  /// Set the path of the picture capturer source.
+  ///
+  /// Available since: 3.22.0
+  /// Description: Set the path of the picture capturer source.
+  /// Related APIs: User can call [createPictureCapturer] function to create a picture capturer instance.
+  ///
+  /// - [path] The path of the picture.
+  Future<void> setPath(String path);
+
+  /// Get picture capturer instance index.
+  ///
+  /// - Returns Picture capturer instance index.
+  int getIndex();
 }
 
 /// Callback for setting room extra information.

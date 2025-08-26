@@ -1,6 +1,7 @@
 #include <variant>
 #include <Windows.h>
 #include <vector>
+#include <wingdi.h>
 #include "ZegoTextureRendererController.h"
 
 std::pair<long, BYTE *> CreateFromHBITMAP(HBITMAP hBitmap) {
@@ -213,4 +214,55 @@ std::pair<long, BYTE *> makeIconByBGRABuffer(unsigned char *buffer, unsigned int
     tmpbuff += sizeof(ICONDIRENTRY);
     RtlMoveMemory(tmpbuff, bitmap.second, bitmap.first);
     return std::pair(sizeof(ICONHEADER) + sizeof(ICONDIRENTRY) + bitmap.first, buff);
+}
+
+std::vector<uint8_t> ConvertHBITMAPToVector(HBITMAP hBitmap) {
+    std::vector<uint8_t> result;
+    if (!hBitmap) return result;
+
+    BITMAP bmp = {0};
+    if (!GetObject(hBitmap, sizeof(BITMAP), &bmp)) {
+        return result;
+    }
+
+    // 准备BITMAPINFO结构
+    BITMAPINFOHEADER bi = {0};
+    bi.biSize = sizeof(BITMAPINFOHEADER);
+    bi.biWidth = bmp.bmWidth;
+    bi.biHeight = -bmp.bmHeight; // 负值表示从上到下的DIB
+    bi.biPlanes = 1;
+    bi.biBitCount = 32; // 强制转换为32位ARGB格式
+    bi.biCompression = BI_RGB;
+
+    // 计算行字节数和对齐
+    DWORD dwBmpSize = ((bmp.bmWidth * bi.biBitCount + 31) / 32) * 4 * bmp.bmHeight;
+
+    // 分配内存
+    result.resize(dwBmpSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+
+    // 构建BITMAPFILEHEADER
+    BITMAPFILEHEADER bfh = {0};
+    bfh.bfType = 0x4D42; // "BM"
+    bfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwBmpSize;
+    bfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+    // 复制文件头和信息头
+    memcpy(result.data(), &bfh, sizeof(BITMAPFILEHEADER));
+    memcpy(result.data() + sizeof(BITMAPFILEHEADER), &bi, sizeof(BITMAPINFOHEADER));
+
+    // 获取位图数据
+    HDC hdc = GetDC(NULL);
+    if (GetDIBits(
+        hdc,
+        hBitmap,
+        0,
+        bmp.bmHeight,
+        result.data() + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER),
+        (BITMAPINFO*)&bi,
+        DIB_RGB_COLORS)) {
+        // 成功获取数据
+    }
+    ReleaseDC(NULL, hdc);
+
+    return result;
 }

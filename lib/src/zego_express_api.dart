@@ -712,6 +712,20 @@ class ZegoExpressEngine {
   /// - [streamID] Stream ID.
   static void Function(String streamID)? onPlayerRenderCameraVideoFirstFrame;
 
+  /// When multiple playing canvas are set, the callback will be triggered after one view renders the first frame of the video.
+  ///
+  /// Available since: 3.21.0
+  /// Description: Call [startPlayingStream] to play stream and call [setPlayingCanvas] to add multiple views, this callback will be called when SDK rendered the first frame of video data.
+  /// Use cases: Developer can use this callback to update the UI for playing stream.
+  /// Trigger: The user playing the mixed stream, adds multiple views through [setPlayingCanvas], and sets the correct viewContext parameters, which will trigger this callback after the corresponding view has rendered the first frame of video data.
+  /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerRecvVideoFirstFrame] determines whether the SDK has received the video data.
+  /// Note: This function is only available in ZegoExpressVideo SDK!
+  ///
+  /// - [streamID] Stream ID.
+  /// - [viewContext] Context of view.
+  static void Function(String streamID, String viewContext)?
+      onPlayerRenderMultiViewFirstFrame;
+
   /// The callback triggered when the stream playback resolution changes.
   ///
   /// Available since: 1.1.0
@@ -1076,7 +1090,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 1.2.1
   /// Description: This callback is used to receive broadcast messages sent by other users in the same room.
-  /// Use cases: Generally used when the number of people in the live room does not exceed 500
+  /// Use cases: Generally used in the live room.
   /// When to trigger: After calling [loginRoom] to log in to the room, if a user in the room sends a broadcast message via [sendBroadcastMessage] function, this callback will be triggered.
   /// Restrictions: None
   /// Caution: The broadcast message sent by the user will not be notified through this callback.
@@ -1107,7 +1121,7 @@ class ZegoExpressEngine {
   ///
   /// Available since: 1.2.1
   /// Description: This callback is used to receive custom command sent by other users in the same room.
-  /// Use cases: Generally used when the number of people in the live room does not exceed 500
+  /// Use cases: Generally used in the live room.
   /// When to trigger: After calling [loginRoom] to log in to the room, if other users in the room send custom signaling to the developer through the [sendCustomCommand] function, this callback will be triggered.
   /// Restrictions: None
   /// Caution: The custom command sent by the user himself will not be notified through this callback.
@@ -1713,7 +1727,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when the mobile screen capture source exception occurred.
   /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   ///
   /// - [exceptionType] Screen capture exception type.
   static void Function(ZegoScreenCaptureExceptionType exceptionType)?
@@ -1725,7 +1739,7 @@ class ZegoExpressEngine {
   /// Description: The callback triggered when calling the start mobile screen capture.
   /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
   /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-  /// Restrictions: Only available on Android.
+  /// Restrictions: Only available on Android and iOS.
   static void Function()? onMobileScreenCaptureStart;
 
   /// Initialize AI voice changer engine status callback.

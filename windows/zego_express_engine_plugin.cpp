@@ -17,14 +17,13 @@
 #include "internal/ZegoExpressEngineEventHandler.h"
 #include "internal/ZegoExpressEngineMethodHandler.h"
 #include "internal/ZegoExpressEngineInterface.h"
-
 class ZegoExpressEnginePlugin : public flutter::Plugin,
                                 public flutter::StreamHandler<flutter::EncodableValue> {
 
   public:
     static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
 
-    ZegoExpressEnginePlugin();
+    ZegoExpressEnginePlugin(flutter::PluginRegistrarWindows *registrar);
 
     virtual ~ZegoExpressEnginePlugin();
 
@@ -40,6 +39,8 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
     // Called when a method is called on this plugin's channel from Dart.
     void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
                           std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    std::optional<LRESULT> WindowProcDelegate(HWND hwnd, UINT message,
+                                            WPARAM wparam, LPARAM lparam);
 
   public:
     std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> methodChannel_;
@@ -47,6 +48,7 @@ class ZegoExpressEnginePlugin : public flutter::Plugin,
 
   private:
     std::shared_ptr<ZegoExpressEngineEventHandler> eventHandler_;
+    int64_t window_proc_delegate_id_ = -1;
 };
 
 // static
@@ -55,7 +57,7 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWind
     ZegoExpressEngineMethodHandler::getInstance().setPluginBinaryMessenger(registrar->messenger());
     ZegoExpressEngineMethodHandler::getInstance().setPluginTexture(registrar->texture_registrar());
 
-    auto plugin = std::make_unique<ZegoExpressEnginePlugin>();
+    auto plugin = std::make_unique<ZegoExpressEnginePlugin>(registrar);
 
     plugin->methodChannel_ = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
         registrar->messenger(), "plugins.zego.im/zego_express_engine",
@@ -77,7 +79,15 @@ void ZegoExpressEnginePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWind
     registrar->AddPlugin(std::move(plugin));
 }
 
-ZegoExpressEnginePlugin::ZegoExpressEnginePlugin() {}
+ZegoExpressEnginePlugin::ZegoExpressEnginePlugin(flutter::PluginRegistrarWindows* registrar) {
+    window_proc_delegate_id_ = registrar->RegisterTopLevelWindowProcDelegate(
+        [this](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+        if (msg == WM_DESTROY) {
+            this->methodChannel_->InvokeMethod("onWindowClose", nullptr);
+        }
+        return std::nullopt;
+    });    
+}
 
 ZegoExpressEnginePlugin::~ZegoExpressEnginePlugin() {
     ZegoExpressEngineEventHandler::getInstance()->clearEventSink();
