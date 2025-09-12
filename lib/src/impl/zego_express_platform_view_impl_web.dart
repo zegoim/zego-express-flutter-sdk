@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:html';
-import 'dart:ui' as ui;
+import 'dart:ui_web' as ui;
 
 /// Web implementation of [createPlatformView]
 class ZegoExpressPlatformViewImpl {
@@ -11,7 +11,10 @@ class ZegoExpressPlatformViewImpl {
     String webcamPushElement = 'plugins.zego.im/zego_express_view';
     // ignore:undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
-      return DivElement()..id = "zego-view-$id";
+      return DivElement()
+        ..id = "zego-view-$id"
+        ..style.width = '100%'
+        ..style.height = '100%';
     });
     return HtmlElementView(
         key: key,
