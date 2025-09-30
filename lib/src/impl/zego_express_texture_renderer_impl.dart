@@ -159,7 +159,7 @@ class ZegoExpressTextureRenderer {
           int textureID = map['textureID'];
           _sizeMap[textureID] = Size(double.parse(map['width'].toString()),
               double.parse(map['height'].toString()));
-          if (_mirrorMap.containsKey('isMirror')) {
+          if (map.containsKey('isMirror')) {
             _mirrorMap[textureID] = map['isMirror'];
           }
           if (map.containsKey('rotation')) {
