@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.22.1
+
+### Bug Fixes
+
+1. Fixed issue where the preview mirror does not take effect.
+
 ## 3.22.0
 
 ### New Features
