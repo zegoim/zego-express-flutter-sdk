@@ -573,7 +573,14 @@
 #pragma mark - FlutterStreamHandler
 
 - (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
-    self.eventSink = events;
+    // Renderer events originate on the video capture / render threads, and a
+    // Flutter event sink may only be used on the platform thread. Hop to the
+    // main queue so every event reaches Flutter from the right thread.
+    self.eventSink = ^(id event) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            events(event);
+        });
+    };
     ZGLog(@"[ZegoTextureRendererController] [onListen] set eventSink: %p", _eventSink);
     return nil;
 }
