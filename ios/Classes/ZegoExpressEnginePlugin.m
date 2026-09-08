@@ -74,7 +74,14 @@
  */
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(FlutterEventSink)events {
-    self.eventSink = events;
+    // The engine delivers its callbacks on its own threads, while a Flutter
+    // event sink may only be used on the platform thread. Hop to the main
+    // queue so every event reaches Flutter from the right thread.
+    self.eventSink = ^(id event) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            events(event);
+        });
+    };
     ZGLog(@"[FlutterEventSink] [onListen] set eventSink: %p", _eventSink);
     return nil;
 }
